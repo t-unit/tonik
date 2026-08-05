@@ -4,68 +4,71 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  late ImposterServer imposterServer;
+  late String baseUrl;
+
+  setUpAll(() async {
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/v1';
+  });
+
   group('pure-map operation wire encoding', () {
     test('form omits null while preserving empty and scalar values', () async {
-      final recorder = TestRequestRecorder();
-      final result = await _api(recorder).encodePureMapForm(
+      final result = await _api(baseUrl).encodePureMapForm(
         values: const {'gone': null, 'empty': '', 'count': 7},
       );
 
-      expect(result, isTonikSuccess);
-      expect(recorder.request!.uri.query, 'empty=&count=7');
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'empty=&count=7');
     });
 
     test(
       'form allowReserved preserves map keys and values when collapsed',
       () async {
-        final recorder = TestRequestRecorder();
-        final result =
-            await _api(
-              recorder,
-            ).encodePureMapFormAllowReservedCollapsed(
+        final result = await _api(baseUrl)
+            .encodePureMapFormAllowReservedCollapsed(
               values: const {'a:b': 'c:d'},
             );
 
         expect(result, isTonikSuccess);
-        expect(recorder.request!.uri.query, 'values=a:b,c:d');
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'values=a:b,c:d');
       },
     );
 
     test(
       'form allowReserved preserves map keys and values when exploded',
       () async {
-        final recorder = TestRequestRecorder();
-        final result =
-            await _api(
-              recorder,
-            ).encodePureMapFormAllowReservedExploded(
+        final result = await _api(baseUrl)
+            .encodePureMapFormAllowReservedExploded(
               values: const {'a:b': 'c:d'},
             );
 
         expect(result, isTonikSuccess);
-        expect(recorder.request!.uri.query, 'a:b=c:d');
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'a:b=c:d');
       },
     );
 
     test(
       'deepObject omits null while preserving empty and scalar values',
       () async {
-        final recorder = TestRequestRecorder();
-        final result = await _api(recorder).encodePureMapDeepObject(
+        final result = await _api(baseUrl).encodePureMapDeepObject(
           values: const {'gone': null, 'empty': '', 'count': 7},
         );
 
         expect(result, isTonikSuccess);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          recorder.request!.uri.query,
+          recordedRequest.uri.query,
           'values%5Bempty%5D=&values%5Bcount%5D=7',
         );
       },
     );
 
     test('form rejects nested values before network I/O', () async {
-      final recorder = TestRequestRecorder();
-      final result = await _api(recorder).encodePureMapForm(
+      final result = await _api(baseUrl).encodePureMapForm(
         values: const {
           'nested': {'value': 1},
         },
@@ -76,7 +79,7 @@ void main() {
         requireError(result).type,
         TonikErrorType.encoding,
       );
-      expect(recorder.request, isNull);
+      await expectLater(imposterServer.takeRequest(), throwsStateError);
     });
   });
 
@@ -571,13 +574,9 @@ void main() {
   });
 }
 
-AdditionalPropertiesApi _api(TestRequestRecorder recorder) =>
-    AdditionalPropertiesApi(
-      CustomServer(
-        baseUrl: 'https://example.com',
-        serverConfig: testServerConfig(
-          recorder: recorder,
-          response: const TestResponseStub(),
-        ),
-      ),
-    );
+AdditionalPropertiesApi _api(String baseUrl) => AdditionalPropertiesApi(
+  CustomServer(
+    baseUrl: baseUrl,
+    serverConfig: testServerConfig(),
+  ),
+);

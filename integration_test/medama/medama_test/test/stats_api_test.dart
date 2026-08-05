@@ -32,9 +32,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/summary',
         );
       });
@@ -47,8 +48,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -59,8 +61,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -74,8 +77,9 @@ void main() {
           previous: true,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['previous'], 'true');
       });
 
@@ -87,8 +91,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['previous'], 'false');
       });
 
@@ -101,8 +106,9 @@ void main() {
           interval: WebsiteHostnameSummaryParametersModel.day,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['interval'], 'day');
       });
 
@@ -116,8 +122,9 @@ void main() {
           start: startDate,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['start'], isNotNull);
       });
 
@@ -131,8 +138,9 @@ void main() {
           end: endDate,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['end'], isNotNull);
       });
 
@@ -145,8 +153,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['previous'], 'false');
         expect(uri.queryParameters.containsKey('interval'), isFalse);
         expect(uri.queryParameters.containsKey('start'), isFalse);
@@ -327,9 +336,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/pages',
         );
       });
@@ -342,8 +352,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -354,8 +365,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -369,8 +381,9 @@ void main() {
           summary: true,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['summary'], 'true');
       });
 
@@ -383,8 +396,9 @@ void main() {
           limit: 50,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['limit'], '50');
       });
 
@@ -397,8 +411,9 @@ void main() {
           offset: 10,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['offset'], '10');
       });
     });
@@ -529,9 +544,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/time',
         );
       });
@@ -544,8 +560,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -556,8 +573,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -687,9 +705,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/referrers',
         );
       });
@@ -702,8 +721,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -714,8 +734,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -729,8 +750,9 @@ void main() {
           grouped: false,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['grouped'], 'false');
       });
     });
@@ -896,9 +918,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/sources',
         );
       });
@@ -911,8 +934,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -923,8 +947,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1089,9 +1114,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/mediums',
         );
       });
@@ -1104,8 +1130,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1116,8 +1143,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1282,9 +1310,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/campaigns',
         );
       });
@@ -1297,8 +1326,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1309,8 +1339,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1475,9 +1506,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/browsers',
         );
       });
@@ -1490,8 +1522,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1502,8 +1535,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1668,9 +1702,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/os',
         );
       });
@@ -1683,8 +1718,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1695,8 +1731,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1843,9 +1880,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/devices',
         );
       });
@@ -1858,8 +1896,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1870,8 +1909,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -2036,9 +2076,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/countries',
         );
       });
@@ -2051,8 +2092,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -2063,8 +2105,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -2229,9 +2272,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/website/example.com/languages',
         );
       });
@@ -2244,8 +2288,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -2256,8 +2301,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -2271,8 +2317,9 @@ void main() {
           locale: true,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['locale'], 'true');
       });
     });
@@ -2438,9 +2485,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/website/example.com/properties',
         );
       });
@@ -2453,8 +2501,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -2465,8 +2514,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 

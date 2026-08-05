@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ref_siblings_api/ref_siblings_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -33,9 +35,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/nullable/optional-pet',
         );
       });
@@ -49,8 +52,9 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('encodes requiredPet as nested object', () async {
@@ -62,9 +66,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['requiredPet'], isA<Map<String, dynamic>>());
         final requiredPet = requestBody['requiredPet'] as Map<String, dynamic>;
@@ -82,9 +87,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('optionalPet'), isTrue);
         final optionalPet = requestBody['optionalPet'] as Map<String, dynamic>;
@@ -101,9 +107,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('optionalPet'), isFalse);
       });
@@ -208,9 +215,10 @@ void main() {
           body: const ContainerWithDescribedOptionalPet(),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/nullable/described-optional',
         );
       });
@@ -224,9 +232,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('pet'), isTrue);
         final pet = requestBody['pet'] as Map<String, dynamic>;
@@ -241,9 +250,10 @@ void main() {
           body: const ContainerWithDescribedOptionalPet(),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('pet'), isFalse);
       });

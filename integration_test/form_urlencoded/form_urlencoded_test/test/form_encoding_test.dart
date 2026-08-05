@@ -22,8 +22,9 @@ void main() {
       final response = await api.postSimpleForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'name=Test+User&age=25');
 
       final data = requireSuccess(response).value;
@@ -37,8 +38,9 @@ void main() {
       final response = await api.postSimpleForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'name=First+Last&age=25');
 
       final data = requireSuccess(response).value;
@@ -60,8 +62,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'text=a%26b%3Dc%2Bd&url=https%3A%2F%2Fexample.com');
 
       final data = requireSuccess(response).value;
@@ -80,8 +83,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         'text=simple&url=50%25+off%21+Buy+now+%26+save+%24%24%24',
@@ -137,8 +141,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       // Verify the encoding in the request
       expect(
         requestData,
@@ -160,8 +165,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       // Spaces should be encoded as + in form bodies
       expect(requestData, 'text=hello+world&url=foo+bar+baz');
 
@@ -208,8 +214,9 @@ void main() {
       final response = await api.postEchoTypes(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       // Verify colons in datetime are encoded
       expect(requestData, contains('%3A'));
 
@@ -229,8 +236,9 @@ void main() {
       final response = await api.postArrayForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3',
@@ -247,9 +255,10 @@ void main() {
       final response = await api.postArrayForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
-      expect(requestData, '');
+      final requestData = recordedRequest.body;
+      expect(requestData, isNull);
 
       final data = requireSuccess(response).value;
       expect(data.colors, ['red', 'green', 'blue']);
@@ -261,8 +270,9 @@ void main() {
       final response = await api.postArrayForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'colors=purple');
 
       final data = requireSuccess(response).value;
@@ -279,8 +289,9 @@ void main() {
 
       expect(response, isTonikSuccess);
 
-      final success = requireSuccess(response);
-      final requestData = success.response.requestOptions.data;
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      final requestData = recordedRequest.body;
       expect(requestData, 'q=hello&tags=urgent&tags=open');
     });
 
@@ -293,9 +304,10 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
-      expect(requestData, '');
+      final requestData = recordedRequest.body;
+      expect(requestData, isNull);
     });
 
     test('comma-joins an array property with explicit explode false', () async {
@@ -307,8 +319,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'tags=a,b');
     });
 
@@ -321,9 +334,10 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
-      expect(requestData, '');
+      final requestData = recordedRequest.body;
+      expect(requestData, isNull);
     });
 
     test(
@@ -337,10 +351,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'tags=a,b');
       },
     );
@@ -355,8 +368,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'tags=a&tags=b');
     });
 
@@ -369,8 +383,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'tags=a%2Cb&tags=c');
     });
 
@@ -386,8 +401,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'label=hello&tags=x&tags=y');
     });
 
@@ -401,8 +417,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'q=hello');
     });
 
@@ -417,10 +434,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'tags=');
       },
     );
@@ -439,8 +455,9 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'tags=a%2Cb&tags=7');
     });
   });
@@ -459,8 +476,9 @@ void main() {
       final response = await api.postTypesForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         '''stringValue=hello+world&intValue=42&doubleValue=3.14&boolValue=true&dateValue=2024-06-20T15%3A45%3A30.000Z''',
@@ -484,8 +502,9 @@ void main() {
       final response = await api.postTypesForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         'stringValue=test&intValue=1&boolValue=false',
@@ -563,8 +582,9 @@ void main() {
       final response = await api.postEmptyNull(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'emptyString=');
 
       final data = requireSuccess(response).value;
@@ -577,8 +597,9 @@ void main() {
       final response = await api.postEmptyNull(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'emptyString=test+value');
 
       final data = requireSuccess(response).value;
@@ -604,10 +625,11 @@ void main() {
       final response = await api.postScalarForm(body: 'hello world');
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'hello+world');
-      expect((requestData as String).startsWith('='), isFalse);
+      expect(requestData?.startsWith('='), isFalse);
     });
   });
 
@@ -625,10 +647,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(
           requestData,
           'reserved=a/b:c?d%26e%3Df%2Bg;h,i@j#k[l]m+'
@@ -649,10 +670,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'reserved=a/b:c&secret=a%2Fb%3Ac');
       },
     );
@@ -669,10 +689,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'user_name=a/b:c');
       },
     );
@@ -691,10 +710,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'reserved=a/b:c&tags=x&tags=y&tags=z');
       },
     );
@@ -713,10 +731,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'tags=a/b&tags=c:d');
       },
     );
@@ -735,10 +752,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'choice=g%26h%3Di%2Bj');
       },
     );
@@ -758,10 +774,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'reserved=a/b:c&extra=x%2Fy');
       },
     );
@@ -779,10 +794,9 @@ void main() {
           response,
           isTonikSuccess,
         );
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = requireSuccess(
-          response,
-        ).response.requestOptions.data;
+        final requestData = recordedRequest.body;
         expect(requestData, 'reserved=a/b:c');
       },
     );
@@ -795,10 +809,9 @@ void main() {
       final response = await api.postSimpleForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final contentType = requireSuccess(
-        response,
-      ).response.requestOptions.headers['content-type'];
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/x-www-form-urlencoded');
     });
   });

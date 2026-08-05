@@ -22,11 +22,11 @@ void main() {
 
       expect(response, isTonikSuccess);
 
-      final requestOptions = requireSuccess(response).response.requestOptions;
-      final contentType = requestOptions.headers['content-type'];
+      final recordedRequest = await imposterServer.takeRequest();
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/vnd.custom-form');
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'field1=test+data&field2=999');
 
       final data = requireSuccess(response).value;
@@ -40,8 +40,9 @@ void main() {
       final response = await api.postCustomForm(body: form);
 
       expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'field1=first+second+third&field2=50');
 
       final data = requireSuccess(response).value;

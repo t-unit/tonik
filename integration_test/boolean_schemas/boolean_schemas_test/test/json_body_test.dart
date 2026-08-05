@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -33,8 +35,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {'name': 'test-name', 'anyData': 'string value'},
       );
 
@@ -50,8 +53,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {'name': 'number-test', 'anyData': 123.45},
       );
 
@@ -70,8 +74,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {
           'name': 'nested-test',
           'anyData': {'nested': 'value', 'count': 42},
@@ -93,8 +98,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {
           'name': 'array-test',
           'anyData': [1, 'two', true, null],
@@ -116,8 +122,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {'name': 'bool-test', 'anyData': true},
       );
 
@@ -133,8 +140,9 @@ void main() {
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.data,
+        jsonDecode(recordedRequest.body!),
         {'name': 'null-test', 'anyData': null},
       );
 

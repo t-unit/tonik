@@ -31,8 +31,9 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/simple/encode-suffix/map-string/k,v.json',
       );
     });
@@ -46,8 +47,9 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/simple/encode-suffix/map-string-explode/k=v.json',
       );
     });
@@ -69,9 +71,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/array/nullable-base64/AQID,,BAUG',
         );
       },
@@ -90,10 +93,11 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // explode=false: k1,v1,k2,v2
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/my.field,hello,a%3Db,42',
         );
       },
@@ -110,10 +114,11 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // explode=true: k1=v1,k2=v2 — a=b must be encoded as a%3Db
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/explode/my.field=hello,a%3Db=42',
         );
       },
@@ -130,9 +135,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/my.field,,a%3Db,42',
         );
       },
@@ -149,9 +155,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/explode/my.field,a%3Db=42',
         );
       },

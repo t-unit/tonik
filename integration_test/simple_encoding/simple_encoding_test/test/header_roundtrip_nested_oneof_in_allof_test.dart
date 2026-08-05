@@ -98,8 +98,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Nested-Value'],
+            recordedRequest.headers['x-nested-value'],
             isNull,
           );
           expect(success.value.xNestedValue, isNull);

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:read_write_only_api/read_write_only_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -37,9 +39,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         // readOnly properties (id, createdAt) must NOT be in the request.
         expect(requestBody.containsKey('id'), isFalse);
@@ -62,9 +65,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Bob');
         expect(requestBody['email'], 'bob@example.com');
@@ -647,9 +651,10 @@ void main() {
         ),
       );
 
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       final requestBody =
-          success.response.requestOptions.data as Map<String, dynamic>;
+          jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
       // Verify the request body contains the email notification data.
       expect(requestBody['emailAddress'], 'bob@example.com');
@@ -795,9 +800,10 @@ void main() {
         ),
       );
 
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       final requestBody =
-          success.response.requestOptions.data as Map<String, dynamic>;
+          jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
       expect(requestBody['token'], 'secret-token');
       expect(requestBody['action'], 'restart');
@@ -990,9 +996,10 @@ void main() {
         ),
       );
 
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       final requestBody =
-          success.response.requestOptions.data as Map<String, dynamic>;
+          jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
       expect(requestBody['deviceId'], 'dev-001');
       expect(requestBody['force'], isTrue);
@@ -1023,9 +1030,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'a1');
         expect(requestBody.containsKey('createdAt'), isFalse);

@@ -293,8 +293,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Simple-Object'],
+          recordedRequest.headers['x-simple-object'],
           'name,a/b c%2Fd 100%,value,7',
         );
         expect(success.value.xSimpleObject?.name, name);
@@ -315,9 +316,8 @@ void main() {
         );
 
         final success = requireSuccess(response);
-        final wire =
-            success.response.requestOptions.headers['X-User-Profile']
-                as String?;
+        final recordedRequest = await imposterServer.takeRequest();
+        final wire = recordedRequest.headers['x-user-profile'];
         expect(wire, contains('website,https://example.com/a/b'));
         expect(
           success.value.xUserProfile?.website,
@@ -339,8 +339,9 @@ void main() {
           );
 
           final success = requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Simple-Object'],
+            recordedRequest.headers['x-simple-object'],
             'name,a,b,value,5',
           );
           expect(success.value.xSimpleObject?.name, 'a');

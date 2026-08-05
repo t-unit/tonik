@@ -40,8 +40,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'hello',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -60,8 +61,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           '42',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -80,8 +82,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'true',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -98,8 +101,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'false',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -120,9 +124,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'name,test,value,42',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -177,8 +182,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Mixed-Value'],
+            recordedRequest.headers['x-mixed-value'],
             isNull,
           );
           expect(success.value.xMixedValue, isNull);

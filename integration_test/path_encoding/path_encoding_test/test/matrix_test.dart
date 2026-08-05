@@ -29,9 +29,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/string/;value=blue',
       );
     });
@@ -43,9 +44,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/integer/;value=42',
       );
     });
@@ -57,9 +59,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/number/;value=3.14',
       );
     });
@@ -71,9 +74,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/boolean/;value=true',
       );
     });
@@ -87,9 +91,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/enum/;value=active',
       );
     });
@@ -107,9 +112,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/array/nullable-string/;values=a%20b,,c',
         );
       },
@@ -130,9 +136,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/array/nullable-base64/;values=AQID,,BAUG',
         );
       },
@@ -147,9 +154,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/array/string/;values=blue,black,brown',
       );
     });
@@ -165,9 +173,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/array/string/explode/;values=blue;values=black;values=brown',
         );
       },
@@ -180,9 +189,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/array/integer/;values=1,2,3',
       );
     });
@@ -198,9 +208,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/object/;value=name,test,count,5',
       );
     });
@@ -214,9 +225,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/object/explode/;name=test;count=5',
       );
     });
@@ -232,9 +244,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/object/;value=name,,count,5',
         );
       },
@@ -251,9 +264,10 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/object/explode/;name;count=5',
         );
       },
@@ -271,9 +285,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/combined/;stringValue=hello/;intValue=42',
       );
     });
@@ -289,9 +304,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/oneOfPrimitive/;value=test',
       );
     });
@@ -305,9 +321,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/oneOfPrimitive/;value=42',
       );
     });
@@ -321,9 +338,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/anyOfPrimitive/;value=test',
       );
     });
@@ -337,9 +355,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/anyOfPrimitive/;value=123',
       );
     });
@@ -355,9 +374,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/oneOfComplex/;value=name,foo,count,10',
       );
     });
@@ -374,9 +394,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/composite/allOfSimple/;value=name,bar,count,20,extra,bonus',
       );
     });
@@ -390,9 +411,10 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/matrix/primitive/integerEnum/;value=2',
       );
     });
@@ -435,8 +457,9 @@ void main() {
         expect(success.response.statusCode, 200);
 
         // explode=false: ;paramName=k1,v1,k2,v2
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/special-keys/;value=my.field,hello,a%3Db,42',
         );
       },
@@ -455,8 +478,9 @@ void main() {
         expect(success.response.statusCode, 200);
 
         // explode=true: ;k1=v1;k2=v2 — a=b must be encoded as a%3Db
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/matrix/special-keys/explode/;my.field=hello;a%3Db=42',
         );
       },

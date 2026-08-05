@@ -36,9 +36,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-string'],
+          recordedRequest.headers['x-nullable-string'],
           'hello',
         );
         expect(success.value.xNullableString, 'hello');
@@ -54,10 +55,11 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Null should not be sent as header
         expect(
-          success.response.requestOptions.headers['x-nullable-string'],
+          recordedRequest.headers['x-nullable-string'],
           isNull,
         );
         expect(success.value.xNullableString, isNull);
@@ -77,9 +79,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-integer'],
+          recordedRequest.headers['x-nullable-integer'],
           '42',
         );
         expect(success.value.xNullableInteger, 42);
@@ -95,9 +98,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-integer'],
+          recordedRequest.headers['x-nullable-integer'],
           isNull,
         );
         expect(success.value.xNullableInteger, isNull);
@@ -117,9 +121,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-object'],
+          recordedRequest.headers['x-nullable-object'],
           'name,test,count,5',
         );
         expect(success.value.xNullableObject?.name, 'test');
@@ -136,9 +141,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-object'],
+          recordedRequest.headers['x-nullable-object'],
           isNull,
         );
         expect(success.value.xNullableObject, isNull);
@@ -160,9 +166,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-enum'],
+          recordedRequest.headers['x-nullable-enum'],
           'active',
         );
         expect(
@@ -181,9 +188,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-enum'],
+          recordedRequest.headers['x-nullable-enum'],
           isNull,
         );
         expect(success.value.xNullableEnum, isNull);

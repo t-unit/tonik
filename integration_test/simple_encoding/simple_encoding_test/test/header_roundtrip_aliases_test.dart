@@ -111,7 +111,8 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
-          expect(success.response.requestOptions.headers['X-User-Name'], '');
+          final recordedRequest = await imposterServer.takeRequest();
+          expect(recordedRequest.headers['x-user-name'], '');
           expect(success.value.xUserName, isNull);
         },
       );

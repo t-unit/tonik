@@ -36,8 +36,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/models');
     });
   });
@@ -53,8 +54,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/models/gpt-4o');
     });
   });
@@ -73,13 +75,14 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/models/ft%3Agpt-4o%3Aorg%3Asuffix%3Aid',
       );
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 
@@ -106,8 +109,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/embeddings');
     });
   });
@@ -132,8 +136,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/moderations');
     });
   });
@@ -176,8 +181,9 @@ void main() {
         success.value,
         isA<ChatCompletionsPost200ResponseJson>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/chat/completions');
     });
   });
@@ -193,8 +199,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files');
       expect(uri.queryParameters['purpose'], 'fine-tune');
       expect(uri.queryParameters['limit'], '10');
@@ -208,8 +215,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files');
       expect(uri.queryParameters['limit'], '10000');
       expect(uri.queryParameters['order'], 'desc');
@@ -229,8 +237,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/batches/batch_abc123');
     });
   });
@@ -253,8 +262,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/fine_tuning/jobs/ftjob-abc123/events',
@@ -278,8 +288,9 @@ void main() {
         );
         final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final uri = success.response.requestOptions.uri;
+        final uri = recordedRequest.uri;
         expect(
           uri.path,
           '/v1/fine_tuning/jobs/ftjob-abc123/events',
@@ -303,8 +314,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/fine_tuning/jobs/ftjob-abc123/cancel',

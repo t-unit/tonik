@@ -144,9 +144,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'class=name%7Ctest%7Cage%7C1',
       );
     });
@@ -190,9 +191,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'classAlias=name%7Ctest%7Cage%7C1',
       );
     });
@@ -219,9 +221,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyOfComplex=name%7Ctest%7Cage%7C1',
       );
     });
@@ -250,9 +253,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'oneOfComplex=value%7Ctest%7Camount%7C1',
       );
     });
@@ -282,9 +286,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'allOfComplex=name%7Ctest%7Cage%7C1%7Cvalue%7Ctest%7Camount%7C1',
       );
     });
@@ -458,9 +463,10 @@ void main() {
         listString: ['test', 'test2', 'white pipe', 'special&&chars'],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listString=test%7Ctest2%7Cwhite%20pipe%7Cspecial%26%26chars',
       );
     });
@@ -471,9 +477,10 @@ void main() {
         listNullableString: ['a b/c', null, 'd'],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listNullableString=a%20b%2Fc%7C%7Cd',
       );
     });
@@ -487,9 +494,10 @@ void main() {
         ],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfPrimitive=white%20space%7Ctest2',
       );
     });
@@ -532,9 +540,10 @@ void main() {
         ],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfComplexMixed=3%7C4%7C5',
       );
     });
@@ -549,9 +558,10 @@ void main() {
         ],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listEnum=high%20priority%7Curgent%7Clow%20priority',
       );
     });
@@ -562,8 +572,9 @@ void main() {
         listString: const [],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('empty array is dropped while a populated param remains', () async {
@@ -573,9 +584,10 @@ void main() {
         listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfPrimitive=test',
       );
     });
@@ -588,9 +600,10 @@ void main() {
         listString: ['test', 'test2'],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listString=test&listString=test2',
       );
     });
@@ -601,9 +614,10 @@ void main() {
         listOneOfPrimitive: [const OneOfPrimitiveString('white space')],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfPrimitive=white%20space',
       );
     });
@@ -632,9 +646,10 @@ void main() {
         ],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
       );
     });
@@ -645,8 +660,9 @@ void main() {
         listString: const [],
       );
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
   });
 
@@ -701,8 +717,9 @@ void main() {
       final response = await api.testPipeDelimitedPrimitive();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('nullableInteger with null', () async {
@@ -710,8 +727,9 @@ void main() {
       final response = await api.testPipeDelimitedPrimitive();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
   });
 
@@ -736,8 +754,9 @@ void main() {
       final response = await api.testPipeDelimitedComplex();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('deeplyNestedClass', () async {
@@ -771,9 +790,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'freeFormMap=k1%7Cv1%7Ck2%7Cv2',
       );
     });
@@ -785,9 +805,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'aliasList=a%7Cb%7Cc',
       );
     });
@@ -799,9 +820,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'mixedComposite=name%7Ctest%7Cage%7C1',
       );
     });

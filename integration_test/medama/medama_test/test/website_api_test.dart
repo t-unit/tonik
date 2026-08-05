@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -29,9 +31,10 @@ void main() {
 
         final response = await api.getWebsites(meSess: 'test_session');
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/websites',
         );
       });
@@ -41,8 +44,9 @@ void main() {
 
         final response = await api.getWebsites(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -50,8 +54,9 @@ void main() {
 
         final response = await api.getWebsites(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -64,8 +69,9 @@ void main() {
           summary: true,
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['summary'], 'true');
       });
 
@@ -76,8 +82,9 @@ void main() {
           meSess: 'test_session',
         );
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['summary'], 'false');
       });
 
@@ -86,8 +93,9 @@ void main() {
 
         final response = await api.getWebsites(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['summary'], 'false');
       });
     });
@@ -240,9 +248,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'test.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites',
         );
       });
@@ -254,8 +263,9 @@ void main() {
           body: const WebsiteCreate(hostname: 'test.com'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -265,9 +275,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'test.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -281,9 +292,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'my-app.example.org'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['hostname'], 'my-app.example.org');
       });
 
@@ -294,9 +306,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'api.staging.example.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['hostname'], 'api.staging.example.com');
       });
 
@@ -307,9 +320,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'localhost:3000'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['hostname'], 'localhost:3000');
       });
 
@@ -320,9 +334,10 @@ void main() {
           body: const WebsiteCreate(hostname: 'my-cool-website.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['hostname'], 'my-cool-website.com');
       });
     });
@@ -507,9 +522,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/example.com',
         );
       });
@@ -522,8 +538,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -534,8 +551,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -548,9 +566,10 @@ void main() {
           hostname: 'app.example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/app.example.com',
         );
       });
@@ -563,9 +582,10 @@ void main() {
           hostname: 'localhost:8080',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/localhost%3A8080',
         );
       });
@@ -578,9 +598,10 @@ void main() {
           hostname: 'my-cool-app.io',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/my-cool-app.io',
         );
       });
@@ -758,9 +779,10 @@ void main() {
           body: const WebsitePatch(hostname: 'new.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/example.com',
         );
       });
@@ -774,8 +796,9 @@ void main() {
           body: const WebsitePatch(hostname: 'new.com'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'PATCH');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'PATCH');
       });
 
       test('content-type header is application/json', () async {
@@ -787,9 +810,10 @@ void main() {
           body: const WebsitePatch(hostname: 'new.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -805,9 +829,10 @@ void main() {
           body: const WebsitePatch(hostname: 'updated-hostname.com'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['hostname'], 'updated-hostname.com');
       });
 
@@ -820,9 +845,10 @@ void main() {
           body: const WebsitePatch(),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('hostname'), isFalse);
       });
 
@@ -837,9 +863,10 @@ void main() {
             body: const WebsitePatch(hostname: 'my-new-app.io'),
           );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['hostname'], 'my-new-app.io');
         },
       );
@@ -996,9 +1023,10 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/example.com',
         );
       });
@@ -1011,8 +1039,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'DELETE');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'DELETE');
       });
 
       test('request has no body', () async {
@@ -1023,8 +1052,9 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1037,9 +1067,10 @@ void main() {
           hostname: 'api.example.com',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/api.example.com',
         );
       });
@@ -1052,9 +1083,10 @@ void main() {
           hostname: 'localhost:3000',
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/websites/localhost%3A3000',
         );
       });

@@ -32,8 +32,9 @@ void main() {
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/array/nullable-string/hello%20world,foo%2Fbar,',
         );
       },
@@ -48,8 +49,9 @@ void main() {
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/simple/array/nullable-integer/1,,2',
       );
     });

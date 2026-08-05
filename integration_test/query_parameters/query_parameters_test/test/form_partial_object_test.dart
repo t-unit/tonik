@@ -33,9 +33,10 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'name=alice&sort=name,alice',
         );
       },
@@ -51,9 +52,10 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'name=alice&nickname=&sort=name,alice,nickname,',
         );
       },

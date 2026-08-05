@@ -29,13 +29,12 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final contentType = requireSuccess(
-        response,
-      ).response.requestOptions.headers['content-type'];
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/x-www-form-urlencoded');
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'name=Form+User&age=25');
 
       final data = requireSuccess(response).value;
@@ -92,13 +91,12 @@ void main() {
         response,
         isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final contentType = requireSuccess(
-        response,
-      ).response.requestOptions.headers['content-type'];
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/x-www-form-urlencoded');
 
-      final requestData = requireSuccess(response).response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         '''stringValue=form+to+form&intValue=100&doubleValue=2.71&boolValue=false&dateValue=2024-06-15T14%3A30%3A00.000Z''',

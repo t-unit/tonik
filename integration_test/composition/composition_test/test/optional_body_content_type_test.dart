@@ -24,8 +24,9 @@ void main() {
     test('omits Content-Type when body is not provided', () async {
       final result = await buildApi().echoOneOfPrimitive();
 
-      final success = requireSuccess(result);
-      expect(success.response.requestOptions.headers['content-type'], isNull);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['content-type'], isNull);
     });
 
     test('sends Content-Type application/json when body is provided', () async {
@@ -33,9 +34,10 @@ void main() {
         body: const OneOfPrimitiveString('hello'),
       );
 
-      final success = requireSuccess(result);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.headers['content-type'],
+        recordedRequest.headers['content-type'],
         'application/json',
       );
     });

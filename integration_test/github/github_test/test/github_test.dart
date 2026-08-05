@@ -33,8 +33,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/');
     });
   });
@@ -51,8 +52,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<MetagetResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/meta');
     });
   });
@@ -72,8 +74,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RateLimitgetResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/rate_limit');
     });
 
@@ -107,8 +110,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UsersgetByUsernameResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/users/octocat');
     });
 

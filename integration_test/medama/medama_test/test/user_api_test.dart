@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -29,9 +31,10 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/user',
         );
       });
@@ -41,8 +44,9 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -50,8 +54,9 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -243,9 +248,10 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/user',
         );
       });
@@ -258,8 +264,9 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'PATCH');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'PATCH');
       });
 
       test('content-type header is application/json', () async {
@@ -270,9 +277,10 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -287,9 +295,10 @@ void main() {
           body: const UserPatch(username: 'newUsername'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'newUsername');
       });
 
@@ -301,9 +310,10 @@ void main() {
           body: const UserPatch(password: 'newPassword'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('username'), isFalse);
       });
 
@@ -315,9 +325,10 @@ void main() {
           body: const UserPatch(password: 'secureP@ss123!'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['password'], 'secureP@ss123!');
       });
 
@@ -329,9 +340,10 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('password'), isFalse);
       });
 
@@ -348,9 +360,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['settings'], isA<Map<String, dynamic>>());
       });
 
@@ -364,9 +377,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
         expect(settings['language'], 'en');
       });
@@ -381,9 +395,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
         expect(settings['blockAbusiveIPs'], true);
       });
@@ -398,9 +413,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
         expect(settings['blockTorExitNodes'], false);
       });
@@ -417,9 +433,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'fullUpdate');
         expect(requestBody['password'], 'fullPassword!');
         expect(requestBody['settings'], {'language': 'en'});
@@ -433,9 +450,10 @@ void main() {
           body: const UserPatch(username: 'user+test_123'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'user+test_123');
       });
 
@@ -447,9 +465,10 @@ void main() {
           body: const UserPatch(password: r'p@$$w0rd!#%&*<>"'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['password'], r'p@$$w0rd!#%&*<>"');
       });
     });
@@ -630,9 +649,10 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/user',
         );
       });
@@ -642,8 +662,9 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'DELETE');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'DELETE');
       });
 
       test('request has no body', () async {
@@ -651,8 +672,9 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -762,9 +784,10 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/user/usage',
         );
       });
@@ -774,8 +797,9 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -783,8 +807,9 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 

@@ -27,8 +27,9 @@ void main() {
     final response = await api.testFormSpecialNames(qAmpersandA: 'hello');
 
     expect(response, isTonikSuccess);
-    final success = requireSuccess(response);
-    expect(success.response.requestOptions.uri.query, 'q%26a=hello');
+    requireSuccess(response);
+    final recordedRequest = await imposterServer.takeRequest();
+    expect(recordedRequest.uri.query, 'q%26a=hello');
   });
 
   test('equals in a parameter name is percent-encoded', () async {
@@ -36,8 +37,9 @@ void main() {
     final response = await api.testFormSpecialNames(aEqualsB: 'v');
 
     expect(response, isTonikSuccess);
-    final success = requireSuccess(response);
-    expect(success.response.requestOptions.uri.query, 'a%3Db=v');
+    requireSuccess(response);
+    final recordedRequest = await imposterServer.takeRequest();
+    expect(recordedRequest.uri.query, 'a%3Db=v');
   });
 
   test(
@@ -50,13 +52,14 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'q%26a=hello&a%3Db=v',
       );
       expect(
-        Uri.splitQueryString(success.response.requestOptions.uri.query),
+        Uri.splitQueryString(recordedRequest.uri.query),
         {'q&a': 'hello', 'a=b': 'v'},
       );
     },

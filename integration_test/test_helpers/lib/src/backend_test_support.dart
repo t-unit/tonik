@@ -12,21 +12,15 @@ import 'test_result.dart';
 /// [Client] is inferred from the generated server constructor.
 ServerConfig<Client> testServerConfig<Client extends Object>({
   Map<String, String> headers = const {},
-  TestRequestRecorder? recorder,
-  TestResponseStub? response,
 }) {
   if (Client == dio.Dio) {
     return dio_backend.dioTestServerConfig(
       headers: headers,
-      recorder: recorder,
-      response: response,
     ) as ServerConfig<Client>;
   }
   if (Client == http.Client) {
     return http_backend.httpTestServerConfig(
       headers: headers,
-      recorder: recorder,
-      response: response,
     ) as ServerConfig<Client>;
   }
   throw UnsupportedError('Unsupported integration client type: $Client.');

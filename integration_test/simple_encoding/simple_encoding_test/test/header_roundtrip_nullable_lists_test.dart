@@ -35,8 +35,9 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['x-nullable-string-list'],
+          recordedRequest.headers['x-nullable-string-list'],
           'hello world,foo/bar,',
         );
       },
@@ -51,9 +52,10 @@ void main() {
         );
 
         // The request encodes the null element as an empty string.
-        final error = requireError(response);
+        requireError(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          error.response?.requestOptions.headers['x-nullable-integer-list'],
+          recordedRequest.headers['x-nullable-integer-list'],
           '1,,2',
         );
 

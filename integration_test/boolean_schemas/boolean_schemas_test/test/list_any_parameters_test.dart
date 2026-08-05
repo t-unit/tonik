@@ -29,8 +29,9 @@ void main() {
       final result = await api.getQueryListAny(anyValues: ['a', 'b', 'c']);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyValues=a&anyValues=b&anyValues=c',
       );
     });
@@ -40,8 +41,9 @@ void main() {
       final result = await api.getQueryListAny(anyValues: [1, 2, 3]);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyValues=1&anyValues=2&anyValues=3',
       );
     });
@@ -53,8 +55,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyValues=string&anyValues=42&anyValues=true',
       );
     });
@@ -68,8 +71,9 @@ void main() {
         );
         final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValues=x,y,z',
         );
       },
@@ -184,8 +188,9 @@ void main() {
       final result = await api.getPathLabelListAny(anyValues: ['a', 'b', 'c']);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/label/list-any/.a,b,c',
       );
     });
@@ -195,8 +200,9 @@ void main() {
       final result = await api.getPathLabelListAny(anyValues: [10, 20]);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/label/list-any/.10,20',
       );
     });
@@ -208,8 +214,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/label/list-any-explode/.foo.bar',
       );
     });
@@ -239,8 +246,9 @@ void main() {
       final result = await api.getPathMatrixListAny(anyValues: ['a', 'b']);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/matrix/list-any/;anyValues=a,b',
       );
     });
@@ -250,8 +258,9 @@ void main() {
       final result = await api.getPathMatrixListAny(anyValues: [1, 2, 3]);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/matrix/list-any/;anyValues=1,2,3',
       );
     });
@@ -263,8 +272,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/path/matrix/list-any-explode/;anyValues=x;anyValues=y',
       );
     });

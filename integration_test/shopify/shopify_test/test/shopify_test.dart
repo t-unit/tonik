@@ -36,8 +36,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/admin/api/2020-10/products.json');
     });
 
@@ -63,8 +64,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/admin/api/2020-10/customers.json');
     });
   });
@@ -80,12 +82,13 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/admin/api/2020-10/products.json',
       );
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.method, 'POST');
     });
   });
 
@@ -100,10 +103,11 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/admin/api/2020-10/products/123.json',
       );
     });

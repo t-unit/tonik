@@ -1,3 +1,11 @@
+def tonikRecordedRequest = [
+    uri: context.request.uri,
+    method: context.request.method,
+    normalisedHeaders: context.request.normalisedHeaders,
+    body: context.request.body,
+]
+stores.open('tonik').save('last', tonikRecordedRequest)
+
 // Imposter response script for the recursive-map integration tests.
 //
 // GET endpoints return deterministic JSON exercising the generated

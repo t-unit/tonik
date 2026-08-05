@@ -40,9 +40,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,test',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -62,10 +63,11 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Header field-values are transmitted literally: the space survives.
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,hello world',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -83,9 +85,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -105,9 +108,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,42',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -125,8 +129,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,0',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -144,8 +149,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,-99',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -165,8 +171,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Flexible-Object'],
+            recordedRequest.headers['x-flexible-object'],
             isNull,
           );
           expect(success.value.xFlexibleObject, isNull);

@@ -31,9 +31,10 @@ void main() {
       final response = await api.testFormAllowReserved(reserved: value);
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'reserved=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
@@ -43,9 +44,10 @@ void main() {
       final response = await api.testFormAllowReserved(notReserved: value);
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'notReserved=a%2Fb%3Ac%3Fd%40e%3Bf%2Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
@@ -60,9 +62,10 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'reserved=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn'
           '&notReserved=a%2Fb%3Ac%3Fd%40e%3Bf%2Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
         );
@@ -81,9 +84,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'reservedList=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
@@ -95,9 +99,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'notReservedList=a%2Fb%3Ac%3Fd%40e%3Bf,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });

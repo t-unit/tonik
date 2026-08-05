@@ -70,9 +70,10 @@ void main() {
             'c&d': 'v2',
           },
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
         );
       },
@@ -81,8 +82,9 @@ void main() {
     test('getQueryAny with empty list value omits the parameter', () async {
       final api = buildApi();
       final result = await api.getQueryAny(anyValue: const <dynamic>[]);
-      final success = requireSuccess(result);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test(
@@ -92,8 +94,9 @@ void main() {
         final result = await api.getQueryAnyNoExplode(
           anyValue: const <dynamic>[],
         );
-        final success = requireSuccess(result);
-        expect(success.response.requestOptions.uri.query, '');
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, '');
       },
     );
 
@@ -104,8 +107,9 @@ void main() {
         final result = await api.getQueryAny(
           anyValue: <dynamic>['a', 'b', 'c'],
         );
-        final success = requireSuccess(result);
-        expect(success.response.requestOptions.uri.query, 'anyValue=a,b,c');
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'anyValue=a,b,c');
       },
     );
   });
@@ -138,9 +142,10 @@ void main() {
           result,
           isTonikSuccess,
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%20b%20c',
         );
       },
@@ -157,9 +162,10 @@ void main() {
           result,
           isTonikSuccess,
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%201%20b%202',
         );
       },
@@ -226,9 +232,10 @@ void main() {
           result,
           isTonikSuccess,
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=one%7Ctwo%7Cthree',
         );
       },
@@ -245,9 +252,10 @@ void main() {
           result,
           isTonikSuccess,
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%7C1%7Cb%7C2',
         );
       },

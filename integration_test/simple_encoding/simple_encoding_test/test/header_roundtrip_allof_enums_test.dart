@@ -42,10 +42,9 @@ void main() {
         isTonikSuccess,
       );
       final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final headerValue =
-          success.response.requestOptions.headers['X-Enum-Composite']
-              as String?;
+      final headerValue = recordedRequest.headers['x-enum-composite'];
       expect(headerValue, contains('priority,3'));
       expect(headerValue, contains('status,active'));
 
@@ -141,9 +140,10 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
 
           expect(
-            success.response.requestOptions.headers['X-Enum-Composite'],
+            recordedRequest.headers['x-enum-composite'],
             isNull,
           );
 

@@ -36,8 +36,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/mobile/protected/users/current');
     });
 
@@ -65,8 +66,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/mobile/protected/users/profile/test-user');
     });
 
@@ -97,8 +99,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/mobile/protected/spaces/');
     });
   });
@@ -117,8 +120,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/mobile/protected/blog/posts');
     });
 
@@ -135,8 +139,9 @@ void main() {
         isTonikSuccess,
       );
 
-      final success = requireSuccess(result);
-      final uri = success.response.requestOptions.uri;
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['limit'], '10');
       expect(uri.queryParameters['offset'], '20');
     });
@@ -153,8 +158,9 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 }

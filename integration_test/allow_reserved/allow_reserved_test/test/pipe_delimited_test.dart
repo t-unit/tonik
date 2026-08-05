@@ -33,9 +33,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'reservedList=a/b:c?d@e;f%7Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
@@ -47,9 +48,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'notReservedList=a%2Fb%3Ac%3Fd%40e%3Bf%7Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });

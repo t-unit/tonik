@@ -33,8 +33,9 @@ void main() {
       expect(success.response.statusCode, 200);
       // First param (label): .hello
       // Second param (matrix): ;matrixValue=world
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/mixed/.hello/;matrixValue=world',
       );
     });

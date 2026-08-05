@@ -40,9 +40,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '42',
         );
 
@@ -63,9 +64,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '0',
         );
 
@@ -86,9 +88,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '-123',
         );
 
@@ -109,9 +112,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '9999999',
         );
 
@@ -134,9 +138,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           'hello',
         );
 
@@ -157,9 +162,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           'hello world',
         );
 
@@ -180,9 +186,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '',
         );
 
@@ -204,9 +211,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           '12345',
         );
 
@@ -228,9 +236,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Primitive-Union'],
+          recordedRequest.headers['x-primitive-union'],
           isNull,
         );
 

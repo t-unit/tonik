@@ -35,8 +35,9 @@ void main() {
       );
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.headers['x-priority'], '1');
+      expect(recordedRequest.headers['x-priority'], '1');
       expect(success.value.xPriority, PriorityEnum.one);
     });
 
@@ -53,7 +54,8 @@ void main() {
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
-      expect(success.response.requestOptions.headers['x-priority'], '2');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['x-priority'], '2');
       expect(success.value.xPriority, PriorityEnum.two);
     });
 
@@ -70,7 +72,8 @@ void main() {
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
-      expect(success.response.requestOptions.headers['x-priority'], '3');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['x-priority'], '3');
       expect(success.value.xPriority, PriorityEnum.three);
     });
 
@@ -87,7 +90,8 @@ void main() {
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
-      expect(success.response.requestOptions.headers['x-priority'], '4');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['x-priority'], '4');
       expect(success.value.xPriority, PriorityEnum.four);
     });
 
@@ -104,7 +108,8 @@ void main() {
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
-      expect(success.response.requestOptions.headers['x-priority'], '5');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['x-priority'], '5');
       expect(success.value.xPriority, PriorityEnum.five);
     });
   });

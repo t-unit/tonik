@@ -42,8 +42,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           '42',
         );
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
@@ -64,8 +65,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'number,99',
         );
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
@@ -87,10 +89,11 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // PriorityEnum.three has raw value 3.
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           '3',
         );
 
@@ -110,8 +113,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'true',
         );
 
@@ -129,8 +133,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'false',
         );
         expect(success.value.xNestedValue, isNotNull);
@@ -148,8 +153,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Nested-Value'],
+            recordedRequest.headers['x-nested-value'],
             isNull,
           );
           expect(success.value.xNestedValue, isNull);

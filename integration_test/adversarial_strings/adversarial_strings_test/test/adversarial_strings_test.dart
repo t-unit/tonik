@@ -6,6 +6,14 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
 void main() {
+  late ImposterServer imposterServer;
+  late String baseUrl;
+
+  setUpAll(() async {
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/v1';
+  });
+
   group('static server URL with single quote', () {
     test('baseUrl preserves the single quote', () {
       final server = ApiOreillyServer();
@@ -280,78 +288,71 @@ void main() {
 
   group('root JSON string request bodies', () {
     test('alias body is sent as a quoted JSON string', () async {
-      final recorder = TestRequestRecorder();
+      await _api(baseUrl).sendRootAlias(body: 'alias-body');
 
-      await _api(recorder).sendRootAlias(body: 'alias-body');
-
-      expect(recorder.request!.bodyText, '"alias-body"');
-      expect(jsonDecode(recorder.request!.bodyText!), 'alias-body');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, '"alias-body"');
+      expect(jsonDecode(recordedRequest.body!), 'alias-body');
     });
 
     test('oneOf string variant is sent as a quoted JSON string', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootOneOf(
+      await _api(baseUrl).sendRootOneOf(
         body: const RootStringOneOfString('one-of-body'),
       );
 
-      expect(recorder.request!.bodyText, '"one-of-body"');
-      expect(jsonDecode(recorder.request!.bodyText!), 'one-of-body');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, '"one-of-body"');
+      expect(jsonDecode(recordedRequest.body!), 'one-of-body');
     });
 
     test('oneOf integer variant is sent as a JSON number', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootOneOf(
+      await _api(baseUrl).sendRootOneOf(
         body: const RootStringOneOfInt(7),
       );
 
-      expect(recorder.request!.bodyText, '7');
-      expect(jsonDecode(recorder.request!.bodyText!), 7);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, '7');
+      expect(jsonDecode(recordedRequest.body!), 7);
     });
 
     test('oneOf bool variant is sent as a JSON boolean', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootOneOf(
+      await _api(baseUrl).sendRootOneOf(
         body: const RootStringOneOfBool(true),
       );
 
-      expect(recorder.request!.bodyText, 'true');
-      expect(jsonDecode(recorder.request!.bodyText!), isTrue);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, 'true');
+      expect(jsonDecode(recordedRequest.body!), isTrue);
     });
 
     test('anyOf string variant is sent as a quoted JSON string', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootAnyOf(
+      await _api(baseUrl).sendRootAnyOf(
         body: const RootStringAnyOf(string: 'any-of-body'),
       );
 
-      expect(recorder.request!.bodyText, '"any-of-body"');
-      expect(jsonDecode(recorder.request!.bodyText!), 'any-of-body');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, '"any-of-body"');
+      expect(jsonDecode(recordedRequest.body!), 'any-of-body');
     });
 
     test('anyOf bool variant is sent as a JSON boolean', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootAnyOf(
+      await _api(baseUrl).sendRootAnyOf(
         body: const RootStringAnyOf(bool: true),
       );
 
-      expect(recorder.request!.bodyText, 'true');
-      expect(jsonDecode(recorder.request!.bodyText!), isTrue);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, 'true');
+      expect(jsonDecode(recordedRequest.body!), isTrue);
     });
 
     test('oneOf decimal variant is sent as a quoted JSON string', () async {
-      final recorder = TestRequestRecorder();
-
-      await _api(recorder).sendRootDecimalOneOf(
+      await _api(baseUrl).sendRootDecimalOneOf(
         body: RootDecimalOneOfDecimal(BigDecimal.parse('12.34')),
       );
 
-      expect(recorder.request!.bodyText, '"12.34"');
-      expect(jsonDecode(recorder.request!.bodyText!), '12.34');
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.body, '"12.34"');
+      expect(jsonDecode(recordedRequest.body!), '12.34');
     });
   });
 
@@ -377,12 +378,9 @@ void main() {
   });
 }
 
-AdversarialApi _api(TestRequestRecorder recorder) => AdversarialApi(
+AdversarialApi _api(String baseUrl) => AdversarialApi(
   CustomServer(
-    baseUrl: 'https://example.com',
-    serverConfig: testServerConfig(
-      recorder: recorder,
-      response: const TestResponseStub(),
-    ),
+    baseUrl: baseUrl,
+    serverConfig: testServerConfig(),
   ),
 );

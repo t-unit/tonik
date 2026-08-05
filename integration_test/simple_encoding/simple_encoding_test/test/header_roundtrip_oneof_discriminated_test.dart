@@ -365,11 +365,11 @@ void main() {
           response,
           isTonikSuccess,
         );
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Verify the header contains the discriminator and fields
-        final requestHeader =
-            success.response.requestOptions.headers['x-entity'] as String?;
+        final requestHeader = recordedRequest.headers['x-entity'];
         expect(requestHeader, contains('type'));
         expect(requestHeader, contains('person'));
         expect(requestHeader, contains('first_name'));
@@ -394,11 +394,11 @@ void main() {
           response,
           isTonikSuccess,
         );
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Verify the header contains the discriminator and fields
-        final requestHeader =
-            success.response.requestOptions.headers['x-entity'] as String?;
+        final requestHeader = recordedRequest.headers['x-entity'];
         expect(requestHeader, contains('type'));
         expect(requestHeader, contains('company'));
         expect(requestHeader, contains('company_name'));

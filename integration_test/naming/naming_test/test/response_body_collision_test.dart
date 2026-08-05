@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/server/server.dart';
 import 'package:test/test.dart';
@@ -7,19 +5,11 @@ import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   test('keeps the decoded body and the raw body_ header', () async {
+    final imposterServer = await setupImposterServer();
     final api = DefaultApi2(
       CustomServer(
-        baseUrl: 'http://localhost',
-        serverConfig: testServerConfig(
-          response: TestResponseStub(
-            statusCode: 200,
-            headers: const {
-              'content-type': ['application/json'],
-              'body_': ['header-value'],
-            },
-            bodyBytes: utf8.encode('{"id":"body-value"}'),
-          ),
-        ),
+        baseUrl: 'http://localhost:${imposterServer.port}',
+        serverConfig: testServerConfig(),
       ),
     );
 

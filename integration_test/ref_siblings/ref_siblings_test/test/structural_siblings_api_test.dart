@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ref_siblings_api/ref_siblings_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -38,9 +40,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/structural/extended-pet',
         );
       });
@@ -55,8 +58,9 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('request body merges Pet and ExtendedPetModel properties', () async {
@@ -72,9 +76,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         // All properties should be merged at the top level
         expect(requestBody['name'], 'Max');
@@ -93,9 +98,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Solo');
         expect(requestBody.containsKey('age'), isFalse);
@@ -189,9 +195,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Spot');
         expect(requestBody['microchipId'], 'CHIP-001');
@@ -211,9 +218,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['microchipId'], 'CHIP-002');
         expect(requestBody['registrationDate'], '2025-06-15');
@@ -257,9 +265,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Entity-1');
         expect(requestBody['createdAt'], '2025-01-01T00:00:00.000Z');
@@ -309,9 +318,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Triple');
         expect(requestBody['createdAt'], '2025-01-01T00:00:00.000Z');

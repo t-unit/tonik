@@ -102,8 +102,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetActivityLogsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/activity_logs');
       expect(uri.queryParameters['events'], 'login,logout');
       expect(uri.queryParameters['limit'], '10');
@@ -124,8 +125,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.value, isA<GetActivityLogsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['start_time'], '1700000000');
       expect(uri.queryParameters['end_time'], '1700086400');
     });
@@ -176,8 +178,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/payments');
       expect(uri.queryParameters['plugin_payment_token'], 'tok_abc123');
     });
@@ -196,8 +199,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['user_id'], 'user_42');
       expect(uri.queryParameters['plugin_id'], 'plugin_99');
     });
@@ -217,8 +221,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['community_file_id'], 'cf_abc');
       expect(uri.queryParameters['widget_id'], 'wdg_xyz');
     });
@@ -255,8 +260,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetWebhookRequestsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v2/webhooks/wh_12345/requests');
     });
 
@@ -320,9 +326,10 @@ void main() {
       expect(value.id, isA<String>());
       expect(value.eventType, isA<WebhookV2Event>());
       expect(value.status, isA<WebhookV2Status>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v2/webhooks');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v2/webhooks');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postWebhook 200 with paused status', () async {
@@ -397,10 +404,11 @@ void main() {
 
       final value = (success.value as PutWebhookResponse200).body;
       expect(value, isA<WebhookV2>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v2/webhooks/wh_update_1');
-      expect(success.response.requestOptions.method, 'PUT');
+      expect(recordedRequest.method, 'PUT');
     });
 
     test('putWebhook 404', () async {
@@ -443,10 +451,11 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteDevResourceResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/file_abc/dev_resources/dr_123');
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
 
     test('deleteDevResource 404', () async {
@@ -516,9 +525,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostDevResourcesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/dev_resources');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v1/dev_resources');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postDevResources 400', () async {
@@ -572,9 +582,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PutDevResourcesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/dev_resources');
-      expect(success.response.requestOptions.method, 'PUT');
+      expect(recordedRequest.uri.path, '/v1/dev_resources');
+      expect(recordedRequest.method, 'PUT');
     });
 
     test('putDevResources 403', () async {
@@ -622,8 +633,9 @@ void main() {
         success.value,
         isA<GetLibraryAnalyticsComponentActionsResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/analytics/libraries/lib_file_1/component/actions',
@@ -651,9 +663,10 @@ void main() {
         success.value,
         isA<GetLibraryAnalyticsComponentActionsResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.queryParameters['group_by'],
+        recordedRequest.uri.queryParameters['group_by'],
         'team',
       );
     });
@@ -672,9 +685,10 @@ void main() {
         result,
         isTonikSuccess,
       );
-      final success = requireSuccess(result);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.queryParameters['cursor'],
+        recordedRequest.uri.queryParameters['cursor'],
         'next_page_token_abc',
       );
     });
@@ -723,8 +737,9 @@ void main() {
         success.value,
         isA<GetLibraryAnalyticsVariableUsagesResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/analytics/libraries/var_lib_file/variable/usages',
@@ -744,9 +759,10 @@ void main() {
         result,
         isTonikSuccess,
       );
-      final success = requireSuccess(result);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.queryParameters['group_by'],
+        recordedRequest.uri.queryParameters['group_by'],
         'file',
       );
     });
@@ -792,11 +808,12 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteCommentReactionResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/file_xyz/comments/comment_42/reactions');
       expect(uri.queryParameters['emoji'], ':thumbsup:');
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
 
     test('deleteCommentReaction 404', () async {
@@ -856,8 +873,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetLocalVariablesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/vars_file_1/variables/local');
     });
 

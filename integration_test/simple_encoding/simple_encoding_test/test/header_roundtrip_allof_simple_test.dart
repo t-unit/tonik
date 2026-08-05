@@ -47,10 +47,9 @@ void main() {
         isTonikSuccess,
       );
       final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final headerValue =
-          success.response.requestOptions.headers['X-Composite-Entity']
-              as String?;
+      final headerValue = recordedRequest.headers['x-composite-entity'];
       expect(headerValue, contains('name,TestEntity'));
       expect(headerValue, contains('specific_field,specific-value'));
       expect(headerValue, contains('created_at,'));
@@ -134,9 +133,10 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
 
           expect(
-            success.response.requestOptions.headers['X-Composite-Entity'],
+            recordedRequest.headers['x-composite-entity'],
             isNull,
           );
 

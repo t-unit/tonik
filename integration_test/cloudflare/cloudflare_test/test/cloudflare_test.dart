@@ -39,8 +39,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AccountsListAccountsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/client/v4/accounts');
     });
 
@@ -71,8 +72,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<ZonesGetResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/client/v4/zones');
     });
 

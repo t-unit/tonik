@@ -316,9 +316,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'class%5Bname%5D=test&class%5Bage%5D=1',
       );
     });
@@ -330,9 +331,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'class%5Bname%5D=&class%5Bage%5D=1',
       );
     });
@@ -378,9 +380,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'classAlias%5Bname%5D=test&classAlias%5Bage%5D=1',
       );
     });
@@ -407,9 +410,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyOfComplex%5Bname%5D=test&anyOfComplex%5Bage%5D=1',
       );
     });
@@ -438,9 +442,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'oneOfComplex%5Bvalue%5D=test&oneOfComplex%5Bamount%5D=1',
       );
     });
@@ -470,9 +475,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         '''allOfComplex%5Bname%5D=test&allOfComplex%5Bage%5D=1&allOfComplex%5Bvalue%5D=test&allOfComplex%5Bamount%5D=1''',
       );
     });
@@ -667,8 +673,9 @@ void main() {
       final response = await api.testDeepObjectPrimitive();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('nullableInteger with null', () async {
@@ -676,8 +683,9 @@ void main() {
       final response = await api.testDeepObjectPrimitive();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
   });
 
@@ -702,8 +710,9 @@ void main() {
       final response = await api.testDeepObjectComplex();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('deeplyNestedClass (explode false)', () async {
@@ -752,9 +761,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'nullableClass%5Bname%5D=test&nullableClass%5Bage%5D=25',
       );
     });
@@ -764,8 +774,9 @@ void main() {
       final response = await api.testDeepObjectComplexExplode();
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('nullableClass with nullable age', () async {
@@ -775,9 +786,10 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'nullableClass%5Bname%5D=test',
       );
     });

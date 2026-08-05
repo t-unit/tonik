@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:multipart_3_1_api/multipart_3_1_api.dart';
@@ -5,54 +6,41 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
+import 'multipart_wire.dart';
+
 void main() {
-  late ImposterServer imposterServer;
-  late String baseUrl;
-  late Multipart31Api api;
-
-  setUpAll(() async {
-    imposterServer = await setupImposterServer();
-    baseUrl = 'http://localhost:${imposterServer.port}';
-
-    api = Multipart31Api(
-      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
-    );
-  });
-
   group(
     'OAS 3.1 style-based primitive encoding (null rawContentType fallback)',
     () {
       test(
         'serializes string, integer and boolean as text/plain when only style is set',
         () async {
-          const form = StylePrimitivesForm(
-            name: 'hello',
-            count: 42,
-            active: true,
+          final server = await _jsonServer();
+
+          final response = await _api(server).postStylePrimitives(
+            body: const StylePrimitivesForm(
+              name: 'hello',
+              count: 42,
+              active: true,
+            ),
           );
 
-          final response = await api.postStylePrimitives(body: form);
-
+          expect(response, isTonikSuccess);
+          final wire = MultipartWire(await server.takeRequest());
+          expect(wire.parts.map((part) => part.name), [
+            'name',
+            'count',
+            'active',
+          ]);
+          expect(wire.parts.map((part) => part.bodyText), [
+            'hello',
+            '42',
+            'true',
+          ]);
           expect(
-            response,
-            isTonikSuccess,
+            wire.parts.map((part) => part.contentType),
+            everyElement(startsWith('text/plain')),
           );
-
-          final success = requireSuccess(response);
-          final formData = success.response.requestOptions.data as TestFormData;
-
-          // Style-based primitives fall back to text/plain and go into files.
-          expect(formData.files.any((e) => e.key == 'name'), isTrue);
-          expect(formData.files.any((e) => e.key == 'count'), isTrue);
-          expect(formData.files.any((e) => e.key == 'active'), isTrue);
-
-          // Server received all three fields with the correct string values.
-          expect(success.response.headers['x-has-name']?.first, 'true');
-          expect(success.response.headers['x-has-count']?.first, 'true');
-          expect(success.response.headers['x-has-active']?.first, 'true');
-          expect(success.response.headers['x-param-name']?.first, 'hello');
-          expect(success.response.headers['x-param-count']?.first, '42');
-          expect(success.response.headers['x-param-active']?.first, 'true');
         },
       );
     },
@@ -60,83 +48,58 @@ void main() {
 
   group('OAS 3.1 pipe-delimited encoding', () {
     test('serializes array as single pipe-delimited value', () async {
-      const form = PipeDelimitedForm(items: ['alpha', 'beta', 'gamma']);
+      final server = await _jsonServer();
 
-      final response = await api.postPipeDelimited(body: form);
+      final response = await _api(server).postPipeDelimited(
+        body: const PipeDelimitedForm(items: ['alpha', 'beta', 'gamma']),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-
-      // With style: pipeDelimited and explode: false, the array should be
-      // serialized as a single field with pipe-separated values.
-      final itemEntries = formData.fields
-          .where((e) => e.key == 'items')
-          .toList();
-      expect(itemEntries, hasLength(1));
-      expect(itemEntries.first.value, 'alpha|beta|gamma');
-
-      // Server received the items field.
-      expect(success.response.headers['x-has-items']?.first, 'true');
+      final parts = MultipartWire(await server.takeRequest()).named('items');
+      expect(parts, hasLength(1));
+      expect(parts.single.bodyText, 'alpha|beta|gamma');
     });
   });
 
   group('OAS 3.1 form encoding with explode=false', () {
     test('serializes an array as one comma-joined multipart field', () async {
-      const form = FormNonExplodedForm(tags: ['a', 'b', 'c']);
+      final server = await _jsonServer();
 
-      final response = await api.postFormNonExploded(body: form);
+      final response = await _api(server).postFormNonExploded(
+        body: const FormNonExplodedForm(tags: ['a', 'b', 'c']),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-      final tagEntries = formData.fields
-          .where((entry) => entry.key == 'tags')
-          .toList();
-
-      expect(tagEntries, hasLength(1));
-      expect(tagEntries.single.value, 'a,b,c');
-      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
-      expect(success.response.headers['x-has-tags']?.first, 'true');
-      expect(success.response.headers['x-param-tags']?.join(','), 'a,b,c');
+      final parts = MultipartWire(await server.takeRequest()).named('tags');
+      expect(parts, hasLength(1));
+      expect(parts.single.bodyText, 'a,b,c');
     });
 
     test('omits the optional array when it is null', () async {
-      const form = FormNonExplodedForm();
+      final server = await _jsonServer();
 
-      final response = await api.postFormNonExploded(body: form);
+      final response = await _api(server).postFormNonExploded(
+        body: const FormNonExplodedForm(),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-
-      expect(formData.fields.where((entry) => entry.key == 'tags'), isEmpty);
-      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
-      expect(success.response.headers['x-has-tags']?.first, 'false');
-      expect(success.response.headers['x-param-tags']?.first, '');
+      expect(
+        MultipartWire(await server.takeRequest()).named('tags'),
+        isEmpty,
+      );
     });
 
     test('serializes an empty array as one empty multipart field', () async {
-      const form = FormNonExplodedForm(tags: []);
+      final server = await _jsonServer();
 
-      final response = await api.postFormNonExploded(body: form);
+      final response = await _api(server).postFormNonExploded(
+        body: const FormNonExplodedForm(tags: []),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-      final tagEntries = formData.fields
-          .where((entry) => entry.key == 'tags')
-          .toList();
-
-      expect(tagEntries, hasLength(1));
-      expect(tagEntries.single.value, '');
-      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
-      expect(success.response.headers['x-has-tags']?.first, 'true');
-      expect(success.response.headers['x-param-tags']?.first, '');
+      final parts = MultipartWire(await server.takeRequest()).named('tags');
+      expect(parts, hasLength(1));
+      expect(parts.single.bodyText, isEmpty);
     });
   });
 
@@ -144,28 +107,17 @@ void main() {
     test(
       'serializes array as repeated form fields when no encoding is set',
       () async {
-        const form = DefaultExplodeForm(values: ['one', 'two', 'three']);
+        final server = await _jsonServer();
 
-        final response = await api.postDefaultExplode(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
+        final response = await _api(server).postDefaultExplode(
+          body: const DefaultExplodeForm(values: ['one', 'two', 'three']),
         );
 
-        final success = requireSuccess(response);
-
-        // Per RFC 7578 §4.3 and OAS 3.x default: when no style/explode/
-        // allowReserved are set on an array property, each element is sent
-        // as a separate form field with the same name (repeated fields).
-        final formData = success.response.requestOptions.data as TestFormData;
-
-        final valueEntries = formData.fields
-            .where((e) => e.key == 'values')
-            .toList();
-        expect(valueEntries, hasLength(3));
+        expect(response, isTonikSuccess);
         expect(
-          valueEntries.map((e) => e.value).toList(),
+          MultipartWire(
+            await server.takeRequest(),
+          ).named('values').map((part) => part.bodyText),
           ['one', 'two', 'three'],
         );
       },
@@ -177,152 +129,101 @@ void main() {
       'serializes required object as bracket-notation with '
       'application/x-www-form-urlencoded content type',
       () async {
-        const address = DeepObjectAddress(city: 'Berlin', zip: '10115');
-        const form = DeepObjectForm(address: address);
+        final server = await _jsonServer();
 
-        final response = await api.postDeepObject(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
+        final response = await _api(server).postDeepObject(
+          body: const DeepObjectForm(
+            address: DeepObjectAddress(city: 'Berlin', zip: '10115'),
+          ),
         );
 
-        final success = requireSuccess(response);
-        final formData = success.response.requestOptions.data as TestFormData;
-
-        // deepObject sends separate form fields with bracket-notation names.
-        expect(formData.fields.any((e) => e.key == 'address[city]'), isTrue);
-        expect(formData.fields.any((e) => e.key == 'address[zip]'), isTrue);
-
-        // Server received the address as separate deepObject-encoded fields.
-        expect(success.response.headers['x-has-address']?.first, 'true');
-        expect(
-          success.response.headers['x-address-has-city']?.first,
-          'true',
-        );
-        expect(
-          success.response.headers['x-address-has-zip']?.first,
-          'true',
-        );
-
-        // Verify the actual bracket-notation values.
-        final addressValue =
-            success.response.headers['x-address-value']?.first ?? '';
-        expect(addressValue, contains('address[city]=Berlin'));
-        expect(addressValue, contains('address[zip]=10115'));
-        expect(addressValue, contains('&'));
+        expect(response, isTonikSuccess);
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.parts.map((part) => part.name), [
+          'address[city]',
+          'address[zip]',
+        ]);
+        expect(wire.single('address[city]').bodyText, 'Berlin');
+        expect(wire.single('address[zip]').bodyText, '10115');
       },
     );
 
     test(
       'encodes string, integer, and boolean property types correctly',
       () async {
-        const profile = DeepObjectProfile(
-          name: 'Alice',
-          age: 30,
-          active: true,
-        );
-        const form = DeepObjectTypesForm(profile: profile);
+        final server = await _jsonServer();
 
-        final response = await api.postDeepObjectTypes(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
+        final response = await _api(server).postDeepObjectTypes(
+          body: const DeepObjectTypesForm(
+            profile: DeepObjectProfile(name: 'Alice', age: 30, active: true),
+          ),
         );
 
-        final success = requireSuccess(response);
-        final formData = success.response.requestOptions.data as TestFormData;
-
-        expect(formData.fields.any((e) => e.key == 'profile[name]'), isTrue);
-        expect(formData.fields.any((e) => e.key == 'profile[age]'), isTrue);
-        expect(formData.fields.any((e) => e.key == 'profile[active]'), isTrue);
-        expect(success.response.headers['x-has-profile']?.first, 'true');
-        expect(
-          success.response.headers['x-profile-has-name']?.first,
-          'true',
-        );
-        expect(
-          success.response.headers['x-profile-has-age']?.first,
-          'true',
-        );
-        expect(
-          success.response.headers['x-profile-has-active']?.first,
-          'true',
-        );
-
-        final profileValue =
-            success.response.headers['x-profile-value']?.first ?? '';
-        expect(profileValue, contains('profile[name]=Alice'));
-        expect(profileValue, contains('profile[age]=30'));
-        expect(profileValue, contains('profile[active]=true'));
+        expect(response, isTonikSuccess);
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.parts.map((part) => part.name), [
+          'profile[name]',
+          'profile[age]',
+          'profile[active]',
+        ]);
+        expect(wire.single('profile[name]').bodyText, 'Alice');
+        expect(wire.single('profile[age]').bodyText, '30');
+        expect(wire.single('profile[active]').bodyText, 'true');
       },
     );
 
     test('URL-encodes special characters in property values', () async {
-      const profile = DeepObjectProfile(
-        name: 'New York',
-        age: 10,
-        active: false,
-      );
-      const form = DeepObjectTypesForm(profile: profile);
+      final server = await _jsonServer();
 
-      final response = await api.postDeepObjectTypes(body: form);
+      final response = await _api(server).postDeepObjectTypes(
+        body: const DeepObjectTypesForm(
+          profile: DeepObjectProfile(
+            name: 'New York',
+            age: 10,
+            active: false,
+          ),
+        ),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final profileValue =
-          success.response.headers['x-profile-value']?.first ?? '';
-
-      // Space in "New York" must be URI-encoded to %20.
-      expect(profileValue, contains('profile[name]=New%20York'));
-      expect(profileValue, contains('profile[active]=false'));
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('profile[name]').bodyText, 'New%20York');
+      expect(wire.single('profile[active]').bodyText, 'false');
     });
 
     test('omits optional deepObject field when null', () async {
-      const shipping = DeepObjectAddress(city: 'Berlin', zip: '10115');
-      const form = DeepObjectOptionalForm(shipping: shipping);
+      final server = await _jsonServer();
 
-      final response = await api.postDeepObjectOptional(body: form);
+      final response = await _api(server).postDeepObjectOptional(
+        body: const DeepObjectOptionalForm(
+          shipping: DeepObjectAddress(city: 'Berlin', zip: '10115'),
+        ),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-
-      expect(formData.fields.any((e) => e.key == 'shipping[city]'), isTrue);
-      expect(formData.fields.any((e) => e.key == 'billing[city]'), isFalse);
-
-      expect(success.response.headers['x-has-shipping']?.first, 'true');
-      expect(success.response.headers['x-has-billing']?.first, 'false');
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('shipping[city]').bodyText, 'Berlin');
+      expect(wire.single('shipping[zip]').bodyText, '10115');
+      expect(wire.named('billing[city]'), isEmpty);
+      expect(wire.named('billing[zip]'), isEmpty);
     });
 
     test('includes optional deepObject field when provided', () async {
-      const shipping = DeepObjectAddress(city: 'Berlin', zip: '10115');
-      const billing = DeepObjectAddress(city: 'Paris', zip: '75001');
-      const form = DeepObjectOptionalForm(
-        shipping: shipping,
-        billing: billing,
+      final server = await _jsonServer();
+
+      final response = await _api(server).postDeepObjectOptional(
+        body: const DeepObjectOptionalForm(
+          shipping: DeepObjectAddress(city: 'Berlin', zip: '10115'),
+          billing: DeepObjectAddress(city: 'Paris', zip: '75001'),
+        ),
       );
 
-      final response = await api.postDeepObjectOptional(body: form);
-
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-
-      expect(formData.fields.any((e) => e.key == 'shipping[city]'), isTrue);
-      expect(formData.fields.any((e) => e.key == 'billing[city]'), isTrue);
-
-      expect(success.response.headers['x-has-shipping']?.first, 'true');
-      expect(success.response.headers['x-has-billing']?.first, 'true');
-
-      final shippingValue =
-          success.response.headers['x-shipping-value']?.first ?? '';
-      expect(shippingValue, contains('shipping[city]=Berlin'));
-      expect(shippingValue, contains('shipping[zip]=10115'));
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('shipping[city]').bodyText, 'Berlin');
+      expect(wire.single('shipping[zip]').bodyText, '10115');
+      expect(wire.single('billing[city]').bodyText, 'Paris');
+      expect(wire.single('billing[zip]').bodyText, '75001');
     });
   });
 
@@ -330,63 +231,46 @@ void main() {
     test(
       'serializes object properties as URL-encoded key-value pairs',
       () async {
-        const address = Address31(firstName: 'John', lastName: 'Doe');
-        const form = UrlEncodedAddressForm(address: address);
+        final server = await _jsonServer();
 
-        final response = await api.postUrlEncodedObject(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
+        final response = await _api(server).postUrlEncodedObject(
+          body: const UrlEncodedAddressForm(
+            address: Address31(firstName: 'John', lastName: 'Doe'),
+          ),
         );
 
-        final success = requireSuccess(response);
-        final formData = success.response.requestOptions.data as TestFormData;
-
-        // The address field is a file part (not a plain field) because it
-        // carries a Content-Type of application/x-www-form-urlencoded.
-        expect(formData.files.any((e) => e.key == 'address'), isTrue);
-
-        // Server received the address as a URL-encoded string.
-        expect(success.response.headers['x-has-address']?.first, 'true');
+        expect(response, isTonikSuccess);
+        final part = MultipartWire(
+          await server.takeRequest(),
+        ).single('address');
         expect(
-          success.response.headers['x-address-has-first-name']?.first,
-          'true',
+          part.contentType,
+          startsWith('application/x-www-form-urlencoded'),
         );
-        expect(
-          success.response.headers['x-address-has-last-name']?.first,
-          'true',
-        );
-
-        // Verify the actual URL-encoded string value.
-        final addressValue =
-            success.response.headers['x-address-value']?.first ?? '';
-        expect(addressValue, contains('firstName=John'));
-        expect(addressValue, contains('lastName=Doe'));
-        expect(addressValue, contains('&'));
+        expect(part.bodyText, 'firstName=John&lastName=Doe');
       },
     );
   });
 
   group('OAS 3.1 basic multipart', () {
     test('sends string and binary fields', () async {
+      final server = await _jsonServer();
       final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
-      final form = BasicForm(name: 'test-31', file: TonikFileBytes(fileBytes));
 
-      final response = await api.postBasic31(body: form);
+      final response = await _api(server).postBasic31(
+        body: BasicForm(
+          name: 'test-31',
+          file: TonikFileBytes(fileBytes, fileName: 'payload.bin'),
+        ),
+      );
 
       expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final formData = success.response.requestOptions.data as TestFormData;
-
-      // Scalar fields go to files with explicit Content-Type.
-      expect(formData.files.any((e) => e.key == 'name'), isTrue);
-      expect(formData.files.any((e) => e.key == 'file'), isTrue);
-
-      // Server received the name text field.
-      expect(success.response.headers['x-has-name']?.first, 'true');
-      expect(success.response.headers['x-param-name']?.first, 'test-31');
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('name').bodyText, 'test-31');
+      expect(wire.single('name').contentType, startsWith('text/plain'));
+      expect(wire.single('file').filename, 'payload.bin');
+      expect(wire.single('file').contentType, 'application/octet-stream');
+      expect(wire.single('file').bodyBytes, fileBytes);
     });
   });
 
@@ -394,102 +278,66 @@ void main() {
     test(
       'sends format:byte as binary part, not a readable text field',
       () async {
+        final server = await _jsonServer();
         final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
-        final form = ByteForm(
-          label: 'test-label',
-          data: TonikFileBytes(fileBytes),
+
+        final response = await _api(server).postByteField31(
+          body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
         );
 
-        final response = await api.postByteField31(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
-        );
-
-        final success = requireSuccess(response);
-        final formData = success.response.requestOptions.data as TestFormData;
-
-        // Both fields go to files.
-        expect(formData.files.any((e) => e.key == 'label'), isTrue);
-        expect(formData.files.any((e) => e.key == 'data'), isTrue);
-
-        // The text label is readable by the server as a form param.
-        expect(success.response.headers['x-has-label']?.first, 'true');
-        expect(
-          success.response.headers['x-param-label']?.first,
-          'test-label',
-        );
-
-        // The format:byte field is sent as application/octet-stream binary —
-        // the server cannot read it as a text form param. If it showed up in
-        // formParams it would mean the old text/plain (StringModel) behavior
-        // was used instead of the correct Base64Model behavior.
-        expect(success.response.headers['x-has-data']?.first, 'false');
+        expect(response, isTonikSuccess);
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.single('label').bodyText, 'test-label');
+        expect(wire.single('label').contentType, startsWith('text/plain'));
+        expect(wire.single('data').contentType, 'application/octet-stream');
+        expect(wire.single('data').bodyBytes, fileBytes);
       },
     );
   });
 
   group('OAS 3.1 AnyModel multipart JSON encoding', () {
-    test(
-      'serializes Map object as valid JSON, not Dart toString()',
-      () async {
-        // The bug: before the fix, a Map would be serialized as
-        // {firstName: John, lastName: Doe} (Dart toString), not
-        // {"firstName":"John","lastName":"Doe"} (valid JSON).
-        const form = AnyModelForm(
+    test('serializes Map object as valid JSON, not Dart toString()', () async {
+      final server = await _jsonServer();
+
+      final response = await _api(server).postAnyModel(
+        body: const AnyModelForm(
           data: {'firstName': 'John', 'lastName': 'Doe'},
-        );
+        ),
+      );
 
-        final response = await api.postAnyModel(body: form);
+      expect(response, isTonikSuccess);
+      final part = MultipartWire(await server.takeRequest()).single('data');
+      expect(part.contentType, startsWith('application/json'));
+      expect(jsonDecode(part.bodyText), {
+        'firstName': 'John',
+        'lastName': 'Doe',
+      });
+    });
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+    test('serializes primitive integer as JSON number', () async {
+      final server = await _jsonServer();
 
-        final success = requireSuccess(response);
-        final formData = success.response.requestOptions.data as TestFormData;
+      final response = await _api(server).postAnyModel(
+        body: const AnyModelForm(data: 42),
+      );
 
-        // The data field goes to files (JSON-encoded as application/json).
-        expect(formData.files.any((e) => e.key == 'data'), isTrue);
-
-        // Server received the field.
-        expect(success.response.headers['x-has-data']?.first, 'true');
-
-        // The value must be valid JSON (starts with '{', contains quoted keys).
-        expect(
-          success.response.headers['x-data-is-valid-json']?.first,
-          'true',
-        );
-        expect(
-          success.response.headers['x-data-contains-firstname']?.first,
-          'true',
-        );
-      },
-    );
-
-    test(
-      'serializes primitive integer as JSON number',
-      () async {
-        const form = AnyModelForm(data: 42);
-
-        final response = await api.postAnyModel(body: form);
-
-        expect(
-          response,
-          isTonikSuccess,
-        );
-
-        final success = requireSuccess(response);
-
-        expect(success.response.headers['x-has-data']?.first, 'true');
-        expect(success.response.headers['x-data-value']?.first, '42');
-        expect(
-          success.response.headers['x-data-is-valid-json']?.first,
-          'true',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final part = MultipartWire(await server.takeRequest()).single('data');
+      expect(part.contentType, startsWith('application/json'));
+      expect(part.bodyBytes, utf8.encode('42'));
+    });
   });
 }
+
+Multipart31Api _api(RawRequestServer server) => Multipart31Api(
+  CustomServer(
+    baseUrl: server.baseUrl,
+    serverConfig: testServerConfig(),
+  ),
+);
+
+Future<RawRequestServer> _jsonServer() => RawRequestServer.start(
+  responseStatusCode: 200,
+  responseHeaders: const {'content-type': 'application/json'},
+  responseBody: utf8.encode('{"success":true,"message":"ok"}'),
+);

@@ -40,8 +40,9 @@ void main() {
         success.value,
         isA<GetWorkspacesResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/workspaces');
     });
 
@@ -81,8 +82,9 @@ void main() {
         success.value,
         isA<GetWorkspaceResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/workspaces/12345');
     });
   });
@@ -99,8 +101,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetUsersResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/users');
       expect(
         uri.queryParameters['workspace'],
@@ -121,8 +124,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetTaskResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks/11111');
     });
 
@@ -153,8 +157,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetProjectResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/projects/22222');
     });
   });
@@ -180,8 +185,9 @@ void main() {
         success.value,
         isA<GetTasksForProjectResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/projects/22222/tasks');
       expect(uri.queryParameters['limit'], '10');
     });
@@ -217,8 +223,9 @@ void main() {
         success.value,
         isA<CreateTaskResponse201>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks');
     });
   });
@@ -254,8 +261,9 @@ void main() {
         success.value,
         isA<CreateProjectForWorkspaceResponse201>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/api/1.0/workspaces/12345/projects',
@@ -294,11 +302,12 @@ void main() {
         success.value,
         isA<UpdateTaskResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks/11111');
       expect(
-        success.response.requestOptions.method,
+        recordedRequest.method,
         'PUT',
       );
     });
@@ -322,11 +331,12 @@ void main() {
         success.value,
         isA<DeleteTaskResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks/11111');
       expect(
-        success.response.requestOptions.method,
+        recordedRequest.method,
         'DELETE',
       );
     });

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:inference_api/inference_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -37,9 +39,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/infer/send_message',
         );
       });
@@ -57,8 +60,9 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -74,9 +78,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -94,9 +99,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['chat_session_id'], 'my-session-abc');
       });
 
@@ -113,9 +119,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['user_id'], 'my-user-xyz');
       });
 
@@ -132,9 +139,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['message_id'], 'custom-msg-id');
       });
 
@@ -151,9 +159,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['message'], 'What is the weather today?');
       });
 
@@ -170,9 +179,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['message'], r'Special chars: @#$%^&*(){}[]|\"');
       });
 
@@ -189,9 +199,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['message'], '你好世界 🌍 مرحبا');
       });
 
@@ -208,9 +219,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(
           requestBody.keys,
           containsAll(['chat_session_id', 'user_id', 'message_id', 'message']),
@@ -233,9 +245,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['custom_context'], 'my custom context data');
       });
 
@@ -252,9 +265,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('custom_context'), isFalse);
       });
 
@@ -274,9 +288,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['reply_to_id'], 'reply-msg-123');
       });
 
@@ -293,9 +308,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('reply_to_id'), isFalse);
       });
 
@@ -319,9 +335,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['followup_selection'], isA<Map<String, dynamic>>());
         final followup =
             requestBody['followup_selection'] as Map<String, dynamic>;
@@ -342,9 +359,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('followup_selection'), isFalse);
       });
 
@@ -364,9 +382,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['start_time'], 1704067200);
       });
 
@@ -383,9 +402,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('start_time'), isFalse);
       });
 
@@ -405,9 +425,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['end_time'], 1704153600);
       });
 
@@ -424,9 +445,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('end_time'), isFalse);
       });
 
@@ -446,9 +468,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['user_intent'], 'SEARCH_CODE');
       });
 
@@ -470,9 +493,10 @@ void main() {
                 ),
               );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['user_intent'], 'DIRECT_ANSWER');
         },
       );
@@ -490,9 +514,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('user_intent'), isFalse);
       });
 
@@ -519,9 +544,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['connectors'], isA<List<dynamic>>());
         final connectors = requestBody['connectors'] as List<dynamic>;
         expect(connectors.length, 2);
@@ -546,9 +572,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['connectors'], isA<List<dynamic>>());
         expect((requestBody['connectors'] as List<dynamic>).isEmpty, isTrue);
       });
@@ -569,9 +596,10 @@ void main() {
                 ),
               );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['connectors'], isA<List<dynamic>>());
           expect(
             (requestBody['connectors'] as List<dynamic>).isEmpty,
@@ -594,9 +622,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['interruption_reply'], true);
       });
 
@@ -613,9 +642,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['interruption_reply'], false);
       });
 
@@ -636,9 +666,10 @@ void main() {
           final response = await api
               .sendMessageProtoRouteApiV1InferSendMessagePost(body: request);
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['interruption_reply'], false);
         },
       );
@@ -659,9 +690,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['user_specified_llm'], 'gpt-4o');
       });
 
@@ -684,9 +716,10 @@ void main() {
                 ),
               );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['user_specified_llm'], 'claude-3-5-sonnet-latest');
         },
       );
@@ -704,9 +737,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('user_specified_llm'), isFalse);
       });
 
@@ -723,9 +757,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['reasoning_mode'], 'copilot');
       });
 
@@ -743,9 +778,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['reasoning_mode'], 'investigate');
       });
 
@@ -765,9 +801,10 @@ void main() {
                 ),
               );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['reasoning_mode'], 'copilot');
         },
       );
@@ -805,9 +842,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['chat_session_id'], 'session-123');
         expect(requestBody['user_id'], 'user-456');
         expect(requestBody['message_id'], 'msg-789');
@@ -933,9 +971,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v2/infer/send_message',
         );
       });
@@ -953,8 +992,9 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -970,9 +1010,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1041,9 +1082,10 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/infer/list_connectors',
         );
       });
@@ -1054,8 +1096,9 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1064,8 +1107,9 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1098,9 +1142,10 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/infer/supported_models',
         );
       });
@@ -1111,8 +1156,9 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
 
       test('request has no body', () async {
@@ -1121,8 +1167,9 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 
@@ -1150,9 +1197,10 @@ void main() {
           body: const {},
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/github/repositories',
         );
       });
@@ -1164,8 +1212,9 @@ void main() {
           body: const {},
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1175,9 +1224,10 @@ void main() {
           body: const {},
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1260,9 +1310,10 @@ void main() {
               body: const GithubReleaseRequest(repo: 'owner/repo'),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/github/release',
         );
       });
@@ -1275,8 +1326,9 @@ void main() {
               body: const GithubReleaseRequest(repo: 'owner/repo'),
             );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1287,9 +1339,10 @@ void main() {
               body: const GithubReleaseRequest(repo: 'owner/repo'),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1302,9 +1355,10 @@ void main() {
               body: const GithubReleaseRequest(repo: 'flutter/flutter'),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['repo'], 'flutter/flutter');
       });
 
@@ -1319,9 +1373,10 @@ void main() {
               ),
             );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['latest_only'], true);
       });
 
@@ -1337,9 +1392,10 @@ void main() {
           final response = await api
               .getGithubReleaseProtoRouteApiV1GithubReleasePost(body: request);
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody['latest_only'], false);
         },
       );
@@ -1414,9 +1470,10 @@ void main() {
           body: const GithubPrRequest(commitSha: 'abc123def456'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/github/pr',
         );
       });
@@ -1428,8 +1485,9 @@ void main() {
           body: const GithubPrRequest(commitSha: 'abc123def456'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1439,9 +1497,10 @@ void main() {
           body: const GithubPrRequest(commitSha: 'abc123def456'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1453,9 +1512,10 @@ void main() {
           body: const GithubPrRequest(commitSha: 'xyz789commit'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['commit_sha'], 'xyz789commit');
       });
 
@@ -1468,9 +1528,10 @@ void main() {
             body: const GithubPrRequest(commitSha: 'abc123'),
           );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody.containsKey('commit_sha'), isTrue);
           expect(requestBody.containsKey('customer_id'), isFalse);
           expect(requestBody.containsKey('repository'), isFalse);
@@ -1537,9 +1598,10 @@ void main() {
           body: const GithubGetBranchesRequest(),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/github/branch/list',
         );
       });
@@ -1551,8 +1613,9 @@ void main() {
           body: const GithubGetBranchesRequest(),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1562,9 +1625,10 @@ void main() {
           body: const GithubGetBranchesRequest(),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1640,9 +1704,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/newrelic/alert',
         );
       });
@@ -1658,8 +1723,9 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1673,9 +1739,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1691,9 +1758,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['connector_name'], 'my-newrelic-connector');
       });
 
@@ -1708,9 +1776,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['violation_id'], 'my-violation-xyz');
       });
 
@@ -1725,9 +1794,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['account_id'], 'my-account-id');
       });
 
@@ -1742,9 +1812,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(
           requestBody.keys,
           containsAll(['connector_name', 'violation_id', 'account_id']),
@@ -1851,9 +1922,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/api/v1/datadog/alert',
         );
       });
@@ -1870,8 +1942,9 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -1886,9 +1959,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -1905,9 +1979,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['connector_name'], 'my-datadog-connector');
       });
 
@@ -1923,9 +1998,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['link'], 'https://app.datadoghq.com/custom/link');
       });
 
@@ -1941,9 +2017,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['monitor_id'], 'custom-monitor-id');
       });
 
@@ -1959,9 +2036,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['host'], 'my-custom-host');
       });
 
@@ -1977,9 +2055,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(
           requestBody.keys,
           containsAll(['connector_name', 'link', 'monitor_id', 'host']),

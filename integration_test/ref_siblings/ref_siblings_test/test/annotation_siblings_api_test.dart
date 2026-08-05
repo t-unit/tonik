@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ref_siblings_api/ref_siblings_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -28,8 +30,9 @@ void main() {
 
       final response = await api.health();
 
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.path, '$baseUrl/health');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.toString(), '$baseUrl/health');
     });
 
     test('request method is GET', () async {
@@ -37,8 +40,9 @@ void main() {
 
       final response = await api.health();
 
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.method, 'GET');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.method, 'GET');
     });
   });
 
@@ -51,9 +55,10 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/described-pet',
         );
       });
@@ -65,8 +70,9 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('encodes Pet properties correctly', () async {
@@ -76,9 +82,10 @@ void main() {
           body: const Pet(name: 'Max', age: 5),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Max');
         expect(requestBody['age'], 5);
@@ -91,9 +98,10 @@ void main() {
           body: const Pet(name: 'Solo'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Solo');
         expect(requestBody.containsKey('age'), isFalse);
@@ -158,8 +166,9 @@ void main() {
         // expected to be deprecated
         // ignore: deprecated_member_use
         expect(success.value, isA<LegacyUser>());
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/deprecated-user',
         );
       });
@@ -178,8 +187,9 @@ void main() {
         // expected to be deprecated
         // ignore: deprecated_member_use
         expect(success.value, isA<LegacyUser>());
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['username'], 'admin');
         expect(requestBody['email'], 'admin@example.com');
@@ -236,8 +246,9 @@ void main() {
         // expected to be deprecated
         // ignore: deprecated_member_use
         expect(success.value, isA<OldItem>());
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/described-deprecated',
         );
       });
@@ -253,8 +264,9 @@ void main() {
         // expected to be deprecated
         // ignore: deprecated_member_use
         expect(success.value, isA<OldItem>());
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['id'], 123);
         expect(requestBody['title'], 'Widget');

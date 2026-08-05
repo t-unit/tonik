@@ -2,6 +2,8 @@ import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
+import 'multipart_wire.dart';
+
 void main() {
   late ImposterServer imposterServer;
   late String baseUrl;
@@ -17,32 +19,28 @@ void main() {
   });
 
   group('Custom content type mapped to multipart', () {
-    test('sends request body as FormData for custom content type', () async {
+    test('sends multipart fields for the custom content type', () async {
+      final rawServer = await RawRequestServer.start();
+      final rawApi = CustomApi(
+        CustomServer(
+          baseUrl: rawServer.baseUrl,
+          serverConfig: testServerConfig(),
+        ),
+      );
       const form = CustomForm(field1: 'test data', field2: 999);
 
-      final response = await api.postCustomMultipart(body: form);
+      await rawApi.postCustomMultipart(body: form);
 
-      expect(response, isTonikSuccess);
-
-      final success = requireSuccess(response);
-      final requestData = success.response.requestOptions.data;
-
-      // The body should be FormData because the custom content type is
-      // mapped to multipart serialization via tonik.yaml contentTypes.
-      expect(requestData, isA<TestFormData>());
-
-      final formData = requestData as TestFormData;
-      // Scalar fields use formData.files with explicit Content-Type.
-      expect(formData.files.any((e) => e.key == 'field1'), isTrue);
-      expect(formData.files.any((e) => e.key == 'field2'), isTrue);
-
-      // Verify actual field values via server echo-back headers.
-      expect(success.response.headers['x-param-field1']?.first, 'test data');
-      expect(success.response.headers['x-param-field2']?.first, '999');
+      final request = await rawServer.takeRequest();
+      expect(request.header('content-type'), contains('multipart/form-data'));
+      final wire = MultipartWire(request);
+      expect(wire.single('field1').bodyText, 'test data');
+      expect(wire.single('field2').bodyText, '999');
+      expect(wire.single('field1').contentType, startsWith('text/plain'));
     });
 
     test(
-      'Dio overrides Content-Type with multipart/form-data boundary',
+      'the client adds the multipart/form-data boundary',
       () async {
         const form = CustomForm(field1: 'hello', field2: 42);
 
@@ -55,9 +53,6 @@ void main() {
 
         final success = requireSuccess(response);
 
-        // Known limitation: Dio replaces content type with
-        // multipart/form-data; boundary=... when body is FormData.
-        // The original application/vnd.custom-multipart is NOT preserved.
         final receivedContentType =
             success.response.headers['x-received-content-type']?.first ?? '';
         expect(receivedContentType, contains('multipart/form-data'));

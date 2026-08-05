@@ -30,8 +30,9 @@ void main() {
 
       expect(response, isTonikSuccess);
 
-      final success = requireSuccess(response);
-      expect(success.response.requestOptions.uri.query, 'status=active');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'status=active');
     },
   );
 }

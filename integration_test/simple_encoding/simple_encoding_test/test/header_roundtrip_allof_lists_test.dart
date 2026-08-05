@@ -108,9 +108,10 @@ void main() {
 
           expect(result, isTonikSuccess);
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
 
           expect(
-            success.response.requestOptions.headers['X-List-Composite'],
+            recordedRequest.headers['x-list-composite'],
             isNull,
           );
           expect(success.value.xListComposite, isNull);

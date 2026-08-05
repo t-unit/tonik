@@ -45,10 +45,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final headerValue =
-            success.response.requestOptions.headers['X-Nested-Value']
-                as String?;
+        final headerValue = recordedRequest.headers['x-nested-value'];
         expect(headerValue, contains('name,test'));
         expect(headerValue, contains('number,42'));
         expect(
@@ -98,8 +97,9 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'simple-string',
         );
 
@@ -118,9 +118,10 @@ void main() {
           result,
           isTonikSuccess,
         );
-        final success = requireSuccess(result);
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'test-value',
         );
       });
@@ -137,8 +138,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Nested-Value'],
+            recordedRequest.headers['x-nested-value'],
             isNull,
           );
           expect(success.value.xNestedValue, isNull);

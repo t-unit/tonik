@@ -39,8 +39,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetBalanceResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/balance');
     });
 
@@ -74,8 +75,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/customers');
       expect(uri.queryParameters['limit'], '10');
     });
@@ -110,8 +112,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersCustomerResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/customers/cus_abc123');
     });
 
@@ -145,9 +148,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostCustomersResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/customers');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v1/customers');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postCustomers default error', () async {
@@ -182,10 +186,11 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteCustomersCustomerResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/customers/cus_delete_me');
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
 
     test('deleteCustomersCustomer default error', () async {
@@ -220,8 +225,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetChargesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/charges');
       expect(uri.queryParameters['limit'], '5');
     });
@@ -258,8 +264,9 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPaymentIntentsIntentResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/payment_intents/pi_abc123');
     });
 
@@ -295,9 +302,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostRefundsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/refunds');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v1/refunds');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postRefunds default error', () async {

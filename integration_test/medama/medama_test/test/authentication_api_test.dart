@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -31,9 +33,10 @@ void main() {
           body: const AuthLogin(username: 'testUser', password: 'testPass'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/auth/login',
         );
       });
@@ -45,8 +48,9 @@ void main() {
           body: const AuthLogin(username: 'testUser', password: 'testPass'),
         );
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -56,9 +60,10 @@ void main() {
           body: const AuthLogin(username: 'testUser', password: 'testPass'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -70,9 +75,10 @@ void main() {
           body: const AuthLogin(username: 'myUser', password: 'myPass'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'myUser');
       });
 
@@ -83,9 +89,10 @@ void main() {
           body: const AuthLogin(username: 'myUser', password: 'myPass'),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['password'], 'myPass');
       });
 
@@ -98,9 +105,10 @@ void main() {
             body: const AuthLogin(username: 'user', password: 'pass'),
           );
 
-          final success = requireSuccess(response);
+          requireSuccess(response);
+          final recordedRequest = await imposterServer.takeRequest();
           final requestBody =
-              success.response.requestOptions.data as Map<String, dynamic>;
+              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
           expect(requestBody.keys, unorderedEquals(['username', 'password']));
         },
       );
@@ -115,9 +123,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'user+test@example.com');
       });
 
@@ -131,9 +140,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['password'], r'p@$$w0rd!#%&*');
       });
 
@@ -147,9 +157,10 @@ void main() {
           ),
         );
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['username'], 'użytkownik');
         expect(requestBody['password'], '密码🔐');
       });
@@ -334,9 +345,10 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        final success = requireSuccess(response);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/auth/logout',
         );
       });
@@ -346,8 +358,9 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('request has no body', () async {
@@ -355,8 +368,9 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.data, isNull);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, isNull);
       });
     });
 

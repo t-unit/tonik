@@ -1,3 +1,11 @@
+def tonikRecordedRequest = [
+    uri: context.request.uri,
+    method: context.request.method,
+    normalisedHeaders: context.request.normalisedHeaders,
+    body: context.request.body,
+]
+stores.open('tonik').save('last', tonikRecordedRequest)
+
 // Serve a JSON `null` body when the caller asks for it via X-Winner, so the
 // same nullable-string endpoint can exercise both a null and a non-null body.
 def wantNull = (context.request.headers['X-Winner'] ?: '') == 'null'

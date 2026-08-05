@@ -30,8 +30,9 @@ void main() {
         final api = buildApi();
         final response = await api.testHeaderRoundtripPrimitives(string: value);
 
-        final success = requireSuccess(response);
-        expect(success.response.requestOptions.headers['x-string'], value);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.headers['x-string'], value);
       });
     }
   });
@@ -72,7 +73,8 @@ void main() {
       );
 
       final success = requireSuccess(response);
-      final wire = success.response.requestOptions.headers['x-file-data'];
+      final recordedRequest = await imposterServer.takeRequest();
+      final wire = recordedRequest.headers['x-file-data'];
       expect(wire, '+/+/AA==');
       expect(success.value.xFileData?.toBytes(), bytes);
     });
@@ -94,9 +96,10 @@ void main() {
         $enum: StatusEnum.active,
       );
 
-      final success = requireSuccess(response);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/primitive/1/1.0/1/a%20b%2Fc%25d/true/'
         '1970-01-01T00%3A00%3A00.000Z/2000-01-01/1/'
         'https%3A%2F%2Fexample.com/active',
@@ -131,9 +134,12 @@ void main() {
           isTonikError,
         );
         final error = requireError(response);
-        // Rejection is transport-provided (Dio refuses control chars), not
-        // a Tonik guard.
-        expect(error.type, TonikErrorType.network);
+        // Both clients reject before dispatch. Dio reports a network error;
+        // package:http reports its argument error as an uncategorized error.
+        expect(
+          error.type,
+          anyOf(TonikErrorType.network, TonikErrorType.other),
+        );
         expect(error.response, isNull);
       });
     }

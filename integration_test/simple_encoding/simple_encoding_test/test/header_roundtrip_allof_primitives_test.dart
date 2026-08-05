@@ -42,9 +42,10 @@ void main() {
         isTonikSuccess,
       );
       final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.headers['X-Merged-Object'],
+        recordedRequest.headers['x-merged-object'],
         anyOf(
           'count,42,id,abc',
           'id,abc,count,42',
@@ -118,8 +119,9 @@ void main() {
             isTonikSuccess,
           );
           final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Merged-Object'],
+            recordedRequest.headers['x-merged-object'],
             isNull,
           );
           expect(success.value.xMergedObject, isNull);

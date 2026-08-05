@@ -72,8 +72,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
     });
 
@@ -86,9 +87,10 @@ void main() {
         result,
         isTonikSuccess,
       );
-      final success = requireSuccess(result);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
       expect(uri.queryParameters['PageSize'], '10');
     });
@@ -121,8 +123,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_test123.json');
     });
 
@@ -152,10 +155,11 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.method, 'POST');
     });
   });
 
@@ -173,8 +177,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Messages.json');
     });
   });
@@ -193,12 +198,13 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/2010-04-01/Accounts/AC_mock/Messages.json',
       );
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.method, 'POST');
     });
   });
 
@@ -216,8 +222,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Calls.json');
     });
   });
@@ -236,8 +243,9 @@ void main() {
       );
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Balance.json');
     });
   });
@@ -256,13 +264,14 @@ void main() {
       expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 204);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/2010-04-01/Accounts/AC_mock/Messages/SM_delete_me.json',
       );
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 }

@@ -1,3 +1,11 @@
+def tonikRecordedRequest = [
+    uri: context.request.uri,
+    method: context.request.method,
+    normalisedHeaders: context.request.normalisedHeaders,
+    body: context.request.body,
+]
+stores.open('tonik').save('last', tonikRecordedRequest)
+
 // Imposter response script for multipart tests.
 // Handles both OAS 3.0 and OAS 3.1 endpoints.
 //

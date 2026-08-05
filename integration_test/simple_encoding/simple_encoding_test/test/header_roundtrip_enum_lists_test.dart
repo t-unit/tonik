@@ -36,9 +36,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-status-list'],
+          recordedRequest.headers['x-status-list'],
           'active',
         );
         expect(success.value.xStatusList, [StatusEnum.active]);
@@ -59,9 +60,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-status-list'],
+          recordedRequest.headers['x-status-list'],
           'active,pending,archived',
         );
         expect(success.value.xStatusList, [
@@ -87,9 +89,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-status-list'],
+          recordedRequest.headers['x-status-list'],
           'active,inactive,pending,archived',
         );
         expect(success.value.xStatusList, [
@@ -114,9 +117,10 @@ void main() {
         );
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-priority-list'],
+          recordedRequest.headers['x-priority-list'],
           '1',
         );
         expect(success.value.xPriorityList, [PriorityEnum.one]);
@@ -137,9 +141,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-priority-list'],
+          recordedRequest.headers['x-priority-list'],
           '1,3,5',
         );
         expect(success.value.xPriorityList, [
@@ -166,9 +171,10 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-priority-list'],
+          recordedRequest.headers['x-priority-list'],
           '1,2,3,4,5',
         );
         expect(success.value.xPriorityList, [
@@ -194,13 +200,14 @@ void main() {
           isTonikSuccess,
         );
         final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-status-list'],
+          recordedRequest.headers['x-status-list'],
           'active,pending',
         );
         expect(
-          success.response.requestOptions.headers['x-priority-list'],
+          recordedRequest.headers['x-priority-list'],
           '2,4',
         );
 

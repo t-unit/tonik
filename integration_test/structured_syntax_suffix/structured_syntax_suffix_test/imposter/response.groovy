@@ -1,3 +1,11 @@
+def tonikRecordedRequest = [
+    uri: context.request.uri,
+    method: context.request.method,
+    normalisedHeaders: context.request.normalisedHeaders,
+    body: context.request.body,
+]
+stores.open('tonik').save('last', tonikRecordedRequest)
+
 if (context.request.path == '/api/v1/widget' && context.request.method == 'GET') {
     respond()
         .withStatusCode(200)
