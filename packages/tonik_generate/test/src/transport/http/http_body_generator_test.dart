@@ -244,6 +244,41 @@ Object? _data({String? body}) {
     );
   });
 
+  test('uses a promoted optional nullable JSON model directly', () {
+    final model = ClassModel(
+      name: 'NullablePayload',
+      properties: const [],
+      context: context,
+      isDeprecated: false,
+      isNullable: true,
+      examples: const [],
+    );
+    final method = generator.generateBodyMethod(
+      _operation(
+        context,
+        requestBody: _body(
+          context,
+          model: model,
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          isRequired: false,
+        ),
+      ),
+    );
+
+    const expected = '''
+Object? _data({NullablePayload? body}) {
+  if (body == null) return null;
+  return utf8.encode(jsonEncode(body.toJson()));
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('form-urlencoded bodies', () {
     test('UTF-8 encodes a scalar without inventing a field name', () {
       final method = generator.generateBodyMethod(
@@ -582,6 +617,50 @@ Future<Object?> _data({required Payload body}) async {
         ),
       );
       return _$multipartFiles;
+    }(),
+  };
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
+  test('does not bind an unsupported multipart variant', () {
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        RequestContent(
+          model: BinaryModel(context: context),
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+
+    const expected = '''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    PayloadFormData _ => await () async {
+      throw UnsupportedError(
+        'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
+      );
     }(),
   };
 }

@@ -50,6 +50,7 @@ class HttpBodyGenerator {
       for (final item in content) {
         final variantName = subclassNames[item.rawContentType]!;
         final isMultipart = item.contentType == ContentType.multipart;
+        final bindsValue = !isMultipart || item.model.resolved is ClassModel;
         final built = isMultipart
             ? null
             : _bodyBytesExpression(
@@ -57,13 +58,14 @@ class HttpBodyGenerator {
                 content: item,
                 valueName: 'value.value',
                 helperContext: helperContext,
+                receiverIsPromotedNonNull: false,
               );
         if (built != null) inlineHelpers.addAll(built.inlineFunctions);
         cases.add(
           Block.of([
-            const Code('final '),
+            if (bindsValue) const Code('final '),
             refer(variantName, requestBodyUrl).code,
-            const Code(' value => '),
+            Code(bindsValue ? ' value => ' : ' _ => '),
             if (isMultipart)
               Method(
                 (builder) => builder
@@ -169,6 +171,7 @@ class HttpBodyGenerator {
       content: item,
       valueName: 'body',
       helperContext: helperContext,
+      receiverIsPromotedNonNull: !isRequired,
     );
     inlineHelpers.addAll(built.inlineFunctions);
 
@@ -207,6 +210,7 @@ class HttpBodyGenerator {
     required RequestContent content,
     required String valueName,
     required InlineHelperContext helperContext,
+    required bool receiverIsPromotedNonNull,
   }) {
     final value = refer(valueName);
     switch (content.contentType) {
@@ -227,6 +231,7 @@ class HttpBodyGenerator {
           helperContext: helperContext,
           contextClass: operation.operationId,
           contextProperty: 'body',
+          receiverIsPromotedNonNull: receiverIsPromotedNonNull,
         );
         return BuiltExpression(
           body: refer('utf8', 'dart:convert').property('encode').call([

@@ -89,6 +89,54 @@ Map<String, String> _options({String? body}) {
     );
   });
 
+  test('sets content type directly for required non-multipart variants', () {
+    final method = generator.generateHeadersMethod(
+      _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/merge-patch+json',
+              examples: const [],
+            ),
+          },
+        ),
+      ),
+      const [],
+      const [],
+    );
+
+    const expected = r'''
+Map<String, String> _options({required Payload body}) {
+  final _$contentType = switch (body) {
+    PayloadJson _ => r'application/json',
+    PayloadMergePatchJson _ => r'application/merge-patch+json',
+  };
+  final _$headers = <String, String>{};
+  _$headers['Accept'] = r'*/*';
+  _$headers[r'Content-Type'] = _$contentType;
+  return _$headers;
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   test('preserves encoded headers and multiple cookies', () {
     final header = RequestHeaderObject(
       name: 'X-Trace',

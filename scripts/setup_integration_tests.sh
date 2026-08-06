@@ -76,16 +76,16 @@ run_commands() {
 }
 
 add_tonik_util_override() {
-  local manifest="$1"
+  local pubspec="$1"
   local relative_path="$2"
 
-  if [ ! -f "$manifest" ]; then
-    echo "Error: package manifest not found: $manifest" >&2
+  if [ ! -f "$pubspec" ]; then
+    echo "Error: package pubspec not found: $pubspec" >&2
     return 1
   fi
-  if ! grep -q '^dependency_overrides:' "$manifest"; then
+  if ! grep -q '^dependency_overrides:' "$pubspec"; then
     printf '\ndependency_overrides:\n  tonik_util:\n    path: %s\n' \
-      "$relative_path" >>"$manifest"
+      "$relative_path" >>"$pubspec"
   fi
 }
 
@@ -210,13 +210,13 @@ for directory in "${GENERATED_DIRS[@]}"; do
   generated_count=$((generated_count + 1))
 done
 
-TEST_MANIFESTS=()
-while IFS= read -r manifest; do
-  TEST_MANIFESTS+=("$manifest")
-done < <(find . -mindepth 3 -maxdepth 3 -type f -path '*_test/pubspec.yaml' -print | sort)
+TEST_DIRS=()
+while IFS= read -r directory; do
+  TEST_DIRS+=("$directory")
+done < <(find . -mindepth 2 -maxdepth 2 -type d -name '*_test' -print | sort)
 
-if [ "${#TEST_MANIFESTS[@]}" -ne 40 ]; then
-  echo "Error: expected 40 checked-in test packages, found ${#TEST_MANIFESTS[@]}." >&2
+if [ "${#TEST_DIRS[@]}" -ne 40 ]; then
+  echo "Error: expected 40 checked-in test packages, found ${#TEST_DIRS[@]}." >&2
   exit 1
 fi
 
@@ -225,9 +225,9 @@ for directory in "${GENERATED_DIRS[@]}"; do
   add_tonik_util_override "$directory/pubspec.yaml" "../../../packages/tonik_util"
   PUB_GET_COMMANDS+=("cd '$directory' && dart pub get")
 done
-for manifest in "${TEST_MANIFESTS[@]}"; do
-  add_tonik_util_override "$manifest" "../../../packages/tonik_util"
-  PUB_GET_COMMANDS+=("cd '${manifest%/pubspec.yaml}' && dart pub get")
+for directory in "${TEST_DIRS[@]}"; do
+  add_tonik_util_override "$directory/pubspec.yaml" "../../../packages/tonik_util"
+  PUB_GET_COMMANDS+=("cd '$directory' && dart pub get")
 done
 PUB_GET_COMMANDS+=("cd 'test_helpers' && dart pub get")
 
@@ -246,4 +246,4 @@ if ! java -jar imposter.jar --version >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Setup complete: backend=$BACKEND generated=$generated_count tests=${#TEST_MANIFESTS[@]}"
+echo "Setup complete: backend=$BACKEND generated=$generated_count tests=${#TEST_DIRS[@]}"

@@ -62,6 +62,10 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       response.property('statusCode');
 
   @override
+  Code responseStatusCodeRangeGuard(RangeResponseStatus status) =>
+      Code('status >= ${status.min} && status <= ${status.max}');
+
+  @override
   Expression responseContentType(Expression response) =>
       response.property('headers').index(literalString('content-type'));
 

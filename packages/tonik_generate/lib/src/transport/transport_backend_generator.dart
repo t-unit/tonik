@@ -44,6 +44,8 @@ abstract interface class TransportBackendGenerator {
 
   Expression responseStatusCode(Expression response);
 
+  Code responseStatusCodeRangeGuard(RangeResponseStatus status);
+
   Expression responseContentType(Expression response);
 
   Expression responseBodyBytes(Expression response);
