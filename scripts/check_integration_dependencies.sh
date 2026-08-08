@@ -31,10 +31,27 @@ dependency_names() {
     | if $packages[$target] == null then
         error("Package \($target) is missing from dart pub deps output")
       else
-        ($packages[$target].directDependencies // [])[]
-        | recurse($packages[.].directDependencies[]?)
+        {
+          pending: ($packages[$target].directDependencies // []),
+          seen: {}
+        }
+        | until(
+            (.pending | length) == 0;
+            .pending[0] as $dependency
+            | .pending = .pending[1:]
+            | if .seen[$dependency] then
+                .
+              else
+                .seen[$dependency] = true
+                | .pending += (
+                    $packages[$dependency].directDependencies // []
+                  )
+              end
+          )
+        | .seen
+        | keys[]
       end
-  ' | sort -u
+  '
 }
 
 require_dependency() {
