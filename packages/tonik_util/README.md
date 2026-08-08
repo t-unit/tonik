@@ -6,7 +6,12 @@ This package provides encoding, decoding, and serialization functionality requir
 
 ## Usage
 
-This package is automatically included as a dependency when you use Tonik-generated code. You typically don't need to add it manually to your `pubspec.yaml`.
+Generated packages depend on `tonik_util`. Add it as a direct dependency when
+application code imports `TonikResult`, `TonikCancellation`, or `ServerConfig`:
+
+```bash
+dart pub add tonik_util
+```
 
 ## Documentation
 
@@ -19,6 +24,7 @@ For complete documentation and usage examples, see the main [Tonik package](http
 - Simple encoding for path and query parameters
 - Support for various OpenAPI parameter styles
 - DateTime and Date handling with timezone support
+- Backend-neutral results, cancellation, and client configuration
 - Custom exception types for encoding/decoding errors
 
 ## License

@@ -14,6 +14,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | **Text response charsets** | Decodes legacy response encodings declared by `Content-Type`, including ISO-8859, Windows code pages, and common East Asian encodings |
 | **readOnly / writeOnly** | Properties excluded from the correct serialization direction automatically |
 | **Server variables** | URL templating with enum constraints and runtime substitution |
+| **HTTP backends** | Generates one package backed by Dio (default) or `package:http` |
 | **Immutable collections** | Optional `IList`/`IMap` from [fast_immutable_collections](https://pub.dev/packages/fast_immutable_collections) with automatic serialization |
 | **Pure Dart** | No Java, no Docker, no external tooling |
 
@@ -24,6 +25,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
   - [Table of Contents](#table-of-contents)
   - [How Generated Code Works](#how-generated-code-works)
     - [Architecture Overview](#architecture-overview)
+    - [HTTP Backends](#http-backends)
     - [Custom Encoding \& Scoped Emission](#custom-encoding--scoped-emission)
     - [Naming Resolution](#naming-resolution)
     - [Response Handling](#response-handling)
@@ -55,13 +57,14 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 
 ### Architecture Overview
 
-Generated code uses [Dio](https://pub.dev/packages/dio) as the HTTP client. Each API operation is encapsulated in its own class for request building and response parsing.
+Generated code uses the selected HTTP backend. Each API operation is
+encapsulated in its own class for request building and response parsing.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   API Client    │────▶│   Operations    │────▶│      Dio        │
-│  (per tag)      │     │ (per endpoint)  │     │  (HTTP layer)   │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┌─────────────────┐     ┌─────────────────┐     ┌──────────────────┐
+│   API Client    │────▶│   Operations    │────▶│ Selected backend │
+│  (per tag)      │     │ (per endpoint)  │     │ Dio or http      │
+└─────────────────┘     └─────────────────┘     └──────────────────┘
                                │
                                ▼
                   ┌───────────────────────┐
@@ -70,6 +73,14 @@ Generated code uses [Dio](https://pub.dev/packages/dio) as the HTTP client. Each
                   │   encode/decode)      │
                   └───────────────────────┘
 ```
+
+### HTTP Backends
+
+Dio is the default; `package:http` can be selected for the whole generated
+package. Models, API-client methods, decoded values, cancellation, and error
+categories are portable. Custom client setup and raw response access use the
+selected backend's types. See [HTTP Backends](http_backends.md) for selection,
+ownership, and migration guidance.
 
 ### Custom Encoding & Scoped Emission
 
@@ -340,8 +351,8 @@ Each operation generates a sealed response class. Every status code and content 
 | Operation-level `security` | ✅ (documented in comments) |
 
 **Security:** Tonik documents security requirements but does not generate
-authentication code. Configure Dio in a `ServerConfig<Dio>` client factory.
-See [Authentication Guide](authentication.md).
+authentication code. Configure the selected client with a Dio interceptor or a
+wrapped `http.Client`. See [Authentication Guide](authentication.md).
 
 ---
 
@@ -393,6 +404,7 @@ Tonik supports an optional `tonik.yaml` for customizing code generation:
 - **Filtering** - Include/exclude by tags, operations, or schemas
 - **Deprecation handling** - `annotate`, `exclude`, or `ignore`
 - **Content type mapping** - Map custom types to `json`, `form`, `text`, `bytes`
+- **HTTP backend** - Generate with Dio or `package:http`
 - **Enum unknown case** - Forward-compatible enum handling
 
 See [Configuration](configuration.md) for full details and examples.

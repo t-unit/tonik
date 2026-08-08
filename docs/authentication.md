@@ -1,374 +1,98 @@
 # Authentication Guide
 
-This guide explains how to handle authentication when using Tonik-generated API clients.
+Tonik documents OpenAPI security requirements in generated library and method
+comments. It does not generate authentication code. Configure authentication
+on the selected HTTP client and pass that client through `ServerConfig`.
 
-## Overview
+## Dio
 
-Tonik generates API client classes that work with Server objects.
-Authentication is configured on a Dio client supplied through
-`ServerConfig<Dio>`, keeping authentication logic separate from generated API
-code.
-
-Use `clientFactory` for Dio options, interceptors, and adapters:
-
-```dart
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () => Dio(
-    BaseOptions(connectTimeout: const Duration(seconds: 10)),
-  )..interceptors.add(AuthInterceptor('your-jwt-token-here')),
-);
-```
-
-The factory is called lazily at most once per server, and the returned Dio is
-cached. The generated server applies its URL after the factory returns, so a
-`BaseOptions.baseUrl` supplied by the factory cannot override the server URL.
-
-You can instead inject an existing Dio:
-
-```dart
-final dio = Dio()..interceptors.add(AuthInterceptor('your-jwt-token-here'));
-final serverConfig = ServerConfig<Dio>.client(dio);
-```
-
-An injected client is borrowed. A factory-created client, or the default Dio
-created when neither option is supplied, is conceptually owned by the generated
-server. Generated servers do not currently close either borrowed or owned
-clients.
-
-## Basic Authentication Setup
-
-### 1. Bearer Token Authentication
+Use a client factory for Dio options, interceptors, and adapters:
 
 ```dart
 import 'package:dio/dio.dart';
-import 'package:tonik/your_api_client.dart'; // Your generated client
 import 'package:tonik_util/tonik_util.dart';
+import 'package:your_api/your_api.dart';
 
-class AuthInterceptor extends Interceptor {
-  AuthInterceptor(this._token);
-  
+final token = 'your-token';
+
+final server = CustomServer(
+  baseUrl: 'https://api.example.com',
+  serverConfig: ServerConfig<Dio>.clientFactory(
+    () => Dio(
+      BaseOptions(connectTimeout: const Duration(seconds: 10)),
+    )..interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            options.headers['Authorization'] = 'Bearer $token';
+            handler.next(options);
+          },
+        ),
+      ),
+  ),
+);
+```
+
+The factory is called lazily at most once per server. The generated server owns
+the returned Dio instance and closes it when `server.close()` is called. The
+generated server URL is applied after the factory returns, so it takes
+precedence over `BaseOptions.baseUrl`.
+
+If the application already owns a configured Dio instance, borrow it instead:
+
+```dart
+final dio = Dio()..interceptors.add(authInterceptor);
+final config = ServerConfig<Dio>.client(dio);
+```
+
+The application remains responsible for closing an injected client.
+
+## `package:http`
+
+Wrap `http.Client` to add authentication to each request:
+
+```dart
+import 'package:http/http.dart' as http;
+import 'package:tonik_util/tonik_util.dart';
+import 'package:your_api/your_api.dart';
+
+final class AuthClient extends http.BaseClient {
+  AuthClient(this._token) : _inner = http.Client();
+
   final String _token;
+  final http.Client _inner;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (_token.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $_token';
-    }
-    handler.next(options);
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    request.headers['Authorization'] = 'Bearer $_token';
+    return _inner.send(request);
   }
+
+  @override
+  void close() => _inner.close();
 }
 
-// Setup with ServerConfig
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () => Dio()
-    ..interceptors.add(AuthInterceptor('your-jwt-token-here')),
+final server = CustomServer(
+  baseUrl: 'https://api.example.com',
+  serverConfig: ServerConfig<http.Client>.clientFactory(
+    () => AuthClient('your-token'),
+  ),
 );
-
-final server = YourServer(serverConfig: serverConfig);
-final apiClient = YourApiClient(server);
-final users = await apiClient.getUsers();
 ```
 
-### 2. API Key Authentication
-
-```dart
-class ApiKeyService {
-  ApiKeyService(this._apiKey);
-
-  final String _apiKey;
-
-  String get apiKey => _apiKey;
-
-  Interceptor createAuthInterceptor() {
-    return _ApiKeyInterceptor(this);
-  }
-}
-
-class _ApiKeyInterceptor extends Interceptor {
-  _ApiKeyInterceptor(this._apiKeyService);
-
-  final ApiKeyService _apiKeyService;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (_apiKeyService.apiKey.isNotEmpty) {
-      // Add as query parameter
-      options.queryParameters['api_key'] = _apiKeyService.apiKey;
-
-      // Or add as header
-      // options.headers['X-API-Key'] = _apiKeyService.apiKey;
-    }
-    handler.next(options);
-  }
-}
-
-// Setup with ServerConfig
-final apiKeyService = ApiKeyService('your-api-key-here');
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () => Dio()
-    ..interceptors.add(apiKeyService.createAuthInterceptor()),
-);
-
-final server = YourServer(serverConfig: serverConfig);
-final apiClient = YourApiClient(server);
-```
-
-### 3. OAuth2 Flow
-
-```dart
-class OAuth2Service {
-  OAuth2Service({
-    required this.clientId,
-    required this.clientSecret,
-    required this.tokenUrl,
-  });
-
-  String? _accessToken;
-  final String _clientId;
-  final String _clientSecret;
-  final String _tokenUrl;
-
-  String? get accessToken => _accessToken;
-
-  Future<void> _refreshToken() async {
-    final response = await Dio().post(
-      _tokenUrl,
-      data: {
-        'grant_type': 'client_credentials',
-        'client_id': _clientId,
-        'client_secret': _clientSecret,
-      },
-    );
-
-    _accessToken = response.data['access_token'];
-  }
-
-  Interceptor createAuthInterceptor() {
-    return _OAuth2Interceptor(this);
-  }
-}
-
-class _OAuth2Interceptor extends Interceptor {
-  _OAuth2Interceptor(this._oauth2Service);
-
-  final OAuth2Service _oauth2Service;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    if (_oauth2Service.accessToken == null) {
-      await _oauth2Service._refreshToken();
-    }
-
-    if (_oauth2Service.accessToken != null) {
-      options.headers['Authorization'] = 'Bearer ${_oauth2Service.accessToken}';
-    }
-    handler.next(options);
-  }
-}
-
-// Setup with ServerConfig
-final oauth2Service = OAuth2Service(
-  clientId: 'your-client-id',
-  clientSecret: 'your-client-secret',
-  tokenUrl: 'https://auth.example.com/oauth/token',
-);
-
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () => Dio()
-    ..interceptors.add(oauth2Service.createAuthInterceptor()),
-);
-
-final server = YourServer(serverConfig: serverConfig);
-final apiClient = YourApiClient(server);
-```
-
-### 4. Mutual TLS (mTLS) Authentication
-
-```dart
-class MutualTlsService {
-  MutualTlsService(this._certificatePath, this._keyPath);
-
-  final String _certificatePath;
-  final String _keyPath;
-
-  Interceptor createAuthInterceptor() {
-    return _MutualTlsInterceptor(this);
-  }
-}
-
-class _MutualTlsInterceptor extends Interceptor {
-  _MutualTlsInterceptor(this._tlsService);
-
-  final MutualTlsService _tlsService;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // Note: Mutual TLS is typically configured at the HTTP client level
-    // This is a simplified example showing the pattern
-    // In practice, you'd configure the SecurityContext for the underlying
-    // HTTP client (e.g., dart:io HttpClient or similar)
-    handler.next(options);
-  }
-}
-
-// Setup with ServerConfig
-final tlsService = MutualTlsService(
-  '/path/to/client-cert.pem',
-  '/path/to/client-key.pem',
-);
-
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () {
-    final dio = Dio()
-      ..interceptors.add(tlsService.createAuthInterceptor());
-    // Configure dio.httpClientAdapter for the target platform here.
-    return dio;
-  },
-);
-
-final server = YourServer(serverConfig: serverConfig);
-final apiClient = YourApiClient(server);
-```
-
-**Note**: Mutual TLS authentication requires client certificates to be configured at the HTTP client level. The above example shows the interceptor pattern for consistency, but actual mTLS setup typically involves configuring the underlying HTTP client's `SecurityContext` with client certificates and private keys.
-
-## Advanced Authentication Patterns
-
-### Token Refresh with Retry
-
-```dart
-class TokenRefreshService {
-  TokenRefreshService(this._tokenUrl);
-
-  String? _accessToken;
-  String? _refreshToken;
-  final String _tokenUrl;
-
-  String? get accessToken => _accessToken;
-  String? get refreshToken => _refreshToken;
-
-  Future<void> _refreshAccessToken() async {
-    final response = await Dio().post(
-      _tokenUrl,
-      data: {
-        'grant_type': 'refresh_token',
-        'refresh_token': _refreshToken,
-      },
-    );
-
-    _accessToken = response.data['access_token'];
-    _refreshToken = response.data['refresh_token'];
-  }
-
-  Interceptor createAuthInterceptor() {
-    return _TokenRefreshInterceptor(this);
-  }
-}
-
-class _TokenRefreshInterceptor extends Interceptor {
-  _TokenRefreshInterceptor(this._tokenService);
-
-  final TokenRefreshService _tokenService;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (_tokenService.accessToken != null) {
-      options.headers['Authorization'] = 'Bearer ${_tokenService.accessToken}';
-    }
-    handler.next(options);
-  }
-
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401 && _tokenService.refreshToken != null) {
-      try {
-        // Try to refresh token
-        await _tokenService._refreshAccessToken();
-        // Retry the original request
-        final response = await Dio().request(
-          err.requestOptions.path,
-          options: Options(
-            method: err.requestOptions.method,
-            headers: err.requestOptions.headers,
-          ).compose(
-            err.requestOptions.extra['dio'] as BaseOptions?,
-            err.requestOptions.path,
-            data: err.requestOptions.data,
-            queryParameters: err.requestOptions.queryParameters,
-          ),
-        );
-        handler.resolve(response);
-      } catch (e) {
-        handler.reject(err);
-      }
-    } else {
-      handler.reject(err);
-    }
-  }
-}
-```
-
-### Multiple Authentication Methods
-
-```dart
-class MultiAuthService {
-  MultiAuthService(this._authHeaders);
-
-  final Map<String, String> _authHeaders;
-  Map<String, String> get authHeaders => _authHeaders;
-
-  Interceptor createAuthInterceptor() {
-    return _MultiAuthInterceptor(this);
-  }
-}
-
-class _MultiAuthInterceptor extends Interceptor {
-  _MultiAuthInterceptor(this._authService);
-
-  final MultiAuthService _authService;
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // Add all authentication headers
-    options.headers.addAll(_authService.authHeaders);
-    handler.next(options);
-  }
-}
-
-// Setup for multiple auth methods
-final multiAuthService = MultiAuthService({
-  'Authorization': 'Bearer your-jwt-token',
-  'X-API-Key': 'your-api-key',
-  'X-Client-ID': 'your-client-id',
-});
-
-final serverConfig = ServerConfig<Dio>.clientFactory(
-  () => Dio()
-    ..interceptors.add(multiAuthService.createAuthInterceptor()),
-);
-
-final server = YourServer(serverConfig: serverConfig);
-final apiClient = YourApiClient(server);
-```
-
-## Security Scheme Documentation
-
-While Tonik doesn't generate authentication code, it does parse and expose security scheme information from the OpenAPI specification. This information is automatically included in the generated API documentation:
-
-- **Library-level documentation** - All available security schemes are documented in the main library file
-- **Method-level documentation** - Individual API methods include their specific security requirements in doc comments
-
-You can use this information to:
-
-1. **Understand authentication requirements** from the generated documentation
-2. **Configure interceptors** based on the documented security schemes
-3. **Reference security information** when implementing authentication
-
-## Best Practices
-
-1. **Create dedicated authentication services** that provide interceptor factories
-2. **Configure authentication in a `ServerConfig<Dio>` client factory**
-3. **Keep authentication logic completely separate** from generated API client code
-4. **Handle token refresh** gracefully with retry logic in your service classes
-5. **Consider security scheme information** from the OpenAPI spec for documentation
-6. **Test authentication flows** thoroughly with mocked services
+The generated server owns and closes the factory-created wrapper. Pass an
+existing wrapper with `ServerConfig<http.Client>.client(...)` when the
+application should retain ownership.
+
+Token refresh, retries, OAuth flows, API-key placement, and TLS configuration
+belong in the interceptor or client wrapper. Tonik does not interpret security
+schemes at runtime.
+
+## Generated Security Documentation
+
+Generated library documentation lists the security schemes declared by the
+OpenAPI document. Generated API methods list their applicable schemes and
+OAuth scopes. Use those comments to configure the client; they do not imply
+runtime authentication support.
+
+See [HTTP Backends](http_backends.md) for backend selection, client ownership,
+and migration guidance.

@@ -15,6 +15,10 @@ outputDir: ./generated        # Output directory (--output-dir, -o)
 packageName: my_api_client    # Package name (--package-name, -p)
 logLevel: warn                # Log level: verbose, info, warn, silent (--log-level)
 
+# Generated HTTP client. Defaults to dio.
+transport:
+  backend: dio               # dio or http (--backend)
+
 nameOverrides:
   schemas:
     # Remove unnecessary suffixes
@@ -117,8 +121,29 @@ tonik --output-dir ./other-location
 | `--output-dir`, `-o` | `outputDir` | Directory for generated code (defaults to `.`) |
 | `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
 | `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
+| `--backend` | `transport.backend` | Generated HTTP backend: `dio` or `http` (defaults to `dio`) |
 | `--immutable-collections` | `immutableCollections` | Use `IList`/`IMap` instead of `List`/`Map` (defaults to `false`) |
 | `--workers` | `workerCount` | Number of worker isolates for parallel model file generation (defaults to auto) |
+
+## HTTP Backend
+
+Tonik generates one backend for the whole output package. Dio is the default.
+Select `package:http` in `tonik.yaml`:
+
+```yaml
+transport:
+  backend: http
+```
+
+Or override the file from the command line:
+
+```bash
+tonik --backend http
+```
+
+There is no runtime, server-level, or operation-level backend switch. Change
+the setting and regenerate the package. See [HTTP Backends](http_backends.md)
+for client setup and migration guidance.
 
 ## Name Overrides
 
