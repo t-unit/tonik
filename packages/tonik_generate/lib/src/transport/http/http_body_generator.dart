@@ -46,6 +46,9 @@ class HttpBodyGenerator {
       );
       final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
       final cases = <Code>[];
+      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
+        operation,
+      );
 
       for (final item in content) {
         final variantName = subclassNames[item.rawContentType]!;
@@ -75,6 +78,7 @@ class HttpBodyGenerator {
                     buildHttpMultipartBodyStatements(
                       item,
                       'value.value',
+                      headerParameters: multipartHeaderInfos,
                     ),
                   ),
               ).closure.call([]).awaited.code
@@ -133,6 +137,9 @@ class HttpBodyGenerator {
     final item = content.single;
     if (item.contentType == ContentType.multipart) {
       final multipartHeaderParameters = _multipartHeaderParameters(operation);
+      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
+        operation,
+      );
       return Method(
         (b) => b
           ..name = '_data'
@@ -162,7 +169,11 @@ class HttpBodyGenerator {
           ..lambda = false
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;'),
-            ...buildHttpMultipartBodyStatements(item, 'body'),
+            ...buildHttpMultipartBodyStatements(
+              item,
+              'body',
+              headerParameters: multipartHeaderInfos,
+            ),
           ]),
       );
     }

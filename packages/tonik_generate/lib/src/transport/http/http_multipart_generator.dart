@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
@@ -12,8 +13,9 @@ import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dar
 /// preserve duplicate names or ordering relative to file parts.
 List<Code> buildHttpMultipartBodyStatements(
   RequestContent content,
-  String bodyAccessor,
-) {
+  String bodyAccessor, {
+  List<MultipartHeaderParamInfo>? headerParameters,
+}) {
   final model = content.model.resolved;
   if (model is! ClassModel) {
     return [
@@ -29,12 +31,27 @@ List<Code> buildHttpMultipartBodyStatements(
     ];
   }
 
+  final normalizedHeaderParameters =
+      (headerParameters ?? extractMultipartHeaderParamInfo(content))
+          .where((parameter) => identical(parameter.content, content))
+          .toList();
+  final usesCustomParts = normalizedHeaderParameters.isNotEmpty;
+  final target = (
+    variableName: usesCustomParts ? r'_$multipartParts' : r'_$multipartFiles',
+    usesCustomParts: usesCustomParts,
+  );
+  final partType = usesCustomParts
+      ? refer(
+          'TonikMultipartPart',
+          'package:tonik_util/tonik_util.dart',
+        )
+      : refer('MultipartFile', 'package:http/http.dart');
   final statements = <Code>[
-    declareFinal(r'_$multipartFiles')
+    declareFinal(target.variableName)
         .assign(
           literalList(
             [],
-            refer('MultipartFile', 'package:http/http.dart'),
+            partType,
           ),
         )
         .statement,
@@ -47,12 +64,24 @@ List<Code> buildHttpMultipartBodyStatements(
     final isNullable = property.isNullable || !property.isRequired;
     final accessor = refer(bodyAccessor).property(normalizedName);
     final value = isNullable ? accessor.nullChecked : accessor;
+    final headerResult = _buildHeaderMapStatements(
+      content,
+      normalizedName,
+      content.multipartEncoding?[property],
+      headerParameters: normalizedHeaderParameters,
+      isPropertyOptional: isNullable,
+    );
     final part = _buildPart(
       property.model,
       property.name,
       value,
       encoding: content.multipartEncoding?[property],
+      target: target,
+      headers: headerResult == null ? null : refer(headerResult.variableName),
     );
+    final encodedPart = headerResult == null
+        ? part
+        : Block.of([...headerResult.statements, part]);
 
     if (isNullable) {
       statements.add(
@@ -60,24 +89,35 @@ List<Code> buildHttpMultipartBodyStatements(
           const Code('if ('),
           accessor.code,
           const Code(' != null) {'),
-          part,
+          encodedPart,
           const Code('}'),
         ]),
       );
     } else {
-      statements.add(part);
+      statements.add(encodedPart);
     }
   }
 
-  statements.add(refer(r'_$multipartFiles').returned.statement);
+  statements.add(
+    usesCustomParts
+        ? refer(
+            'TonikMultipartBody',
+            'package:tonik_util/tonik_util.dart',
+          ).newInstance([refer(target.variableName)]).returned.statement
+        : refer(target.variableName).returned.statement,
+  );
   return statements;
 }
+
+typedef _MultipartTarget = ({String variableName, bool usesCustomParts});
 
 Code _buildPart(
   Model model,
   String rawName,
   Expression value, {
   required PartEncoding? encoding,
+  required _MultipartTarget target,
+  required Expression? headers,
 }) {
   final resolved = model.resolved;
   return switch (resolved) {
@@ -88,12 +128,16 @@ Code _buildPart(
         encoding,
         'application/octet-stream',
       ),
+      target: target,
+      headers: headers,
     ),
     ListModel() => _buildListParts(
       rawName,
       value,
       resolved,
       encoding: encoding,
+      target: target,
+      headers: headers,
     ),
     NeverModel() => generateEncodingExceptionExpression(
       "Cannot encode NeverModel property '$rawName' - this type does not "
@@ -104,6 +148,8 @@ Code _buildPart(
       rawName,
       value,
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     ),
     AnyModel() => _addTextPart(
       rawName,
@@ -114,24 +160,29 @@ Code _buildPart(
         ).call([value]),
       ]),
       rawContentType: _rawContentType(encoding, 'application/json'),
+      target: target,
+      headers: headers,
     ),
     MapModel() => _addTextPart(
       rawName,
       refer('jsonEncode', 'dart:convert').call([value]),
       rawContentType: _rawContentType(encoding, 'application/json'),
+      target: target,
+      headers: headers,
     ),
-    ClassModel() || CompositeModel() => _addTextPart(
+    ClassModel() || CompositeModel() => _buildObjectPart(
       rawName,
-      refer(
-        'jsonEncode',
-        'dart:convert',
-      ).call([value.property('toJson').call([])]),
-      rawContentType: _rawContentType(encoding, 'application/json'),
+      value,
+      encoding: encoding,
+      target: target,
+      headers: headers,
     ),
     EnumModel() => _addTextPart(
       rawName,
       _enumText(value, resolved, encoding?.contentType),
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     ),
     DateTimeModel() => _addTextPart(
       rawName,
@@ -141,11 +192,15 @@ Code _buildPart(
         method: 'toTimeZonedIso8601String',
       ),
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     ),
     PrimitiveModel() => _addTextPart(
       rawName,
       _primitiveText(value, encoding?.contentType, method: 'toString'),
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     ),
     NamedModel() => generateEncodingExceptionExpression(
       "Cannot encode cyclic AliasModel property '$rawName'.",
@@ -159,6 +214,8 @@ Code _buildListParts(
   Expression value,
   ListModel model, {
   required PartEncoding? encoding,
+  required _MultipartTarget target,
+  required Expression? headers,
 }) {
   final content = model.content.resolved;
   if (content is ListModel) {
@@ -189,6 +246,8 @@ Code _buildListParts(
           encoding,
           'application/octet-stream',
         ),
+        target: target,
+        headers: headers,
       ),
       const Code('}'),
     ]);
@@ -213,6 +272,8 @@ Code _buildListParts(
         _jsonListValue(value, content),
       ]),
       rawContentType: _rawContentType(encoding, 'application/json'),
+      target: target,
+      headers: headers,
     );
   }
 
@@ -238,6 +299,8 @@ Code _buildListParts(
         rawName,
         refer('jsonEncode', 'dart:convert').call([itemJson]),
         rawContentType: _rawContentType(encoding, 'application/json'),
+        target: target,
+        headers: headers,
       ),
       const Code('}'),
     ]);
@@ -245,6 +308,17 @@ Code _buildListParts(
 
   final explode = encoding?.explode ?? true;
   if (!explode) {
+    if (encoding?.style == EncodingStyle.pipeDelimited ||
+        encoding?.style == EncodingStyle.spaceDelimited) {
+      return _buildDelimitedListParts(
+        rawName,
+        value,
+        content,
+        encoding: encoding!,
+        target: target,
+        headers: headers,
+      );
+    }
     final serialized = buildSimpleValueExpression(
       value,
       model,
@@ -255,6 +329,8 @@ Code _buildListParts(
       rawName,
       serialized,
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     );
   }
 
@@ -266,6 +342,223 @@ Code _buildListParts(
       rawName,
       _listItemText(refer('item'), content, encoding?.contentType),
       rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
+    ),
+    const Code('}'),
+  ]);
+}
+
+Code _buildObjectPart(
+  String rawName,
+  Expression value, {
+  required PartEncoding? encoding,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) {
+  if (encoding?.style == EncodingStyle.deepObject) {
+    return _buildDeepObjectParts(
+      rawName,
+      value,
+      encoding: encoding!,
+      target: target,
+      headers: headers,
+    );
+  }
+
+  if (encoding?.isStyleBased ?? false) {
+    if (encoding?.style == EncodingStyle.form) {
+      return _buildRawStyleObjectParts(
+        rawName,
+        value,
+        explode: encoding?.explode ?? true,
+        target: target,
+        headers: headers,
+      );
+    }
+    return generateEncodingExceptionExpression(
+      '${encoding?.style?.name ?? 'unknown'} style is not supported for '
+      'object multipart part $rawName',
+      raw: true,
+    ).statement;
+  }
+
+  if (encoding?.contentType == ContentType.form) {
+    return _buildUrlEncodedObjectPart(
+      rawName,
+      value,
+      rawContentType: _rawContentType(
+        encoding,
+        'application/x-www-form-urlencoded',
+      ),
+      target: target,
+      headers: headers,
+    );
+  }
+
+  return _addTextPart(
+    rawName,
+    refer(
+      'jsonEncode',
+      'dart:convert',
+    ).call([value.property('toJson').call([])]),
+    rawContentType: _rawContentType(encoding, 'application/json'),
+    target: target,
+    headers: headers,
+  );
+}
+
+Code _buildDeepObjectParts(
+  String rawName,
+  Expression value, {
+  required PartEncoding encoding,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) {
+  final namedArguments = <String, Expression>{
+    'explode': literalTrue,
+    'allowEmpty': literalTrue,
+    if (encoding.allowReserved ?? false) 'allowReserved': literalTrue,
+  };
+  final entries = value.property('toDeepObject').call(
+    [specLiteralString(rawName)],
+    namedArguments,
+  );
+  return Block.of([
+    const Code('for (final entry in '),
+    entries.code,
+    const Code(') {'),
+    _addTextPartExpression(
+      refer('entry').property('name'),
+      refer('entry').property('value'),
+      rawContentType: 'application/x-www-form-urlencoded',
+      target: target,
+      headers: headers,
+    ),
+    const Code('}'),
+  ]);
+}
+
+Code _buildUrlEncodedObjectPart(
+  String rawName,
+  Expression value, {
+  required String rawContentType,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) {
+  final entries = value
+      .property('toForm')
+      .call(
+        [specLiteralString(rawName)],
+        {
+          'explode': literalTrue,
+          'allowEmpty': literalTrue,
+          'useQueryComponent': literalTrue,
+        },
+      );
+  final joined = entries
+      .property('map')
+      .call([
+        Method(
+          (builder) => builder
+            ..lambda = true
+            ..requiredParameters.add(Parameter((p) => p..name = 'entry'))
+            ..body = const Code(r"'${entry.name}=${entry.value}'"),
+        ).closure,
+      ])
+      .property('join')
+      .call([literalString('&')]);
+  return _addTextPart(
+    rawName,
+    joined,
+    rawContentType: rawContentType,
+    target: target,
+    headers: headers,
+  );
+}
+
+Code _buildRawStyleObjectParts(
+  String rawName,
+  Expression value, {
+  required bool explode,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) {
+  final entries = value
+      .property('parameterProperties')
+      .call([], {'allowEmpty': literalTrue})
+      .property('toRawStyleParts')
+      .call(
+        [specLiteralString(rawName)],
+        {'explode': literalBool(explode)},
+      );
+  return Block.of([
+    const Code('for (final entry in '),
+    entries.code,
+    const Code(') {'),
+    _addTextPartExpression(
+      refer('entry').property('name'),
+      refer('entry').property('value'),
+      rawContentType: 'text/plain',
+      target: target,
+      headers: headers,
+    ),
+    const Code('}'),
+  ]);
+}
+
+Code _buildDelimitedListParts(
+  String rawName,
+  Expression value,
+  Model content, {
+  required PartEncoding encoding,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) {
+  final needsMapping = content is! StringModel;
+  final list = needsMapping
+      ? value
+            .property('map')
+            .call([
+              Method(
+                (builder) => builder
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((p) => p..name = 'item'))
+                  ..body = _listItemText(
+                    refer('item'),
+                    content,
+                    encoding.contentType,
+                  ).code,
+              ).closure,
+            ])
+            .property('toList')
+            .call([])
+      : value;
+  final isSpaceDelimited = encoding.style == EncodingStyle.spaceDelimited;
+  final encoded = list
+      .property(
+        isSpaceDelimited ? 'toSpaceDelimited' : 'toPipeDelimited',
+      )
+      .call(
+        [],
+        {
+          'explode': literalFalse,
+          'allowEmpty': literalTrue,
+          'alreadyEncoded': literalTrue,
+          if (isSpaceDelimited) 'percentEncodeDelimiter': literalFalse,
+          if (encoding.allowReserved ?? false) 'allowReserved': literalTrue,
+        },
+      );
+  return Block.of([
+    const Code('for (final item in '),
+    encoded.code,
+    const Code(') {'),
+    _addTextPart(
+      rawName,
+      refer('item'),
+      rawContentType: _rawContentType(encoding, 'text/plain'),
+      target: target,
+      headers: headers,
     ),
     const Code('}'),
   ]);
@@ -385,17 +678,37 @@ Code _addFilePart(
   String rawName,
   Expression file, {
   required String rawContentType,
+  required _MultipartTarget target,
+  required Expression? headers,
 }) => _addPart(
-  rawName,
+  specLiteralString(rawName),
   file.property('toBytes').call([]),
   rawContentType: rawContentType,
   filename: file.property('fileName').ifNullThen(specLiteralString(rawName)),
+  target: target,
+  headers: headers,
 );
 
 Code _addTextPart(
   String rawName,
   Expression text, {
   required String rawContentType,
+  required _MultipartTarget target,
+  required Expression? headers,
+}) => _addTextPartExpression(
+  specLiteralString(rawName),
+  text,
+  rawContentType: rawContentType,
+  target: target,
+  headers: headers,
+);
+
+Code _addTextPartExpression(
+  Expression name,
+  Expression text, {
+  required String rawContentType,
+  required _MultipartTarget target,
+  required Expression? headers,
 }) {
   final encoding = _encoding(rawContentType);
   if (encoding == null) {
@@ -404,18 +717,40 @@ Code _addTextPart(
     ).statement;
   }
   return _addPart(
-    rawName,
+    name,
     encoding.property('encode').call([text]),
     rawContentType: rawContentType,
+    target: target,
+    headers: headers,
   );
 }
 
 Code _addPart(
-  String rawName,
+  Expression name,
   Expression bytes, {
   required String rawContentType,
+  required _MultipartTarget target,
+  required Expression? headers,
   Expression? filename,
 }) {
+  if (target.usesCustomParts) {
+    return refer(target.variableName).property('add').call([
+      refer(
+        'TonikMultipartPart',
+        'package:tonik_util/tonik_util.dart',
+      ).newInstance(
+        [],
+        {
+          'name': name,
+          'bytes': bytes,
+          'contentType': specLiteralString(rawContentType),
+          'filename': ?filename,
+          'headers': ?headers,
+        },
+      ),
+    ]).statement;
+  }
+
   final namedArguments = <String, Expression>{
     'filename': ?filename,
     'contentType': refer(
@@ -423,15 +758,86 @@ Code _addPart(
       'package:http/http.dart',
     ).property('parse').call([specLiteralString(rawContentType)]),
   };
-  return refer(r'_$multipartFiles').property('add').call([
+  return refer(target.variableName).property('add').call([
     refer(
       'MultipartFile',
       'package:http/http.dart',
     ).property('fromBytes').call(
-      [specLiteralString(rawName), bytes],
+      [name, bytes],
       namedArguments,
     ),
   ]).statement;
+}
+
+final class _HeaderMapResult {
+  const _HeaderMapResult(this.statements, this.variableName);
+
+  final List<Code> statements;
+  final String variableName;
+}
+
+_HeaderMapResult? _buildHeaderMapStatements(
+  RequestContent content,
+  String normalizedPropertyName,
+  PartEncoding? encoding, {
+  required List<MultipartHeaderParamInfo> headerParameters,
+  required bool isPropertyOptional,
+}) {
+  final entries = encoding?.headers?.entries
+      .where((entry) => entry.key.toLowerCase() != 'content-type')
+      .toList();
+  if (entries == null || entries.isEmpty) return null;
+
+  final variableName = '_\$${normalizedPropertyName}Headers';
+  final statements = <Code>[
+    declareFinal(variableName)
+        .assign(
+          literalMap(
+            {},
+            refer('String', 'dart:core'),
+            refer('String', 'dart:core'),
+          ),
+        )
+        .statement,
+  ];
+
+  for (final entry in entries) {
+    final header = entry.value.resolve();
+    final parameter = headerParameters.firstWhere(
+      (parameter) =>
+          identical(parameter.content, content) &&
+          parameter.normalizedPropertyName == normalizedPropertyName &&
+          parameter.rawHeaderName == entry.key,
+    );
+    final parameterReference = isPropertyOptional && header.isRequired
+        ? refer(parameter.name).nullChecked
+        : refer(parameter.name);
+    final serialized = buildSimpleValueExpression(
+      parameterReference,
+      header.model,
+      explode: header.explode,
+      allowEmpty: true,
+    ).unsafeRawBody;
+    final assignment = refer(
+      variableName,
+    ).index(specLiteralString(entry.key)).assign(serialized).statement;
+
+    if (header.isRequired) {
+      statements.add(assignment);
+    } else {
+      statements.add(
+        Block.of([
+          const Code('if ('),
+          refer(parameter.name).code,
+          const Code(' != null) {'),
+          assignment,
+          const Code('}'),
+        ]),
+      );
+    }
+  }
+
+  return _HeaderMapResult(statements, variableName);
 }
 
 Expression? _encoding(String rawContentType) =>

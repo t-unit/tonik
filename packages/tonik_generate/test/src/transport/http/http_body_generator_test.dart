@@ -970,7 +970,7 @@ Future<Object?> _data({required UnsupportedTextUpload body}) async {
       );
     });
 
-    test('adds required per-part header parameters to the body method', () {
+    test('attaches required per-part headers to the encoded body', () {
       final value = _formProperty(
         context,
         name: 'value',
@@ -1022,15 +1022,21 @@ Future<Object?> _data({
   required HeaderUpload body,
   required int valueTrace,
 }) async {
-  final _$multipartFiles = <MultipartFile>[];
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'value',
-      utf8.encode(body.value),
-      contentType: MediaType.parse(r'text/plain'),
+  final _$multipartParts = <TonikMultipartPart>[];
+  final _$valueHeaders = <String, String>{};
+  _$valueHeaders[r'X-Trace'] = valueTrace.toSimple(
+    explode: false,
+    allowEmpty: true,
+  );
+  _$multipartParts.add(
+    TonikMultipartPart(
+      name: r'value',
+      bytes: utf8.encode(body.value),
+      contentType: r'text/plain',
+      headers: _$valueHeaders,
     ),
   );
-  return _$multipartFiles;
+  return TonikMultipartBody(_$multipartParts);
 }
 ''';
 

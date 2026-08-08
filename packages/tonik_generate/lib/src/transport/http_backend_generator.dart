@@ -264,6 +264,10 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         ..url = 'dart:core'
         ..types.add(refer('MultipartFile', 'package:http/http.dart')),
     );
+    final multipartBodyType = refer(
+      'TonikMultipartBody',
+      'package:tonik_util/tonik_util.dart',
+    );
     final isRequiredMultipart = switch (plan.body) {
       MultipartBodyPlan(:final isRequired) => isRequired,
       _ => false,
@@ -275,9 +279,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       ),
       _ => false,
     };
-    final requestType = isRequiredMultipart
-        ? refer('AbortableMultipartRequest', 'package:http/http.dart')
-        : canBeMultipart
+    final requestType = canBeMultipart
         ? refer('BaseRequest', 'package:http/http.dart')
         : refer('AbortableRequest', 'package:http/http.dart');
 
@@ -356,6 +358,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
             plan: plan,
             request: request,
             cancellation: cancellation,
+            multipartFilesType: multipartFilesType,
+            multipartBodyType: multipartBodyType,
           )
         else if (canBeMultipart)
           ..._selectedRequestStatements(
@@ -364,6 +368,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
             cancellation: cancellation,
             bodyBytesType: bodyBytesType,
             multipartFilesType: multipartFilesType,
+            multipartBodyType: multipartBodyType,
           )
         else
           ..._ordinaryRequestStatements(
@@ -374,11 +379,19 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         refer(request).property('headers').property('addAll').call([
           refer(r'_$options'),
         ]).statement,
-        if (isRequiredMultipart)
-          refer(request).property('files').property('addAll').call([
-            refer(r'_$data').asA(multipartFilesType),
-          ]).statement
-        else if (!canBeMultipart)
+        if (canBeMultipart)
+          Block.of([
+            const Code(r'if (_$data is '),
+            multipartBodyType.code,
+            const Code(') {'),
+            refer(request)
+                .property('headers')
+                .index(literalString('content-type'))
+                .assign(refer(r'_$data').property('contentType'))
+                .statement,
+            const Code('}'),
+          ])
+        else
           Block.of([
             const Code(r'if (_$data != null) {'),
             refer(request)
@@ -536,21 +549,55 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     required OperationRequestPlan plan,
     required String request,
     required Expression cancellation,
-  }) => [
-    refer(request)
-        .assign(
-          refer(
-            'AbortableMultipartRequest',
-            'package:http/http.dart',
-          ).newInstance(
-            [literalString(plan.methodName), plan.uri],
-            {
-              'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
-            },
-          ),
-        )
-        .statement,
-  ];
+    required TypeReference multipartFilesType,
+    required Reference multipartBodyType,
+  }) {
+    const bodyRequest = r'_$bodyRequest';
+    const multipartRequest = r'_$multipartRequest';
+    final abortTrigger = <String, Expression>{
+      'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
+    };
+    return [
+      Block.of([
+        const Code(r'if (_$data is '),
+        multipartBodyType.code,
+        const Code(') {'),
+        declareFinal(bodyRequest)
+            .assign(
+              refer(
+                'AbortableRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                abortTrigger,
+              ),
+            )
+            .statement,
+        refer(bodyRequest)
+            .property('bodyBytes')
+            .assign(refer(r'_$data').property('bodyBytes'))
+            .statement,
+        refer(request).assign(refer(bodyRequest)).statement,
+        const Code('} else {'),
+        declareFinal(multipartRequest)
+            .assign(
+              refer(
+                'AbortableMultipartRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                abortTrigger,
+              ),
+            )
+            .statement,
+        refer(multipartRequest).property('files').property('addAll').call([
+          refer(r'_$data').asA(multipartFilesType),
+        ]).statement,
+        refer(request).assign(refer(multipartRequest)).statement,
+        const Code('}'),
+      ]),
+    ];
+  }
 
   List<Code> _ordinaryRequestStatements({
     required OperationRequestPlan plan,
@@ -578,12 +625,37 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     required Expression cancellation,
     required TypeReference bodyBytesType,
     required TypeReference multipartFilesType,
+    required Reference multipartBodyType,
   }) {
+    const bodyRequest = r'_$bodyRequest';
     const multipartRequest = r'_$multipartRequest';
     const ordinaryRequest = r'_$ordinaryRequest';
     return [
       Block.of([
         const Code(r'if (_$data is '),
+        multipartBodyType.code,
+        const Code(') {'),
+        declareFinal(bodyRequest)
+            .assign(
+              refer(
+                'AbortableRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                {
+                  'abortTrigger': cancellation.nullSafeProperty(
+                    'whenCancelled',
+                  ),
+                },
+              ),
+            )
+            .statement,
+        refer(bodyRequest)
+            .property('bodyBytes')
+            .assign(refer(r'_$data').property('bodyBytes'))
+            .statement,
+        refer(request).assign(refer(bodyRequest)).statement,
+        const Code(r'} else if (_$data is '),
         multipartFilesType.code,
         const Code(') {'),
         declareFinal(multipartRequest)
