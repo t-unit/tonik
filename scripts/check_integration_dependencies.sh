@@ -26,25 +26,15 @@ dependency_names() {
       exit 1
     fi
     dart pub deps --json
-  ) | python3 -c \
-    'import json, sys
-data = json.load(sys.stdin)
-target = sys.argv[1]
-packages = {package["name"]: package for package in data["packages"]}
-if target not in packages:
-    raise SystemExit(f"Package {target} is missing from dart pub deps output")
-seen = set()
-pending = list(packages[target].get("directDependencies", []))
-while pending:
-    dependency = pending.pop()
-    if dependency in seen:
-        continue
-    seen.add(dependency)
-    package = packages.get(dependency)
-    if package is not None:
-        pending.extend(package.get("directDependencies", []))
-print("\n".join(sorted(seen)))' \
-    "$package_name"
+  ) | jq -r --arg target "$package_name" '
+    INDEX(.packages[]; .name) as $packages
+    | if $packages[$target] == null then
+        error("Package \($target) is missing from dart pub deps output")
+      else
+        ($packages[$target].directDependencies // [])[]
+        | recurse($packages[.].directDependencies[]?)
+      end
+  ' | sort -u
 }
 
 require_dependency() {
