@@ -64,7 +64,7 @@ See [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/compos
 
 ### No Name Conflicts
 
-Use `Error`, `Response`, `List`, or any Dart built-in as schema names. Tonik uses scoped code emission to properly qualify all type references - no naming collisions with `dart:core` or Dio.
+Use `Error`, `Response`, `List`, or any Dart built-in as schema names. Tonik uses scoped code emission to properly qualify all type references - no naming collisions with `dart:core` or transport dependencies.
 
 ### Integer and String Enums
 
@@ -85,20 +85,30 @@ Path, query, and header parameters support all OpenAPI styles: `simple`, `label`
 
 Install with `dart pub global activate tonik` and run. No JVM, no Docker, no external dependencies.
 
-### Universal Platform Support
+### Choice of HTTP Backend
 
-Generated packages are pure Dart with no platform dependencies. Use them in Flutter apps targeting iOS, Android, web, desktop, or in server-side Dart - the same generated code works everywhere.
+Generate clients with Dio (the default) or `package:http`. Selection is
+generation-time and applies to the whole generated package; ordinary models,
+API calls, and result handling keep the same shape.
+
+### Platform Support
+
+Generated packages are pure Dart with no native plugin dependency. The current
+dual-backend compatibility suite targets the Dart VM. Browser behavior depends
+on the selected backend and is not part of the current compatibility
+certification.
 
 ## Documentation
 
 - [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md) – Complete feature reference
+- [HTTP Backends](https://github.com/t-unit/tonik/blob/main/docs/http_backends.md) – Backend selection, client ownership, and migration
 - [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md) – `tonik.yaml` options, name overrides, filtering
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md) – OpenAPI to Dart type mappings
 - [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) – `oneOf`, `anyOf`, `allOf` usage
 - [Defaults](https://github.com/t-unit/tonik/blob/main/docs/defaults.md) – `default` keyword handling and generated constants
 - [Additional Properties](https://github.com/t-unit/tonik/blob/main/docs/additional_properties.md) – `additionalProperties` support and pure maps
 - [Multipart](https://github.com/t-unit/tonik/blob/main/docs/multipart.md) – `multipart/form-data` request bodies
-- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
+- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Dio interceptors and `http.Client` wrappers
 - [URI Encoding](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding.md) – query/body encoding and `allowReserved`
 
 ## Quick Start
@@ -121,12 +131,14 @@ Add the generated package to your project:
 
 ```bash
 dart pub add my_api:{'path':'./my_api'}
+dart pub add tonik_util
 ```
 
 Then import and use:
 
 ```dart
 import 'package:my_api/my_api.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 final api = PetApi(CustomServer(baseUrl: 'https://api.example.com'));
 
@@ -152,7 +164,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 | **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
 | **Multipart** | `multipart/form-data` with primitive, file, JSON, and array parts; per-part `encoding` and content types |
 | **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas, `additionalProperties` |
-| **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping, parallel generation tuning |
+| **Configuration** | HTTP backend selection, name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping, parallel generation tuning |
 | **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays, `contentEncoding`/`contentMediaType` |
 
 ## Acknowledgments

@@ -4,8 +4,7 @@ import 'package:meta/meta.dart';
 ///
 /// An injected [client] is borrowed: generated servers never close it.
 /// A client returned by [clientFactory], or a default client created when
-/// neither field is provided, is conceptually owned by the generated server.
-/// Generated servers currently do not close owned clients either.
+/// neither field is provided, is owned and closed by the generated server.
 @immutable
 class ServerConfig<Client extends Object> {
   /// Creates configuration that lets the generated server create its default
@@ -25,9 +24,9 @@ class ServerConfig<Client extends Object> {
   /// it.
   final Client? client;
 
-  /// Creates the client conceptually owned by the generated server.
+  /// Creates the client owned by the generated server.
   ///
-  /// Generated servers invoke this lazily and cache the returned client. They
-  /// currently do not close it.
+  /// Generated servers invoke this lazily, cache the returned client, and
+  /// close it when the server is closed.
   final Client Function()? clientFactory;
 }

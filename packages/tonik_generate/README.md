@@ -19,7 +19,7 @@ For complete documentation and usage examples, see the main [Tonik package](http
 - Generates API client classes with methods for each operation
 - Handles various content types and serialization formats
 - Generates request and response wrapper classes
-- Supports authentication schemes
+- Documents authentication schemes on generated libraries and methods
 
 ## License
 
