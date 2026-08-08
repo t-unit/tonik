@@ -70,6 +70,12 @@ final class DioBackendGenerator implements TransportBackendGenerator {
       response.property('statusCode');
 
   @override
+  Code responseStatusCodeRangeGuard(RangeResponseStatus status) => Code(
+    'status != null '
+    '&& status >= ${status.min} && status <= ${status.max}',
+  );
+
+  @override
   Expression responseContentType(Expression response) => response
       .property('headers')
       .property('value')

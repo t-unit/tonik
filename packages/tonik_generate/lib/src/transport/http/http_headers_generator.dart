@@ -40,7 +40,10 @@ class HttpHeadersGenerator {
           .index(specLiteralString('Content-Type'))
           .assign(generated.contentType!)
           .statement;
-      if (requestBody!.isRequired && content.length == 1) {
+      final contentTypeIsRequired =
+          requestBody!.isRequired &&
+          content.every((item) => item.contentType != ContentType.multipart);
+      if (contentTypeIsRequired) {
         statements.add(assignContentType);
       } else {
         statements.add(

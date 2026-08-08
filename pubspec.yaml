@@ -258,49 +258,13 @@ melos:
         cd integration_test/recursive_map/recursive_map_test
         dart test
 
+    test-integration-current:
+      run: ./scripts/test_current_integration.sh
+
     test-integration-all:
       run: |
         set -e
-        for backend in dio http; do
-          ./scripts/setup_integration_tests.sh --backend "$backend"
-          melos run test-integration-additional-properties
-          melos run test-integration-defaulted
-          melos run test-integration-petstore
-          melos run test-integration-petstore-config
-          melos run test-integration-music-streaming
-          melos run test-integration-gov
-          melos run test-integration-simple-encoding
-          melos run test-integration-fastify-type-provider-zod
-          melos run test-integration-composition
-          melos run test-integration-query-parameters
-          melos run test-integration-allow-reserved
-          melos run test-integration-path-encoding
-          melos run test-integration-binary-models
-          melos run test-integration-structured-syntax-suffix
-          melos run test-integration-form-urlencoded
-          melos run test-integration-boolean-schemas
-          melos run test-integration-type-arrays
-          melos run test-integration-medama
-          melos run test-integration-inference
-          melos run test-integration-ref-siblings
-          melos run test-integration-defs
-          melos run test-integration-server-variables
-          melos run test-integration-cookies
-          melos run test-integration-read-write-only
-          melos run test-integration-nullable-bodies
-          melos run test-integration-multipart
-          melos run test-integration-adversarial-strings
-          melos run test-integration-figma
-          melos run test-integration-stripe
-          melos run test-integration-github
-          melos run test-integration-openai
-          melos run test-integration-asana
-          melos run test-integration-twilio
-          melos run test-integration-shopify
-          melos run test-integration-kubernetes
-          melos run test-integration-cloudflare
-          melos run test-integration-totem
-          melos run test-integration-immutable-collections
-          melos run test-integration-naming
-          melos run test-integration-recursive-map
-        done
+        ./scripts/setup_integration_tests.sh --backend dio
+        melos run test-integration-current
+        ./scripts/setup_integration_tests.sh --backend http
+        melos run test-integration-current

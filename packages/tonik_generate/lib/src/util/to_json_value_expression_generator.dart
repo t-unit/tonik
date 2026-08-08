@@ -29,6 +29,7 @@ BuiltExpression buildToJsonPropertyExpression(
   String? contextClass,
   String? contextProperty,
   bool forceNonNullReceiver = false,
+  bool receiverIsPromotedNonNull = false,
   bool useImmutableCollections = false,
 }) {
   final model = property.model;
@@ -44,6 +45,7 @@ BuiltExpression buildToJsonPropertyExpression(
     contextClass: contextClass,
     contextProperty: contextProperty,
     forceNonNullReceiver: forceNonNullReceiver,
+    receiverIsPromotedNonNull: receiverIsPromotedNonNull,
     useImmutableCollections: useImmutableCollections,
   );
 }
@@ -156,11 +158,13 @@ BuiltExpression _buildSerializationExpression(
   String? contextClass,
   String? contextProperty,
   bool forceNonNullReceiver = false,
+  bool receiverIsPromotedNonNull = false,
   bool useImmutableCollections = false,
 }) {
   final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
+      !receiverIsPromotedNonNull &&
       (isNullable ||
           (model is EnumModel && model.isNullable) ||
           model.isEffectivelyNullable);
@@ -218,7 +222,7 @@ BuiltExpression _buildSerializationExpression(
       return _handleListExpression(
         receiver,
         model,
-        isNullable,
+        !receiverIsPromotedNonNull && isNullable,
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
@@ -231,7 +235,7 @@ BuiltExpression _buildSerializationExpression(
       return _handleMapExpression(
         receiver,
         model,
-        isNullable || model.isNullable,
+        !receiverIsPromotedNonNull && (isNullable || model.isNullable),
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
@@ -251,6 +255,7 @@ BuiltExpression _buildSerializationExpression(
         contextClass: contextClass,
         contextProperty: contextProperty,
         forceNonNullReceiver: forceNonNullReceiver,
+        receiverIsPromotedNonNull: receiverIsPromotedNonNull,
         useImmutableCollections: useImmutableCollections,
       );
     case PrimitiveModel():

@@ -232,6 +232,61 @@ Object? test() {
       });
     }
 
+    test('emits deepObject entries as bracket-named parts', () {
+      expectPropertyCode(
+        _classModel(context, 'Nested'),
+        r'''
+  for (final entry in body.value.toDeepObject(
+    r'value',
+    explode: true,
+    allowEmpty: true,
+  )) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        entry.name,
+        utf8.encode(entry.value),
+        contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          style: EncodingStyle.deepObject,
+          explode: true,
+          allowReserved: false,
+        ),
+      );
+    });
+
+    test('form-encodes an object in content-based mode', () {
+      expectPropertyCode(
+        _classModel(context, 'Nested'),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      utf8.encode(
+        body.value
+            .toForm(
+              r'value',
+              explode: true,
+              allowEmpty: true,
+              useQueryComponent: true,
+            )
+            .map((entry) => '${entry.name}=${entry.value}')
+            .join('&'),
+      ),
+      contentType: MediaType.parse(
+        r'application/x-www-form-urlencoded',
+      ),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
     test('uses plain and JSON encodings for string enums', () {
       final model = _stringEnum(context);
       expectPropertyCode(
@@ -558,6 +613,39 @@ Object? test() {
         ),
       );
     });
+
+    for (final entry in <({EncodingStyle style, String method})>[
+      (style: EncodingStyle.pipeDelimited, method: 'toPipeDelimited'),
+      (style: EncodingStyle.spaceDelimited, method: 'toSpaceDelimited'),
+    ]) {
+      test('honors ${entry.style.name} for a non-exploded string array', () {
+        final delimiterArgument = entry.style == EncodingStyle.spaceDelimited
+            ? '\n    percentEncodeDelimiter: false,'
+            : '';
+        expectPropertyCode(
+          _list(context, StringModel(context: context)),
+          '''
+  for (final item in body.value.${entry.method}(
+    explode: false,
+    allowEmpty: true,
+    alreadyEncoded: true,$delimiterArgument
+  )) {
+    _\$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode(item),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }''',
+          encoding: _encoding(
+            style: entry.style,
+            explode: false,
+            allowReserved: false,
+          ),
+        );
+      });
+    }
 
     for (final entry
         in <

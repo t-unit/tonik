@@ -168,10 +168,7 @@ class ParseGenerator {
         return _caseWithGuards(
           'case (var status, $contentTypePattern)',
           [
-            Code(
-              'status != null '
-              '&& status >= ${status.min} && status <= ${status.max}',
-            ),
+            backendGenerator.responseStatusCodeRangeGuard(status),
             ?mediaTypeGuard,
           ],
         );

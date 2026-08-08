@@ -244,6 +244,41 @@ Object? _data({String? body}) {
     );
   });
 
+  test('uses a promoted optional nullable JSON model directly', () {
+    final model = ClassModel(
+      name: 'NullablePayload',
+      properties: const [],
+      context: context,
+      isDeprecated: false,
+      isNullable: true,
+      examples: const [],
+    );
+    final method = generator.generateBodyMethod(
+      _operation(
+        context,
+        requestBody: _body(
+          context,
+          model: model,
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          isRequired: false,
+        ),
+      ),
+    );
+
+    const expected = '''
+Object? _data({NullablePayload? body}) {
+  if (body == null) return null;
+  return utf8.encode(jsonEncode(body.toJson()));
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('form-urlencoded bodies', () {
     test('UTF-8 encodes a scalar without inventing a field name', () {
       final method = generator.generateBodyMethod(
@@ -593,6 +628,50 @@ Future<Object?> _data({required Payload body}) async {
     );
   });
 
+  test('does not bind an unsupported multipart variant', () {
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        RequestContent(
+          model: BinaryModel(context: context),
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+
+    const expected = '''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    PayloadFormData _ => await () async {
+      throw UnsupportedError(
+        'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
+      );
+    }(),
+  };
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('multipart bodies', () {
     test(
       'emits ordered duplicate-preserving scalar JSON and file parts',
@@ -891,7 +970,7 @@ Future<Object?> _data({required UnsupportedTextUpload body}) async {
       );
     });
 
-    test('adds required per-part header parameters to the body method', () {
+    test('attaches required per-part headers to the encoded body', () {
       final value = _formProperty(
         context,
         name: 'value',
@@ -943,15 +1022,21 @@ Future<Object?> _data({
   required HeaderUpload body,
   required int valueTrace,
 }) async {
-  final _$multipartFiles = <MultipartFile>[];
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'value',
-      utf8.encode(body.value),
-      contentType: MediaType.parse(r'text/plain'),
+  final _$multipartParts = <TonikMultipartPart>[];
+  final _$valueHeaders = <String, String>{};
+  _$valueHeaders[r'X-Trace'] = valueTrace.toSimple(
+    explode: false,
+    allowEmpty: true,
+  );
+  _$multipartParts.add(
+    TonikMultipartPart(
+      name: r'value',
+      bytes: utf8.encode(body.value),
+      contentType: r'text/plain',
+      headers: _$valueHeaders,
     ),
   );
-  return _$multipartFiles;
+  return TonikMultipartBody(_$multipartParts);
 }
 ''';
 

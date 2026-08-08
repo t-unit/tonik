@@ -1194,15 +1194,29 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  late final AbortableMultipartRequest _$request;
+  late final BaseRequest _$request;
   try {
-    _$request = AbortableMultipartRequest(
-      'POST',
-      _$uri,
-      abortTrigger: cancellation?.whenCancelled,
-    );
+    if (_$data is TonikMultipartBody) {
+      final _$bodyRequest = AbortableRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$bodyRequest.bodyBytes = _$data.bodyBytes;
+      _$request = _$bodyRequest;
+    } else {
+      final _$multipartRequest = AbortableMultipartRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$multipartRequest.files.addAll((_$data as List<MultipartFile>));
+      _$request = _$multipartRequest;
+    }
     _$request.headers.addAll(_$options);
-    _$request.files.addAll((_$data as List<MultipartFile>));
+    if (_$data is TonikMultipartBody) {
+      _$request.headers['content-type'] = _$data.contentType;
+    }
   } on Object catch (exception, stackTrace) {
     return TonikError<void, Response>(
       exception,
@@ -1301,7 +1315,15 @@ Future<TonikResult<void, Response>> dispatch() async {
 
   late final BaseRequest _$request;
   try {
-    if (_$data is List<MultipartFile>) {
+    if (_$data is TonikMultipartBody) {
+      final _$bodyRequest = AbortableRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$bodyRequest.bodyBytes = _$data.bodyBytes;
+      _$request = _$bodyRequest;
+    } else if (_$data is List<MultipartFile>) {
       final _$multipartRequest = AbortableMultipartRequest(
         'POST',
         _$uri,
@@ -1321,6 +1343,9 @@ Future<TonikResult<void, Response>> dispatch() async {
       _$request = _$ordinaryRequest;
     }
     _$request.headers.addAll(_$options);
+    if (_$data is TonikMultipartBody) {
+      _$request.headers['content-type'] = _$data.contentType;
+    }
   } on Object catch (exception, stackTrace) {
     return TonikError<void, Response>(
       exception,
@@ -1429,7 +1454,15 @@ Future<TonikResult<void, Response>> dispatch() async {
 
   late final BaseRequest _$request;
   try {
-    if (_$data is List<MultipartFile>) {
+    if (_$data is TonikMultipartBody) {
+      final _$bodyRequest = AbortableRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$bodyRequest.bodyBytes = _$data.bodyBytes;
+      _$request = _$bodyRequest;
+    } else if (_$data is List<MultipartFile>) {
       final _$multipartRequest = AbortableMultipartRequest(
         'POST',
         _$uri,
@@ -1449,6 +1482,9 @@ Future<TonikResult<void, Response>> dispatch() async {
       _$request = _$ordinaryRequest;
     }
     _$request.headers.addAll(_$options);
+    if (_$data is TonikMultipartBody) {
+      _$request.headers['content-type'] = _$data.contentType;
+    }
   } on Object catch (exception, stackTrace) {
     return TonikError<void, Response>(
       exception,
