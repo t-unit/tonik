@@ -18,6 +18,7 @@
   - `patternProperties` for regex-matched property schemas
   - `propertyNames` for property name validation
 - Supporting the `not` keyword
+- `server` overrides in operations and paths
 
 ## Non-goals
 
