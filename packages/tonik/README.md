@@ -145,7 +145,7 @@ final api = PetApi(CustomServer(baseUrl: 'https://api.example.com'));
 final response = await api.getPetById(petId: 1);
 switch (response) {
   case TonikSuccess(:final value):
-    print('Pet: ${value.body.name}');
+    print('Response: $value');
   case TonikError(:final error):
     print('Failed: $error');
 }
