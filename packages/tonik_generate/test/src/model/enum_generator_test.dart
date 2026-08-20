@@ -1438,7 +1438,7 @@ void main() {
         );
         expect(toForm.requiredParameters, hasLength(1));
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(5));
+        expect(toForm.optionalParameters, hasLength(6));
 
         final explodeParam = toForm.optionalParameters.firstWhere(
           (p) => p.name == 'explode',
@@ -1473,7 +1473,7 @@ void main() {
           body,
           r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-          'allowReserved: allowReserved)',
+          'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1502,14 +1502,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(5));
+        expect(toForm.optionalParameters, hasLength(6));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-          'allowReserved: allowReserved)',
+          'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1537,14 +1537,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(5));
+        expect(toForm.optionalParameters, hasLength(6));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-          'allowReserved: allowReserved)',
+          'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1573,14 +1573,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(5));
+        expect(toForm.optionalParameters, hasLength(6));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-          'allowReserved: allowReserved)',
+          'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -2284,14 +2284,14 @@ void main() {
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.lambda, isFalse);
-        expect(toForm.optionalParameters, hasLength(5));
+        expect(toForm.optionalParameters, hasLength(6));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+          return _$rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

@@ -1806,6 +1806,7 @@ class ClassGenerator {
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
                 'fieldEncodings': refer('fieldEncodings'),
+                'textEncoding': refer('textEncoding'),
               },
             )
             .returned

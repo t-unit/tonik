@@ -167,7 +167,7 @@ Object? _data({required Map<String, List<LineItem>> body}) {
     );
   });
 
-  test('uses the declared supported charset for text', () {
+  test('semantic encoding selects HTTP text bytes for required bodies', () {
     final method = generator.generateBodyMethod(
       _operation(
         context,
@@ -175,7 +175,8 @@ Object? _data({required Map<String, List<LineItem>> body}) {
           context,
           model: StringModel(context: context),
           contentType: ContentType.text,
-          rawContentType: 'text/plain; charset=iso-8859-1',
+          rawContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
         ),
       ),
     );
@@ -302,6 +303,44 @@ Object? _data({required String body}) {
           explode: true,
           allowEmpty: true,
           useQueryComponent: true,
+        )
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&'),
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('Latin-1 percent-encodes a scalar from raw text in one pass', () {
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: StringModel(context: context),
+            contentType: ContentType.form,
+            rawContentType:
+                'application/x-www-form-urlencoded; charset=iso-8859-1',
+            textEncoding: TextEncoding.latin1,
+          ),
+        ),
+      );
+
+      const expected = r'''
+Object? _data({required String body}) {
+  return utf8.encode(
+    body
+        .toForm(
+          '',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
         )
         .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
         .join('&'),
@@ -501,7 +540,7 @@ Object? _data({ProfileSubmission? body}) {
     );
   });
 
-  test('emits an encoding failure for an unsupported text charset', () {
+  test('semantic encoding selects HTTP text bytes for optional bodies', () {
     final method = generator.generateBodyMethod(
       _operation(
         context,
@@ -510,13 +549,16 @@ Object? _data({ProfileSubmission? body}) {
           model: StringModel(context: context),
           contentType: ContentType.text,
           rawContentType: 'text/plain; charset=utf-16',
+          textEncoding: TextEncoding.ascii,
+          isRequired: false,
         ),
       ),
     );
 
     const expected = '''
-Object? _data({required String body}) {
-  return throw EncodingException('Unsupported text encoding: utf-16.');
+Object? _data({String? body}) {
+  if (body == null) return null;
+  return ascii.encode(body);
 }
 ''';
 
@@ -543,6 +585,8 @@ Object? _data({required String body}) {
           model: StringModel(context: context),
           contentType: ContentType.text,
           rawContentType: 'text/plain',
+          wireContentType: 'text/plain',
+          textEncoding: TextEncoding.latin1,
           examples: const [],
         ),
       },
@@ -555,7 +599,7 @@ Object? _data({required String body}) {
 Object? _data({required Payload body}) {
   return switch (body) {
     final PayloadJson value => utf8.encode(jsonEncode(value.value)),
-    final PayloadPlain value => utf8.encode(value.value),
+    final PayloadPlain value => latin1.encode(value.value),
   };
 }
 ''';
@@ -731,6 +775,8 @@ Future<Object?> _data({required Payload body}) async {
                 text: const PartEncoding(
                   contentType: ContentType.text,
                   rawContentType: 'text/plain; charset=iso-8859-1',
+                  wireContentType: 'text/plain; charset=iso-8859-1',
+                  textEncoding: TextEncoding.latin1,
                   headers: null,
                   style: null,
                   explode: null,
@@ -921,7 +967,7 @@ Future<Object?> _data({OptionalUpload? body}) async {
       );
     });
 
-    test('emits an encoding failure for an unsupported part charset', () {
+    test('uses normalized semantic fallback for HTTP multipart text', () {
       final value = _formProperty(
         context,
         name: 'value',
@@ -946,6 +992,7 @@ Future<Object?> _data({OptionalUpload? body}) async {
               value: const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain; charset=utf-16',
+                wireContentType: 'text/plain; charset=utf-8',
                 headers: null,
                 style: null,
                 explode: null,
@@ -959,7 +1006,13 @@ Future<Object?> _data({OptionalUpload? body}) async {
       const expected = r'''
 Future<Object?> _data({required UnsupportedTextUpload body}) async {
   final _$multipartFiles = <MultipartFile>[];
-  throw EncodingException('Unsupported multipart text encoding: utf-16.');
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain; charset=utf-8'),
+    ),
+  );
   return _$multipartFiles;
 }
 ''';
@@ -1069,6 +1122,8 @@ RequestBodyObject _body(
   required Model model,
   required ContentType contentType,
   required String rawContentType,
+  String? wireContentType,
+  TextEncoding textEncoding = TextEncoding.utf8,
   bool isRequired = true,
   Map<Property, FieldEncoding>? formEncoding,
   Map<Property, PartEncoding>? multipartEncoding,
@@ -1082,6 +1137,8 @@ RequestBodyObject _body(
       model: model,
       contentType: contentType,
       rawContentType: rawContentType,
+      wireContentType: wireContentType ?? rawContentType,
+      textEncoding: textEncoding,
       examples: const [],
       formEncoding: formEncoding,
       multipartEncoding: multipartEncoding,

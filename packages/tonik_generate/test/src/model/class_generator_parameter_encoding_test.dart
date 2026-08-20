@@ -1979,15 +1979,14 @@ List<ParameterEntry> toForm(
   required bool allowEmpty,
   bool useQueryComponent = false,
   bool allowReserved = false,
-  Map<String, FormFieldEncoding> fieldEncodings = const {},
+  Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
 }) {
   return parameterProperties(allowEmpty: allowEmpty).toForm(
     paramName,
     explode: explode,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
-    fieldEncodings: fieldEncodings,
+    allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding,
   );
 }
 ''';

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
@@ -13,10 +15,12 @@ String _encodeValue(
   String value, {
   required bool useQueryComponent,
   bool allowReserved = false,
+  Encoding textEncoding = utf8,
 }) => value.uriEncode(
   allowEmpty: true,
   useQueryComponent: useQueryComponent,
   allowReserved: allowReserved,
+  textEncoding: textEncoding,
 );
 
 /// Extension for encoding Uri values.
@@ -28,17 +32,20 @@ extension FormUriEncoder on Uri {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -53,17 +60,20 @@ extension FormStringEncoder on String {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -78,17 +88,20 @@ extension FormIntEncoder on int {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -103,17 +116,20 @@ extension FormDoubleEncoder on double {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -128,17 +144,20 @@ extension FormNumEncoder on num {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -153,17 +172,20 @@ extension FormBoolEncoder on bool {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -178,17 +200,20 @@ extension FormDateTimeEncoder on DateTime {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -203,17 +228,20 @@ extension FormBigDecimalEncoder on BigDecimal {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -234,6 +262,7 @@ extension FormStringListEncoder on List<String> {
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) {
     if (isEmpty) {
       return const [];
@@ -246,12 +275,14 @@ extension FormStringListEncoder on List<String> {
             paramName,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
           value: uriEncode(
             allowEmpty: allowEmpty,
             alreadyEncoded: alreadyEncoded,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
         ),
       ];
@@ -264,6 +295,7 @@ extension FormStringListEncoder on List<String> {
             paramName,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
           value: alreadyEncoded
               ? item
@@ -271,6 +303,7 @@ extension FormStringListEncoder on List<String> {
                   item,
                   useQueryComponent: useQueryComponent,
                   allowReserved: allowReserved,
+                  textEncoding: textEncoding,
                 ),
         ),
     ];
@@ -293,6 +326,7 @@ extension FormStringMapEncoder on Map<String, String> {
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) {
     if (isEmpty) {
       return const [];
@@ -305,12 +339,14 @@ extension FormStringMapEncoder on Map<String, String> {
             paramName,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
           value: uriEncode(
             allowEmpty: allowEmpty,
             alreadyEncoded: alreadyEncoded,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
         ),
       ];
@@ -323,6 +359,7 @@ extension FormStringMapEncoder on Map<String, String> {
             e.key,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
           value: alreadyEncoded
               ? e.value
@@ -330,6 +367,7 @@ extension FormStringMapEncoder on Map<String, String> {
                   e.value,
                   useQueryComponent: useQueryComponent,
                   allowReserved: allowReserved,
+                  textEncoding: textEncoding,
                 ),
         ),
     ];
@@ -347,17 +385,20 @@ extension FormBinaryEncoder on List<int> {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];

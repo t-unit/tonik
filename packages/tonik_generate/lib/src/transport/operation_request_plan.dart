@@ -122,7 +122,7 @@ final class TextBodyPlan extends PresentBodyPlan {
     required super.isRequired,
   });
 
-  final String encoding;
+  final TextEncoding encoding;
 }
 
 @immutable

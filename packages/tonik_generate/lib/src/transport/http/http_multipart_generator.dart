@@ -4,6 +4,7 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Lowers one multipart body to an ordered list of `package:http` parts.
@@ -124,7 +125,7 @@ Code _buildPart(
     BinaryModel() || Base64Model() => _addFilePart(
       rawName,
       value,
-      rawContentType: _rawContentType(
+      rawContentType: _wireContentType(
         encoding,
         'application/octet-stream',
       ),
@@ -147,7 +148,8 @@ Code _buildPart(
     StringModel() => _addTextPart(
       rawName,
       value,
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
@@ -159,14 +161,16 @@ Code _buildPart(
           'package:tonik_util/tonik_util.dart',
         ).call([value]),
       ]),
-      rawContentType: _rawContentType(encoding, 'application/json'),
+      rawContentType: _wireContentType(encoding, 'application/json'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
     MapModel() => _addTextPart(
       rawName,
       refer('jsonEncode', 'dart:convert').call([value]),
-      rawContentType: _rawContentType(encoding, 'application/json'),
+      rawContentType: _wireContentType(encoding, 'application/json'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
@@ -180,7 +184,8 @@ Code _buildPart(
     EnumModel() => _addTextPart(
       rawName,
       _enumText(value, resolved, encoding?.contentType),
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
@@ -191,14 +196,16 @@ Code _buildPart(
         encoding?.contentType,
         method: 'toTimeZonedIso8601String',
       ),
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
     PrimitiveModel() => _addTextPart(
       rawName,
       _primitiveText(value, encoding?.contentType, method: 'toString'),
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
@@ -242,7 +249,7 @@ Code _buildListParts(
       _addFilePart(
         rawName,
         refer('item'),
-        rawContentType: _rawContentType(
+        rawContentType: _wireContentType(
           encoding,
           'application/octet-stream',
         ),
@@ -271,7 +278,8 @@ Code _buildListParts(
       refer('jsonEncode', 'dart:convert').call([
         _jsonListValue(value, content),
       ]),
-      rawContentType: _rawContentType(encoding, 'application/json'),
+      rawContentType: _wireContentType(encoding, 'application/json'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     );
@@ -298,7 +306,8 @@ Code _buildListParts(
       _addTextPart(
         rawName,
         refer('jsonEncode', 'dart:convert').call([itemJson]),
-        rawContentType: _rawContentType(encoding, 'application/json'),
+        rawContentType: _wireContentType(encoding, 'application/json'),
+        textEncoding: _textEncoding(encoding),
         target: target,
         headers: headers,
       ),
@@ -328,7 +337,8 @@ Code _buildListParts(
     return _addTextPart(
       rawName,
       serialized,
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     );
@@ -341,7 +351,8 @@ Code _buildListParts(
     _addTextPart(
       rawName,
       _listItemText(refer('item'), content, encoding?.contentType),
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     ),
@@ -372,6 +383,7 @@ Code _buildObjectPart(
         rawName,
         value,
         explode: encoding?.explode ?? true,
+        textEncoding: encoding!.textEncoding,
         target: target,
         headers: headers,
       );
@@ -387,10 +399,11 @@ Code _buildObjectPart(
     return _buildUrlEncodedObjectPart(
       rawName,
       value,
-      rawContentType: _rawContentType(
+      rawContentType: _wireContentType(
         encoding,
         'application/x-www-form-urlencoded',
       ),
+      textEncoding: _textEncoding(encoding),
       target: target,
       headers: headers,
     );
@@ -402,7 +415,8 @@ Code _buildObjectPart(
       'jsonEncode',
       'dart:convert',
     ).call([value.property('toJson').call([])]),
-    rawContentType: _rawContentType(encoding, 'application/json'),
+    rawContentType: _wireContentType(encoding, 'application/json'),
+    textEncoding: _textEncoding(encoding),
     target: target,
     headers: headers,
   );
@@ -432,6 +446,7 @@ Code _buildDeepObjectParts(
       refer('entry').property('name'),
       refer('entry').property('value'),
       rawContentType: 'application/x-www-form-urlencoded',
+      textEncoding: encoding.textEncoding,
       target: target,
       headers: headers,
     ),
@@ -443,6 +458,7 @@ Code _buildUrlEncodedObjectPart(
   String rawName,
   Expression value, {
   required String rawContentType,
+  required TextEncoding textEncoding,
   required _MultipartTarget target,
   required Expression? headers,
 }) {
@@ -454,6 +470,8 @@ Code _buildUrlEncodedObjectPart(
           'explode': literalTrue,
           'allowEmpty': literalTrue,
           'useQueryComponent': literalTrue,
+          if (textEncoding != TextEncoding.utf8)
+            'textEncoding': textEncodingExpression(textEncoding),
         },
       );
   final joined = entries
@@ -472,6 +490,7 @@ Code _buildUrlEncodedObjectPart(
     rawName,
     joined,
     rawContentType: rawContentType,
+    textEncoding: textEncoding,
     target: target,
     headers: headers,
   );
@@ -481,6 +500,7 @@ Code _buildRawStyleObjectParts(
   String rawName,
   Expression value, {
   required bool explode,
+  required TextEncoding textEncoding,
   required _MultipartTarget target,
   required Expression? headers,
 }) {
@@ -500,6 +520,7 @@ Code _buildRawStyleObjectParts(
       refer('entry').property('name'),
       refer('entry').property('value'),
       rawContentType: 'text/plain',
+      textEncoding: textEncoding,
       target: target,
       headers: headers,
     ),
@@ -556,7 +577,8 @@ Code _buildDelimitedListParts(
     _addTextPart(
       rawName,
       refer('item'),
-      rawContentType: _rawContentType(encoding, 'text/plain'),
+      rawContentType: _wireContentType(encoding, 'text/plain'),
+      textEncoding: encoding.textEncoding,
       target: target,
       headers: headers,
     ),
@@ -648,8 +670,11 @@ Expression _listItemText(
   _ => value.property('toString').call([]),
 };
 
-String _rawContentType(PartEncoding? encoding, String fallback) =>
-    encoding?.rawContentType ?? fallback;
+String _wireContentType(PartEncoding? encoding, String fallback) =>
+    encoding?.wireContentType ?? fallback;
+
+TextEncoding _textEncoding(PartEncoding? encoding) =>
+    encoding?.textEncoding ?? TextEncoding.utf8;
 
 Expression _primitiveText(
   Expression value,
@@ -693,12 +718,14 @@ Code _addTextPart(
   String rawName,
   Expression text, {
   required String rawContentType,
+  required TextEncoding textEncoding,
   required _MultipartTarget target,
   required Expression? headers,
 }) => _addTextPartExpression(
   specLiteralString(rawName),
   text,
   rawContentType: rawContentType,
+  textEncoding: textEncoding,
   target: target,
   headers: headers,
 );
@@ -707,18 +734,16 @@ Code _addTextPartExpression(
   Expression name,
   Expression text, {
   required String rawContentType,
+  required TextEncoding textEncoding,
   required _MultipartTarget target,
   required Expression? headers,
 }) {
-  final encoding = _encoding(rawContentType);
-  if (encoding == null) {
-    return generateEncodingExceptionExpression(
-      'Unsupported multipart text encoding: ${_charset(rawContentType)}.',
-    ).statement;
-  }
+  final bytes = textEncodingExpression(
+    textEncoding,
+  ).property('encode').call([text]);
   return _addPart(
     name,
-    encoding.property('encode').call([text]),
+    bytes,
     rawContentType: rawContentType,
     target: target,
     headers: headers,
@@ -839,18 +864,3 @@ _HeaderMapResult? _buildHeaderMapStatements(
 
   return _HeaderMapResult(statements, variableName);
 }
-
-Expression? _encoding(String rawContentType) =>
-    switch (_charset(rawContentType)) {
-      'utf-8' || 'utf8' => refer('utf8', 'dart:convert'),
-      'iso-8859-1' || 'latin1' => refer('latin1', 'dart:convert'),
-      'us-ascii' || 'ascii' => refer('ascii', 'dart:convert'),
-      _ => null,
-    };
-
-String _charset(String rawContentType) =>
-    RegExp(
-      r'(?:^|;)\s*charset\s*=\s*"?([^";\s]+)',
-      caseSensitive: false,
-    ).firstMatch(rawContentType)?.group(1)?.toLowerCase() ??
-    'utf-8';

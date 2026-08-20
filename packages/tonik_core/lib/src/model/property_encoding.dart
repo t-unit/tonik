@@ -54,10 +54,14 @@ class PartEncoding {
     required this.style,
     required this.explode,
     required this.allowReserved,
-  });
+    String? wireContentType,
+    this.textEncoding = TextEncoding.utf8,
+  }) : wireContentType = wireContentType ?? rawContentType;
 
   final ContentType? contentType;
   final String? rawContentType;
+  final String? wireContentType;
+  final TextEncoding textEncoding;
   final Map<String, ResponseHeader>? headers;
   final EncodingStyle? style;
   final bool? explode;
@@ -74,6 +78,8 @@ class PartEncoding {
           runtimeType == other.runtimeType &&
           contentType == other.contentType &&
           rawContentType == other.rawContentType &&
+          wireContentType == other.wireContentType &&
+          textEncoding == other.textEncoding &&
           headers == other.headers &&
           style == other.style &&
           explode == other.explode &&
@@ -83,6 +89,8 @@ class PartEncoding {
   int get hashCode => Object.hash(
     contentType,
     rawContentType,
+    wireContentType,
+    textEncoding,
     headers,
     style,
     explode,
@@ -93,6 +101,7 @@ class PartEncoding {
   String toString() =>
       'PartEncoding(contentType: $contentType, '
       'rawContentType: $rawContentType, '
+      'wireContentType: $wireContentType, textEncoding: $textEncoding, '
       'headers: $headers, style: $style, explode: $explode, '
       'allowReserved: $allowReserved)';
 }

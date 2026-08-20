@@ -732,5 +732,20 @@ void main() {
       );
       expect(utf8.encode('a b/:').uriEncode(allowEmpty: true), 'a%20b%2F%3A');
     });
+
+    test('percent-encodes the selected text encoding exactly once', () {
+      expect(
+        'café'.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
+        ),
+        'caf%E9',
+      );
+      expect(
+        'café'.uriEncode(allowEmpty: true, useQueryComponent: true),
+        'caf%C3%A9',
+      );
+    });
   });
 }

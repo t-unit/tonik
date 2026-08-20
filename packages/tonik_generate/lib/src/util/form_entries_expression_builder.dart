@@ -16,6 +16,7 @@ Expression? buildFormEntriesValueExpression(
   required Expression explode,
   required Expression allowEmpty,
   Expression? useQueryComponent,
+  Expression? textEncoding,
   bool allowReserved = false,
   Expression? fieldEncodings,
   String mapContext = 'map parameter value',
@@ -24,6 +25,7 @@ Expression? buildFormEntriesValueExpression(
     'explode': explode,
     'allowEmpty': allowEmpty,
     'useQueryComponent': ?useQueryComponent,
+    'textEncoding': ?textEncoding,
   };
 
   Expression toForm(
@@ -93,6 +95,7 @@ Expression? buildFormEntriesValueExpression(
         m.content,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
         isContentNullable:
             m.isContentNullable || m.content.isEffectivelyNullable,
         toForm: toForm,
@@ -107,6 +110,7 @@ Expression? buildFormEntriesValueExpression(
         explode: explode,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
         allowReserved: allowReserved,
         mapContext: mapContext,
       );
@@ -128,6 +132,7 @@ Expression? _buildListFormEntriesExpression(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
+  required Expression? textEncoding,
   required bool isContentNullable,
   required Expression Function(
     Expression, {
@@ -165,6 +170,7 @@ Expression? _buildListFormEntriesExpression(
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    textEncoding: textEncoding,
     isContentNullable: isContentNullable,
     allowReserved: allowReserved,
   );
@@ -178,18 +184,29 @@ Expression? _buildEncodedElementsList(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
+  required Expression? textEncoding,
   required bool isContentNullable,
   required bool allowReserved,
 }) {
   if (!_isUriEncodableElement(contentModel)) return null;
 
-  final element = buildUriEncodeExpression(
-    refer('e'),
-    contentModel,
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved ? literalBool(true) : null,
-  ).expression;
+  final element = textEncoding == null
+      ? buildUriEncodeExpression(
+          refer('e'),
+          contentModel,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved ? literalBool(true) : null,
+        ).expression
+      : _buildEncodedElementExpression(
+          refer('e'),
+          contentModel,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          textEncoding: textEncoding,
+          allowReserved: allowReserved,
+        );
+  if (element == null) return null;
 
   final elementEncode = isContentNullable
       ? refer('e').equalTo(literalNull).conditional(literalString(''), element)
@@ -206,6 +223,62 @@ Expression? _buildEncodedElementsList(
       ])
       .property('toList')
       .call([]);
+}
+
+Expression? _buildEncodedElementExpression(
+  Expression receiver,
+  Model model, {
+  required Expression allowEmpty,
+  required Expression? useQueryComponent,
+  required Expression? textEncoding,
+  required bool allowReserved,
+}) {
+  final resolved = model.resolved;
+  if (resolved
+      case StringModel() ||
+          BooleanModel() ||
+          DateTimeModel() ||
+          DecimalModel() ||
+          UriModel() ||
+          DateModel() ||
+          IntegerModel() ||
+          DoubleModel() ||
+          NumberModel()) {
+    return receiver.property('uriEncode').call([], {
+      'allowEmpty': allowEmpty,
+      'useQueryComponent': ?useQueryComponent,
+      if (allowReserved) 'allowReserved': literalBool(true),
+      'textEncoding': ?textEncoding,
+    });
+  }
+
+  if (resolved is AnyModel) {
+    return refer(
+      'encodeAnyToForm',
+      'package:tonik_util/tonik_util.dart',
+    ).call(
+      [receiver],
+      {
+        'explode': literalBool(false),
+        'allowEmpty': allowEmpty,
+        'useQueryComponent': ?useQueryComponent,
+        if (allowReserved) 'allowReserved': literalBool(true),
+        'textEncoding': ?textEncoding,
+      },
+    );
+  }
+
+  final entries = buildFormEntriesValueExpression(
+    receiver,
+    model,
+    paramName: literalString(''),
+    explode: literalBool(false),
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    textEncoding: textEncoding,
+    allowReserved: allowReserved,
+  );
+  return entries?.property('single').property('value');
 }
 
 /// Complex elements (objects, nested lists, complex maps) are excluded because

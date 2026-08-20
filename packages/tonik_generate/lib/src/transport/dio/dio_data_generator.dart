@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
+import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -76,7 +77,15 @@ class DioDataGenerator {
 
         switch (c.contentType) {
           case .text:
-            switchCases.add(const Code(' value => value.value,'));
+            switchCases
+              ..add(const Code(' value => '))
+              ..add(
+                requestTextBytesExpression(
+                  c.textEncoding,
+                  const CodeExpression(Code('value')).property('value'),
+                ).code,
+              )
+              ..add(const Code(','));
           case .bytes:
             switch (c.model) {
               case BinaryModel():
@@ -134,6 +143,7 @@ class DioDataGenerator {
                   'value.value',
                   c.model,
                   useQueryComponent: true,
+                  textEncoding: c.textEncoding,
                   encoding: c.formEncoding,
                 ).code,
               )
@@ -232,7 +242,17 @@ class DioDataGenerator {
     final bodyCode = [const Code('return ')];
     switch (contentType) {
       case ContentType.text:
-        bodyCode.add(const Code('body;'));
+        bodyCode
+          ..clear()
+          ..addAll([
+            if (!isRequired) const Code('if (body == null) return null;\n'),
+            const Code('return '),
+            requestTextBytesExpression(
+              content.first.textEncoding,
+              const CodeExpression(Code('body')),
+            ).code,
+            const Code(';'),
+          ]);
       case ContentType.bytes:
         switch (model) {
           case BinaryModel():
@@ -295,6 +315,7 @@ class DioDataGenerator {
           'body',
           model,
           useQueryComponent: true,
+          textEncoding: content.first.textEncoding,
           encoding: content.first.formEncoding,
         );
         bodyCode

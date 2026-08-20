@@ -10,6 +10,12 @@ stores.open('tonik').save('last', tonikRecordedRequest)
 def path = context.request.path
 
 switch (path) {
+    case '/form/latin1':
+        respond {
+            withStatusCode 204
+        }
+        break
+
     case '/form/simple':
         def formBody = 'name=John+Doe&age=30'
         def requestBody = context.request.body

@@ -1343,7 +1343,8 @@ void main() {
           'List<ParameterEntry> toForm( String paramName, { required bool '
           'explode, required bool allowEmpty, bool useQueryComponent = false, '
           'bool allowReserved = false, Map<String, FormFieldEncoding> '
-          'fieldEncodings = const {}, }) => $throwExpr',
+          'fieldEncodings = const {}, Encoding textEncoding = utf8, '
+          '}) => $throwExpr',
         );
       });
 

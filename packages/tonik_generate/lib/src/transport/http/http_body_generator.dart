@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
+import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -251,17 +252,11 @@ class HttpBodyGenerator {
           inlineFunctions: json.inlineFunctions,
         );
       case ContentType.text:
-        final encoding = _textEncoding(content.rawContentType);
-        if (encoding == null) {
-          final charset = _charset(content.rawContentType);
-          return BuiltExpression.simple(
-            generateEncodingExceptionExpression(
-              'Unsupported text encoding: $charset.',
-            ),
-          );
-        }
         return BuiltExpression.simple(
-          encoding.property('encode').call([value]),
+          requestTextBytesExpression(
+            content.textEncoding,
+            value,
+          ),
         );
       case ContentType.bytes:
         final resolved = content.model.resolved;
@@ -281,6 +276,7 @@ class HttpBodyGenerator {
           valueName,
           content.model,
           useQueryComponent: true,
+          textEncoding: content.textEncoding,
           encoding: content.formEncoding,
         );
         return BuiltExpression(
@@ -294,24 +290,6 @@ class HttpBodyGenerator {
         throw StateError('Multipart bodies are handled by HTTP-09.');
     }
   }
-
-  Expression? _textEncoding(String rawContentType) {
-    final charset = _charset(rawContentType);
-
-    return switch (charset) {
-      'utf-8' || 'utf8' => refer('utf8', 'dart:convert'),
-      'iso-8859-1' || 'latin1' => refer('latin1', 'dart:convert'),
-      'us-ascii' || 'ascii' => refer('ascii', 'dart:convert'),
-      _ => null,
-    };
-  }
-
-  String _charset(String rawContentType) =>
-      RegExp(
-        r'(?:^|;)\s*charset\s*=\s*"?([^";\s]+)',
-        caseSensitive: false,
-      ).firstMatch(rawContentType)?.group(1)?.toLowerCase() ??
-      'utf-8';
 
   List<Parameter> _multipartHeaderParameters(Operation operation) => [
     for (final info in extractOperationMultipartHeaderParamInfo(operation))

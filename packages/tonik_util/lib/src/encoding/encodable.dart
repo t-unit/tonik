@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
@@ -61,6 +63,7 @@ abstract interface class FormEncodable {
   /// form delimiters `& = +`.
   /// [fieldEncodings], keyed by raw property name, lets individual object
   /// properties override [allowReserved]; other encoders ignore it.
+  /// [textEncoding] selects the bytes used for percent encoding.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -68,6 +71,7 @@ abstract interface class FormEncodable {
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
+    Encoding textEncoding = utf8,
   });
 }
 

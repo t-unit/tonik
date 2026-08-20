@@ -197,6 +197,8 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
+              wireContentType: 'text/plain',
+              textEncoding: TextEncoding.ascii,
               examples: const [],
             ),
           },
@@ -216,7 +218,7 @@ void main() {
         Object? _data({required Test body}) {
           return switch (body) {
             final TestJson value => jsonEncode(value.value),
-            final TestPlain value => value.value,
+            final TestPlain value => ascii.encode(value.value),
           };
         }
       ''';
@@ -772,7 +774,7 @@ void main() {
       );
     });
 
-    test('handles text/plain request body without JSON encoding', () {
+    test('semantic encoding selects Dio text bytes for required bodies', () {
       final operation = Operation(
         operationId: 'testOp',
         path: '/test',
@@ -786,7 +788,9 @@ void main() {
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
-              rawContentType: 'text/plain',
+              rawContentType: 'text/plain; charset=us-ascii',
+              wireContentType: 'text/plain; charset=us-ascii',
+              textEncoding: TextEncoding.latin1,
               examples: const [],
             ),
           },
@@ -804,7 +808,7 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({required String body}) {
-          return body;
+          return latin1.encode(body);
         }
       ''';
 
@@ -959,7 +963,7 @@ void main() {
       },
     );
 
-    test('handles multiple content types with text variant', () {
+    test('semantic encoding selects Dio bytes for multi-content text', () {
       final operation = Operation(
         operationId: 'testOp',
         path: '/test',
@@ -985,7 +989,9 @@ void main() {
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
-              rawContentType: 'text/plain',
+              rawContentType: 'text/plain; charset=us-ascii',
+              wireContentType: 'text/plain; charset=us-ascii',
+              textEncoding: TextEncoding.latin1,
               examples: const [],
             ),
           },
@@ -1005,7 +1011,7 @@ void main() {
         Object? _data({required Test body}) {
           return switch (body) {
             final TestJson value => value.value.toJson(),
-            final TestPlain value => value.value,
+            final TestPlainCharsetUsAscii value => latin1.encode(value.value),
           };
         }
       ''';
@@ -1136,7 +1142,7 @@ void main() {
       );
     });
 
-    test('handles optional text/plain request body', () {
+    test('semantic encoding selects Dio text bytes for optional bodies', () {
       final operation = Operation(
         operationId: 'testOp',
         path: '/test',
@@ -1150,7 +1156,9 @@ void main() {
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
-              rawContentType: 'text/plain',
+              rawContentType: 'text/plain; charset=iso-8859-1',
+              wireContentType: 'text/plain; charset=iso-8859-1',
+              textEncoding: TextEncoding.ascii,
               examples: const [],
             ),
           },
@@ -1168,7 +1176,8 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({String? body}) {
-          return body;
+          if (body == null) return null;
+          return ascii.encode(body);
         }
       ''';
 
@@ -1251,6 +1260,60 @@ void main() {
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('uses Latin-1 at the raw form value boundary', () {
+        final operation = Operation(
+          operationId: 'submitForm',
+          path: '/form',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'form',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: testContext),
+                contentType: ContentType.form,
+                rawContentType:
+                    'application/x-www-form-urlencoded; charset=iso-8859-1',
+                textEncoding: TextEncoding.latin1,
+                examples: const [],
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
+Object? _data({required String body}) {
+  return body
+      .toForm(
+        '',
+        explode: true,
+        allowEmpty: true,
+        useQueryComponent: true,
+        textEncoding: latin1,
+      )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+      .join('&');
+}
+''';
+
+        final method = generator.generateDataMethod(operation);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(format(expectedMethod)),
         );
       });

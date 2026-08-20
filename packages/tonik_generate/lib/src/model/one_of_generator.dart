@@ -1112,6 +1112,7 @@ class OneOfGenerator {
           explode: refer('explode'),
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          textEncoding: refer('textEncoding'),
         );
 
     Map<String, Expression> memberFormArgs() => {
@@ -1119,6 +1120,7 @@ class OneOfGenerator {
       'allowEmpty': refer('allowEmpty'),
       'useQueryComponent': refer('useQueryComponent'),
       'allowReserved': refer('allowReserved'),
+      'textEncoding': refer('textEncoding'),
     };
 
     final caseCodes = <Code>[];
@@ -1178,7 +1180,8 @@ class OneOfGenerator {
           const Code(
             '.toForm(paramName, explode: explode, allowEmpty: allowEmpty, '
             'useQueryComponent: useQueryComponent, '
-            'allowReserved: allowReserved, fieldEncodings: fieldEncodings)',
+            'allowReserved: allowReserved, fieldEncodings: fieldEncodings, '
+            'textEncoding: textEncoding)',
           ),
         ];
 

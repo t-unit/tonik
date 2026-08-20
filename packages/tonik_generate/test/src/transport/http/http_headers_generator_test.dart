@@ -137,6 +137,46 @@ Map<String, String> _options({required Payload body}) {
     );
   });
 
+  test(
+    'uses effective wire content type without changing declared identity',
+    () {
+      final requestBody = RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.text,
+            rawContentType: 'text/plain; charset=utf-16',
+            wireContentType: 'text/plain; charset=utf-8',
+            examples: const [],
+          ),
+        },
+      );
+      final method = generator.generateHeadersMethod(
+        _operation(context, requestBody: requestBody),
+        const [],
+        const [],
+      );
+
+      const expected = r'''
+Map<String, String> _options() {
+  final _$headers = <String, String>{};
+  _$headers['Accept'] = r'*/*';
+  _$headers[r'Content-Type'] = r'text/plain; charset=utf-8';
+  return _$headers;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    },
+  );
+
   test('preserves encoded headers and multiple cookies', () {
     final header = RequestHeaderObject(
       name: 'X-Trace',

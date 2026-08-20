@@ -109,19 +109,25 @@ class RequestBodyImporter {
             contentTypes: contentTypes,
             log: log,
           );
+          final textEncoding = _resolveTextEncoding(
+            rawContentType,
+            applicable:
+                contentType == core.ContentType.text ||
+                contentType == core.ContentType.form,
+          );
 
           final hasEncoding =
               mediaType.encoding != null && mediaType.encoding!.isNotEmpty;
-          final explicitEncoding =
-              hasEncoding && contentType == core.ContentType.multipart
-              ? _importEncoding(mediaType.encoding!, context)
-              : null;
 
           if (mediaType.schema != null) {
             final model = modelImporter.importSchema(
               mediaType.schema!,
               context.push('body'),
             );
+            final explicitEncoding =
+                hasEncoding && contentType == core.ContentType.multipart
+                ? _importEncoding(mediaType.encoding!, model, context)
+                : null;
 
             final formEncoding =
                 contentType == core.ContentType.form && hasEncoding
@@ -139,6 +145,8 @@ class RequestBodyImporter {
               core.RequestContent(
                 model: model,
                 rawContentType: rawContentType,
+                wireContentType: textEncoding.wireContentType,
+                textEncoding: textEncoding.encoding,
                 contentType: contentType,
                 formEncoding: formEncoding,
                 multipartEncoding: multipartEncoding,
@@ -169,6 +177,8 @@ class RequestBodyImporter {
               core.RequestContent(
                 model: model,
                 rawContentType: rawContentType,
+                wireContentType: textEncoding.wireContentType,
+                textEncoding: textEncoding.encoding,
                 contentType: contentType,
                 examples: exampleImporter.fromMediaType(mediaType),
               ),
@@ -239,13 +249,18 @@ class RequestBodyImporter {
       );
 
       final isStyleBased = existing?.isStyleBased ?? false;
+      final rawContentType = isStyleBased
+          ? null
+          : (existing?.rawContentType ?? defaultRawContentType);
       result[property] = core.PartEncoding(
         contentType: isStyleBased
             ? null
             : (existing?.contentType ?? defaultContentType),
-        rawContentType: isStyleBased
+        rawContentType: rawContentType,
+        wireContentType: isStyleBased
             ? null
-            : (existing?.rawContentType ?? defaultRawContentType),
+            : (existing?.wireContentType ?? rawContentType),
+        textEncoding: existing?.textEncoding ?? core.TextEncoding.utf8,
         headers: existing?.headers,
         style: existing?.style,
         explode: existing?.explode,
@@ -397,13 +412,21 @@ class RequestBodyImporter {
 
   Map<String, core.PartEncoding> _importEncoding(
     Map<String, Encoding> encodingMap,
+    core.Model model,
     core.Context context,
   ) {
     final result = <String, core.PartEncoding>{};
     final isOas30 = openApiObject.openapi.startsWith('3.0');
+    final propertiesByName = switch (model.resolved) {
+      final core.ClassModel resolved => {
+        for (final property in resolved.properties) property.name: property,
+      },
+      _ => const <String, core.Property>{},
+    };
     for (final entry in encodingMap.entries) {
       final propertyName = entry.key;
       final encoding = entry.value;
+      final property = propertiesByName[propertyName];
 
       final headers = _importEncodingHeaders(encoding, propertyName, context);
 
@@ -425,10 +448,22 @@ class RequestBodyImporter {
       final resolvedStyle = useStyleMode
           ? (_mapSerializationStyle(encoding.style) ?? core.EncodingStyle.form)
           : null;
+      final textEncoding = encoding.contentType == null
+          ? null
+          : _resolveTextEncoding(
+              encoding.contentType!,
+              applicable:
+                  !useStyleMode &&
+                  property != null &&
+                  !property.isReadOnly &&
+                  _serializesMultipartAsText(property.model, <core.Model>{}),
+            );
 
       result[propertyName] = core.PartEncoding(
         contentType: useStyleMode ? null : resolvedContentType,
         rawContentType: useStyleMode ? null : encoding.contentType,
+        wireContentType: useStyleMode ? null : textEncoding?.wireContentType,
+        textEncoding: textEncoding?.encoding ?? core.TextEncoding.utf8,
         headers: headers,
         style: resolvedStyle,
         explode: useStyleMode
@@ -439,6 +474,62 @@ class RequestBodyImporter {
     }
     return result;
   }
+
+  static bool _serializesMultipartAsText(
+    core.Model model,
+    Set<core.Model> visited,
+  ) {
+    if (!visited.add(model)) return false;
+    return switch (model) {
+      core.AliasModel() => _serializesMultipartAsText(model.model, visited),
+      core.ListModel() => switch (model.content.resolved) {
+        core.ListModel() => false,
+        _ => _serializesMultipartAsText(model.content, visited),
+      },
+      core.BinaryModel() || core.Base64Model() || core.NeverModel() => false,
+      _ => true,
+    };
+  }
+
+  ({core.TextEncoding encoding, String wireContentType}) _resolveTextEncoding(
+    String rawContentType, {
+    required bool applicable,
+  }) {
+    if (!applicable) {
+      return (
+        encoding: core.TextEncoding.utf8,
+        wireContentType: rawContentType,
+      );
+    }
+
+    final match = _charsetPattern.firstMatch(rawContentType);
+    final charset = match?.group(3)?.toLowerCase();
+    final encoding = switch (charset) {
+      null || 'utf-8' || 'utf8' => core.TextEncoding.utf8,
+      'iso-8859-1' || 'latin1' => core.TextEncoding.latin1,
+      'us-ascii' || 'ascii' => core.TextEncoding.ascii,
+      _ => null,
+    };
+    if (encoding != null) {
+      return (encoding: encoding, wireContentType: rawContentType);
+    }
+
+    final quote = match!.group(2) == '"' ? '"' : '';
+    final wireContentType = rawContentType.replaceRange(
+      match.start,
+      match.end,
+      '${match.group(1)}${quote}utf-8$quote',
+    );
+    return (
+      encoding: core.TextEncoding.utf8,
+      wireContentType: wireContentType,
+    );
+  }
+
+  static final _charsetPattern = RegExp(
+    r'((?:^|;)\s*charset\s*=\s*)("?)([^";\s]+)("?)',
+    caseSensitive: false,
+  );
 
   static core.EncodingStyle? _mapSerializationStyle(
     SerializationStyle? style,

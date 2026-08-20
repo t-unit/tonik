@@ -496,7 +496,7 @@ class EnumGenerator {
           ..body = const Code(
             '$_rawValueFieldName.toForm(paramName, explode: explode, '
             'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-            'allowReserved: allowReserved)',
+            'allowReserved: allowReserved, textEncoding: textEncoding)',
           ),
       );
     }
@@ -525,7 +525,7 @@ class EnumGenerator {
           const Code(
             'return $_rawValueFieldName.toForm(paramName, explode: explode, '
             'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
-            'allowReserved: allowReserved);',
+            'allowReserved: allowReserved, textEncoding: textEncoding);',
           ),
         ]),
     );

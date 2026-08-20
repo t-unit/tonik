@@ -98,7 +98,7 @@ class OperationRequestPlanner {
         requestBody?.isRequired == false) {
       return null;
     }
-    return literalString(content.single.rawContentType);
+    return literalString(content.single.wireContentType);
   }
 
   ResponseRequirements _responseRequirements(Operation operation) {
@@ -154,7 +154,7 @@ class OperationRequestPlanner {
       ContentType.text => TextBodyPlan(
         value: value,
         rawContentType: content.rawContentType,
-        encoding: _textEncoding(content.rawContentType),
+        encoding: content.textEncoding,
         isRequired: isRequired,
       ),
       ContentType.bytes => BytesBodyPlan(
@@ -175,14 +175,6 @@ class OperationRequestPlanner {
         isRequired: isRequired,
       ),
     };
-  }
-
-  String _textEncoding(String contentType) {
-    final match = RegExp(
-      r'(?:^|;)\s*charset\s*=\s*"?([^";\s]+)',
-      caseSensitive: false,
-    ).firstMatch(contentType);
-    return match?.group(1)?.toLowerCase() ?? 'utf-8';
   }
 
   List<FormEntryPlan> _formEntries(Model model) {
@@ -217,7 +209,7 @@ class OperationRequestPlanner {
           isNullable: property.isNullable || !property.isRequired,
           allowsMultiple: property.model.resolved is ListModel,
           filename: null,
-          contentType: content.multipartEncoding?[property]?.rawContentType,
+          contentType: content.multipartEncoding?[property]?.wireContentType,
         ),
     ];
   }

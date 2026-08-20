@@ -116,13 +116,17 @@ class RequestContent {
     required this.contentType,
     required this.rawContentType,
     required this.examples,
+    String? wireContentType,
+    this.textEncoding = TextEncoding.utf8,
     this.formEncoding,
     this.multipartEncoding,
-  });
+  }) : wireContentType = wireContentType ?? rawContentType;
 
   Model model;
   ContentType contentType;
   String rawContentType;
+  String wireContentType;
+  TextEncoding textEncoding;
   List<Example> examples;
 
   /// Per-property encoding for application/x-www-form-urlencoded bodies, keyed
@@ -138,5 +142,6 @@ class RequestContent {
   @override
   String toString() =>
       'RequestContent(model: $model, contentType: $contentType, '
-      'rawContentType: $rawContentType, examples: $examples)';
+      'rawContentType: $rawContentType, wireContentType: $wireContentType, '
+      'textEncoding: $textEncoding, examples: $examples)';
 }

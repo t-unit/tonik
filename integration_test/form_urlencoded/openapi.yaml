@@ -18,6 +18,22 @@ tags:
     description: Operations with custom content type
 
 paths:
+  /form/latin1:
+    post:
+      operationId: postLatin1Form
+      tags:
+        - form
+      summary: Post a form encoded with ISO-8859-1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded; charset=iso-8859-1:
+            schema:
+              $ref: '#/components/schemas/Latin1Form'
+      responses:
+        '204':
+          description: Form accepted
+
   /form/simple:
     post:
       operationId: postSimpleForm
@@ -1078,3 +1094,12 @@ components:
           description: >-
             Array of a simple composite whose elements single-encode on the
             wire
+
+    Latin1Form:
+      type: object
+      required:
+        - word
+      properties:
+        word:
+          type: string
+          description: Text percent-encoded from ISO-8859-1 bytes

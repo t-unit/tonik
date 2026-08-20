@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/date.dart';
@@ -55,6 +57,7 @@ class TestEncodableModel implements ParameterEncodable {
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
+    Encoding textEncoding = utf8,
   }) {
     if (explode) {
       return [
@@ -141,6 +144,7 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
+    Encoding textEncoding = utf8,
   }) {
     if (allowReserved) {
       return [(name: paramName, value: '$rawValue!reserved')];
@@ -1221,6 +1225,21 @@ void main() {
         expect(
           encodeAnyToForm('hello+world', explode: false, allowEmpty: true),
           'hello%2Bworld',
+        );
+      });
+
+      test('encodes nested form values with the selected charset', () {
+        expect(
+          encodeAnyToForm(
+            {
+              'clé': ['café'],
+            },
+            explode: true,
+            allowEmpty: true,
+            useQueryComponent: true,
+            textEncoding: latin1,
+          ),
+          'cl%E9=caf%E9',
         );
       });
     });

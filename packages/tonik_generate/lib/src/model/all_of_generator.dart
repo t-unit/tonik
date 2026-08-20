@@ -1636,6 +1636,7 @@ class AllOfGenerator {
           explode: refer('explode'),
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          textEncoding: refer('textEncoding'),
         );
         if (entries != null) return entries;
         return generateEncodingExceptionExpression(
@@ -1654,6 +1655,7 @@ class AllOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
+                'textEncoding': refer('textEncoding'),
               },
             );
       }
@@ -1671,6 +1673,7 @@ class AllOfGenerator {
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
               'allowReserved': refer('allowReserved'),
+              'textEncoding': refer('textEncoding'),
             },
           );
     }
@@ -1755,6 +1758,7 @@ class AllOfGenerator {
             'useQueryComponent': refer('useQueryComponent'),
             'allowReserved': refer('allowReserved'),
             'fieldEncodings': refer('fieldEncodings'),
+            'textEncoding': refer('textEncoding'),
           },
         )
         .returned

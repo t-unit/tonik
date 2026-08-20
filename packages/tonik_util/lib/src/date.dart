@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:meta/meta.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
@@ -98,13 +100,20 @@ class Date {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Encoding textEncoding = utf8,
   }) => [
     (
-      name: paramName,
+      name: paramName.uriEncode(
+        allowEmpty: true,
+        useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
+        textEncoding: textEncoding,
+      ),
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -136,11 +145,13 @@ class Date {
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
+    Encoding textEncoding = utf8,
   }) => toString().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
     allowReserved: allowReserved,
     literal: literal,
+    textEncoding: textEncoding,
   );
 
   /// Creates a copy of this [Date] with the given fields replaced

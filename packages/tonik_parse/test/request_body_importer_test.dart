@@ -129,6 +129,159 @@ void main() {
     },
   };
 
+  test('resolves request text encodings at the semantic boundary', () {
+    Map<String, dynamic> textBody(String contentType) => {
+      'required': true,
+      'content': {
+        contentType: {
+          'schema': {'type': 'string'},
+        },
+      },
+    };
+
+    final api =
+        Importer(
+          contentTypes: {
+            'application/vnd.custom-text': ContentType.text,
+          },
+        ).import({
+          'openapi': '3.0.3',
+          'info': {'title': 'Text encoding', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'requestBodies': {
+              'DefaultUtf8': textBody('text/plain'),
+              'Utf8Hyphen': textBody('text/plain; charset=UTF-8'),
+              'Utf8Compact': textBody('text/plain; charset=utf8'),
+              'Latin1Iso': textBody(
+                'text/plain; charset = "ISO-8859-1"',
+              ),
+              'Latin1Alias': textBody('text/plain; CHARSET=LaTiN1'),
+              'AsciiUs': textBody('text/plain; charset = "US-ASCII"'),
+              'AsciiAlias': textBody('text/plain; charset=ASCII'),
+              'Unsupported': textBody('text/plain; charset=utf-16'),
+              'CustomText': textBody(
+                'application/vnd.custom-text; charset=latin1',
+              ),
+              'Multipart': {
+                'required': true,
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'type': 'object',
+                      'properties': {
+                        'latin': {'type': 'string'},
+                        'ascii': {'type': 'integer'},
+                        'jsonText': {
+                          'type': 'object',
+                          'properties': {
+                            'value': {'type': 'string'},
+                          },
+                        },
+                        'formText': {
+                          'type': 'object',
+                          'properties': {
+                            'value': {'type': 'string'},
+                          },
+                        },
+                        'repeated': {
+                          'type': 'array',
+                          'items': {'type': 'string'},
+                        },
+                        'defaulted': {'type': 'string'},
+                        'unsupported': {'type': 'string'},
+                        'binary': {'type': 'string', 'format': 'binary'},
+                      },
+                    },
+                    'encoding': {
+                      'latin': {
+                        'contentType': 'text/plain; charset=iso-8859-1',
+                      },
+                      'ascii': {
+                        'contentType': 'text/plain; charset=us-ascii',
+                      },
+                      'jsonText': {
+                        'contentType': 'application/json; charset=latin1',
+                      },
+                      'formText': {
+                        'contentType':
+                            'application/x-www-form-urlencoded; charset=ascii',
+                      },
+                      'repeated': {
+                        'contentType': 'text/plain; charset=latin1',
+                      },
+                      'unsupported': {
+                        'contentType': 'text/plain; charset=utf-16',
+                      },
+                      'binary': {
+                        'contentType': 'application/octet-stream',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+    RequestContent contentNamed(String name) =>
+        (api.requestBodies.singleWhere((body) => body.name == name)
+                as RequestBodyObject)
+            .content
+            .single;
+
+    final expectedBodies = <String, TextEncoding>{
+      'DefaultUtf8': TextEncoding.utf8,
+      'Utf8Hyphen': TextEncoding.utf8,
+      'Utf8Compact': TextEncoding.utf8,
+      'Latin1Iso': TextEncoding.latin1,
+      'Latin1Alias': TextEncoding.latin1,
+      'AsciiUs': TextEncoding.ascii,
+      'AsciiAlias': TextEncoding.ascii,
+      'CustomText': TextEncoding.latin1,
+    };
+    for (final entry in expectedBodies.entries) {
+      final content = contentNamed(entry.key);
+      expect(content.textEncoding, entry.value, reason: entry.key);
+      expect(content.wireContentType, content.rawContentType);
+    }
+
+    final unsupported = contentNamed('Unsupported');
+    expect(unsupported.textEncoding, TextEncoding.utf8);
+    expect(unsupported.rawContentType, 'text/plain; charset=utf-16');
+    expect(unsupported.wireContentType, 'text/plain; charset=utf-8');
+
+    final multipart = contentNamed('Multipart');
+    final expectedParts = <String, TextEncoding>{
+      'latin': TextEncoding.latin1,
+      'ascii': TextEncoding.ascii,
+      'jsonText': TextEncoding.latin1,
+      'formText': TextEncoding.ascii,
+      'repeated': TextEncoding.latin1,
+      'defaulted': TextEncoding.utf8,
+      'unsupported': TextEncoding.utf8,
+    };
+    for (final entry in expectedParts.entries) {
+      expect(
+        partEncodingFor(multipart, entry.key)!.textEncoding,
+        entry.value,
+        reason: entry.key,
+      );
+    }
+    final defaulted = partEncodingFor(multipart, 'defaulted')!;
+    expect(defaulted.rawContentType, 'text/plain');
+    expect(defaulted.wireContentType, 'text/plain');
+    final unsupportedPart = partEncodingFor(multipart, 'unsupported')!;
+    expect(
+      unsupportedPart.rawContentType,
+      'text/plain; charset=utf-16',
+    );
+    expect(
+      unsupportedPart.wireContentType,
+      'text/plain; charset=utf-8',
+    );
+  });
+
   test('imports simple request body with JSON content', () {
     final api = Importer().import(fileContent);
     final simpleBody = api.requestBodies.firstWhereOrNull(
@@ -614,6 +767,34 @@ void main() {
         expect(content?.rawContentType, 'application/x-www-form-urlencoded');
       },
     );
+
+    test('resolves form body charset into semantic and wire encoding', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FormBody': {
+              'content': {
+                'application/x-www-form-urlencoded; charset=iso-8859-1': {
+                  'schema': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      });
+
+      final content =
+          (api.requestBodies.single as RequestBodyObject).content.single;
+      expect(content.contentType, ContentType.form);
+      expect(content.textEncoding, TextEncoding.latin1);
+      expect(
+        content.wireContentType,
+        'application/x-www-form-urlencoded; charset=iso-8859-1',
+      );
+    });
   });
 
   group('OAS 3.1 empty schema support', () {
@@ -1836,6 +2017,44 @@ void main() {
         final encoding = partEncodingFor(content, 'data')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
+      });
+
+      test('resolves charset only for multipart values serialized as text', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'count': {'type': 'integer'},
+              'file': {'type': 'string', 'format': 'binary'},
+            },
+            encoding: {
+              'count': {
+                'contentType':
+                    'application/vnd.example.count; charset=iso-8859-1',
+              },
+              'file': {
+                'contentType': 'application/vnd.example.binary; charset=utf-16',
+              },
+            },
+          ),
+        );
+
+        final count = partEncodingFor(content, 'count')!;
+        expect(count.contentType, ContentType.bytes);
+        expect(
+          count.rawContentType,
+          'application/vnd.example.count; charset=iso-8859-1',
+        );
+        expect(count.wireContentType, count.rawContentType);
+        expect(count.textEncoding, TextEncoding.latin1);
+
+        final file = partEncodingFor(content, 'file')!;
+        expect(file.contentType, ContentType.bytes);
+        expect(
+          file.rawContentType,
+          'application/vnd.example.binary; charset=utf-16',
+        );
+        expect(file.wireContentType, file.rawContentType);
+        expect(file.textEncoding, TextEncoding.utf8);
       });
 
       test(

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
@@ -998,6 +1000,19 @@ void main() {
           allowReserved: true,
         ),
         const <ParameterEntry>[(name: 'a:b', value: 'v')],
+      );
+    });
+
+    test('encodes raw names and values directly with Latin-1', () {
+      expect(
+        'café'.toForm(
+          'clé',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
+        ),
+        const <ParameterEntry>[(name: 'cl%E9', value: 'caf%E9')],
       );
     });
   });

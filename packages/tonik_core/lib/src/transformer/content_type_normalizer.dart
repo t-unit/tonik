@@ -232,6 +232,8 @@ class ContentTypeNormalizer {
       model: normalizedModel,
       contentType: content.contentType,
       rawContentType: content.rawContentType,
+      wireContentType: content.wireContentType,
+      textEncoding: content.textEncoding,
       formEncoding: content.formEncoding,
       multipartEncoding: content.multipartEncoding,
       examples: content.examples,

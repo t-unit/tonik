@@ -248,12 +248,21 @@ Parameter buildFieldEncodingsParameter() => Parameter(
     ..defaultTo = literalConstMap({}).code,
 );
 
+Parameter _buildTextEncodingParameter() => Parameter(
+  (b) => b
+    ..name = 'textEncoding'
+    ..type = refer('Encoding', 'dart:convert')
+    ..named = true
+    ..defaultTo = refer('utf8', 'dart:convert').code,
+);
+
 /// Encoding parameters for form-style `toForm`.
 List<Parameter> buildFormEncodingParameters() => [
   ...buildEncodingParameters(),
   buildBoolParameter('useQueryComponent'),
   buildBoolParameter('allowReserved'),
   buildFieldEncodingsParameter(),
+  _buildTextEncodingParameter(),
 ];
 
 /// Shared parameters for every composite `parameterProperties` method.

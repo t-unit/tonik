@@ -84,7 +84,7 @@ class RequestHeadersGenerator {
         return literalNull;
       }
       if (requestBody.isRequired) {
-        return specLiteralString(singleContent.rawContentType);
+        return specLiteralString(singleContent.wireContentType);
       }
 
       // Optional bodies omit the Content-Type header when no body is sent.
@@ -110,7 +110,7 @@ class RequestHeadersGenerator {
                   .equalTo(literalNull)
                   .conditional(
                     literalNull,
-                    specLiteralString(singleContent.rawContentType),
+                    specLiteralString(singleContent.wireContentType),
                   ),
             )
             .statement,
@@ -144,7 +144,7 @@ class RequestHeadersGenerator {
         if (content.contentType == ContentType.multipart)
           literalNull.code
         else
-          specLiteralString(content.rawContentType).code,
+          specLiteralString(content.wireContentType).code,
         const Code(',\n'),
       ];
       cases.addAll(caseCode);

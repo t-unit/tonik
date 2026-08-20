@@ -440,6 +440,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /text/latin1:
+    post:
+      operationId: postLatin1Text
+      tags:
+        - multipart
+      summary: Post an ISO-8859-1 text request body
+      requestBody:
+        required: true
+        content:
+          'text/plain; charset=iso-8859-1':
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/latin1:
+    post:
+      operationId: postLatin1Multipart
+      tags:
+        - multipart
+      summary: Post an ISO-8859-1 multipart text field
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Latin1MultipartForm'
+            encoding:
+              message:
+                contentType: 'text/plain; charset=iso-8859-1'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/latin1-form:
+    post:
+      operationId: postLatin1FormMultipart
+      tags:
+        - multipart
+      summary: Post an ISO-8859-1 form-encoded multipart field
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Latin1FormMultipartForm'
+            encoding:
+              payload:
+                contentType: >-
+                  application/x-www-form-urlencoded; charset=iso-8859-1
+      responses:
+        '204':
+          description: Accepted
+
   /custom/multipart:
     post:
       operationId: postCustomMultipart
@@ -465,6 +520,30 @@ paths:
 
 components:
   schemas:
+    Latin1MultipartForm:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    Latin1FormMultipartForm:
+      type: object
+      required:
+        - payload
+      properties:
+        payload:
+          $ref: '#/components/schemas/Latin1FormValue'
+
+    Latin1FormValue:
+      type: object
+      required:
+        - word
+      properties:
+        word:
+          type: string
+
     SimpleFields:
       type: object
       required:

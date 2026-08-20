@@ -616,14 +616,14 @@ void main() {
         class ResultStrings extends Result {
           const ResultStrings(this.value);
           final List<String> value;
-          
+
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
             return other is ResultStrings && _$deepEquals.equals(other.value, this.value);
           }
-          
+
           @override
           int get hashCode {
             const deepEquals = DeepCollectionEquality();
@@ -1467,7 +1467,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 5);
+      expect(toFormMethod.optionalParameters.length, 6);
 
       final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -2033,21 +2033,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
               }) {
                 return switch (this) {
                   ValueList(:final value) => value.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
-                    useQueryComponent: useQueryComponent,
+                    useQueryComponent: useQueryComponent, textEncoding: textEncoding,
                   ),
                   ValueStr(:final value) => value.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, textEncoding: textEncoding,
                   ),
                 };
               }
@@ -2102,7 +2102,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
               }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
@@ -2113,7 +2113,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, textEncoding: textEncoding,
                   ),
                 };
               }
@@ -2708,7 +2708,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               required bool explode,
               required bool allowEmpty,
               bool useQueryComponent = false,
-              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
             }) {
               return switch (this) {
                 ValueTags() => throw EncodingException(
@@ -2719,7 +2719,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                   explode: explode,
                   allowEmpty: allowEmpty,
                   useQueryComponent: useQueryComponent,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, textEncoding: textEncoding,
                 ),
               };
             }
@@ -3030,7 +3030,7 @@ bool operator ==(Object other) {
               required bool explode,
               required bool allowEmpty,
               bool useQueryComponent = false,
-              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
             }) {
               return switch (this) {
                 ValueUnknown() => throw EncodingException(
@@ -3041,7 +3041,7 @@ bool operator ==(Object other) {
                   explode: explode,
                   allowEmpty: allowEmpty,
                   useQueryComponent: useQueryComponent,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, textEncoding: textEncoding,
                 ),
               };
             }
@@ -3751,7 +3751,7 @@ bool operator ==(Object other) {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
           }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().toForm(
@@ -3759,14 +3759,14 @@ bool operator ==(Object other) {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
               ValueText(:final value) => value.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
             };
           }
@@ -3835,7 +3835,7 @@ bool operator ==(Object other) {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
           }) {
             return switch (this) {
               ValueNullableData(:final value) =>
@@ -3846,14 +3846,14 @@ bool operator ==(Object other) {
                         explode: explode,
                         allowEmpty: allowEmpty,
                         useQueryComponent: useQueryComponent,
-                        allowReserved: allowReserved,
+                        allowReserved: allowReserved, textEncoding: textEncoding,
                       ),
               ValueText(:final value) => value.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
             };
           }

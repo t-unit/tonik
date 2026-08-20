@@ -51,8 +51,62 @@ void main() {
     return format(method.accept(emitter).toString());
   }
 
+  void expectPropertyCode(
+    Model propertyModel,
+    String expectedPartCode, {
+    PartEncoding? encoding,
+    Object? defaultValue,
+  }) {
+    final branchNameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
+    final property = Property(
+      name: 'value',
+      model: propertyModel,
+      isRequired: true,
+      isNullable: false,
+      isDeprecated: false,
+      examples: const [],
+      defaultValue: defaultValue,
+    );
+    final model = ClassModel(
+      name: 'TestForm',
+      isDeprecated: false,
+      properties: [property],
+      context: testContext,
+      examples: const [],
+    );
+    final content = RequestContent(
+      model: model,
+      contentType: ContentType.multipart,
+      rawContentType: 'multipart/form-data',
+      multipartEncoding: encoding == null ? null : {property: encoding},
+      examples: const [],
+    );
+    final result = buildMultipartBodyStatements(
+      content,
+      'body',
+      branchNameManager,
+      'test_package',
+    );
+    final expected =
+        '''
+void test() {
+  final _\$formData = FormData();
+$expectedPartCode
+  return _\$formData;
+}
+''';
+
+    expect(
+      collapseWhitespace(emitStatements(result)),
+      collapseWhitespace(format(expected)),
+    );
+  }
+
   group('buildMultipartBodyStatements', () {
-    test('generates direct field access for required non-nullable string', () {
+    test('semantic encoding selects Dio multipart text bytes', () {
       final model = ClassModel(
         name: 'TestForm',
         isDeprecated: false,
@@ -78,7 +132,9 @@ void main() {
         multipartEncoding: _multipartEncoding(model, {
           'name': const PartEncoding(
             contentType: ContentType.text,
-            rawContentType: 'text/plain',
+            rawContentType: 'text/plain; charset=us-ascii',
+            wireContentType: 'text/plain; charset=us-ascii',
+            textEncoding: TextEncoding.latin1,
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
@@ -102,11 +158,166 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry(r'name', MultipartFile.fromBytes(latin1.encode(body.name), contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'))));
             return _$formData;
           }
         '''),
         ),
+      );
+    });
+
+    test('semantic encoding reaches every Dio multipart text path', () {
+      const latin1Text = PartEncoding(
+        contentType: ContentType.text,
+        rawContentType: 'text/plain; charset=us-ascii',
+        wireContentType: 'text/plain; charset=us-ascii',
+        textEncoding: TextEncoding.latin1,
+        style: null,
+        explode: null,
+        allowReserved: null,
+        headers: null,
+      );
+
+      expectPropertyCode(
+        StringModel(context: testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromBytes(
+        latin1.encode(body.value),
+        contentType: DioMediaType.parse(
+          r'application/vnd.example.text; charset=iso-8859-1',
+        ),
+      ),
+    ),
+  );''',
+        encoding: const PartEncoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'application/vnd.example.text; charset=iso-8859-1',
+          wireContentType: 'application/vnd.example.text; charset=iso-8859-1',
+          textEncoding: TextEncoding.latin1,
+          style: null,
+          explode: null,
+          allowReserved: null,
+          headers: null,
+        ),
+      );
+      expectPropertyCode(
+        IntegerModel(context: testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromBytes(
+        latin1.encode(body.value.toString()),
+        contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+      ),
+    ),
+  );''',
+        encoding: latin1Text,
+      );
+      expectPropertyCode(
+        _testStringEnum(testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromBytes(
+        latin1.encode(body.value.toJson()),
+        contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+      ),
+    ),
+  );''',
+        encoding: latin1Text,
+      );
+      expectPropertyCode(
+        AnyModel(context: testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromBytes(
+        latin1.encode(jsonEncode(encodeAnyToJson(body.value))),
+        contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+      ),
+    ),
+  );''',
+        encoding: latin1Text,
+      );
+      expectPropertyCode(
+        _testClassModel(testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromBytes(
+        latin1.encode(jsonEncode(body.value.toJson())),
+        contentType: DioMediaType.parse(r'application/json; charset=us-ascii'),
+      ),
+    ),
+  );''',
+        encoding: const PartEncoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json; charset=us-ascii',
+          wireContentType: 'application/json; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+          style: null,
+          explode: null,
+          allowReserved: null,
+          headers: null,
+        ),
+      );
+      expectPropertyCode(
+        ListModel(
+          content: StringModel(context: testContext),
+          context: testContext,
+          examples: const [],
+        ),
+        r'''
+  for (final item in body.value) {
+    _$formData.files.add(
+      MapEntry(
+        r'value',
+        MultipartFile.fromBytes(
+          latin1.encode(item),
+          contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+        ),
+      ),
+    );
+  }''',
+        encoding: const PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=us-ascii',
+          wireContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
+          headers: null,
+        ),
+      );
+      expectPropertyCode(
+        StringModel(context: testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromString(
+        body.value,
+        contentType: DioMediaType.parse(r'text/plain'),
+      ),
+    ),
+  );''',
+        encoding: const PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain',
+          style: null,
+          explode: null,
+          allowReserved: null,
+          headers: null,
+        ),
+        defaultValue: 'fallback',
       );
     });
 
@@ -5109,7 +5320,7 @@ void main() {
     );
 
     test(
-      'generates URL-encoded file part for required MapModel property',
+      'URL-encoded map dynamic values use typed form encoding',
       () {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
@@ -5177,8 +5388,13 @@ void main() {
                 }
                 metadataParts.add(
                   [
-                    Uri.encodeQueryComponent(entry.key.toString()),
-                    Uri.encodeQueryComponent(value.toString()),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    encodeAnyToForm(
+                      value,
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                    ),
                   ].join('='),
                 );
               }
@@ -5269,8 +5485,13 @@ void main() {
                   }
                   metadataParts.add(
                     [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
+                      entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                      encodeAnyToForm(
+                        value,
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                      ),
                     ].join('='),
                   );
                 }
@@ -5362,8 +5583,13 @@ void main() {
                 }
                 itsMetaParts.add(
                   [
-                    Uri.encodeQueryComponent(entry.key.toString()),
-                    Uri.encodeQueryComponent(value.toString()),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    encodeAnyToForm(
+                      value,
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                    ),
                   ].join('='),
                 );
               }
@@ -5454,8 +5680,13 @@ void main() {
                 }
                 pathBackslashToParts.add(
                   [
-                    Uri.encodeQueryComponent(entry.key.toString()),
-                    Uri.encodeQueryComponent(value.toString()),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    encodeAnyToForm(
+                      value,
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                    ),
                   ].join('='),
                 );
               }
@@ -5546,8 +5777,13 @@ void main() {
                 }
                 $totalParts.add(
                   [
-                    Uri.encodeQueryComponent(entry.key.toString()),
-                    Uri.encodeQueryComponent(value.toString()),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    encodeAnyToForm(
+                      value,
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                    ),
                   ].join('='),
                 );
               }
@@ -10206,3 +10442,20 @@ Map<Property, PartEncoding> _multipartEncoding(
       model.properties.firstWhere((p) => p.name == entry.key): entry.value,
   };
 }
+
+ClassModel _testClassModel(Context context) => ClassModel(
+  name: 'NestedValue',
+  properties: const [],
+  context: context,
+  isDeprecated: false,
+  examples: const [],
+);
+
+EnumModel<String> _testStringEnum(Context context) => EnumModel(
+  name: 'TextValue',
+  values: {const EnumEntry(value: 'value')},
+  isNullable: false,
+  context: context,
+  isDeprecated: false,
+  examples: const [],
+);

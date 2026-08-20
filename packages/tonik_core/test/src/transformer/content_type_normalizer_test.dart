@@ -15,6 +15,101 @@ void main() {
       context = Context.initial();
     });
 
+    test('typed request text encodings survive model normalization', () {
+      expect(TextEncoding.values, [
+        TextEncoding.utf8,
+        TextEncoding.latin1,
+        TextEncoding.ascii,
+      ]);
+
+      final partProperty = Property(
+        name: 'message',
+        model: StringModel(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      const partEncoding = PartEncoding(
+        contentType: ContentType.text,
+        rawContentType: 'text/plain; charset=iso-8859-1',
+        wireContentType: 'text/plain; charset=iso-8859-1',
+        textEncoding: TextEncoding.latin1,
+        headers: null,
+        style: null,
+        explode: null,
+        allowReserved: null,
+      );
+      final textContent = RequestContent(
+        model: BooleanModel(context: context),
+        contentType: ContentType.text,
+        rawContentType: 'text/plain; charset=us-ascii',
+        wireContentType: 'text/plain; charset=us-ascii',
+        textEncoding: TextEncoding.ascii,
+        examples: const [],
+      );
+      final multipartContent = RequestContent(
+        model: ClassModel(
+          name: 'MultipartBody',
+          properties: [partProperty],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        ),
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        multipartEncoding: {partProperty: partEncoding},
+        examples: const [],
+      );
+      final requestBody = RequestBodyObject(
+        name: 'EncodedBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {textContent, multipartContent},
+      );
+      final document = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: {requestBody},
+      );
+
+      final transformed = normalizer.apply(document);
+      final transformedBody =
+          transformed.requestBodies.single as RequestBodyObject;
+      final transformedText = transformedBody.content.singleWhere(
+        (content) => content.contentType == ContentType.text,
+      );
+      final transformedMultipart = transformedBody.content.singleWhere(
+        (content) => content.contentType == ContentType.multipart,
+      );
+      final transformedPart =
+          transformedMultipart.multipartEncoding!.values.single;
+
+      expect(transformedText.model, isA<StringModel>());
+      expect(transformedText.textEncoding, TextEncoding.ascii);
+      expect(
+        transformedText.wireContentType,
+        'text/plain; charset=us-ascii',
+      );
+      expect(transformedMultipart.textEncoding, TextEncoding.utf8);
+      expect(transformedPart.textEncoding, TextEncoding.latin1);
+      expect(
+        transformedPart.wireContentType,
+        'text/plain; charset=iso-8859-1',
+      );
+    });
+
     group('ResponseBody normalization', () {
       test(
         'replaces model with BinaryModel for ContentType.bytes responses',
