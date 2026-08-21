@@ -1259,7 +1259,6 @@ void main() {
         );
 
         final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
           @override
