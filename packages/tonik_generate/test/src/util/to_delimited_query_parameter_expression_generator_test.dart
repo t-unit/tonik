@@ -669,14 +669,21 @@ void main() {
           collapseWhitespace(
             format(r'''
               void test() {
-                for (final value in ids
-                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
-                    .toList()
-                    .toSpaceDelimited(
-                      explode: false,
-                      allowEmpty: true,
-                      alreadyEncoded: true,
-                    )) {
+                for (final value
+                    in ids
+                        .map(
+                          (e) => e.uriEncode(
+                            allowEmpty: true,
+                            textEncoding: utf8,
+                            allowReserved: true,
+                          ),
+                        )
+                        .toList()
+                        .toSpaceDelimited(
+                          explode: false,
+                          allowEmpty: true,
+                          alreadyEncoded: true,
+                        )) {
                   _$entries.add((name: r'ids', value: value));
                 }
               }
@@ -716,18 +723,23 @@ void main() {
             collapseWhitespace(
               format(r'''
                 void test() {
-                  for (final value in tags
-                      .map(
-                        (e) => e == null
-                            ? ''
-                            : e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),
-                      )
-                      .toList()
-                      .toSpaceDelimited(
-                        explode: false,
-                        allowEmpty: true,
-                        alreadyEncoded: true,
-                      )) {
+                  for (final value
+                      in tags
+                          .map(
+                            (e) => e == null
+                                ? ''
+                                : e.uriEncode(
+                                    allowEmpty: true,
+                                    textEncoding: utf8,
+                                    allowReserved: true,
+                                  ),
+                          )
+                          .toList()
+                          .toSpaceDelimited(
+                            explode: false,
+                            allowEmpty: true,
+                            alreadyEncoded: true,
+                          )) {
                     _$entries.add((name: r'tags', value: value));
                   }
                 }
@@ -768,18 +780,23 @@ void main() {
             collapseWhitespace(
               format(r'''
                 void test() {
-                  for (final value in tags
-                      .map(
-                        (e) => e == null
-                            ? ''
-                            : e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),
-                      )
-                      .toList()
-                      .toPipeDelimited(
-                        explode: false,
-                        allowEmpty: true,
-                        alreadyEncoded: true,
-                      )) {
+                  for (final value
+                      in tags
+                          .map(
+                            (e) => e == null
+                                ? ''
+                                : e.uriEncode(
+                                    allowEmpty: true,
+                                    textEncoding: utf8,
+                                    allowReserved: true,
+                                  ),
+                          )
+                          .toList()
+                          .toPipeDelimited(
+                            explode: false,
+                            allowEmpty: true,
+                            alreadyEncoded: true,
+                          )) {
                     _$entries.add((name: r'tags', value: value));
                   }
                 }
@@ -826,19 +843,26 @@ void main() {
             collapseWhitespace(code),
             collapseWhitespace(
               format(r'''
-              void test() {
-                for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
-                    .toList()
-                    .toSpaceDelimited(
-                      explode: false,
-                      allowEmpty: true,
-                      alreadyEncoded: true,
-                    )) {
-                  _$entries.add((name: r'priorities', value: value));
+                void test() {
+                  for (final value
+                      in priorities
+                          .map(
+                            (e) => e.uriEncode(
+                              allowEmpty: true,
+                              textEncoding: utf8,
+                              allowReserved: true,
+                            ),
+                          )
+                          .toList()
+                          .toSpaceDelimited(
+                            explode: false,
+                            allowEmpty: true,
+                            alreadyEncoded: true,
+                          )) {
+                    _$entries.add((name: r'priorities', value: value));
+                  }
                 }
-              }
-            '''),
+              '''),
             ),
           );
         },
@@ -894,14 +918,21 @@ void main() {
                     );
                   }
                 }
-                for (final value in items
-                    .map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
-                    .toList()
-                    .toSpaceDelimited(
-                      explode: false,
-                      allowEmpty: true,
-                      alreadyEncoded: true,
-                    )) {
+                for (final value
+                    in items
+                        .map(
+                          (item) => item.uriEncode(
+                            allowEmpty: true,
+                            textEncoding: utf8,
+                            allowReserved: true,
+                          ),
+                        )
+                        .toList()
+                        .toSpaceDelimited(
+                          explode: false,
+                          allowEmpty: true,
+                          alreadyEncoded: true,
+                        )) {
                   _$entries.add((name: r'items', value: value));
                 }
               }

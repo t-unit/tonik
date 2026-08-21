@@ -2032,22 +2032,26 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                required Encoding textEncoding, bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+                required Encoding textEncoding,
+                bool useQueryComponent = false,
+                bool allowReserved = false,
+                Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList(:final value) => value.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
-                    useQueryComponent: useQueryComponent, textEncoding: textEncoding,
+                    useQueryComponent: useQueryComponent,
+                    textEncoding: textEncoding,
                   ),
                   ValueStr(:final value) => value.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved, textEncoding: textEncoding,
+                    allowReserved: allowReserved,
+                    textEncoding: textEncoding,
                   ),
                 };
               }
@@ -2101,8 +2105,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                required Encoding textEncoding, bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+                required Encoding textEncoding,
+                bool useQueryComponent = false,
+                bool allowReserved = false,
+                Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
@@ -2113,7 +2119,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved, textEncoding: textEncoding,
+                    allowReserved: allowReserved,
+                    textEncoding: textEncoding,
                   ),
                 };
               }
@@ -4043,11 +4050,17 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String uriEncode({ required bool allowEmpty, required Encoding textEncoding,bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
-                textEncoding: textEncoding,useQueryComponent: useQueryComponent,
+                textEncoding: textEncoding,
+                useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
               ),
               ValueText() => throw EncodingException(

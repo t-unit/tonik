@@ -156,12 +156,20 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'name', MultipartFile.fromBytes(latin1.encode(body.name), contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'))));
-            return _$formData;
-          }
-        '''),
+            void test() {
+              final _$formData = FormData();
+              _$formData.files.add(
+                MapEntry(
+                  r'name',
+                  MultipartFile.fromBytes(
+                    latin1.encode(body.name),
+                    contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+                  ),
+                ),
+              );
+              return _$formData;
+            }
+          '''),
         ),
       );
     });
@@ -5306,14 +5314,14 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              throw EncodingException(
-                r"deepObject style is not supported for map multipart properties (property: it's-meta). Maps do not implement ParameterEncodable.toDeepObject().",
-              );
-              return _$formData;
-            }
-          '''),
+              void test() {
+                final _$formData = FormData();
+                throw EncodingException(
+                  r"deepObject style is not supported for map multipart properties (property: it's-meta). Maps do not implement ParameterEncodable.toDeepObject().",
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },
@@ -5375,41 +5383,48 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              final metadataParts = <String>[];
-              for (final entry in ((body.metadata as Map)).entries) {
-                final value = entry.value;
-                if (value == null) continue;
-                if (value is Map || value is List) {
-                  throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: ' r'metadata' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+              void test() {
+                final _$formData = FormData();
+                final metadataParts = <String>[];
+                for (final entry in ((body.metadata as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: '
+                      r'metadata'
+                      ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  metadataParts.add(
+                    [
+                      entry.key.toString().uriEncode(
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                      encodeAnyToForm(
+                        value,
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                    ].join('='),
                   );
                 }
-                metadataParts.add(
-                  [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
-                    encodeAnyToForm(
-                      value,
-                      explode: true,
-                      allowEmpty: true,
-                      useQueryComponent: true,
-                    textEncoding: utf8,),
-                  ].join('='),
-                );
-              }
-              _$formData.files.add(MapEntry(
-                r'metadata',
-                MultipartFile.fromString(
-                  metadataParts.join('&'),
-                  contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded'),
+                _$formData.files.add(
+                  MapEntry(
+                    r'metadata',
+                    MultipartFile.fromString(
+                      metadataParts.join('&'),
+                      contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
+                    ),
                   ),
-                ),
-              );
-              return _$formData;
-            }
-          '''),
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },
@@ -5471,43 +5486,50 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              if (body.metadata != null) {
-                final metadataParts = <String>[];
-                for (final entry in ((body.metadata! as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'metadata' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+              void test() {
+                final _$formData = FormData();
+                if (body.metadata != null) {
+                  final metadataParts = <String>[];
+                  for (final entry in ((body.metadata! as Map)).entries) {
+                    final value = entry.value;
+                    if (value == null) continue;
+                    if (value is Map || value is List) {
+                      throw EncodingException(
+                        'Standard URL encoding does not support nested values (property: '
+                        r'metadata'
+                        ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      );
+                    }
+                    metadataParts.add(
+                      [
+                        entry.key.toString().uriEncode(
+                          allowEmpty: true,
+                          useQueryComponent: true,
+                          textEncoding: utf8,
+                        ),
+                        encodeAnyToForm(
+                          value,
+                          explode: true,
+                          allowEmpty: true,
+                          useQueryComponent: true,
+                          textEncoding: utf8,
+                        ),
+                      ].join('='),
                     );
                   }
-                  metadataParts.add(
-                    [
-                      entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
-                      encodeAnyToForm(
-                        value,
-                        explode: true,
-                        allowEmpty: true,
-                        useQueryComponent: true,
-                      textEncoding: utf8,),
-                    ].join('='),
+                  _$formData.files.add(
+                    MapEntry(
+                      r'metadata',
+                      MultipartFile.fromString(
+                        metadataParts.join('&'),
+                        contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
+                      ),
+                    ),
                   );
                 }
-                _$formData.files.add(MapEntry(
-                  r'metadata',
-                  MultipartFile.fromString(
-                    metadataParts.join('&'),
-                    contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded'),
-                    ),
-                  ),
-                );
+                return _$formData;
               }
-              return _$formData;
-            }
-          '''),
+            '''),
           ),
         );
       },
@@ -5570,41 +5592,48 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              final itsMetaParts = <String>[];
-              for (final entry in ((body.itsMeta as Map)).entries) {
-                final value = entry.value;
-                if (value == null) continue;
-                if (value is Map || value is List) {
-                  throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: ' r"it's-meta" ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+              void test() {
+                final _$formData = FormData();
+                final itsMetaParts = <String>[];
+                for (final entry in ((body.itsMeta as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: '
+                      r"it's-meta"
+                      ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  itsMetaParts.add(
+                    [
+                      entry.key.toString().uriEncode(
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                      encodeAnyToForm(
+                        value,
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                    ].join('='),
                   );
                 }
-                itsMetaParts.add(
-                  [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
-                    encodeAnyToForm(
-                      value,
-                      explode: true,
-                      allowEmpty: true,
-                      useQueryComponent: true,
-                    textEncoding: utf8,),
-                  ].join('='),
-                );
-              }
-              _$formData.files.add(MapEntry(
-                r"it's-meta",
-                MultipartFile.fromString(
-                  itsMetaParts.join('&'),
-                  contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded'),
+                _$formData.files.add(
+                  MapEntry(
+                    r"it's-meta",
+                    MultipartFile.fromString(
+                      itsMetaParts.join('&'),
+                      contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
+                    ),
                   ),
-                ),
-              );
-              return _$formData;
-            }
-          '''),
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },
@@ -5667,41 +5696,48 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              final pathBackslashToParts = <String>[];
-              for (final entry in ((body.pathBackslashTo as Map)).entries) {
-                final value = entry.value;
-                if (value == null) continue;
-                if (value is Map || value is List) {
-                  throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: ' r'path\to' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+              void test() {
+                final _$formData = FormData();
+                final pathBackslashToParts = <String>[];
+                for (final entry in ((body.pathBackslashTo as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: '
+                      r'path\to'
+                      ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  pathBackslashToParts.add(
+                    [
+                      entry.key.toString().uriEncode(
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                      encodeAnyToForm(
+                        value,
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                    ].join('='),
                   );
                 }
-                pathBackslashToParts.add(
-                  [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
-                    encodeAnyToForm(
-                      value,
-                      explode: true,
-                      allowEmpty: true,
-                      useQueryComponent: true,
-                    textEncoding: utf8,),
-                  ].join('='),
-                );
-              }
-              _$formData.files.add(MapEntry(
-                r'path\to',
-                MultipartFile.fromString(
-                  pathBackslashToParts.join('&'),
-                  contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded'),
+                _$formData.files.add(
+                  MapEntry(
+                    r'path\to',
+                    MultipartFile.fromString(
+                      pathBackslashToParts.join('&'),
+                      contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
+                    ),
                   ),
-                ),
-              );
-              return _$formData;
-            }
-          '''),
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },
@@ -5764,41 +5800,48 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-            void test() {
-              final _$formData = FormData();
-              final $totalParts = <String>[];
-              for (final entry in ((body.$total as Map)).entries) {
-                final value = entry.value;
-                if (value == null) continue;
-                if (value is Map || value is List) {
-                  throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: ' r'$total' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+              void test() {
+                final _$formData = FormData();
+                final $totalParts = <String>[];
+                for (final entry in ((body.$total as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: '
+                      r'$total'
+                      ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  $totalParts.add(
+                    [
+                      entry.key.toString().uriEncode(
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                      encodeAnyToForm(
+                        value,
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      ),
+                    ].join('='),
                   );
                 }
-                $totalParts.add(
-                  [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
-                    encodeAnyToForm(
-                      value,
-                      explode: true,
-                      allowEmpty: true,
-                      useQueryComponent: true,
-                    textEncoding: utf8,),
-                  ].join('='),
-                );
-              }
-              _$formData.files.add(MapEntry(
-                r'$total',
-                MultipartFile.fromString(
-                  $totalParts.join('&'),
-                  contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded'),
+                _$formData.files.add(
+                  MapEntry(
+                    r'$total',
+                    MultipartFile.fromString(
+                      $totalParts.join('&'),
+                      contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
+                    ),
                   ),
-                ),
-              );
-              return _$formData;
-            }
-          '''),
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },
@@ -6069,12 +6112,21 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'tags', body.tags.uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
-            return _$formData;
-          }
-        '''),
+            void test() {
+              final _$formData = FormData();
+              _$formData.fields.add(
+                MapEntry(
+                  r'tags',
+                  body.tags.uriEncode(
+                    allowEmpty: true,
+                    textEncoding: utf8,
+                    alreadyEncoded: true,
+                  ),
+                ),
+              );
+              return _$formData;
+            }
+          '''),
         ),
       );
     });
@@ -6406,14 +6458,19 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            for (final item in body.statuses) {
-              _$formData.fields.add(MapEntry(r'statuses', item.uriEncode(allowEmpty: true, textEncoding: utf8),),);
+            void test() {
+              final _$formData = FormData();
+              for (final item in body.statuses) {
+                _$formData.fields.add(
+                  MapEntry(
+                    r'statuses',
+                    item.uriEncode(allowEmpty: true, textEncoding: utf8),
+                  ),
+                );
+              }
+              return _$formData;
             }
-            return _$formData;
-          }
-        '''),
+          '''),
         ),
       );
     });
@@ -6482,12 +6539,24 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'codes', body.codes.map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8)).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
-            return _$formData;
-          }
-        '''),
+            void test() {
+              final _$formData = FormData();
+              _$formData.fields.add(
+                MapEntry(
+                  r'codes',
+                  body.codes
+                      .map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8))
+                      .toList()
+                      .uriEncode(
+                        allowEmpty: true,
+                        textEncoding: utf8,
+                        alreadyEncoded: true,
+                      ),
+                ),
+              );
+              return _$formData;
+            }
+          '''),
         ),
       );
     });
@@ -6674,12 +6743,24 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'scores', body.scores.map((item) => jsonEncode(item)).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
-            return _$formData;
-          }
-        '''),
+            void test() {
+              final _$formData = FormData();
+              _$formData.fields.add(
+                MapEntry(
+                  r'scores',
+                  body.scores
+                      .map((item) => jsonEncode(item))
+                      .toList()
+                      .uriEncode(
+                        allowEmpty: true,
+                        textEncoding: utf8,
+                        alreadyEncoded: true,
+                      ),
+                ),
+              );
+              return _$formData;
+            }
+          '''),
         ),
       );
     });
@@ -7881,14 +7962,19 @@ $expectedPartCode
             collapseWhitespace(code),
             collapseWhitespace(
               format(r'''
-              void test() {
-                final _$formData = FormData();
-                for (final item in body.priorities) {
-                  _$formData.fields.add(MapEntry(r'priorities', item.uriEncode(allowEmpty: true, textEncoding: utf8),),);
+                void test() {
+                  final _$formData = FormData();
+                  for (final item in body.priorities) {
+                    _$formData.fields.add(
+                      MapEntry(
+                        r'priorities',
+                        item.uriEncode(allowEmpty: true, textEncoding: utf8),
+                      ),
+                    );
+                  }
+                  return _$formData;
                 }
-                return _$formData;
-              }
-            '''),
+              '''),
             ),
           );
         },
@@ -9368,14 +9454,28 @@ $expectedPartCode
         collapseWhitespace(code),
         collapseWhitespace(
           format(r'''
-          void test() {
-            final _$formData = FormData();
-            final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true),];
-            _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(body.tags.uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,), headers: _$tagsHeaders,),),);
-            return _$formData;
-          }
-        '''),
+            void test() {
+              final _$formData = FormData();
+              final _$tagsHeaders = <String, List<String>>{};
+              _$tagsHeaders[r'X-Custom'] = [
+                tagsCustom.toSimple(explode: false, allowEmpty: true),
+              ];
+              _$formData.files.add(
+                MapEntry(
+                  r'tags',
+                  MultipartFile.fromString(
+                    body.tags.uriEncode(
+                      allowEmpty: true,
+                      textEncoding: utf8,
+                      alreadyEncoded: true,
+                    ),
+                    headers: _$tagsHeaders,
+                  ),
+                ),
+              );
+              return _$formData;
+            }
+          '''),
         ),
       );
     });
@@ -10192,14 +10292,31 @@ $expectedPartCode
           collapseWhitespace(code),
           collapseWhitespace(
             format(r'''
-          void test() {
-            final _$formData = FormData();
-            final _$datesHeaders = <String, List<String>>{};
-            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true),];
-            _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(body.dates.map((item) => item.toTimeZonedIso8601String()).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,), headers: _$datesHeaders,),),);
-            return _$formData;
-          }
-        '''),
+              void test() {
+                final _$formData = FormData();
+                final _$datesHeaders = <String, List<String>>{};
+                _$datesHeaders[r'X-Custom'] = [
+                  datesCustom.toSimple(explode: false, allowEmpty: true),
+                ];
+                _$formData.files.add(
+                  MapEntry(
+                    r'dates',
+                    MultipartFile.fromString(
+                      body.dates
+                          .map((item) => item.toTimeZonedIso8601String())
+                          .toList()
+                          .uriEncode(
+                            allowEmpty: true,
+                            textEncoding: utf8,
+                            alreadyEncoded: true,
+                          ),
+                      headers: _$datesHeaders,
+                    ),
+                  ),
+                );
+                return _$formData;
+              }
+            '''),
           ),
         );
       },

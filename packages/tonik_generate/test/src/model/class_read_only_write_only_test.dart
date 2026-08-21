@@ -429,8 +429,26 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
-''';
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
+          return parameterProperties(allowEmpty: allowEmpty).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            fieldEncodings: fieldEncodings,
+            textEncoding: textEncoding,
+          );
+        }
+      ''';
 
       expect(
         collapseWhitespace(classCode),
