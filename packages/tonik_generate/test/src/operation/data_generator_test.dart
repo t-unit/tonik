@@ -1250,7 +1250,7 @@ void main() {
         const expectedMethod = r'''
           Object? _data({required Pet body}) {
             return body
-                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                 .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                 .join('&');
           }
@@ -1370,7 +1370,7 @@ Object? _data({required String body}) {
           Object? _data({Pet? body}) {
             if (body == null) return null;
             return body
-                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                 .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                 .join('&');
           }
@@ -1465,7 +1465,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -1546,7 +1546,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -1620,7 +1620,7 @@ Object? _data({required String body}) {
           const expectedMethod = r'''
             Object? _data({required PlainForm body}) {
               return body
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&');
             }
@@ -1684,7 +1684,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -1750,7 +1750,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -1826,7 +1826,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -1928,7 +1928,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                       r'status': const FormFieldEncoding(allowReserved: true),
                       r'choice': const FormFieldEncoding(allowReserved: true),
@@ -2005,7 +2005,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'status': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2086,7 +2086,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'choice': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2151,7 +2151,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2221,7 +2221,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                       r'tags': const FormFieldEncoding(explode: true),
                     },
@@ -2292,7 +2292,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2358,7 +2358,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'metadata': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2420,7 +2420,7 @@ Object? _data({required String body}) {
           const expectedMethod = r'''
             Object? _data({required ReadOnlyForm body}) {
               return body
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&');
             }
@@ -2484,7 +2484,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'user_name': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -2570,7 +2570,7 @@ Object? _data({required String body}) {
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                    fieldEncodings: <String, FormFieldEncoding>{
+                    textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
                     },
                   )
@@ -3043,7 +3043,7 @@ Object? _data({required String body}) {
             return switch (body) {
               final CreateUserJson value => value.value.toJson(),
               final CreateUserXWwwFormUrlencoded value => value.value
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&'),
             };
@@ -3118,7 +3118,7 @@ Object? _data({required String body}) {
               return switch (body) {
                 final UpdateItemJson value => value.value.toJson(),
                 final UpdateItemXWwwFormUrlencoded value => value.value
-                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
                     .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                     .join('&'),
               };
@@ -3222,7 +3222,7 @@ Object? _data({required String body}) {
                       explode: true,
                       allowEmpty: true,
                       useQueryComponent: true,
-                      fieldEncodings: <String, FormFieldEncoding>{
+                      textEncoding: utf8,fieldEncodings: <String, FormFieldEncoding>{
                         r'reserved': const FormFieldEncoding(allowReserved: true),
                       },
                     )

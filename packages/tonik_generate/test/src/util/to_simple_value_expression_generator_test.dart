@@ -134,7 +134,7 @@ void main() {
           format('''
             test() {
               final result = ids
-                  .map((e) => e.uriEncode(allowEmpty: true))
+                  .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                   .toList()
                   .toSimple(explode: false, allowEmpty: true, alreadyEncoded: true);
             }
@@ -281,7 +281,7 @@ void main() {
             format('''
               test() {
                 final result = value
-                    .map((e) => e.uriEncode(allowEmpty: true, literal: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8,literal: true),)
                     .toList()
                     .toSimple(
                       explode: false,
@@ -1450,7 +1450,7 @@ void main() {
         final expected = format('''
           test() {
             final result = value
-                .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true, textEncoding: utf8),)
                 .toList()
                 .toSimple(explode: false, allowEmpty: true, alreadyEncoded: true);
           }

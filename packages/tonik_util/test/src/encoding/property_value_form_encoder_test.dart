@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:test/test.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/form_field_encoding.dart';
@@ -17,6 +19,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'colors': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[
           (name: 'name', value: 'John'),
@@ -32,7 +35,7 @@ void main() {
         <String, PropertyValue>{
           'q': const PropertyValue.scalar('hello'),
           'tags': const PropertyValue.array(['urgent', 'open']),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[
           (name: 'q', value: 'hello'),
           (name: 'tags', value: 'urgent,open'),
@@ -49,6 +52,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'colors': FormFieldEncoding()},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'colors', value: 'red,green,blue')],
       );
@@ -66,6 +70,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'name', value: 'John')],
       );
@@ -81,6 +86,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'tags', value: '')],
       );
@@ -91,7 +97,7 @@ void main() {
         <String, PropertyValue>{
           'name': const PropertyValue.scalar('John'),
           'tags': const PropertyValue.array([]),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'name', value: 'John')],
       );
     });
@@ -101,7 +107,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'tags': const PropertyValue.array(['']),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'tags', value: '')],
       );
     });
@@ -117,6 +123,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'numbers': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'name', value: 'John')],
       );
@@ -126,7 +133,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'name': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'name', value: '')],
       );
     });
@@ -143,6 +150,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[
           (name: 'tags', value: 'a%2Cb'),
@@ -162,6 +170,7 @@ void main() {
           fieldEncodings: const {
             'tags': FormFieldEncoding(explode: true, allowReserved: true),
           },
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[
           (name: 'tags', value: 'a,b'),
@@ -175,7 +184,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'tags': const PropertyValue.array(['a,b', 'c']),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'tags', value: 'a%2Cb,c')],
       );
     });
@@ -187,7 +196,7 @@ void main() {
         <String, PropertyValue>{
           'a': const PropertyValue.scalar('1'),
           'colors': const PropertyValue.array(['red', 'green', 'blue']),
-        }.toForm('p', explode: false, allowEmpty: true),
+        }.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: 'a,1,colors,red,green,blue')],
       );
     });
@@ -202,6 +211,7 @@ void main() {
           explode: false,
           allowEmpty: true,
           fieldEncodings: const {'colors': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'p', value: 'a,1,colors,red,green,blue')],
       );
@@ -216,6 +226,7 @@ void main() {
           explode: false,
           allowEmpty: true,
           fieldEncodings: const {'k/1': FormFieldEncoding(allowReserved: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'p', value: 'k%2F1,a%2Fb')],
       );
@@ -225,7 +236,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'colors': const PropertyValue.array([]),
-        }.toForm('p', explode: false, allowEmpty: true),
+        }.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: 'colors,')],
       );
     });
@@ -235,7 +246,12 @@ void main() {
         <String, PropertyValue>{
           'a': const PropertyValue.scalar(''),
           'b': const PropertyValue.scalar('ok'),
-        }.toForm('filter', explode: false, allowEmpty: false),
+        }.toForm(
+          'filter',
+          explode: false,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'filter', value: 'a,,b,ok')],
       );
     });
@@ -253,6 +269,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'a/1': FormFieldEncoding(allowReserved: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[
           (name: 'a%2F1', value: 'x/y'),
@@ -267,7 +284,13 @@ void main() {
         expect(
           <String, PropertyValue>{
             'a:b': const PropertyValue.scalar('c:d'),
-          }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+          }.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+            textEncoding: utf8,
+          ),
           const <ParameterEntry>[
             (name: 'a:b', value: 'c:d'),
           ],
@@ -281,7 +304,13 @@ void main() {
         expect(
           <String, PropertyValue>{
             'a:b': const PropertyValue.scalar('c:d'),
-          }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+          }.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+            textEncoding: utf8,
+          ),
           const <ParameterEntry>[(name: 'p', value: 'a:b,c:d')],
         );
       },
@@ -291,7 +320,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'a=b&c': const PropertyValue.scalar('d:e'),
-        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[
           (name: 'a%3Db%26c', value: 'd:e'),
         ],
@@ -302,7 +337,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'a=b&c': const PropertyValue.scalar('d:e'),
-        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'p', value: 'a%3Db%26c,d:e')],
       );
     });
@@ -318,6 +359,7 @@ void main() {
           allowEmpty: true,
           allowReserved: true,
           fieldEncodings: const {'a:b': FormFieldEncoding()},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'a:b', value: 'c%3Ad')],
       );
@@ -327,7 +369,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'k:1': const PropertyValue.array(['a:b', 'c:d']),
-        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'p', value: 'k:1,a:b,c:d')],
       );
     });
@@ -336,7 +384,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'a,b': const PropertyValue.scalar('c:d'),
-        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'p', value: 'a,b,c:d')],
       );
     });
@@ -345,7 +399,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'a:b': const PropertyValue.scalar('c:d'),
-        }.toForm('p', explode: false, allowEmpty: true),
+        }.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: 'a%3Ab,c%3Ad')],
       );
     });
@@ -361,6 +415,7 @@ void main() {
           allowEmpty: true,
           allowReserved: true,
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[(name: 'tags', value: 'a%2Fb')],
       );
@@ -371,7 +426,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'tags': const PropertyValue.array(['a/b', 'c/d']),
-        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'tags', value: 'a/b,c/d')],
       );
     });
@@ -382,7 +443,13 @@ void main() {
       expect(
         <String, PropertyValue>{
           'q': const PropertyValue.scalar('a b'),
-        }.toForm('p', explode: true, allowEmpty: true, useQueryComponent: true),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[(name: 'q', value: 'a+b')],
       );
     });
@@ -391,7 +458,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'q': const PropertyValue.scalar('a b'),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'q', value: 'a%20b')],
       );
     });
@@ -404,6 +471,7 @@ void main() {
           'p',
           explode: false,
           allowEmpty: true,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -412,6 +480,7 @@ void main() {
           'p',
           explode: true,
           allowEmpty: true,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -420,6 +489,7 @@ void main() {
           'p',
           explode: false,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -428,6 +498,7 @@ void main() {
           'p',
           explode: true,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -438,7 +509,12 @@ void main() {
         <String, PropertyValue>{
           'a': const PropertyValue.scalar(''),
           'b': const PropertyValue.scalar('ok'),
-        }.toForm('filter', explode: true, allowEmpty: false),
+        }.toForm(
+          'filter',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[
           (name: 'a', value: ''),
           (name: 'b', value: 'ok'),
@@ -450,7 +526,7 @@ void main() {
       expect(
         <String, PropertyValue>{
           'key': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: true),
+        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'key', value: '')],
       );
     });
@@ -459,7 +535,7 @@ void main() {
       expect(
         () => <String, PropertyValue>{
           'tags': const PropertyValue.array([]),
-        }.toForm('p', explode: true, allowEmpty: false),
+        }.toForm('p', explode: true, allowEmpty: false, textEncoding: utf8),
         throwsA(isA<EmptyValueException>()),
       );
     });
@@ -473,6 +549,7 @@ void main() {
           explode: true,
           allowEmpty: true,
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -489,6 +566,7 @@ void main() {
               explode: true,
               allowEmpty: false,
               fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+              textEncoding: utf8,
             ),
         throwsA(isA<EmptyValueException>()),
       );

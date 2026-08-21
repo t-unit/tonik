@@ -67,6 +67,7 @@ List<Code> _buildToFormQueryParameterCode(
             'name': specLiteralString(rawName),
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
+            'textEncoding': refer('utf8', 'dart:convert'),
             if (allowReserved) 'allowReserved': literalBool(true),
           },
         );
@@ -81,6 +82,7 @@ List<Code> _buildToFormQueryParameterCode(
     paramName: specLiteralString(rawName),
     explode: literalBool(explode),
     allowEmpty: literalBool(allowEmpty),
+    textEncoding: refer('utf8', 'dart:convert'),
     allowReserved: allowReserved,
     mapContext: rawName,
   );

@@ -1881,7 +1881,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(3));
+        expect(uriEncode.optionalParameters, hasLength(4));
 
         final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
@@ -1889,6 +1889,16 @@ void main() {
         expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
+
+        final textEncodingParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'textEncoding',
+        );
+        expect(
+          textEncodingParam.type?.accept(DartEmitter()).toString(),
+          'Encoding',
+        );
+        expect(textEncodingParam.named, isTrue);
+        expect(textEncodingParam.required, isTrue);
 
         final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'useQueryComponent',
@@ -1908,6 +1918,7 @@ void main() {
         expect(
           body,
           r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -1933,7 +1944,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(3));
+        expect(uriEncode.optionalParameters, hasLength(4));
 
         final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'useQueryComponent',
@@ -1953,6 +1964,7 @@ void main() {
         expect(
           body,
           r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -1977,7 +1989,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(3));
+        expect(uriEncode.optionalParameters, hasLength(4));
 
         final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'useQueryComponent',
@@ -1997,6 +2009,7 @@ void main() {
         expect(
           body,
           r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -2396,7 +2409,7 @@ void main() {
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
         expect(uriEncode.lambda, isFalse);
-        expect(uriEncode.optionalParameters, hasLength(3));
+        expect(uriEncode.optionalParameters, hasLength(4));
 
         final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
@@ -2424,7 +2437,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+          return _$rawValue.uriEncode(allowEmpty: allowEmpty, textEncoding: textEncoding, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

@@ -303,6 +303,7 @@ Object? _data({required String body}) {
           explode: true,
           allowEmpty: true,
           useQueryComponent: true,
+          textEncoding: utf8,
         )
         .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
         .join('&'),
@@ -380,6 +381,7 @@ Object? _data({required List<String> body}) {
           explode: true,
           allowEmpty: true,
           useQueryComponent: true,
+          textEncoding: utf8,
         )
         .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
         .join('&'),
@@ -430,6 +432,7 @@ Object? _data({required ProfileSubmission body}) {
           explode: true,
           allowEmpty: true,
           useQueryComponent: true,
+          textEncoding: utf8,
           fieldEncodings: <String, FormFieldEncoding>{
             r'callback': const FormFieldEncoding(allowReserved: true),
             r'tags': const FormFieldEncoding(explode: true),
@@ -480,6 +483,7 @@ Object? _data({ProfileSubmission? body}) {
           explode: true,
           allowEmpty: true,
           useQueryComponent: true,
+          textEncoding: utf8,
           fieldEncodings: <String, FormFieldEncoding>{
             r'callback': const FormFieldEncoding(allowReserved: true),
             r'tags': const FormFieldEncoding(explode: true),
@@ -517,6 +521,7 @@ Object? _data({ProfileSubmission? body}) {
                 'callback': FormFieldEncoding(allowReserved: true),
                 'tags': FormFieldEncoding(explode: true),
               },
+              textEncoding: utf8,
             );
 
         final wireBody = entries

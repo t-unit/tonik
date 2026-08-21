@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:test/test.dart';
 import 'package:tonik_util/src/date.dart';
 
@@ -177,7 +179,7 @@ void main() {
       test('toForm returns URL-encoded ISO date string', () {
         final date = Date(2024, 3, 15);
         final encoded = date
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         expect(encoded, '2024-03-15');
@@ -186,11 +188,11 @@ void main() {
       test('toForm handles explode parameter', () {
         final date = Date(2024, 12, 31);
         final encodedNoExplode = date
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final encodedExplode = date
-            .toForm('p', explode: true, allowEmpty: true)
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         expect(encodedNoExplode, '2024-12-31');
@@ -200,11 +202,11 @@ void main() {
       test('toForm handles allowEmpty parameter', () {
         final date = Date(2024, 1, 1);
         final encoded1 = date
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final encoded2 = date
-            .toForm('p', explode: false, allowEmpty: false)
+            .toForm('p', explode: false, allowEmpty: false, textEncoding: utf8)
             .single
             .value;
         expect(encoded1, '2024-01-01');
@@ -281,7 +283,7 @@ void main() {
       test('round-trip form encoding preserves date', () {
         final originalDate = Date(2024, 7, 4);
         final encoded = originalDate
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decodedDate = Date.fromForm(encoded);
@@ -294,7 +296,7 @@ void main() {
       test('round-trip with URL encoding preserves date', () {
         final originalDate = Date(2024, 12, 25);
         final encoded = originalDate
-            .toForm('p', explode: true, allowEmpty: false)
+            .toForm('p', explode: true, allowEmpty: false, textEncoding: utf8)
             .single
             .value;
         final urlEncoded = Uri.encodeQueryComponent(encoded);
@@ -308,7 +310,7 @@ void main() {
       test('handles leap year dates correctly', () {
         final leapDate = Date(2024, 2, 29);
         final encoded = leapDate
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = Date.fromForm(encoded);
@@ -329,7 +331,7 @@ void main() {
 
         for (final testDate in testCases) {
           final encoded = testDate
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value;
           final decoded = Date.fromForm(encoded);
@@ -346,7 +348,7 @@ void main() {
         () {
           final date = Date(2024, 3, 15);
           final encoded = date
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value;
           expect(encoded, Uri.encodeComponent('2024-03-15'));
@@ -364,6 +366,7 @@ void main() {
                 explode: false,
                 allowEmpty: true,
                 useQueryComponent: true,
+                textEncoding: utf8,
               )
               .single
               .value;
@@ -422,7 +425,7 @@ void main() {
     test('encodes Date values', () {
       final date = Date(2023, 12, 25);
       expect(
-        date.uriEncode(allowEmpty: true),
+        date.uriEncode(allowEmpty: true, textEncoding: utf8),
         '2023-12-25',
       );
     });
@@ -430,7 +433,7 @@ void main() {
     test('encodes Date values with special characters', () {
       final date = Date(2023, 1, 1);
       expect(
-        date.uriEncode(allowEmpty: true),
+        date.uriEncode(allowEmpty: true, textEncoding: utf8),
         '2023-01-01',
       );
     });
@@ -438,7 +441,11 @@ void main() {
     test('handles Date with useQueryComponent true', () {
       final date = Date(2023, 12, 25);
       expect(
-        date.uriEncode(allowEmpty: true, useQueryComponent: true),
+        date.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: utf8,
+        ),
         '2023-12-25',
       );
     });
@@ -446,7 +453,7 @@ void main() {
     test('handles Date with useQueryComponent false', () {
       final date = Date(2023, 12, 25);
       expect(
-        date.uriEncode(allowEmpty: true),
+        date.uriEncode(allowEmpty: true, textEncoding: utf8),
         '2023-12-25',
       );
     });
@@ -454,7 +461,11 @@ void main() {
     test('threads allowReserved into uriEncode as a no-op', () {
       final date = Date(2023, 12, 25);
       expect(
-        date.uriEncode(allowEmpty: true, allowReserved: true),
+        date.uriEncode(
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         '2023-12-25',
       );
     });
@@ -462,7 +473,13 @@ void main() {
     test('threads allowReserved into toForm as a no-op', () {
       final date = Date(2023, 12, 25);
       final encoded = date
-          .toForm('p', explode: false, allowEmpty: true, allowReserved: true)
+          .toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+            textEncoding: utf8,
+          )
           .single
           .value;
       expect(encoded, '2023-12-25');
@@ -470,7 +487,10 @@ void main() {
 
     test('literal returns plain string form', () {
       final date = Date(2023, 12, 25);
-      expect(date.uriEncode(allowEmpty: true, literal: true), '2023-12-25');
+      expect(
+        date.uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
+        '2023-12-25',
+      );
     });
   });
 

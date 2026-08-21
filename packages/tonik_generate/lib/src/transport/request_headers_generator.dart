@@ -482,6 +482,7 @@ class RequestHeadersGenerator {
             {
               'explode': literalBool(explode),
               'allowEmpty': literalBool(true),
+              'textEncoding': refer('utf8', 'dart:convert'),
             },
           );
       bodyStatements.add(
@@ -501,6 +502,7 @@ class RequestHeadersGenerator {
       paramName: specLiteralString(rawName),
       explode: literalBool(explode),
       allowEmpty: literalBool(true),
+      textEncoding: refer('utf8', 'dart:convert'),
       mapContext: rawName,
     );
 

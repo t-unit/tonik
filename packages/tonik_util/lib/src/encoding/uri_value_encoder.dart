@@ -13,7 +13,7 @@ String encodeUriValue(
   String value, {
   required bool allowReserved,
   required bool useQueryComponent,
-  Encoding textEncoding = utf8,
+  required Encoding textEncoding,
 }) {
   final bytes = textEncoding.encode(value);
   final result = StringBuffer();

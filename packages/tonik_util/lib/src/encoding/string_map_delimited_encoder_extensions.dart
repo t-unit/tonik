@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
@@ -49,6 +51,7 @@ extension StringMapDelimitedEncoder on Map<String, String> {
       value,
       allowReserved: allowReserved,
       useQueryComponent: false,
+      textEncoding: utf8,
     );
 
     final flattened = entries

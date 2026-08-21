@@ -68,10 +68,10 @@ abstract interface class FormEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
-    Encoding textEncoding = utf8,
   });
 }
 
@@ -149,6 +149,7 @@ abstract interface class UriEncodable {
   /// the form delimiters `& = +`.
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent,
     bool allowReserved,
   });

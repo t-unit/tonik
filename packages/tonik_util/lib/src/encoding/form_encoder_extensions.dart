@@ -14,8 +14,8 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 String _encodeValue(
   String value, {
   required bool useQueryComponent,
+  required Encoding textEncoding,
   bool allowReserved = false,
-  Encoding textEncoding = utf8,
 }) => value.uriEncode(
   allowEmpty: true,
   useQueryComponent: useQueryComponent,
@@ -30,9 +30,9 @@ extension FormUriEncoder on Uri {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -58,9 +58,9 @@ extension FormStringEncoder on String {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -86,9 +86,9 @@ extension FormIntEncoder on int {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -114,9 +114,9 @@ extension FormDoubleEncoder on double {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -142,9 +142,9 @@ extension FormNumEncoder on num {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -170,9 +170,9 @@ extension FormBoolEncoder on bool {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -198,9 +198,9 @@ extension FormDateTimeEncoder on DateTime {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -226,9 +226,9 @@ extension FormBigDecimalEncoder on BigDecimal {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(
@@ -259,10 +259,10 @@ extension FormStringListEncoder on List<String> {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty) {
       return const [];
@@ -323,10 +323,10 @@ extension FormStringMapEncoder on Map<String, String> {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty) {
       return const [];
@@ -383,9 +383,9 @@ extension FormBinaryEncoder on List<int> {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: _encodeValue(

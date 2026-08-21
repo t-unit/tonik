@@ -227,7 +227,7 @@ Map<String, String> _options({
           r'session',
           explode: false,
           allowEmpty: true,
-        )
+        textEncoding: utf8,)
         .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
   );
   if (theme != null) {
@@ -237,7 +237,7 @@ Map<String, String> _options({
             r'theme',
             explode: false,
             allowEmpty: true,
-          )
+          textEncoding: utf8,)
           .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
     );
   }

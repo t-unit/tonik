@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -578,6 +580,7 @@ void main() {
         'item',
         explode: true,
         allowEmpty: true,
+        textEncoding: utf8,
         useQueryComponent: true,
       );
 

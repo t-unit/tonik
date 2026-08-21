@@ -55,7 +55,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           return switch (this) {
             ResultError(:final value) => value.toForm(
               paramName,
@@ -122,7 +122,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
       const expectedMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) { return switch (this) { ResponseMessage(:final value) => value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ), }; }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return switch (this) { ResponseMessage(:final value) => value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ), }; }
 ''';
 
       expect(
@@ -442,7 +442,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           return switch (this) {
             OuterInner(:final value) => value.toForm(
               paramName,
@@ -507,7 +507,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) { return switch (this) { OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'inner'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), }; }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return switch (this) { OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'inner'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), }; }
 ''';
 
       expect(
@@ -595,7 +595,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) { return switch (this) { OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'a'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'b'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), }; }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return switch (this) { OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'a'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'b'), }.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ) : value.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ), }; }
 ''';
 
         expect(
@@ -630,7 +630,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final generated = format(baseClass.accept(emitter).toString());
 
         const expectedMethod = '''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           return switch (this) {
             WithBinaryBinary() => throw EncodingException(
               'Binary data cannot be form-encoded',

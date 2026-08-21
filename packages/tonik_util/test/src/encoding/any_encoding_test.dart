@@ -54,10 +54,10 @@ class TestEncodableModel implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
-    Encoding textEncoding = utf8,
   }) {
     if (explode) {
       return [
@@ -116,6 +116,7 @@ enum TestUriEncodableEnum implements UriEncodable {
   @override
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
   }) {
@@ -141,10 +142,10 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
-    Encoding textEncoding = utf8,
   }) {
     if (allowReserved) {
       return [(name: paramName, value: '$rawValue!reserved')];
@@ -1145,7 +1146,12 @@ void main() {
       test('encodes with explode=true', () {
         const model = TestEncodableModel(name: 'test', value: 42);
         expect(
-          encodeAnyToForm(model, explode: true, allowEmpty: false),
+          encodeAnyToForm(
+            model,
+            explode: true,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
           'name=test&value=42',
         );
       });
@@ -1153,7 +1159,12 @@ void main() {
       test('encodes with explode=false', () {
         const model = TestEncodableModel(name: 'test', value: 42);
         expect(
-          encodeAnyToForm(model, explode: false, allowEmpty: false),
+          encodeAnyToForm(
+            model,
+            explode: false,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
           'name,test,value,42',
         );
       });
@@ -1165,12 +1176,14 @@ void main() {
           model,
           explode: false,
           allowEmpty: true,
+          textEncoding: utf8,
         );
         final withQuery = encodeAnyToForm(
           model,
           explode: false,
           allowEmpty: true,
           useQueryComponent: true,
+          textEncoding: utf8,
         );
 
         expect(withoutQuery, 'hello%20world');
@@ -1187,6 +1200,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'value!reserved',
         );
@@ -1196,7 +1210,12 @@ void main() {
         const model = QueryComponentAwareEncodable('hello world');
 
         expect(
-          encodeAnyToForm(model, explode: true, allowEmpty: true),
+          encodeAnyToForm(
+            model,
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'hello%20world',
         );
       });
@@ -1205,7 +1224,12 @@ void main() {
     group('String', () {
       test('encodes string values with URL encoding', () {
         expect(
-          encodeAnyToForm('hello world', explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            'hello world',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'hello%20world',
         );
       });
@@ -1216,6 +1240,7 @@ void main() {
             'key=value&other=data',
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'key%3Dvalue%26other%3Ddata',
         );
@@ -1223,7 +1248,12 @@ void main() {
 
       test('encodes plus sign', () {
         expect(
-          encodeAnyToForm('hello+world', explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            'hello+world',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'hello%2Bworld',
         );
       });
@@ -1246,25 +1276,86 @@ void main() {
 
     group('int', () {
       test('encodes integer values', () {
-        expect(encodeAnyToForm(42, explode: false, allowEmpty: true), '42');
-        expect(encodeAnyToForm(-123, explode: true, allowEmpty: true), '-123');
-        expect(encodeAnyToForm(0, explode: false, allowEmpty: false), '0');
+        expect(
+          encodeAnyToForm(
+            42,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          '42',
+        );
+        expect(
+          encodeAnyToForm(
+            -123,
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          '-123',
+        );
+        expect(
+          encodeAnyToForm(
+            0,
+            explode: false,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
+          '0',
+        );
       });
     });
 
     group('double', () {
       test('encodes double values', () {
-        expect(encodeAnyToForm(3.14, explode: false, allowEmpty: true), '3.14');
-        expect(encodeAnyToForm(-2.5, explode: true, allowEmpty: true), '-2.5');
-        expect(encodeAnyToForm(0.0, explode: false, allowEmpty: false), '0.0');
+        expect(
+          encodeAnyToForm(
+            3.14,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          '3.14',
+        );
+        expect(
+          encodeAnyToForm(
+            -2.5,
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          '-2.5',
+        );
+        expect(
+          encodeAnyToForm(
+            0.0,
+            explode: false,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
+          '0.0',
+        );
       });
     });
 
     group('bool', () {
       test('encodes boolean values', () {
-        expect(encodeAnyToForm(true, explode: false, allowEmpty: true), 'true');
         expect(
-          encodeAnyToForm(false, explode: true, allowEmpty: true),
+          encodeAnyToForm(
+            true,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'true',
+        );
+        expect(
+          encodeAnyToForm(
+            false,
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'false',
         );
       });
@@ -1277,6 +1368,7 @@ void main() {
           dateTime,
           explode: false,
           allowEmpty: true,
+          textEncoding: utf8,
         );
         expect(encoded, contains('2023-12-25T10%3A30%3A45'));
         expect(encoded, contains('Z'));
@@ -1287,7 +1379,12 @@ void main() {
       test('encodes Uri values with URL encoding', () {
         final uri = Uri.parse('https://example.com/path?query=value');
         expect(
-          encodeAnyToForm(uri, explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            uri,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
         );
       });
@@ -1297,14 +1394,24 @@ void main() {
       test('encodes BigDecimal values', () {
         final decimal = BigDecimal.parse('123.456789');
         expect(
-          encodeAnyToForm(decimal, explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            decimal,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           '123.456789',
         );
       });
 
       test('handles zero and negative values', () {
         expect(
-          encodeAnyToForm(BigDecimal.zero, explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            BigDecimal.zero,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           '0',
         );
         expect(
@@ -1312,6 +1419,7 @@ void main() {
             BigDecimal.parse('-42.5'),
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '-42.5',
         );
@@ -1320,12 +1428,25 @@ void main() {
 
     group('null handling', () {
       test('encodes null with allowEmpty=true', () {
-        expect(encodeAnyToForm(null, explode: false, allowEmpty: true), '');
+        expect(
+          encodeAnyToForm(
+            null,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          '',
+        );
       });
 
       test('throws for null with allowEmpty=false', () {
         expect(
-          () => encodeAnyToForm(null, explode: false, allowEmpty: false),
+          () => encodeAnyToForm(
+            null,
+            explode: false,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -1338,6 +1459,7 @@ void main() {
             <dynamic>[1, 2, 3],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '1,2,3',
         );
@@ -1351,6 +1473,7 @@ void main() {
             <dynamic>[1, 2, 3],
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '1,2,3',
         );
@@ -1362,6 +1485,7 @@ void main() {
             <dynamic>['hello world', 'foo&bar'],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'hello%20world,foo%26bar',
         );
@@ -1374,6 +1498,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'hello+world',
         );
@@ -1385,6 +1510,7 @@ void main() {
             <dynamic>['hello world'],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'hello%20world',
         );
@@ -1396,6 +1522,7 @@ void main() {
             <dynamic>[],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '',
         );
@@ -1407,6 +1534,7 @@ void main() {
             <dynamic>[],
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1421,6 +1549,7 @@ void main() {
             ],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'a,1,b,2',
         );
@@ -1434,6 +1563,7 @@ void main() {
             <String, dynamic>{'key': 'value', 'count': 5},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'key,value,count,5',
         );
@@ -1445,6 +1575,7 @@ void main() {
             <String, dynamic>{'key': 'value', 'count': 5},
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'key=value&count=5',
         );
@@ -1456,6 +1587,7 @@ void main() {
             <String, dynamic>{'q': 'hello world'},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'q,hello%20world',
         );
@@ -1472,6 +1604,7 @@ void main() {
             },
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'first%20name,Jane,a%2Cb,v1,c%26d,v2',
         );
@@ -1484,6 +1617,7 @@ void main() {
             explode: true,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'q=hello+world',
         );
@@ -1495,6 +1629,7 @@ void main() {
             <String, dynamic>{'q': 'hello world'},
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'q=hello%20world',
         );
@@ -1506,6 +1641,7 @@ void main() {
             <String, dynamic>{},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '',
         );
@@ -1517,6 +1653,7 @@ void main() {
             <String, dynamic>{},
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1530,6 +1667,7 @@ void main() {
             },
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'tags,a,b',
         );
@@ -1543,6 +1681,7 @@ void main() {
             },
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'outer,inner,v',
         );
@@ -1556,6 +1695,7 @@ void main() {
             },
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'outer=inner=v',
         );
@@ -1567,6 +1707,7 @@ void main() {
             <String, dynamic>{'key': null},
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'key=',
         );
@@ -1580,6 +1721,7 @@ void main() {
             <dynamic>[null, 'a'],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           ',a',
         );
@@ -1596,6 +1738,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'q,hello+world,foo+bar',
         );
@@ -1609,6 +1752,7 @@ void main() {
             },
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'q,hello%20world,foo%20bar',
         );
@@ -1623,6 +1767,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'q,hello+world',
         );
@@ -1636,6 +1781,7 @@ void main() {
             ],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'q,hello%20world',
         );
@@ -1648,6 +1794,7 @@ void main() {
             explode: true,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'has+space=v',
         );
@@ -1659,6 +1806,7 @@ void main() {
             <String, dynamic>{'has space': 'v'},
             explode: true,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'has%20space=v',
         );
@@ -1671,6 +1819,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'hello+world',
         );
@@ -1684,6 +1833,7 @@ void main() {
               <dynamic>[const QueryComponentAwareEncodable('hello world')],
               explode: false,
               allowEmpty: true,
+              textEncoding: utf8,
             ),
             'hello%20world',
           );
@@ -1699,6 +1849,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'hello+world',
         );
@@ -1710,6 +1861,7 @@ void main() {
             'hello world',
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'hello%20world',
         );
@@ -1719,7 +1871,12 @@ void main() {
     group('unsupported types', () {
       test('throws for unsupported type', () {
         expect(
-          () => encodeAnyToForm(Object(), explode: false, allowEmpty: false),
+          () => encodeAnyToForm(
+            Object(),
+            explode: false,
+            allowEmpty: false,
+            textEncoding: utf8,
+          ),
           throwsA(isA<EncodingException>()),
         );
       });
@@ -1731,6 +1888,7 @@ void main() {
             <dynamic, dynamic>{'a': 1},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           throwsA(isA<EncodingException>()),
         );
@@ -1742,6 +1900,7 @@ void main() {
             <String, int>{'a': 1},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'a,1',
         );
@@ -1759,6 +1918,7 @@ void main() {
             <String, dynamic>{'key': <dynamic>[]},
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1771,6 +1931,7 @@ void main() {
             <dynamic>[<dynamic>[]],
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1783,6 +1944,7 @@ void main() {
             <String, dynamic>{'key': <String, dynamic>{}},
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1795,6 +1957,7 @@ void main() {
             <String, dynamic>{'key': null},
             explode: false,
             allowEmpty: false,
+            textEncoding: utf8,
           ),
           throwsA(isA<EmptyValueException>()),
         );
@@ -1808,6 +1971,7 @@ void main() {
             <String, dynamic>{'key': <dynamic>[]},
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           'key,',
         );
@@ -1820,6 +1984,7 @@ void main() {
             <dynamic>[<dynamic>[]],
             explode: false,
             allowEmpty: true,
+            textEncoding: utf8,
           ),
           '',
         );
@@ -1834,6 +1999,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'a%26b%3Dc:d',
         );
@@ -1846,6 +2012,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'https://x/a?b%3Dc%26d%3De',
         );
@@ -1859,6 +2026,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           '2024-01-02T12:30:45.000Z',
         );
@@ -1867,7 +2035,12 @@ void main() {
       test('DateTime value encodes : as %3A by default', () {
         final dateTime = DateTime.utc(2024, 1, 2, 12, 30, 45);
         expect(
-          encodeAnyToForm(dateTime, explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            dateTime,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           '2024-01-02T12%3A30%3A45.000Z',
         );
       });
@@ -1879,6 +2052,7 @@ void main() {
             explode: false,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'a:b,c%26d',
         );
@@ -1891,6 +2065,7 @@ void main() {
             explode: true,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'k=a%26b:c',
         );
@@ -1899,7 +2074,12 @@ void main() {
       test('default is byte-identical to Uri.encodeComponent for String', () {
         const value = 'a&b=c+d:e';
         expect(
-          encodeAnyToForm(value, explode: false, allowEmpty: true),
+          encodeAnyToForm(
+            value,
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           Uri.encodeComponent(value),
         );
       });
@@ -1914,6 +2094,7 @@ void main() {
           name: 'anyValue',
           explode: false,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -1926,6 +2107,7 @@ void main() {
           name: 'anyValue',
           explode: true,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -1938,6 +2120,7 @@ void main() {
           name: 'anyValue',
           explode: false,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const [(name: 'anyValue', value: 'a,b,c')],
       );
@@ -1950,6 +2133,7 @@ void main() {
           name: 'anyValue',
           explode: false,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const [(name: 'anyValue', value: 'hello')],
       );
@@ -1962,6 +2146,7 @@ void main() {
           name: 'anyValue',
           explode: false,
           allowEmpty: true,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -1971,6 +2156,7 @@ void main() {
           name: 'anyValue',
           explode: true,
           allowEmpty: true,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -1980,6 +2166,7 @@ void main() {
           name: 'anyValue',
           explode: false,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -1989,6 +2176,7 @@ void main() {
           name: 'anyValue',
           explode: true,
           allowEmpty: false,
+          textEncoding: utf8,
         ),
         const <ParameterEntry>[],
       );
@@ -3008,14 +3196,22 @@ void main() {
     group('UriEncodable', () {
       test('encodes simple enum value', () {
         expect(
-          encodeAnyToUri(TestUriEncodableEnum.value1, allowEmpty: true),
+          encodeAnyToUri(
+            TestUriEncodableEnum.value1,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'one',
         );
       });
 
       test('encodes enum value with special characters', () {
         expect(
-          encodeAnyToUri(TestUriEncodableEnum.valueWithSpace, allowEmpty: true),
+          encodeAnyToUri(
+            TestUriEncodableEnum.valueWithSpace,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'has%20space',
         );
       });
@@ -3026,6 +3222,7 @@ void main() {
             TestUriEncodableEnum.valueWithSpace,
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'has+space',
         );
@@ -3037,6 +3234,7 @@ void main() {
             TestUriEncodableEnum.value1,
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'one!reserved',
         );
@@ -3046,34 +3244,34 @@ void main() {
     group('String', () {
       test('encodes simple string', () {
         expect(
-          encodeAnyToUri('hello', allowEmpty: true),
+          encodeAnyToUri('hello', allowEmpty: true, textEncoding: utf8),
           'hello',
         );
       });
 
       test('encodes string with spaces', () {
         expect(
-          encodeAnyToUri('hello world', allowEmpty: true),
+          encodeAnyToUri('hello world', allowEmpty: true, textEncoding: utf8),
           'hello%20world',
         );
       });
 
       test('encodes special characters', () {
         expect(
-          encodeAnyToUri('hello & world', allowEmpty: true),
+          encodeAnyToUri('hello & world', allowEmpty: true, textEncoding: utf8),
           'hello%20%26%20world',
         );
       });
 
       test('encodes empty string with allowEmpty=true', () {
         expect(
-          encodeAnyToUri('', allowEmpty: true),
+          encodeAnyToUri('', allowEmpty: true, textEncoding: utf8),
           '',
         );
       });
 
       test('encodes empty string as empty with allowEmpty=false', () {
-        expect(encodeAnyToUri('', allowEmpty: false), '');
+        expect(encodeAnyToUri('', allowEmpty: false, textEncoding: utf8), '');
       });
 
       test('uses query component encoding when requested', () {
@@ -3082,6 +3280,7 @@ void main() {
             'hello world',
             allowEmpty: true,
             useQueryComponent: true,
+            textEncoding: utf8,
           ),
           'hello+world',
         );
@@ -3094,6 +3293,7 @@ void main() {
             'a/b:c&d=e+f',
             allowEmpty: true,
             allowReserved: true,
+            textEncoding: utf8,
           ),
           'a/b:c%26d%3De%2Bf',
         );
@@ -3103,21 +3303,21 @@ void main() {
     group('int', () {
       test('encodes positive int', () {
         expect(
-          encodeAnyToUri(42, allowEmpty: true),
+          encodeAnyToUri(42, allowEmpty: true, textEncoding: utf8),
           '42',
         );
       });
 
       test('encodes zero', () {
         expect(
-          encodeAnyToUri(0, allowEmpty: true),
+          encodeAnyToUri(0, allowEmpty: true, textEncoding: utf8),
           '0',
         );
       });
 
       test('encodes negative int', () {
         expect(
-          encodeAnyToUri(-42, allowEmpty: true),
+          encodeAnyToUri(-42, allowEmpty: true, textEncoding: utf8),
           '-42',
         );
       });
@@ -3126,14 +3326,14 @@ void main() {
     group('double', () {
       test('encodes positive double', () {
         expect(
-          encodeAnyToUri(3.14, allowEmpty: true),
+          encodeAnyToUri(3.14, allowEmpty: true, textEncoding: utf8),
           '3.14',
         );
       });
 
       test('encodes negative double', () {
         expect(
-          encodeAnyToUri(-3.14, allowEmpty: true),
+          encodeAnyToUri(-3.14, allowEmpty: true, textEncoding: utf8),
           '-3.14',
         );
       });
@@ -3142,14 +3342,14 @@ void main() {
     group('bool', () {
       test('encodes true', () {
         expect(
-          encodeAnyToUri(true, allowEmpty: true),
+          encodeAnyToUri(true, allowEmpty: true, textEncoding: utf8),
           'true',
         );
       });
 
       test('encodes false', () {
         expect(
-          encodeAnyToUri(false, allowEmpty: true),
+          encodeAnyToUri(false, allowEmpty: true, textEncoding: utf8),
           'false',
         );
       });
@@ -3159,7 +3359,7 @@ void main() {
       test('encodes UTC DateTime', () {
         final dt = DateTime.utc(2024, 1, 15, 10, 30);
         expect(
-          encodeAnyToUri(dt, allowEmpty: true),
+          encodeAnyToUri(dt, allowEmpty: true, textEncoding: utf8),
           '2024-01-15T10%3A30%3A00.000Z',
         );
       });
@@ -3167,7 +3367,12 @@ void main() {
       test('encodes with query component', () {
         final dt = DateTime.utc(2024, 1, 15, 10, 30);
         expect(
-          encodeAnyToUri(dt, allowEmpty: true, useQueryComponent: true),
+          encodeAnyToUri(
+            dt,
+            allowEmpty: true,
+            useQueryComponent: true,
+            textEncoding: utf8,
+          ),
           '2024-01-15T10%3A30%3A00.000Z',
         );
       });
@@ -3177,7 +3382,7 @@ void main() {
       test('encodes Uri', () {
         final uri = Uri.parse('https://example.com/path?query=value');
         expect(
-          encodeAnyToUri(uri, allowEmpty: true),
+          encodeAnyToUri(uri, allowEmpty: true, textEncoding: utf8),
           'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
         );
       });
@@ -3187,7 +3392,7 @@ void main() {
       test('encodes BigDecimal', () {
         final bd = BigDecimal.parse('123.456');
         expect(
-          encodeAnyToUri(bd, allowEmpty: true),
+          encodeAnyToUri(bd, allowEmpty: true, textEncoding: utf8),
           '123.456',
         );
       });
@@ -3196,14 +3401,14 @@ void main() {
     group('null', () {
       test('returns empty string with allowEmpty=true', () {
         expect(
-          encodeAnyToUri(null, allowEmpty: true),
+          encodeAnyToUri(null, allowEmpty: true, textEncoding: utf8),
           '',
         );
       });
 
       test('throws with allowEmpty=false', () {
         expect(
-          () => encodeAnyToUri(null, allowEmpty: false),
+          () => encodeAnyToUri(null, allowEmpty: false, textEncoding: utf8),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -3212,14 +3417,15 @@ void main() {
     group('unsupported types', () {
       test('throws for unsupported type', () {
         expect(
-          () => encodeAnyToUri(Object(), allowEmpty: true),
+          () => encodeAnyToUri(Object(), allowEmpty: true, textEncoding: utf8),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('throws for List (not directly supported)', () {
         expect(
-          () => encodeAnyToUri(['a', 'b'], allowEmpty: true),
+          () =>
+              encodeAnyToUri(['a', 'b'], allowEmpty: true, textEncoding: utf8),
           throwsA(isA<EncodingException>()),
         );
       });

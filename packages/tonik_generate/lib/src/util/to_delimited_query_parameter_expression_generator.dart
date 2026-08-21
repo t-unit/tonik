@@ -213,12 +213,17 @@ List<Code> _buildDelimitedCode(
 
   // A null array element encodes to the empty string, coercing the element
   // type back to non-null `String` for the whole-list extension.
-  String nullGuard(String encoded) =>
-      isContentNullable ? "e == null ? '' : $encoded" : encoded;
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
 
-  final scalarItemArgs = allowReserved
-      ? 'allowEmpty: $allowEmpty, allowReserved: true'
-      : 'allowEmpty: $allowEmpty';
+  final scalarItem = nullGuard(
+    refer('e').property('uriEncode').call([], {
+      'allowEmpty': literalBool(allowEmpty),
+      'textEncoding': refer('utf8', 'dart:convert'),
+      if (allowReserved) 'allowReserved': literalTrue,
+    }),
+  );
 
   return switch (contentModel) {
     StringModel() when !isContentNullable => _buildForLoop(
@@ -246,7 +251,7 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       needsMapping: true,
-      mapExpression: nullGuard('e.uriEncode($scalarItemArgs)'),
+      mapExpression: scalarItem,
     ),
 
     EnumModel() => _buildForLoop(
@@ -256,7 +261,7 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       needsMapping: true,
-      mapExpression: nullGuard('e.uriEncode($scalarItemArgs)'),
+      mapExpression: scalarItem,
     ),
 
     AllOfModel() ||
@@ -301,20 +306,34 @@ List<Code> _buildForLoop(
   bool allowEmpty, {
   required bool needsMapping,
   bool allowReserved = false,
-  String? mapExpression,
+  Expression? mapExpression,
 }) {
-  final delimitedArgs = allowReserved
-      ? 'explode: $explode, allowEmpty: $allowEmpty, allowReserved: true'
-      : 'explode: $explode, allowEmpty: $allowEmpty';
-
-  final baseExpression = needsMapping
-      ? '$parameterName.map((e) => $mapExpression).toList().$methodName('
-            ' explode: $explode, allowEmpty: $allowEmpty,'
-            ' alreadyEncoded: true)'
-      : '$parameterName.$methodName($delimitedArgs)';
+  final receiver = needsMapping
+      ? refer(parameterName)
+            .property('map')
+            .call([
+              Method(
+                (b) => b
+                  ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+                  ..body = mapExpression!.code,
+              ).closure,
+            ])
+            .property('toList')
+            .call([])
+      : refer(parameterName);
+  final baseExpression = receiver.property(methodName).call([], {
+    'explode': literalBool(explode),
+    'allowEmpty': literalBool(allowEmpty),
+    if (allowReserved) 'allowReserved': literalTrue,
+    if (needsMapping) 'alreadyEncoded': literalTrue,
+  });
 
   return [
-    Code('for (final value in $baseExpression) {'),
+    Block.of([
+      const Code('for (final value in '),
+      baseExpression.code,
+      const Code(') {'),
+    ]),
     Code(
       r'_$entries'
       '.add((name: ${specLiteralStringCode(rawName)}, value: value));',
@@ -332,54 +351,67 @@ List<Code> _buildForLoopWithRuntimeCheck(
   String encodingName, {
   required bool allowReserved,
 }) {
-  final itemArgs = allowReserved
-      ? 'allowEmpty: $allowEmpty, allowReserved: true'
-      : 'allowEmpty: $allowEmpty';
+  final encodedItem = refer('item').property('uriEncode').call([], {
+    'allowEmpty': literalBool(allowEmpty),
+    'textEncoding': refer('utf8', 'dart:convert'),
+    if (allowReserved) 'allowReserved': literalTrue,
+  });
+
+  Code validateItem() => Block.of([
+    const Code('if (item.currentEncodingShape != '),
+    refer(
+      'EncodingShape',
+      'package:tonik_util/tonik_util.dart',
+    ).property('simple').code,
+    const Code(') {'),
+    generateEncodingExceptionExpression(
+      'Parameter $parameterName: $encodingName encoding requires simple '
+      'encoding shape',
+      raw: true,
+    ).statement,
+    const Code('}'),
+  ]);
 
   if (explode) {
     return [
       Code('for (final item in $parameterName) { '),
-      const Code('if (item.currentEncodingShape != '),
-      refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      ).property('simple').code,
-      const Code(') {'),
-      generateEncodingExceptionExpression(
-        'Parameter $parameterName: $encodingName encoding requires simple '
-        'encoding shape',
-        raw: true,
-      ).statement,
-      const Code('}'),
-      Code(
-        r'_$entries'
-        '.add((name: ${specLiteralStringCode(rawName)}, value: '
-        'item.uriEncode($itemArgs)));',
-      ),
+      validateItem(),
+      Block.of([
+        const Code(r'_$entries.add((name: '),
+        specLiteralString(rawName).code,
+        const Code(', value: '),
+        encodedItem.code,
+        const Code('));'),
+      ]),
       const Code('}'),
     ];
   } else {
+    final encodedItems = refer(parameterName)
+        .property('map')
+        .call([
+          Method(
+            (b) => b
+              ..requiredParameters.add(Parameter((p) => p..name = 'item'))
+              ..body = encodedItem.code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([])
+        .property(methodName)
+        .call([], {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(allowEmpty),
+          'alreadyEncoded': literalTrue,
+        });
     return [
       Code('for (final item in $parameterName) { '),
-      const Code('if (item.currentEncodingShape != '),
-      refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      ).property('simple').code,
-      const Code(') {'),
-      generateEncodingExceptionExpression(
-        'Parameter $parameterName: $encodingName encoding requires simple '
-        'encoding shape',
-        raw: true,
-      ).statement,
+      validateItem(),
       const Code('}'),
-      const Code('}'),
-      Code(
-        'for (final value in $parameterName.map((item) => item'
-        ' .uriEncode($itemArgs)).toList()'
-        ' .$methodName(explode: $explode, allowEmpty: $allowEmpty, '
-        ' alreadyEncoded: true)) {',
-      ),
+      Block.of([
+        const Code('for (final value in '),
+        encodedItems.code,
+        const Code(') {'),
+      ]),
       Code(
         r'_$entries'
         '.add((name: ${specLiteralStringCode(rawName)}, value: value));',

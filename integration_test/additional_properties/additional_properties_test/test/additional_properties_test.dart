@@ -1,6 +1,8 @@
 // Test file uses many map literals passed to fromJson/constructors.
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:additional_properties_api/additional_properties_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -613,7 +615,12 @@ void main() {
         },
       );
       expect(
-        () => obj.toForm('p', explode: true, allowEmpty: true),
+        () => obj.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -682,7 +689,12 @@ void main() {
         metadata: {'key': 'value'},
       );
       expect(
-        () => obj.toForm('p', explode: true, allowEmpty: true),
+        () => obj.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
         throwsA(isA<EncodingException>()),
       );
     });

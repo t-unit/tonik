@@ -4036,16 +4036,16 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
                 return _$formData;
               }
             '''),
@@ -4119,16 +4119,16 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
                 return _$formData;
               }
             '''),
@@ -4203,16 +4203,16 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r"it's-form",
                   MultipartFile.fromString(
                     itsFormEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
                 return _$formData;
               }
             '''),
@@ -4287,7 +4287,7 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'path\form',
                   MultipartFile.fromString(
@@ -4295,10 +4295,10 @@ $expectedPartCode
                         .map((e) => '${e.name}=${e.value}')
                         .join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
                 return _$formData;
               }
             '''),
@@ -4373,16 +4373,16 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'$total',
                   MultipartFile.fromString(
                     $totalEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
                 return _$formData;
               }
             '''),
@@ -4455,16 +4455,16 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
               }
               return _$formData;
             }
@@ -4878,17 +4878,17 @@ $expectedPartCode
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
-                );
+                textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'
                     ),
                     headers: _$addressHeaders,
                   ),
-                ));
+                ),);
                 return _$formData;
               }
             '''),
@@ -5388,13 +5388,13 @@ $expectedPartCode
                 }
                 metadataParts.add(
                   [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
                     encodeAnyToForm(
                       value,
                       explode: true,
                       allowEmpty: true,
                       useQueryComponent: true,
-                    ),
+                    textEncoding: utf8,),
                   ].join('='),
                 );
               }
@@ -5403,10 +5403,10 @@ $expectedPartCode
                 MultipartFile.fromString(
                   metadataParts.join('&'),
                   contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded',
+                    r'application/x-www-form-urlencoded'),
                   ),
                 ),
-              ));
+              );
               return _$formData;
             }
           '''),
@@ -5485,13 +5485,13 @@ $expectedPartCode
                   }
                   metadataParts.add(
                     [
-                      entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                      entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
                       encodeAnyToForm(
                         value,
                         explode: true,
                         allowEmpty: true,
                         useQueryComponent: true,
-                      ),
+                      textEncoding: utf8,),
                     ].join('='),
                   );
                 }
@@ -5500,10 +5500,10 @@ $expectedPartCode
                   MultipartFile.fromString(
                     metadataParts.join('&'),
                     contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded'),
                     ),
                   ),
-                ));
+                );
               }
               return _$formData;
             }
@@ -5583,13 +5583,13 @@ $expectedPartCode
                 }
                 itsMetaParts.add(
                   [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
                     encodeAnyToForm(
                       value,
                       explode: true,
                       allowEmpty: true,
                       useQueryComponent: true,
-                    ),
+                    textEncoding: utf8,),
                   ].join('='),
                 );
               }
@@ -5598,10 +5598,10 @@ $expectedPartCode
                 MultipartFile.fromString(
                   itsMetaParts.join('&'),
                   contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded',
+                    r'application/x-www-form-urlencoded'),
                   ),
                 ),
-              ));
+              );
               return _$formData;
             }
           '''),
@@ -5680,13 +5680,13 @@ $expectedPartCode
                 }
                 pathBackslashToParts.add(
                   [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
                     encodeAnyToForm(
                       value,
                       explode: true,
                       allowEmpty: true,
                       useQueryComponent: true,
-                    ),
+                    textEncoding: utf8,),
                   ].join('='),
                 );
               }
@@ -5695,10 +5695,10 @@ $expectedPartCode
                 MultipartFile.fromString(
                   pathBackslashToParts.join('&'),
                   contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded',
+                    r'application/x-www-form-urlencoded'),
                   ),
                 ),
-              ));
+              );
               return _$formData;
             }
           '''),
@@ -5777,13 +5777,13 @@ $expectedPartCode
                 }
                 $totalParts.add(
                   [
-                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, ),
+                    entry.key.toString().uriEncode( allowEmpty: true, useQueryComponent: true, textEncoding: utf8,),
                     encodeAnyToForm(
                       value,
                       explode: true,
                       allowEmpty: true,
                       useQueryComponent: true,
-                    ),
+                    textEncoding: utf8,),
                   ].join('='),
                 );
               }
@@ -5792,10 +5792,10 @@ $expectedPartCode
                 MultipartFile.fromString(
                   $totalParts.join('&'),
                   contentType: DioMediaType.parse(
-                    r'application/x-www-form-urlencoded',
+                    r'application/x-www-form-urlencoded'),
                   ),
                 ),
-              ));
+              );
               return _$formData;
             }
           '''),
@@ -6071,7 +6071,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'tags', body.tags.uriEncode(allowEmpty: true, alreadyEncoded: true)));
+            _$formData.fields.add(MapEntry(r'tags', body.tags.uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
             return _$formData;
           }
         '''),
@@ -6409,7 +6409,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.statuses) {
-              _$formData.fields.add(MapEntry(r'statuses', item.uriEncode(allowEmpty: true)));
+              _$formData.fields.add(MapEntry(r'statuses', item.uriEncode(allowEmpty: true, textEncoding: utf8),),);
             }
             return _$formData;
           }
@@ -6484,7 +6484,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'codes', body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().uriEncode(allowEmpty: true, alreadyEncoded: true)));
+            _$formData.fields.add(MapEntry(r'codes', body.codes.map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8)).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
             return _$formData;
           }
         '''),
@@ -6676,7 +6676,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.fields.add(MapEntry(r'scores', body.scores.map((item) => jsonEncode(item)).toList().uriEncode(allowEmpty: true, alreadyEncoded: true)));
+            _$formData.fields.add(MapEntry(r'scores', body.scores.map((item) => jsonEncode(item)).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,),),);
             return _$formData;
           }
         '''),
@@ -7884,7 +7884,7 @@ $expectedPartCode
               void test() {
                 final _$formData = FormData();
                 for (final item in body.priorities) {
-                  _$formData.fields.add(MapEntry(r'priorities', item.uriEncode(allowEmpty: true)));
+                  _$formData.fields.add(MapEntry(r'priorities', item.uriEncode(allowEmpty: true, textEncoding: utf8),),);
                 }
                 return _$formData;
               }
@@ -9371,8 +9371,8 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
-            _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(body.tags.uriEncode(allowEmpty: true, alreadyEncoded: true), headers: _$tagsHeaders)));
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true),];
+            _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(body.tags.uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,), headers: _$tagsHeaders,),),);
             return _$formData;
           }
         '''),
@@ -10195,8 +10195,8 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$datesHeaders = <String, List<String>>{};
-            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
-            _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(body.dates.map((item) => item.toTimeZonedIso8601String()).toList().uriEncode(allowEmpty: true, alreadyEncoded: true), headers: _$datesHeaders)));
+            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true),];
+            _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(body.dates.map((item) => item.toTimeZonedIso8601String()).toList().uriEncode(allowEmpty: true, textEncoding: utf8,alreadyEncoded: true,), headers: _$datesHeaders,),),);
             return _$formData;
           }
         '''),

@@ -271,6 +271,7 @@ Object? test() {
               explode: true,
               allowEmpty: true,
               useQueryComponent: true,
+              textEncoding: utf8,
             )
             .map((entry) => '${entry.name}=${entry.value}')
             .join('&'),

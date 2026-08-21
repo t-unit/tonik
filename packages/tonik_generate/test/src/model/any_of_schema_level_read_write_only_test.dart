@@ -219,7 +219,7 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       const expectedMethod = '''
         String uriEncode({
           required bool allowEmpty,
-          bool useQueryComponent = false,
+          required Encoding textEncoding, bool useQueryComponent = false,
           bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',

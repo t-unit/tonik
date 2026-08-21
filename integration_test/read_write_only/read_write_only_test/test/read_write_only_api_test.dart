@@ -299,7 +299,7 @@ void main() {
         password: 'pass',
       );
       final form = user
-          .toForm('user', explode: true, allowEmpty: true)
+          .toForm('user', explode: true, allowEmpty: true, textEncoding: utf8)
           .map((e) => '${e.name}=${e.value}')
           .join('&');
 
@@ -554,7 +554,7 @@ void main() {
       });
 
       expect(
-        () => notification.uriEncode(allowEmpty: true),
+        () => notification.uriEncode(allowEmpty: true, textEncoding: utf8),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -708,7 +708,7 @@ void main() {
     test('uriEncode throws EncodingException', () {
       const info = ReadOnlyServerInfo();
       expect(
-        () => info.uriEncode(allowEmpty: true),
+        () => info.uriEncode(allowEmpty: true, textEncoding: utf8),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -893,7 +893,7 @@ void main() {
       });
 
       expect(
-        () => reading.uriEncode(allowEmpty: true),
+        () => reading.uriEncode(allowEmpty: true, textEncoding: utf8),
         throwsA(isA<EncodingException>()),
       );
     });

@@ -1977,9 +1977,9 @@ List<ParameterEntry> toForm(
   String paramName, {
   required bool explode,
   required bool allowEmpty,
-  bool useQueryComponent = false,
+  required Encoding textEncoding, bool useQueryComponent = false,
   bool allowReserved = false,
-  Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+  Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   return parameterProperties(allowEmpty: allowEmpty).toForm(
     paramName,

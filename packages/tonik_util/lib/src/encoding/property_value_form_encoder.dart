@@ -54,10 +54,10 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty) {
       return const [];

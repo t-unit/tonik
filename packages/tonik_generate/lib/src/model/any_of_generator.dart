@@ -2283,6 +2283,7 @@ class AnyOfGenerator {
           ..add(
             Code(
               'return $receiver.uriEncode(allowEmpty: allowEmpty, '
+              'textEncoding: textEncoding, '
               'useQueryComponent: useQueryComponent, '
               'allowReserved: allowReserved);',
             ),

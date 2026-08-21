@@ -10,9 +10,9 @@ BuiltExpression buildToFormValueExpression(
   String valueExpression,
   Model model, {
   required bool useQueryComponent,
+  required TextEncoding textEncoding,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
-  TextEncoding textEncoding = TextEncoding.utf8,
   Map<Property, FieldEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
@@ -42,7 +42,7 @@ BuiltExpression buildToFormValueExpression(
           'explode': literalBool(explodeLiteral),
           'allowEmpty': literalBool(allowEmptyLiteral),
           if (useQueryComponent) 'useQueryComponent': literalBool(true),
-          if (textEncoding != TextEncoding.utf8) 'textEncoding': codec,
+          'textEncoding': codec,
         },
       ),
     );
@@ -55,7 +55,7 @@ BuiltExpression buildToFormValueExpression(
     explode: literalBool(explodeLiteral),
     allowEmpty: literalBool(allowEmptyLiteral),
     useQueryComponent: useQueryComponent ? literalBool(true) : null,
-    textEncoding: textEncoding == TextEncoding.utf8 ? null : codec,
+    textEncoding: codec,
     fieldEncodings: _fieldEncodingsLiteral(model, encoding),
   );
 

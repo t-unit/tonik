@@ -91,16 +91,16 @@ class Date {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 
   /// Converts this [Date] to a form-encoded parameter entry.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
-    Encoding textEncoding = utf8,
   }) => [
     (
       name: paramName.uriEncode(
@@ -122,7 +122,7 @@ class Date {
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD) with label prefix.
   String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.${uriEncode(allowEmpty: allowEmpty)}';
+    return '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
   }
 
   /// Converts this [Date] to a matrix-encoded string.
@@ -133,7 +133,8 @@ class Date {
     required bool explode,
     required bool allowEmpty,
   }) {
-    return ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+    final value = uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
+    return ';$paramName=$value';
   }
 
   /// URI encodes this Date value.
@@ -142,10 +143,10 @@ class Date {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) => toString().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,

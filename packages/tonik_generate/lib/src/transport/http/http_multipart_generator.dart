@@ -470,8 +470,7 @@ Code _buildUrlEncodedObjectPart(
           'explode': literalTrue,
           'allowEmpty': literalTrue,
           'useQueryComponent': literalTrue,
-          if (textEncoding != TextEncoding.utf8)
-            'textEncoding': textEncodingExpression(textEncoding),
+          'textEncoding': textEncodingExpression(textEncoding),
         },
       );
   final joined = entries

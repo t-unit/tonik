@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
@@ -54,7 +56,11 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
       final encodedKey = Uri.encodeComponent(e.key);
       final encodedValue = alreadyEncoded
           ? e.value
-          : e.value.uriEncode(allowEmpty: true, allowReserved: allowReserved);
+          : e.value.uriEncode(
+              allowEmpty: true,
+              allowReserved: allowReserved,
+              textEncoding: utf8,
+            );
       return (name: '$paramName[$encodedKey]', value: encodedValue);
     }).toList();
   }

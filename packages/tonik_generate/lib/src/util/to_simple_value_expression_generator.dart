@@ -340,6 +340,7 @@ Expression _handleListExpression(
         nullGuard(
           refer('e').property('uriEncode').call([], {
             'allowEmpty': literalBool(allowEmpty),
+            'textEncoding': refer('utf8', 'dart:convert'),
             if (literal) 'literal': literalBool(true),
           }),
         ),

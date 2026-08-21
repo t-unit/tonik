@@ -168,7 +168,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: true));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: true, textEncoding: utf8,),);
           }
           if (_$entries.isEmpty) {
             return null;
@@ -743,7 +743,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, List<String>? tags}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: true, allowEmpty: true));
+            _$entries.addAll(filter.toForm(r'filter', explode: true, allowEmpty: true, textEncoding: utf8,),);
           }
           if (tags != null) {
             for (final value in tags.toSpaceDelimited(
@@ -820,7 +820,7 @@ void main() {
       const expectedMethod = r'''
         String? _queryParameters({required AnonymousModel filter}) {
           final _$entries = <ParameterEntry>[];
-          _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
+          _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
           if (_$entries.isEmpty) {
             return null;
           }
@@ -888,7 +888,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (_$entries.isEmpty) {
             return null;
@@ -1009,16 +1009,16 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (name != null) {
-            _$entries.addAll(name.toForm(r'name', explode: false, allowEmpty: false));
+            _$entries.addAll(name.toForm(r'name', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (tags != null) {
-            _$entries.addAll(tags.toForm(r'tags', explode: false, allowEmpty: false));
+            _$entries.addAll(tags.toForm(r'tags', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (age != null) {
-            _$entries.addAll(age.toForm(r'age', explode: false, allowEmpty: false));
+            _$entries.addAll(age.toForm(r'age', explode: false, allowEmpty: false, textEncoding: utf8),);
           }
           if (active != null) {
-            _$entries.addAll(active.toForm(r'active', explode: false, allowEmpty: false));
+            _$entries.addAll(active.toForm(r'active', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (_$entries.isEmpty) {
             return null;
@@ -1111,10 +1111,10 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (range != null) {
-            _$entries.addAll(range.toForm(r'range', explode: false, allowEmpty: false));
+            _$entries.addAll(range.toForm(r'range', explode: false, allowEmpty: false, textEncoding: utf8,),);
           }
           if (_$entries.isEmpty) {
             return null;
@@ -1281,14 +1281,14 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (color != null) {
-            _$entries.addAll(color.toForm(r'color', explode: false, allowEmpty: true));
+            _$entries.addAll(color.toForm(r'color', explode: false, allowEmpty: true, textEncoding: utf8,),);
           }
           _$entries.addAll(
             value.toDeepObject(r'value', explode: false, allowEmpty: true),
           );
           if (ids != null) {
             for (final value in ids
-                .map((e) => e.uriEncode(allowEmpty: true))
+                .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                 .toList()
                 .toSpaceDelimited(
               explode: false,
@@ -1299,7 +1299,7 @@ void main() {
             }
           }
           for (final value in categories
-              .map((e) => e.uriEncode(allowEmpty: true))
+              .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
               .toList()
               .toPipeDelimited(
             explode: false,
@@ -1392,13 +1392,13 @@ void main() {
             final _$entries = <ParameterEntry>[];
             _$entries.addAll(
               colors
-                  .map((e) => e.uriEncode(allowEmpty: false))
+                  .map((e) => e.toForm('', explode: false,allowEmpty: false, textEncoding: utf8).single .value,)
                   .toList()
                   .toForm(
                     r'colors',
                     explode: true,
                     allowEmpty: false,
-                    alreadyEncoded: true,
+                    textEncoding: utf8,alreadyEncoded: true,
                   ),
             );
             if (_$entries.isEmpty) {
@@ -1656,7 +1656,7 @@ void main() {
                }
              }
              for (final value in values
-                 .map((item) => item.uriEncode(allowEmpty: false))
+                 .map((item) => item.uriEncode(allowEmpty: false, textEncoding: utf8))
                  .toList()
                  .toPipeDelimited(
                    explode: false,
@@ -1758,7 +1758,7 @@ void main() {
                    r'Parameter items: spaceDelimited encoding requires simple encoding shape',
                  );
                }
-               _$entries.add((name: r'items', value: item.uriEncode(allowEmpty: false)));
+               _$entries.add((name: r'items', value: item.uriEncode(allowEmpty: false, textEncoding: utf8),));
              }
              if (_$entries.isEmpty) {
                return null;
@@ -1994,7 +1994,7 @@ void main() {
         String? _queryParameters({required List<AnonymousModel> $enum}) {
           final _$entries = <ParameterEntry>[];
           for (final value in $enum
-              .map((e) => e.uriEncode(allowEmpty: false))
+              .map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
               .toList()
               .toPipeDelimited(
                 explode: false,
@@ -2284,7 +2284,7 @@ void main() {
               r'path',
               explode: false,
               allowEmpty: false,
-              allowReserved: true,
+              textEncoding: utf8,allowReserved: true,
             ),
           );
           if (_$entries.isEmpty) {
@@ -2326,7 +2326,7 @@ void main() {
         String? _queryParameters({required String path}) {
           final _$entries = <ParameterEntry>[];
           _$entries.addAll(
-            path.toForm(r'path', explode: false, allowEmpty: false),
+            path.toForm(r'path', explode: false, allowEmpty: false, textEncoding: utf8),
           );
           if (_$entries.isEmpty) {
             return null;
@@ -2376,14 +2376,14 @@ void main() {
                 .map(
                   (e) => e == null
                       ? ''
-                      : e.uriEncode(allowEmpty: false, allowReserved: true),
+                      : e.uriEncode(allowEmpty: false, allowReserved: true, textEncoding: utf8,),
                 )
                 .toList()
                 .toForm(
                   r'tags',
                   explode: true,
                   allowEmpty: false,
-                  alreadyEncoded: true,
+                  textEncoding: utf8,alreadyEncoded: true,
                 ),
           );
           if (_$entries.isEmpty) {
@@ -2430,7 +2430,7 @@ void main() {
               name: r'meta',
               explode: false,
               allowEmpty: false,
-              allowReserved: true,
+              textEncoding: utf8,allowReserved: true,
             ),
           );
           if (_$entries.isEmpty) {
@@ -2482,7 +2482,7 @@ void main() {
                 r'tags',
                 explode: false,
                 allowEmpty: false,
-                allowReserved: true,
+                textEncoding: utf8,allowReserved: true,
               ),
             );
             if (_$entries.isEmpty) {
@@ -2531,7 +2531,7 @@ void main() {
         String? _queryParameters({required List<String> tags}) {
           final _$entries = <ParameterEntry>[];
           _$entries.addAll(
-            tags.toForm(r'tags', explode: false, allowEmpty: false),
+            tags.toForm(r'tags', explode: false, allowEmpty: false, textEncoding: utf8),
           );
           if (_$entries.isEmpty) {
             return null;
@@ -2583,7 +2583,7 @@ void main() {
               r'filter',
               explode: false,
               allowEmpty: false,
-              allowReserved: true,
+              textEncoding: utf8,allowReserved: true,
             ),
           );
           if (_$entries.isEmpty) {
@@ -2631,7 +2631,7 @@ void main() {
           _$entries.addAll(
             filter
                 .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
-                .toForm(r'filter', explode: false, allowEmpty: false),
+                .toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),
           );
           if (_$entries.isEmpty) {
             return null;

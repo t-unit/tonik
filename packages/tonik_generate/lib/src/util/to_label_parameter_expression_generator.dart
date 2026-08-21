@@ -153,6 +153,7 @@ Expression _buildListLabelExpression(
                 ..body = nullGuard(
                   refer('e').property('uriEncode').call([], {
                     'allowEmpty': allowEmpty,
+                    'textEncoding': refer('utf8', 'dart:convert'),
                   }),
                 ).code,
             ).closure,
@@ -184,10 +185,19 @@ Expression _buildListLabelExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer(
-                  'encodeAnyToUri',
-                  'package:tonik_util/tonik_util.dart',
-                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+                ..body =
+                    refer(
+                          'encodeAnyToUri',
+                          'package:tonik_util/tonik_util.dart',
+                        )
+                        .call(
+                          [refer('e')],
+                          {
+                            'allowEmpty': allowEmpty,
+                            'textEncoding': refer('utf8', 'dart:convert'),
+                          },
+                        )
+                        .code,
             ).closure,
           ])
           .property('toList')

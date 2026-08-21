@@ -1863,6 +1863,7 @@ class OneOfGenerator {
             refer('value'),
           ).property('uriEncode').call([], {
             'allowEmpty': refer('allowEmpty'),
+            'textEncoding': refer('textEncoding'),
             'useQueryComponent': refer('useQueryComponent'),
             'allowReserved': refer('allowReserved'),
           }).code,

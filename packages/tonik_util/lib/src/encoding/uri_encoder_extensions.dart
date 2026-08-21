@@ -14,10 +14,10 @@ extension UriEncoder on Uri {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -39,10 +39,10 @@ extension StringUriEncoder on String {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return this;
@@ -64,10 +64,10 @@ extension IntUriEncoder on int {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -89,10 +89,10 @@ extension DoubleUriEncoder on double {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -114,10 +114,10 @@ extension NumUriEncoder on num {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -139,10 +139,10 @@ extension BoolUriEncoder on bool {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -164,10 +164,10 @@ extension DateTimeUriEncoder on DateTime {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toTimeZonedIso8601String();
@@ -189,10 +189,10 @@ extension BigDecimalUriEncoder on BigDecimal {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (literal) {
       return toString();
@@ -216,10 +216,10 @@ extension BinaryUriEncoder on List<int> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -251,11 +251,11 @@ extension StringListUriEncoder on List<String> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -292,11 +292,11 @@ extension StringMapUriEncoder on Map<String, String> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
-    Encoding textEncoding = utf8,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();

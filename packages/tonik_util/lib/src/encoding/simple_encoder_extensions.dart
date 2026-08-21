@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
@@ -15,7 +17,7 @@ extension SimpleUriEncoder on Uri {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding String values.
@@ -25,7 +27,7 @@ extension SimpleStringEncoder on String {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding int values.
@@ -35,7 +37,7 @@ extension SimpleIntEncoder on int {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding double values.
@@ -45,7 +47,7 @@ extension SimpleDoubleEncoder on double {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding num values.
@@ -55,7 +57,7 @@ extension SimpleNumEncoder on num {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding bool values.
@@ -65,7 +67,7 @@ extension SimpleBoolEncoder on bool {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding DateTime values.
@@ -75,7 +77,7 @@ extension SimpleDateTimeEncoder on DateTime {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding BigDecimal values.
@@ -85,7 +87,7 @@ extension SimpleBigDecimalEncoder on BigDecimal {
     required bool explode,
     required bool allowEmpty,
     bool literal = false,
-  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal, textEncoding: utf8);
 }
 
 /// Extension for encoding List values.
@@ -112,6 +114,7 @@ extension SimpleStringListEncoder on List<String> {
     allowEmpty: allowEmpty,
     alreadyEncoded: alreadyEncoded,
     literal: literal,
+    textEncoding: utf8,
   );
 }
 
@@ -164,6 +167,7 @@ extension SimpleStringMapEncoder on Map<String, String> {
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
         literal: literal,
+        textEncoding: utf8,
       );
     }
   }

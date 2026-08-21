@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:query_parameters_api/query_parameters_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -68,7 +70,12 @@ void main() {
         label: 'release',
       );
 
-      final encoded = filter.toForm('filter', explode: true, allowEmpty: true);
+      final encoded = filter.toForm(
+        'filter',
+        explode: true,
+        allowEmpty: true,
+        textEncoding: utf8,
+      );
       final wire = [
         for (final entry in encoded) '${entry.name}=${entry.value}',
       ].join('&');

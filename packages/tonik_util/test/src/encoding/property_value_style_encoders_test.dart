@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -10,7 +12,7 @@ void main() {
       };
 
       expect(
-        value.toUri(allowEmpty: true),
+        value.toUri(allowEmpty: true, textEncoding: utf8),
         'a%2Fb,x%3Dy,empty,',
       );
     });
@@ -19,7 +21,7 @@ void main() {
       const value = {'formula': PropertyValue.scalar('x/y?z')};
 
       expect(
-        value.toUri(allowEmpty: true, allowReserved: true),
+        value.toUri(allowEmpty: true, allowReserved: true, textEncoding: utf8),
         'formula,x/y?z',
       );
     });
@@ -31,7 +33,10 @@ void main() {
           'color': PropertyValue.scalar(''),
           'size': PropertyValue.scalar('xl'),
         };
-        expect(value.toUri(allowEmpty: false), 'color,,size,xl');
+        expect(
+          value.toUri(allowEmpty: false, textEncoding: utf8),
+          'color,,size,xl',
+        );
       },
     );
   });

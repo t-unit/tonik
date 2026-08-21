@@ -192,7 +192,7 @@ void main() {
     test('encodes non-empty bytes with URI component encoding', () {
       // "Hello" in UTF-8
       const file = TonikFileBytes([72, 101, 108, 108, 111]);
-      expect(file.uriEncode(allowEmpty: false), 'Hello');
+      expect(file.uriEncode(allowEmpty: false, textEncoding: utf8), 'Hello');
     });
 
     test('encodes with query component when useQueryComponent is true', () {
@@ -200,6 +200,7 @@ void main() {
       const file = TonikFileBytes([97, 32, 98]);
       final result = file.uriEncode(
         allowEmpty: false,
+        textEncoding: utf8,
         useQueryComponent: true,
       );
       // Uri.encodeQueryComponent encodes space as '+'
@@ -209,7 +210,7 @@ void main() {
     test('encodes with component encoding when useQueryComponent is false', () {
       // "a b" in UTF-8
       const file = TonikFileBytes([97, 32, 98]);
-      final result = file.uriEncode(allowEmpty: false);
+      final result = file.uriEncode(allowEmpty: false, textEncoding: utf8);
       // Uri.encodeComponent encodes space as '%20'
       expect(result, 'a%20b');
     });
@@ -217,22 +218,36 @@ void main() {
     test('throws FormatException for empty bytes when allowEmpty is false', () {
       const file = TonikFileBytes([]);
       expect(
-        () => file.uriEncode(allowEmpty: false),
+        () => file.uriEncode(allowEmpty: false, textEncoding: utf8),
         throwsA(isA<FormatException>()),
       );
     });
 
     test('returns empty string for empty bytes when allowEmpty is true', () {
       const file = TonikFileBytes([]);
-      expect(file.uriEncode(allowEmpty: true), '');
+      expect(file.uriEncode(allowEmpty: true, textEncoding: utf8), '');
     });
 
     test('keeps reserved chars literal when allowReserved is true', () {
       // "a:b c" in UTF-8
       const file = TonikFileBytes([97, 58, 98, 32, 99]);
       expect(
-        file.uriEncode(allowEmpty: false, allowReserved: true),
+        file.uriEncode(
+          allowEmpty: false,
+          textEncoding: utf8,
+          allowReserved: true,
+        ),
         'a:b%20c',
+      );
+    });
+
+    test('uses the supplied text encoding for URI bytes', () {
+      // "café" in UTF-8.
+      const file = TonikFileBytes([99, 97, 102, 195, 169]);
+
+      expect(
+        file.uriEncode(allowEmpty: false, textEncoding: latin1),
+        'caf%E9',
       );
     });
   });

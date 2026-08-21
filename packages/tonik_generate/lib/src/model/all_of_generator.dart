@@ -1653,9 +1653,9 @@ class AllOfGenerator {
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
-                'textEncoding': refer('textEncoding'),
               },
             );
       }
@@ -2458,6 +2458,7 @@ class AllOfGenerator {
               .property('uriEncode')
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
               })
@@ -2540,6 +2541,7 @@ class AllOfGenerator {
                 receiver,
               ).property('uriEncode').call([], {
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
               }),

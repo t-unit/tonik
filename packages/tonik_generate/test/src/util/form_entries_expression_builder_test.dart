@@ -45,6 +45,7 @@ void main() {
       allowEmpty: literalBool(true),
       useQueryComponent: useQueryComponent ? literalBool(true) : null,
       allowReserved: allowReserved,
+      textEncoding: refer('utf8', 'dart:convert'),
     );
     expect(result, isNotNull);
     return result!;
@@ -56,7 +57,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8);
         }
       ''');
 
@@ -71,7 +72,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, useQueryComponent: true);
+          value.toForm('p', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,);
         }
       ''');
 
@@ -91,7 +92,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8);
         }
       ''');
 
@@ -111,7 +112,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: false, allowEmpty: true);
+          value.toForm('p', explode: false, allowEmpty: true, textEncoding: _i1.utf8);
         }
       ''');
 
@@ -123,7 +124,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toBase64String().toForm('p', explode: true, allowEmpty: true);
+          value.toBase64String().toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,);
         }
       ''');
 
@@ -142,7 +143,7 @@ void main() {
             'p',
             explode: true,
             allowEmpty: true,
-            allowReserved: true,
+            textEncoding: _i1.utf8,allowReserved: true,
           );
         }
       ''');
@@ -162,7 +163,7 @@ void main() {
             'p',
             explode: true,
             allowEmpty: true,
-            allowReserved: true,
+            textEncoding: _i1.utf8,allowReserved: true,
           );
         }
       ''');
@@ -184,7 +185,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,);
         }
       ''');
 
@@ -209,7 +210,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,);
         }
       ''');
 
@@ -230,7 +231,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,);
         }
       ''');
 
@@ -250,7 +251,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,);
         }
       ''');
 
@@ -270,9 +271,9 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true, textEncoding: _i1.utf8,),)
               .toList()
-              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,alreadyEncoded: true,);
         }
       ''');
 
@@ -302,9 +303,9 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+              .map((e) => e.toForm('', explode: false,allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,).single .value,)
               .toList()
-              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,alreadyEncoded: true,);
         }
       ''');
 
@@ -325,9 +326,9 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true, allowReserved: true))
+              .map((e) => _i1.encodeAnyToForm(e, explode: false,allowEmpty: true, allowReserved: true, textEncoding: _i2.utf8,),)
               .toList()
-              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i2.utf8,alreadyEncoded: true,);
         }
       ''');
 
@@ -347,9 +348,9 @@ void main() {
         test() {
           value
               .map(
-                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v)),
+                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v))
               )
-              .toForm('p', explode: true, allowEmpty: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i3.utf8);
         }
       ''');
 
@@ -369,13 +370,13 @@ void main() {
         test() {
           value
               .map(
-                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v)),
+                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v))
               )
               .toForm(
                 'p',
                 explode: true,
                 allowEmpty: true,
-                allowReserved: true,
+                textEncoding: _i3.utf8,allowReserved: true,
               );
         }
       ''');
@@ -398,10 +399,10 @@ void main() {
               .map(
                 (k, v) => _i1.MapEntry(
                   k,
-                  _i2.PropertyValue.scalar(v.toString()),
-                ),
+                  _i2.PropertyValue.scalar(v.toString())
+                )
               )
-              .toForm('p', explode: true, allowEmpty: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i3.utf8);
         }
       ''');
 
@@ -425,6 +426,7 @@ void main() {
         paramName: literalString('p'),
         explode: literalBool(true),
         allowEmpty: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(result, isNull);
@@ -441,7 +443,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8);
         }
       ''');
 
@@ -460,7 +462,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,);
         }
       ''');
 
@@ -480,11 +482,11 @@ void main() {
         test() {
           value
               .map(
-                (e) => _i1.encodeAnyToUri(
+                (e) => _i1.encodeAnyToForm(
                   e,
-                  allowEmpty: true,
+                  explode: false,allowEmpty: true,
                   useQueryComponent: true,
-                ),
+                textEncoding: _i2.utf8,),
               )
               .toList()
               .toForm(
@@ -492,7 +494,7 @@ void main() {
                 explode: true,
                 allowEmpty: true,
                 useQueryComponent: true,
-                alreadyEncoded: true,
+                textEncoding: _i2.utf8,alreadyEncoded: true,
               );
         }
       ''');
@@ -519,9 +521,9 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+              .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true, textEncoding: _i1.utf8),)
               .toList()
-              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,alreadyEncoded: true,);
         }
       ''');
 
@@ -542,7 +544,7 @@ void main() {
           value
               .map((e) => e.toBase64String())
               .toList()
-              .toForm('p', explode: true, allowEmpty: true);
+              .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8);
         }
       ''');
 
@@ -568,7 +570,7 @@ void main() {
                 'p',
                 explode: true,
                 allowEmpty: true,
-                allowReserved: true,
+                textEncoding: _i1.utf8,allowReserved: true,
               );
         }
       ''');
@@ -583,6 +585,7 @@ void main() {
         paramName: literalString('p'),
         explode: literalBool(true),
         allowEmpty: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(result, isNull);
@@ -595,6 +598,7 @@ void main() {
         paramName: literalString('p'),
         explode: literalBool(true),
         allowEmpty: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(result, isNull);
@@ -607,6 +611,7 @@ void main() {
         paramName: literalString('p'),
         explode: literalBool(true),
         allowEmpty: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(result, isNull);
@@ -619,6 +624,7 @@ void main() {
         refer('e'),
         model,
         allowEmpty: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       ).expression;
       final body = collapseWhitespace(bodyOf(expression));
       return !body.contains('EncodingException') && !body.contains('.map(');

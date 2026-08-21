@@ -1417,7 +1417,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         (m) => m.name == 'uriEncode',
       );
 
-      expect(uriEncodeMethod.optionalParameters, hasLength(3));
+      expect(uriEncodeMethod.optionalParameters, hasLength(4));
 
       final allowReservedParam = uriEncodeMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -2032,8 +2032,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+                required Encoding textEncoding, bool useQueryComponent = false,
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList(:final value) => value.toForm(
@@ -2101,8 +2101,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                bool useQueryComponent = false,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+                required Encoding textEncoding, bool useQueryComponent = false,
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
@@ -2707,8 +2707,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               String paramName, {
               required bool explode,
               required bool allowEmpty,
-              bool useQueryComponent = false,
-              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+              required Encoding textEncoding, bool useQueryComponent = false,
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
                 ValueTags() => throw EncodingException(
@@ -3029,8 +3029,8 @@ bool operator ==(Object other) {
               String paramName, {
               required bool explode,
               required bool allowEmpty,
-              bool useQueryComponent = false,
-              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+              required Encoding textEncoding, bool useQueryComponent = false,
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
                 ValueUnknown() => throw EncodingException(
@@ -3750,8 +3750,8 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+            required Encoding textEncoding,bool useQueryComponent = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().toForm(
@@ -3834,8 +3834,8 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, Encoding textEncoding = utf8,
+            required Encoding textEncoding,bool useQueryComponent = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
               ValueNullableData(:final value) =>
@@ -4043,11 +4043,11 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({ required bool allowEmpty, required Encoding textEncoding,bool useQueryComponent = false, bool allowReserved = false, }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
+                textEncoding: textEncoding,useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
               ),
               ValueText() => throw EncodingException(

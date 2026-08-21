@@ -847,11 +847,12 @@ Code _buildNonExplodedListAddition(
 
   // Unlike delimited encoders, non-exploded form encoding returns a scalar
   // String, so it represents one multipart part rather than an iterable.
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
   final valueExpr = listExpr.property('uriEncode').call([], {
     'allowEmpty': literalTrue,
+    'textEncoding': textEncodingExpression(textEncoding),
     'alreadyEncoded': literalTrue,
   });
-  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
   final usesFile = headerVarName != null || textEncoding != TextEncoding.utf8;
   final value = usesFile
       ? _textMultipartFile(
@@ -895,8 +896,8 @@ Code _buildBinaryListForLoop(
 /// value, based on the content model type and content type.
 Expression _itemToStringExpr(
   Model contentModel, {
+  required TextEncoding textEncoding,
   ContentType? contentType,
-  TextEncoding textEncoding = TextEncoding.utf8,
 }) {
   return switch (contentModel) {
     StringModel() => refer('item'),
@@ -920,23 +921,10 @@ Expression _itemToStringExpr(
           : refer(
               'item',
             ).property('toTimeZonedIso8601String').call([]),
-    EnumModel() =>
-      textEncoding == TextEncoding.utf8
-          ? refer(
-              'item',
-            ).property('uriEncode').call([], {'allowEmpty': literalTrue})
-          : refer('item')
-                .property('toForm')
-                .call(
-                  [literalString('')],
-                  {
-                    'explode': literalFalse,
-                    'allowEmpty': literalTrue,
-                    'textEncoding': textEncodingExpression(textEncoding),
-                  },
-                )
-                .property('single')
-                .property('value'),
+    EnumModel() => refer('item').property('uriEncode').call([], {
+      'allowEmpty': literalTrue,
+      'textEncoding': textEncodingExpression(textEncoding),
+    }),
     AliasModel() => _itemToStringExpr(
       contentModel.resolved,
       contentType: contentType,
@@ -1182,6 +1170,7 @@ Code _buildUrlEncodedMapFileAddition(
 }) {
   final propVarName = accessor.split('.').last.replaceAll('!', '');
   final partsVarName = '${propVarName}Parts';
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
 
   return Block.of([
     // final <propName>Parts = <String>[];
@@ -1231,11 +1220,7 @@ Code _buildUrlEncodedMapFileAddition(
             .call([], {
               'allowEmpty': literalTrue,
               'useQueryComponent': literalTrue,
-              if ((propertyEncoding?.textEncoding ?? TextEncoding.utf8) !=
-                  TextEncoding.utf8)
-                'textEncoding': textEncodingExpression(
-                  propertyEncoding!.textEncoding,
-                ),
+              'textEncoding': textEncodingExpression(textEncoding),
             }),
         refer(
           'encodeAnyToForm',
@@ -1246,11 +1231,7 @@ Code _buildUrlEncodedMapFileAddition(
             'explode': literalTrue,
             'allowEmpty': literalTrue,
             'useQueryComponent': literalTrue,
-            if ((propertyEncoding?.textEncoding ?? TextEncoding.utf8) !=
-                TextEncoding.utf8)
-              'textEncoding': textEncodingExpression(
-                propertyEncoding!.textEncoding,
-              ),
+            'textEncoding': textEncodingExpression(textEncoding),
           },
         ),
       ]).property('join').call([literalString('=')]),
@@ -1375,8 +1356,7 @@ Code _buildUrlEncodedObjectFileAddition(
                   'explode': literalTrue,
                   'allowEmpty': literalTrue,
                   'useQueryComponent': literalTrue,
-                  if (textEncoding != TextEncoding.utf8)
-                    'textEncoding': textEncodingExpression(textEncoding),
+                  'textEncoding': textEncodingExpression(textEncoding),
                 },
               ),
         )

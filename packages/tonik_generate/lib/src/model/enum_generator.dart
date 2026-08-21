@@ -586,6 +586,7 @@ class EnumGenerator {
           ..optionalParameters.addAll(buildUriEncodeParameters())
           ..body = const Code(
             '$_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
+            'textEncoding: textEncoding, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved)',
           ),
@@ -608,6 +609,7 @@ class EnumGenerator {
           const Code('}'),
           const Code(
             'return $_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
+            'textEncoding: textEncoding, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved);',
           ),

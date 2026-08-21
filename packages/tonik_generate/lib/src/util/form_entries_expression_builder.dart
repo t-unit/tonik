@@ -2,7 +2,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
-import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// Returns null for the throwing cases (never/binary/complex map) and the
 /// `AnyModel` single-string path, which each caller handles with
@@ -15,8 +14,8 @@ Expression? buildFormEntriesValueExpression(
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
-  Expression? textEncoding,
   bool allowReserved = false,
   Expression? fieldEncodings,
   String mapContext = 'map parameter value',
@@ -25,7 +24,7 @@ Expression? buildFormEntriesValueExpression(
     'explode': explode,
     'allowEmpty': allowEmpty,
     'useQueryComponent': ?useQueryComponent,
-    'textEncoding': ?textEncoding,
+    'textEncoding': textEncoding,
   };
 
   Expression toForm(
@@ -132,7 +131,7 @@ Expression? _buildListFormEntriesExpression(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
-  required Expression? textEncoding,
+  required Expression textEncoding,
   required bool isContentNullable,
   required Expression Function(
     Expression, {
@@ -184,28 +183,20 @@ Expression? _buildEncodedElementsList(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
-  required Expression? textEncoding,
+  required Expression textEncoding,
   required bool isContentNullable,
   required bool allowReserved,
 }) {
   if (!_isUriEncodableElement(contentModel)) return null;
 
-  final element = textEncoding == null
-      ? buildUriEncodeExpression(
-          refer('e'),
-          contentModel,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved ? literalBool(true) : null,
-        ).expression
-      : _buildEncodedElementExpression(
-          refer('e'),
-          contentModel,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          textEncoding: textEncoding,
-          allowReserved: allowReserved,
-        );
+  final element = _buildEncodedElementExpression(
+    refer('e'),
+    contentModel,
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    textEncoding: textEncoding,
+    allowReserved: allowReserved,
+  );
   if (element == null) return null;
 
   final elementEncode = isContentNullable
@@ -230,7 +221,7 @@ Expression? _buildEncodedElementExpression(
   Model model, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
-  required Expression? textEncoding,
+  required Expression textEncoding,
   required bool allowReserved,
 }) {
   final resolved = model.resolved;
@@ -248,7 +239,7 @@ Expression? _buildEncodedElementExpression(
       'allowEmpty': allowEmpty,
       'useQueryComponent': ?useQueryComponent,
       if (allowReserved) 'allowReserved': literalBool(true),
-      'textEncoding': ?textEncoding,
+      'textEncoding': textEncoding,
     });
   }
 
@@ -263,7 +254,7 @@ Expression? _buildEncodedElementExpression(
         'allowEmpty': allowEmpty,
         'useQueryComponent': ?useQueryComponent,
         if (allowReserved) 'allowReserved': literalBool(true),
-        'textEncoding': ?textEncoding,
+        'textEncoding': textEncoding,
       },
     );
   }
