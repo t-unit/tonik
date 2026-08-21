@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
@@ -12,6 +14,7 @@ extension UriEncoder on Uri {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -23,6 +26,7 @@ extension UriEncoder on Uri {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -35,6 +39,7 @@ extension StringUriEncoder on String {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -46,6 +51,7 @@ extension StringUriEncoder on String {
       this,
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -58,6 +64,7 @@ extension IntUriEncoder on int {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -69,6 +76,7 @@ extension IntUriEncoder on int {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -81,6 +89,7 @@ extension DoubleUriEncoder on double {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -92,6 +101,7 @@ extension DoubleUriEncoder on double {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -104,6 +114,7 @@ extension NumUriEncoder on num {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -115,6 +126,7 @@ extension NumUriEncoder on num {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -127,6 +139,7 @@ extension BoolUriEncoder on bool {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -138,6 +151,7 @@ extension BoolUriEncoder on bool {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -150,6 +164,7 @@ extension DateTimeUriEncoder on DateTime {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -161,6 +176,7 @@ extension DateTimeUriEncoder on DateTime {
       toTimeZonedIso8601String(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -173,6 +189,7 @@ extension BigDecimalUriEncoder on BigDecimal {
   /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -184,6 +201,7 @@ extension BigDecimalUriEncoder on BigDecimal {
       toString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -198,6 +216,7 @@ extension BinaryUriEncoder on List<int> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -215,6 +234,7 @@ extension BinaryUriEncoder on List<int> {
       decodeToString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
 }
@@ -231,6 +251,7 @@ extension StringListUriEncoder on List<String> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
@@ -257,6 +278,7 @@ extension StringListUriEncoder on List<String> {
         item,
         allowReserved: allowReserved,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
       ),
     ).join(',');
   }
@@ -270,6 +292,7 @@ extension StringMapUriEncoder on Map<String, String> {
   /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
@@ -291,6 +314,7 @@ extension StringMapUriEncoder on Map<String, String> {
       value,
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
 
     return entries

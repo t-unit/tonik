@@ -144,7 +144,7 @@ void main() {
         TextBodyPlan(
           value: value,
           rawContentType: 'text/plain; charset=utf-8',
-          encoding: 'utf-8',
+          encoding: TextEncoding.utf8,
           isRequired: true,
         ),
         BytesBodyPlan(

@@ -15,6 +15,7 @@ Expression? buildFormEntriesValueExpression(
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
   bool allowReserved = false,
   Expression? fieldEncodings,
@@ -24,6 +25,7 @@ Expression? buildFormEntriesValueExpression(
     'explode': explode,
     'allowEmpty': allowEmpty,
     'useQueryComponent': ?useQueryComponent,
+    'textEncoding': textEncoding,
   };
 
   Expression toForm(
@@ -93,6 +95,7 @@ Expression? buildFormEntriesValueExpression(
         m.content,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
         isContentNullable:
             m.isContentNullable || m.content.isEffectivelyNullable,
         toForm: toForm,
@@ -107,6 +110,7 @@ Expression? buildFormEntriesValueExpression(
         explode: explode,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
         allowReserved: allowReserved,
         mapContext: mapContext,
       );
@@ -128,6 +132,7 @@ Expression? _buildListFormEntriesExpression(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
+  required Expression textEncoding,
   required bool isContentNullable,
   required Expression Function(
     Expression, {
@@ -165,6 +170,7 @@ Expression? _buildListFormEntriesExpression(
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    textEncoding: textEncoding,
     isContentNullable: isContentNullable,
     allowReserved: allowReserved,
   );
@@ -178,6 +184,7 @@ Expression? _buildEncodedElementsList(
   Model contentModel, {
   required Expression allowEmpty,
   required Expression? useQueryComponent,
+  required Expression textEncoding,
   required bool isContentNullable,
   required bool allowReserved,
 }) {
@@ -188,6 +195,7 @@ Expression? _buildEncodedElementsList(
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    textEncoding: textEncoding,
     allowReserved: allowReserved ? literalBool(true) : null,
   ).expression;
 

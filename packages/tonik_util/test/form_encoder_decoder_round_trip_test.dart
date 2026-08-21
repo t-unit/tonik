@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
@@ -12,7 +14,7 @@ void main() {
       test('simple strings', () {
         const original = 'hello world';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -22,7 +24,7 @@ void main() {
       test('strings with special characters', () {
         const original = 'test@example.com';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -32,7 +34,7 @@ void main() {
       test('strings with mixed special characters', () {
         const original = 'hello world @test+data&more=stuff';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -42,7 +44,7 @@ void main() {
       test('unicode strings', () {
         const original = 'héllo wörld 😀';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -52,7 +54,7 @@ void main() {
       test('empty strings', () {
         const original = '';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -62,7 +64,7 @@ void main() {
       test('very long strings', () {
         final original = 'a' * 1000 + r' test @#$%^&*()';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -74,7 +76,7 @@ void main() {
       test('positive integers', () {
         const original = 42;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormInt();
@@ -84,7 +86,7 @@ void main() {
       test('negative integers', () {
         const original = -123;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormInt();
@@ -94,7 +96,7 @@ void main() {
       test('zero', () {
         const original = 0;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormInt();
@@ -104,7 +106,7 @@ void main() {
       test('large integers', () {
         const original = 9223372036854775807; // max int64
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormInt();
@@ -116,7 +118,7 @@ void main() {
       test('positive doubles', () {
         const original = 3.14159;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormDouble();
@@ -126,7 +128,7 @@ void main() {
       test('negative doubles', () {
         const original = -2.71828;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormDouble();
@@ -136,7 +138,7 @@ void main() {
       test('zero double', () {
         const original = 0.0;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormDouble();
@@ -153,7 +155,7 @@ void main() {
 
         for (final original in values) {
           final encoded = original
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value;
           final decoded = encoded.decodeFormDouble();
@@ -164,7 +166,7 @@ void main() {
       test('NaN handling', () {
         const original = double.nan;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormDouble();
@@ -176,7 +178,7 @@ void main() {
       test('true value', () {
         const original = true;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBool();
@@ -186,7 +188,7 @@ void main() {
       test('false value', () {
         const original = false;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBool();
@@ -198,7 +200,7 @@ void main() {
       test('simple decimal', () {
         final original = BigDecimal.parse('123.456789');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBigDecimal();
@@ -208,7 +210,7 @@ void main() {
       test('large decimal', () {
         final original = BigDecimal.parse('999999999999.123456789012345');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBigDecimal();
@@ -218,7 +220,7 @@ void main() {
       test('zero decimal', () {
         final original = BigDecimal.zero;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBigDecimal();
@@ -228,7 +230,7 @@ void main() {
       test('negative decimal', () {
         final original = BigDecimal.parse('-42.5');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBigDecimal();
@@ -238,7 +240,7 @@ void main() {
       test('very precise decimal', () {
         final original = BigDecimal.parse('0.000000000000000000000001');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormBigDecimal();
@@ -250,7 +252,7 @@ void main() {
       test('simple URI', () {
         final original = Uri.parse('https://example.com');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormUri();
@@ -262,7 +264,7 @@ void main() {
           'https://example.com/path?query=value&other=data',
         );
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormUri();
@@ -274,7 +276,7 @@ void main() {
           'https://example.com/path with spaces?query=value@test',
         );
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormUri();
@@ -284,7 +286,7 @@ void main() {
       test('URI with fragment', () {
         final original = Uri.parse('https://example.com/path#fragment');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormUri();
@@ -296,7 +298,7 @@ void main() {
       test('simple string list', () {
         const original = ['red', 'green', 'blue'];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -310,7 +312,7 @@ void main() {
           'key=value&other=data',
         ];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -320,7 +322,7 @@ void main() {
       test('string list with unicode', () {
         const original = ['héllo wörld', 'emoji 😀', 'unicode ñ'];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -330,7 +332,7 @@ void main() {
       test('single item list', () {
         const original = ['single'];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -339,14 +341,19 @@ void main() {
 
       test('empty list produces no wire entries', () {
         const original = <String>[];
-        final encoded = original.toForm('p', explode: false, allowEmpty: true);
+        final encoded = original.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          textEncoding: utf8,
+        );
         expect(encoded, const <ParameterEntry>[]);
       });
 
       test('list with empty strings', () {
         const original = ['', 'middle', ''];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -358,7 +365,7 @@ void main() {
       test('simple string map', () {
         const original = {'name': 'John', 'age': '25'};
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
 
@@ -374,7 +381,7 @@ void main() {
       test('map with special characters encodes keys and values', () {
         const original = {'key=name': 'value&data', 'other+key': 'more data'};
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
 
@@ -385,7 +392,12 @@ void main() {
     group('String Map round-trip (explode=true)', () {
       test('simple string map exploded into one entry per property', () {
         const original = {'name': 'John', 'age': '25'};
-        final encoded = original.toForm('p', explode: true, allowEmpty: true);
+        final encoded = original.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        );
 
         expect(encoded, const [
           (name: 'name', value: 'John'),
@@ -395,7 +407,12 @@ void main() {
 
       test('map with special characters exploded with encoded keys/values', () {
         const original = {'key name': 'value@data', 'other+key': 'more&data'};
-        final encoded = original.toForm('p', explode: true, allowEmpty: true);
+        final encoded = original.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        );
 
         expect(encoded, const [
           (name: 'key%20name', value: 'value%40data'),
@@ -408,7 +425,7 @@ void main() {
       test('nullable string with value', () {
         const original = 'test value';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormNullableString();
@@ -418,7 +435,7 @@ void main() {
       test('nullable int with value', () {
         const original = 42;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormNullableInt();
@@ -428,7 +445,7 @@ void main() {
       test('nullable bool with value', () {
         const original = true;
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormNullableBool();
@@ -438,7 +455,7 @@ void main() {
       test('nullable list with value', () {
         const original = ['test', 'data'];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormNullableStringList();
@@ -450,7 +467,7 @@ void main() {
       test('strings with all ASCII special characters', () {
         const original = r'''!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~''';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -460,7 +477,7 @@ void main() {
       test('mixed data types in string list', () {
         const original = ['42', 'true', '3.14', 'hello world'];
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -470,7 +487,7 @@ void main() {
       test('very large string list', () {
         final original = List.generate(100, (i) => 'item_$i with spaces');
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormStringList();
@@ -483,7 +500,7 @@ void main() {
             "'"
             '<>?,./';
         final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
             .single
             .value;
         final decoded = encoded.decodeFormString();
@@ -506,7 +523,7 @@ void main() {
 
         for (final original in testCases) {
           final encoded = original
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value;
           final decoded = encoded.decodeFormString();
@@ -524,7 +541,7 @@ void main() {
         const stringVal = 'test value';
         expect(
           stringVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormString(),
@@ -535,7 +552,7 @@ void main() {
         const intVal = 42;
         expect(
           intVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormInt(),
@@ -546,7 +563,7 @@ void main() {
         const doubleVal = 3.14;
         expect(
           doubleVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormDouble(),
@@ -557,7 +574,7 @@ void main() {
         const boolVal = true;
         expect(
           boolVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormBool(),
@@ -568,7 +585,7 @@ void main() {
         final bigDecimalVal = BigDecimal.parse('123.456');
         expect(
           bigDecimalVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormBigDecimal(),
@@ -579,7 +596,7 @@ void main() {
         final uriVal = Uri.parse('https://example.com');
         expect(
           uriVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormUri(),
@@ -590,7 +607,7 @@ void main() {
         const listVal = ['a', 'b', 'c'];
         expect(
           listVal
-              .toForm('p', explode: false, allowEmpty: true)
+              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
               .single
               .value
               .decodeFormStringList(),

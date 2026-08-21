@@ -38,6 +38,7 @@ sealed class TonikFile {
   /// Throws a [FormatException] for empty data when [allowEmpty] is false.
   String uriEncode({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
   }) {
@@ -52,6 +53,7 @@ sealed class TonikFile {
       allowEmpty: true,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
 }

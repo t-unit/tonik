@@ -616,14 +616,14 @@ void main() {
         class ResultStrings extends Result {
           const ResultStrings(this.value);
           final List<String> value;
-          
+
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
             return other is ResultStrings && _$deepEquals.equals(other.value, this.value);
           }
-          
+
           @override
           int get hashCode {
             const deepEquals = DeepCollectionEquality();
@@ -1417,7 +1417,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         (m) => m.name == 'uriEncode',
       );
 
-      expect(uriEncodeMethod.optionalParameters, hasLength(3));
+      expect(uriEncodeMethod.optionalParameters, hasLength(4));
 
       final allowReservedParam = uriEncodeMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -1467,7 +1467,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 5);
+      expect(toFormMethod.optionalParameters.length, 6);
 
       final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -2032,7 +2032,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                bool useQueryComponent = false,
+                required Encoding textEncoding, bool useQueryComponent = false,
                 bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
@@ -2040,14 +2040,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
-                    useQueryComponent: useQueryComponent,
+                    useQueryComponent: useQueryComponent, textEncoding: textEncoding,
                   ),
                   ValueStr(:final value) => value.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, textEncoding: textEncoding,
                   ),
                 };
               }
@@ -2101,7 +2101,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 String paramName, {
                 required bool explode,
                 required bool allowEmpty,
-                bool useQueryComponent = false,
+                required Encoding textEncoding, bool useQueryComponent = false,
                 bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
@@ -2113,7 +2113,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, textEncoding: textEncoding,
                   ),
                 };
               }
@@ -2707,7 +2707,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               String paramName, {
               required bool explode,
               required bool allowEmpty,
-              bool useQueryComponent = false,
+              required Encoding textEncoding, bool useQueryComponent = false,
               bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
@@ -2719,7 +2719,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                   explode: explode,
                   allowEmpty: allowEmpty,
                   useQueryComponent: useQueryComponent,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, textEncoding: textEncoding,
                 ),
               };
             }
@@ -3029,7 +3029,7 @@ bool operator ==(Object other) {
               String paramName, {
               required bool explode,
               required bool allowEmpty,
-              bool useQueryComponent = false,
+              required Encoding textEncoding, bool useQueryComponent = false,
               bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
@@ -3041,7 +3041,7 @@ bool operator ==(Object other) {
                   explode: explode,
                   allowEmpty: allowEmpty,
                   useQueryComponent: useQueryComponent,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, textEncoding: textEncoding,
                 ),
               };
             }
@@ -3750,7 +3750,7 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            bool useQueryComponent = false,
+            required Encoding textEncoding,bool useQueryComponent = false,
             bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
@@ -3759,14 +3759,14 @@ bool operator ==(Object other) {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
               ValueText(:final value) => value.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
             };
           }
@@ -3834,7 +3834,7 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            bool useQueryComponent = false,
+            required Encoding textEncoding,bool useQueryComponent = false,
             bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
@@ -3846,14 +3846,14 @@ bool operator ==(Object other) {
                         explode: explode,
                         allowEmpty: allowEmpty,
                         useQueryComponent: useQueryComponent,
-                        allowReserved: allowReserved,
+                        allowReserved: allowReserved, textEncoding: textEncoding,
                       ),
               ValueText(:final value) => value.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, textEncoding: textEncoding,
               ),
             };
           }
@@ -4043,11 +4043,11 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({ required bool allowEmpty, required Encoding textEncoding,bool useQueryComponent = false, bool allowReserved = false, }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
+                textEncoding: textEncoding,useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
               ),
               ValueText() => throw EncodingException(

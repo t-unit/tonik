@@ -4,17 +4,20 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 
 BuiltExpression buildToFormValueExpression(
   String valueExpression,
   Model model, {
   required bool useQueryComponent,
+  required TextEncoding textEncoding,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
   Map<Property, FieldEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
   final resolved = model.resolved;
+  final codec = textEncodingExpression(textEncoding);
 
   final unsupported = formEntriesUnsupportedReason(resolved);
   if (unsupported != null) {
@@ -39,6 +42,7 @@ BuiltExpression buildToFormValueExpression(
           'explode': literalBool(explodeLiteral),
           'allowEmpty': literalBool(allowEmptyLiteral),
           if (useQueryComponent) 'useQueryComponent': literalBool(true),
+          'textEncoding': codec,
         },
       ),
     );
@@ -51,6 +55,7 @@ BuiltExpression buildToFormValueExpression(
     explode: literalBool(explodeLiteral),
     allowEmpty: literalBool(allowEmptyLiteral),
     useQueryComponent: useQueryComponent ? literalBool(true) : null,
+    textEncoding: codec,
     fieldEncodings: _fieldEncodingsLiteral(model, encoding),
   );
 

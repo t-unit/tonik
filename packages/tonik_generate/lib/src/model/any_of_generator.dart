@@ -1216,7 +1216,8 @@ class AnyOfGenerator {
         const Code('allowEmpty: allowEmpty, '),
         const Code('useQueryComponent: useQueryComponent, '),
         const Code('allowReserved: allowReserved, '),
-        const Code('fieldEncodings: fieldEncodings'),
+        const Code('fieldEncodings: fieldEncodings, '),
+        const Code('textEncoding: textEncoding, '),
         const Code(');'),
       ]);
 
@@ -1328,6 +1329,7 @@ class AnyOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
+                'textEncoding': refer('textEncoding'),
               },
             ),
       );
@@ -1348,6 +1350,7 @@ class AnyOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
+                'textEncoding': refer('textEncoding'),
               },
             ),
       );
@@ -1360,6 +1363,7 @@ class AnyOfGenerator {
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
               useQueryComponent: refer('useQueryComponent'),
+              textEncoding: refer('textEncoding'),
             )
           : null;
       if (listEntries != null) {
@@ -1421,6 +1425,7 @@ class AnyOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
+                'textEncoding': refer('textEncoding'),
               },
             ),
       );
@@ -2278,6 +2283,7 @@ class AnyOfGenerator {
           ..add(
             Code(
               'return $receiver.uriEncode(allowEmpty: allowEmpty, '
+              'textEncoding: textEncoding, '
               'useQueryComponent: useQueryComponent, '
               'allowReserved: allowReserved);',
             ),

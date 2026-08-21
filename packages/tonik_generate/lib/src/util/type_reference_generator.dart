@@ -248,9 +248,18 @@ Parameter buildFieldEncodingsParameter() => Parameter(
     ..defaultTo = literalConstMap({}).code,
 );
 
+Parameter _buildTextEncodingParameter() => Parameter(
+  (b) => b
+    ..name = 'textEncoding'
+    ..type = refer('Encoding', 'dart:convert')
+    ..named = true
+    ..required = true,
+);
+
 /// Encoding parameters for form-style `toForm`.
 List<Parameter> buildFormEncodingParameters() => [
   ...buildEncodingParameters(),
+  _buildTextEncodingParameter(),
   buildBoolParameter('useQueryComponent'),
   buildBoolParameter('allowReserved'),
   buildFieldEncodingsParameter(),
@@ -276,6 +285,7 @@ List<Parameter> buildDelimitedEncodingParameters() => [
 /// Parameters for an inline `uriEncode` signature.
 List<Parameter> buildUriEncodeParameters() => [
   buildBoolParameter('allowEmpty', required: true),
+  _buildTextEncodingParameter(),
   buildBoolParameter('useQueryComponent'),
   buildBoolParameter('allowReserved'),
 ];

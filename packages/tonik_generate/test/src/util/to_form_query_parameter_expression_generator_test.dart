@@ -136,10 +136,10 @@ void main() {
                   .map(
                     (k, v) => _i1.MapEntry(
                       k,
-                      _i2.PropertyValue.scalar(v),
-                    ),
+                      _i2.PropertyValue.scalar(v)
+                    )
                   )
-                  .toForm(r'mapParam', explode: false, allowEmpty: true),
+                  .toForm(r'mapParam', explode: false, allowEmpty: true, textEncoding: _i3.utf8,),
             );
           }
         ''');
@@ -176,10 +176,10 @@ void main() {
                   .map(
                     (k, v) => _i1.MapEntry(
                       k,
-                      _i2.PropertyValue.scalar(v.toString()),
-                    ),
+                      _i2.PropertyValue.scalar(v.toString())
+                    )
                   )
-                  .toForm(r'mapParam', explode: false, allowEmpty: true),
+                  .toForm(r'mapParam', explode: false, allowEmpty: true, textEncoding: _i3.utf8,),
             );
           }
         ''');
@@ -256,7 +256,7 @@ void main() {
                 r'base64Param',
                 explode: false,
                 allowEmpty: true,
-              ),
+              textEncoding: _i1.utf8,),
             );
           }
         ''');
@@ -290,7 +290,7 @@ void main() {
                 name: r'anyParam',
                 explode: false,
                 allowEmpty: true,
-              ),
+              textEncoding: _i2.utf8,),
             );
           }
         ''');
@@ -413,7 +413,7 @@ void main() {
                 base64ListParam
                     .map((e) => e.toBase64String())
                     .toList()
-                    .toForm(r'base64ListParam', explode: false, allowEmpty: true),
+                    .toForm(r'base64ListParam', explode: false, allowEmpty: true, textEncoding: _i1.utf8,),
               );
             }
           ''');
@@ -578,13 +578,13 @@ void main() {
             test() {
               _$entries.addAll(
                 queryType
-                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: false))
+                    .map( (e) => e == null ? '' : e.uriEncode(allowEmpty: false, textEncoding: _i1.utf8), )
                     .toList()
                     .toForm(
                       r'queryType',
                       explode: true,
                       allowEmpty: false,
-                      alreadyEncoded: true,
+                      textEncoding: _i1.utf8, alreadyEncoded: true,
                     ),
               );
             }
@@ -626,13 +626,13 @@ void main() {
             test() {
               _$entries.addAll(
                 values
-                    .map((e) => e.uriEncode(allowEmpty: false))
+                    .map((e) => e.uriEncode(allowEmpty: false, textEncoding: _i1.utf8))
                     .toList()
                     .toForm(
                       r'values',
                       explode: true,
                       allowEmpty: false,
-                      alreadyEncoded: true,
+                      textEncoding: _i1.utf8, alreadyEncoded: true,
                     ),
               );
             }
@@ -681,9 +681,9 @@ void main() {
             test() {
               _$entries.addAll(
                 ids
-                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                    .map( (e) => e == null ? '' : e.uriEncode(allowEmpty: true, textEncoding: _i1.utf8), )
                     .toList()
-                    .toForm(r'ids', explode: false, allowEmpty: true, alreadyEncoded: true),
+                    .toForm( r'ids', explode: false, allowEmpty: true, textEncoding: _i1.utf8, alreadyEncoded: true, ),
               );
             }
           ''';

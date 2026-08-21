@@ -93,7 +93,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -135,7 +135,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toSpaceDelimited(
                       explode: true,
@@ -176,7 +176,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in ids
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -217,7 +217,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toPipeDelimited(
                       explode: false,
@@ -259,7 +259,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toPipeDelimited(
                       explode: true,
@@ -300,7 +300,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in ids
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                     .toList()
                     .toPipeDelimited(
                       explode: false,
@@ -344,7 +344,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in tags
-                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true, textEncoding: utf8),)
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -386,7 +386,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in ids
-                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true, textEncoding: utf8),)
                     .toList()
                     .toPipeDelimited(
                       explode: false,
@@ -670,7 +670,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in ids
-                    .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -720,7 +720,7 @@ void main() {
                       .map(
                         (e) => e == null
                             ? ''
-                            : e.uriEncode(allowEmpty: true, allowReserved: true),
+                            : e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),
                       )
                       .toList()
                       .toSpaceDelimited(
@@ -772,7 +772,7 @@ void main() {
                       .map(
                         (e) => e == null
                             ? ''
-                            : e.uriEncode(allowEmpty: true, allowReserved: true),
+                            : e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),
                       )
                       .toList()
                       .toPipeDelimited(
@@ -828,7 +828,7 @@ void main() {
               format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -895,7 +895,7 @@ void main() {
                   }
                 }
                 for (final value in items
-                    .map((item) => item.uriEncode(allowEmpty: true, allowReserved: true))
+                    .map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8,allowReserved: true,),)
                     .toList()
                     .toSpaceDelimited(
                       explode: false,

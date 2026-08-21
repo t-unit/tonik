@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/deep_object_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
@@ -271,6 +273,7 @@ String encodeAnyToForm(
   Object? value, {
   required bool explode,
   required bool allowEmpty,
+  required Encoding textEncoding,
   bool useQueryComponent = false,
   bool allowReserved = false,
 }) {
@@ -288,6 +291,7 @@ String encodeAnyToForm(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
       explode: explode,
     );
@@ -297,6 +301,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is int) {
@@ -304,6 +309,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is double) {
@@ -311,6 +317,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is bool) {
@@ -318,6 +325,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is DateTime) {
@@ -325,6 +333,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is Uri) {
@@ -332,6 +341,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is BigDecimal) {
@@ -339,6 +349,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is Map<String, dynamic>) {
@@ -353,6 +364,7 @@ String encodeAnyToForm(
           allowEmpty: allowEmpty,
           useQueryComponent: useQueryComponent,
           allowReserved: allowReserved,
+          textEncoding: textEncoding,
         ),
     };
     return _formEntriesToString(
@@ -362,6 +374,7 @@ String encodeAnyToForm(
         allowEmpty: allowEmpty,
         alreadyEncoded: true,
         useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
       ),
       explode: explode,
     );
@@ -380,6 +393,7 @@ String encodeAnyToForm(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
         )
         .toList();
@@ -387,6 +401,7 @@ String encodeAnyToForm(
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
       useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
     );
   }
   throw EncodingException(
@@ -402,6 +417,7 @@ List<ParameterEntry> encodeAnyToFormEntries(
   required String name,
   required bool explode,
   required bool allowEmpty,
+  required Encoding textEncoding,
   bool useQueryComponent = false,
   bool allowReserved = false,
 }) {
@@ -418,6 +434,7 @@ List<ParameterEntry> encodeAnyToFormEntries(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     ),
   ];
@@ -609,6 +626,7 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
 String encodeAnyToUri(
   Object? value, {
   required bool allowEmpty,
+  required Encoding textEncoding,
   bool useQueryComponent = false,
   bool allowReserved = false,
 }) {
@@ -621,6 +639,7 @@ String encodeAnyToUri(
   if (value is UriEncodable) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
     );
@@ -630,6 +649,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is int) {
@@ -637,6 +657,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is double) {
@@ -644,6 +665,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is bool) {
@@ -651,6 +673,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is DateTime) {
@@ -658,6 +681,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is Uri) {
@@ -665,6 +689,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   if (value is BigDecimal) {
@@ -672,6 +697,7 @@ String encodeAnyToUri(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
+      textEncoding: textEncoding,
     );
   }
   throw EncodingException(

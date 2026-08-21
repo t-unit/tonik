@@ -271,6 +271,7 @@ Object? test() {
               explode: true,
               allowEmpty: true,
               useQueryComponent: true,
+              textEncoding: utf8,
             )
             .map((entry) => '${entry.name}=${entry.value}')
             .join('&'),
@@ -391,7 +392,7 @@ Object? test() {
       );
     });
 
-    test('honors an ASCII part charset', () {
+    test('semantic encoding selects HTTP multipart text bytes', () {
       expectPropertyCode(
         StringModel(context: context),
         r'''
@@ -399,12 +400,142 @@ Object? test() {
     MultipartFile.fromBytes(
       r'value',
       ascii.encode(body.value),
+      contentType: MediaType.parse(r'text/plain; charset=iso-8859-1'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=iso-8859-1',
+          textEncoding: TextEncoding.ascii,
+        ),
+      );
+    });
+
+    test('semantic encoding reaches every HTTP multipart text path', () {
+      expectPropertyCode(
+        StringModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      latin1.encode(body.value),
+      contentType: MediaType.parse(
+        r'application/vnd.example.text; charset=iso-8859-1',
+      ),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'application/vnd.example.text; charset=iso-8859-1',
+          textEncoding: TextEncoding.latin1,
+        ),
+      );
+      expectPropertyCode(
+        IntegerModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      latin1.encode(body.value.toString()),
       contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
     ),
   );''',
         encoding: _encoding(
           contentType: ContentType.text,
           rawContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+        ),
+      );
+      expectPropertyCode(
+        _stringEnum(context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      latin1.encode(body.value.toJson()),
+      contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+        ),
+      );
+      expectPropertyCode(
+        AnyModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      latin1.encode(jsonEncode(encodeAnyToJson(body.value))),
+      contentType: MediaType.parse(r'application/json; charset=us-ascii'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+        ),
+      );
+      expectPropertyCode(
+        _classModel(context, 'Nested'),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      latin1.encode(jsonEncode(body.value.toJson())),
+      contentType: MediaType.parse(r'application/json; charset=us-ascii'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+        ),
+      );
+      expectPropertyCode(
+        _classModel(context, 'Styled'),
+        r'''
+  for (final entry in body.value
+      .parameterProperties(allowEmpty: true)
+      .toRawStyleParts(r'value', explode: true)) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        entry.name,
+        latin1.encode(entry.value),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
+        ),
+      );
+      expectPropertyCode(
+        _list(context, StringModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        latin1.encode(item),
+        contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=us-ascii',
+          textEncoding: TextEncoding.latin1,
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
         ),
       );
     });
@@ -531,22 +662,6 @@ Object? test() {
         _list(context, item),
         '  throw EncodingException(r"Cannot encode cyclic AliasModel list '
         'items for multipart property \'value\'.");',
-      );
-    });
-
-    test('uses the fallback text representation for Never list items', () {
-      expectPropertyCode(
-        _list(context, NeverModel(context: context, isNullable: false)),
-        r'''
-  for (final item in body.value) {
-    _$multipartFiles.add(
-      MultipartFile.fromBytes(
-        r'value',
-        utf8.encode(item.toString()),
-        contentType: MediaType.parse(r'text/plain'),
-      ),
-    );
-  }''',
       );
     });
 
@@ -758,12 +873,16 @@ EnumModel<int> _integerEnum(Context context) => EnumModel(
 PartEncoding _encoding({
   ContentType? contentType,
   String? rawContentType,
+  String? wireContentType,
+  TextEncoding textEncoding = TextEncoding.utf8,
   EncodingStyle? style,
   bool? explode,
   bool? allowReserved,
 }) => PartEncoding(
   contentType: contentType,
   rawContentType: rawContentType,
+  wireContentType: wireContentType ?? rawContentType,
+  textEncoding: textEncoding,
   headers: null,
   style: style,
   explode: explode,

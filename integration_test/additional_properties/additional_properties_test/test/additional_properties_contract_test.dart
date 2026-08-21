@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:additional_properties_api/additional_properties_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -175,11 +177,14 @@ void main() {
         additionalProperties: {'ts': DateTime.utc(2024, 1, 15, 10, 30)},
       );
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'id', value: '1'),
-        (name: 'name', value: 'n'),
-        (name: 'ts', value: '2024-01-15T10%3A30%3A00.000Z'),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'id', value: '1'),
+          (name: 'name', value: 'n'),
+          (name: 'ts', value: '2024-01-15T10%3A30%3A00.000Z'),
+        ],
+      );
     });
 
     test('parameterProperties throws EncodingException for map AP values', () {
@@ -207,7 +212,12 @@ void main() {
       );
 
       expect(
-        () => obj.toForm('body', explode: true, allowEmpty: true),
+        () => obj.toForm(
+          'body',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -232,10 +242,13 @@ void main() {
         additionalProperties: {'note': null},
       );
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'id', value: '1'),
-        (name: 'name', value: 'n'),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'id', value: '1'),
+          (name: 'name', value: 'n'),
+        ],
+      );
     });
 
     test('toSimple omits null AP entries', () {
@@ -255,11 +268,14 @@ void main() {
         additionalProperties: {'note': ''},
       );
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'id', value: '1'),
-        (name: 'name', value: 'n'),
-        (name: 'note', value: ''),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'id', value: '1'),
+          (name: 'name', value: 'n'),
+          (name: 'note', value: ''),
+        ],
+      );
     });
   });
 
@@ -270,10 +286,13 @@ void main() {
         additionalProperties: {'gone': null, 'kept': 'v'},
       );
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'name', value: 'n'),
-        (name: 'kept', value: 'v'),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'name', value: 'n'),
+          (name: 'kept', value: 'v'),
+        ],
+      );
     });
 
     test('toJson keeps explicit null typed AP entries', () {
@@ -426,11 +445,14 @@ void main() {
         additionalProperties: {'note': 'a b'},
       );
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'id', value: '1'),
-        (name: 'label', value: 'a%20b'),
-        (name: 'note', value: 'a%20b'),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'id', value: '1'),
+          (name: 'label', value: 'a%20b'),
+          (name: 'note', value: 'a%20b'),
+        ],
+      );
     });
 
     test('toLabel includes AP entries', () {
@@ -510,7 +532,12 @@ void main() {
       );
 
       expect(
-        () => obj.toForm('body', explode: true, allowEmpty: true),
+        () => obj.toForm(
+          'body',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -520,9 +547,12 @@ void main() {
     test('toForm emits AP entries', () {
       const obj = AuditedSettings(additionalProperties: {'theme': 'dark'});
 
-      expect(obj.toForm('body', explode: true, allowEmpty: true), [
-        (name: 'theme', value: 'dark'),
-      ]);
+      expect(
+        obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
+        [
+          (name: 'theme', value: 'dark'),
+        ],
+      );
     });
 
     test('toSimple emits AP entries', () {

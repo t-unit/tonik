@@ -140,7 +140,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedToFormMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
 ''';
 
       expect(
@@ -214,7 +214,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { if (currentEncodingShape == EncodingShape.mixed) { throw EncodingException( r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported', ); } return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { if (currentEncodingShape == EncodingShape.mixed) { throw EncodingException( r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported', ); } return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
 ''';
 
     expect(
@@ -239,13 +239,13 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final combinedClass = generator.generateClass(model);
 
       const expectedToFormMethod = '''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           return bigDecimal.toForm(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
         }
       ''';
@@ -317,13 +317,13 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final combinedClass = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           return status.toForm(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
         }
       ''';
@@ -450,7 +450,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final combinedClass = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
             throw EncodingException(
               'Form encoding not supported: contains complex types',
             );
@@ -511,7 +511,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
@@ -524,7 +524,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$intForm);
           _$values.add(_$intForm.map((e) => e.value).join(','));
@@ -533,7 +533,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$choiceForm);
           _$values.add(_$choiceForm.map((e) => e.value).join(','));
@@ -689,7 +689,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
@@ -702,7 +702,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$flexibleAForm);
           _$values.add(_$flexibleAForm.map((e) => e.value).join(','));
@@ -711,7 +711,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$flexibleBForm);
           _$values.add(_$flexibleBForm.map((e) => e.value).join(','));
@@ -720,7 +720,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$stringForm);
           _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -818,7 +818,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
@@ -831,7 +831,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$flexibleValueForm);
           _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
@@ -840,7 +840,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$bigDecimalForm);
           _$values.add(_$bigDecimalForm.map((e) => e.value).join(','));
@@ -849,7 +849,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$choiceForm);
           _$values.add(_$choiceForm.map((e) => e.value).join(','));
@@ -858,7 +858,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$stringForm);
           _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -896,7 +896,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToForm = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$listForm = list .map( (e) => e.uriEncode( allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } return _$entryLists.first; }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$listForm = list .map( (e) => e.uriEncode( allowEmpty: allowEmpty, textEncoding: textEncoding, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, textEncoding: textEncoding, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } return _$entryLists.first; }
 ''';
 
     expect(
@@ -924,7 +924,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToForm = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$listForm = list .map( (e) => e.uriEncode( allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } return _$entryLists.first; }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$listForm = list .map( (e) => e.uriEncode( allowEmpty: allowEmpty, textEncoding: textEncoding, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, textEncoding: textEncoding, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } return _$entryLists.first; }
 ''';
 
     expect(
@@ -979,7 +979,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
@@ -992,7 +992,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$flexibleValueForm);
           _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
@@ -1001,7 +1001,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, textEncoding: textEncoding,
           );
           _$entryLists.add(_$intForm);
           _$values.add(_$intForm.map((e) => e.value).join(','));

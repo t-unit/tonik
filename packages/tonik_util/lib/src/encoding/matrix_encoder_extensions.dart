@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
@@ -18,7 +20,7 @@ extension MatrixUriEncoder on Uri {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding String values.
@@ -34,7 +36,8 @@ extension MatrixStringEncoder on String {
     if (isEmpty) {
       return ';$paramName';
     }
-    return ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+    final value = uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
+    return ';$paramName=$value';
   }
 }
 
@@ -45,7 +48,7 @@ extension MatrixIntEncoder on int {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding double values.
@@ -55,7 +58,7 @@ extension MatrixDoubleEncoder on double {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding num values.
@@ -65,7 +68,7 @@ extension MatrixNumEncoder on num {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding bool values.
@@ -75,7 +78,7 @@ extension MatrixBoolEncoder on bool {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding DateTime values.
@@ -85,7 +88,7 @@ extension MatrixDateTimeEncoder on DateTime {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding BigDecimal values.
@@ -95,7 +98,7 @@ extension MatrixBigDecimalEncoder on BigDecimal {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding List values.
@@ -131,6 +134,7 @@ extension MatrixStringListEncoder on List<String> {
       return ';$paramName=${uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
+        textEncoding: utf8,
       )}';
     }
   }
@@ -175,6 +179,7 @@ extension MatrixStringMapEncoder on Map<String, String> {
       return ';$paramName=${uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
+        textEncoding: utf8,
       )}';
     }
   }

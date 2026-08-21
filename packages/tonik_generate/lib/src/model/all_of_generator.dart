@@ -1636,6 +1636,7 @@ class AllOfGenerator {
           explode: refer('explode'),
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          textEncoding: refer('textEncoding'),
         );
         if (entries != null) return entries;
         return generateEncodingExceptionExpression(
@@ -1652,6 +1653,7 @@ class AllOfGenerator {
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
               },
@@ -1671,6 +1673,7 @@ class AllOfGenerator {
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
               'allowReserved': refer('allowReserved'),
+              'textEncoding': refer('textEncoding'),
             },
           );
     }
@@ -1755,6 +1758,7 @@ class AllOfGenerator {
             'useQueryComponent': refer('useQueryComponent'),
             'allowReserved': refer('allowReserved'),
             'fieldEncodings': refer('fieldEncodings'),
+            'textEncoding': refer('textEncoding'),
           },
         )
         .returned
@@ -2454,6 +2458,7 @@ class AllOfGenerator {
               .property('uriEncode')
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
               })
@@ -2536,6 +2541,7 @@ class AllOfGenerator {
                 receiver,
               ).property('uriEncode').call([], {
                 'allowEmpty': refer('allowEmpty'),
+                'textEncoding': refer('textEncoding'),
                 'useQueryComponent': refer('useQueryComponent'),
                 'allowReserved': refer('allowReserved'),
               }),

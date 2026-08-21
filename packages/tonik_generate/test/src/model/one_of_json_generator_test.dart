@@ -1341,9 +1341,11 @@ void main() {
       test('toForm', () {
         expectContainsBody(
           'List<ParameterEntry> toForm( String paramName, { required bool '
-          'explode, required bool allowEmpty, bool useQueryComponent = false, '
+          'explode, required bool allowEmpty, required Encoding textEncoding, '
+          'bool useQueryComponent = false, '
           'bool allowReserved = false, Map<String, FormFieldEncoding> '
-          'fieldEncodings = const {}, }) => $throwExpr',
+          'fieldEncodings = const {}, '
+          '}) => $throwExpr',
         );
       });
 
@@ -1363,7 +1365,8 @@ void main() {
 
       test('uriEncode', () {
         expectContainsBody(
-          'String uriEncode({ required bool allowEmpty, bool '
+          'String uriEncode({ required bool allowEmpty, required Encoding '
+          'textEncoding, bool '
           'useQueryComponent = false, bool allowReserved = false, }) => '
           '$throwExpr',
         );

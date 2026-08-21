@@ -8,6 +8,7 @@ BuiltExpression buildUriEncodeExpression(
   Expression valueExpression,
   Model model, {
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
   Expression? allowReserved,
@@ -17,6 +18,7 @@ BuiltExpression buildUriEncodeExpression(
       valueExpression,
       model,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
       allowReserved: allowReserved,
@@ -42,6 +44,7 @@ Expression _buildUriEncodeExpression(
   Expression valueExpression,
   Model model, {
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
   Expression? allowReserved,
@@ -66,6 +69,7 @@ Expression _buildUriEncodeExpression(
         [],
         {
           'allowEmpty': allowEmpty,
+          'textEncoding': textEncoding,
           'useQueryComponent': ?useQueryComponent,
           'allowReserved': ?allowReserved,
         },
@@ -78,6 +82,7 @@ Expression _buildUriEncodeExpression(
         [valueExpression],
         {
           'allowEmpty': allowEmpty,
+          'textEncoding': textEncoding,
           'useQueryComponent': ?useQueryComponent,
           'allowReserved': ?allowReserved,
         },
@@ -86,6 +91,7 @@ Expression _buildUriEncodeExpression(
       valueExpression,
       model,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
     ),
@@ -93,6 +99,7 @@ Expression _buildUriEncodeExpression(
       valueExpression,
       m.content,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
       allowReserved: allowReserved,
@@ -102,6 +109,7 @@ Expression _buildUriEncodeExpression(
       valueExpression,
       model.model,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
       allowReserved: allowReserved,
@@ -116,6 +124,7 @@ Expression _buildListUriEncodeExpression(
   Expression valueExpression,
   Model contentModel, {
   required Expression allowEmpty,
+  required Expression textEncoding,
   required bool isContentNullable,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
@@ -135,6 +144,7 @@ Expression _buildListUriEncodeExpression(
 
   final wholeListArgs = <String, Expression>{
     'allowEmpty': allowEmpty,
+    'textEncoding': textEncoding,
     'useQueryComponent': ?useQueryComponent,
     'allowReserved': ?allowReserved,
   };
@@ -179,6 +189,7 @@ Expression _buildListUriEncodeExpression(
                     refer('e'),
                     contentModel,
                     allowEmpty: allowEmpty,
+                    textEncoding: textEncoding,
                     useQueryComponent: useQueryComponent,
                     allowReserved: allowReserved,
                   ),
@@ -207,6 +218,7 @@ Expression _buildListUriEncodeExpression(
                           [refer('e')],
                           {
                             'allowEmpty': allowEmpty,
+                            'textEncoding': textEncoding,
                             'useQueryComponent': ?useQueryComponent,
                             'allowReserved': ?allowReserved,
                           },
@@ -222,6 +234,7 @@ Expression _buildListUriEncodeExpression(
       listExpr,
       contentModel,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       allowReserved: allowReserved,
     ),
@@ -229,6 +242,7 @@ Expression _buildListUriEncodeExpression(
       valueExpression,
       contentModel.model,
       allowEmpty: allowEmpty,
+      textEncoding: textEncoding,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
       allowReserved: allowReserved,
@@ -244,6 +258,7 @@ Expression _buildMapUriEncodeExpression(
   Expression valueExpression,
   MapModel model, {
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
   Expression? allowReserved,
 }) {
@@ -259,6 +274,7 @@ Expression _buildMapUriEncodeExpression(
         [],
         {
           'allowEmpty': allowEmpty,
+          'textEncoding': textEncoding,
           'useQueryComponent': ?useQueryComponent,
           'allowReserved': ?allowReserved,
         },
@@ -274,6 +290,7 @@ Expression _buildListMapContentUriEncodeExpression(
   Expression listExpression,
   MapModel contentModel, {
   required Expression allowEmpty,
+  required Expression textEncoding,
   Expression? useQueryComponent,
   Expression? allowReserved,
 }) {
@@ -303,6 +320,7 @@ Expression _buildListMapContentUriEncodeExpression(
               [],
               {
                 'allowEmpty': allowEmpty,
+                'textEncoding': textEncoding,
                 'useQueryComponent': ?useQueryComponent,
                 'allowReserved': ?allowReserved,
               },
@@ -316,6 +334,7 @@ Expression _buildListMapContentUriEncodeExpression(
         [],
         {
           'allowEmpty': allowEmpty,
+          'textEncoding': textEncoding,
           'useQueryComponent': ?useQueryComponent,
           'allowReserved': ?allowReserved,
         },

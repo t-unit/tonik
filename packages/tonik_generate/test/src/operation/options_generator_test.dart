@@ -1304,7 +1304,7 @@ void main() {
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
   sessionId
-.toForm(r'session_id', explode: false, allowEmpty: true)
+.toForm( r'session_id', explode: false, allowEmpty: true, textEncoding: utf8, )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -1364,7 +1364,7 @@ void main() {
             if (trackingId != null) {
               _$cookieParts.addAll(
   trackingId
-.toForm(r'tracking_id', explode: false, allowEmpty: true)
+.toForm( r'tracking_id', explode: false, allowEmpty: true, textEncoding: utf8, )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
@@ -1447,12 +1447,12 @@ void main() {
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
   sessionId
-.toForm(r'session_id', explode: false, allowEmpty: true)
+.toForm( r'session_id', explode: false, allowEmpty: true, textEncoding: utf8, )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             _$cookieParts.addAll(
   userId
-.toForm(r'user_id', explode: false, allowEmpty: true)
+.toForm( r'user_id', explode: false, allowEmpty: true, textEncoding: utf8, )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -1511,7 +1511,7 @@ void main() {
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
   pageNum
-.toForm(r'page_num', explode: false, allowEmpty: true)
+.toForm( r'page_num', explode: false, allowEmpty: true, textEncoding: utf8, )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -1582,9 +1582,9 @@ void main() {
             _$cookieParts.addAll(
               labels
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
-                  .toForm(r'labels', explode: false, allowEmpty: true)
+                  .toForm(r'labels', explode: false, allowEmpty: true, textEncoding: utf8)
                   .map(
-                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'
                   ),
             );
             if (_$cookieParts.isNotEmpty) {
@@ -1662,11 +1662,11 @@ void main() {
             _$cookieParts.addAll(
               prefs
                   .map(
-                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString()))
                   )
-                  .toForm(r'prefs', explode: true, allowEmpty: true)
+                  .toForm(r'prefs', explode: true, allowEmpty: true, textEncoding: utf8)
                   .map(
-                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'
                   ),
             );
             if (_$cookieParts.isNotEmpty) {
@@ -1746,11 +1746,11 @@ void main() {
                 settings
                     .map(
                       (k, v) =>
-                          MapEntry(k, PropertyValue.scalar(v.toString())),
+                          MapEntry(k, PropertyValue.scalar(v.toString()))
                     )
-                    .toForm(r'settings', explode: false, allowEmpty: true)
+                    .toForm(r'settings', explode: false, allowEmpty: true, textEncoding: utf8,)
                     .map(
-                      (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                      (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'
                     ),
               );
             }
@@ -1999,7 +1999,7 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2077,13 +2077,13 @@ void main() {
   items
                     .map(
                       (e) =>
-                          encodeAnyToUri(e, allowEmpty: true),
+                          encodeAnyToUri(e, allowEmpty: true, textEncoding: utf8,),
                     )
                     .toList()
                     .toForm(r'items', 
                       explode: false,
                       allowEmpty: true,
-                      alreadyEncoded: true,
+                      textEncoding: utf8,alreadyEncoded: true,
                     )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -2157,7 +2157,7 @@ void main() {
             final _$cookieParts = <String>[];
             if (metadata != null) {
               _$cookieParts.add(
-  [r'metadata=', encodeAnyToForm(metadata, explode: false, allowEmpty: true)].join(),
+  [r'metadata=', encodeAnyToForm(metadata, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -2228,7 +2228,7 @@ void main() {
           _$headers['Accept'] = r'*/*';
           final _$cookieParts = <String>[];
           _$cookieParts.addAll(
-  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
           if (_$cookieParts.isNotEmpty) {
@@ -2379,7 +2379,7 @@ void main() {
   tokens
                     .map((e) => e.toBase64String())
                     .toList()
-                    .toForm(r'tokens', explode: false, allowEmpty: true)
+                    .toForm(r'tokens', explode: false, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -2528,7 +2528,7 @@ void main() {
           final _$cookieParts = <String>[];
           if (token != null) {
             _$cookieParts.addAll(
-  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
           }
@@ -2683,7 +2683,7 @@ void main() {
   tokens
                       .map((e) => e.toBase64String())
                       .toList()
-                      .toForm(r'tokens', explode: false, allowEmpty: true)
+                      .toForm(r'tokens', explode: false, allowEmpty: true, textEncoding: utf8,)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
@@ -2843,7 +2843,7 @@ void main() {
         const expectedMethod = r'''
           Options _options({
             required TonikFile binaryData,
-            required String tracker,
+            required String tracker
           }) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2853,7 +2853,7 @@ void main() {
             );
             _$cookieParts.addAll(
   tracker
-.toForm(r'tracker', explode: true, allowEmpty: true)
+.toForm(r'tracker', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -2938,7 +2938,7 @@ void main() {
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
   tags
-.toForm(r'tags', explode: false, allowEmpty: true)
+.toForm(r'tags', explode: false, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
@@ -3022,12 +3022,12 @@ void main() {
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
   numbers
-                      .map((e) => e.uriEncode(allowEmpty: true))
+                      .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                       .toList()
                       .toForm(r'numbers', 
                         explode: false,
                         allowEmpty: true,
-                        alreadyEncoded: true,
+                        textEncoding: utf8,alreadyEncoded: true,
                       )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -3121,12 +3121,12 @@ void main() {
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
   flags
-                      .map((e) => e.uriEncode(allowEmpty: true))
+                      .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                       .toList()
                       .toForm(r'flags', 
                         explode: false,
                         allowEmpty: true,
-                        alreadyEncoded: true,
+                        textEncoding: utf8,alreadyEncoded: true,
                       )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -3212,12 +3212,12 @@ void main() {
               if (numbers != null) {
                 _$cookieParts.addAll(
   numbers
-                        .map((e) => e.uriEncode(allowEmpty: true))
+                        .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
                         .toList()
                         .toForm(r'numbers', 
                           explode: false,
                           allowEmpty: true,
-                          alreadyEncoded: true,
+                          textEncoding: utf8,alreadyEncoded: true,
                         )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -3303,9 +3303,9 @@ void main() {
   prefs
                     .map(
                       (k, v) =>
-                          MapEntry(k, PropertyValue.scalar(v.toString())),
+                          MapEntry(k, PropertyValue.scalar(v.toString()))
                     )
-                    .toForm(r'prefs', explode: false, allowEmpty: true)
+                    .toForm(r'prefs', explode: false, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
@@ -3381,7 +3381,7 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3465,13 +3465,13 @@ void main() {
   items
                       .map(
                         (e) =>
-                            encodeAnyToUri(e, allowEmpty: true),
+                            encodeAnyToUri(e, allowEmpty: true, textEncoding: utf8,),
                       )
                       .toList()
                       .toForm(r'items', 
                         explode: false,
                         allowEmpty: true,
-                        alreadyEncoded: true,
+                        textEncoding: utf8,alreadyEncoded: true,
                       )
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -3558,7 +3558,7 @@ void main() {
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
   names
-.toForm(r'names', explode: true, allowEmpty: true)
+.toForm(r'names', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
@@ -3733,9 +3733,9 @@ void main() {
   prefs
                       .map(
                         (k, v) =>
-                            MapEntry(k, PropertyValue.scalar(v.toString())),
+                            MapEntry(k, PropertyValue.scalar(v.toString()))
                       )
-                      .toForm(r'prefs', explode: false, allowEmpty: true)
+                      .toForm(r'prefs', explode: false, allowEmpty: true, textEncoding: utf8,)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
@@ -3813,7 +3813,7 @@ void main() {
             final _$cookieParts = <String>[];
             if (data != null) {
               _$cookieParts.add(
-  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -3891,7 +3891,7 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
-  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
@@ -4056,7 +4056,7 @@ void main() {
   tokens
                       .map((e) => e.toBase64String())
                       .toList()
-                      .toForm(r'tokens', explode: true, allowEmpty: true)
+                      .toForm(r'tokens', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
@@ -4221,7 +4221,7 @@ void main() {
               final _$cookieParts = <String>[];
               if (token != null) {
                 _$cookieParts.addAll(
-  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true, textEncoding: utf8)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               }
@@ -4394,7 +4394,7 @@ void main() {
   tokens
                         .map((e) => e.toBase64String())
                         .toList()
-                        .toForm(r'tokens', explode: true, allowEmpty: true)
+                        .toForm(r'tokens', explode: true, allowEmpty: true, textEncoding: utf8,)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               }

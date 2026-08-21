@@ -1977,7 +1977,7 @@ List<ParameterEntry> toForm(
   String paramName, {
   required bool explode,
   required bool allowEmpty,
-  bool useQueryComponent = false,
+  required Encoding textEncoding, bool useQueryComponent = false,
   bool allowReserved = false,
   Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
@@ -1986,8 +1986,7 @@ List<ParameterEntry> toForm(
     explode: explode,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
-    fieldEncodings: fieldEncodings,
+    allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding,
   );
 }
 ''';

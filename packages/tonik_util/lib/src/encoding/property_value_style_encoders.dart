@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/property_value.dart';
@@ -12,6 +14,7 @@ String _encodeValue(PropertyValue value, {required bool literal}) =>
                 value,
                 allowReserved: false,
                 useQueryComponent: false,
+                textEncoding: utf8,
               ),
       ArrayPropertyValue(:final values) =>
         values
@@ -22,6 +25,7 @@ String _encodeValue(PropertyValue value, {required bool literal}) =>
                       element,
                       allowReserved: false,
                       useQueryComponent: false,
+                      textEncoding: utf8,
                     ),
             )
             .join(','),
@@ -64,6 +68,7 @@ List<ParameterEntry> _delimitedEntries(
     value,
     allowReserved: allowReserved,
     useQueryComponent: false,
+    textEncoding: utf8,
   );
   String encodeProperty(PropertyValue value) => switch (value) {
     ScalarPropertyValue(:final value) => encode(value),
@@ -83,6 +88,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Produces alternating key/value tokens with configurable URI escaping.
   String toUri({
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     bool literal = false,
@@ -98,6 +104,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
             value,
             allowReserved: allowReserved,
             useQueryComponent: useQueryComponent,
+            textEncoding: textEncoding,
           );
     String encodePropertyValue(PropertyValue value) => switch (value) {
       ScalarPropertyValue(:final value) => encode(value),
@@ -267,6 +274,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
               value,
               allowReserved: allowReserved,
               useQueryComponent: false,
+              textEncoding: utf8,
             ),
           ));
       }

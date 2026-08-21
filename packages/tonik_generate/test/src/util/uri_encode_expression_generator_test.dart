@@ -30,11 +30,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -50,11 +51,12 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
       ''';
 
       expect(
@@ -80,11 +82,12 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
       ''';
 
       expect(
@@ -106,11 +109,12 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
       ''';
 
       expect(
@@ -125,11 +129,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -144,11 +149,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -163,11 +169,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -182,11 +189,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -211,11 +219,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -230,11 +239,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -249,11 +259,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.toBase64String().uriEncode(allowEmpty: allowEmpty);
+        final result = value.toBase64String().uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,);
       ''';
 
       expect(
@@ -269,13 +280,14 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         useQueryComponent: refer('useQueryComponent'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value.toBase64String().uriEncode(
           allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
+          textEncoding: utf8,useQueryComponent: useQueryComponent,
         );
       ''';
 
@@ -292,13 +304,14 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         useQueryComponent: refer('useQueryComponent'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value.uriEncode(
           allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
+          textEncoding: utf8,useQueryComponent: useQueryComponent,
         );
       ''';
 
@@ -314,11 +327,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = encodeAnyToUri(value, allowEmpty: allowEmpty);
+        final result = encodeAnyToUri(value, allowEmpty: allowEmpty, textEncoding: utf8,);
       ''';
 
       expect(
@@ -336,6 +350,7 @@ void main() {
           model,
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          textEncoding: refer('utf8', 'dart:convert'),
         );
 
         final generated = format(
@@ -345,7 +360,7 @@ void main() {
         final result = encodeAnyToUri(
           value,
           allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
+          textEncoding: utf8,useQueryComponent: useQueryComponent,
         );
       ''';
 
@@ -368,11 +383,12 @@ void main() {
         refer('value'),
         aliasModel,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -394,6 +410,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(
@@ -414,11 +431,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -439,11 +457,12 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
       ''';
 
       expect(
@@ -462,14 +481,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -490,14 +510,15 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty, allowReserved: true))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,),)
             .toList()
-            .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true);
       ''';
 
       expect(
@@ -516,14 +537,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -542,14 +564,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -579,14 +602,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -605,14 +629,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -631,14 +656,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.toBase64String().uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.toBase64String().uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,),)
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -657,14 +683,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty))
+            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -685,14 +712,15 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, allowReserved: true))
+            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,),)
             .toList()
-            .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true);
       ''';
 
       expect(
@@ -714,6 +742,7 @@ void main() {
           model,
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          textEncoding: refer('utf8', 'dart:convert'),
         );
 
         final generated = format(
@@ -724,12 +753,12 @@ void main() {
             .map((e) => encodeAnyToUri(
                   e,
                   allowEmpty: allowEmpty,
-                  useQueryComponent: useQueryComponent,
-                ))
+                  textEncoding: utf8,useQueryComponent: useQueryComponent,
+                ),)
             .toList()
             .uriEncode(
               allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
+              textEncoding: utf8,useQueryComponent: useQueryComponent,
             );
       ''';
 
@@ -757,14 +786,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -784,6 +814,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
@@ -791,7 +822,7 @@ void main() {
         final result = value
             .map((e) => e ?? '')
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -811,14 +842,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),)
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -849,14 +881,15 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),)
             .toList()
-            .uriEncode(allowEmpty: allowEmpty);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
       ''';
 
       expect(
@@ -882,6 +915,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       expect(
@@ -902,6 +936,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('''
@@ -913,7 +948,7 @@ void main() {
         test() {
           final result = value
               .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
-              .toUri(allowEmpty: allowEmpty);
+              .toUri(allowEmpty: allowEmpty, textEncoding: utf8);
         }
       ''';
 
@@ -934,6 +969,7 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final generated = format('''
@@ -945,7 +981,7 @@ void main() {
         test() {
           final result = value
               .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
-              .toUri(allowEmpty: allowEmpty, allowReserved: true);
+              .toUri(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true);
         }
       ''';
 
@@ -967,6 +1003,7 @@ void main() {
           refer('value'),
           model,
           allowEmpty: refer('allowEmpty'),
+          textEncoding: refer('utf8', 'dart:convert'),
         );
 
         final method = Method(
@@ -982,7 +1019,7 @@ void main() {
         test() {
           final result = value
               .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
-              .toUri(allowEmpty: allowEmpty);
+              .toUri(allowEmpty: allowEmpty, textEncoding: utf8);
         }
       ''');
 
@@ -1009,6 +1046,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final method = Method(
@@ -1050,6 +1088,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final method = Method(
@@ -1067,12 +1106,12 @@ void main() {
               .map(
                 (e) => e
                     .map(
-                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString()))
                     )
-                    .toUri(allowEmpty: allowEmpty),
+                    .toUri(allowEmpty: allowEmpty, textEncoding: utf8),
               )
               .toList()
-              .uriEncode(allowEmpty: allowEmpty);
+              .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
         }
       ''');
 
@@ -1098,6 +1137,7 @@ void main() {
         model,
         allowEmpty: refer('allowEmpty'),
         allowReserved: literalBool(true),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final method = Method(
@@ -1115,12 +1155,12 @@ void main() {
               .map(
                 (e) => e
                     .map(
-                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString()))
                     )
-                    .toUri(allowEmpty: allowEmpty, allowReserved: true),
+                    .toUri(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,),
               )
               .toList()
-              .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+              .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
         }
       ''');
 
@@ -1151,6 +1191,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
+        textEncoding: refer('utf8', 'dart:convert'),
       );
 
       final method = Method(

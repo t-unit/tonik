@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
@@ -44,6 +46,7 @@ extension SpaceDelimitedStringListEncoder on List<String> {
         (item) => item.uriEncode(
           allowEmpty: allowEmpty,
           allowReserved: allowReserved,
+          textEncoding: utf8,
         ),
       ).toList();
     } else {
@@ -56,6 +59,7 @@ extension SpaceDelimitedStringListEncoder on List<String> {
           (item) => item.uriEncode(
             allowEmpty: allowEmpty,
             allowReserved: allowReserved,
+            textEncoding: utf8,
           ),
         ).join('%20'),
       ];
@@ -94,6 +98,7 @@ extension SpaceDelimitedBinaryEncoder on List<int> {
       decodeToString().uriEncode(
         allowEmpty: true,
         allowReserved: allowReserved,
+        textEncoding: utf8,
       ),
     ];
   }

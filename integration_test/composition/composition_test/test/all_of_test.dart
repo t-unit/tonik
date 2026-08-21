@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -27,14 +29,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'count=1&id=1',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfPrimitive.fromForm(form, explode: true);
@@ -43,14 +53,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'count,1,id,1',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfPrimitive.fromForm(form, explode: false);
@@ -134,14 +152,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'count=1&id=foo%25bar%26baz%3Dqux',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfPrimitive.fromForm(form, explode: true);
@@ -150,14 +176,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'count,1,id,foo%25bar%26baz%3Dqux',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfPrimitive.fromForm(form, explode: false);
@@ -255,14 +289,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name=1&number=1',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfComplex.fromForm(form, explode: true);
@@ -271,14 +313,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name,1,number,1',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfComplex.fromForm(form, explode: false);
@@ -374,14 +424,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name=50%25%20off!%20Buy%20now%20%26%20save&number=99',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfComplex.fromForm(form, explode: true);
@@ -390,14 +448,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfComplex.fromForm(form, explode: false);
@@ -493,14 +559,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'priority=1&status=value1',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfEnum.fromForm(form, explode: true);
@@ -509,14 +583,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'priority,1,status,value1',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfEnum.fromForm(form, explode: false);
@@ -606,8 +688,15 @@ void main() {
 
     test('toForm throws EncodingException', () {
       expect(
-        () =>
-            formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        () => formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -670,14 +759,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name=Albert&number=1&extra=extra',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = NestedAllOfInAllOf.fromForm(form, explode: true);
@@ -686,14 +783,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'name,Albert,number,1,extra,extra',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = NestedAllOfInAllOf.fromForm(form, explode: false);
@@ -791,7 +896,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -848,7 +958,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -900,14 +1015,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'active=true&id=123&name=Albert',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = TwoLevelAllOf.fromForm(form, explode: true);
@@ -916,14 +1039,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'active,true,id,123,name,Albert',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = TwoLevelAllOf.fromForm(form, explode: false);
@@ -1036,14 +1167,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'verified=true&email=albert%40example.com&id=123&name=Albert',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = ThreeLevelAllOf.fromForm(form, explode: true);
@@ -1052,14 +1191,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'verified,true,email,albert%40example.com,id,123,name,Albert',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = ThreeLevelAllOf.fromForm(form, explode: false);
@@ -1153,7 +1300,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1214,7 +1366,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1258,7 +1415,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1309,7 +1471,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1371,7 +1538,15 @@ void main() {
 
       test('toForm', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'metadata=asdf&name=qwerty',
         );
       });
@@ -1428,7 +1603,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1482,7 +1662,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1546,7 +1731,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1598,14 +1788,27 @@ void main() {
 
       test('toForm - explode true', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'base=test&name=Albert',
         );
       });
 
       test('form roundtrip - explode true', () {
         final form = formValue(
-          allOf.toForm('p', explode: true, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = ComplexNestedMix.fromForm(form, explode: true);
@@ -1614,14 +1817,27 @@ void main() {
 
       test('toForm - explode false', () {
         expect(
-          formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'base,test,name,Albert',
         );
       });
 
       test('form roundtrip - explode false', () {
         final form = formValue(
-          allOf.toForm('p', explode: false, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = ComplexNestedMix.fromForm(form, explode: false);
@@ -1719,7 +1935,15 @@ void main() {
 
       test('toForm', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'base=test&number=42',
         );
       });
@@ -1783,14 +2007,27 @@ void main() {
 
       test('toForm - explode true', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'level1=test&level2=42',
         );
       });
 
       test('form roundtrip - explode true', () {
         final form = formValue(
-          allOf.toForm('p', explode: true, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = MultiLevelNesting.fromForm(form, explode: true);
@@ -1799,14 +2036,27 @@ void main() {
 
       test('toForm - explode false', () {
         expect(
-          formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'level1,test,level2,42',
         );
       });
 
       test('form roundtrip - explode false', () {
         final form = formValue(
-          allOf.toForm('p', explode: false, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = MultiLevelNesting.fromForm(form, explode: false);
@@ -1912,7 +2162,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -1964,7 +2219,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -2018,14 +2278,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'ids=1,2,3&tags=tag1,tag2,tag3',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfWithSimpleList.fromForm(form, explode: true);
@@ -2034,14 +2302,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'ids,1,2,3,tags,tag1,tag2,tag3',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       expect(
@@ -2163,8 +2439,15 @@ void main() {
 
     test('toForm throws EncodingException', () {
       expect(
-        () =>
-            formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        () => formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -2231,14 +2514,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'priorities=1,2&statuses=value1',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfWithEnumList.fromForm(form, explode: true);
@@ -2247,14 +2538,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'priorities,1,2,statuses,value1',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       expect(
@@ -2375,8 +2674,15 @@ void main() {
 
     test('toForm throws EncodingException', () {
       expect(
-        () =>
-            formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        () => formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -2447,14 +2753,27 @@ void main() {
 
       test('toForm - explode true', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'enumList=value1,value2&simpleList=test,test2',
         );
       });
 
       test('form roundtrip - explode true', () {
         final form = formValue(
-          allOf.toForm('p', explode: true, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = ComplexListComposition.fromForm(
@@ -2466,14 +2785,27 @@ void main() {
 
       test('toForm - explode false', () {
         expect(
-          formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'enumList,value1,value2,simpleList,test,test2',
         );
       });
 
       test('form roundtrip - explode false', () {
         final form = formValue(
-          allOf.toForm('p', explode: false, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         expect(
@@ -2605,7 +2937,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -2675,7 +3012,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -2741,8 +3083,15 @@ void main() {
 
     test('toForm throws EncodingException', () {
       expect(
-        () =>
-            formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        () => formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -2822,21 +3171,37 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         'p=2021-01-01T00%3A00%3A00.000Z&p=2021-01-02T00%3A00%3A00.000Z',
       );
     });
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfDoubleList.fromForm(form, explode: false);
@@ -2943,21 +3308,42 @@ void main() {
 
       test('toForm - explode true', () {
         expect(
-          formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           'p=2021-01-01T00%3A00%3A00.000Z&p=2021-01-02T00%3A00%3A00.000Z',
         );
       });
 
       test('toForm - explode false', () {
         expect(
-          formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+          formValue(
+            allOf.toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
+            'p',
+          ),
           '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
         );
       });
 
       test('form roundtrip - explode false', () {
         final form = formValue(
-          allOf.toForm('p', explode: false, allowEmpty: true),
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         final reconstructed = AllOfOneOfDoubleList.fromForm(
@@ -3060,7 +3446,12 @@ void main() {
       test('toForm throws EncodingException', () {
         expect(
           () => formValue(
-            allOf.toForm('p', explode: true, allowEmpty: true),
+            allOf.toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              textEncoding: utf8,
+            ),
             'p',
           ),
           throwsA(isA<EncodingException>()),
@@ -3113,14 +3504,22 @@ void main() {
 
     test('toForm - explode true', () {
       expect(
-        formValue(allOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         '1',
       );
     });
 
     test('form roundtrip - explode true', () {
       final form = formValue(
-        allOf.toForm('p', explode: true, allowEmpty: true),
+        allOf.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfDirectPrimitive.fromForm(form, explode: true);
@@ -3129,14 +3528,22 @@ void main() {
 
     test('toForm - explode false', () {
       expect(
-        formValue(allOf.toForm('p', explode: false, allowEmpty: true), 'p'),
+        formValue(
+          allOf.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          'p',
+        ),
         '1',
       );
     });
 
     test('form roundtrip - explode false', () {
       final form = formValue(
-        allOf.toForm('p', explode: false, allowEmpty: true),
+        allOf.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         'p',
       );
       final reconstructed = AllOfDirectPrimitive.fromForm(form, explode: false);

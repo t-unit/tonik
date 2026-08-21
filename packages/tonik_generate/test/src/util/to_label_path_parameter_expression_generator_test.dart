@@ -359,7 +359,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
-          '''statuses.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''statuses.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -388,7 +388,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
-          '''values.map((e) => e == null ? '' : e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''values.map((e) => e == null ? '' : e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -417,7 +417,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
-          '''ids.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''ids.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -456,7 +456,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
-          '''statuses.map((e) => e.uriEncode(allowEmpty: true)).toList().toLabel(explode: true, allowEmpty: true, alreadyEncoded: true, )''',
+          '''statuses.map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8, )).toList().toLabel(explode: true, allowEmpty: true, alreadyEncoded: true, )''',
         );
       },
     );
@@ -485,7 +485,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('prices', parameter)),
-          '''prices.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''prices.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -514,7 +514,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('flags', parameter)),
-          '''flags.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''flags.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -543,7 +543,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('timestamps', parameter)),
-          '''timestamps.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''timestamps.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -587,7 +587,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
-          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -631,7 +631,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
-          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -660,7 +660,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('amounts', parameter)),
-          '''amounts.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''amounts.map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -689,7 +689,7 @@ void main() {
         );
         expect(
           emit(buildToLabelPathParameterExpression('anyValues', parameter)),
-          '''anyValues.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+          '''anyValues.map((e) => encodeAnyToUri(e, allowEmpty: false, textEncoding: utf8, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );

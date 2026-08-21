@@ -535,6 +535,52 @@ void main() {
     });
   });
 
+  group('Request text encoding', () {
+    test(
+      'both backends send exact Latin-1 ordinary and multipart bytes',
+      () async {
+        final textServer = await RawRequestServer.start();
+        await _rawApi(textServer).postLatin1Text(body: 'Grüße');
+        final textRequest = await textServer.takeRequest();
+
+        expect(textRequest.bodyBytes, [0x47, 0x72, 0xFC, 0xDF, 0x65]);
+        expect(
+          textRequest.header('content-type'),
+          'text/plain; charset=iso-8859-1',
+        );
+
+        final multipartServer = await RawRequestServer.start();
+        await _rawApi(multipartServer).postLatin1Multipart(
+          body: const Latin1MultipartForm(message: 'Grüße'),
+        );
+        final part = MultipartWire(
+          await multipartServer.takeRequest(),
+        ).single('message');
+
+        expect(part.bodyBytes, [0x47, 0x72, 0xFC, 0xDF, 0x65]);
+        expect(part.contentType, 'text/plain; charset=iso-8859-1');
+      },
+    );
+
+    test('Latin-1 form multipart percent-encodes Latin-1 bytes', () async {
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postLatin1FormMultipart(
+        body: const Latin1FormMultipartForm(
+          payload: Latin1FormValue(word: 'café'),
+        ),
+      );
+      final part = MultipartWire(
+        await server.takeRequest(),
+      ).single('payload');
+
+      expect(part.bodyBytes, ascii.encode('word=caf%E9'));
+      expect(
+        part.contentType,
+        'application/x-www-form-urlencoded; charset=iso-8859-1',
+      );
+    });
+  });
+
   group('Recursive array', () {
     test('posts the form when the recursive array field is omitted', () async {
       final response = requireSuccess(

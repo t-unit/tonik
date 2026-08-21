@@ -45,12 +45,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -103,6 +104,7 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
@@ -113,8 +115,8 @@ void main() {
                 explode: true,
                 allowEmpty: true,
                 useQueryComponent: true,
-                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
-                  r'reserved': const _i2.FormFieldEncoding(allowReserved: true),
+                textEncoding: _i1.utf8,fieldEncodings: <_i2.String, _i3.FormFieldEncoding>{
+                  r'reserved': const  _i3.FormFieldEncoding(allowReserved: true),
                 },
               )
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
@@ -154,12 +156,13 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -199,12 +202,13 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -247,6 +251,7 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
@@ -257,8 +262,8 @@ void main() {
                 explode: true,
                 allowEmpty: true,
                 useQueryComponent: true,
-                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
-                  r'tags': const _i2.FormFieldEncoding(
+                textEncoding: _i1.utf8,fieldEncodings: <_i2.String, _i3.FormFieldEncoding>{
+                  r'tags': const  _i3.FormFieldEncoding(
                     allowReserved: true,
                     explode: true,
                   ),
@@ -299,6 +304,7 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
@@ -309,8 +315,8 @@ void main() {
                 explode: true,
                 allowEmpty: true,
                 useQueryComponent: true,
-                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
-                  r'tags': const _i2.FormFieldEncoding(explode: true),
+                textEncoding: _i1.utf8,fieldEncodings: <_i2.String, _i3.FormFieldEncoding>{
+                  r'tags': const  _i3.FormFieldEncoding(explode: true),
                 },
               )
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
@@ -355,12 +361,13 @@ void main() {
             explode: false,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -403,12 +410,13 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -451,12 +459,13 @@ void main() {
             explode: null,
           ),
         },
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -499,12 +508,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -535,12 +545,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -577,12 +588,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -640,6 +652,7 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
@@ -650,8 +663,8 @@ void main() {
                 explode: true,
                 allowEmpty: true,
                 useQueryComponent: true,
-                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
-                  r'tags': const _i2.FormFieldEncoding(explode: true),
+                textEncoding: _i1.utf8,fieldEncodings: <_i2.String, _i3.FormFieldEncoding>{
+                  r'tags': const  _i3.FormFieldEncoding(explode: true),
                 },
               )
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
@@ -667,6 +680,7 @@ void main() {
         'body',
         AnyModel(context: context),
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
@@ -676,7 +690,7 @@ void main() {
             explode: true,
             allowEmpty: true,
             useQueryComponent: true,
-          );
+          textEncoding: _i2.utf8,);
         }
       ''');
 
@@ -688,11 +702,12 @@ void main() {
         'body',
         AnyModel(context: context),
         useQueryComponent: false,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
         test() {
-          _i1.encodeAnyToForm(body, explode: true, allowEmpty: true);
+          _i1.encodeAnyToForm(body, explode: true, allowEmpty: true, textEncoding: _i2.utf8,);
         }
       ''');
 
@@ -710,6 +725,7 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
@@ -726,6 +742,7 @@ void main() {
         'body',
         BinaryModel(context: context),
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
@@ -742,6 +759,7 @@ void main() {
         'body',
         NeverModel(context: context, isNullable: false),
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
@@ -773,6 +791,7 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format('''
@@ -791,12 +810,13 @@ void main() {
         'body',
         StringModel(context: context),
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -810,12 +830,13 @@ void main() {
         'body',
         IntegerModel(context: context),
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -841,12 +862,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }
@@ -866,12 +888,13 @@ void main() {
         'body',
         model,
         useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
       );
 
       final expected = format(r'''
         test() {
           body
-              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
               .join('&');
         }

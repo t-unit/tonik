@@ -6,6 +6,7 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Lowers a multipart request plan to Dio FormData construction statements.
@@ -140,8 +141,11 @@ Code? _buildFieldCode(
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
   final contentType = encoding?.contentType;
   final rawContentType = encoding?.rawContentType;
+  final wireContentType = encoding?.wireContentType;
+  final textEncoding = encoding?.textEncoding ?? TextEncoding.utf8;
   // Style-based primitives serialize as plain strings.
-  final effectiveRawContentType = rawContentType ?? 'text/plain';
+  final effectiveWireContentType =
+      wireContentType ?? rawContentType ?? 'text/plain';
 
   final headerResult = _buildHeaderMapStatements(
     normalizedName,
@@ -161,13 +165,15 @@ Code? _buildFieldCode(
     StringModel() => _buildStringFileAddition(
       rawName,
       accessor,
-      rawContentType: effectiveRawContentType,
+      wireContentType: effectiveWireContentType,
+      textEncoding: textEncoding,
       headerVarName: headerVarName,
     ),
     AnyModel() => _buildAnyModelFileAddition(
       rawName,
       accessor,
-      rawContentType: rawContentType ?? 'application/json',
+      wireContentType: wireContentType ?? rawContentType ?? 'application/json',
+      textEncoding: textEncoding,
       headerVarName: headerVarName,
     ),
     NeverModel() => generateEncodingExceptionExpression(
@@ -187,13 +193,15 @@ Code? _buildFieldCode(
           ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
-              rawContentType: effectiveRawContentType,
+              wireContentType: effectiveWireContentType,
+              textEncoding: textEncoding,
               headerVarName: headerVarName,
             )
           : _buildPrimitiveFileAddition(
               rawName,
               accessor,
-              rawContentType: effectiveRawContentType,
+              wireContentType: effectiveWireContentType,
+              textEncoding: textEncoding,
               serializerMethod: 'toString',
               headerVarName: headerVarName,
             ),
@@ -203,13 +211,15 @@ Code? _buildFieldCode(
           ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
-              rawContentType: effectiveRawContentType,
+              wireContentType: effectiveWireContentType,
+              textEncoding: textEncoding,
               headerVarName: headerVarName,
             )
           : _buildPrimitiveFileAddition(
               rawName,
               accessor,
-              rawContentType: effectiveRawContentType,
+              wireContentType: effectiveWireContentType,
+              textEncoding: textEncoding,
               serializerMethod: 'toTimeZonedIso8601String',
               headerVarName: headerVarName,
             ),
@@ -218,7 +228,8 @@ Code? _buildFieldCode(
       rawName,
       accessor,
       resolved,
-      rawContentType: effectiveRawContentType,
+      wireContentType: effectiveWireContentType,
+      textEncoding: textEncoding,
       headerVarName: headerVarName,
     ),
 
@@ -365,67 +376,52 @@ _HeaderMapResult? _buildHeaderMapStatements(
   return _HeaderMapResult(statements, headerVarName);
 }
 
-/// Builds a string field as MultipartFile.fromString with explicit contentType.
+/// Builds a string field with its semantically selected byte encoding.
 Code _buildStringFileAddition(
   String rawName,
   String accessor, {
-  required String rawContentType,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
   String? headerVarName,
-}) {
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call([refer(accessor)], namedArgs),
-    ]),
-  ]).statement;
-}
+}) => refer(r'_$formData').property('files').property('add').call([
+  refer('MapEntry', 'dart:core').call([
+    specLiteralString(rawName),
+    _textMultipartFile(
+      refer(accessor),
+      wireContentType: wireContentType,
+      textEncoding: textEncoding,
+      headerVarName: headerVarName,
+    ),
+  ]),
+]).statement;
 
-/// Builds a primitive field as MultipartFile.fromString with explicit
-/// contentType.
+/// Builds a primitive field with its semantically selected byte encoding.
 Code _buildPrimitiveFileAddition(
   String rawName,
   String accessor, {
-  required String rawContentType,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
   required String serializerMethod,
   String? headerVarName,
-}) {
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call(
-        [refer(accessor).property(serializerMethod).call([])],
-        namedArgs,
-      ),
-    ]),
-  ]).statement;
-}
+}) => refer(r'_$formData').property('files').property('add').call([
+  refer('MapEntry', 'dart:core').call([
+    specLiteralString(rawName),
+    _textMultipartFile(
+      refer(accessor).property(serializerMethod).call([]),
+      wireContentType: wireContentType,
+      textEncoding: textEncoding,
+      headerVarName: headerVarName,
+    ),
+  ]),
+]).statement;
 
-/// Builds an enum field as MultipartFile.fromString with explicit contentType.
+/// Builds an enum field with its semantically selected byte encoding.
 Code _buildEnumFileAddition(
   String rawName,
   String accessor,
   EnumModel<dynamic> model, {
-  required String rawContentType,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
   String? headerVarName,
 }) {
   final toJsonCall = refer(accessor).property('toJson').call([]);
@@ -433,50 +429,39 @@ Code _buildEnumFileAddition(
       ? toJsonCall
       : toJsonCall.property('toString').call([]);
 
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call([valueExpr], namedArgs),
-    ]),
-  ]).statement;
+  return refer(r'_$formData').property('files').property('add').call(
+    [
+      refer('MapEntry', 'dart:core').call([
+        specLiteralString(rawName),
+        _textMultipartFile(
+          valueExpr,
+          wireContentType: wireContentType,
+          textEncoding: textEncoding,
+          headerVarName: headerVarName,
+        ),
+      ]),
+    ],
+  ).statement;
 }
 
-/// Builds a json-encoded field as MultipartFile.fromString with explicit
-/// contentType.
+/// Builds a JSON-encoded field with its semantically selected byte encoding.
 Code _buildJsonEncodeFileAddition(
   String rawName,
   String accessor, {
-  required String rawContentType,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
   String? headerVarName,
 }) {
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-  return refer(r'_$formData').property('files').property('add').call([
+  return refer(
+    r'_$formData',
+  ).property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call(
-        [
-          refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
-        ],
-        namedArgs,
+      _textMultipartFile(
+        refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
+        wireContentType: wireContentType,
+        textEncoding: textEncoding,
+        headerVarName: headerVarName,
       ),
     ]),
   ]).statement;
@@ -487,35 +472,54 @@ Code _buildJsonEncodeFileAddition(
 Code _buildAnyModelFileAddition(
   String rawName,
   String accessor, {
-  required String rawContentType,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
   String? headerVarName,
 }) {
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call(
-        [
+  return refer(r'_$formData').property('files').property('add').call(
+    [
+      refer('MapEntry', 'dart:core').call([
+        specLiteralString(rawName),
+        _textMultipartFile(
           refer('jsonEncode', 'dart:convert').call([
             refer(
               'encodeAnyToJson',
               'package:tonik_util/tonik_util.dart',
             ).call([refer(accessor)]),
           ]),
-        ],
-        namedArgs,
-      ),
-    ]),
-  ]).statement;
+          wireContentType: wireContentType,
+          textEncoding: textEncoding,
+          headerVarName: headerVarName,
+        ),
+      ]),
+    ],
+  ).statement;
+}
+
+Expression _textMultipartFile(
+  Expression text, {
+  required String? wireContentType,
+  required TextEncoding textEncoding,
+  String? headerVarName,
+}) {
+  final namedArguments = <String, Expression>{
+    if (wireContentType != null)
+      'contentType': refer(
+        'DioMediaType',
+        'package:dio/dio.dart',
+      ).property('parse').call([specLiteralString(wireContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
+  final multipartFile = refer('MultipartFile', 'package:dio/dio.dart');
+  if (textEncoding == TextEncoding.utf8) {
+    return multipartFile.property('fromString').call([text], namedArguments);
+  }
+  final bytes = textEncodingExpression(
+    textEncoding,
+  ).property('encode').call([text]);
+  return multipartFile.property('fromBytes').call([
+    bytes,
+  ], namedArguments);
 }
 
 Code _buildBinaryFileAddition(
@@ -524,7 +528,7 @@ Code _buildBinaryFileAddition(
   PartEncoding? encoding,
   String? headerVarName,
 }) {
-  final rawContentType = encoding?.rawContentType;
+  final rawContentType = encoding?.wireContentType ?? encoding?.rawContentType;
   final isDefaultContentType =
       rawContentType == null || rawContentType == 'application/octet-stream';
 
@@ -602,21 +606,29 @@ Code _buildListFieldAddition(
 
   // For text-serializable types, build the item-to-string expression
   // and decide whether to go through an encoder.
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
   final itemExpr = _itemToStringExpr(
     contentModel,
     contentType: contentType,
+    textEncoding: textEncoding,
   );
   final isIdentity = contentModel is StringModel;
 
   final explode = propertyEncoding?.explode ?? true;
 
   if (explode) {
-    // When headers are present, text items must be sent as
-    // MultipartFile.fromString so the headers can be attached.
-    if (headerVarName != null) {
-      final fileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
-          .property('fromString')
-          .call([itemExpr], {'headers': refer(headerVarName)});
+    if (headerVarName != null || textEncoding != TextEncoding.utf8) {
+      final fileItemExpr = _textMultipartFile(
+        itemExpr,
+        wireContentType:
+            textEncoding == TextEncoding.utf8 &&
+                (propertyEncoding?.isStyleBased ?? false)
+            ? null
+            : propertyEncoding?.wireContentType ??
+                  propertyEncoding?.rawContentType,
+        textEncoding: textEncoding,
+        headerVarName: headerVarName,
+      );
       return _buildListForLoop(
         rawName,
         refer(accessor),
@@ -639,6 +651,7 @@ Code _buildListFieldAddition(
     itemExpr,
     needsMapping: !isIdentity,
     style: style,
+    propertyEncoding: propertyEncoding,
     headerVarName: headerVarName,
   );
 }
@@ -684,9 +697,9 @@ Code _buildContentBasedListAddition(
     ).statement;
   }
 
-  // Always use application/json — text/plain is promoted since the spec does
-  // not define how to serialize an array as a single text/plain part.
-  const rawContentType = 'application/json';
+  final wireContentType =
+      propertyEncoding?.wireContentType ?? 'application/json';
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
 
   final Expression jsonArg;
   if (contentModel is ClassModel ||
@@ -744,23 +757,19 @@ Code _buildContentBasedListAddition(
 
   final jsonExpr = refer('jsonEncode', 'dart:convert').call([jsonArg]);
 
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call([jsonExpr], namedArgs),
-    ]),
-  ]).statement;
+  return refer(r'_$formData').property('files').property('add').call(
+    [
+      refer('MapEntry', 'dart:core').call([
+        specLiteralString(rawName),
+        _textMultipartFile(
+          jsonExpr,
+          wireContentType: wireContentType,
+          textEncoding: textEncoding,
+          headerVarName: headerVarName,
+        ),
+      ]),
+    ],
+  ).statement;
 }
 
 /// Builds a for-loop that iterates [iterableExpr] and adds each item.
@@ -791,6 +800,7 @@ Code _buildNonExplodedListAddition(
   Expression itemExpr, {
   required bool needsMapping,
   required EncodingStyle? style,
+  required PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   final listExpr = _buildStringListExpr(
@@ -812,31 +822,52 @@ Code _buildNonExplodedListAddition(
         'percentEncodeDelimiter': literalFalse,
     };
     final iterableExpr = listExpr.property(encoderMethod).call([], namedArgs);
-    final itemValue = headerVarName == null
-        ? refer('item')
-        : refer('MultipartFile', 'package:dio/dio.dart')
-              .property('fromString')
-              .call([refer('item')], {'headers': refer(headerVarName)});
+    final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
+    final usesFile = headerVarName != null || textEncoding != TextEncoding.utf8;
+    final itemValue = usesFile
+        ? _textMultipartFile(
+            refer('item'),
+            wireContentType:
+                textEncoding == TextEncoding.utf8 &&
+                    (propertyEncoding?.isStyleBased ?? false)
+                ? null
+                : propertyEncoding?.wireContentType ??
+                      propertyEncoding?.rawContentType,
+            textEncoding: textEncoding,
+            headerVarName: headerVarName,
+          )
+        : refer('item');
     return _buildListForLoop(
       rawName,
       iterableExpr,
       itemValue,
-      isFile: headerVarName != null,
+      isFile: usesFile,
     );
   }
 
   // Unlike delimited encoders, non-exploded form encoding returns a scalar
   // String, so it represents one multipart part rather than an iterable.
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
   final valueExpr = listExpr.property('uriEncode').call([], {
     'allowEmpty': literalTrue,
+    'textEncoding': textEncodingExpression(textEncoding),
     'alreadyEncoded': literalTrue,
   });
-  final value = headerVarName == null
-      ? valueExpr
-      : refer('MultipartFile', 'package:dio/dio.dart')
-            .property('fromString')
-            .call([valueExpr], {'headers': refer(headerVarName)});
-  final target = headerVarName == null ? 'fields' : 'files';
+  final usesFile = headerVarName != null || textEncoding != TextEncoding.utf8;
+  final value = usesFile
+      ? _textMultipartFile(
+          valueExpr,
+          wireContentType:
+              textEncoding == TextEncoding.utf8 &&
+                  (propertyEncoding?.isStyleBased ?? false)
+              ? null
+              : propertyEncoding?.wireContentType ??
+                    propertyEncoding?.rawContentType,
+          textEncoding: textEncoding,
+          headerVarName: headerVarName,
+        )
+      : valueExpr;
+  final target = usesFile ? 'files' : 'fields';
 
   return refer(r'_$formData').property(target).property('add').call([
     refer('MapEntry', 'dart:core').call([
@@ -865,6 +896,7 @@ Code _buildBinaryListForLoop(
 /// value, based on the content model type and content type.
 Expression _itemToStringExpr(
   Model contentModel, {
+  required TextEncoding textEncoding,
   ContentType? contentType,
 }) {
   return switch (contentModel) {
@@ -877,19 +909,26 @@ Expression _itemToStringExpr(
     DecimalModel() ||
     UriModel() =>
       contentType == ContentType.json
-          ? refer('jsonEncode', 'dart:convert').call([refer('item')])
+          ? refer('jsonEncode', 'dart:convert').call([
+              refer('item'),
+            ])
           : refer('item').property('toString').call([]),
     DateTimeModel() =>
       contentType == ContentType.json
-          ? refer('jsonEncode', 'dart:convert').call([refer('item')])
-          : refer('item').property('toTimeZonedIso8601String').call([]),
-    EnumModel() => refer('item').property('uriEncode').call(
-      [],
-      {'allowEmpty': literalTrue},
-    ),
+          ? refer('jsonEncode', 'dart:convert').call([
+              refer('item'),
+            ])
+          : refer(
+              'item',
+            ).property('toTimeZonedIso8601String').call([]),
+    EnumModel() => refer('item').property('uriEncode').call([], {
+      'allowEmpty': literalTrue,
+      'textEncoding': textEncodingExpression(textEncoding),
+    }),
     AliasModel() => _itemToStringExpr(
       contentModel.resolved,
       contentType: contentType,
+      textEncoding: textEncoding,
     ),
     _ => refer('item').property('toString').call([]),
   };
@@ -914,7 +953,9 @@ Code _binaryFileSwitch(
 }) {
   final multipartFile = refer('MultipartFile', 'package:dio/dio.dart');
   final fileArguments = <String, Expression>{
-    'filename': refer('fileName').ifNullThen(specLiteralString(rawName)),
+    'filename': refer(
+      'fileName',
+    ).ifNullThen(specLiteralString(rawName)),
     if (rawContentType != null)
       'contentType': refer(
         'DioMediaType',
@@ -967,24 +1008,17 @@ Expression _complexItemExpr(
   PartEncoding? encoding,
   String? headerVarName,
 }) {
-  final rawContentType = encoding?.rawContentType ?? 'application/json';
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-  };
-  if (headerVarName != null) {
-    namedArgs['headers'] = refer(headerVarName);
-  }
-  return refer(
-    'MultipartFile',
-    'package:dio/dio.dart',
-  ).property('fromString').call([
+  return _textMultipartFile(
     refer('jsonEncode', 'dart:convert').call([
       refer('item').property('toJson').call([]),
     ]),
-  ], namedArgs);
+    wireContentType:
+        encoding?.wireContentType ??
+        encoding?.rawContentType ??
+        'application/json',
+    textEncoding: encoding?.textEncoding ?? TextEncoding.utf8,
+    headerVarName: headerVarName,
+  );
 }
 
 /// Builds the string-list input used by non-exploded array encoders.
@@ -1015,6 +1049,7 @@ Expression _buildStringListExpr(
 Code _buildDeepObjectFileAddition(
   String rawName,
   String accessor, {
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   final iterableExpr = refer(accessor)
@@ -1024,14 +1059,15 @@ Code _buildDeepObjectFileAddition(
         {'explode': literalTrue, 'allowEmpty': literalTrue},
       );
 
-  if (headerVarName != null) {
-    // With per-part headers: each bracket-notation entry becomes a file part.
-    final fileExpr = refer('MultipartFile', 'package:dio/dio.dart')
-        .property('fromString')
-        .call(
-          [refer('entry').property('value')],
-          {'headers': refer(headerVarName)},
-        );
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
+  if (headerVarName != null || textEncoding != TextEncoding.utf8) {
+    // Per-part headers and non-UTF-8 encodings require byte-aware file parts.
+    final fileExpr = _textMultipartFile(
+      refer('entry').property('value'),
+      wireContentType: null,
+      textEncoding: textEncoding,
+      headerVarName: headerVarName,
+    );
     return Block.of([
       const Code('for (final entry in '),
       iterableExpr.code,
@@ -1094,33 +1130,26 @@ Code _buildMapModelFileAddition(
     return _buildUrlEncodedMapFileAddition(
       rawName,
       accessor,
+      propertyEncoding: propertyEncoding,
       headerVarName: headerVarName,
     );
   }
 
   // Default: JSON-encode the map directly (maps are natively serializable).
-  final rawContentType = propertyEncoding?.rawContentType ?? 'application/json';
-
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-  };
-
-  if (headerVarName != null) {
-    namedArgs['headers'] = refer(headerVarName);
-  }
-
-  return refer(r'_$formData').property('files').property('add').call([
+  return refer(
+    r'_$formData',
+  ).property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call([
+      _textMultipartFile(
         refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
-      ], namedArgs),
+        wireContentType:
+            propertyEncoding?.wireContentType ??
+            propertyEncoding?.rawContentType ??
+            'application/json',
+        textEncoding: propertyEncoding?.textEncoding ?? TextEncoding.utf8,
+        headerVarName: headerVarName,
+      ),
     ]),
   ]).statement;
 }
@@ -1136,19 +1165,12 @@ Code _buildMapModelFileAddition(
 Code _buildUrlEncodedMapFileAddition(
   String rawName,
   String accessor, {
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   final propVarName = accessor.split('.').last.replaceAll('!', '');
   final partsVarName = '${propVarName}Parts';
-
-  final contentTypeExpr = refer('DioMediaType', 'package:dio/dio.dart')
-      .property('parse')
-      .call([specLiteralString('application/x-www-form-urlencoded')]);
-
-  final namedArgs = <String, Expression>{
-    'contentType': contentTypeExpr,
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
 
   return Block.of([
     // final <propName>Parts = <String>[];
@@ -1165,7 +1187,9 @@ Code _buildUrlEncodedMapFileAddition(
     refer(accessor).asA(refer('Map', 'dart:core')).code,
     const Code(').entries) {'),
     // final value = entry.value;
-    declareFinal('value').assign(refer('entry').property('value')).statement,
+    declareFinal(
+      'value',
+    ).assign(refer('entry').property('value')).statement,
     // if (value == null) continue;
     const Code('if (value == null) continue;'),
     // if (value is Map || value is List) { throw EncodingException(...); }
@@ -1185,19 +1209,31 @@ Code _buildUrlEncodedMapFileAddition(
       ),
     ]),
     const Code('}'),
-    // <partsVarName>.add(
-    //   Uri.encodeQueryComponent(entry.key.toString()) +
-    //       '=' +
-    //       Uri.encodeQueryComponent(value.toString()),
-    // );
+    // Add one encoded key/value pair using the value's typed form encoder.
     refer(partsVarName).property('add').call([
       literalList([
-        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-          refer('entry').property('key').property('toString').call([]),
-        ]),
-        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-          refer('value').property('toString').call([]),
-        ]),
+        refer('entry')
+            .property('key')
+            .property('toString')
+            .call([])
+            .property('uriEncode')
+            .call([], {
+              'allowEmpty': literalTrue,
+              'useQueryComponent': literalTrue,
+              'textEncoding': textEncodingExpression(textEncoding),
+            }),
+        refer(
+          'encodeAnyToForm',
+          'package:tonik_util/tonik_util.dart',
+        ).call(
+          [refer('value')],
+          {
+            'explode': literalTrue,
+            'allowEmpty': literalTrue,
+            'useQueryComponent': literalTrue,
+            'textEncoding': textEncodingExpression(textEncoding),
+          },
+        ),
       ]).property('join').call([literalString('=')]),
     ]).statement,
     const Code('}'),
@@ -1205,14 +1241,15 @@ Code _buildUrlEncodedMapFileAddition(
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         specLiteralString(rawName),
-        refer(
-          'MultipartFile',
-          'package:dio/dio.dart',
-        ).property('fromString').call(
-          [
-            refer(partsVarName).property('join').call([literalString('&')]),
-          ],
-          namedArgs,
+        _textMultipartFile(
+          refer(
+            partsVarName,
+          ).property('join').call([literalString('&')]),
+          wireContentType:
+              propertyEncoding?.wireContentType ??
+              'application/x-www-form-urlencoded',
+          textEncoding: propertyEncoding?.textEncoding ?? TextEncoding.utf8,
+          headerVarName: headerVarName,
         ),
       ]),
     ]).statement,
@@ -1229,6 +1266,7 @@ Code _buildComplexObjectFileAddition(
     return _buildDeepObjectFileAddition(
       rawName,
       accessor,
+      propertyEncoding: propertyEncoding,
       headerVarName: headerVarName,
     );
   }
@@ -1249,6 +1287,7 @@ Code _buildComplexObjectFileAddition(
       rawName,
       accessor,
       explode: propertyEncoding?.explode ?? true,
+      propertyEncoding: propertyEncoding,
       headerVarName: headerVarName,
     );
   }
@@ -1257,56 +1296,42 @@ Code _buildComplexObjectFileAddition(
     return _buildUrlEncodedObjectFileAddition(
       rawName,
       accessor,
+      propertyEncoding: propertyEncoding,
       headerVarName: headerVarName,
     );
   }
 
-  final rawContentType = propertyEncoding?.rawContentType ?? 'application/json';
-
-  final namedArgs = <String, Expression>{
-    'contentType': refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([specLiteralString(rawContentType)]),
-  };
-
-  if (headerVarName != null) {
-    namedArgs['headers'] = refer(headerVarName);
-  }
-
-  return refer(r'_$formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      specLiteralString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromString').call([
-        refer(
-          'jsonEncode',
-          'dart:convert',
-        ).call([refer(accessor).property('toJson').call([])]),
-      ], namedArgs),
-    ]),
-  ]).statement;
+  return refer(r'_$formData').property('files').property('add').call(
+    [
+      refer('MapEntry', 'dart:core').call([
+        specLiteralString(rawName),
+        _textMultipartFile(
+          refer(
+            'jsonEncode',
+            'dart:convert',
+          ).call([refer(accessor).property('toJson').call([])]),
+          wireContentType:
+              propertyEncoding?.wireContentType ??
+              propertyEncoding?.rawContentType ??
+              'application/json',
+          textEncoding: propertyEncoding?.textEncoding ?? TextEncoding.utf8,
+          headerVarName: headerVarName,
+        ),
+      ]),
+    ],
+  ).statement;
 }
 
 Code _buildUrlEncodedObjectFileAddition(
   String rawName,
   String accessor, {
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   final propVarName = accessor.split('.').last.replaceAll('!', '');
   final entriesVarName = '${propVarName}Entries';
 
-  final contentTypeExpr = refer('DioMediaType', 'package:dio/dio.dart')
-      .property('parse')
-      .call([specLiteralString('application/x-www-form-urlencoded')]);
-
-  final namedArgs = <String, Expression>{
-    'contentType': contentTypeExpr,
-    if (headerVarName != null) 'headers': refer(headerVarName),
-  };
-
+  final textEncoding = propertyEncoding?.textEncoding ?? TextEncoding.utf8;
   final joinedBody = refer(entriesVarName)
       .property('map')
       .call([
@@ -1314,7 +1339,7 @@ Code _buildUrlEncodedObjectFileAddition(
           (b) => b
             ..requiredParameters.add(Parameter((p) => p..name = 'e'))
             ..lambda = true
-            ..body = const Code(r"'${e.name}=${e.value}'"),
+            ..body = refer(r"'${e.name}=${e.value}'").code,
         ).closure,
       ])
       .property('join')
@@ -1331,6 +1356,7 @@ Code _buildUrlEncodedObjectFileAddition(
                   'explode': literalTrue,
                   'allowEmpty': literalTrue,
                   'useQueryComponent': literalTrue,
+                  'textEncoding': textEncodingExpression(textEncoding),
                 },
               ),
         )
@@ -1338,10 +1364,14 @@ Code _buildUrlEncodedObjectFileAddition(
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         specLiteralString(rawName),
-        refer(
-          'MultipartFile',
-          'package:dio/dio.dart',
-        ).property('fromString').call([joinedBody], namedArgs),
+        _textMultipartFile(
+          joinedBody,
+          wireContentType:
+              propertyEncoding?.wireContentType ??
+              'application/x-www-form-urlencoded',
+          textEncoding: textEncoding,
+          headerVarName: headerVarName,
+        ),
       ]),
     ]).statement,
   ]);
@@ -1351,6 +1381,7 @@ Code _buildRawStylePartsAddition(
   String rawName,
   String accessor, {
   required bool explode,
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   final propVarName = accessor.split('.').last.replaceAll('!', '');
@@ -1373,12 +1404,12 @@ Code _buildRawStylePartsAddition(
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         refer(r'_$part').property('name'),
-        refer('MultipartFile', 'package:dio/dio.dart')
-            .property('fromString')
-            .call(
-              [refer(r'_$part').property('value')],
-              {if (headerVarName != null) 'headers': refer(headerVarName)},
-            ),
+        _textMultipartFile(
+          refer(r'_$part').property('value'),
+          wireContentType: null,
+          textEncoding: propertyEncoding?.textEncoding ?? TextEncoding.utf8,
+          headerVarName: headerVarName,
+        ),
       ]),
     ]).statement,
     const Code('}'),

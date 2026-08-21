@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -16,6 +18,23 @@ void main() {
   });
 
   group('Simple form encoding', () {
+    test(
+      'percent-encodes Latin-1 bytes once and preserves the charset',
+      () async {
+        const form = Latin1Form(word: 'café');
+
+        final response = await api.postLatin1Form(body: form);
+
+        expect(response, isTonikSuccess);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.body, 'word=caf%E9');
+        expect(
+          recordedRequest.headers['content-type'],
+          'application/x-www-form-urlencoded; charset=iso-8859-1',
+        );
+      },
+    );
+
     test('posts flat object with form encoding', () async {
       const form = SimpleForm(name: 'Test User', age: 25);
 
@@ -561,6 +580,7 @@ void main() {
         'item',
         explode: true,
         allowEmpty: true,
+        textEncoding: utf8,
         useQueryComponent: true,
       );
 

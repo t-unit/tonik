@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
@@ -7,7 +9,7 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 extension LabelUriEncoder on Uri {
   /// Encodes this Uri value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding String values.
@@ -17,7 +19,7 @@ extension LabelStringEncoder on String {
     if (isEmpty) {
       return '.';
     }
-    return '.${uriEncode(allowEmpty: allowEmpty)}';
+    return '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
   }
 }
 
@@ -25,42 +27,42 @@ extension LabelStringEncoder on String {
 extension LabelIntEncoder on int {
   /// Encodes this int value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding double values.
 extension LabelDoubleEncoder on double {
   /// Encodes this double value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding num values.
 extension LabelNumEncoder on num {
   /// Encodes this num value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding bool values.
 extension LabelBoolEncoder on bool {
   /// Encodes this bool value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding DateTime values.
 extension LabelDateTimeEncoder on DateTime {
   /// Encodes this DateTime value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding BigDecimal values.
 extension LabelBigDecimalEncoder on BigDecimal {
   /// Encodes this BigDecimal value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) =>
-      '.${uriEncode(allowEmpty: allowEmpty)}';
+      '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
 }
 
 /// Extension for encoding List values.
@@ -83,14 +85,21 @@ extension LabelStringListEncoder on List<String> {
 
     if (explode) {
       return map(
-        (item) =>
-            '.'
-            '${alreadyEncoded ? item : item.uriEncode(allowEmpty: allowEmpty)}',
+        (item) {
+          final value = alreadyEncoded
+              ? item
+              : item.uriEncode(
+                  allowEmpty: allowEmpty,
+                  textEncoding: utf8,
+                );
+          return '.$value';
+        },
       ).join();
     } else {
       final encodedValues = uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
+        textEncoding: utf8,
       );
       return '.$encodedValues';
     }
@@ -125,7 +134,10 @@ extension LabelStringMapEncoder on Map<String, String> {
           }
           final value = alreadyEncoded
               ? entry.value
-              : entry.value.uriEncode(allowEmpty: allowEmpty);
+              : entry.value.uriEncode(
+                  allowEmpty: allowEmpty,
+                  textEncoding: utf8,
+                );
           return '.$key=$value';
         },
       ).join();
@@ -133,6 +145,7 @@ extension LabelStringMapEncoder on Map<String, String> {
       final encodedPairs = uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
+        textEncoding: utf8,
       );
       return '.$encodedPairs';
     }

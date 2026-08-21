@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -51,7 +53,12 @@ void main() {
 
       test('toForm - explode true', () {
         final form = formValue(
-          petChoice.toForm('p', explode: true, allowEmpty: true),
+          petChoice.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         expect(form, contains('petType=cat'));
@@ -116,7 +123,12 @@ void main() {
 
       test('toForm - explode true', () {
         final form = formValue(
-          petChoice.toForm('p', explode: true, allowEmpty: true),
+          petChoice.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
           'p',
         );
         expect(form, contains('petType=dog'));

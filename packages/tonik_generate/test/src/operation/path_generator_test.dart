@@ -1174,7 +1174,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<int> ids}) {
-          return [r'data', ids.map<String>((e) => e.uriEncode(allowEmpty: false)).toList().toMatrix(r'ids', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
+          return [r'data', ids.map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toMatrix(r'ids', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
         }
       ''';
 
@@ -1254,7 +1254,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> statuses}) {
-          return [r'data', statuses.map<String>((e) => e.uriEncode(allowEmpty: false)).toList().toMatrix(r'statuses', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
+          return [r'data', statuses.map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toMatrix(r'statuses', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
         }
       ''';
 

@@ -208,7 +208,10 @@ Expression _buildListMatrixExpression(
                   ..body = nullGuard(
                     refer('e').property('uriEncode').call(
                       [],
-                      {'allowEmpty': allowEmpty},
+                      {
+                        'allowEmpty': allowEmpty,
+                        'textEncoding': refer('utf8', 'dart:convert'),
+                      },
                     ),
                   ).code,
               ).closure,
@@ -252,7 +255,10 @@ Expression _buildListMatrixExpression(
                           )
                           .call(
                             [refer('e')],
-                            {'allowEmpty': allowEmpty},
+                            {
+                              'allowEmpty': allowEmpty,
+                              'textEncoding': refer('utf8', 'dart:convert'),
+                            },
                           )
                           .code,
               ).closure,

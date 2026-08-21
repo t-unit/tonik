@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
@@ -8,22 +10,26 @@ String _encode(
   String value, {
   required bool useQueryComponent,
   required bool allowReserved,
+  required Encoding textEncoding,
 }) => value.uriEncode(
   allowEmpty: true,
   useQueryComponent: useQueryComponent,
   allowReserved: allowReserved,
+  textEncoding: textEncoding,
 );
 
 String _joinEncoded(
   List<String> values, {
   required bool useQueryComponent,
   required bool allowReserved,
+  required Encoding textEncoding,
 }) => values
     .map(
       (element) => _encode(
         element,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       ),
     )
     .join(',');
@@ -48,6 +54,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    required Encoding textEncoding,
     bool useQueryComponent = false,
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
@@ -73,6 +80,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
         paramName,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       );
     }
 
@@ -83,6 +91,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
         name,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        textEncoding: textEncoding,
       );
       final encoding = fieldEncodings[name];
       final explodeArray = encoding?.explode ?? false;
@@ -105,6 +114,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
               value,
               useQueryComponent: useQueryComponent,
               allowReserved: valueAllowReserved,
+              textEncoding: textEncoding,
             ),
           ));
         case ArrayPropertyValue(:final values):
@@ -120,6 +130,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
                   element,
                   useQueryComponent: useQueryComponent,
                   allowReserved: valueAllowReserved,
+                  textEncoding: textEncoding,
                 ),
               ));
             }
@@ -130,6 +141,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
                 values,
                 useQueryComponent: useQueryComponent,
                 allowReserved: valueAllowReserved,
+                textEncoding: textEncoding,
               ),
             ));
           }
@@ -142,6 +154,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
     String paramName, {
     required bool useQueryComponent,
     required bool allowReserved,
+    required Encoding textEncoding,
   }) {
     final parts = <String>[];
     for (final entry in entries) {
@@ -151,6 +164,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
             entry.key,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
+            textEncoding: textEncoding,
           ),
         )
         ..add(
@@ -159,11 +173,13 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
               value,
               useQueryComponent: useQueryComponent,
               allowReserved: allowReserved,
+              textEncoding: textEncoding,
             ),
             ArrayPropertyValue(:final values) => _joinEncoded(
               values,
               useQueryComponent: useQueryComponent,
               allowReserved: allowReserved,
+              textEncoding: textEncoding,
             ),
           },
         );
