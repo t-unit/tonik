@@ -578,7 +578,7 @@ void main() {
             test() {
               _$entries.addAll(
                 queryType
-                    .map( (e) => e == null ? '' : e .toForm( '', explode: false, allowEmpty: false, textEncoding: _i1.utf8, ) .single .value, )
+                    .map( (e) => e == null ? '' : e.uriEncode(allowEmpty: false, textEncoding: _i1.utf8), )
                     .toList()
                     .toForm(
                       r'queryType',

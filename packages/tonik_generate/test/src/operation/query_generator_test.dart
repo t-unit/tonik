@@ -1392,7 +1392,7 @@ void main() {
             final _$entries = <ParameterEntry>[];
             _$entries.addAll(
               colors
-                  .map((e) => e.toForm('', explode: false,allowEmpty: false, textEncoding: utf8).single .value,)
+                  .map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
                   .toList()
                   .toForm(
                     r'colors',
@@ -2376,7 +2376,7 @@ void main() {
                 .map(
                   (e) => e == null
                       ? ''
-                      : e.uriEncode(allowEmpty: false, allowReserved: true, textEncoding: utf8,),
+                      : e.uriEncode(allowEmpty: false, textEncoding: utf8, allowReserved: true,),
                 )
                 .toList()
                 .toForm(

@@ -2077,7 +2077,7 @@ void main() {
   items
                     .map(
                       (e) =>
-                          encodeAnyToForm(e, explode: false,allowEmpty: true, textEncoding: utf8,),
+                          encodeAnyToUri(e, allowEmpty: true, textEncoding: utf8,),
                     )
                     .toList()
                     .toForm(r'items', 
@@ -3465,7 +3465,7 @@ void main() {
   items
                       .map(
                         (e) =>
-                            encodeAnyToForm(e, explode: false,allowEmpty: true, textEncoding: utf8,),
+                            encodeAnyToUri(e, allowEmpty: true, textEncoding: utf8,),
                       )
                       .toList()
                       .toForm(r'items', 

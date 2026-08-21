@@ -271,7 +271,7 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true, textEncoding: _i1.utf8,),)
+              .map((e) => e.uriEncode(allowEmpty: true, textEncoding: _i1.utf8, allowReserved: true,),)
               .toList()
               .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,alreadyEncoded: true,);
         }
@@ -303,7 +303,7 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e.toForm('', explode: false,allowEmpty: true, textEncoding: _i1.utf8,allowReserved: true,).single .value,)
+              .map((e) => e.uriEncode(allowEmpty: true, textEncoding: _i1.utf8, allowReserved: true,),)
               .toList()
               .toForm('p', explode: true, allowEmpty: true, textEncoding: _i1.utf8,alreadyEncoded: true,);
         }
@@ -326,7 +326,7 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => _i1.encodeAnyToForm(e, explode: false,allowEmpty: true, allowReserved: true, textEncoding: _i2.utf8,),)
+              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true, textEncoding: _i2.utf8, allowReserved: true,),)
               .toList()
               .toForm('p', explode: true, allowEmpty: true, textEncoding: _i2.utf8,alreadyEncoded: true,);
         }
@@ -482,11 +482,12 @@ void main() {
         test() {
           value
               .map(
-                (e) => _i1.encodeAnyToForm(
+                (e) => _i1.encodeAnyToUri(
                   e,
-                  explode: false,allowEmpty: true,
+                  allowEmpty: true,
+                  textEncoding: _i2.utf8,
                   useQueryComponent: true,
-                textEncoding: _i2.utf8,),
+                ),
               )
               .toList()
               .toForm(

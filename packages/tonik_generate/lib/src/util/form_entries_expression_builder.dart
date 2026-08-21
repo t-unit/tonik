@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// Returns null for the throwing cases (never/binary/complex map) and the
 /// `AnyModel` single-string path, which each caller handles with
@@ -189,15 +190,14 @@ Expression? _buildEncodedElementsList(
 }) {
   if (!_isUriEncodableElement(contentModel)) return null;
 
-  final element = _buildEncodedElementExpression(
+  final element = buildUriEncodeExpression(
     refer('e'),
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
     textEncoding: textEncoding,
-    allowReserved: allowReserved,
-  );
-  if (element == null) return null;
+    allowReserved: allowReserved ? literalBool(true) : null,
+  ).expression;
 
   final elementEncode = isContentNullable
       ? refer('e').equalTo(literalNull).conditional(literalString(''), element)
@@ -214,62 +214,6 @@ Expression? _buildEncodedElementsList(
       ])
       .property('toList')
       .call([]);
-}
-
-Expression? _buildEncodedElementExpression(
-  Expression receiver,
-  Model model, {
-  required Expression allowEmpty,
-  required Expression? useQueryComponent,
-  required Expression textEncoding,
-  required bool allowReserved,
-}) {
-  final resolved = model.resolved;
-  if (resolved
-      case StringModel() ||
-          BooleanModel() ||
-          DateTimeModel() ||
-          DecimalModel() ||
-          UriModel() ||
-          DateModel() ||
-          IntegerModel() ||
-          DoubleModel() ||
-          NumberModel()) {
-    return receiver.property('uriEncode').call([], {
-      'allowEmpty': allowEmpty,
-      'useQueryComponent': ?useQueryComponent,
-      if (allowReserved) 'allowReserved': literalBool(true),
-      'textEncoding': textEncoding,
-    });
-  }
-
-  if (resolved is AnyModel) {
-    return refer(
-      'encodeAnyToForm',
-      'package:tonik_util/tonik_util.dart',
-    ).call(
-      [receiver],
-      {
-        'explode': literalBool(false),
-        'allowEmpty': allowEmpty,
-        'useQueryComponent': ?useQueryComponent,
-        if (allowReserved) 'allowReserved': literalBool(true),
-        'textEncoding': textEncoding,
-      },
-    );
-  }
-
-  final entries = buildFormEntriesValueExpression(
-    receiver,
-    model,
-    paramName: literalString(''),
-    explode: literalBool(false),
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    textEncoding: textEncoding,
-    allowReserved: allowReserved,
-  );
-  return entries?.property('single').property('value');
 }
 
 /// Complex elements (objects, nested lists, complex maps) are excluded because
