@@ -1250,7 +1250,13 @@ void main() {
         const expectedMethod = r'''
           Object? _data({required Pet body}) {
             return body
-                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+                .toForm(
+                  '',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  textEncoding: utf8,
+                )
                 .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                 .join('&');
           }
@@ -1370,7 +1376,13 @@ Object? _data({required String body}) {
           Object? _data({Pet? body}) {
             if (body == null) return null;
             return body
-                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+                .toForm(
+                  '',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  textEncoding: utf8,
+                )
                 .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                 .join('&');
           }
@@ -1620,7 +1632,13 @@ Object? _data({required String body}) {
           const expectedMethod = r'''
             Object? _data({required PlainForm body}) {
               return body
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    textEncoding: utf8,
+                  )
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&');
             }
@@ -2420,7 +2438,13 @@ Object? _data({required String body}) {
           const expectedMethod = r'''
             Object? _data({required ReadOnlyForm body}) {
               return body
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    textEncoding: utf8,
+                  )
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&');
             }
@@ -3042,10 +3066,17 @@ Object? _data({required String body}) {
           Object? _data({required CreateUser body}) {
             return switch (body) {
               final CreateUserJson value => value.value.toJson(),
-              final CreateUserXWwwFormUrlencoded value => value.value
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
-                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
-                  .join('&'),
+              final CreateUserXWwwFormUrlencoded value =>
+                value.value
+                    .toForm(
+                      '',
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                      textEncoding: utf8,
+                    )
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                    .join('&'),
             };
           }
         ''';
@@ -3117,10 +3148,17 @@ Object? _data({required String body}) {
               if (body == null) return null;
               return switch (body) {
                 final UpdateItemJson value => value.value.toJson(),
-                final UpdateItemXWwwFormUrlencoded value => value.value
-                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
-                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
-                    .join('&'),
+                final UpdateItemXWwwFormUrlencoded value =>
+                  value.value
+                      .toForm(
+                        '',
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                        textEncoding: utf8,
+                      )
+                      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                      .join('&'),
               };
             }
           ''';

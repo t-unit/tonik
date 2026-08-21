@@ -1357,8 +1357,32 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToMatrix = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$listMatrix = list .map<String>( (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8), ) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result', ); } return _$values.first; }
-''';
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          final _$listMatrix = list
+              .map<String>(
+                (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+              )
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+          _$values.add(_$listMatrix);
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -1416,9 +1440,52 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToForm = r'''
-@override
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; if (list != null) { final _$listForm = list! .map( (e) => e.uriEncode( allowEmpty: allowEmpty, textEncoding: textEncoding, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, textEncoding: textEncoding, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); } if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } if (_$entryLists.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$entryLists.first; }
-''';
+        @override
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
+          final _$entryLists = <List<ParameterEntry>>[];
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listForm = list!
+                .map(
+                  (e) => e.uriEncode(
+                    allowEmpty: allowEmpty,
+                    textEncoding: textEncoding,
+                    useQueryComponent: useQueryComponent,
+                  ),
+                )
+                .toList()
+                .toForm(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                  textEncoding: textEncoding,
+                  alreadyEncoded: true,
+                );
+            _$entryLists.add(_$listForm);
+            _$values.add(_$listForm.map((e) => e.value).join(','));
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf form encoding: all values must encode to the same result',
+            );
+          }
+          if (_$entryLists.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
+            );
+          }
+          return _$entryLists.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -1446,9 +1513,33 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToLabel = r'''
-@override
-String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; if (list != null) { final _$listLabel = list! .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)) .toList() .toLabel( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listLabel); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf label encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$values.first; }
-''';
+        @override
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listLabel = list!
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
+                .toList()
+                .toLabel(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listLabel);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf label encoding: all values must encode to the same result',
+            );
+          }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -1476,9 +1567,40 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToMatrix = r'''
-@override
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>( (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8), ) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$values.first; }
-''';
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listMatrix = list!
+                .map<String>(
+                  (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+                )
+                .toList()
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listMatrix);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result',
+            );
+          }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -2302,12 +2424,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
 
         const expectedUriEncode = r'''
           @override
-          String uriEncode({ required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
             final _$values = <String>{};
             if (nullableInt != null) {
               final _$nullableIntEncoded = nullableInt!.uriEncode(
                 allowEmpty: allowEmpty,
-                textEncoding: textEncoding, useQueryComponent: useQueryComponent,
+                textEncoding: textEncoding,
+                useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
               );
               _$values.add(_$nullableIntEncoded);
@@ -2367,12 +2495,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
 
         const expectedUriEncode = r'''
           @override
-          String uriEncode({ required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
             final _$values = <String>{};
             if (signature != null) {
               final _$signatureEncoded = signature!.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
-                textEncoding: textEncoding, useQueryComponent: useQueryComponent,
+                textEncoding: textEncoding,
+                useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
               );
               _$values.add(_$signatureEncoded);
@@ -2454,20 +2588,26 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedUriEncode = '''
-@override
-String uriEncode({ required bool allowEmpty, required Encoding textEncoding,bool useQueryComponent = false, bool allowReserved = false, }) {
-  if (currentEncodingShape != EncodingShape.simple) {
-    throw EncodingException(
-      r'Cannot uriEncode DynamicByte: contains complex types',
-    );
-  }
-  return signature!.toBase64String().uriEncode(
-    allowEmpty: allowEmpty,
-    textEncoding: textEncoding,useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
-  );
-}
-''';
+          @override
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
+            if (currentEncodingShape != EncodingShape.simple) {
+              throw EncodingException(
+                r'Cannot uriEncode DynamicByte: contains complex types',
+              );
+            }
+            return signature!.toBase64String().uriEncode(
+              allowEmpty: allowEmpty,
+              textEncoding: textEncoding,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+            );
+          }
+        ''';
 
         expect(
           collapseWhitespace(methodCode),
@@ -2686,25 +2826,25 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
     test('toMatrix throws for binary member', () {
       const expected = r'''
-@override
-String toMatrix(
-  String paramName, {
-  required bool explode,
-  required bool allowEmpty,
-}) {
-  final _$values = <String>{};
-  final _$tonikFileMatrix = throw EncodingException(
-    'Binary data cannot be matrix-encoded',
-  );
-  _$values.add(_$tonikFileMatrix);
-  if (_$values.length > 1) {
-    throw EncodingException(
-      r'Inconsistent allOf matrix encoding for AllOfBinary: all values must encode to the same result',
-    );
-  }
-  return _$values.first;
-}
-''';
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          final _$tonikFileMatrix = throw EncodingException(
+            'Binary data cannot be matrix-encoded',
+          );
+          _$values.add(_$tonikFileMatrix);
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf matrix encoding for AllOfBinary: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(methodSource(binaryModel(), 'toMatrix')),
@@ -2823,8 +2963,10 @@ String toMatrix(
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            required Encoding textEncoding, bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             if (currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
@@ -2839,7 +2981,8 @@ String toMatrix(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved, textEncoding: textEncoding,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
               );
               _$entryLists.add(_$statusForm);
               _$values.add(_$statusForm.map((e) => e.value).join(','));
@@ -2849,7 +2992,8 @@ String toMatrix(
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved, textEncoding: textEncoding,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));

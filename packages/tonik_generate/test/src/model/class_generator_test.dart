@@ -220,7 +220,12 @@ void main() {
 
         const expectedUriEncode = '''
           @override
-          String uriEncode({ required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
             throw EncodingException(
               r'Cannot uriEncode User: complex types cannot be URI-encoded',
             );
@@ -247,7 +252,12 @@ void main() {
 
         const expectedUriEncode = '''
           @override
-          String uriEncode({ required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, }) {
+          String uriEncode({
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+          }) {
             throw EncodingException(
               r'Cannot uriEncode Empty: complex types cannot be URI-encoded',
             );
@@ -1479,8 +1489,26 @@ factory ModelWithSimpleListRoundtrip.fromForm(
           ''';
 
           const expectedToFormMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
-''';
+            List<ParameterEntry> toForm(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+              required Encoding textEncoding,
+              bool useQueryComponent = false,
+              bool allowReserved = false,
+              Map<String, FormFieldEncoding> fieldEncodings = const {},
+            }) {
+              return parameterProperties(allowEmpty: allowEmpty).toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
+                textEncoding: textEncoding,
+              );
+            }
+          ''';
 
           const expectedParameterPropertiesMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
@@ -1614,14 +1642,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final result = generator.generateClass(model);
 
         const expectedToFormBody = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {},  }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, );
+          @override
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            return parameterProperties(allowEmpty: allowEmpty).toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              fieldEncodings: fieldEncodings,
+              textEncoding: textEncoding,
+            );
           }
         ''';
 
+        final toFormMethod = result.methods.singleWhere(
+          (method) => method.name == 'toForm',
+        );
         expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedToFormBody)),
+          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedToFormBody)),
         );
       });
 
@@ -1652,14 +1700,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final result = generator.generateClass(model);
 
         const expectedToFormBody = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {},  }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, );
+          @override
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            return parameterProperties(allowEmpty: allowEmpty).toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              fieldEncodings: fieldEncodings,
+              textEncoding: textEncoding,
+            );
           }
         ''';
 
+        final toFormMethod = result.methods.singleWhere(
+          (method) => method.name == 'toForm',
+        );
         expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedToFormBody)),
+          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedToFormBody)),
         );
       });
 
@@ -1675,14 +1743,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final result = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {},  }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, );
+          @override
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            return parameterProperties(allowEmpty: allowEmpty).toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              fieldEncodings: fieldEncodings,
+              textEncoding: textEncoding,
+            );
           }
         ''';
 
+        final toFormMethod = result.methods.singleWhere(
+          (method) => method.name == 'toForm',
+        );
         expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedToFormMethod)),
+          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedToFormMethod)),
         );
       });
 
@@ -1923,14 +2011,36 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           final result = generator.generateClass(model);
 
           const expectedToFormMethod = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {},  }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, );
-          }
-        ''';
+            @override
+            List<ParameterEntry> toForm(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+              required Encoding textEncoding,
+              bool useQueryComponent = false,
+              bool allowReserved = false,
+              Map<String, FormFieldEncoding> fieldEncodings = const {},
+            }) {
+              return parameterProperties(allowEmpty: allowEmpty).toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
+                textEncoding: textEncoding,
+              );
+            }
+          ''';
 
+          final toFormMethod = result.methods.singleWhere(
+            (method) => method.name == 'toForm',
+          );
           expect(
-            collapseWhitespace(result.accept(emitter).toString()),
-            contains(collapseWhitespace(expectedToFormMethod)),
+            collapseWhitespace(
+              format(toFormMethod.accept(emitter).toString()),
+            ),
+            collapseWhitespace(format(expectedToFormMethod)),
           );
         },
       );

@@ -209,7 +209,10 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -234,7 +237,14 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value
+            .map(
+              (e) => e == null
+                  ? ''
+                  : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+            )
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -259,7 +269,14 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value
+            .map(
+              (e) => e == null
+                  ? ''
+                  : e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+            )
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -319,7 +336,10 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -478,7 +498,10 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, textEncoding: utf8)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value
+            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, textEncoding: utf8))
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -605,7 +628,7 @@ void main() {
 
       expect(
         collapseWhitespace(generated),
-        collapseWhitespace(expected),
+        collapseWhitespace(format(expected)),
       );
     });
 
