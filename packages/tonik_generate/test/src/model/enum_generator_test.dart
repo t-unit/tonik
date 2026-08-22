@@ -15,6 +15,8 @@ void main() {
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
 
+  String formatBody(String body) => format('void test() {$body}');
+
   String formatConstructor(Constructor constructor, String className) {
     final clazz = Class(
       (b) => b
@@ -2304,9 +2306,19 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding);
+          return _$rawValue.toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            textEncoding: textEncoding,
+          );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatBody(body)),
+          collapseWhitespace(formatBody(expectedBody)),
+        );
       });
 
       test('uses custom fallback name from nameOverride', () {
@@ -2437,9 +2449,17 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.uriEncode(allowEmpty: allowEmpty, textEncoding: textEncoding, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+          return _$rawValue.uriEncode(
+            allowEmpty: allowEmpty,
+            textEncoding: textEncoding,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+          );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatBody(body)),
+          collapseWhitespace(formatBody(expectedBody)),
+        );
       });
 
       test('toMatrix throws when encoding fallback case', () {

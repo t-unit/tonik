@@ -456,7 +456,12 @@ void main() {
             if (optionalSession != null) {
               _$cookieParts.addAll(
                 optionalSession
-                    .toForm( r'optional_session', explode: false, allowEmpty: true, textEncoding: utf8, )
+                    .toForm(
+                      r'optional_session',
+                      explode: false,
+                      allowEmpty: true,
+                      textEncoding: utf8,
+                    )
                     .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
               );
             }

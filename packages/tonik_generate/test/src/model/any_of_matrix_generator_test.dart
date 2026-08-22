@@ -575,8 +575,38 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>( (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8), ) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty) return ''; return _$values.first; }
-''';
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final _$values = <String>{};
+            if (list != null) {
+              final _$listMatrix = list!
+                  .map<String>(
+                    (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+                  )
+                  .toList()
+                  .toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    alreadyEncoded: true,
+                  );
+              _$values.add(_$listMatrix);
+            }
+            if (string != null) {
+              final _$stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$stringMatrix);
+            }
+            if (_$values.isEmpty) return '';
+            return _$values.first;
+          }
+        ''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),
@@ -610,8 +640,38 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>( (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8), ) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (list2 != null) { final _$list2Matrix = list2!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$list2Matrix); } if (_$values.isEmpty) return ''; return _$values.first; }
-''';
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final _$values = <String>{};
+            if (list != null) {
+              final _$listMatrix = list!
+                  .map<String>(
+                    (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
+                  )
+                  .toList()
+                  .toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    alreadyEncoded: true,
+                  );
+              _$values.add(_$listMatrix);
+            }
+            if (list2 != null) {
+              final _$list2Matrix = list2!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$list2Matrix);
+            }
+            if (_$values.isEmpty) return '';
+            return _$values.first;
+          }
+        ''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),

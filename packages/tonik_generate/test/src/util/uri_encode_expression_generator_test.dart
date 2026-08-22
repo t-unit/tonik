@@ -56,7 +56,11 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
+        final result = value.uriEncode(
+          allowEmpty: allowEmpty,
+          textEncoding: utf8,
+          allowReserved: true,
+        );
       ''';
 
       expect(
@@ -87,7 +91,11 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
+        final result = value.uriEncode(
+          allowEmpty: allowEmpty,
+          textEncoding: utf8,
+          allowReserved: true,
+        );
       ''';
 
       expect(
@@ -114,7 +122,11 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
+        final result = value.uriEncode(
+          allowEmpty: allowEmpty,
+          textEncoding: utf8,
+          allowReserved: true,
+        );
       ''';
 
       expect(
@@ -264,7 +276,10 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.toBase64String().uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,);
+        final result = value.toBase64String().uriEncode(
+          allowEmpty: allowEmpty,
+          textEncoding: utf8,
+        );
       ''';
 
       expect(
@@ -462,7 +477,11 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,);
+        final result = value.uriEncode(
+          allowEmpty: allowEmpty,
+          textEncoding: utf8,
+          allowReserved: true,
+        );
       ''';
 
       expect(
@@ -516,9 +535,15 @@ void main() {
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,),)
+            .map(
+              (e) => e.uriEncode(
+                allowEmpty: allowEmpty,
+                textEncoding: utf8,
+                allowReserved: true,
+              ),
+            )
             .toList()
-            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8, allowReserved: true);
       ''';
 
       expect(
@@ -718,9 +743,16 @@ void main() {
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true,),)
+            .map(
+              (e) => encodeAnyToUri(
+                e,
+                allowEmpty: allowEmpty,
+                textEncoding: utf8,
+                allowReserved: true,
+              ),
+            )
             .toList()
-            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8,allowReserved: true);
+            .uriEncode(allowEmpty: allowEmpty, textEncoding: utf8, allowReserved: true);
       ''';
 
       expect(
@@ -1025,7 +1057,7 @@ void main() {
 
         expect(
           collapseWhitespace(generated),
-          collapseWhitespace(expected),
+          collapseWhitespace(format(expected)),
         );
       },
     );

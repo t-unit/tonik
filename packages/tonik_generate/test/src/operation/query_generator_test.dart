@@ -168,12 +168,21 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: true, textEncoding: utf8,),);
+            _$entries.addAll(
+              filter.toForm(
+                r'filter',
+                explode: false,
+                allowEmpty: true,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -743,7 +752,14 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, List<String>? tags}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: true, allowEmpty: true, textEncoding: utf8,),);
+            _$entries.addAll(
+              filter.toForm(
+                r'filter',
+                explode: true,
+                allowEmpty: true,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (tags != null) {
             for (final value in tags.toSpaceDelimited(
@@ -756,7 +772,9 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -820,11 +838,20 @@ void main() {
       const expectedMethod = r'''
         String? _queryParameters({required AnonymousModel filter}) {
           final _$entries = <ParameterEntry>[];
-          _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
+          _$entries.addAll(
+            filter.toForm(
+              r'filter',
+              explode: false,
+              allowEmpty: false,
+              textEncoding: utf8,
+            ),
+          );
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -888,12 +915,21 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              filter.toForm(
+                r'filter',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -1009,21 +1045,46 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (name != null) {
-            _$entries.addAll(name.toForm(r'name', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              name.toForm(
+                r'name',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (tags != null) {
-            _$entries.addAll(tags.toForm(r'tags', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              tags.toForm(
+                r'tags',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (age != null) {
-            _$entries.addAll(age.toForm(r'age', explode: false, allowEmpty: false, textEncoding: utf8),);
+            _$entries.addAll(
+              age.toForm(r'age', explode: false, allowEmpty: false, textEncoding: utf8),
+            );
           }
           if (active != null) {
-            _$entries.addAll(active.toForm(r'active', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              active.toForm(
+                r'active',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -1111,15 +1172,31 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              filter.toForm(
+                r'filter',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (range != null) {
-            _$entries.addAll(range.toForm(r'range', explode: false, allowEmpty: false, textEncoding: utf8,),);
+            _$entries.addAll(
+              range.toForm(
+                r'range',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,
+              ),
+            );
           }
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -1281,37 +1358,48 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (color != null) {
-            _$entries.addAll(color.toForm(r'color', explode: false, allowEmpty: true, textEncoding: utf8,),);
+            _$entries.addAll(
+              color.toForm(
+                r'color',
+                explode: false,
+                allowEmpty: true,
+                textEncoding: utf8,
+              ),
+            );
           }
           _$entries.addAll(
             value.toDeepObject(r'value', explode: false, allowEmpty: true),
           );
           if (ids != null) {
-            for (final value in ids
-                .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
-                .toList()
-                .toSpaceDelimited(
-              explode: false,
-              allowEmpty: true,
-                  alreadyEncoded: true,
-                )) {
+            for (final value
+                in ids
+                    .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
               _$entries.add((name: r'ids', value: value));
             }
           }
-          for (final value in categories
-              .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
-              .toList()
-              .toPipeDelimited(
-            explode: false,
-            allowEmpty: true,
-                alreadyEncoded: true,
-          )) {
+          for (final value
+              in categories
+                  .map((e) => e.uriEncode(allowEmpty: true, textEncoding: utf8))
+                  .toList()
+                  .toPipeDelimited(
+                    explode: false,
+                    allowEmpty: true,
+                    alreadyEncoded: true,
+                  )) {
             _$entries.add((name: r'categories', value: value));
           }
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
         }
       ''';
 
@@ -1388,25 +1476,28 @@ void main() {
       );
 
       const expectedMethod = r'''
-         String? _queryParameters({required List<AnonymousModel> colors}) {
-            final _$entries = <ParameterEntry>[];
-            _$entries.addAll(
-              colors
-                  .map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
-                  .toList()
-                  .toForm(
-                    r'colors',
-                    explode: true,
-                    allowEmpty: false,
-                    textEncoding: utf8,alreadyEncoded: true,
-                  ),
-            );
-            if (_$entries.isEmpty) {
-              return null;
-            }
-            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        String? _queryParameters({required List<AnonymousModel> colors}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            colors
+                .map((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
+                .toList()
+                .toForm(
+                  r'colors',
+                  explode: true,
+                  allowEmpty: false,
+                  textEncoding: utf8,
+                  alreadyEncoded: true,
+                ),
+          );
+          if (_$entries.isEmpty) {
+            return null;
           }
-        ''';
+          return _$entries
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''';
 
       final queryParameters =
           <({String normalizedName, QueryParameterObject parameter})>[
@@ -1646,31 +1737,34 @@ void main() {
         );
 
         const expectedMethod = r'''
-           String? _queryParameters({required List<MixedOneOf> values}) {
-             final _$entries = <ParameterEntry>[];
-             for (final item in values) {
-               if (item.currentEncodingShape != EncodingShape.simple) {
-                 throw EncodingException(
-                   r'Parameter values: pipeDelimited encoding requires simple encoding shape',
-                 );
-               }
-             }
-             for (final value in values
-                 .map((item) => item.uriEncode(allowEmpty: false, textEncoding: utf8))
-                 .toList()
-                 .toPipeDelimited(
-                   explode: false,
-                   allowEmpty: false,
-                   alreadyEncoded: true,
-                 )) {
-               _$entries.add((name: r'values', value: value));
-             }
-             if (_$entries.isEmpty) {
-               return null;
-             }
-             return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
-           }
-         ''';
+          String? _queryParameters({required List<MixedOneOf> values}) {
+            final _$entries = <ParameterEntry>[];
+            for (final item in values) {
+              if (item.currentEncodingShape != EncodingShape.simple) {
+                throw EncodingException(
+                  r'Parameter values: pipeDelimited encoding requires simple encoding shape',
+                );
+              }
+            }
+            for (final value
+                in values
+                    .map((item) => item.uriEncode(allowEmpty: false, textEncoding: utf8))
+                    .toList()
+                    .toPipeDelimited(
+                      explode: false,
+                      allowEmpty: false,
+                      alreadyEncoded: true,
+                    )) {
+              _$entries.add((name: r'values', value: value));
+            }
+            if (_$entries.isEmpty) {
+              return null;
+            }
+            return _$entries
+                .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                .join('&');
+          }
+        ''';
 
         final queryParameters =
             <({String normalizedName, QueryParameterObject parameter})>[
@@ -1750,22 +1844,27 @@ void main() {
         );
 
         const expectedMethod = r'''
-           String? _queryParameters({required List<SimpleOneOf> items}) {
-             final _$entries = <ParameterEntry>[];
-             for (final item in items) {
-               if (item.currentEncodingShape != EncodingShape.simple) {
-                 throw EncodingException(
-                   r'Parameter items: spaceDelimited encoding requires simple encoding shape',
-                 );
-               }
-               _$entries.add((name: r'items', value: item.uriEncode(allowEmpty: false, textEncoding: utf8),));
-             }
-             if (_$entries.isEmpty) {
-               return null;
-             }
-             return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
-           }
-         ''';
+          String? _queryParameters({required List<SimpleOneOf> items}) {
+            final _$entries = <ParameterEntry>[];
+            for (final item in items) {
+              if (item.currentEncodingShape != EncodingShape.simple) {
+                throw EncodingException(
+                  r'Parameter items: spaceDelimited encoding requires simple encoding shape',
+                );
+              }
+              _$entries.add((
+                name: r'items',
+                value: item.uriEncode(allowEmpty: false, textEncoding: utf8),
+              ));
+            }
+            if (_$entries.isEmpty) {
+              return null;
+            }
+            return _$entries
+                .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                .join('&');
+          }
+        ''';
 
         final queryParameters =
             <({String normalizedName, QueryParameterObject parameter})>[
@@ -2482,13 +2581,16 @@ void main() {
                 r'tags',
                 explode: false,
                 allowEmpty: false,
-                textEncoding: utf8,allowReserved: true,
+                textEncoding: utf8,
+                allowReserved: true,
               ),
             );
             if (_$entries.isEmpty) {
               return null;
             }
-            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            return _$entries
+                .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                .join('&');
           }
         ''';
 

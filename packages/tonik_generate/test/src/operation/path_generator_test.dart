@@ -1173,10 +1173,21 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required List<int> ids}) {
-          return [r'data', ids.map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toMatrix(r'ids', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
-        }
-      ''';
+      List<String> _path({required List<int> ids}) {
+        return [
+          r'data',
+          ids
+              .map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
+              .toList()
+              .toMatrix(
+                r'ids',
+                explode: true,
+                allowEmpty: false,
+                alreadyEncoded: true,
+              ),
+        ];
+      }
+    ''';
 
     final pathParameters =
         <({String normalizedName, PathParameterObject parameter})>[
@@ -1196,8 +1207,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1253,10 +1264,21 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required List<AnonymousModel> statuses}) {
-          return [r'data', statuses.map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8, )).toList().toMatrix(r'statuses', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
-        }
-      ''';
+      List<String> _path({required List<AnonymousModel> statuses}) {
+        return [
+          r'data',
+          statuses
+              .map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
+              .toList()
+              .toMatrix(
+                r'statuses',
+                explode: true,
+                allowEmpty: false,
+                alreadyEncoded: true,
+              ),
+        ];
+      }
+    ''';
 
     final pathParameters =
         <({String normalizedName, PathParameterObject parameter})>[
@@ -1276,8 +1298,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 

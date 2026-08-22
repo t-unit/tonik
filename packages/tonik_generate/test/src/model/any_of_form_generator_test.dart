@@ -587,7 +587,15 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) {
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           if (int != null) {
@@ -596,7 +604,8 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved, textEncoding: textEncoding,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
             );
             _$entryLists.add(_$intForm);
             _$values.add(_$intForm.map((e) => e.value).join(','));
@@ -607,7 +616,8 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved, textEncoding: textEncoding,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -658,8 +668,35 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$mapValues = <Map<String, PropertyValue>>[]; if (a != null) { final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aForm); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
-''';
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
+          final _$mapValues = <Map<String, PropertyValue>>[];
+          if (a != null) {
+            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$aForm);
+          }
+          final _$map = <String, PropertyValue>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
+          return _$map.toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            fieldEncodings: fieldEncodings,
+            textEncoding: textEncoding,
+          );
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -720,8 +757,46 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (a != null) { final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aForm); _$discriminatorValue ??= r'a'; } if (b != null) { final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bForm); _$discriminatorValue ??= r'b'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); }
-''';
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
+          final _$mapValues = <Map<String, PropertyValue>>[];
+          String? _$discriminatorValue;
+          if (a != null) {
+            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$aForm);
+            _$discriminatorValue ??= r'a';
+          }
+          if (b != null) {
+            final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$bForm);
+            _$discriminatorValue ??= r'b';
+          }
+          final _$map = <String, PropertyValue>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
+          }
+          return _$map.toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            fieldEncodings: fieldEncodings,
+            textEncoding: textEncoding,
+          );
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -763,8 +838,61 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (data != null) { final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataForm); } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); } }
-''';
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          required Encoding textEncoding,
+          bool useQueryComponent = false,
+          bool allowReserved = false,
+          Map<String, FormFieldEncoding> fieldEncodings = const {},
+        }) {
+          final _$entryLists = <List<ParameterEntry>>[];
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, PropertyValue>>[];
+          if (data != null) {
+            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$dataForm);
+          }
+          if (string != null) {
+            final _$stringForm = string!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
+            );
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (_$values.isEmpty && _$mapValues.isEmpty) {
+            return const <ParameterEntry>[];
+          }
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+            throw EncodingException(
+              r'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
+            );
+          }
+          if (_$values.isNotEmpty) {
+            return _$entryLists.first;
+          } else {
+            final _$map = <String, PropertyValue>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
+            }
+            return _$map.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              fieldEncodings: fieldEncodings,
+              textEncoding: textEncoding,
+            );
+          }
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -884,8 +1012,83 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: final _$innerChoiceForm = innerChoice!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$innerChoiceForm); _$values.add(_$innerChoiceForm.map((e) => e.value).join(',')); break; case EncodingShape.complex: final _$innerChoiceForm = innerChoice!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerChoiceForm); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); } }
-''';
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, PropertyValue>>[];
+            if (innerChoice != null) {
+              switch (innerChoice!.currentEncodingShape) {
+                case EncodingShape.simple:
+                  final _$innerChoiceForm = innerChoice!.toForm(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                    allowReserved: allowReserved,
+                    textEncoding: textEncoding,
+                  );
+                  _$entryLists.add(_$innerChoiceForm);
+                  _$values.add(_$innerChoiceForm.map((e) => e.value).join(','));
+                  break;
+                case EncodingShape.complex:
+                  final _$innerChoiceForm = innerChoice!.parameterProperties(
+                    allowEmpty: allowEmpty,
+                  );
+                  _$mapValues.add(_$innerChoiceForm);
+                  break;
+                case EncodingShape.mixed:
+                  throw EncodingException(
+                    'Cannot encode field with mixed encoding shape',
+                  );
+              }
+            }
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              return _$entryLists.first;
+            } else {
+              final _$map = <String, PropertyValue>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              return _$map.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
+                textEncoding: textEncoding,
+              );
+            }
+          }
+        ''';
 
         expect(
           collapseWhitespace(generated),
@@ -939,8 +1142,83 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (innerAnyOf != null) { switch (innerAnyOf!.currentEncodingShape) { case EncodingShape.simple: final _$innerAnyOfForm = innerAnyOf!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$innerAnyOfForm); _$values.add(_$innerAnyOfForm.map((e) => e.value).join(',')); break; case EncodingShape.complex: final _$innerAnyOfForm = innerAnyOf!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerAnyOfForm); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); } }
-''';
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, PropertyValue>>[];
+            if (innerAnyOf != null) {
+              switch (innerAnyOf!.currentEncodingShape) {
+                case EncodingShape.simple:
+                  final _$innerAnyOfForm = innerAnyOf!.toForm(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                    allowReserved: allowReserved,
+                    textEncoding: textEncoding,
+                  );
+                  _$entryLists.add(_$innerAnyOfForm);
+                  _$values.add(_$innerAnyOfForm.map((e) => e.value).join(','));
+                  break;
+                case EncodingShape.complex:
+                  final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
+                    allowEmpty: allowEmpty,
+                  );
+                  _$mapValues.add(_$innerAnyOfForm);
+                  break;
+                case EncodingShape.mixed:
+                  throw EncodingException(
+                    'Cannot encode field with mixed encoding shape',
+                  );
+              }
+            }
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              return _$entryLists.first;
+            } else {
+              final _$map = <String, PropertyValue>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              return _$map.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
+                textEncoding: textEncoding,
+              );
+            }
+          }
+        ''';
 
         expect(
           collapseWhitespace(generated),
@@ -981,15 +1259,83 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         );
 
         final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, required Encoding textEncoding, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},  }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (myClass != null) { final _$myClassForm = myClass!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$myClassForm); } if (int != null) { final _$intForm = int!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$intForm); _$values.add(_$intForm.map((e) => e.value).join(',')); } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, textEncoding: textEncoding, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding, ); } }
-''';
+          @override
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, PropertyValue>>[];
+            if (myClass != null) {
+              final _$myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$myClassForm);
+            }
+            if (int != null) {
+              final _$intForm = int!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$intForm);
+              _$values.add(_$intForm.map((e) => e.value).join(','));
+            }
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              return _$entryLists.first;
+            } else {
+              final _$map = <String, PropertyValue>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              return _$map.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
+                textEncoding: textEncoding,
+              );
+            }
+          }
+        ''';
 
+        final toFormMethod = klass.methods.singleWhere(
+          (method) => method.name == 'toForm',
+        );
         expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expected)),
+          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expected)),
         );
       });
 
