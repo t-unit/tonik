@@ -1675,9 +1675,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           }
         ''';
 
+        final constructor = result.constructors.firstWhere(
+          (constructor) => constructor.name == 'fromForm',
+        );
+        final constructorClass = Class(
+          (builder) => builder
+            ..name = 'EmptyModel'
+            ..constructors.add(constructor),
+        );
         expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedFromFormBody)),
+          collapseWhitespace(
+            format(constructorClass.accept(emitter).toString()),
+          ),
+          collapseWhitespace(
+            format('class EmptyModel {$expectedFromFormBody}'),
+          ),
         );
       });
 
@@ -2391,8 +2403,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2461,8 +2473,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2494,8 +2506,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2541,8 +2553,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
           final generatedCode = result.accept(emitter).toString();
           expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedToMatrixMethod)),
+            collapseWhitespace(format(generatedCode)),
+            contains(collapseWhitespace(format(expectedToMatrixMethod))),
           );
         },
       );

@@ -1,8 +1,13 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 
 void main() {
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   final emitter = DartEmitter(useNullSafetySyntax: true);
 
   group('generateCopyWith', () {
@@ -362,8 +367,8 @@ void main() {
           }
         ''';
         expect(
-          collapseWhitespace(callMethod.accept(emitter).toString()),
-          collapseWhitespace(expectedCallMethod),
+          collapseWhitespace(format(callMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedCallMethod)),
         );
       });
 
@@ -393,8 +398,8 @@ void main() {
           }
         ''';
         expect(
-          collapseWhitespace(callMethod.accept(emitter).toString()),
-          collapseWhitespace(expectedCallMethod),
+          collapseWhitespace(format(callMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedCallMethod)),
         );
       });
 
@@ -427,8 +432,8 @@ void main() {
           }
         ''';
           expect(
-            collapseWhitespace(callMethod.accept(emitter).toString()),
-            collapseWhitespace(expectedCallMethod),
+            collapseWhitespace(format(callMethod.accept(emitter).toString())),
+            collapseWhitespace(format(expectedCallMethod)),
           );
         },
       );
@@ -462,8 +467,8 @@ void main() {
           }
         ''';
           expect(
-            collapseWhitespace(callMethod.accept(emitter).toString()),
-            collapseWhitespace(expectedCallMethod),
+            collapseWhitespace(format(callMethod.accept(emitter).toString())),
+            collapseWhitespace(format(expectedCallMethod)),
           );
         },
       );
@@ -499,8 +504,8 @@ void main() {
           }
         ''';
         expect(
-          collapseWhitespace(callMethod.accept(emitter).toString()),
-          collapseWhitespace(expectedCallMethod),
+          collapseWhitespace(format(callMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedCallMethod)),
         );
       });
 

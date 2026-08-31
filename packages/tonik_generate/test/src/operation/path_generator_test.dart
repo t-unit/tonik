@@ -70,8 +70,8 @@ void main() {
     expect(method.requiredParameters, isEmpty);
     expect(method.optionalParameters, isEmpty);
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -193,8 +193,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -259,8 +259,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -325,8 +325,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -395,8 +395,8 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     },
   );
@@ -463,8 +463,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -530,8 +530,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -628,8 +628,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -756,8 +756,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -834,8 +834,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -896,8 +896,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -978,8 +978,8 @@ void main() {
     expect(method.optionalParameters.first.named, isTrue);
     expect(method.optionalParameters.first.required, isTrue);
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1060,8 +1060,8 @@ void main() {
     expect(method.optionalParameters.first.named, isTrue);
     expect(method.optionalParameters.first.required, isTrue);
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1128,8 +1128,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1374,8 +1374,8 @@ void main() {
         ),
       );
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     },
   );
@@ -1449,8 +1449,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1543,8 +1543,8 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1576,8 +1576,8 @@ void main() {
     final method = generator.generatePathMethod(operation, []);
 
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1629,8 +1629,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1682,8 +1682,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1736,8 +1736,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1807,8 +1807,8 @@ void main() {
 
       expect(method, isA<Method>());
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     },
   );
@@ -1861,8 +1861,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1914,8 +1914,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -1967,8 +1967,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -2020,8 +2020,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -2073,8 +2073,8 @@ void main() {
 
     expect(method, isA<Method>());
     expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
     );
   });
 
@@ -2108,8 +2108,8 @@ void main() {
 
       expect(method, isA<Method>());
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2162,8 +2162,8 @@ void main() {
 
       expect(method, isA<Method>());
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2196,8 +2196,8 @@ void main() {
 
       expect(method, isA<Method>());
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2250,8 +2250,8 @@ void main() {
 
       expect(method, isA<Method>());
       expect(
-        collapseWhitespace(method.accept(emitter).toString()),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
   });

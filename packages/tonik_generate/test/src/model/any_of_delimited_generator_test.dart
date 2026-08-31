@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/any_of_generator.dart';
@@ -6,6 +7,10 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   group('AnyOfGenerator delimited generation', () {
     late AnyOfGenerator generator;
     late NameManager nameManager;
@@ -69,8 +74,8 @@ void main() {
       ''';
 
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -85,8 +90,8 @@ void main() {
       ''';
 
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
   });

@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
@@ -6,6 +7,10 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   group('AllOfGenerator toDeepObject generation', () {
     late AllOfGenerator generator;
     late NameManager nameManager;
@@ -86,8 +91,8 @@ void main() {
 
       final generatedCode = generatedClass.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
 
@@ -145,8 +150,8 @@ void main() {
 
       final generatedCode = generatedClass.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
 
@@ -169,8 +174,8 @@ void main() {
 
       final generatedCode = generatedClass.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
 
@@ -196,8 +201,8 @@ void main() {
 
       final generatedCode = generatedClass.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
 
@@ -222,8 +227,8 @@ void main() {
 
       final generatedCode = generatedClass.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
   });

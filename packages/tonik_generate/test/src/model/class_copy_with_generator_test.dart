@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -6,6 +7,10 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   late ClassGenerator generator;
   late NameManager nameManager;
   late NameGenerator nameGenerator;
@@ -157,8 +162,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
 
@@ -210,8 +215,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
 
@@ -298,8 +303,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
 
@@ -368,8 +373,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
 
@@ -434,8 +439,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
 
@@ -511,8 +516,8 @@ void main() {
         }
       ''';
       expect(
-        collapseWhitespace(implCallMethod.accept(emitter).toString()),
-        collapseWhitespace(expectedCallMethod),
+        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCallMethod)),
       );
     });
   });
