@@ -15,7 +15,6 @@ class NameManager {
 
   final modelNames = <Model, String>{};
 
-  final _multipartNames = <MultipartRequestContent, String>{};
   final _multipartObjectNames = <MultipartRequestContent, String>{};
   final _multipartAliasNames = <MultipartRequestContent, String>{};
   final _schemaNames = <(Context, String), String>{};
@@ -226,32 +225,31 @@ class NameManager {
               ), allocate);
       });
 
-  String multipartName(MultipartRequestContent content) =>
-      _multipartNames.putIfAbsent(content, () {
-        if (content.alias case final alias?) {
-          return _schemaNames.putIfAbsent(
-            (alias.targetContext, alias.targetName),
-            () => generator.generateObjectName(
-              name: alias.targetNameOverride ?? alias.targetName,
-              context: alias.targetContext,
-              usedFileNames: _usedFileNames,
-            ),
-          );
-        }
-        if (content.name == null ||
-            (content.name == content.sourceName &&
-                content.context == content.sourceContext)) {
-          return multipartObjectName(content);
-        }
-        return _schemaNames.putIfAbsent(
-          (content.context, content.name!),
-          () => generator.generateObjectName(
-            name: content.nameOverride ?? content.name,
-            context: content.context,
-            usedFileNames: _usedFileNames,
-          ),
-        );
-      });
+  String multipartName(MultipartRequestContent content) {
+    if (content.alias case final alias?) {
+      return _schemaNames.putIfAbsent(
+        (alias.targetContext, alias.targetName),
+        () => generator.generateObjectName(
+          name: alias.targetNameOverride ?? alias.targetName,
+          context: alias.targetContext,
+          usedFileNames: _usedFileNames,
+        ),
+      );
+    }
+    if (content.name == null ||
+        (content.name == content.sourceName &&
+            content.context == content.sourceContext)) {
+      return multipartObjectName(content);
+    }
+    return _schemaNames.putIfAbsent(
+      (content.context, content.name!),
+      () => generator.generateObjectName(
+        name: content.nameOverride ?? content.name,
+        context: content.context,
+        usedFileNames: _usedFileNames,
+      ),
+    );
+  }
 
   String multipartAliasName(MultipartRequestContent content) =>
       _multipartAliasNames.putIfAbsent(

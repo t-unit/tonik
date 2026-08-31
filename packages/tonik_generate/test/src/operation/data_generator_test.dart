@@ -2618,33 +2618,6 @@ Object? _data({required String body}) {
     group('multipart request bodies', () {
       test('generates _data method for single-content multipart with string '
           'properties', () {
-        final userModel = ClassModel(
-          name: 'CreateUserForm',
-          isDeprecated: false,
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'nickname',
-              model: StringModel(context: testContext),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
-
         final operation = Operation(
           operationId: 'createUser',
           path: '/users',
@@ -2655,28 +2628,37 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              multipartContentFromModel(
-                model: userModel,
-                rawContentType: 'multipart/form-data',
-                multipartEncoding: _multipartEncodingByName(userModel, {
-                  'name': const PartEncoding(
-                    contentType: ContentType.text,
-                    rawContentType: 'text/plain',
-                    headers: null,
-                    style: EncodingStyle.form,
-                    explode: true,
-                    allowReserved: false,
+              multipartContentFixture(
+                testContext,
+                [
+                  multipartPartFixture(
+                    name: 'name',
+                    model: StringModel(context: testContext),
+                    encoding: const PartEncoding(
+                      contentType: ContentType.text,
+                      rawContentType: 'text/plain',
+                      headers: null,
+                      style: EncodingStyle.form,
+                      explode: true,
+                      allowReserved: false,
+                    ),
                   ),
-                  'nickname': const PartEncoding(
-                    contentType: ContentType.text,
-                    rawContentType: 'text/plain',
-                    headers: null,
-                    style: EncodingStyle.form,
-                    explode: true,
-                    allowReserved: false,
+                  multipartPartFixture(
+                    name: 'nickname',
+                    model: StringModel(context: testContext),
+                    isRequired: false,
+                    isNullable: true,
+                    encoding: const PartEncoding(
+                      contentType: ContentType.text,
+                      rawContentType: 'text/plain',
+                      headers: null,
+                      style: EncodingStyle.form,
+                      explode: true,
+                      allowReserved: false,
+                    ),
                   ),
-                }),
-                examples: const [],
+                ],
+                name: 'CreateUserForm',
               ),
             },
           ),
@@ -2713,24 +2695,6 @@ Object? _data({required String body}) {
       test(
         'generates _data method with multipart header params in signature',
         () {
-          final uploadModel = ClassModel(
-            name: 'UploadForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'file',
-                model: BinaryModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
-
           final operation = Operation(
             operationId: 'uploadFile',
             path: '/uploads',
@@ -2741,32 +2705,35 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                multipartContentFromModel(
-                  model: uploadModel,
-                  rawContentType: 'multipart/form-data',
-                  multipartEncoding: _multipartEncodingByName(uploadModel, {
-                    'file': PartEncoding(
-                      contentType: ContentType.bytes,
-                      rawContentType: 'application/octet-stream',
-                      style: null,
-                      explode: null,
-                      allowReserved: null,
-                      headers: {
-                        'X-Rate-Limit': ResponseHeaderObject(
-                          name: 'X-Rate-Limit',
-                          context: testContext,
-                          description: null,
-                          explode: false,
-                          model: IntegerModel(context: testContext),
-                          isRequired: true,
-                          isDeprecated: false,
-                          encoding: ResponseHeaderEncoding.simple,
-                          examples: const [],
-                        ),
-                      },
+                multipartContentFixture(
+                  testContext,
+                  [
+                    multipartPartFixture(
+                      name: 'file',
+                      model: BinaryModel(context: testContext),
+                      encoding: PartEncoding(
+                        contentType: ContentType.bytes,
+                        rawContentType: 'application/octet-stream',
+                        style: null,
+                        explode: null,
+                        allowReserved: null,
+                        headers: {
+                          'X-Rate-Limit': ResponseHeaderObject(
+                            name: 'X-Rate-Limit',
+                            context: testContext,
+                            description: null,
+                            explode: false,
+                            model: IntegerModel(context: testContext),
+                            isRequired: true,
+                            isDeprecated: false,
+                            encoding: ResponseHeaderEncoding.simple,
+                            examples: const [],
+                          ),
+                        },
+                      ),
                     ),
-                  }),
-                  examples: const [],
+                  ],
+                  name: 'UploadForm',
                 ),
               },
             ),
@@ -2797,23 +2764,6 @@ Object? _data({required String body}) {
       );
 
       test('uses the operation-scoped name for multipart header values', () {
-        final uploadModel = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
-              name: 'file',
-              model: BinaryModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
         final queryParameter = QueryParameterObject(
           name: null,
           rawName: 'file_custom',
@@ -2839,32 +2789,35 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              multipartContentFromModel(
-                model: uploadModel,
-                rawContentType: 'multipart/form-data',
-                multipartEncoding: _multipartEncodingByName(uploadModel, {
-                  'file': PartEncoding(
-                    contentType: ContentType.bytes,
-                    rawContentType: 'application/octet-stream',
-                    style: null,
-                    explode: null,
-                    allowReserved: null,
-                    headers: {
-                      'X-Custom': ResponseHeaderObject(
-                        name: 'X-Custom',
-                        context: testContext,
-                        description: null,
-                        explode: false,
-                        model: StringModel(context: testContext),
-                        isRequired: true,
-                        isDeprecated: false,
-                        encoding: ResponseHeaderEncoding.simple,
-                        examples: const [],
-                      ),
-                    },
+              multipartContentFixture(
+                testContext,
+                [
+                  multipartPartFixture(
+                    name: 'file',
+                    model: BinaryModel(context: testContext),
+                    encoding: PartEncoding(
+                      contentType: ContentType.bytes,
+                      rawContentType: 'application/octet-stream',
+                      style: null,
+                      explode: null,
+                      allowReserved: null,
+                      headers: {
+                        'X-Custom': ResponseHeaderObject(
+                          name: 'X-Custom',
+                          context: testContext,
+                          description: null,
+                          explode: false,
+                          model: StringModel(context: testContext),
+                          isRequired: true,
+                          isDeprecated: false,
+                          encoding: ResponseHeaderEncoding.simple,
+                          examples: const [],
+                        ),
+                      },
+                    ),
                   ),
-                }),
-                examples: const [],
+                ],
+                name: 'UploadForm',
               ),
             },
           ),
@@ -2965,24 +2918,6 @@ Future<Object?> _data({Payload? body}) async {
           examples: const [],
         );
 
-        final formModel = ClassModel(
-          name: 'FormPayload',
-          isDeprecated: false,
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
-
         final operation = Operation(
           operationId: 'createItem',
           path: '/items',
@@ -2999,20 +2934,23 @@ Future<Object?> _data({Payload? body}) async {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              multipartContentFromModel(
-                model: formModel,
-                rawContentType: 'multipart/form-data',
-                multipartEncoding: _multipartEncodingByName(formModel, {
-                  'name': const PartEncoding(
-                    contentType: ContentType.text,
-                    rawContentType: 'text/plain',
-                    headers: null,
-                    style: EncodingStyle.form,
-                    explode: true,
-                    allowReserved: false,
+              multipartContentFixture(
+                testContext,
+                [
+                  multipartPartFixture(
+                    name: 'name',
+                    model: StringModel(context: testContext),
+                    encoding: const PartEncoding(
+                      contentType: ContentType.text,
+                      rawContentType: 'text/plain',
+                      headers: null,
+                      style: EncodingStyle.form,
+                      explode: true,
+                      allowReserved: false,
+                    ),
                   ),
-                }),
-                examples: const [],
+                ],
+                name: 'FormPayload',
               ),
             },
           ),
@@ -3329,24 +3267,6 @@ Future<Object?> _data({Payload? body}) async {
       test(
         'generates _data method for optional single-content multipart body',
         () {
-          final userModel = ClassModel(
-            name: 'CreateUserForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
-
           final operation = Operation(
             operationId: 'createUser',
             path: '/users',
@@ -3357,20 +3277,23 @@ Future<Object?> _data({Payload? body}) async {
               description: null,
               isRequired: false,
               content: {
-                multipartContentFromModel(
-                  model: userModel,
-                  rawContentType: 'multipart/form-data',
-                  multipartEncoding: _multipartEncodingByName(userModel, {
-                    'name': const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
+                multipartContentFixture(
+                  testContext,
+                  [
+                    multipartPartFixture(
+                      name: 'name',
+                      model: StringModel(context: testContext),
+                      encoding: const PartEncoding(
+                        contentType: ContentType.text,
+                        rawContentType: 'text/plain',
+                        headers: null,
+                        style: EncodingStyle.form,
+                        explode: true,
+                        allowReserved: false,
+                      ),
                     ),
-                  }),
-                  examples: const [],
+                  ],
+                  name: 'CreateUserForm',
                 ),
               },
             ),
@@ -3414,24 +3337,6 @@ Future<Object?> _data({Payload? body}) async {
             examples: const [],
           );
 
-          final uploadModel = ClassModel(
-            name: 'UploadPayload',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'file',
-                model: BinaryModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
-
           final operation = Operation(
             operationId: 'uploadItem',
             path: '/items/upload',
@@ -3448,32 +3353,35 @@ Future<Object?> _data({Payload? body}) async {
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                multipartContentFromModel(
-                  model: uploadModel,
-                  rawContentType: 'multipart/form-data',
-                  multipartEncoding: _multipartEncodingByName(uploadModel, {
-                    'file': PartEncoding(
-                      contentType: ContentType.bytes,
-                      rawContentType: 'application/octet-stream',
-                      style: null,
-                      explode: null,
-                      allowReserved: null,
-                      headers: {
-                        'X-Checksum': ResponseHeaderObject(
-                          name: 'X-Checksum',
-                          context: testContext,
-                          description: null,
-                          explode: false,
-                          model: StringModel(context: testContext),
-                          isRequired: true,
-                          isDeprecated: false,
-                          encoding: ResponseHeaderEncoding.simple,
-                          examples: const [],
-                        ),
-                      },
+                multipartContentFixture(
+                  testContext,
+                  [
+                    multipartPartFixture(
+                      name: 'file',
+                      model: BinaryModel(context: testContext),
+                      encoding: PartEncoding(
+                        contentType: ContentType.bytes,
+                        rawContentType: 'application/octet-stream',
+                        style: null,
+                        explode: null,
+                        allowReserved: null,
+                        headers: {
+                          'X-Checksum': ResponseHeaderObject(
+                            name: 'X-Checksum',
+                            context: testContext,
+                            description: null,
+                            explode: false,
+                            model: StringModel(context: testContext),
+                            isRequired: true,
+                            isDeprecated: false,
+                            encoding: ResponseHeaderEncoding.simple,
+                            examples: const [],
+                          ),
+                        },
+                      ),
                     ),
-                  }),
-                  examples: const [],
+                  ],
+                  name: 'UploadPayload',
                 ),
               },
             ),
@@ -3636,16 +3544,6 @@ FieldEncoding _reserved(bool allowReserved) =>
 Map<Property, FieldEncoding> _formEncodingByName(
   ClassModel model,
   Map<String, FieldEncoding> byName,
-) {
-  return {
-    for (final entry in byName.entries)
-      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
-  };
-}
-
-Map<Property, PartEncoding> _multipartEncodingByName(
-  ClassModel model,
-  Map<String, PartEncoding> byName,
 ) {
   return {
     for (final entry in byName.entries)

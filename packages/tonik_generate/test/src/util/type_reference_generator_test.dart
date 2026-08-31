@@ -24,7 +24,6 @@ void main() {
           name: 'UploadAlias',
           sourceName: 'Upload',
           context: context,
-          isEffectivelyNullable: true,
           parts: const [],
           rawContentType: 'multipart/form-data',
           examples: const [],
@@ -45,7 +44,6 @@ void main() {
             context: Context.initial().pushAll(['upload', 'body']),
             sourceName: 'Upload',
             sourceContext: context,
-            isEffectivelyNullable: true,
             alias: MultipartContentAlias(
               targetName: 'UploadAlias',
               targetContext: context,

@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
-import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 sealed class RequestBody {
@@ -175,7 +174,6 @@ final class MultipartRequestContent extends RequestContent {
     this.description,
     this.isDeprecated = false,
     this.isNullable = false,
-    bool? isEffectivelyNullable,
     this.isReadOnly = false,
     this.isWriteOnly = false,
     AdditionalPropertiesPolicy? additionalPropertiesPolicy,
@@ -184,7 +182,6 @@ final class MultipartRequestContent extends RequestContent {
        sourceNameOverride =
            sourceNameOverride ??
            (sourceName == null || sourceName == name ? nameOverride : null),
-       isEffectivelyNullable = isEffectivelyNullable ?? isNullable,
        additionalPropertiesPolicy =
            additionalPropertiesPolicy ??
            AllowedAdditionalProperties(
@@ -206,7 +203,6 @@ final class MultipartRequestContent extends RequestContent {
   String? description;
   bool isDeprecated;
   bool isNullable;
-  bool isEffectivelyNullable;
   bool isReadOnly;
   bool isWriteOnly;
   AdditionalPropertiesPolicy additionalPropertiesPolicy;
@@ -261,6 +257,4 @@ final class MultipartPart {
   bool isWriteOnly;
   List<Example> examples;
   Object? defaultValue;
-
-  Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 }

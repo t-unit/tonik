@@ -9,15 +9,8 @@ void main() {
       context = Context.initial();
     });
 
-    test('ordinary content owns its model and rejects multipart category', () {
+    test('ordinary content rejects multipart category', () {
       final model = StringModel(context: context);
-      final content = ModelRequestContent(
-        model: model,
-        contentType: ContentType.json,
-        rawContentType: 'application/json',
-        examples: const [],
-      );
-      expect(content.model, same(model));
       expect(
         () => ModelRequestContent(
           model: model,
@@ -27,47 +20,6 @@ void main() {
         ),
         throwsArgumentError,
       );
-    });
-
-    test('multipart content owns ordered parts with effective defaults', () {
-      final alias = AliasModel(
-        model: StringModel(context: context),
-        context: context,
-        examples: const [],
-        defaultValue: 'guest',
-      );
-      final parts = [
-        for (final name in ['label', 'title'])
-          MultipartPart(
-            name: name,
-            model: alias,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-      ];
-      final content = MultipartRequestContent(
-        parts: parts,
-        context: context,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-      expect(content.contentType, ContentType.multipart);
-      expect(content.parts.map((part) => part.name), ['label', 'title']);
-      expect(content.parts.first.model, same(alias));
-      expect(content.parts.first.effectiveDefaultValue, 'guest');
-      content.parts.first.defaultValue = 'local';
-      expect(content.parts.first.effectiveDefaultValue, 'local');
     });
 
     group('contentCount', () {

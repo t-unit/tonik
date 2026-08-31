@@ -1,6 +1,9 @@
+import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 typedef MultipartHeaderParamInfo = ({
   MultipartRequestContent content,
@@ -11,6 +14,28 @@ typedef MultipartHeaderParamInfo = ({
   bool isRequired,
   bool isDeprecated,
 });
+
+List<Parameter> buildMultipartHeaderParameters(
+  List<MultipartHeaderParamInfo> headers,
+  NameManager nameManager,
+  String package, {
+  required bool useImmutableCollections,
+}) => [
+  for (final header in headers)
+    Parameter(
+      (parameter) => parameter
+        ..name = header.name
+        ..type = typeReference(
+          header.model,
+          nameManager,
+          package,
+          isNullableOverride: !header.isRequired,
+          useImmutableCollections: useImmutableCollections,
+        )
+        ..named = true
+        ..required = header.isRequired,
+    ),
+];
 
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   MultipartRequestContent content, {

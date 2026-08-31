@@ -4516,16 +4516,10 @@ void main() {
           description: 'Multipart body',
           isRequired: true,
           content: {
-            multipartContentFromModel(
-              model: ClassModel(
-                name: 'UploadForm',
-                isDeprecated: false,
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              rawContentType: 'multipart/form-data',
-              examples: const [],
+            multipartContentFixture(
+              context,
+              [],
+              name: 'UploadForm',
             ),
           },
         );
@@ -4577,16 +4571,10 @@ void main() {
           description: 'Optional multipart body',
           isRequired: false,
           content: {
-            multipartContentFromModel(
-              model: ClassModel(
-                name: 'UploadForm',
-                isDeprecated: false,
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              rawContentType: 'multipart/form-data',
-              examples: const [],
+            multipartContentFixture(
+              context,
+              [],
+              name: 'UploadForm',
             ),
           },
         );
@@ -4646,16 +4634,10 @@ void main() {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              multipartContentFromModel(
-                model: ClassModel(
-                  name: 'FormModel',
-                  isDeprecated: false,
-                  properties: const [],
-                  context: context,
-                  examples: const [],
-                ),
-                rawContentType: 'multipart/form-data',
-                examples: const [],
+              multipartContentFixture(
+                context,
+                [],
+                name: 'FormModel',
               ),
             },
           );

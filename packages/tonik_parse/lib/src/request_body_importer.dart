@@ -207,12 +207,13 @@ class RequestBodyImporter {
     }
     var schema = rootSchema;
     final bodyContext = context.push('body');
+    final hasAnnotations = modelImporter.hasAnnotationSiblings(schema);
     var sourceContext = bodyContext;
     String? sourceName;
     final referenceContext = schema.ref?.contains(r'/$defs/') == true
         ? core.Context.initial().pushAll(schema.ref!.substring(2).split('/'))
         : ModelImporter.rootContext;
-    final alias = schema.ref != null && _hasAnnotations(schema)
+    final alias = schema.ref != null && hasAnnotations
         ? core.MultipartContentAlias(
             targetName: schema.ref!.split('/').last,
             targetContext: referenceContext,
@@ -225,14 +226,13 @@ class RequestBodyImporter {
             examples: exampleImporter.fromSchema(schema),
           )
         : null;
-    final exposedContext = schema.ref != null && !_hasAnnotations(schema)
+    final exposedContext = schema.ref != null && !hasAnnotations
         ? referenceContext
         : bodyContext;
-    final exposedName = schema.ref != null && !_hasAnnotations(schema)
+    final exposedName = schema.ref != null && !hasAnnotations
         ? schema.ref!.split('/').last
         : null;
     var exposedNameOverride = schema.xDartName;
-    var isEffectivelyNullable = false;
     final seen = <Schema>{};
     while (true) {
       if (!seen.add(schema)) {
@@ -240,7 +240,6 @@ class RequestBodyImporter {
           'Multipart body at $context has a cyclic schema reference.',
         );
       }
-      isEffectivelyNullable |= schema.isNullable ?? schema.hasNullType;
       if (schema.allOf != null ||
           schema.oneOf != null ||
           schema.anyOf != null ||
@@ -259,15 +258,11 @@ class RequestBodyImporter {
       if (sourceName == exposedName) exposedNameOverride = schema.xDartName;
     }
     final types = schema.nonNullTypes;
-    final hasProperties = schema.properties?.isNotEmpty ?? false;
     if (schema.isBooleanSchema != null ||
         types.length > 1 ||
         (types.isNotEmpty && types.single != 'object') ||
         (schema.hasNullType && types.isEmpty) ||
-        (!hasProperties &&
-            schema.additionalProperties != false &&
-            (schema.additionalProperties != null ||
-                types.contains('object')))) {
+        modelImporter.isOpenMapSchema(schema, types)) {
       return _emptyMultipartContent(mediaType, rawContentType, context);
     }
     final parts = <core.MultipartPart>[];
@@ -328,7 +323,6 @@ class RequestBodyImporter {
       isDeprecated: schema.isDeprecated ?? false,
       isNullable:
           schema.isNullable ?? (types.contains('object') && schema.hasNullType),
-      isEffectivelyNullable: isEffectivelyNullable,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       schemaExamples: exampleImporter.fromSchema(schema),
@@ -360,13 +354,6 @@ class RequestBodyImporter {
       additionalPropertiesPolicy: const core.ForbiddenAdditionalProperties(),
     );
   }
-
-  static bool _hasAnnotations(Schema schema) =>
-      schema.description != null ||
-      (schema.isDeprecated ?? false) ||
-      (schema.isNullable ?? false) ||
-      schema.hasNullType ||
-      schema.rawDefault != null;
 
   /// A recursive model has no leaf to inspect; only complex structures can
   /// recurse, so a cycle defaults to JSON.

@@ -25,7 +25,6 @@ import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
-import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -69,7 +68,11 @@ class ClassGenerator {
     MultipartRequestContent content,
   ) {
     final alias = content.alias!;
-    final targetName = nameManager.multipartName(content);
+    final targetType = requestContentTypeReference(
+      content,
+      nameManager,
+      package,
+    );
     final name = nameManager.multipartAliasName(content);
     return _generateFile(name, [
       TypeDef(
@@ -84,12 +87,7 @@ class ClassGenerator {
                 literalString('This typedef is deprecated.'),
               ]),
           ])
-          ..definition = TypeReference(
-            (b) => b
-              ..symbol = targetName
-              ..url = sourceFileUrl(package, 'model', targetName)
-              ..isNullable = alias.isNullable,
-          ),
+          ..definition = targetType,
       ),
     ]);
   }

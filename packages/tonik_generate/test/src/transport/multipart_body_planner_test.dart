@@ -37,12 +37,9 @@ void main() {
     String expectedPartCode, {
     PartEncoding? encoding,
   }) {
-    final property = _property(context, model);
-    final content = _content(
-      context,
-      [property],
-      encodings: encoding == null ? null : {property: encoding},
-    );
+    final content = multipartContentFixture(context, [
+      multipartPartFixture(name: 'value', model: model, encoding: encoding),
+    ]);
     final expected = [
       'Object? test() {',
       r'  final _$multipartFiles = <MultipartFile>[];',
@@ -65,7 +62,7 @@ Object? test() {
 }
 ''';
     expect(
-      collapseWhitespace(emit(_content(context, const []))),
+      collapseWhitespace(emit(multipartContentFixture(context, const []))),
       collapseWhitespace(format(expected)),
     );
   });
@@ -107,25 +104,17 @@ Object? test() {
     });
 
     test('omits read-only parts and guards optional normalized access', () {
-      final content = _content(context, [
-        Property(
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
           name: 'serverId',
           model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
           isReadOnly: true,
-          examples: const [],
-          defaultValue: null,
         ),
-        Property(
+        multipartPartFixture(
           name: 'display-name',
           model: StringModel(context: context),
           isRequired: false,
           isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
         ),
       ]);
       const expected = r'''
@@ -150,12 +139,11 @@ Object? test() {
     });
 
     test('encodes optional part headers and their scalar values', () {
-      final property = _property(context, StringModel(context: context));
-      final content = _content(
-        context,
-        [property],
-        encodings: {
-          property: PartEncoding(
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: StringModel(context: context),
+          encoding: PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: null,
@@ -175,8 +163,8 @@ Object? test() {
               ),
             },
           ),
-        },
-      );
+        ),
+      ]);
       const expected = r'''
 Object? test() {
   final _$multipartParts = <TonikMultipartPart>[];
@@ -897,22 +885,6 @@ Object? test() {
     }
   });
 }
-
-MultipartRequestContent _content(
-  Context context,
-  List<Property> properties, {
-  Map<Property, PartEncoding>? encodings,
-}) => multipartContentFixture(context, properties, encodings: encodings);
-
-Property _property(Context context, Model model) => Property(
-  name: 'value',
-  model: model,
-  isRequired: true,
-  isNullable: false,
-  isDeprecated: false,
-  examples: const [],
-  defaultValue: null,
-);
 
 ClassModel _classModel(Context context, String name) => ClassModel(
   name: name,

@@ -6,6 +6,7 @@ import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
+import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
   test(
@@ -16,11 +17,10 @@ void main() {
       addTearDown(subscription.cancel);
       for (final version in ['3.0.3', '3.1.0']) {
         for (final entry in _unsupportedRoots.entries) {
-          final importer = _importer(entry.value, version: version);
           records.clear();
-          importer.import();
+          final api = Importer().import(_document(entry.value, version));
           final content =
-              importer.requestBodies.single.resolvedContent.single
+              api.requestBodies.single.resolvedContent.single
                   as MultipartRequestContent;
           expect(content.parts, isEmpty, reason: '$version: ${entry.key}');
           expect(content.contentType, ContentType.multipart);
@@ -49,9 +49,25 @@ void main() {
   );
 
   test('unresolved multipart schema references remain errors', () {
-    final importer = _importer(
-      {r'$ref': '#/components/schemas/Missing'},
-      version: '3.1.0',
+    final document = OpenApiObject.fromJson(
+      _document(
+        {r'$ref': '#/components/schemas/Missing'},
+        '3.1.0',
+      ),
+    );
+    final examples = ExampleImporter(openApiObject: document);
+    final models = ModelImporter(document, exampleImporter: examples)..import();
+    final headers = ResponseHeaderImporter(
+      openApiObject: document,
+      modelImporter: models,
+      exampleImporter: examples,
+    )..import();
+    final importer = RequestBodyImporter(
+      openApiObject: document,
+      modelImporter: models,
+      contentTypes: const {},
+      responseHeaderImporter: headers,
+      exampleImporter: examples,
     );
     expect(importer.import, throwsArgumentError);
     expect(importer.requestBodies, isEmpty);
@@ -105,62 +121,43 @@ const _unsupportedRoots = <String, Object?>{
   },
 };
 
-RequestBodyImporter _importer(
-  Object? schema, {
-  required String version,
-}) {
-  final document = OpenApiObject.fromJson({
-    'openapi': version,
-    'info': {'title': 'Multipart roots', 'version': '1.0.0'},
-    'paths': <String, dynamic>{},
-    'components': {
-      'schemas': {
-        'Binary': {'type': 'string', 'format': 'binary'},
-        'BinaryAlias': {r'$ref': '#/components/schemas/Binary'},
-        'Map': {
-          'type': 'object',
-          'additionalProperties': {'type': 'string'},
-        },
-        'Composed': {
-          'allOf': [
-            {
-              'type': 'object',
-              'properties': {
-                'name': {'type': 'string'},
-              },
-            },
-            {
-              'type': 'object',
-              'properties': {
-                'count': {'type': 'integer'},
-              },
-            },
-          ],
-        },
+Map<String, dynamic> _document(Object? schema, String version) => {
+  'openapi': version,
+  'info': {'title': 'Multipart roots', 'version': '1.0.0'},
+  'paths': <String, dynamic>{},
+  'components': {
+    'schemas': {
+      'Binary': {'type': 'string', 'format': 'binary'},
+      'BinaryAlias': {r'$ref': '#/components/schemas/Binary'},
+      'Map': {
+        'type': 'object',
+        'additionalProperties': {'type': 'string'},
       },
-      'requestBodies': {
-        'Upload': {
-          'content': {
-            'multipart/form-data': {
-              'schema': ?schema,
+      'Composed': {
+        'allOf': [
+          {
+            'type': 'object',
+            'properties': {
+              'name': {'type': 'string'},
             },
+          },
+          {
+            'type': 'object',
+            'properties': {
+              'count': {'type': 'integer'},
+            },
+          },
+        ],
+      },
+    },
+    'requestBodies': {
+      'Upload': {
+        'content': {
+          'multipart/form-data': {
+            'schema': ?schema,
           },
         },
       },
     },
-  });
-  final examples = ExampleImporter(openApiObject: document);
-  final models = ModelImporter(document, exampleImporter: examples)..import();
-  final headers = ResponseHeaderImporter(
-    openApiObject: document,
-    modelImporter: models,
-    exampleImporter: examples,
-  )..import();
-  return RequestBodyImporter(
-    openApiObject: document,
-    modelImporter: models,
-    contentTypes: const {},
-    responseHeaderImporter: headers,
-    exampleImporter: examples,
-  );
-}
+  },
+};

@@ -21,8 +21,8 @@ class StableModelSorter {
     return _cache[model] ??= _computeStableKey(model, {}, 0);
   }
 
-  String stableAliasKey({required Model model, String? name}) =>
-      'AliasModel{$name,${_computeStableKey(model, {}, 1)}}';
+  String stableAliasKey({required Model model}) =>
+      'AliasModel{null,${_computeStableKey(model, {}, 1)}}';
 
   String stableObjectKey({
     required String? name,

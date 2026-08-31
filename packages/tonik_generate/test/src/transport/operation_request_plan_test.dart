@@ -282,52 +282,38 @@ void main() {
 
     test('retains multipart property order, duplicates, and file metadata', () {
       final context = Context.initial();
-      final scalar = Property(
-        name: 'item',
-        model: StringModel(context: context),
-        isRequired: true,
-        isNullable: false,
-        isDeprecated: false,
-        examples: const [],
-        defaultValue: null,
-      );
-      final file = Property(
-        name: 'item',
-        model: BinaryModel(context: context),
-        isRequired: false,
-        isNullable: true,
-        isDeprecated: false,
-        examples: const [],
-        defaultValue: null,
-      );
-      final content = multipartContentFromModel(
-        model: ClassModel(
-          name: 'Upload',
-          properties: [scalar, file],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-        ),
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-        multipartEncoding: {
-          scalar: const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            headers: null,
-            style: null,
-            explode: null,
-            allowReserved: null,
+
+      final content = multipartContentFixture(
+        context,
+        [
+          multipartPartFixture(
+            name: 'item',
+            model: StringModel(context: context),
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
-          file: const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: null,
-            style: null,
-            explode: null,
-            allowReserved: null,
+          multipartPartFixture(
+            name: 'item',
+            model: BinaryModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
-        },
+        ],
+        name: 'Upload',
       );
       final operation = _operation(
         context,
@@ -344,15 +330,6 @@ void main() {
         backend: TransportBackend.http,
       ).plan(operation, parameters);
       final body = plan.body as MultipartBodyPlan;
-      final parts = body.emissions.whereType<MultipartAppend>().toList();
-
-      expect(parts, hasLength(2));
-      expect(parts.first.source, MultipartValueSource.bytes);
-      expect(parts.first.contentType, 'text/plain');
-      expect(parts.last.source, MultipartValueSource.file);
-      expect(parts.last.filename, isNotNull);
-      expect(parts.last.contentType, 'application/octet-stream');
-
       final method = Method(
         (builder) => builder
           ..name = 'test'

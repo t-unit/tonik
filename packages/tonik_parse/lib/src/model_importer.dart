@@ -217,7 +217,7 @@ class ModelImporter {
       return;
     }
 
-    if (_isOpenMapSchema(schema, types)) {
+    if (isOpenMapSchema(schema, types)) {
       final model = MapModel(
         valueModel: AnyModel(context: context),
         context: context,
@@ -456,7 +456,7 @@ class ModelImporter {
       return;
     }
 
-    if (_isOpenMapSchema(schema, types)) {
+    if (isOpenMapSchema(schema, types)) {
       _populateMapShell(name, schema, context, existingModel as MapModel);
       applyExamples(existingModel, examples);
       return;
@@ -662,7 +662,7 @@ class ModelImporter {
   ) {
     final modelContext = context.push(name);
 
-    shell.additionalPropertiesPolicy = _resolveAdditionalProperties(
+    shell.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       modelContext,
     );
@@ -884,7 +884,7 @@ class ModelImporter {
   }
 
   // Bare objects need maps to preserve unknown members.
-  bool _isOpenMapSchema(Schema schema, List<String> types) {
+  bool isOpenMapSchema(Schema schema, List<String> types) {
     if (schema.properties != null && schema.properties!.isNotEmpty) {
       return false;
     }
@@ -919,7 +919,7 @@ class ModelImporter {
     Context context,
     ClassModel shell,
   ) {
-    shell.additionalPropertiesPolicy = _resolveAdditionalProperties(
+    shell.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       context,
     );
@@ -1009,14 +1009,6 @@ class ModelImporter {
         schema,
         context,
       );
-
-  Schema? resolveSchemaReference(Schema schema) =>
-      _resolveSchemaToSchema(schema);
-
-  AdditionalPropertiesPolicy importAdditionalProperties(
-    Schema schema,
-    Context context,
-  ) => _resolveAdditionalProperties(schema, context);
 
   /// Resolves a schema that may have a $ref field.
   Model _resolveSchemaRef(String? name, Schema schema, Context context) {
@@ -1206,7 +1198,7 @@ class ModelImporter {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
     }
 
-    if (name != null || _hasAnnotationSiblings(schema)) {
+    if (name != null || hasAnnotationSiblings(schema)) {
       if (name != null) {
         final existing = models.firstWhereOrNull(
           (m) => m is NamedModel && m.name == name,
@@ -1302,7 +1294,7 @@ class ModelImporter {
     }
   }
 
-  bool _hasAnnotationSiblings(Schema schema) {
+  bool hasAnnotationSiblings(Schema schema) {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
         (schema.isNullable ?? false) ||
@@ -1360,7 +1352,7 @@ class ModelImporter {
       );
     }
 
-    if (name != null || _hasAnnotationSiblings(schema)) {
+    if (name != null || hasAnnotationSiblings(schema)) {
       if (name != null) {
         final existing = models.firstWhereOrNull(
           (m) => m is NamedModel && m.name == name,
@@ -1474,7 +1466,7 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
-    if (_isOpenMapSchema(schema, types)) {
+    if (isOpenMapSchema(schema, types)) {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
       Model valueModel;
@@ -1699,7 +1691,7 @@ class ModelImporter {
       context: modelContext,
       name: name,
       description: schema.description,
-      additionalPropertiesPolicy: _resolveAdditionalProperties(
+      additionalPropertiesPolicy: importAdditionalProperties(
         schema,
         modelContext,
       ),
@@ -1881,14 +1873,14 @@ class ModelImporter {
   /// Recursively descends into allOf members so that discriminators on
   /// grandparent (or deeper) schemas are found.
   parse.Discriminator? _findDiscriminatorInAllOfChain(Schema schema) {
-    final resolvedSchema = _resolveSchemaToSchema(schema);
+    final resolvedSchema = resolveSchemaReference(schema);
     if (resolvedSchema == null) return null;
 
     final allOf = resolvedSchema.allOf;
     if (allOf == null || allOf.isEmpty) return null;
 
     for (final member in allOf) {
-      final memberSchema = _resolveSchemaToSchema(member);
+      final memberSchema = resolveSchemaReference(member);
       if (memberSchema == null) continue;
 
       if (memberSchema.discriminator != null) {
@@ -1912,7 +1904,7 @@ class ModelImporter {
       if (!seenRefs.add(current.ref!)) {
         return false;
       }
-      final resolved = _resolveSchemaToSchema(current);
+      final resolved = resolveSchemaReference(current);
       if (resolved == null) {
         return false;
       }
@@ -1921,7 +1913,7 @@ class ModelImporter {
     return current.type.isNotEmpty && current.nonNullTypes.isEmpty;
   }
 
-  Schema? _resolveSchemaToSchema(Schema schema) {
+  Schema? resolveSchemaReference(Schema schema) {
     if (schema.ref == null) return schema;
 
     final ref = schema.ref!;
@@ -1937,7 +1929,7 @@ class ModelImporter {
     return null;
   }
 
-  AdditionalPropertiesPolicy _resolveAdditionalProperties(
+  AdditionalPropertiesPolicy importAdditionalProperties(
     Schema schema,
     Context context,
   ) => _additionalProperties[(schema, context)] ??= _importAdditionalProperties(
@@ -2001,7 +1993,7 @@ class ModelImporter {
       properties: properties,
       context: context,
       description: schema.description,
-      additionalPropertiesPolicy: _resolveAdditionalProperties(schema, context),
+      additionalPropertiesPolicy: importAdditionalProperties(schema, context),
       isNullable:
           schema.isNullable ??
           (schema.type.contains('object') && schema.hasNullType),

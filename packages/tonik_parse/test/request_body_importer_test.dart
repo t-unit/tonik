@@ -1088,7 +1088,6 @@ void main() {
       expect(content, isA<MultipartRequestContent>());
 
       // Default encoding should be populated for all properties
-      expect(content.parts, isNotNull);
       expect(content.parts, hasLength(2));
 
       final fileEncoding = partEncodingFor(content, 'file')!;
@@ -1136,7 +1135,6 @@ void main() {
                 as RequestBodyObject;
 
         final content = body.content.first as MultipartRequestContent;
-        expect(content.parts, isNotNull);
         expect(content.parts, hasLength(2));
 
         // format: byte → Base64Model → application/octet-stream (spec-correct)
@@ -1210,7 +1208,6 @@ void main() {
               as RequestBodyObject;
 
       final content = body.content.first as MultipartRequestContent;
-      expect(content.parts, isNotNull);
       expect(content.parts, hasLength(3));
 
       final idEncoding = partEncodingFor(content, 'id')!;
@@ -1284,7 +1281,6 @@ void main() {
               as RequestBodyObject;
 
       final content = body.content.first as MultipartRequestContent;
-      expect(content.parts, isNotNull);
 
       final fileEncoding = partEncodingFor(content, 'file')!;
       expect(fileEncoding.contentType, ContentType.bytes);
@@ -1331,7 +1327,6 @@ void main() {
 
       final content = body.content.first as MultipartRequestContent;
       expect(content.contentType, ContentType.multipart);
-      expect(content.parts, isNotNull);
       expect(content.parts, hasLength(1));
 
       final nameEncoding = partEncodingFor(content, 'name')!;
@@ -1344,16 +1339,16 @@ void main() {
 
     group('multipart default encoding', () {
       Map<String, dynamic> multipartSpec({
-        required Map<String, dynamic> properties,
+        Map<String, dynamic> properties = const {},
         String version = '3.1.0',
+        Map<String, dynamic>? schema,
         Map<String, dynamic>? encoding,
         Map<String, dynamic>? schemas,
+        Object? example,
       }) {
         final mediaType = <String, dynamic>{
-          'schema': {
-            'type': 'object',
-            'properties': properties,
-          },
+          'schema': schema ?? {'type': 'object', 'properties': properties},
+          'example': ?example,
         };
         if (encoding != null) {
           mediaType['encoding'] = encoding;
@@ -1392,6 +1387,224 @@ void main() {
         return body.content.first as MultipartRequestContent;
       }
 
+      test('parts preserve order and property metadata', () {
+        for (final version in ['3.0.3', '3.1.0']) {
+          final content = importMultipartContent(
+            multipartSpec(
+              version: version,
+              schema: {
+                'type': 'object',
+                'required': ['name'],
+                'properties': {
+                  'serverId': {'type': 'string', 'readOnly': true},
+                  'name': {
+                    'type': 'string',
+                    'description': 'Public label',
+                    'deprecated': true,
+                    'default': 'guest',
+                    'x-dart-name': 'label',
+                  },
+                  'tags': {
+                    'type': version.startsWith('3.0')
+                        ? 'array'
+                        : ['array', 'null'],
+                    if (version.startsWith('3.0')) 'nullable': true,
+                    'items': {'type': 'string'},
+                  },
+                },
+              },
+            ),
+          );
+          final parts = content.parts;
+          expect(parts.map((part) => part.name), ['serverId', 'name', 'tags']);
+          expect(parts[0].isReadOnly, isTrue);
+          expect(parts[1].isRequired, isTrue);
+          expect(parts[1].isDeprecated, isTrue);
+          expect(parts[1].defaultValue, 'guest');
+          expect(parts[1].nameOverride, 'label');
+          expect(parts[1].description, 'Public label');
+          expect(parts[2].isRequired, isFalse);
+          expect(parts[2].isNullable, isTrue);
+        }
+      });
+
+      test('read-only recursive parts do not warn about encoding', () {
+        final records = <LogRecord>[];
+        final subscription = Logger.root.onRecord.listen(records.add);
+        addTearDown(subscription.cancel);
+        importMultipartContent(
+          multipartSpec(
+            properties: {
+              'serverId': {
+                r'$ref': '#/components/schemas/Values',
+                'readOnly': true,
+              },
+            },
+            schemas: {
+              'Values': {
+                'type': 'array',
+                'items': {r'$ref': '#/components/schemas/Values'},
+              },
+            },
+          ),
+        );
+        expect(
+          records.where((record) => record.level == Level.WARNING),
+          isEmpty,
+        );
+      });
+
+      test('configuration preserves part identity and overrides', () {
+        final api = Importer().import(
+          multipartSpec(
+            schema: {r'$ref': '#/components/schemas/Upload'},
+            schemas: {
+              'Upload': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+          ),
+        );
+        final content =
+            api.requestBodies.single.resolvedContent.single
+                as MultipartRequestContent;
+        final part = content.parts.single;
+        const ConfigTransformer().apply(
+          api,
+          const TonikConfig(
+            nameOverrides: NameOverridesConfig(
+              schemas: {'Upload': 'UploadValue'},
+              properties: {'Upload.name': 'label'},
+            ),
+          ),
+        );
+        expect(content.parts.single, same(part));
+        expect(part.nameOverride, 'label');
+        expect(content.sourceNameOverride, 'UploadValue');
+      });
+
+      test('configuration filters deprecated parts', () {
+        final api = Importer().import(
+          multipartSpec(
+            properties: {
+              'name': {'type': 'string', 'deprecated': true},
+              'file': {'type': 'string', 'format': 'binary'},
+            },
+          ),
+        );
+        const ConfigTransformer().apply(
+          api,
+          const TonikConfig(
+            deprecated: DeprecatedConfig(
+              properties: DeprecatedHandling.exclude,
+            ),
+          ),
+        );
+        final content =
+            api.requestBodies.single.resolvedContent.single
+                as MultipartRequestContent;
+        expect(content.parts.map((part) => part.name), ['file']);
+      });
+
+      test('aliases preserve source metadata and nested model identity', () {
+        final api = Importer().import(
+          multipartSpec(
+            schema: {
+              r'$ref': '#/components/schemas/UploadAlias',
+              'nullable': true,
+              'description': 'Nullable upload',
+            },
+            schemas: {
+              'Upload': {
+                'type': 'object',
+                'properties': {
+                  'name': {
+                    'type': 'object',
+                    'properties': {
+                      'label': {'type': 'string'},
+                    },
+                  },
+                },
+                'examples': [
+                  {
+                    'name': {'label': 'schema label'},
+                  },
+                ],
+                'additionalProperties': {
+                  'type': 'object',
+                  'properties': {
+                    'code': {'type': 'integer'},
+                  },
+                },
+              },
+              'UploadAlias': {r'$ref': '#/components/schemas/Upload'},
+            },
+            example: {
+              'name': {'label': 'media label'},
+            },
+          ),
+        );
+        final content =
+            api.requestBodies.single.resolvedContent.single
+                as MultipartRequestContent;
+        final source = api.models.whereType<ClassModel>().singleWhere(
+          (model) => model.name == 'Upload',
+        );
+        expect(content.name, isNull);
+        expect(content.sourceName, 'Upload');
+        expect(content.alias!.targetName, 'UploadAlias');
+        expect(content.alias!.isNullable, isTrue);
+        expect(content.alias!.description, 'Nullable upload');
+        expect(content.isNullable, isFalse);
+        expect(
+          content.parts.single.model,
+          same(source.properties.single.model),
+        );
+        expect(
+          content.additionalPropertiesPolicy,
+          same(source.additionalPropertiesPolicy),
+        );
+        expect(content.schemaExamples.single, source.examples.single);
+        expect(content.examples.single, isNot(content.schemaExamples.single));
+      });
+
+      test(
+        'part normalization preserves raw defaults and encoding identity',
+        () {
+          final api = Importer().import(
+            multipartSpec(
+              properties: {
+                'name': {
+                  r'$ref': '#/components/schemas/Wrapper',
+                  'default': 'hello',
+                },
+              },
+              schemas: {
+                'Value': {'type': 'string'},
+                'Wrapper': {
+                  'allOf': [
+                    {r'$ref': '#/components/schemas/Value'},
+                  ],
+                },
+              },
+            ),
+          );
+          final content =
+              api.requestBodies.single.resolvedContent.single
+                  as MultipartRequestContent;
+          final part = content.parts.single;
+          final encoding = part.encoding;
+          const AllOfNormalizer().apply(api);
+          expect(content.parts.single, same(part));
+          expect(part.encoding, same(encoding));
+          expect(part.model.resolved, isA<StringModel>());
+          expect(part.defaultValue, 'hello');
+        },
+      );
+
       test('string property gets text/plain default', () {
         final content = importMultipartContent(
           multipartSpec(
@@ -1400,8 +1613,6 @@ void main() {
             },
           ),
         );
-
-        expect(content.parts, isNotNull);
         expect(content.parts, hasLength(1));
 
         final encoding = partEncodingFor(content, 'name')!;
@@ -1889,20 +2100,6 @@ void main() {
         expect(encoding.allowReserved, isFalse);
       });
 
-      test('multipart part owns its effective encoding', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'name': {'type': 'string'},
-            },
-          ),
-        );
-
-        final part = content.parts.single;
-        expect(part.name, 'name');
-        expect(part.encoding.contentType, ContentType.text);
-      });
-
       test('multipart part retains its alias model and effective encoding', () {
         final content = importMultipartContent(
           multipartSpec(
@@ -2183,43 +2380,6 @@ void main() {
           ContentType.json,
         );
       });
-
-      test('non-object multipart body has no parts', () {
-        final spec = multipartSpec(properties: {});
-        final components = spec['components'] as Map<String, dynamic>;
-        final bodies = components['requestBodies'] as Map<String, dynamic>;
-        final body = bodies['TestBody'] as Map<String, dynamic>;
-        final content = body['content'] as Map<String, dynamic>;
-        final mediaType =
-            content['multipart/form-data'] as Map<String, dynamic>;
-        mediaType['schema'] = {'type': 'string'};
-        expect(importMultipartContent(spec).parts, isEmpty);
-      });
-    });
-
-    test('multipart/form-data without schema has no parts', () {
-      final fileContentNoSchema = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'requestBodies': {
-            'NoSchemaMultipart': {
-              'description': 'Multipart without schema',
-              'required': true,
-              'content': {
-                'multipart/form-data': <String, dynamic>{},
-              },
-            },
-          },
-        },
-      };
-
-      final api = Importer().import(fileContentNoSchema);
-      final content =
-          api.requestBodies.single.resolvedContent.single
-              as MultipartRequestContent;
-      expect(content.parts, isEmpty);
     });
   });
 
