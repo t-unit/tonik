@@ -545,7 +545,7 @@ void main() {
               isRequired: true,
               name: 'createUser',
               content: {
-                RequestContent(
+                ModelRequestContent(
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   model: ClassModel(
@@ -1210,7 +1210,7 @@ void main() {
             isRequired: true,
             name: 'createUser',
             content: {
-              RequestContent(
+              ModelRequestContent(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 model: ClassModel(
@@ -1432,7 +1432,7 @@ void main() {
             isRequired: true,
             name: 'createUser',
             content: {
-              RequestContent(
+              ModelRequestContent(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 model: StringModel(context: testContext),
@@ -1445,7 +1445,7 @@ void main() {
                   ),
                 ],
               ),
-              RequestContent(
+              ModelRequestContent(
                 contentType: ContentType.json,
                 rawContentType: 'application/hal+json',
                 model: StringModel(context: testContext),
@@ -1697,7 +1697,7 @@ void main() {
             isRequired: true,
             name: 'createUser',
             content: {
-              RequestContent(
+              ModelRequestContent(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 model: ClassModel(

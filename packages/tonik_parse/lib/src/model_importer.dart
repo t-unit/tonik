@@ -21,6 +21,11 @@ class ModelImporter {
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};
 
+  // A component reused by multipart keeps the same nested schema identities.
+  final _propertyModels = <(Schema, Context), Model>{};
+  final _additionalProperties =
+      <(Schema, Context), AdditionalPropertiesPolicy>{};
+
   /// Set of named schemas whose composite shells have been populated.
   ///
   /// Used during pass 2 to determine whether a referenced model's composite
@@ -50,6 +55,8 @@ class ModelImporter {
   void import() {
     models = <Model>{};
     _placeholders.clear();
+    _propertyModels.clear();
+    _additionalProperties.clear();
     _populatedComposites.clear();
     _collectAllDefs();
 
@@ -945,7 +952,7 @@ class ModelImporter {
 
       final property = Property(
         name: propertyName,
-        model: _resolveSchemaRefForProperty(
+        model: importPropertySchema(
           propertySchema,
           context.pushAll([name, contextPropertyName]),
         ),
@@ -996,6 +1003,20 @@ class ModelImporter {
 
     return model;
   }
+
+  Model importPropertySchema(Schema schema, Context context) =>
+      _propertyModels[(schema, context)] ??= _resolveSchemaRefForProperty(
+        schema,
+        context,
+      );
+
+  Schema? resolveSchemaReference(Schema schema) =>
+      _resolveSchemaToSchema(schema);
+
+  AdditionalPropertiesPolicy importAdditionalProperties(
+    Schema schema,
+    Context context,
+  ) => _resolveAdditionalProperties(schema, context);
 
   /// Resolves a schema that may have a $ref field.
   Model _resolveSchemaRef(String? name, Schema schema, Context context) {
@@ -1919,6 +1940,14 @@ class ModelImporter {
   AdditionalPropertiesPolicy _resolveAdditionalProperties(
     Schema schema,
     Context context,
+  ) => _additionalProperties[(schema, context)] ??= _importAdditionalProperties(
+    schema,
+    context,
+  );
+
+  AdditionalPropertiesPolicy _importAdditionalProperties(
+    Schema schema,
+    Context context,
   ) {
     final ap = schema.additionalProperties;
     if (ap == false) return const ForbiddenAdditionalProperties();
@@ -2013,7 +2042,7 @@ class ModelImporter {
 
       final property = Property(
         name: propertyName,
-        model: _resolveSchemaRefForProperty(
+        model: importPropertySchema(
           propertySchema,
           context.pushAll(
             [name, contextPropertyName].whereType<String>(),

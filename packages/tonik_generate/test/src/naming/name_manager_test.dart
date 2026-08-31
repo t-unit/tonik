@@ -28,6 +28,111 @@ void main() {
       expect(name2, 'PetsApi', reason: 'Should return cached name');
     });
 
+    test('sorts inline multipart objects alongside ordinary object models', () {
+      final bodyContext = context.pushAll(['upload', 'body']);
+      final ordinary = ClassModel(
+        context: bodyContext,
+        isDeprecated: false,
+        examples: const [],
+        properties: [
+          Property(
+            name: 'z',
+            model: StringModel(context: bodyContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+      );
+      final multipart = MultipartRequestContent(
+        context: bodyContext,
+        parts: const [],
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+      );
+      manager.prime(
+        models: [ordinary],
+        requestBodies: [
+          RequestBodyObject(
+            name: null,
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {multipart},
+          ),
+        ],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      expect(manager.multipartName(multipart), 'UploadBodyModel');
+      expect(manager.modelName(ordinary), 'UploadBodyModel2');
+    });
+
+    test('sorts local multipart aliases alongside ordinary aliases', () {
+      final schemaContext = context.pushAll(['components', 'schemas']);
+      final bodyContext = context.pushAll(['upload', 'body']);
+      final object = ClassModel(
+        name: 'Upload',
+        context: schemaContext,
+        isDeprecated: false,
+        properties: const [],
+        examples: const [],
+      );
+      final namedAlias = AliasModel(
+        name: 'UploadAlias',
+        context: schemaContext,
+        model: object,
+        defaultValue: null,
+        examples: const [],
+      );
+      final ordinaryAlias = AliasModel(
+        context: bodyContext,
+        model: object,
+        defaultValue: null,
+        examples: const [],
+      );
+      final multipart = MultipartRequestContent(
+        context: bodyContext,
+        sourceName: 'Upload',
+        sourceContext: schemaContext,
+        alias: MultipartContentAlias(
+          targetName: 'UploadAlias',
+          targetContext: schemaContext,
+          description: 'Upload input.',
+        ),
+        parts: const [],
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+      );
+
+      manager.prime(
+        models: [ordinaryAlias, namedAlias, object],
+        requestBodies: [
+          RequestBodyObject(
+            name: null,
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {multipart},
+          ),
+        ],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      expect(manager.multipartAliasName(multipart), 'UploadBodyModel');
+      expect(manager.modelName(ordinaryAlias), 'UploadBodyModel2');
+      expect(manager.multipartName(multipart), 'UploadAlias');
+      expect(manager.multipartObjectName(multipart), 'Upload');
+    });
+
     group('responseWrapperNames', () {
       test('returns correct base and subclass names and caches result', () {
         final operation = Operation(
@@ -187,13 +292,13 @@ void main() {
         description: '',
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
           ),
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
@@ -213,13 +318,13 @@ void main() {
         description: '',
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
           ),
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
@@ -237,13 +342,13 @@ void main() {
         description: '',
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
           ),
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
@@ -435,7 +540,7 @@ void main() {
         description: '',
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
@@ -450,13 +555,13 @@ void main() {
         description: '',
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
           ),
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',

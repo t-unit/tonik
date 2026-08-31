@@ -352,7 +352,7 @@ void main() {
       final jsonContent = requestBody!.resolvedContent.firstWhere(
         (c) => c.contentType == ContentType.json,
       );
-      expect(jsonContent.model, isA<ClassModel>());
+      expect((jsonContent as ModelRequestContent).model, isA<ClassModel>());
 
       final orderInputModel = jsonContent.model as ClassModel;
       expect(orderInputModel.properties, hasLength(1));

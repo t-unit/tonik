@@ -2,13 +2,14 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_generator.dart';
-import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
+import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
-  late NameManager nameManager;
   late Context testContext;
   late DartEmitter emitter;
 
@@ -17,10 +18,6 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -57,10 +54,6 @@ void main() {
     PartEncoding? encoding,
     Object? defaultValue,
   }) {
-    final branchNameManager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
     final property = Property(
       name: 'value',
       model: propertyModel,
@@ -77,18 +70,14 @@ void main() {
       context: testContext,
       examples: const [],
     );
-    final content = RequestContent(
+    final content = multipartContentFromModel(
       model: model,
-      contentType: ContentType.multipart,
       rawContentType: 'multipart/form-data',
       multipartEncoding: encoding == null ? null : {property: encoding},
       examples: const [],
     );
     final result = buildMultipartBodyStatements(
-      content,
-      'body',
-      branchNameManager,
-      'test_package',
+      _planMultipartBody(content, 'body'),
     );
     final expected =
         '''
@@ -125,9 +114,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'name': const PartEncoding(
@@ -145,10 +133,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -348,9 +333,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'name': const PartEncoding(
@@ -366,10 +350,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -408,9 +389,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'nickname': const PartEncoding(
@@ -426,10 +406,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -468,9 +445,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'bio': const PartEncoding(
@@ -486,10 +462,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -518,19 +491,15 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: const {},
         examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -547,74 +516,7 @@ $expectedPartCode
       );
     });
 
-    test('generates UnsupportedError for non-ClassModel body', () {
-      final content = RequestContent(
-        model: BinaryModel(context: testContext),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            throw UnsupportedError(
-              'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-            );
-          }
-        '''),
-        ),
-      );
-    });
-
-    test('resolves AliasModel wrapping non-ClassModel and generates '
-        'UnsupportedError', () {
-      final content = RequestContent(
-        model: AliasModel(
-          name: 'BinaryAlias',
-          model: BinaryModel(context: testContext),
-          context: testContext,
-          examples: const [],
-          defaultValue: null,
-        ),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            throw UnsupportedError(
-              'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-            );
-          }
-        '''),
-        ),
-      );
-    });
-
-    test('resolves AliasModel wrapping ClassModel and generates correctly', () {
+    test('serializes parts from aliased multipart content', () {
       final classModel = ClassModel(
         name: 'InnerForm',
         isDeprecated: false,
@@ -633,34 +535,29 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
-        model: AliasModel(
-          name: 'FormAlias',
-          model: classModel,
-          context: testContext,
-          examples: const [],
-          defaultValue: null,
-        ),
-        contentType: ContentType.multipart,
+      final content = MultipartRequestContent(
+        name: 'FormAlias',
+        sourceName: classModel.name,
+        context: testContext,
         rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(classModel, {
-          'title': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
+        parts: [
+          multipartPartFixture(
+            classModel.properties.single,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
-        }),
+        ],
         examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -707,9 +604,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'name': const PartEncoding(
@@ -725,10 +621,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -766,9 +659,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'password': const PartEncoding(
@@ -784,10 +676,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -824,9 +713,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'data': const PartEncoding(
@@ -842,10 +730,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -882,9 +767,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'impossible': const PartEncoding(
@@ -900,10 +784,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -944,9 +825,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             r'$total': const PartEncoding(
@@ -962,10 +842,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1007,9 +884,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'age': const PartEncoding(
@@ -1025,10 +901,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1065,9 +938,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'score': const PartEncoding(
@@ -1083,10 +955,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1123,9 +992,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'value': const PartEncoding(
@@ -1141,10 +1009,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1181,9 +1046,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'active': const PartEncoding(
@@ -1199,10 +1063,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1239,9 +1100,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'birth_date': const PartEncoding(
@@ -1257,10 +1117,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1297,9 +1154,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'amount': const PartEncoding(
@@ -1315,10 +1171,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1355,9 +1208,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'website': const PartEncoding(
@@ -1373,10 +1225,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1415,9 +1264,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'created_at': const PartEncoding(
@@ -1433,10 +1281,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1476,9 +1321,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': const PartEncoding(
@@ -1494,10 +1338,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1538,9 +1379,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'age': const PartEncoding(
@@ -1556,10 +1396,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1597,9 +1434,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'createdAt': const PartEncoding(
@@ -1615,10 +1451,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1656,9 +1489,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'active': const PartEncoding(
@@ -1674,10 +1506,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1715,9 +1544,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'score': const PartEncoding(
@@ -1733,10 +1561,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1779,9 +1604,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'name': const PartEncoding(
@@ -1797,10 +1621,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1840,9 +1661,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': const PartEncoding(
@@ -1858,10 +1678,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1901,9 +1718,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'active': const PartEncoding(
@@ -1919,10 +1735,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1962,9 +1775,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'createdAt': const PartEncoding(
@@ -1980,10 +1792,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2023,9 +1832,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'value': const PartEncoding(
@@ -2041,10 +1849,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2096,9 +1901,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'status': const PartEncoding(
@@ -2114,10 +1918,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2171,9 +1972,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'status': const PartEncoding(
@@ -2189,10 +1989,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2244,9 +2041,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': const PartEncoding(
@@ -2262,10 +2058,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2317,9 +2110,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'status': const PartEncoding(
@@ -2335,10 +2127,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2390,9 +2179,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': const PartEncoding(
@@ -2408,10 +2196,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2461,9 +2246,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'status': const PartEncoding(
@@ -2479,10 +2263,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2533,9 +2314,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'status': const PartEncoding(
@@ -2551,10 +2331,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2595,9 +2372,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'avatar': const PartEncoding(
@@ -2613,10 +2389,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2664,9 +2437,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'document': const PartEncoding(
@@ -2682,10 +2454,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2735,9 +2504,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'photo': const PartEncoding(
@@ -2753,10 +2521,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2806,9 +2571,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'image': const PartEncoding(
@@ -2824,10 +2588,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2883,9 +2644,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': const PartEncoding(
@@ -2901,10 +2661,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2954,9 +2711,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'avatar': const PartEncoding(
@@ -2972,10 +2728,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3036,9 +2789,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3054,10 +2806,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3111,9 +2860,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3129,10 +2877,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3185,9 +2930,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3203,10 +2947,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3259,9 +3000,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3277,10 +3017,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3331,9 +3068,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3349,10 +3085,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3405,9 +3138,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3423,10 +3155,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3479,9 +3208,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3497,10 +3225,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3553,9 +3278,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3571,10 +3295,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3625,9 +3346,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3643,10 +3363,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3701,9 +3418,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3719,10 +3435,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3778,9 +3491,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3796,10 +3508,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3855,9 +3564,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -3873,10 +3581,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3933,9 +3638,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': const PartEncoding(
@@ -3951,10 +3655,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -4008,9 +3709,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': const PartEncoding(
@@ -4026,10 +3726,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4091,9 +3788,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': const PartEncoding(
@@ -4109,10 +3805,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4175,9 +3868,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               "it's-form": const PartEncoding(
@@ -4193,10 +3885,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4259,9 +3948,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               r'path\form': const PartEncoding(
@@ -4277,10 +3965,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4345,9 +4030,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               r'$total': const PartEncoding(
@@ -4363,10 +4047,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4426,9 +4107,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'address': const PartEncoding(
@@ -4444,10 +4124,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -4510,9 +4187,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': const PartEncoding(
@@ -4529,10 +4205,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4587,9 +4260,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': PartEncoding(
@@ -4617,10 +4289,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4686,9 +4355,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': const PartEncoding(
@@ -4704,10 +4372,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4757,9 +4422,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': const PartEncoding(
@@ -4775,10 +4439,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4834,9 +4495,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'address': PartEncoding(
@@ -4864,10 +4524,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4937,9 +4594,8 @@ $expectedPartCode
               examples: const [],
             ),
         };
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'file': PartEncoding(
@@ -4956,10 +4612,7 @@ $expectedPartCode
 
         final code = emitStatements(
           buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           ),
         );
 
@@ -5004,9 +4657,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5022,10 +4674,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5077,9 +4726,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5095,10 +4743,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5152,18 +4797,14 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5215,9 +4856,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5233,10 +4873,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5285,9 +4922,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             "it's-meta": const PartEncoding(
@@ -5303,10 +4939,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5354,9 +4987,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5372,10 +5004,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5457,9 +5086,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5475,10 +5103,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5563,9 +5188,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             "it's-meta": const PartEncoding(
@@ -5581,10 +5205,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5667,9 +5288,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             r'path\to': const PartEncoding(
@@ -5685,10 +5305,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5771,9 +5388,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             r'$total': const PartEncoding(
@@ -5789,10 +5405,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5882,9 +5495,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'metadata': const PartEncoding(
@@ -5900,10 +5512,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5955,9 +5564,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -5973,10 +5581,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6019,9 +5624,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -6037,10 +5641,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6083,9 +5684,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -6101,10 +5701,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6154,9 +5751,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -6172,10 +5768,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6218,9 +5811,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -6236,10 +5828,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6283,9 +5872,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -6301,10 +5889,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6350,9 +5935,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             "it's-tags": const PartEncoding(
@@ -6368,10 +5952,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -6429,9 +6010,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'statuses': const PartEncoding(
@@ -6447,10 +6027,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6510,9 +6087,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'codes': const PartEncoding(
@@ -6528,10 +6104,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6586,9 +6159,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'scores': const PartEncoding(
@@ -6604,10 +6176,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6650,9 +6219,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'scores': const PartEncoding(
@@ -6668,10 +6236,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6714,9 +6279,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'scores': const PartEncoding(
@@ -6732,10 +6296,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6788,9 +6349,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'dates': const PartEncoding(
@@ -6806,10 +6366,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6852,9 +6409,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'dates': const PartEncoding(
@@ -6870,10 +6426,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6918,9 +6471,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'files': const PartEncoding(
@@ -6936,10 +6488,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6987,9 +6536,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'files': const PartEncoding(
@@ -7005,10 +6553,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7066,9 +6611,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'addresses': const PartEncoding(
@@ -7084,10 +6628,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7138,9 +6679,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'addresses': const PartEncoding(
@@ -7156,10 +6696,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7204,9 +6741,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -7222,10 +6758,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7270,9 +6803,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': const PartEncoding(
@@ -7288,10 +6820,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7337,9 +6866,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'tags': const PartEncoding(
@@ -7355,10 +6883,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7399,9 +6924,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'scores': const PartEncoding(
@@ -7417,10 +6941,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7463,18 +6984,14 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7526,9 +7043,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'addresses': const PartEncoding(
@@ -7544,10 +7060,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7588,9 +7101,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'dates': const PartEncoding(
@@ -7606,10 +7118,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7650,9 +7159,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'tags': const PartEncoding(
@@ -7668,10 +7176,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7720,9 +7225,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'tags': const PartEncoding(
@@ -7738,10 +7242,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7787,9 +7288,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'scores': const PartEncoding(
@@ -7805,10 +7305,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7854,9 +7351,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'dates': const PartEncoding(
@@ -7872,10 +7368,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7933,9 +7426,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'priorities': const PartEncoding(
@@ -7951,10 +7443,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8005,18 +7494,14 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8074,9 +7559,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'priorities': const PartEncoding(
@@ -8092,10 +7576,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -8142,9 +7623,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'files': const PartEncoding(
@@ -8160,10 +7640,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8219,9 +7696,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'matrix': const PartEncoding(
@@ -8237,10 +7713,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8291,9 +7764,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               r'$matrix': const PartEncoding(
@@ -8309,10 +7781,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8359,9 +7828,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               'items': const PartEncoding(
@@ -8377,10 +7845,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8427,9 +7892,8 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = RequestContent(
+          final content = multipartContentFromModel(
             model: model,
-            contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             multipartEncoding: _multipartEncoding(model, {
               "it's-items": const PartEncoding(
@@ -8445,10 +7909,7 @@ $expectedPartCode
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8491,9 +7952,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'name': const PartEncoding(
@@ -8509,10 +7969,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyExpression(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitExpressionAsMethod(result);
@@ -8525,38 +7982,6 @@ $expectedPartCode
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
               return _$formData;
-            }();
-          }
-        '''),
-        ),
-      );
-    });
-
-    test('returns IIFE with UnsupportedError for non-ClassModel', () {
-      final content = RequestContent(
-        model: BinaryModel(context: testContext),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyExpression(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitExpressionAsMethod(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            await () async {
-              throw UnsupportedError(
-                'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-              );
             }();
           }
         '''),
@@ -8586,9 +8011,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': PartEncoding(
@@ -8616,10 +8040,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8669,9 +8090,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': PartEncoding(
@@ -8699,10 +8119,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8762,9 +8179,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'address': PartEncoding(
@@ -8792,10 +8208,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8841,9 +8254,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'description': PartEncoding(
@@ -8871,10 +8283,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8918,9 +8327,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': PartEncoding(
@@ -8948,10 +8356,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9006,9 +8411,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'status': PartEncoding(
@@ -9036,10 +8440,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9081,9 +8482,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': PartEncoding(
@@ -9111,10 +8511,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9163,9 +8560,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': PartEncoding(
@@ -9204,10 +8600,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9260,9 +8653,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': const PartEncoding(
@@ -9278,10 +8670,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9334,9 +8723,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': PartEncoding(
@@ -9364,10 +8752,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9413,9 +8798,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'tags': PartEncoding(
@@ -9443,10 +8827,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9506,9 +8887,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'tags': PartEncoding(
@@ -9536,10 +8916,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9588,9 +8965,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'dates': PartEncoding(
@@ -9618,10 +8994,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9668,9 +9041,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'files': PartEncoding(
@@ -9698,10 +9070,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9760,9 +9129,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'addresses': PartEncoding(
@@ -9790,10 +9158,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9834,9 +9199,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'file': PartEncoding(
@@ -9864,10 +9228,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9923,9 +9284,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'file': PartEncoding(
@@ -9953,10 +9313,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10011,9 +9368,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'data': PartEncoding(
@@ -10041,10 +9397,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10090,9 +9443,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'count': PartEncoding(
@@ -10120,10 +9472,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10169,9 +9518,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'createdAt': PartEncoding(
@@ -10199,10 +9547,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10251,9 +9596,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'dates': PartEncoding(
@@ -10281,10 +9625,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10354,9 +9695,8 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: model,
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         multipartEncoding: _multipartEncoding(model, {
           'document': PartEncoding(
@@ -10378,10 +9718,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -10436,9 +9773,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             'name': const PartEncoding(
@@ -10454,10 +9790,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10497,9 +9830,8 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = RequestContent(
+        final content = multipartContentFromModel(
           model: model,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           multipartEncoding: _multipartEncoding(model, {
             "it's-field": const PartEncoding(
@@ -10515,10 +9847,7 @@ $expectedPartCode
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10559,6 +9888,15 @@ Map<Property, PartEncoding> _multipartEncoding(
       model.properties.firstWhere((p) => p.name == entry.key): entry.value,
   };
 }
+
+MultipartBodyPlan _planMultipartBody(
+  MultipartRequestContent content,
+  String bodyAccessor,
+) => const MultipartBodyPlanner(backend: TransportBackend.dio).plan(
+  content,
+  bodyAccessor: bodyAccessor,
+  isRequired: true,
+);
 
 ClassModel _testClassModel(Context context) => ClassModel(
   name: 'NestedValue',

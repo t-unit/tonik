@@ -3,6 +3,8 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
@@ -25,7 +27,7 @@ class DioDataGenerator {
   final bool useImmutableCollections;
 
   /// Generates a data expression for the operation.
-  Method generateDataMethod(Operation operation) {
+  Method generateDataMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
       return Method(
@@ -43,6 +45,9 @@ class DioDataGenerator {
     final multipartHeaderInfo = extractOperationMultipartHeaderParamInfo(
       operation,
     );
+    bodyPlan ??= const OperationRequestPlanner(
+      backend: TransportBackend.dio,
+    ).planBody(operation);
 
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
@@ -75,8 +80,8 @@ class DioDataGenerator {
           ..add(const Code('final '))
           ..add(refer(variantName, requestBodyUrl).code);
 
-        switch (c.contentType) {
-          case .text:
+        switch (c) {
+          case ModelRequestContent(contentType: .text):
             switchCases
               ..add(const Code(' value => '))
               ..add(
@@ -86,7 +91,7 @@ class DioDataGenerator {
                 ).code,
               )
               ..add(const Code(','));
-          case .bytes:
+          case ModelRequestContent(contentType: .bytes):
             switch (c.model) {
               case BinaryModel():
                 switchCases.add(const Code(' value => value.value.toBytes(),'));
@@ -112,7 +117,7 @@ class DioDataGenerator {
                   )
                   ..add(const Code(','));
             }
-          case .json:
+          case ModelRequestContent(contentType: .json):
             final jsonBuilt = buildToJsonPropertyExpression(
               'value.value',
               Property(
@@ -135,7 +140,7 @@ class DioDataGenerator {
               ..add(const Code(' value => '))
               ..add(_jsonRequestBodyExpression(jsonBuilt, c.model).code)
               ..add(const Code(','));
-          case .form:
+          case ModelRequestContent(contentType: .form):
             switchCases
               ..add(const Code(' value => '))
               ..add(
@@ -148,22 +153,22 @@ class DioDataGenerator {
                 ).code,
               )
               ..add(const Code(','));
-          case .multipart:
-            final isClassModel = c.model.resolved is ClassModel;
+          case MultipartRequestContent():
+            final multipartPlan =
+                (bodyPlan as BodySelectionPlan).variants.firstWhere(
+                      (variant) => variant.rawContentType == c.rawContentType,
+                    )
+                    as MultipartBodyPlan;
             switchCases
-              ..add(Code(isClassModel ? ' value => ' : ' _ => '))
               ..add(
-                buildMultipartBodyExpression(
-                  c,
-                  'value.value',
-                  nameManager,
-                  package,
-                  headerParameters: multipartHeaderInfo
-                      .where((info) => identical(info.content, c))
-                      .toList(),
-                ).code,
+                Code(multipartPlan.emissions.isEmpty ? ' _ => ' : ' value => '),
+              )
+              ..add(
+                buildMultipartBodyExpression(multipartPlan).code,
               )
               ..add(const Code(','));
+          case ModelRequestContent(contentType: .multipart):
+            throw StateError('Multipart content must own parts.');
         }
       }
 
@@ -219,8 +224,61 @@ class DioDataGenerator {
       );
     }
 
-    final model = content.first.model;
-    final contentType = content.first.contentType;
+    final item = content.first;
+    if (item is MultipartRequestContent) {
+      return Method(
+        (b) => b
+          ..name = '_data'
+          ..returns = TypeReference(
+            (t) => t
+              ..symbol = 'Future'
+              ..url = 'dart:async'
+              ..types.add(refer('Object?', 'dart:core')),
+          )
+          ..modifier = MethodModifier.async
+          ..optionalParameters.add(
+            Parameter(
+              (p) => p
+                ..name = 'body'
+                ..type = requestContentTypeReference(
+                  item,
+                  nameManager,
+                  package,
+                  isNullableOverride: !isRequired,
+                  useImmutableCollections: useImmutableCollections,
+                )
+                ..named = true
+                ..required = isRequired,
+            ),
+          )
+          ..optionalParameters.addAll(
+            multipartHeaderInfo.map(
+              (info) => Parameter(
+                (p) => p
+                  ..name = info.name
+                  ..type = typeReference(
+                    info.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !info.isRequired,
+                  )
+                  ..named = true
+                  ..required = info.isRequired,
+              ),
+            ),
+          )
+          ..lambda = false
+          ..body = Block.of([
+            if (!isRequired) const Code('if (body == null) return null;'),
+            ...buildMultipartBodyStatements(
+              bodyPlan! as MultipartBodyPlan,
+            ).statements,
+          ]),
+      );
+    }
+    item as ModelRequestContent;
+    final model = item.model;
+    final contentType = item.contentType;
     final parameterType = typeReference(
       model,
       nameManager,
@@ -316,7 +374,7 @@ class DioDataGenerator {
           model,
           useQueryComponent: true,
           textEncoding: content.first.textEncoding,
-          encoding: content.first.formEncoding,
+          encoding: item.formEncoding,
         );
         bodyCode
           ..clear()
@@ -327,55 +385,13 @@ class DioDataGenerator {
             const Code(';'),
           ]);
       case ContentType.multipart:
-        bodyCode
-          ..clear()
-          ..addAll([
-            if (!isRequired) const Code('if (body == null) return null;\n'),
-            ...buildMultipartBodyStatements(
-              content.first,
-              'body',
-              nameManager,
-              package,
-              headerParameters: multipartHeaderInfo,
-            ).statements,
-          ]);
+        throw StateError('Multipart content must own parts.');
     }
-
-    // Collect multipart header params for single-content multipart bodies.
-    final multipartHeaderParams = <Parameter>[];
-    if (contentType == ContentType.multipart) {
-      for (final info in multipartHeaderInfo) {
-        multipartHeaderParams.add(
-          Parameter(
-            (b) => b
-              ..name = info.name
-              ..type = typeReference(
-                info.model,
-                nameManager,
-                package,
-                isNullableOverride: !info.isRequired,
-              )
-              ..named = true
-              ..required = info.isRequired,
-          ),
-        );
-      }
-    }
-
-    final isMultipart = contentType == ContentType.multipart;
 
     return Method(
       (b) => b
         ..name = '_data'
-        ..returns = isMultipart
-            ? TypeReference(
-                (b) => b
-                  ..symbol = 'Future'
-                  ..url = 'dart:async'
-                  ..types.add(refer('Object?', 'dart:core')),
-              )
-            : refer('Object?', 'dart:core')
-        ..modifier = isMultipart ? MethodModifier.async : null
+        ..returns = refer('Object?', 'dart:core')
         ..optionalParameters.add(
           Parameter(
             (b) => b
@@ -385,7 +401,6 @@ class DioDataGenerator {
               ..required = isRequired,
           ),
         )
-        ..optionalParameters.addAll(multipartHeaderParams)
         ..lambda = false
         ..body = Block.of([
           ...spliceInlineHelpers(inlineHelpers),

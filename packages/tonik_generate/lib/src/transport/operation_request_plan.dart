@@ -161,27 +161,34 @@ final class FormBodyPlan extends PresentBodyPlan {
   final List<FormEntryPlan> entries;
 }
 
-enum MultipartPartSource { scalar, bytes, fileBytesOrPath }
+enum MultipartValueSource { field, text, bytes, path, file }
 
-@immutable
-class MultipartPartPlan {
-  const MultipartPartPlan({
+sealed class MultipartEmission {
+  const MultipartEmission();
+}
+
+final class MultipartCode extends MultipartEmission {
+  const MultipartCode(this.code);
+
+  final Code code;
+}
+
+final class MultipartAppend extends MultipartEmission {
+  const MultipartAppend({
     required this.name,
     required this.value,
     required this.source,
-    required this.isNullable,
-    required this.filename,
-    required this.contentType,
-    this.allowsMultiple = false,
+    this.filename,
+    this.contentType,
+    this.headers,
   });
 
-  final String name;
+  final Expression name;
   final Expression value;
-  final MultipartPartSource source;
-  final bool isNullable;
-  final bool allowsMultiple;
-  final String? filename;
+  final MultipartValueSource source;
+  final Expression? filename;
   final String? contentType;
+  final Expression? headers;
 }
 
 @immutable
@@ -189,11 +196,13 @@ final class MultipartBodyPlan extends PresentBodyPlan {
   MultipartBodyPlan({
     required super.value,
     required super.rawContentType,
-    required List<MultipartPartPlan> parts,
+    required List<MultipartEmission> emissions,
     required super.isRequired,
-  }) : parts = List.unmodifiable(parts);
+    this.usesCustomParts = false,
+  }) : emissions = List.unmodifiable(emissions);
 
-  final List<MultipartPartPlan> parts;
+  final List<MultipartEmission> emissions;
+  final bool usesCustomParts;
 }
 
 /// A runtime-selected body variant for OpenAPI operations with multiple media

@@ -6,6 +6,8 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_data_generator.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
   late DioDataGenerator generator;
   late NameManager nameManager;
@@ -71,7 +73,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'TestModel',
@@ -121,7 +123,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'JsonModel',
@@ -133,7 +135,7 @@ void main() {
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'FormModel',
@@ -187,13 +189,13 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
@@ -252,7 +254,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: tree,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -318,13 +320,13 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: tree,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: ClassModel(
                   isDeprecated: false,
                   name: 'Plain',
@@ -389,7 +391,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -433,7 +435,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -478,7 +480,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: AliasModel(
                 name: 'UserId',
                 model: StringModel(context: testContext),
@@ -528,7 +530,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: EnumModel<String>(
                 name: 'Status',
                 values: {
@@ -582,7 +584,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: DateModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -627,7 +629,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: DecimalModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -672,13 +674,13 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: IntegerModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: EnumModel(
                 isDeprecated: false,
                 name: 'TestEnum',
@@ -735,7 +737,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'TestModel',
@@ -785,7 +787,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain; charset=us-ascii',
@@ -833,7 +835,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
@@ -882,7 +884,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: BinaryModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
@@ -929,7 +931,7 @@ void main() {
             description: null,
             isRequired: false,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: BinaryModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
@@ -974,7 +976,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'JsonModel',
@@ -986,7 +988,7 @@ void main() {
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain; charset=us-ascii',
@@ -1035,7 +1037,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'JsonModel',
@@ -1047,7 +1049,7 @@ void main() {
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
@@ -1094,7 +1096,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 isDeprecated: false,
                 name: 'JsonModel',
@@ -1106,7 +1108,7 @@ void main() {
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: BinaryModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
@@ -1153,7 +1155,7 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain; charset=iso-8859-1',
@@ -1228,7 +1230,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: petModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
@@ -1281,7 +1283,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.form,
                 rawContentType:
@@ -1353,7 +1355,7 @@ Object? _data({required String body}) {
             description: null,
             isRequired: false,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: petModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
@@ -1446,7 +1448,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -1527,7 +1529,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: false,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -1607,7 +1609,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -2564,7 +2566,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -2653,9 +2655,8 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              multipartContentFromModel(
                 model: userModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncodingByName(userModel, {
                   'name': const PartEncoding(
@@ -2740,9 +2741,8 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                multipartContentFromModel(
                   model: uploadModel,
-                  contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   multipartEncoding: _multipartEncodingByName(uploadModel, {
                     'file': PartEncoding(
@@ -2839,9 +2839,8 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              multipartContentFromModel(
                 model: uploadModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncodingByName(uploadModel, {
                   'file': PartEncoding(
@@ -2898,6 +2897,55 @@ Object? _data({required String body}) {
         );
       });
 
+      test('does not bind the value of an empty multipart variant', () {
+        final operation = Operation(
+          operationId: 'upload',
+          path: '/upload',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'payload',
+            context: testContext,
+            description: null,
+            isRequired: false,
+            content: {
+              ModelRequestContent(
+                model: StringModel(context: testContext),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                examples: const [],
+              ),
+              multipartContentFixture(testContext, const []),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+        const expected = r'''
+Future<Object?> _data({Payload? body}) async {
+  if (body == null) return null;
+  return switch (body) {
+    final PayloadJson value => jsonEncode(value.value),
+    final PayloadFormData _ => await () async {
+      final _$formData = FormData();
+      return _$formData;
+    }(),
+  };
+}
+''';
+        final method = generator.generateDataMethod(operation);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expected)),
+        );
+      });
+
       test('generates _data method for multi-content including multipart', () {
         final jsonModel = ClassModel(
           name: 'JsonPayload',
@@ -2945,15 +2993,14 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: jsonModel,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              multipartContentFromModel(
                 model: formModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncodingByName(formModel, {
                   'name': const PartEncoding(
@@ -3037,13 +3084,13 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: jsonModel,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: formModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
@@ -3118,13 +3165,13 @@ Object? _data({required String body}) {
               description: null,
               isRequired: false,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: jsonModel,
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -3221,13 +3268,13 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: jsonModel,
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                RequestContent(
+                ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
@@ -3310,9 +3357,8 @@ Object? _data({required String body}) {
               description: null,
               isRequired: false,
               content: {
-                RequestContent(
+                multipartContentFromModel(
                   model: userModel,
-                  contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   multipartEncoding: _multipartEncodingByName(userModel, {
                     'name': const PartEncoding(
@@ -3396,15 +3442,14 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: jsonModel,
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                RequestContent(
+                multipartContentFromModel(
                   model: uploadModel,
-                  contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   multipartEncoding: _multipartEncodingByName(uploadModel, {
                     'file': PartEncoding(
@@ -3461,65 +3506,6 @@ Object? _data({required String body}) {
           expect(method.modifier, MethodModifier.async);
         },
       );
-
-      test(
-        'generates _data method for non-ClassModel multipart body '
-        'without unreachable return',
-        () {
-          final mapModel = MapModel(
-            name: 'AssetMap',
-            valueModel: StringModel(context: testContext),
-            context: testContext,
-            examples: const [],
-          );
-
-          final operation = Operation(
-            operationId: 'uploadAssets',
-            path: '/assets',
-            method: HttpMethod.post,
-            requestBody: RequestBodyObject(
-              name: 'uploadAssets',
-              context: testContext,
-              description: null,
-              isRequired: true,
-              content: {
-                RequestContent(
-                  model: mapModel,
-                  contentType: ContentType.multipart,
-                  rawContentType: 'multipart/form-data',
-                  examples: const [],
-                ),
-              },
-            ),
-            responses: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            queryParameters: const {},
-            headers: const {},
-            context: testContext,
-            tags: const {},
-            isDeprecated: false,
-            securitySchemes: const {},
-          );
-
-          const expectedMethod = '''
-            Future<Object?> _data({
-              required AssetMap body,
-            }) async {
-              throw UnsupportedError(
-                'Multipart request bodies require an object schema (ClassModel). Got: MapModel.',
-              );
-            }
-          ''';
-
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
     });
 
     group('unsupported bytes content type generates runtime throws', () {
@@ -3536,7 +3522,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: EnumModel<String>(
                     name: 'Status',
                     values: const {},
@@ -3585,7 +3571,7 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                RequestContent(
+                ModelRequestContent(
                   model: ClassModel(
                     isDeprecated: false,
                     name: 'JsonModel',
@@ -3597,7 +3583,7 @@ Object? _data({required String body}) {
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                RequestContent(
+                ModelRequestContent(
                   model: EnumModel<String>(
                     name: 'Status',
                     values: const {},
@@ -3641,87 +3627,6 @@ Object? _data({required String body}) {
         },
       );
     });
-
-    group(
-      'non-ClassModel multipart in multi-content uses wildcard pattern',
-      () {
-        test(
-          'generates throw with wildcard pattern for MapModel multipart in '
-          'multi-content request body',
-          () {
-            final jsonModel = ClassModel(
-              name: 'JsonPayload',
-              isDeprecated: false,
-              properties: const [],
-              context: testContext,
-              examples: const [],
-            );
-
-            final mapModel = MapModel(
-              name: 'AssetMap',
-              valueModel: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            );
-
-            final operation = Operation(
-              operationId: 'createItem',
-              path: '/items',
-              method: HttpMethod.post,
-              requestBody: RequestBodyObject(
-                name: 'createItem',
-                context: testContext,
-                description: null,
-                isRequired: true,
-                content: {
-                  RequestContent(
-                    model: jsonModel,
-                    contentType: ContentType.json,
-                    rawContentType: 'application/json',
-                    examples: const [],
-                  ),
-                  RequestContent(
-                    model: mapModel,
-                    contentType: ContentType.multipart,
-                    rawContentType: 'multipart/form-data',
-                    examples: const [],
-                  ),
-                },
-              ),
-              responses: const {},
-              pathParameters: const {},
-              cookieParameters: const {},
-              queryParameters: const {},
-              headers: const {},
-              context: testContext,
-              tags: const {},
-              isDeprecated: false,
-              securitySchemes: const {},
-            );
-
-            const expectedMethod = '''
-              Future<Object?> _data({required CreateItem body}) async {
-                return switch (body) {
-                  final CreateItemJson value => value.value.toJson(),
-                  final CreateItemFormData _ => await () async {
-                    throw UnsupportedError(
-                      'Multipart request bodies require an object schema (ClassModel). Got: MapModel.',
-                    );
-                  }(),
-                };
-              }
-            ''';
-
-            final method = generator.generateDataMethod(operation);
-            final methodString = format(method.accept(emitter).toString());
-            expect(
-              collapseWhitespace(methodString),
-              collapseWhitespace(format(expectedMethod)),
-            );
-          },
-        );
-      },
-    );
   });
 }
 
@@ -3764,7 +3669,7 @@ Operation _formOperation({
       description: null,
       isRequired: true,
       content: {
-        RequestContent(
+        ModelRequestContent(
           model: model,
           contentType: ContentType.form,
           rawContentType: 'application/x-www-form-urlencoded',

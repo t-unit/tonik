@@ -49,7 +49,7 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: testContext),
             contentType: ContentType.json,
             rawContentType: 'application/json',
@@ -72,13 +72,13 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -103,13 +103,13 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -138,13 +138,13 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
@@ -171,6 +171,60 @@ void main() {
         expect(constructor.requiredParameters.first.name, 'this.value');
       });
 
+      test('reuses the schema name for JSON and multipart variants', () {
+        final model = ClassModel(
+          name: 'SharedInput',
+          context: testContext,
+          isDeprecated: false,
+          properties: const [],
+          examples: const [],
+        );
+        final requestBody = RequestBodyObject(
+          name: 'Upload',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: model,
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+            MultipartRequestContent(
+              name: 'SharedInput',
+              context: testContext,
+              parts: const [],
+              rawContentType: 'multipart/form-data',
+              examples: const [],
+            ),
+          },
+        );
+
+        final (name, _) = nameManager.requestBodyNames(requestBody);
+        final classes = generator.generateClasses(requestBody, name);
+
+        expect(classes.map((c) => c.name), [
+          'Upload',
+          'UploadJson',
+          'UploadFormData',
+        ]);
+        for (final subClass in classes.skip(1)) {
+          final field = subClass.fields.single;
+          expect(field.name, 'value');
+          expect(field.type?.symbol, 'SharedInput');
+          expect(
+            field.type?.url,
+            'package:test_package/src/model/shared_input.dart',
+          );
+
+          final constructor = subClass.constructors.single;
+          expect(constructor.constant, isTrue);
+          expect(constructor.requiredParameters.single.name, 'this.value');
+          expect(constructor.optionalParameters, isEmpty);
+        }
+      });
+
       group('equals method generation', () {
         test('generates equals method with simple value', () {
           final requestBody = RequestBodyObject(
@@ -179,13 +233,13 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
@@ -218,7 +272,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
@@ -228,7 +282,7 @@ void main() {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
@@ -264,13 +318,13 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
@@ -300,7 +354,7 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
@@ -310,7 +364,7 @@ void main() {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',

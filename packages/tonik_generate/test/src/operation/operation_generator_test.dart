@@ -10,6 +10,8 @@ import 'package:tonik_generate/src/operation/operation_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
   group('OperationGenerator', () {
     late OperationGenerator generator;
@@ -886,7 +888,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: 'A single content type body',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -942,7 +944,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: 'An optional single content type body',
             isRequired: false,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -1090,13 +1092,13 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: 'A multiple content type body',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: IntegerModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/xml',
@@ -1170,9 +1172,8 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              multipartContentFromModel(
                 model: multipartModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncoding(multipartModel, {
                   'name': const PartEncoding(
@@ -1346,9 +1347,8 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: false,
             content: {
-              RequestContent(
+              multipartContentFromModel(
                 model: multipartModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncoding(multipartModel, {
                   'name': const PartEncoding(
@@ -1504,7 +1504,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: 'A single content type body',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -2584,7 +2584,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
@@ -3379,7 +3379,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           description: 'User to create',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -3993,9 +3993,8 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
+              multipartContentFromModel(
                 model: uploadModel,
-                contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 multipartEncoding: _multipartEncoding(uploadModel, {
                   'file': PartEncoding(

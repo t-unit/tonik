@@ -3,6 +3,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/model/object_declaration.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_builders.dart';
@@ -24,6 +25,7 @@ import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -46,20 +48,71 @@ class ClassGenerator {
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
-  ({String code, String filename}) generate(ClassModel model) {
+  ({String code, String filename}) generate(ClassModel model) => _generate(
+    ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
+  );
+
+  ({String code, String filename}) generateMultipart(
+    MultipartRequestContent content,
+  ) => _generate(
+    ObjectDeclaration.fromMultipart(
+      content,
+      nameManager.multipartObjectName(content),
+    ),
+  );
+
+  ({String code, String filename}) _generate(ObjectDeclaration model) {
+    return _generateFile(model.name, _generateClasses(model));
+  }
+
+  ({String code, String filename}) generateMultipartAlias(
+    MultipartRequestContent content,
+  ) {
+    final alias = content.alias!;
+    final targetName = nameManager.multipartName(content);
+    final name = nameManager.multipartAliasName(content);
+    return _generateFile(name, [
+      TypeDef(
+        (b) => b
+          ..name = name
+          ..docs.addAll(
+            formatDocsWithExamples(alias.description, alias.examples),
+          )
+          ..annotations.addAll([
+            if (alias.isDeprecated)
+              refer('Deprecated', 'dart:core').call([
+                literalString('This typedef is deprecated.'),
+              ]),
+          ])
+          ..definition = TypeReference(
+            (b) => b
+              ..symbol = targetName
+              ..url = sourceFileUrl(package, 'model', targetName)
+              ..isNullable = alias.isNullable,
+          ),
+      ),
+    ]);
+  }
+
+  ({String code, String filename}) _generateFile(
+    String name,
+    List<Spec> specs,
+  ) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(
-        additionalImports: ['package:tonik_util/tonik_util.dart'],
+        additionalImports: [
+          if (specs.any((spec) => spec is Class))
+            'package:tonik_util/tonik_util.dart',
+        ],
       ),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
 
-    final fileName = nameManager.fileNameForClass(nameManager.modelName(model));
-    final generatedClasses = generateClasses(model);
+    final fileName = nameManager.fileNameForClass(name);
 
     final library = Library((b) {
-      b.body.addAll(generatedClasses);
+      b.body.addAll(specs);
     });
 
     final formatter = DartFormatter(
@@ -72,18 +125,23 @@ class ClassGenerator {
   }
 
   @visibleForTesting
-  List<Spec> generateClasses(ClassModel model) {
-    final className = nameManager.modelName(model);
+  List<Spec> generateClasses(ClassModel model) => _generateClasses(
+    ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
+  );
+
+  @visibleForTesting
+  List<Spec> generateMultipartClasses(MultipartRequestContent content) =>
+      _generateClasses(
+        ObjectDeclaration.fromMultipart(
+          content,
+          nameManager.multipartObjectName(content),
+        ),
+      );
+
+  List<Spec> _generateClasses(ObjectDeclaration model) {
+    final className = model.name;
     final actualClassName = model.isNullable
-        ? nameManager.modelName(
-            AliasModel(
-              name: '\$Raw$className',
-              model: model,
-              context: model.context,
-              defaultValue: null,
-              examples: const [],
-            ),
-          )
+        ? nameManager.rawObjectName(className)
         : className;
 
     final normalizedProperties = normalizeProperties(model.properties.toList());
@@ -117,14 +175,14 @@ class ClassGenerator {
   Class generateClass(ClassModel model, [Method? copyWithGetter]) {
     final className = nameManager.modelName(model);
     return _generateClassWithName(
-      model,
+      ObjectDeclaration.fromModel(model, className),
       className,
       copyWithGetter: copyWithGetter,
     );
   }
 
   Class _generateClassWithName(
-    ClassModel model,
+    ObjectDeclaration model,
     String className, {
     Method? copyWithGetter,
   }) {
@@ -390,7 +448,7 @@ class ClassGenerator {
   CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ClassModel model,
+    ObjectDeclaration model,
   ) {
     final copyWithProps = properties.map(
       (prop) {
@@ -429,7 +487,7 @@ class ClassGenerator {
 
   Constructor _buildFromSimpleConstructor(
     String className,
-    ClassModel model,
+    ObjectDeclaration model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -514,7 +572,7 @@ class ClassGenerator {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
-    ClassModel classModel,
+    ObjectDeclaration classModel,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {
@@ -652,7 +710,7 @@ class ClassGenerator {
 
   Constructor _buildFromJsonConstructor(
     String className,
-    ClassModel model,
+    ObjectDeclaration model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -693,7 +751,7 @@ class ClassGenerator {
 
   Code _buildFromJsonBody(
     String className,
-    ClassModel model,
+    ObjectDeclaration model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     final normalizedProperties = normalizeProperties(
@@ -834,8 +892,8 @@ class ClassGenerator {
     ]);
   }
 
-  Method _buildToJsonMethod(ClassModel model) {
-    final className = nameManager.modelName(model);
+  Method _buildToJsonMethod(ObjectDeclaration model) {
+    final className = model.name;
 
     // Schema-level readOnly: encoding is never valid.
     if (model.isReadOnly) {
@@ -1024,7 +1082,7 @@ class ClassGenerator {
   Field _generateField(
     Property property,
     String normalizedName, {
-    ClassModel? classModel,
+    ObjectDeclaration? classModel,
   }) {
     final fieldBuilder = FieldBuilder()
       ..name = normalizedName
@@ -1064,7 +1122,7 @@ class ClassGenerator {
 
   TypeReference _getSchemaAwareTypeReference(
     Property property,
-    ClassModel model,
+    ObjectDeclaration model,
   ) {
     return typeReference(
       property.model,
@@ -1100,10 +1158,10 @@ class ClassGenerator {
   }
 
   Method _buildParameterPropertiesMethod(
-    ClassModel model,
+    ObjectDeclaration model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final className = nameManager.modelName(model);
+    final className = model.name;
 
     // Schema-level readOnly: encoding is never valid.
     if (model.isReadOnly) {
@@ -1163,7 +1221,7 @@ class ClassGenerator {
     );
   }
 
-  List<Code> _buildAdditionalPropertiesParameterLoop(ClassModel model) {
+  List<Code> _buildAdditionalPropertiesParameterLoop(ObjectDeclaration model) {
     final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
     if (apPolicy == null) return [];
 
@@ -1171,7 +1229,7 @@ class ClassGenerator {
     final apFieldName = nameManager.additionalPropertiesFieldName(
       allNormalized,
     );
-    final className = nameManager.modelName(model);
+    final className = model.name;
 
     return buildApPropertyValueEntries(
       AdditionalPropertiesPlan(
@@ -1250,7 +1308,7 @@ class ClassGenerator {
   Method _buildSimpleParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ClassModel model,
+    ObjectDeclaration model,
   ) {
     if (properties.isEmpty &&
         activeApPolicy(model.additionalPropertiesPolicy) == null) {
@@ -1318,7 +1376,7 @@ class ClassGenerator {
   Method _buildListParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ClassModel model,
+    ObjectDeclaration model,
   ) {
     final propertyAssignments = <Code>[];
 
@@ -1418,7 +1476,7 @@ class ClassGenerator {
   Method _buildMixedParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ClassModel model,
+    ObjectDeclaration model,
   ) {
     final propertyAssignments = <Code>[];
 
@@ -1565,7 +1623,7 @@ class ClassGenerator {
 
   Constructor _buildFromFormConstructor(
     String className,
-    ClassModel model,
+    ObjectDeclaration model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -1650,7 +1708,7 @@ class ClassGenerator {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
-    ClassModel classModel,
+    ObjectDeclaration classModel,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {

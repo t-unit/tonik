@@ -2,11 +2,15 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
 class OperationRequestPlanner {
-  const OperationRequestPlanner();
+  const OperationRequestPlanner({required this.backend});
+
+  final TransportBackend backend;
 
   OperationRequestPlan plan(
     Operation operation,
@@ -37,7 +41,7 @@ class OperationRequestPlanner {
       contentType: _contentTypeExpression(requestBody, content),
       cancellation: refer('cancellation'),
       response: _responseRequirements(operation),
-      body: _bodyPlan(requestBody, content),
+      body: planBody(operation),
     );
   }
 
@@ -119,17 +123,22 @@ class OperationRequestPlanner {
     );
   }
 
-  RequestBodyPlan _bodyPlan(
-    RequestBody? requestBody,
-    List<RequestContent> content,
-  ) {
+  RequestBodyPlan planBody(Operation operation) {
+    final requestBody = operation.requestBody;
+    final content = requestBody?.resolvedContent.toList() ?? const [];
     if (requestBody == null || content.isEmpty) {
       return const AbsentBodyPlan();
     }
 
+    final headers = extractOperationMultipartHeaderParamInfo(operation);
     final variants = [
       for (final item in content)
-        _contentPlan(item, isRequired: requestBody.isRequired),
+        _contentPlan(
+          item,
+          isRequired: requestBody.isRequired,
+          bodyAccessor: content.length > 1 ? 'value.value' : 'body',
+          headerParameters: headers,
+        ),
     ];
     if (variants.length == 1) return variants.single;
 
@@ -143,7 +152,18 @@ class OperationRequestPlanner {
   PresentBodyPlan _contentPlan(
     RequestContent content, {
     required bool isRequired,
+    required String bodyAccessor,
+    required List<MultipartHeaderParamInfo> headerParameters,
   }) {
+    if (content is MultipartRequestContent) {
+      return MultipartBodyPlanner(backend: backend).plan(
+        content,
+        bodyAccessor: bodyAccessor,
+        isRequired: isRequired,
+        headerParameters: headerParameters,
+      );
+    }
+    content as ModelRequestContent;
     final value = refer('body');
     return switch (content.contentType) {
       ContentType.json => JsonBodyPlan(
@@ -168,11 +188,8 @@ class OperationRequestPlanner {
         entries: _formEntries(content.model),
         isRequired: isRequired,
       ),
-      ContentType.multipart => MultipartBodyPlan(
-        value: value,
-        rawContentType: content.rawContentType,
-        parts: _multipartParts(content),
-        isRequired: isRequired,
+      ContentType.multipart => throw StateError(
+        'Multipart content must own parts.',
       ),
     };
   }
@@ -192,37 +209,5 @@ class OperationRequestPlanner {
           allowsMultiple: property.model.resolved is ListModel,
         ),
     ];
-  }
-
-  List<MultipartPartPlan> _multipartParts(RequestContent content) {
-    final resolved = content.model.resolved;
-    if (resolved is! ClassModel) return const [];
-
-    return [
-      for (final (:normalizedName, :property) in normalizeProperties(
-        resolved.properties.where((property) => !property.isReadOnly).toList(),
-      ))
-        MultipartPartPlan(
-          name: property.name,
-          value: refer('body').property(normalizedName),
-          source: _multipartSource(property.model),
-          isNullable: property.isNullable || !property.isRequired,
-          allowsMultiple: property.model.resolved is ListModel,
-          filename: null,
-          contentType: content.multipartEncoding?[property]?.wireContentType,
-        ),
-    ];
-  }
-
-  MultipartPartSource _multipartSource(Model model) {
-    final resolved = model.resolved;
-    final valueModel = resolved is ListModel
-        ? resolved.content.resolved
-        : resolved;
-    return switch (valueModel) {
-      BinaryModel() => MultipartPartSource.fileBytesOrPath,
-      Base64Model() => MultipartPartSource.bytes,
-      _ => MultipartPartSource.scalar,
-    };
   }
 }

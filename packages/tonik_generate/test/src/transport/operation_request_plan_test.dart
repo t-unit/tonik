@@ -1,9 +1,13 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
+
+import 'multipart_test_support.dart';
 
 void main() {
   group('OperationRequestPlan', () {
@@ -134,6 +138,8 @@ void main() {
 
     test('retains every body meaning as a distinct plan', () {
       final value = refer('body');
+      final partName = literalString('item');
+      final filename = literalString('item.bin');
       final plans = <RequestBodyPlan>[
         const AbsentBodyPlan(),
         JsonBodyPlan(
@@ -161,21 +167,18 @@ void main() {
         MultipartBodyPlan(
           value: value,
           rawContentType: 'multipart/form-data',
-          parts: [
-            MultipartPartPlan(
-              name: 'item',
+          emissions: [
+            MultipartAppend(
+              name: partName,
               value: refer('first'),
-              source: MultipartPartSource.scalar,
-              isNullable: false,
-              filename: null,
+              source: MultipartValueSource.text,
               contentType: 'text/plain',
             ),
-            MultipartPartPlan(
-              name: 'item',
+            MultipartAppend(
+              name: partName,
               value: refer('second'),
-              source: MultipartPartSource.fileBytesOrPath,
-              isNullable: true,
-              filename: 'item.bin',
+              source: MultipartValueSource.bytes,
+              filename: filename,
               contentType: 'application/octet-stream',
             ),
           ],
@@ -193,19 +196,19 @@ void main() {
       ]);
 
       final multipart = plans.last as MultipartBodyPlan;
-      expect(multipart.parts.map((part) => part.name).toList(), [
-        'item',
-        'item',
+      final parts = multipart.emissions.whereType<MultipartAppend>().toList();
+      expect(parts.map((part) => part.name).toList(), [
+        same(partName),
+        same(partName),
       ]);
-      expect(multipart.parts.last.source, MultipartPartSource.fileBytesOrPath);
-      expect(multipart.parts.last.isNullable, isTrue);
-      expect(multipart.parts.last.filename, 'item.bin');
-      expect(multipart.parts.last.contentType, 'application/octet-stream');
+      expect(parts.last.source, MultipartValueSource.bytes);
+      expect(parts.last.filename, same(filename));
+      expect(parts.last.contentType, 'application/octet-stream');
     });
   });
 
   group('OperationRequestPlanner', () {
-    const planner = OperationRequestPlanner();
+    const planner = OperationRequestPlanner(backend: TransportBackend.dio);
     const parameters = NormalizedRequestParameters(
       pathParameters: [],
       queryParameters: [],
@@ -252,12 +255,20 @@ void main() {
             description: null,
             isRequired: true,
             content: {
-              RequestContent(
-                model: StringModel(context: context),
-                contentType: contentType,
-                rawContentType: _rawContentTypes[contentType]!,
-                examples: const [],
-              ),
+              if (contentType == ContentType.multipart)
+                MultipartRequestContent(
+                  parts: const [],
+                  context: context,
+                  rawContentType: _rawContentTypes[contentType]!,
+                  examples: const [],
+                )
+              else
+                ModelRequestContent(
+                  model: StringModel(context: context),
+                  contentType: contentType,
+                  rawContentType: _rawContentTypes[contentType]!,
+                  examples: const [],
+                ),
             },
           ),
         );
@@ -289,7 +300,7 @@ void main() {
         examples: const [],
         defaultValue: null,
       );
-      final content = RequestContent(
+      final content = multipartContentFromModel(
         model: ClassModel(
           name: 'Upload',
           properties: [scalar, file],
@@ -297,7 +308,6 @@ void main() {
           isDeprecated: false,
           examples: const [],
         ),
-        contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         examples: const [],
         multipartEncoding: {
@@ -330,15 +340,55 @@ void main() {
         ),
       );
 
-      final plan = planner.plan(operation, parameters);
+      final plan = const OperationRequestPlanner(
+        backend: TransportBackend.http,
+      ).plan(operation, parameters);
       final body = plan.body as MultipartBodyPlan;
+      final parts = body.emissions.whereType<MultipartAppend>().toList();
 
-      expect(body.parts.map((part) => part.name).toList(), ['item', 'item']);
-      expect(body.parts.first.source, MultipartPartSource.scalar);
-      expect(body.parts.first.contentType, 'text/plain');
-      expect(body.parts.last.source, MultipartPartSource.fileBytesOrPath);
-      expect(body.parts.last.isNullable, isTrue);
-      expect(body.parts.last.contentType, 'application/octet-stream');
+      expect(parts, hasLength(2));
+      expect(parts.first.source, MultipartValueSource.bytes);
+      expect(parts.first.contentType, 'text/plain');
+      expect(parts.last.source, MultipartValueSource.file);
+      expect(parts.last.filename, isNotNull);
+      expect(parts.last.contentType, 'application/octet-stream');
+
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..returns = refer('Object?', 'dart:core')
+          ..body = Block.of(buildHttpMultipartBodyStatements(body)),
+      );
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'item',
+      utf8.encode(body.item),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  if (body.item2 != null) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'item',
+        body.item2!.toBytes(),
+        filename: body.item2!.fileName ?? r'item',
+        contentType: MediaType.parse(r'application/octet-stream'),
+      ),
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(format('${method.accept(DartEmitter())}')),
+        collapseWhitespace(format(expected)),
+      );
     });
 
     test('retains response selectors and creates a variant body plan', () {
@@ -351,13 +401,13 @@ void main() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.text,
               rawContentType: 'text/plain',

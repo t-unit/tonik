@@ -9,6 +9,8 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
+import '../multipart_test_support.dart';
+
 void main() {
   late HttpBodyGenerator generator;
   late Context context;
@@ -580,13 +582,13 @@ Object? _data({String? body}) {
       description: null,
       isRequired: true,
       content: {
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.json,
           rawContentType: 'application/json',
           examples: const [],
         ),
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.text,
           rawContentType: 'text/plain',
@@ -615,6 +617,42 @@ Object? _data({required Payload body}) {
     );
   });
 
+  test('does not bind the value of an empty multipart variant', () {
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        ModelRequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        multipartContentFixture(context, const []),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+    const expected = r'''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    final PayloadFormData _ => await () async {
+      final _$multipartFiles = <MultipartFile>[];
+      return _$multipartFiles;
+    }(),
+  };
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   test('lowers a runtime-selected JSON or multipart body', () {
     final value = _formProperty(
       context,
@@ -634,15 +672,14 @@ Object? _data({required Payload body}) {
       description: null,
       isRequired: true,
       content: {
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.json,
           rawContentType: 'application/json',
           examples: const [],
         ),
-        RequestContent(
+        multipartContentFromModel(
           model: upload,
-          contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           examples: const [],
         ),
@@ -666,50 +703,6 @@ Future<Object?> _data({required Payload body}) async {
         ),
       );
       return _$multipartFiles;
-    }(),
-  };
-}
-''';
-
-    expect(
-      collapseWhitespace(format('${method.accept(emitter)}')),
-      collapseWhitespace(format(expected)),
-    );
-  });
-
-  test('does not bind an unsupported multipart variant', () {
-    final requestBody = RequestBodyObject(
-      name: 'payload',
-      context: context,
-      description: null,
-      isRequired: true,
-      content: {
-        RequestContent(
-          model: StringModel(context: context),
-          contentType: ContentType.json,
-          rawContentType: 'application/json',
-          examples: const [],
-        ),
-        RequestContent(
-          model: BinaryModel(context: context),
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          examples: const [],
-        ),
-      },
-    );
-    final method = generator.generateBodyMethod(
-      _operation(context, requestBody: requestBody),
-    );
-
-    const expected = '''
-Future<Object?> _data({required Payload body}) async {
-  return switch (body) {
-    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
-    PayloadFormData _ => await () async {
-      throw UnsupportedError(
-        'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-      );
     }(),
   };
 }
@@ -1138,16 +1131,25 @@ RequestBodyObject _body(
   description: null,
   isRequired: isRequired,
   content: {
-    RequestContent(
-      model: model,
-      contentType: contentType,
-      rawContentType: rawContentType,
-      wireContentType: wireContentType ?? rawContentType,
-      textEncoding: textEncoding,
-      examples: const [],
-      formEncoding: formEncoding,
-      multipartEncoding: multipartEncoding,
-    ),
+    if (contentType == ContentType.multipart)
+      multipartContentFromModel(
+        model: model as ClassModel,
+        rawContentType: rawContentType,
+        wireContentType: wireContentType,
+        textEncoding: textEncoding,
+        examples: const [],
+        multipartEncoding: multipartEncoding,
+      )
+    else
+      ModelRequestContent(
+        model: model,
+        contentType: contentType,
+        rawContentType: rawContentType,
+        wireContentType: wireContentType ?? rawContentType,
+        textEncoding: textEncoding,
+        examples: const [],
+        formEncoding: formEncoding,
+      ),
   },
 );
 

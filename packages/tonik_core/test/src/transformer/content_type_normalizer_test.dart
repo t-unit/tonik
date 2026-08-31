@@ -22,7 +22,7 @@ void main() {
         TextEncoding.ascii,
       ]);
 
-      final partProperty = Property(
+      final partProperty = MultipartPart(
         name: 'message',
         model: StringModel(context: context),
         isRequired: true,
@@ -30,18 +30,18 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        encoding: const PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain; charset=iso-8859-1',
+          wireContentType: 'text/plain; charset=iso-8859-1',
+          textEncoding: TextEncoding.latin1,
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
       );
-      const partEncoding = PartEncoding(
-        contentType: ContentType.text,
-        rawContentType: 'text/plain; charset=iso-8859-1',
-        wireContentType: 'text/plain; charset=iso-8859-1',
-        textEncoding: TextEncoding.latin1,
-        headers: null,
-        style: null,
-        explode: null,
-        allowReserved: null,
-      );
-      final textContent = RequestContent(
+      final textContent = ModelRequestContent(
         model: BooleanModel(context: context),
         contentType: ContentType.text,
         rawContentType: 'text/plain; charset=us-ascii',
@@ -49,17 +49,11 @@ void main() {
         textEncoding: TextEncoding.ascii,
         examples: const [],
       );
-      final multipartContent = RequestContent(
-        model: ClassModel(
-          name: 'MultipartBody',
-          properties: [partProperty],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-        ),
-        contentType: ContentType.multipart,
+      final multipartContent = MultipartRequestContent(
+        name: 'MultipartBody',
+        parts: [partProperty],
+        context: context,
         rawContentType: 'multipart/form-data',
-        multipartEncoding: {partProperty: partEncoding},
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -93,10 +87,15 @@ void main() {
       final transformedMultipart = transformedBody.content.singleWhere(
         (content) => content.contentType == ContentType.multipart,
       );
-      final transformedPart =
-          transformedMultipart.multipartEncoding!.values.single;
+      final transformedPart = (transformedMultipart as MultipartRequestContent)
+          .parts
+          .single
+          .encoding;
 
-      expect(transformedText.model, isA<StringModel>());
+      expect(
+        (transformedText as ModelRequestContent).model,
+        isA<StringModel>(),
+      );
       expect(transformedText.textEncoding, TextEncoding.ascii);
       expect(
         transformedText.wireContentType,
@@ -629,7 +628,7 @@ void main() {
             description: 'Upload a file',
             isRequired: true,
             content: Set.unmodifiable({
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
@@ -656,7 +655,7 @@ void main() {
           final transformed = normalizer.apply(document);
           final transformedBody =
               transformed.requestBodies.first as RequestBodyObject;
-          final content = transformedBody.content.first;
+          final content = transformedBody.content.first as ModelRequestContent;
 
           expect(content.model, isA<BinaryModel>());
           expect(content.rawContentType, 'application/octet-stream');
@@ -671,7 +670,7 @@ void main() {
           description: 'Text body',
           isRequired: true,
           content: Set.unmodifiable({
-            RequestContent(
+            ModelRequestContent(
               model: BooleanModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
@@ -698,7 +697,7 @@ void main() {
         final transformed = normalizer.apply(document);
         final transformedBody =
             transformed.requestBodies.first as RequestBodyObject;
-        final content = transformedBody.content.first;
+        final content = transformedBody.content.first as ModelRequestContent;
 
         expect(content.model, isA<StringModel>());
       });
@@ -718,7 +717,7 @@ void main() {
           description: 'Create user',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: originalModel,
               rawContentType: 'application/json',
               contentType: ContentType.json,
@@ -745,7 +744,7 @@ void main() {
         final transformed = normalizer.apply(document);
         final transformedBody =
             transformed.requestBodies.first as RequestBodyObject;
-        final content = transformedBody.content.first;
+        final content = transformedBody.content.first as ModelRequestContent;
 
         expect(content.model, isA<ClassModel>());
         expect((content.model as ClassModel).name, 'CreateUserRequest');
@@ -766,7 +765,7 @@ void main() {
           description: 'Submit form data',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: originalModel,
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
@@ -793,7 +792,7 @@ void main() {
         final transformed = normalizer.apply(document);
         final transformedBody =
             transformed.requestBodies.first as RequestBodyObject;
-        final content = transformedBody.content.first;
+        final content = transformedBody.content.first as ModelRequestContent;
 
         expect(content.model, isA<ClassModel>());
         expect((content.model as ClassModel).name, 'FormRequest');
@@ -806,7 +805,7 @@ void main() {
           description: 'A JSON body',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'User',
                 properties: const [],
@@ -864,7 +863,7 @@ void main() {
             description: '',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: DoubleModel(context: context),
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
@@ -909,7 +908,10 @@ void main() {
 
           final normalizedInner =
               transformedAlias.requestBody as RequestBodyObject;
-          expect(normalizedInner.content.first.model, isA<StringModel>());
+          expect(
+            (normalizedInner.content.first as ModelRequestContent).model,
+            isA<StringModel>(),
+          );
         },
       );
 
@@ -922,7 +924,7 @@ void main() {
             description: '',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: DoubleModel(context: context),
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
@@ -987,7 +989,7 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: DoubleModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
@@ -1024,15 +1026,18 @@ void main() {
                 )
                 as RequestBodyObject;
 
-        expect(transformedOriginal.content.first.model, isA<StringModel>());
+        expect(
+          (transformedOriginal.content.first as ModelRequestContent).model,
+          isA<StringModel>(),
+        );
       });
 
-      test('keeps original model for ContentType.multipart requests', () {
-        final originalModel = ClassModel(
+      test('keeps multipart request content unchanged', () {
+        final originalContent = MultipartRequestContent(
           name: 'MultipartData',
-          properties: const [],
+          parts: const [],
           context: context,
-          isDeprecated: false,
+          rawContentType: 'multipart/form-data',
           examples: const [],
         );
 
@@ -1041,14 +1046,7 @@ void main() {
           context: context,
           description: 'Upload form data',
           isRequired: true,
-          content: {
-            RequestContent(
-              model: originalModel,
-              rawContentType: 'multipart/form-data',
-              contentType: ContentType.multipart,
-              examples: const [],
-            ),
-          },
+          content: {originalContent},
         );
 
         final document = ApiDocument(
@@ -1071,12 +1069,11 @@ void main() {
             transformed.requestBodies.first as RequestBodyObject;
         final content = transformedBody.content.first;
 
-        expect(content.model, isA<ClassModel>());
-        expect((content.model as ClassModel).name, 'MultipartData');
+        expect(content, same(originalContent));
       });
 
       test('preserves encoding when normalizing multipart request content', () {
-        final fileProperty = Property(
+        final filePart = MultipartPart(
           name: 'file',
           model: BinaryModel(context: context),
           isRequired: true,
@@ -1084,9 +1081,7 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
-        );
-        final encoding = {
-          fileProperty: const PartEncoding(
+          encoding: const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: null,
@@ -1094,7 +1089,7 @@ void main() {
             explode: true,
             allowReserved: null,
           ),
-        };
+        );
 
         final requestBody = RequestBodyObject(
           name: 'UploadForm',
@@ -1102,17 +1097,11 @@ void main() {
           description: 'Upload with encoding',
           isRequired: true,
           content: {
-            RequestContent(
-              model: ClassModel(
-                name: 'UploadData',
-                properties: [fileProperty],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              ),
+            MultipartRequestContent(
+              name: 'UploadData',
+              parts: [filePart],
+              context: context,
               rawContentType: 'multipart/form-data',
-              contentType: ContentType.multipart,
-              multipartEncoding: encoding,
               examples: const [],
             ),
           },
@@ -1136,11 +1125,14 @@ void main() {
         final transformed = normalizer.apply(document);
         final transformedBody =
             transformed.requestBodies.first as RequestBodyObject;
-        final content = transformedBody.content.first;
+        final content =
+            transformedBody.content.first as MultipartRequestContent;
 
-        expect(content.multipartEncoding, isNotNull);
-        expect(content.multipartEncoding, equals(encoding));
-        expect(content.multipartEncoding!.keys.single, same(fileProperty));
+        expect(
+          content.parts.single,
+          same(filePart),
+        );
+        expect(content.parts.single.encoding, same(filePart.encoding));
       });
 
       test('preserves encoding when normalizing form request content', () {
@@ -1167,7 +1159,7 @@ void main() {
           description: 'Form with encoding',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'FilterData',
                 properties: [nameProperty],
@@ -1201,10 +1193,10 @@ void main() {
         final transformed = normalizer.apply(document);
         final transformedBody =
             transformed.requestBodies.first as RequestBodyObject;
-        final content = transformedBody.content.first;
+        final content = transformedBody.content.first as ModelRequestContent;
 
         expect(content.formEncoding, isNotNull);
-        expect(content.formEncoding, equals(encoding));
+        expect(content.formEncoding, encoding);
         expect(content.formEncoding!.keys.single, same(nameProperty));
       });
 
@@ -1215,7 +1207,7 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: IntegerModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,

@@ -52,7 +52,6 @@ class OperationGenerator {
   final QueryGenerator _queryParametersGenerator;
   final PathGenerator _pathGenerator;
   final ParseGenerator _parseGenerator;
-  static const _requestPlanner = OperationRequestPlanner();
 
   ({String code, String filename}) generateCallableOperation(
     Operation operation,
@@ -114,6 +113,10 @@ class OperationGenerator {
       ),
     );
 
+    final requestPlan = OperationRequestPlanner(
+      backend: backendGenerator.backend,
+    ).plan(operation, normalizedParams);
+
     return Class(
       (b) {
         b
@@ -166,6 +169,7 @@ class OperationGenerator {
               operation,
               normalizedParams,
               defaultsByName: defaults.byName,
+              requestPlan: requestPlan,
             ),
             _pathGenerator.generatePathMethod(
               operation,
@@ -173,6 +177,7 @@ class OperationGenerator {
             ),
             backendGenerator.generateBodyMethod(
               operation: operation,
+              requestPlan: requestPlan,
               nameManager: nameManager,
               package: package,
               useImmutableCollections: useImmutableCollections,
@@ -203,6 +208,7 @@ class OperationGenerator {
     Operation operation,
     NormalizedRequestParameters normalizedParams, {
     Map<String, OperationParameterDefault> defaultsByName = const {},
+    OperationRequestPlan? requestPlan,
   }) {
     final hasRequestBody =
         operation.requestBody?.resolvedContent.isNotEmpty ?? false;
@@ -217,7 +223,9 @@ class OperationGenerator {
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
     final cookieArgs = <String, Expression>{};
-    final requestPlan = _requestPlanner.plan(operation, normalizedParams);
+    requestPlan ??= OperationRequestPlanner(
+      backend: backendGenerator.backend,
+    ).plan(operation, normalizedParams);
 
     for (final pathParam in requestPlan.pathParameters) {
       pathArgs[pathParam.normalizedName] = pathParam.value;

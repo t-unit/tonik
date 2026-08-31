@@ -3,6 +3,8 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
@@ -24,7 +26,7 @@ class HttpBodyGenerator {
   final String package;
   final bool useImmutableCollections;
 
-  Method generateBodyMethod(Operation operation) {
+  Method generateBodyMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
       return Method(
@@ -40,6 +42,9 @@ class HttpBodyGenerator {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final isRequired = requestBody.isRequired;
+    bodyPlan ??= const OperationRequestPlanner(
+      backend: TransportBackend.http,
+    ).planBody(operation);
 
     if (content.length > 1) {
       final (baseName, subclassNames) = nameManager.requestBodyNames(
@@ -47,19 +52,20 @@ class HttpBodyGenerator {
       );
       final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
       final cases = <Code>[];
-      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
-        operation,
-      );
-
       for (final item in content) {
         final variantName = subclassNames[item.rawContentType]!;
-        final isMultipart = item.contentType == ContentType.multipart;
-        final bindsValue = !isMultipart || item.model.resolved is ClassModel;
+        final isMultipart = item is MultipartRequestContent;
+        final multipartPlan = isMultipart
+            ? (bodyPlan as BodySelectionPlan).variants.firstWhere(
+                    (variant) => variant.rawContentType == item.rawContentType,
+                  )
+                  as MultipartBodyPlan
+            : null;
         final built = isMultipart
             ? null
             : _bodyBytesExpression(
                 operation: operation,
-                content: item,
+                content: item as ModelRequestContent,
                 valueName: 'value.value',
                 helperContext: helperContext,
                 receiverIsPromotedNonNull: false,
@@ -67,9 +73,13 @@ class HttpBodyGenerator {
         if (built != null) inlineHelpers.addAll(built.inlineFunctions);
         cases.add(
           Block.of([
-            if (bindsValue) const Code('final '),
+            const Code('final '),
             refer(variantName, requestBodyUrl).code,
-            Code(bindsValue ? ' value => ' : ' _ => '),
+            Code(
+              multipartPlan?.emissions.isEmpty ?? false
+                  ? ' _ => '
+                  : ' value => ',
+            ),
             if (isMultipart)
               Method(
                 (builder) => builder
@@ -77,9 +87,7 @@ class HttpBodyGenerator {
                   ..lambda = false
                   ..body = Block.of(
                     buildHttpMultipartBodyStatements(
-                      item,
-                      'value.value',
-                      headerParameters: multipartHeaderInfos,
+                      multipartPlan!,
                     ),
                   ),
               ).closure.call([]).awaited.code
@@ -136,11 +144,8 @@ class HttpBodyGenerator {
     }
 
     final item = content.single;
-    if (item.contentType == ContentType.multipart) {
+    if (item is MultipartRequestContent) {
       final multipartHeaderParameters = _multipartHeaderParameters(operation);
-      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
-        operation,
-      );
       return Method(
         (b) => b
           ..name = '_data'
@@ -154,8 +159,8 @@ class HttpBodyGenerator {
             Parameter(
               (p) => p
                 ..name = 'body'
-                ..type = typeReference(
-                  item.model,
+                ..type = requestContentTypeReference(
+                  item,
                   nameManager,
                   package,
                   isNullableOverride: !isRequired,
@@ -171,13 +176,12 @@ class HttpBodyGenerator {
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;'),
             ...buildHttpMultipartBodyStatements(
-              item,
-              'body',
-              headerParameters: multipartHeaderInfos,
+              bodyPlan! as MultipartBodyPlan,
             ),
           ]),
       );
     }
+    item as ModelRequestContent;
     final built = _bodyBytesExpression(
       operation: operation,
       content: item,
@@ -219,7 +223,7 @@ class HttpBodyGenerator {
 
   BuiltExpression _bodyBytesExpression({
     required Operation operation,
-    required RequestContent content,
+    required ModelRequestContent content,
     required String valueName,
     required InlineHelperContext helperContext,
     required bool receiverIsPromotedNonNull,
@@ -287,7 +291,7 @@ class HttpBodyGenerator {
           inlineFunctions: form.inlineFunctions,
         );
       case ContentType.multipart:
-        throw StateError('Multipart bodies are handled by HTTP-09.');
+        throw StateError('Multipart content must own parts.');
     }
   }
 

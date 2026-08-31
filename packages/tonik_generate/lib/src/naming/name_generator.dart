@@ -106,6 +106,20 @@ class NameGenerator {
     }
   }
 
+  String generateObjectName({
+    required String? name,
+    required Context context,
+    required Set<String> usedFileNames,
+  }) {
+    var baseName = _generateBaseName(name: name, context: context);
+    if (name == null || name.isEmpty) {
+      if (!baseName.endsWith(_modelSuffix)) baseName += _modelSuffix;
+      return _makeUnique(baseName, _modelSuffix, usedFileNames);
+    }
+    baseName = ensureValidClassName(baseName);
+    return _makeUniqueWithTypeSuffix(baseName, _modelSuffix, usedFileNames);
+  }
+
   /// Get a type-based name for primitive models
   String? _getPrimitiveModelName(Model model) {
     return switch (model) {

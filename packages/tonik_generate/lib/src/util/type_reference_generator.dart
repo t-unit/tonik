@@ -7,6 +7,32 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
+TypeReference requestContentTypeReference(
+  RequestContent content,
+  NameManager nameManager,
+  String package, {
+  bool isNullableOverride = false,
+  bool useImmutableCollections = false,
+}) => switch (content) {
+  ModelRequestContent(:final model) => typeReference(
+    model,
+    nameManager,
+    package,
+    isNullableOverride: isNullableOverride,
+    useImmutableCollections: useImmutableCollections,
+  ),
+  MultipartRequestContent() => TypeReference(
+    (b) => b
+      ..symbol = nameManager.multipartName(content)
+      ..url = sourceFileUrl(
+        package,
+        'model',
+        nameManager.multipartName(content),
+      )
+      ..isNullable = isNullableOverride || (content.alias?.isNullable ?? false),
+  ),
+};
+
 /// Generates a TypeReference from a model.
 TypeReference typeReference(
   Model model,

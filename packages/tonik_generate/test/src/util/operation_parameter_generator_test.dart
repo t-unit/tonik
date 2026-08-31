@@ -443,10 +443,12 @@ void main() {
 
   group('multipart per-part header parameters', () {
     test('generates parameter for property with one header', () {
-      final partModel1 = ClassModel(
+      final partModel1 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -457,7 +459,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -466,34 +467,28 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel1,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel1, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Rate-Limit-Limit': ResponseHeaderObject(
-                    name: 'X-Rate-Limit-Limit',
-                    context: context,
-                    description: 'Rate limit',
-                    explode: false,
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel1, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Rate-Limit-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit-Limit',
+                  context: context,
+                  description: 'Rate limit',
+                  explode: false,
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -530,10 +525,12 @@ void main() {
     });
 
     test('generates multiple header parameters for multiple headers', () {
-      final partModel2 = ClassModel(
+      final partModel2 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -544,7 +541,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -553,45 +549,39 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel2,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel2, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Rate-Limit-Limit': ResponseHeaderObject(
-                    name: 'X-Rate-Limit-Limit',
-                    context: context,
-                    description: 'Rate limit',
-                    explode: false,
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                  'X-Custom-Tag': ResponseHeaderObject(
-                    name: 'X-Custom-Tag',
-                    context: context,
-                    description: 'Custom tag',
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: false,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel2, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Rate-Limit-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit-Limit',
+                  context: context,
+                  description: 'Rate limit',
+                  explode: false,
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+                'X-Custom-Tag': ResponseHeaderObject(
+                  name: 'X-Custom-Tag',
+                  context: context,
+                  description: 'Custom tag',
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -636,10 +626,12 @@ void main() {
     test(
       'optional property with required header produces optional parameter',
       () {
-        final partModel3 = ClassModel(
+        final partModel3 = MultipartRequestContent(
+          rawContentType: 'multipart/form-data',
           name: 'UploadForm',
-          properties: [
-            Property(
+          parts: [
+            MultipartPart(
+              encoding: _binaryEncoding,
               name: 'avatar',
               model: BinaryModel(context: context),
               isRequired: false,
@@ -650,7 +642,6 @@ void main() {
             ),
           ],
           context: context,
-          isDeprecated: false,
           examples: const [],
         );
         final requestBody = RequestBodyObject(
@@ -659,34 +650,28 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
-              model: partModel3,
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-              multipartEncoding: _multipartEncoding(partModel3, {
-                'avatar': PartEncoding(
-                  contentType: ContentType.bytes,
-                  rawContentType: 'application/octet-stream',
-                  headers: {
-                    'X-Custom': ResponseHeaderObject(
-                      name: 'X-Custom',
-                      context: context,
-                      description: null,
-                      explode: false,
-                      model: StringModel(context: context),
-                      isRequired: true,
-                      isDeprecated: false,
-                      encoding: ResponseHeaderEncoding.simple,
-                      examples: const [],
-                    ),
-                  },
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              }),
-              examples: const [],
-            ),
+            _withEncoding(partModel3, {
+              'avatar': PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            }),
           },
         );
 
@@ -722,10 +707,12 @@ void main() {
     );
 
     test('does not filter out Content-Type header', () {
-      final partModel4 = ClassModel(
+      final partModel4 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -736,7 +723,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -745,45 +731,39 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel4,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel4, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'Content-Type': ResponseHeaderObject(
-                    name: 'Content-Type',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: false,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: false,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel4, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'Content-Type': ResponseHeaderObject(
+                  name: 'Content-Type',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -818,10 +798,12 @@ void main() {
     });
 
     test('no extra parameters for property without headers', () {
-      final partModel5 = ClassModel(
+      final partModel5 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -832,7 +814,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -841,22 +822,16 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel5,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel5, {
-              'name': const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel5, {
+            'name': const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -892,10 +867,12 @@ void main() {
       // Query param "file_custom" normalizes to "fileCustom".
       // Multipart header "X-Custom" on property "file" also normalizes to
       // "fileCustom". We need unique names.
-      final partModel6 = ClassModel(
+      final partModel6 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -906,7 +883,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -915,34 +891,28 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel6,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel6, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel6, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -997,10 +967,12 @@ void main() {
     });
 
     test('multipart header parameter does not collide with cancellation', () {
-      final model = ClassModel(
+      final model = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'c',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -1011,7 +983,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -1020,34 +991,28 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'c': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'ancellation': ResponseHeaderObject(
-                    name: 'ancellation',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(model, {
+            'c': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'ancellation': ResponseHeaderObject(
+                  name: 'ancellation',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
       final operation = Operation(
@@ -1080,10 +1045,12 @@ void main() {
 
     test('multipart headers remain unique after repeated normalization '
         'collisions', () {
-      final model = ClassModel(
+      final model = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -1094,7 +1061,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final headers = {
@@ -1117,22 +1083,16 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: headers,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(model, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: headers,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
       final operation = Operation(
@@ -1166,10 +1126,12 @@ void main() {
     });
 
     test('generates deprecated annotation for deprecated multipart header', () {
-      final partModel7 = ClassModel(
+      final partModel7 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -1180,7 +1142,6 @@ void main() {
           ),
         ],
         context: context,
-        isDeprecated: false,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -1189,34 +1150,28 @@ void main() {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
-            model: partModel7,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(partModel7, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Legacy': ResponseHeaderObject(
-                    name: 'X-Legacy',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: context),
-                    isRequired: false,
-                    isDeprecated: true,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(partModel7, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Legacy': ResponseHeaderObject(
+                  name: 'X-Legacy',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isDeprecated: true,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -1263,11 +1218,12 @@ void main() {
         examples: const [],
       );
 
-      final bodyModel = ClassModel(
+      final bodyModel = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
         name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
             isRequired: true,
@@ -1287,28 +1243,22 @@ void main() {
         description: 'Upload',
         isRequired: true,
         content: {
-          RequestContent(
-            model: bodyModel,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(bodyModel, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Trace-Id': ResponseHeaderAlias(
-                    name: 'X-Trace-Id',
-                    context: context,
-                    header: underlyingHeader,
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
-          ),
+          _withEncoding(bodyModel, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Trace-Id': ResponseHeaderAlias(
+                  name: 'X-Trace-Id',
+                  context: context,
+                  header: underlyingHeader,
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
         },
       );
 
@@ -1360,10 +1310,12 @@ void main() {
           defaultValue: 'static-trace-id',
         );
 
-        final partModel8 = ClassModel(
+        final partModel8 = MultipartRequestContent(
+          rawContentType: 'multipart/form-data',
           name: 'UploadForm',
-          properties: [
-            Property(
+          parts: [
+            MultipartPart(
+              encoding: _binaryEncoding,
               name: 'file',
               model: BinaryModel(context: context),
               isRequired: true,
@@ -1374,7 +1326,6 @@ void main() {
             ),
           ],
           context: context,
-          isDeprecated: false,
           examples: const [],
         );
         final requestBody = RequestBodyObject(
@@ -1383,34 +1334,28 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
-              model: partModel8,
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-              multipartEncoding: _multipartEncoding(partModel8, {
-                'file': PartEncoding(
-                  contentType: ContentType.bytes,
-                  rawContentType: 'application/octet-stream',
-                  headers: {
-                    'X-Trace-Id': ResponseHeaderObject(
-                      name: 'X-Trace-Id',
-                      context: context,
-                      description: null,
-                      explode: false,
-                      model: aliasedModel,
-                      isRequired: true,
-                      isDeprecated: false,
-                      encoding: ResponseHeaderEncoding.simple,
-                      examples: const [],
-                    ),
-                  },
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              }),
-              examples: const [],
-            ),
+            _withEncoding(partModel8, {
+              'file': PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Trace-Id': ResponseHeaderObject(
+                    name: 'X-Trace-Id',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: aliasedModel,
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            }),
           },
         );
 
@@ -1472,7 +1417,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'Payload',
                 properties: const [],
@@ -1545,7 +1490,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'Payload',
                 properties: const [],
@@ -1617,7 +1562,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'Payload',
                 properties: const [],
@@ -1922,7 +1867,7 @@ void main() {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: ClassModel(
                 name: 'Payload',
                 properties: const [],
@@ -2408,12 +2353,21 @@ void main() {
   });
 }
 
-Map<Property, PartEncoding> _multipartEncoding(
-  ClassModel model,
+MultipartRequestContent _withEncoding(
+  MultipartRequestContent content,
   Map<String, PartEncoding> byName,
 ) {
-  return {
-    for (final entry in byName.entries)
-      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
-  };
+  for (final part in content.parts) {
+    part.encoding = byName[part.name] ?? part.encoding;
+  }
+  return content;
 }
+
+const _binaryEncoding = PartEncoding(
+  contentType: ContentType.bytes,
+  rawContentType: 'application/octet-stream',
+  headers: null,
+  style: null,
+  explode: null,
+  allowReserved: null,
+);

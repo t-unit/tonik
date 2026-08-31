@@ -294,7 +294,7 @@ void main() {
     expect(simpleBody?.content, hasLength(1));
 
     final content = simpleBody?.content.first;
-    expect(content?.model, isA<StringModel>());
+    expect((content as ModelRequestContent?)?.model, isA<StringModel>());
     expect(content?.rawContentType, 'application/json');
     expect(content?.contentType, ContentType.json);
   });
@@ -306,7 +306,9 @@ void main() {
     );
 
     final model =
-        (nullableInlineBody as RequestBodyObject?)?.content.first.model;
+        ((nullableInlineBody as RequestBodyObject?)?.content.first
+                as ModelRequestContent?)
+            ?.model;
     expect(model?.isEffectivelyNullable, isTrue);
     expect(model?.resolved, isA<StringModel>());
   });
@@ -323,8 +325,11 @@ void main() {
     expect(referenceBody?.content, hasLength(1));
 
     final content = referenceBody?.content.first;
-    expect(content?.model, isA<ClassModel>());
-    expect((content?.model as ClassModel?)?.name, 'MySchema');
+    expect((content as ModelRequestContent?)?.model, isA<ClassModel>());
+    expect(
+      (content?.model as ClassModel?)?.name,
+      'MySchema',
+    );
     expect(content?.rawContentType, 'application/json');
     expect(content?.contentType, ContentType.json);
   });
@@ -370,7 +375,7 @@ void main() {
     final jsonContent = jsonLikeBody?.content.firstWhere(
       (c) => c.rawContentType == 'alto-endpointcost+json',
     );
-    expect(jsonContent?.model, isA<StringModel>());
+    expect((jsonContent as ModelRequestContent?)?.model, isA<StringModel>());
     expect(jsonContent?.contentType, ContentType.json);
 
     final bytesContent = jsonLikeBody?.content.firstWhere(
@@ -408,13 +413,13 @@ void main() {
     final jsonContent = multipleJsonBody?.content.firstWhereOrNull(
       (c) => c.rawContentType == 'application/json',
     );
-    expect(jsonContent?.model, isA<StringModel>());
+    expect((jsonContent as ModelRequestContent?)?.model, isA<StringModel>());
     expect(jsonContent?.contentType, ContentType.json);
 
     final problemContent = multipleJsonBody?.content.firstWhereOrNull(
       (c) => c.rawContentType == 'application/problem+json',
     );
-    expect(problemContent?.model, isA<NumberModel>());
+    expect((problemContent as ModelRequestContent?)?.model, isA<NumberModel>());
     expect(problemContent?.contentType, ContentType.json);
   });
 
@@ -430,7 +435,7 @@ void main() {
     expect(inlineClassBody?.content, hasLength(1));
 
     final content = inlineClassBody?.content.first;
-    expect(content?.model, isA<ClassModel>());
+    expect((content as ModelRequestContent?)?.model, isA<ClassModel>());
 
     final model = content?.model as ClassModel?;
     expect(model?.properties, hasLength(3));
@@ -464,7 +469,9 @@ void main() {
     final alias = aliasBody as RequestBodyAlias?;
     expect(alias?.requestBody, isA<RequestBodyObject>());
     expect(
-      (alias?.requestBody as RequestBodyObject?)?.content.first.model,
+      ((alias?.requestBody as RequestBodyObject?)?.content.first
+              as ModelRequestContent?)
+          ?.model,
       isA<StringModel>(),
     );
   });
@@ -485,10 +492,9 @@ void main() {
     final aliasRequestBody = alias?.requestBody as RequestBodyAlias?;
     expect(aliasRequestBody?.requestBody, isA<RequestBodyObject>());
     expect(
-      (aliasRequestBody?.requestBody as RequestBodyObject?)
-          ?.content
-          .first
-          .model,
+      ((aliasRequestBody?.requestBody as RequestBodyObject?)?.content.first
+              as ModelRequestContent?)
+          ?.model,
       isA<StringModel>(),
     );
   });
@@ -509,7 +515,10 @@ void main() {
       'First definition',
     );
     expect(duplicateBody.isRequired, isTrue);
-    expect(duplicateBody.content.first.model, isA<StringModel>());
+    expect(
+      (duplicateBody.content.first as ModelRequestContent).model,
+      isA<StringModel>(),
+    );
   });
 
   test('adds request body when importing a single one', () {
@@ -826,7 +835,7 @@ void main() {
       expect((binaryBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = binaryBody?.content.first;
-      expect(content?.model, isA<BinaryModel>());
+      expect((content as ModelRequestContent?)?.model, isA<BinaryModel>());
       expect(content?.rawContentType, 'application/octet-stream');
       expect(content?.contentType, ContentType.bytes);
     });
@@ -859,7 +868,7 @@ void main() {
       expect((imageBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = imageBody?.content.first;
-      expect(content?.model, isA<BinaryModel>());
+      expect((content as ModelRequestContent?)?.model, isA<BinaryModel>());
       expect(content?.rawContentType, 'image/png');
       expect(content?.contentType, ContentType.bytes);
     });
@@ -892,7 +901,7 @@ void main() {
       expect((jsonBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = jsonBody?.content.first;
-      expect(content?.model, isA<AnyModel>());
+      expect((content as ModelRequestContent?)?.model, isA<AnyModel>());
       expect(content?.rawContentType, 'application/json');
       expect(content?.contentType, ContentType.json);
     });
@@ -925,7 +934,7 @@ void main() {
       expect((textBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = textBody?.content.first;
-      expect(content?.model, isA<StringModel>());
+      expect((content as ModelRequestContent?)?.model, isA<StringModel>());
       expect(content?.rawContentType, 'text/plain');
       expect(content?.contentType, ContentType.text);
     });
@@ -958,7 +967,7 @@ void main() {
       expect((formBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = formBody?.content.first;
-      expect(content?.model, isA<BinaryModel>());
+      expect((content as ModelRequestContent?)?.model, isA<BinaryModel>());
       expect(content?.rawContentType, 'application/x-www-form-urlencoded');
       expect(content?.contentType, ContentType.form);
     });
@@ -991,7 +1000,7 @@ void main() {
       expect((unknownBody as RequestBodyObject?)?.content, hasLength(1));
 
       final content = unknownBody?.content.first;
-      expect(content?.model, isA<BinaryModel>());
+      expect((content as ModelRequestContent?)?.model, isA<BinaryModel>());
       expect(content?.rawContentType, 'application/x-custom-unknown');
       expect(content?.contentType, ContentType.bytes);
     });
@@ -1074,13 +1083,13 @@ void main() {
       final bodyObj = body! as RequestBodyObject;
       expect(bodyObj.content, hasLength(1));
 
-      final content = bodyObj.content.first;
+      final content = bodyObj.content.first as MultipartRequestContent;
       expect(content.contentType, ContentType.multipart);
-      expect(content.model, isA<ClassModel>());
+      expect(content, isA<MultipartRequestContent>());
 
       // Default encoding should be populated for all properties
-      expect(content.multipartEncoding, isNotNull);
-      expect(content.multipartEncoding, hasLength(2));
+      expect(content.parts, isNotNull);
+      expect(content.parts, hasLength(2));
 
       final fileEncoding = partEncodingFor(content, 'file')!;
       expect(fileEncoding.contentType, ContentType.bytes);
@@ -1126,9 +1135,9 @@ void main() {
                 )!
                 as RequestBodyObject;
 
-        final content = body.content.first;
-        expect(content.multipartEncoding, isNotNull);
-        expect(content.multipartEncoding, hasLength(2));
+        final content = body.content.first as MultipartRequestContent;
+        expect(content.parts, isNotNull);
+        expect(content.parts, hasLength(2));
 
         // format: byte → Base64Model → application/octet-stream (spec-correct)
         final dataEncoding = partEncodingFor(content, 'data')!;
@@ -1200,9 +1209,9 @@ void main() {
               )!
               as RequestBodyObject;
 
-      final content = body.content.first;
-      expect(content.multipartEncoding, isNotNull);
-      expect(content.multipartEncoding, hasLength(3));
+      final content = body.content.first as MultipartRequestContent;
+      expect(content.parts, isNotNull);
+      expect(content.parts, hasLength(3));
 
       final idEncoding = partEncodingFor(content, 'id')!;
       // OAS 3.1: contentType SHALL be ignored when style fields are present
@@ -1274,8 +1283,8 @@ void main() {
               )!
               as RequestBodyObject;
 
-      final content = body.content.first;
-      expect(content.multipartEncoding, isNotNull);
+      final content = body.content.first as MultipartRequestContent;
+      expect(content.parts, isNotNull);
 
       final fileEncoding = partEncodingFor(content, 'file')!;
       expect(fileEncoding.contentType, ContentType.bytes);
@@ -1320,10 +1329,10 @@ void main() {
               )!
               as RequestBodyObject;
 
-      final content = body.content.first;
+      final content = body.content.first as MultipartRequestContent;
       expect(content.contentType, ContentType.multipart);
-      expect(content.multipartEncoding, isNotNull);
-      expect(content.multipartEncoding, hasLength(1));
+      expect(content.parts, isNotNull);
+      expect(content.parts, hasLength(1));
 
       final nameEncoding = partEncodingFor(content, 'name')!;
       expect(nameEncoding.contentType, ContentType.text);
@@ -1371,14 +1380,16 @@ void main() {
         };
       }
 
-      RequestContent importMultipartContent(Map<String, dynamic> spec) {
+      MultipartRequestContent importMultipartContent(
+        Map<String, dynamic> spec,
+      ) {
         final api = Importer().import(spec);
         final body =
             api.requestBodies.firstWhereOrNull(
                   (r) => r.name == 'TestBody',
                 )!
                 as RequestBodyObject;
-        return body.content.first;
+        return body.content.first as MultipartRequestContent;
       }
 
       test('string property gets text/plain default', () {
@@ -1390,8 +1401,8 @@ void main() {
           ),
         );
 
-        expect(content.multipartEncoding, isNotNull);
-        expect(content.multipartEncoding, hasLength(1));
+        expect(content.parts, isNotNull);
+        expect(content.parts, hasLength(1));
 
         final encoding = partEncodingFor(content, 'name')!;
         expect(encoding.contentType, ContentType.text);
@@ -1878,8 +1889,7 @@ void main() {
         expect(encoding.allowReserved, isFalse);
       });
 
-      test('multipart encoding map is keyed by the declared Property '
-          'instance', () {
+      test('multipart part owns its effective encoding', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1888,13 +1898,12 @@ void main() {
           ),
         );
 
-        final classModel = content.model.resolved as ClassModel;
-        final nameProperty = classModel.properties.single;
-        expect(content.multipartEncoding!.keys.single, same(nameProperty));
+        final part = content.parts.single;
+        expect(part.name, 'name');
+        expect(part.encoding.contentType, ContentType.text);
       });
 
-      test('multipart encoding on an alias-chain property keys by declared '
-          'Property', () {
+      test('multipart part retains its alias model and effective encoding', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1906,12 +1915,10 @@ void main() {
           ),
         );
 
-        final classModel = content.model.resolved as ClassModel;
-        final labelProperty = classModel.properties.single;
-        expect(labelProperty.model, isA<AliasModel>());
-        expect(content.multipartEncoding!.keys.single, same(labelProperty));
+        final part = content.parts.single;
+        expect(part.model, isA<AliasModel>());
         expect(
-          content.multipartEncoding![labelProperty]!.contentType,
+          part.encoding.contentType,
           ContentType.text,
         );
       });
@@ -1950,7 +1957,7 @@ void main() {
         expect(plainEncoding.isStyleBased, isFalse);
       });
 
-      test('readOnly properties are dropped from encoding map', () {
+      test('readOnly parts retain their request visibility', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1963,8 +1970,8 @@ void main() {
           ),
         );
 
-        expect(content.multipartEncoding, hasLength(1));
-        expect(partEncodingFor(content, 'id'), isNull);
+        expect(content.parts, hasLength(2));
+        expect(content.parts.first.isReadOnly, isTrue);
         expect(partEncodingFor(content, 'name'), isNotNull);
       });
 
@@ -1980,7 +1987,7 @@ void main() {
           ),
         );
 
-        expect(content.multipartEncoding, hasLength(1));
+        expect(content.parts, hasLength(1));
         final password = partEncodingFor(content, 'password')!;
         expect(password.contentType, ContentType.text);
         expect(password.rawContentType, 'text/plain');
@@ -2108,7 +2115,7 @@ void main() {
                 )!
                 as RequestBodyObject;
 
-        final content = body.content.first;
+        final content = body.content.first as ModelRequestContent;
         expect(content.contentType, ContentType.form);
         expect(content.formEncoding, isNull);
       });
@@ -2132,9 +2139,12 @@ void main() {
           ),
         );
 
-        expect(content.multipartEncoding, hasLength(1));
+        expect(content.parts, hasLength(1));
         expect(partEncodingFor(content, 'name'), isNotNull);
-        expect(_propertyNamed(content, 'nonExistent'), isNull);
+        expect(
+          content.parts.where((part) => part.name == 'nonExistent'),
+          isEmpty,
+        );
         expect(
           logs.any(
             (r) =>
@@ -2161,7 +2171,7 @@ void main() {
           ),
         );
 
-        expect(content.multipartEncoding, hasLength(4));
+        expect(content.parts, hasLength(4));
         expect(partEncodingFor(content, 'name')!.contentType, ContentType.text);
         expect(partEncodingFor(content, 'age')!.contentType, ContentType.text);
         expect(
@@ -2174,54 +2184,20 @@ void main() {
         );
       });
 
-      test('non-ClassModel multipart body does not get encoding populated '
-          'and logs warning', () {
-        final logs = <LogRecord>[];
-        final sub = Logger.root.onRecord.listen(logs.add);
-
-        addTearDown(sub.cancel);
-
-        final spec = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'requestBodies': {
-              'BareString': {
-                'description': 'Bare string multipart',
-                'required': true,
-                'content': {
-                  'multipart/form-data': {
-                    'schema': {'type': 'string'},
-                  },
-                },
-              },
-            },
-          },
-        };
-
-        final api = Importer().import(spec);
-        final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'BareString',
-                )!
-                as RequestBodyObject;
-
-        final content = body.content.first;
-        expect(content.multipartEncoding, isNull);
-        expect(
-          logs.any(
-            (r) =>
-                r.level == Level.WARNING &&
-                r.message.contains('BareString') &&
-                r.message.contains('non-object schema'),
-          ),
-          isTrue,
-        );
+      test('non-object multipart body has no parts', () {
+        final spec = multipartSpec(properties: {});
+        final components = spec['components'] as Map<String, dynamic>;
+        final bodies = components['requestBodies'] as Map<String, dynamic>;
+        final body = bodies['TestBody'] as Map<String, dynamic>;
+        final content = body['content'] as Map<String, dynamic>;
+        final mediaType =
+            content['multipart/form-data'] as Map<String, dynamic>;
+        mediaType['schema'] = {'type': 'string'};
+        expect(importMultipartContent(spec).parts, isEmpty);
       });
     });
 
-    test('infers BinaryModel for multipart/form-data without schema', () {
+    test('multipart/form-data without schema has no parts', () {
       final fileContentNoSchema = {
         'openapi': '3.1.0',
         'info': {'title': 'Test', 'version': '1.0.0'},
@@ -2240,27 +2216,22 @@ void main() {
       };
 
       final api = Importer().import(fileContentNoSchema);
-      final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'NoSchemaMultipart',
-              )!
-              as RequestBodyObject;
-
-      final content = body.content.first;
-      expect(content.model, isA<BinaryModel>());
-      expect(content.contentType, ContentType.multipart);
+      final content =
+          api.requestBodies.single.resolvedContent.single
+              as MultipartRequestContent;
+      expect(content.parts, isEmpty);
     });
   });
 
   group('form-urlencoded encoding support', () {
-    RequestContent importFormContent(Map<String, dynamic> spec) {
+    ModelRequestContent importFormContent(Map<String, dynamic> spec) {
       final api = Importer().import(spec);
       final body =
           api.requestBodies.firstWhereOrNull(
                 (r) => r.name == 'FormBody',
               )!
               as RequestBodyObject;
-      return body.content.first;
+      return body.content.first as ModelRequestContent;
     }
 
     Map<String, dynamic> formSpec({
@@ -2693,7 +2664,7 @@ void main() {
   });
 }
 
-Property? _propertyNamed(RequestContent content, String name) =>
+Property? _propertyNamed(ModelRequestContent content, String name) =>
     _propertyNamedIn(content.model, name);
 
 Property? _propertyNamedIn(Model model, String name) {
@@ -2711,13 +2682,12 @@ Property? _propertyNamedIn(Model model, String name) {
   }
 }
 
-PartEncoding? partEncodingFor(RequestContent content, String name) {
-  final property = _propertyNamed(content, name);
-  if (property == null) return null;
-  return content.multipartEncoding?[property];
-}
+PartEncoding? partEncodingFor(RequestContent content, String name) =>
+    (content as MultipartRequestContent).parts
+        .firstWhereOrNull((part) => part.name == name)
+        ?.encoding;
 
-FieldEncoding? fieldEncodingFor(RequestContent content, String name) {
+FieldEncoding? fieldEncodingFor(ModelRequestContent content, String name) {
   final property = _propertyNamed(content, name);
   if (property == null) return null;
   return content.formEncoding?[property];

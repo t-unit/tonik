@@ -15,6 +15,12 @@ class NameManager {
 
   final modelNames = <Model, String>{};
 
+  final _multipartNames = <MultipartRequestContent, String>{};
+  final _multipartObjectNames = <MultipartRequestContent, String>{};
+  final _multipartAliasNames = <MultipartRequestContent, String>{};
+  final _schemaNames = <(Context, String), String>{};
+  final _rawObjectNames = <String, String>{};
+
   final operationNames = <Operation, String>{};
 
   final tagNames = <Tag, String>{};
@@ -82,42 +88,90 @@ class NameManager {
     }
 
     // Root-level models claim names before nested models to avoid conflicts.
-    final sortedModels = models.toList()
-      ..sort((a, b) {
-        final aPathLength = a.context.path.length;
-        final bPathLength = b.context.path.length;
-        if (aPathLength != bPathLength) {
-          return aPathLength.compareTo(bPathLength);
-        }
+    final multipart = requestBodies
+        .expand((body) => body.resolvedContent)
+        .whereType<MultipartRequestContent>()
+        .toSet();
+    final existingSchemas = {
+      for (final model in models.whereType<NamedModel>())
+        if (model.name != null) (model.context, model.name!): model,
+    };
+    final declarations =
+        [
+          for (final model in models)
+            (
+              context: model.context,
+              name: model is NamedModel ? model.name : null,
+              key: () => stableModelSorter.stableKeyOf(model),
+              claim: () => _logModelName(modelName(model), model),
+            ),
+          for (final content in multipart)
+            if (content.sourceName == null ||
+                !existingSchemas.containsKey((
+                  content.sourceContext,
+                  content.sourceName!,
+                )))
+              (
+                context: content.sourceContext,
+                name: content.sourceName,
+                key: () => stableModelSorter.stableObjectKey(
+                  name: content.sourceName,
+                  properties: content.parts.map(
+                    (part) => (part.name, part.model),
+                  ),
+                  additionalPropertiesPolicy:
+                      content.additionalPropertiesPolicy,
+                ),
+                claim: () {
+                  multipartObjectName(content);
+                },
+              ),
+          for (final content in multipart)
+            if (content.alias case final alias?)
+              (
+                context: content.context,
+                name: null,
+                key: () => switch (existingSchemas[(
+                  alias.targetContext,
+                  alias.targetName,
+                )]) {
+                  final target? => stableModelSorter.stableAliasKey(
+                    model: target,
+                  ),
+                  null => 'AliasModel{null,${alias.targetName}}',
+                },
+                claim: () {
+                  multipartAliasName(content);
+                },
+              ),
+        ]..sort((a, b) {
+          final aPathLength = a.context.path.length;
+          final bPathLength = b.context.path.length;
+          if (aPathLength != bPathLength) {
+            return aPathLength.compareTo(bPathLength);
+          }
 
-        final aName = a is NamedModel ? (a.name ?? '') : '';
-        final bName = b is NamedModel ? (b.name ?? '') : '';
-        final nameComp = aName.compareTo(bName);
-        if (nameComp != 0) return nameComp;
+          final aName = a.name ?? '';
+          final bName = b.name ?? '';
+          final nameComp = aName.compareTo(bName);
+          if (nameComp != 0) return nameComp;
 
-        final contextComp = a.context.toString().compareTo(
-          b.context.toString(),
-        );
-        if (contextComp != 0) return contextComp;
+          final contextComp = a.context.toString().compareTo(
+            b.context.toString(),
+          );
+          if (contextComp != 0) return contextComp;
 
-        return stableModelSorter
-            .stableKeyOf(a)
-            .compareTo(stableModelSorter.stableKeyOf(b));
-      });
+          return a.key().compareTo(b.key());
+        });
 
-    for (final model in sortedModels.where(
-      (m) => m is NamedModel && m.name != null,
-    )) {
-      final name = modelName(model);
-      _logModelName(name, model);
+    for (final declaration in declarations.where((d) => d.name != null)) {
+      declaration.claim();
     }
 
-    for (final model in sortedModels.where(
-      (m) => m is! NamedModel || m.name == null,
-    )) {
-      final name = modelName(model);
-      _logModelName(name, model);
+    for (final declaration in declarations.where((d) => d.name == null)) {
+      declaration.claim();
     }
+    multipart.forEach(multipartName);
 
     for (final response in responses) {
       if (response.hasHeaders || response.bodyCount > 1) {
@@ -149,9 +203,74 @@ class NameManager {
   /// Gets a cached or generates a new unique class name for a model.
   String modelName(Model model) {
     return modelNames.putIfAbsent(model, () {
-      return generator.generateModelName(model, _usedFileNames);
+      final name = generator.generateModelName(model, _usedFileNames);
+      if (model case NamedModel(name: final sourceName?)) {
+        _schemaNames.putIfAbsent((model.context, sourceName), () => name);
+      }
+      return name;
     });
   }
+
+  String multipartObjectName(MultipartRequestContent content) =>
+      _multipartObjectNames.putIfAbsent(content, () {
+        String allocate() => generator.generateObjectName(
+          name: content.sourceNameOverride ?? content.sourceName,
+          context: content.sourceContext,
+          usedFileNames: _usedFileNames,
+        );
+        return content.sourceName == null
+            ? allocate()
+            : _schemaNames.putIfAbsent((
+                content.sourceContext,
+                content.sourceName!,
+              ), allocate);
+      });
+
+  String multipartName(MultipartRequestContent content) =>
+      _multipartNames.putIfAbsent(content, () {
+        if (content.alias case final alias?) {
+          return _schemaNames.putIfAbsent(
+            (alias.targetContext, alias.targetName),
+            () => generator.generateObjectName(
+              name: alias.targetNameOverride ?? alias.targetName,
+              context: alias.targetContext,
+              usedFileNames: _usedFileNames,
+            ),
+          );
+        }
+        if (content.name == null ||
+            (content.name == content.sourceName &&
+                content.context == content.sourceContext)) {
+          return multipartObjectName(content);
+        }
+        return _schemaNames.putIfAbsent(
+          (content.context, content.name!),
+          () => generator.generateObjectName(
+            name: content.nameOverride ?? content.name,
+            context: content.context,
+            usedFileNames: _usedFileNames,
+          ),
+        );
+      });
+
+  String multipartAliasName(MultipartRequestContent content) =>
+      _multipartAliasNames.putIfAbsent(
+        content,
+        () => generator.generateObjectName(
+          name: content.nameOverride,
+          context: content.context,
+          usedFileNames: _usedFileNames,
+        ),
+      );
+
+  String rawObjectName(String name) => _rawObjectNames.putIfAbsent(
+    name,
+    () => generator.generateObjectName(
+      name: '\$Raw$name',
+      context: Context.initial(),
+      usedFileNames: _usedFileNames,
+    ),
+  );
 
   /// Gets a cached or generates a new unique response class
   /// name and implementation names.

@@ -1,9 +1,9 @@
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 
 typedef MultipartHeaderParamInfo = ({
-  RequestContent content,
+  MultipartRequestContent content,
   String name,
   String normalizedPropertyName,
   String rawHeaderName,
@@ -13,24 +13,16 @@ typedef MultipartHeaderParamInfo = ({
 });
 
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
-  RequestContent content, {
+  MultipartRequestContent content, {
   Set<String> reservedNames = const {},
 }) {
-  final encoding = content.multipartEncoding;
-  if (encoding == null) return const [];
-
-  final model = content.model.resolved;
-  if (model is! ClassModel) return const [];
-
-  final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();
-  final normalizedProps = normalizeProperties(writeProperties);
+  final normalizedProps = normalizeMultipartParts(content);
 
   final result = <MultipartHeaderParamInfo>[];
   final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
 
-  for (final (:normalizedName, :property) in normalizedProps) {
-    final propertyEncoding = encoding[property];
-    final headers = propertyEncoding?.headers;
+  for (final (:normalizedName, part: property) in normalizedProps) {
+    final headers = property.encoding.headers;
     if (headers == null || headers.isEmpty) continue;
 
     final isPropertyOptional = !property.isRequired || property.isNullable;
@@ -91,7 +83,7 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
   final result = <MultipartHeaderParamInfo>[];
 
   for (final content in operation.requestBody!.resolvedContent) {
-    if (content.contentType != ContentType.multipart) continue;
+    if (content is! MultipartRequestContent) continue;
     final parameters = extractMultipartHeaderParamInfo(
       content,
       reservedNames: usedNames,
@@ -102,6 +94,32 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
 
   return result;
 }
+
+List<({String normalizedName, MultipartPart part})> normalizeMultipartParts(
+  MultipartRequestContent content,
+) =>
+    ensureUniqueness(
+          content.parts
+              .where((part) => !part.isReadOnly)
+              .map(
+                (part) => (
+                  normalizedName: normalizeSingle(
+                    part.nameOverride ?? part.name,
+                    preserveNumbers: true,
+                  ),
+                  originalValue: part,
+                ),
+              )
+              .toList(),
+          defaultPrefix: defaultFieldPrefix,
+        )
+        .map(
+          (item) => (
+            normalizedName: item.normalizedName,
+            part: item.originalValue,
+          ),
+        )
+        .toList();
 
 String _uniqueMultipartHeaderParameterName(
   String baseName,

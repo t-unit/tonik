@@ -99,14 +99,16 @@ class RequestBodyGenerator {
     final (_, subclassNames) = nameManager.requestBodyNames(requestBody);
     return requestBody.resolvedContent.map((content) {
       final className = subclassNames[content.rawContentType]!;
-      final typeRef = typeReference(
-        content.model,
+      final typeRef = requestContentTypeReference(
+        content,
         nameManager,
         package,
         useImmutableCollections: useImmutableCollections,
       );
       final hasCollectionValue =
-          !useImmutableCollections && content.model is ListModel;
+          !useImmutableCollections &&
+          content is ModelRequestContent &&
+          content.model is ListModel;
 
       return Class(
         (b) => b
