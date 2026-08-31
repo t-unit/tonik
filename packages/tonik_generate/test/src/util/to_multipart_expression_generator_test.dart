@@ -2,13 +2,14 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_generator.dart';
-import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
+import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
-  late NameManager nameManager;
   late Context testContext;
   late DartEmitter emitter;
 
@@ -17,10 +18,6 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -57,38 +54,19 @@ void main() {
     PartEncoding? encoding,
     Object? defaultValue,
   }) {
-    final branchNameManager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
-    final property = Property(
-      name: 'value',
-      model: propertyModel,
-      isRequired: true,
-      isNullable: false,
-      isDeprecated: false,
-      examples: const [],
-      defaultValue: defaultValue,
-    );
-    final model = ClassModel(
-      name: 'TestForm',
-      isDeprecated: false,
-      properties: [property],
-      context: testContext,
-      examples: const [],
-    );
-    final content = RequestContent(
-      model: model,
-      contentType: ContentType.multipart,
-      rawContentType: 'multipart/form-data',
-      multipartEncoding: encoding == null ? null : {property: encoding},
-      examples: const [],
+    final content = multipartContentFixture(
+      testContext,
+      [
+        multipartPartFixture(
+          name: 'value',
+          model: propertyModel,
+          defaultValue: defaultValue,
+          encoding: encoding,
+        ),
+      ],
     );
     final result = buildMultipartBodyStatements(
-      content,
-      'body',
-      branchNameManager,
-      'test_package',
+      _planMultipartBody(content, 'body'),
     );
     final expected =
         '''
@@ -107,48 +85,28 @@ $expectedPartCode
 
   group('buildMultipartBodyStatements', () {
     test('semantic encoding selects Dio multipart text bytes', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'name',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain; charset=us-ascii',
+              wireContentType: 'text/plain; charset=us-ascii',
+              textEncoding: TextEncoding.latin1,
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'name': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain; charset=us-ascii',
-            wireContentType: 'text/plain; charset=us-ascii',
-            textEncoding: TextEncoding.latin1,
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -330,46 +288,27 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for required nullable string', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'name',
             model: StringModel(context: testContext),
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'name': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -390,46 +329,27 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for optional non-nullable string', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'nickname',
             model: StringModel(context: testContext),
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'nickname': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -450,46 +370,28 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for optional nullable string', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'bio',
             model: StringModel(context: testContext),
             isRequired: false,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'bio': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -509,28 +411,14 @@ $expectedPartCode
       );
     });
 
-    test('generates empty FormData for class with zero properties', () {
-      final model = ClassModel(
-        name: 'EmptyForm',
-        isDeprecated: false,
-        properties: const [],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: const {},
-        examples: const [],
+    test('generates empty FormData when there are no parts', () {
+      final content = multipartContentFixture(
+        testContext,
+        [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -547,120 +435,31 @@ $expectedPartCode
       );
     });
 
-    test('generates UnsupportedError for non-ClassModel body', () {
-      final content = RequestContent(
-        model: BinaryModel(context: testContext),
-        contentType: ContentType.multipart,
+    test('serializes parts from aliased multipart content', () {
+      final content = MultipartRequestContent(
+        name: 'FormAlias',
+        sourceName: 'InnerForm',
+        context: testContext,
         rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            throw UnsupportedError(
-              'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-            );
-          }
-        '''),
-        ),
-      );
-    });
-
-    test('resolves AliasModel wrapping non-ClassModel and generates '
-        'UnsupportedError', () {
-      final content = RequestContent(
-        model: AliasModel(
-          name: 'BinaryAlias',
-          model: BinaryModel(context: testContext),
-          context: testContext,
-          examples: const [],
-          defaultValue: null,
-        ),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            throw UnsupportedError(
-              'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-            );
-          }
-        '''),
-        ),
-      );
-    });
-
-    test('resolves AliasModel wrapping ClassModel and generates correctly', () {
-      final classModel = ClassModel(
-        name: 'InnerForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+        parts: [
+          multipartPartFixture(
             name: 'title',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: AliasModel(
-          name: 'FormAlias',
-          model: classModel,
-          context: testContext,
-          examples: const [],
-          defaultValue: null,
-        ),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(classModel, {
-          'title': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
         examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -679,56 +478,31 @@ $expectedPartCode
     });
 
     test('excludes readOnly properties', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'id',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
             isReadOnly: true,
-            examples: const [],
-            defaultValue: null,
           ),
-          Property(
+          multipartPartFixture(
             name: 'name',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'name': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -747,47 +521,27 @@ $expectedPartCode
     });
 
     test('includes writeOnly properties', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'password',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
             isWriteOnly: true,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'password': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -806,46 +560,26 @@ $expectedPartCode
     });
 
     test('serializes AnyModel property via jsonEncode()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'data',
             model: AnyModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'data': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -864,46 +598,26 @@ $expectedPartCode
     });
 
     test('generates EncodingException for NeverModel property', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'impossible',
             model: NeverModel(context: testContext, isNullable: false),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'impossible': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -926,46 +640,26 @@ $expectedPartCode
     test(
       'NeverModel property name with dollar sign emits raw literal',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: r'$total',
               model: NeverModel(context: testContext, isNullable: false),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            r'$total': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -989,46 +683,26 @@ $expectedPartCode
 
   group('primitive types', () {
     test('serializes IntegerModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'age',
             model: IntegerModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'age': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1047,46 +721,26 @@ $expectedPartCode
     });
 
     test('serializes DoubleModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'score',
             model: DoubleModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'score': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1105,46 +759,26 @@ $expectedPartCode
     });
 
     test('serializes NumberModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'value',
             model: NumberModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'value': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1163,46 +797,26 @@ $expectedPartCode
     });
 
     test('serializes BooleanModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'active',
             model: BooleanModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'active': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1221,46 +835,26 @@ $expectedPartCode
     });
 
     test('serializes DateModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'birth_date',
             model: DateModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'birth_date': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1279,46 +873,26 @@ $expectedPartCode
     });
 
     test('serializes DecimalModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'amount',
             model: DecimalModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'amount': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1337,46 +911,26 @@ $expectedPartCode
     });
 
     test('serializes UriModel with text/plain via toString()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'website',
             model: UriModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'website': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1397,46 +951,26 @@ $expectedPartCode
     test(
       'serializes DateTimeModel with text/plain via toTimeZonedIso8601String()',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'created_at',
               model: DateTimeModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'created_at': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1458,46 +992,27 @@ $expectedPartCode
     test(
       'wraps nullable required primitive with text/plain with null-check',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: IntegerModel(context: testContext),
-              isRequired: true,
               isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1520,46 +1035,26 @@ $expectedPartCode
 
     test('serializes IntegerModel with application/json contentType '
         'via jsonEncode', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'age',
             model: IntegerModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'age': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1579,46 +1074,26 @@ $expectedPartCode
 
     test('serializes DateTimeModel with application/json contentType '
         'via jsonEncode (not toTimeZonedIso8601String)', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'createdAt',
             model: DateTimeModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'createdAt': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1638,46 +1113,26 @@ $expectedPartCode
 
     test('serializes BooleanModel with application/json contentType '
         'via jsonEncode', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'active',
             model: BooleanModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'active': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1697,46 +1152,27 @@ $expectedPartCode
 
     test('wraps nullable primitive with null-check when using '
         'application/json contentType', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'score',
             model: IntegerModel(context: testContext),
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'score': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -1761,46 +1197,26 @@ $expectedPartCode
     test(
       'StringModel falls back to text/plain when rawContentType is null',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'name',
               model: StringModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                style: EncodingStyle.form,
+                explode: true,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'name': const PartEncoding(
-              style: EncodingStyle.form,
-              explode: true,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1822,46 +1238,26 @@ $expectedPartCode
     test(
       'IntegerModel falls back to text/plain when rawContentType is null',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: IntegerModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                style: EncodingStyle.form,
+                explode: true,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': const PartEncoding(
-              style: EncodingStyle.form,
-              explode: true,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1883,46 +1279,26 @@ $expectedPartCode
     test(
       'BooleanModel falls back to text/plain when rawContentType is null',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'active',
               model: BooleanModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                allowReserved: true,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                style: null,
+                explode: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'active': const PartEncoding(
-              allowReserved: true,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              style: null,
-              explode: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -1944,46 +1320,26 @@ $expectedPartCode
     test(
       'DateTimeModel falls back to text/plain when rawContentType is null',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'createdAt',
               model: DateTimeModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                style: EncodingStyle.form,
+                explode: false,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'createdAt': const PartEncoding(
-              style: EncodingStyle.form,
-              explode: false,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2005,46 +1361,26 @@ $expectedPartCode
     test(
       'AnyModel falls back to application/json when rawContentType is null',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'value',
               model: AnyModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                style: EncodingStyle.form,
+                explode: true,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'value': const PartEncoding(
-              style: EncodingStyle.form,
-              explode: true,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2078,46 +1414,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'status',
               model: enumModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                style: EncodingStyle.form,
+                explode: true,
+                contentType: null,
+                rawContentType: null,
+                headers: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'status': const PartEncoding(
-              style: EncodingStyle.form,
-              explode: true,
-              contentType: null,
-              rawContentType: null,
-              headers: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2153,46 +1469,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'status',
               model: enumModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'status': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2226,46 +1522,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: enumModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2299,46 +1575,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'status',
               model: enumModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'status': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2372,46 +1628,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: enumModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -2443,46 +1679,27 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'status',
             model: enumModel,
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'status': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2515,46 +1732,27 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'status',
             model: enumModel,
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'status': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2577,46 +1775,26 @@ $expectedPartCode
 
   group('binary properties', () {
     test('generates MultipartFile.fromBytes for required binary property', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'avatar',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'avatar': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2646,46 +1824,27 @@ $expectedPartCode
     });
 
     test('wraps optional binary property with null-check', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'document',
             model: BinaryModel(context: testContext),
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'document': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2717,46 +1876,27 @@ $expectedPartCode
     });
 
     test('wraps required-but-nullable binary property with null-check', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'photo',
             model: BinaryModel(context: testContext),
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'photo': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2788,46 +1928,26 @@ $expectedPartCode
     });
 
     test('passes explicit contentType encoding to MultipartFile', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'image',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'image/png',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'image': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'image/png',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2865,46 +1985,26 @@ $expectedPartCode
     });
 
     test('uses default application/octet-stream contentType for binary', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -2936,46 +2036,26 @@ $expectedPartCode
     test(
       'generates binary switch for Base64Model property (same as BinaryModel)',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'avatar',
               model: Base64Model(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'avatar': const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3018,46 +2098,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: innerClass,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: null,
+                explode: null,
+                allowReserved: null,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3093,46 +2153,26 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: allOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3167,46 +2207,26 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: oneOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3241,46 +2261,26 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: anyOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3313,46 +2313,27 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: innerClass,
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3387,46 +2368,27 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: innerClass,
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3461,46 +2423,26 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: innerClass,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/xml',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/xml',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3535,46 +2477,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: innerClass,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3607,46 +2529,27 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: innerClass,
               isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3683,46 +2586,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: allOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3760,46 +2643,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: oneOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3837,46 +2700,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: anyOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -3915,46 +2758,26 @@ $expectedPartCode
         defaultValue: null,
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: aliasModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: null,
-            explode: null,
-            allowReserved: null,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -3990,46 +2813,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4073,46 +2876,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: allOfModel,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4157,46 +2940,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: "it's-form",
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              "it's-form": const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4241,46 +3004,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: r'path\form',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              r'path\form': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4327,46 +3070,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: r'$total',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              r'$total': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4408,46 +3131,27 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'PersonForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'address',
               model: innerClass,
               isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'address': const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -4492,47 +3196,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  style: EncodingStyle.form,
+                  explode: true,
+                  allowReserved: false,
+                  headers: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                // style/explode present → style-based mode, contentType ignored
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4569,58 +3252,38 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: PartEncoding(
+                  contentType: null,
+                  rawContentType: null,
+                  style: EncodingStyle.form,
+                  explode: true,
+                  allowReserved: null,
+                  headers: {
+                    'X-Custom-Header': ResponseHeaderObject(
+                      name: 'X-Custom-Header',
+                      description: null,
+                      isRequired: true,
+                      isDeprecated: false,
+                      explode: false,
+                      model: StringModel(context: testContext),
+                      context: testContext,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
+                    ),
+                  },
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': PartEncoding(
-                contentType: null,
-                rawContentType: null,
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: null,
-                headers: {
-                  'X-Custom-Header': ResponseHeaderObject(
-                    name: 'X-Custom-Header',
-                    description: null,
-                    isRequired: true,
-                    isDeprecated: false,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    context: testContext,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4668,46 +3331,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: null,
+                  rawContentType: null,
+                  style: EncodingStyle.pipeDelimited,
+                  explode: true,
+                  allowReserved: null,
+                  headers: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': const PartEncoding(
-                contentType: null,
-                rawContentType: null,
-                style: EncodingStyle.pipeDelimited,
-                explode: true,
-                allowReserved: null,
-                headers: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4739,46 +3382,26 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: null,
+                  rawContentType: null,
+                  style: EncodingStyle.form,
+                  explode: false,
+                  allowReserved: null,
+                  headers: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': const PartEncoding(
-                contentType: null,
-                rawContentType: null,
-                style: EncodingStyle.form,
-                explode: false,
-                allowReserved: null,
-                headers: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4816,58 +3439,38 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'PersonForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'address',
                 model: innerClass,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: {
+                    'X-Custom-Header': ResponseHeaderObject(
+                      name: 'X-Custom-Header',
+                      description: null,
+                      isRequired: true,
+                      isDeprecated: false,
+                      explode: false,
+                      model: StringModel(context: testContext),
+                      context: testContext,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
+                    ),
+                  },
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'address': PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: {
-                  'X-Custom-Header': ResponseHeaderObject(
-                    name: 'X-Custom-Header',
-                    description: null,
-                    isRequired: true,
-                    isDeprecated: false,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    context: testContext,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -4906,23 +3509,6 @@ $expectedPartCode
       );
 
       test('colliding per-part header names use their distinct parameters', () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
-              name: 'file',
-              model: BinaryModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
         final headers = {
           for (final rawName in ['X-Trace-Id', 'Trace-Id'])
             rawName: ResponseHeaderObject(
@@ -4937,29 +3523,27 @@ $expectedPartCode
               examples: const [],
             ),
         };
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'file': PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: headers,
-              style: null,
-              explode: null,
-              allowReserved: null,
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
+              name: 'file',
+              model: BinaryModel(context: testContext),
+              encoding: PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: headers,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
-          }),
-          examples: const [],
+          ],
         );
 
         final code = emitStatements(
           buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           ),
         );
 
@@ -4986,46 +3570,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5059,46 +3623,27 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
               isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5134,36 +3679,18 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5197,46 +3724,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5267,46 +3774,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: "it's-meta",
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.deepObject,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            "it's-meta": const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.deepObject,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5336,46 +3823,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5439,46 +3906,27 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: mapModel,
               isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5545,46 +3993,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: "it's-meta",
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            "it's-meta": const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5649,46 +4077,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: r'path\to',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            r'path\to': const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5753,46 +4161,26 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: r'$total',
               model: mapModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            r'$total': const PartEncoding(
-              contentType: ContentType.form,
-              rawContentType: 'application/x-www-form-urlencoded',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5864,46 +4252,26 @@ $expectedPartCode
           defaultValue: null,
         );
 
-        final model = ClassModel(
-          name: 'ResourceForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'metadata',
               model: aliasModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'metadata': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -5933,50 +4301,30 @@ $expectedPartCode
     // --- Style / explode tests (text/plain contentType) ---
 
     test('list of strings, explode: true, style: form', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -5997,50 +4345,30 @@ $expectedPartCode
     });
 
     test('list of strings, explode: true, style: spaceDelimited', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.spaceDelimited,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.spaceDelimited,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6061,50 +4389,30 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: form', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6132,50 +4440,30 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: spaceDelimited', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.spaceDelimited,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.spaceDelimited,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6196,50 +4484,30 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: pipeDelimited', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.pipeDelimited,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.pipeDelimited,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6261,50 +4529,30 @@ $expectedPartCode
 
     test('list of strings, explode: false, style: deepObject '
         'generates runtime error', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.deepObject,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.deepObject,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6328,50 +4576,30 @@ $expectedPartCode
       'deepObject error for list uses raw literal when property name '
       'has special characters',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: "it's-tags",
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.deepObject,
+                explode: false,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            "it's-tags": const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.deepObject,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -6407,50 +4635,30 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'statuses',
             model: ListModel(
               content: enumModel,
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'statuses': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6488,50 +4696,30 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'codes',
             model: ListModel(
               content: enumModel,
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'codes': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6564,50 +4752,30 @@ $expectedPartCode
     // --- ContentType tests ---
 
     test('list of integers, text/plain, explode: true', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'scores',
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'scores': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6628,50 +4796,30 @@ $expectedPartCode
     });
 
     test('list of integers, application/json, explode: true', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'scores',
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'scores': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6692,50 +4840,30 @@ $expectedPartCode
     });
 
     test('list of integers, application/json, explode: false', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'scores',
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'scores': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6766,50 +4894,30 @@ $expectedPartCode
     });
 
     test('list of DateTimeModel, text/plain, explode: true', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'dates',
             model: ListModel(
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'dates': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6830,50 +4938,30 @@ $expectedPartCode
     });
 
     test('list of DateTimeModel, application/json, explode: true', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'dates',
             model: ListModel(
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'dates': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6896,50 +4984,30 @@ $expectedPartCode
     // --- Binary tests ---
 
     test('list of binary, explode: true', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'files',
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'files': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -6965,50 +5033,30 @@ $expectedPartCode
     });
 
     test('list of binary, explode: false (treated as exploded)', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'files',
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: false,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'files': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: false,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7044,50 +5092,30 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'addresses',
             model: ListModel(
               content: innerClass,
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'addresses': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7116,50 +5144,30 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'addresses',
             model: ListModel(
               content: innerClass,
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/xml',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'addresses': const PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/xml',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7182,11 +5190,10 @@ $expectedPartCode
     // --- Nullable / optional tests ---
 
     test('optional list property wraps in null-check', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
@@ -7194,38 +5201,20 @@ $expectedPartCode
               examples: const [],
             ),
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7248,50 +5237,31 @@ $expectedPartCode
     });
 
     test('required-but-nullable list wraps in null-check', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
             isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -7315,50 +5285,30 @@ $expectedPartCode
 
     group('content-based mode (no style fields)', () {
       test('list of strings, application/json, content-based mode', () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'tags': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7377,50 +5327,30 @@ $expectedPartCode
       });
 
       test('list of integers, application/json, content-based mode', () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'scores',
               model: ListModel(
                 content: IntegerModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'scores': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7441,40 +5371,22 @@ $expectedPartCode
       test(
         'list of strings, no encoding at all → repeated text/plain fields',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'tags',
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7504,50 +5416,30 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'addresses',
               model: ListModel(
                 content: innerClass,
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'addresses': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7566,50 +5458,30 @@ $expectedPartCode
       });
 
       test('list of DateTimeModel, content-based mode', () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'dates',
               model: ListModel(
                 content: DateTimeModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'dates': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7628,11 +5500,10 @@ $expectedPartCode
       });
 
       test('optional list, content-based mode, null-wrapping applies', () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: testContext),
@@ -7640,38 +5511,20 @@ $expectedPartCode
                 examples: const [],
               ),
               isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'tags': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -7698,50 +5551,31 @@ $expectedPartCode
           // In OAS 3.0/3.1 the parser computes contentType: text/plain as the
           // default for string/scalar array items. With no style fields set,
           // the default is repeated parts (one per element), not a JSON blob.
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'tags',
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'tags': const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7765,50 +5599,30 @@ $expectedPartCode
       test(
         'list of integers, text/plain (parser default) → repeated form fields',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'scores',
                 model: ListModel(
                   content: IntegerModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'scores': const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7832,50 +5646,30 @@ $expectedPartCode
       test(
         'list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'dates',
                 model: ListModel(
                   content: DateTimeModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'dates': const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7911,50 +5705,30 @@ $expectedPartCode
             examples: const [],
           );
 
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'priorities',
                 model: ListModel(
                   content: enumModel,
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'priorities': const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -7983,11 +5757,10 @@ $expectedPartCode
       test(
         'optional list, no encoding → repeated fields with null guard',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'tags',
                 model: ListModel(
                   content: StringModel(context: testContext),
@@ -7995,28 +5768,12 @@ $expectedPartCode
                   examples: const [],
                 ),
                 isRequired: false,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8052,50 +5809,30 @@ $expectedPartCode
           examples: const [],
         );
 
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'priorities',
               model: ListModel(
                 content: enumModel,
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'priorities': const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -8120,50 +5857,31 @@ $expectedPartCode
           // BinaryModel items bypass the content-based/style-based check and
           // always produce a for-loop, matching the plan's "one file part per
           // binary item" rule.
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'files',
                 model: ListModel(
                   content: BinaryModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'files': const PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8193,11 +5911,10 @@ $expectedPartCode
         'list of ListModel items (array-of-arrays), '
         'content-based mode → EncodingException',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'matrix',
                 model: ListModel(
                   content: ListModel(
@@ -8208,39 +5925,20 @@ $expectedPartCode
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'matrix': const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8265,11 +5963,10 @@ $expectedPartCode
         'arrays-of-arrays error uses raw literal when property name '
         'has special characters',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: r'$matrix',
                 model: ListModel(
                   content: ListModel(
@@ -8280,39 +5977,20 @@ $expectedPartCode
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              r'$matrix': const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8337,50 +6015,30 @@ $expectedPartCode
         'list with explicit unsupported contentType, '
         'content-based mode → EncodingException',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: 'items',
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              'items': const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8405,50 +6063,30 @@ $expectedPartCode
         'unsupported contentType error uses raw literal when property name '
         'has special characters',
         () {
-          final model = ClassModel(
-            name: 'TestForm',
-            isDeprecated: false,
-            properties: [
-              Property(
+          final content = multipartContentFixture(
+            testContext,
+            [
+              multipartPartFixture(
                 name: "it's-items",
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
                 ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
+                encoding: const PartEncoding(
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
             ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = RequestContent(
-            model: model,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: _multipartEncoding(model, {
-              "it's-items": const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
-            content,
-            'body',
-            nameManager,
-            'test_package',
+            _planMultipartBody(content, 'body'),
           );
 
           final code = emitStatements(result);
@@ -8473,46 +6111,26 @@ $expectedPartCode
 
   group('buildMultipartBodyExpression', () {
     test('returns IIFE for ClassModel with string property', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'name',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'name': const PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyExpression(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitExpressionAsMethod(result);
@@ -8531,95 +6149,43 @@ $expectedPartCode
         ),
       );
     });
-
-    test('returns IIFE with UnsupportedError for non-ClassModel', () {
-      final content = RequestContent(
-        model: BinaryModel(context: testContext),
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = buildMultipartBodyExpression(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
-
-      final code = emitExpressionAsMethod(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
-          void test() {
-            await () async {
-              throw UnsupportedError(
-                'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-              );
-            }();
-          }
-        '''),
-        ),
-      );
-    });
   });
 
   group('per-part headers', () {
     test('binary property with one required header passes headers to '
         'MultipartFile', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: {
+                'X-Rate-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: IntegerModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-            headers: {
-              'X-Rate-Limit': ResponseHeaderObject(
-                name: 'X-Rate-Limit',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: IntegerModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8651,58 +6217,38 @@ $expectedPartCode
     });
 
     test('binary property with optional header wraps in null check', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Tag': ResponseHeaderObject(
+                  name: 'X-Tag',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: {
-              'X-Tag': ResponseHeaderObject(
-                name: 'X-Tag',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: false,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8744,58 +6290,38 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'address',
             model: innerClass,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'address': PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8823,58 +6349,38 @@ $expectedPartCode
     });
 
     test('string field with headers converts to MultipartFile.fromString', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'description',
             model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Language': ResponseHeaderObject(
+                  name: 'X-Language',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'description': PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            headers: {
-              'X-Language': ResponseHeaderObject(
-                name: 'X-Language',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -8900,58 +6406,38 @@ $expectedPartCode
     test(
       'primitive field with headers converts to MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: IntegerModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                headers: {
+                  'X-Source': ResponseHeaderObject(
+                    name: 'X-Source',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: {
-                'X-Source': ResponseHeaderObject(
-                  name: 'X-Source',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -8988,58 +6474,38 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'status',
             model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'status': PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9063,58 +6529,38 @@ $expectedPartCode
     });
 
     test('Content-Type header is filtered out from per-part headers', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'Content-Type': ResponseHeaderObject(
+                  name: 'Content-Type',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: {
-              'Content-Type': ResponseHeaderObject(
-                name: 'Content-Type',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: false,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9145,69 +6591,49 @@ $expectedPartCode
     });
 
     test('multiple headers on one property are all included', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Rate-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: IntegerModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+                'X-Tag': ResponseHeaderObject(
+                  name: 'X-Tag',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: false,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: {
-              'X-Rate-Limit': ResponseHeaderObject(
-                name: 'X-Rate-Limit',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: IntegerModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-              'X-Tag': ResponseHeaderObject(
-                name: 'X-Tag',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: false,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9242,46 +6668,26 @@ $expectedPartCode
     });
 
     test('property without headers does not generate headers map', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: null,
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9312,62 +6718,42 @@ $expectedPartCode
 
     test('exploded string list with headers uses MultipartFile.fromString '
         'per item', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: true,
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9391,62 +6777,42 @@ $expectedPartCode
 
     test('non-exploded string list with headers uses MultipartFile.fromString '
         'for encoded value', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'tags': PartEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: EncodingStyle.form,
-            explode: false,
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9484,62 +6850,42 @@ $expectedPartCode
       'non-exploded space-delimited string list with headers wraps the '
       'encoded value in MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.spaceDelimited,
+                explode: false,
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'tags': PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.spaceDelimited,
-              explode: false,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9566,62 +6912,42 @@ $expectedPartCode
       'non-exploded pipe-delimited DateTime list with headers maps items and '
       'wraps the encoded value in MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'dates',
               model: ListModel(
                 content: DateTimeModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.pipeDelimited,
+                explode: false,
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'dates': PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.pipeDelimited,
-              explode: false,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9646,62 +6972,42 @@ $expectedPartCode
 
     test('exploded binary list with headers passes headers to '
         'MultipartFile.fromBytes', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'files',
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: EncodingStyle.form,
+              explode: true,
+              headers: {
+                'X-Checksum': ResponseHeaderObject(
+                  name: 'X-Checksum',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'files': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            style: EncodingStyle.form,
-            explode: true,
-            headers: {
-              'X-Checksum': ResponseHeaderObject(
-                name: 'X-Checksum',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9738,62 +7044,42 @@ $expectedPartCode
         examples: const [],
       );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'addresses',
             model: ListModel(
               content: innerClass,
               context: testContext,
               examples: const [],
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.form,
+              explode: true,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'addresses': PartEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9816,58 +7102,39 @@ $expectedPartCode
     });
 
     test('required header on optional property uses null assertion', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
             name: 'file',
             model: BinaryModel(context: testContext),
             isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Rate-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: IntegerModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
         ],
-        context: testContext,
-        examples: const [],
-      );
-
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'file': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: {
-              'X-Rate-Limit': ResponseHeaderObject(
-                name: 'X-Rate-Limit',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: IntegerModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-                examples: const [],
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
-          ),
-        }),
-        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -9905,58 +7172,39 @@ $expectedPartCode
     test(
       'required header on nullable required property uses null assertion',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'file',
               model: BinaryModel(context: testContext),
-              isRequired: true,
               isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Checksum': ResponseHeaderObject(
+                    name: 'X-Checksum',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'file': PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'X-Checksum': ResponseHeaderObject(
-                  name: 'X-Checksum',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -9993,58 +7241,38 @@ $expectedPartCode
     test(
       'AnyModel field with headers converts to MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'data',
               model: AnyModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'data': PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10072,58 +7300,38 @@ $expectedPartCode
       'primitive field with json contentType and headers uses jsonEncode in '
       'MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'count',
               model: IntegerModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: {
+                  'X-Source': ResponseHeaderObject(
+                    name: 'X-Source',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'count': PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: {
-                'X-Source': ResponseHeaderObject(
-                  name: 'X-Source',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10151,58 +7359,38 @@ $expectedPartCode
       'DateTimeModel field with json contentType and headers uses jsonEncode '
       'in MultipartFile.fromString',
       () {
-        final model = ClassModel(
-          name: 'UploadForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'createdAt',
               model: DateTimeModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: {
+                  'X-Source': ResponseHeaderObject(
+                    name: 'X-Source',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'createdAt': PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: {
-                'X-Source': ResponseHeaderObject(
-                  name: 'X-Source',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10229,62 +7417,42 @@ $expectedPartCode
     test(
       'non-exploded DateTime list with headers sends one mapped encoded part',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'dates',
               model: ListModel(
                 content: DateTimeModel(context: testContext),
                 context: testContext,
                 examples: const [],
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                style: EncodingStyle.form,
+                explode: false,
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: testContext,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                allowReserved: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'dates': PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: false,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10323,24 +7491,6 @@ $expectedPartCode
     );
 
     test('resolves ResponseHeaderAlias to underlying header object', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'document',
-            model: BinaryModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: testContext,
-        examples: const [],
-      );
-
       // Create a header alias that wraps a real header object.
       final underlyingHeader = ResponseHeaderObject(
         name: 'X-Trace-Id',
@@ -10354,34 +7504,32 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        multipartEncoding: _multipartEncoding(model, {
-          'document': PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: {
-              'X-Trace-Id': ResponseHeaderAlias(
-                name: 'X-Trace-Id',
-                context: testContext,
-                header: underlyingHeader,
-              ),
-            },
-            style: null,
-            explode: null,
-            allowReserved: null,
+      final content = multipartContentFixture(
+        testContext,
+        [
+          multipartPartFixture(
+            name: 'document',
+            model: BinaryModel(context: testContext),
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Trace-Id': ResponseHeaderAlias(
+                  name: 'X-Trace-Id',
+                  context: testContext,
+                  header: underlyingHeader,
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
           ),
-        }),
-        examples: const [],
+        ],
       );
 
       final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
+        _planMultipartBody(content, 'body'),
       );
 
       final code = emitStatements(result);
@@ -10418,46 +7566,26 @@ $expectedPartCode
     test(
       'generates valid code when rawContentType contains single quote',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: 'name',
               model: StringModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: "text/it's-plain",
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            'name': const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: "text/it's-plain",
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10479,46 +7607,26 @@ $expectedPartCode
     test(
       'generates valid code when field name contains single quote',
       () {
-        final model = ClassModel(
-          name: 'TestForm',
-          isDeprecated: false,
-          properties: [
-            Property(
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
               name: "it's-field",
               model: BinaryModel(context: testContext),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+              encoding: const PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
           ],
-          context: testContext,
-          examples: const [],
-        );
-
-        final content = RequestContent(
-          model: model,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          multipartEncoding: _multipartEncoding(model, {
-            "it's-field": const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          }),
-          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
-          content,
-          'body',
-          nameManager,
-          'test_package',
+          _planMultipartBody(content, 'body'),
         );
 
         final code = emitStatements(result);
@@ -10550,15 +7658,14 @@ $expectedPartCode
   });
 }
 
-Map<Property, PartEncoding> _multipartEncoding(
-  ClassModel model,
-  Map<String, PartEncoding> byName,
-) {
-  return {
-    for (final entry in byName.entries)
-      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
-  };
-}
+MultipartBodyPlan _planMultipartBody(
+  MultipartRequestContent content,
+  String bodyAccessor,
+) => const MultipartBodyPlanner(backend: TransportBackend.dio).plan(
+  content,
+  bodyAccessor: bodyAccessor,
+  isRequired: true,
+);
 
 ClassModel _testClassModel(Context context) => ClassModel(
   name: 'NestedValue',

@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -6,6 +7,10 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   group('ClassGenerator toDeepObject generation', () {
     late ClassGenerator generator;
     late NameManager nameManager;
@@ -127,8 +132,8 @@ void main() {
 
       final generatedCode = result.accept(emitter).toString();
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToDeepObjectMethod)),
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
       );
     });
 
@@ -177,8 +182,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -233,8 +238,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -274,8 +279,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -311,8 +316,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -348,8 +353,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -410,8 +415,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );
@@ -447,8 +452,8 @@ void main() {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToDeepObjectMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
         );
       },
     );

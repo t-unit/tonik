@@ -218,6 +218,8 @@ class ContentTypeNormalizer {
     RequestContent content,
     Context context,
   ) {
+    if (content is MultipartRequestContent) return content;
+    content as ModelRequestContent;
     final normalizedModel = _normalizeModel(
       content.model,
       content.contentType,
@@ -228,14 +230,13 @@ class ContentTypeNormalizer {
       return content;
     }
 
-    return RequestContent(
+    return ModelRequestContent(
       model: normalizedModel,
       contentType: content.contentType,
       rawContentType: content.rawContentType,
       wireContentType: content.wireContentType,
       textEncoding: content.textEncoding,
       formEncoding: content.formEncoding,
-      multipartEncoding: content.multipartEncoding,
       examples: content.examples,
     );
   }

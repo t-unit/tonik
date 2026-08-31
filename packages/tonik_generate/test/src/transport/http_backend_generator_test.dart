@@ -1137,7 +1137,7 @@ Future<TonikResult<void, Response>> dispatch() async {
           body: MultipartBodyPlan(
             value: refer('body'),
             rawContentType: 'multipart/form-data',
-            parts: const [],
+            emissions: const [],
             isRequired: true,
           ),
         ),
@@ -1256,7 +1256,7 @@ Future<TonikResult<void, Response>> dispatch() async {
             body: MultipartBodyPlan(
               value: refer('body'),
               rawContentType: 'multipart/form-data',
-              parts: const [],
+              emissions: const [],
               isRequired: false,
             ),
           ),
@@ -1392,7 +1392,7 @@ Future<TonikResult<void, Response>> dispatch() async {
               MultipartBodyPlan(
                 value: refer('body'),
                 rawContentType: 'multipart/form-data',
-                parts: const [],
+                emissions: const [],
                 isRequired: true,
               ),
             ],

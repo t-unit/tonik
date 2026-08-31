@@ -92,8 +92,8 @@ class RequestHeadersGenerator {
         Parameter(
           (b) => b
             ..name = 'body'
-            ..type = typeReference(
-              singleContent.model,
+            ..type = requestContentTypeReference(
+              singleContent,
               nameManager,
               package,
               isNullableOverride: true,

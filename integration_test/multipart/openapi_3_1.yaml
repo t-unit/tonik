@@ -15,6 +15,21 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/read-only:
+    post:
+      operationId: postReadOnlyFields
+      tags:
+        - multipart31
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReadOnlyFields'
+      responses:
+        '204':
+          description: Accepted
+
   /multipart31/pipe-delimited:
     post:
       operationId: postPipeDelimited
@@ -311,6 +326,19 @@ paths:
 
 components:
   schemas:
+    ReadOnlyFields:
+      type: object
+      required:
+        - name
+      properties:
+        serverId:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        note:
+          type: string
+
     PipeDelimitedForm:
       type: object
       required:

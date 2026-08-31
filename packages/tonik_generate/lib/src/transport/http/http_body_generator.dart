@@ -1,8 +1,11 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/data_method_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
@@ -24,22 +27,25 @@ class HttpBodyGenerator {
   final String package;
   final bool useImmutableCollections;
 
-  Method generateBodyMethod(Operation operation) {
+  Method generateBodyMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
-      return Method(
-        (b) => b
-          ..name = '_data'
-          ..returns = refer('Object?', 'dart:core')
-          ..lambda = false
-          ..body = const Code('return null;'),
-      );
+      return buildDataMethod(statements: [const Code('return null;')]);
     }
 
     final content = requestBody.resolvedContent.toList();
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final isRequired = requestBody.isRequired;
+    final headerParameters = buildMultipartHeaderParameters(
+      extractOperationMultipartHeaderParamInfo(operation),
+      nameManager,
+      package,
+      useImmutableCollections: useImmutableCollections,
+    );
+    bodyPlan ??= const OperationRequestPlanner(
+      backend: TransportBackend.http,
+    ).planBody(operation);
 
     if (content.length > 1) {
       final (baseName, subclassNames) = nameManager.requestBodyNames(
@@ -47,19 +53,20 @@ class HttpBodyGenerator {
       );
       final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
       final cases = <Code>[];
-      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
-        operation,
-      );
-
       for (final item in content) {
         final variantName = subclassNames[item.rawContentType]!;
-        final isMultipart = item.contentType == ContentType.multipart;
-        final bindsValue = !isMultipart || item.model.resolved is ClassModel;
+        final isMultipart = item is MultipartRequestContent;
+        final multipartPlan = isMultipart
+            ? (bodyPlan as BodySelectionPlan).variants.firstWhere(
+                    (variant) => variant.rawContentType == item.rawContentType,
+                  )
+                  as MultipartBodyPlan
+            : null;
         final built = isMultipart
             ? null
             : _bodyBytesExpression(
                 operation: operation,
-                content: item,
+                content: item as ModelRequestContent,
                 valueName: 'value.value',
                 helperContext: helperContext,
                 receiverIsPromotedNonNull: false,
@@ -67,9 +74,13 @@ class HttpBodyGenerator {
         if (built != null) inlineHelpers.addAll(built.inlineFunctions);
         cases.add(
           Block.of([
-            if (bindsValue) const Code('final '),
+            const Code('final '),
             refer(variantName, requestBodyUrl).code,
-            Code(bindsValue ? ' value => ' : ' _ => '),
+            Code(
+              multipartPlan?.emissions.isEmpty ?? false
+                  ? ' _ => '
+                  : ' value => ',
+            ),
             if (isMultipart)
               Method(
                 (builder) => builder
@@ -77,9 +88,7 @@ class HttpBodyGenerator {
                   ..lambda = false
                   ..body = Block.of(
                     buildHttpMultipartBodyStatements(
-                      item,
-                      'value.value',
-                      headerParameters: multipartHeaderInfos,
+                      multipartPlan!,
                     ),
                   ),
               ).closure.call([]).awaited.code
@@ -94,90 +103,49 @@ class HttpBodyGenerator {
         cases.add(const Code('null => null,'));
       }
 
-      final multipartHeaderParameters = _multipartHeaderParameters(operation);
       final hasMultipart = content.any(
         (item) => item.contentType == ContentType.multipart,
       );
-      return Method(
-        (b) => b
-          ..name = '_data'
-          ..returns = hasMultipart
-              ? TypeReference(
-                  (t) => t
-                    ..symbol = 'Future'
-                    ..url = 'dart:async'
-                    ..types.add(refer('Object?', 'dart:core')),
-                )
-              : refer('Object?', 'dart:core')
-          ..optionalParameters.add(
-            Parameter(
-              (p) => p
-                ..name = 'body'
-                ..type = TypeReference(
-                  (t) => t
-                    ..symbol = baseName
-                    ..url = requestBodyUrl
-                    ..isNullable = !isRequired,
-                )
-                ..named = true
-                ..required = isRequired,
-            ),
-          )
-          ..optionalParameters.addAll(multipartHeaderParameters)
-          ..modifier = hasMultipart ? MethodModifier.async : null
-          ..lambda = false
-          ..body = Block.of([
-            ...spliceInlineHelpers(inlineHelpers),
-            const Code('return switch (body) {'),
-            ...cases,
-            const Code('};'),
-          ]),
+      return buildDataMethod(
+        bodyType: TypeReference(
+          (type) => type
+            ..symbol = baseName
+            ..url = requestBodyUrl
+            ..isNullable = !isRequired,
+        ),
+        isRequired: isRequired,
+        isAsync: hasMultipart,
+        headerParameters: headerParameters,
+        statements: [
+          ...spliceInlineHelpers(inlineHelpers),
+          const Code('return switch (body) {'),
+          ...cases,
+          const Code('};'),
+        ],
       );
     }
 
     final item = content.single;
-    if (item.contentType == ContentType.multipart) {
-      final multipartHeaderParameters = _multipartHeaderParameters(operation);
-      final multipartHeaderInfos = extractOperationMultipartHeaderParamInfo(
-        operation,
-      );
-      return Method(
-        (b) => b
-          ..name = '_data'
-          ..returns = TypeReference(
-            (t) => t
-              ..symbol = 'Future'
-              ..url = 'dart:async'
-              ..types.add(refer('Object?', 'dart:core')),
-          )
-          ..optionalParameters.add(
-            Parameter(
-              (p) => p
-                ..name = 'body'
-                ..type = typeReference(
-                  item.model,
-                  nameManager,
-                  package,
-                  isNullableOverride: !isRequired,
-                  useImmutableCollections: useImmutableCollections,
-                )
-                ..named = true
-                ..required = isRequired,
-            ),
-          )
-          ..optionalParameters.addAll(multipartHeaderParameters)
-          ..modifier = MethodModifier.async
-          ..lambda = false
-          ..body = Block.of([
-            if (!isRequired) const Code('if (body == null) return null;'),
-            ...buildHttpMultipartBodyStatements(
-              item,
-              'body',
-              headerParameters: multipartHeaderInfos,
-            ),
-          ]),
+    final bodyType = requestContentTypeReference(
+      item,
+      nameManager,
+      package,
+      isNullableOverride: !isRequired,
+      useImmutableCollections: useImmutableCollections,
+    );
+    if (item is MultipartRequestContent) {
+      return buildDataMethod(
+        bodyType: bodyType,
+        isRequired: isRequired,
+        isAsync: true,
+        headerParameters: headerParameters,
+        statements: [
+          if (!isRequired) const Code('if (body == null) return null;'),
+          ...buildHttpMultipartBodyStatements(bodyPlan as MultipartBodyPlan),
+        ],
       );
     }
+    item as ModelRequestContent;
     final built = _bodyBytesExpression(
       operation: operation,
       content: item,
@@ -187,39 +155,22 @@ class HttpBodyGenerator {
     );
     inlineHelpers.addAll(built.inlineFunctions);
 
-    return Method(
-      (b) => b
-        ..name = '_data'
-        ..returns = refer('Object?', 'dart:core')
-        ..optionalParameters.add(
-          Parameter(
-            (p) => p
-              ..name = 'body'
-              ..type = typeReference(
-                item.model,
-                nameManager,
-                package,
-                isNullableOverride: !isRequired,
-                useImmutableCollections: useImmutableCollections,
-              )
-              ..named = true
-              ..required = isRequired,
-          ),
-        )
-        ..lambda = false
-        ..body = Block.of([
-          if (!isRequired) const Code('if (body == null) return null;'),
-          ...spliceInlineHelpers(inlineHelpers),
-          const Code('return '),
-          built.unsafeRawBody.code,
-          const Code(';'),
-        ]),
+    return buildDataMethod(
+      bodyType: bodyType,
+      isRequired: isRequired,
+      statements: [
+        if (!isRequired) const Code('if (body == null) return null;'),
+        ...spliceInlineHelpers(inlineHelpers),
+        const Code('return '),
+        built.unsafeRawBody.code,
+        const Code(';'),
+      ],
     );
   }
 
   BuiltExpression _bodyBytesExpression({
     required Operation operation,
-    required RequestContent content,
+    required ModelRequestContent content,
     required String valueName,
     required InlineHelperContext helperContext,
     required bool receiverIsPromotedNonNull,
@@ -287,24 +238,7 @@ class HttpBodyGenerator {
           inlineFunctions: form.inlineFunctions,
         );
       case ContentType.multipart:
-        throw StateError('Multipart bodies are handled by HTTP-09.');
+        throw StateError('Multipart content must own parts.');
     }
   }
-
-  List<Parameter> _multipartHeaderParameters(Operation operation) => [
-    for (final info in extractOperationMultipartHeaderParamInfo(operation))
-      Parameter(
-        (parameter) => parameter
-          ..name = info.name
-          ..type = typeReference(
-            info.model,
-            nameManager,
-            package,
-            isNullableOverride: !info.isRequired,
-            useImmutableCollections: useImmutableCollections,
-          )
-          ..named = true
-          ..required = info.isRequired,
-      ),
-  ];
 }

@@ -31,6 +31,8 @@ abstract interface class TransportBackendGenerator {
 
   List<DependencyDescriptor> get dependencies;
 
+  TransportBackend get backend;
+
   Reference get nativeClientType;
 
   TypeReference get nativeResponseType;
@@ -78,6 +80,7 @@ abstract interface class TransportBackendGenerator {
 
   Method generateBodyMethod({
     required Operation operation,
+    required OperationRequestPlan requestPlan,
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,

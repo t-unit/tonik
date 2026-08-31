@@ -21,6 +21,27 @@ class StableModelSorter {
     return _cache[model] ??= _computeStableKey(model, {}, 0);
   }
 
+  String stableAliasKey({required Model model}) =>
+      'AliasModel{null,${_computeStableKey(model, {}, 1)}}';
+
+  String stableObjectKey({
+    required String? name,
+    required Iterable<(String, Model)> properties,
+    required AdditionalPropertiesPolicy additionalPropertiesPolicy,
+  }) => _objectKey(name, properties, additionalPropertiesPolicy, {}, 0);
+
+  String _objectKey(
+    String? name,
+    Iterable<(String, Model)> properties,
+    AdditionalPropertiesPolicy policy,
+    Set<Model> visited,
+    int depth,
+  ) =>
+      'ClassModel{$name,'
+      '${properties.map((p) => '${p.$1}:'
+          '${_computeStableKey(p.$2, visited, depth + 1)}').join(',')},'
+      'ap:${_policyKey(policy, visited, depth)}}';
+
   /// Returns a deterministically sorted list of [models].
   ///
   /// Sort order:
@@ -110,14 +131,13 @@ class StableModelSorter {
         :final properties,
         :final additionalPropertiesPolicy,
       ) =>
-        'ClassModel{'
-            '$name,'
-            '${properties.map(
-              (p) => '${p.name}:'
-                  '${_computeStableKey(p.model, visited, depth + 1)}',
-            ).join(',')},'
-            'ap:${_policyKey(additionalPropertiesPolicy, visited, depth)}'
-            '}',
+        _objectKey(
+          name,
+          properties.map((p) => (p.name, p.model)),
+          additionalPropertiesPolicy,
+          visited,
+          depth,
+        ),
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>

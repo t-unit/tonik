@@ -9,6 +9,8 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
+import '../multipart_test_support.dart';
+
 void main() {
   late HttpBodyGenerator generator;
   late Context context;
@@ -580,13 +582,13 @@ Object? _data({String? body}) {
       description: null,
       isRequired: true,
       content: {
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.json,
           rawContentType: 'application/json',
           examples: const [],
         ),
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.text,
           rawContentType: 'text/plain',
@@ -615,36 +617,64 @@ Object? _data({required Payload body}) {
     );
   });
 
-  test('lowers a runtime-selected JSON or multipart body', () {
-    final value = _formProperty(
-      context,
-      name: 'value',
-      model: StringModel(context: context),
-    );
-    final upload = ClassModel(
-      name: 'Upload',
-      properties: [value],
-      context: context,
-      isDeprecated: false,
-      examples: const [],
-    );
+  test('does not bind the value of an empty multipart variant', () {
     final requestBody = RequestBodyObject(
       name: 'payload',
       context: context,
       description: null,
       isRequired: true,
       content: {
-        RequestContent(
+        ModelRequestContent(
           model: StringModel(context: context),
           contentType: ContentType.json,
           rawContentType: 'application/json',
           examples: const [],
         ),
-        RequestContent(
-          model: upload,
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
+        multipartContentFixture(context, const []),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+    const expected = r'''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    final PayloadFormData _ => await () async {
+      final _$multipartFiles = <MultipartFile>[];
+      return _$multipartFiles;
+    }(),
+  };
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
+  test('lowers a runtime-selected JSON or multipart body', () {
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        ModelRequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
           examples: const [],
+        ),
+        multipartContentFixture(
+          context,
+          [
+            multipartPartFixture(
+              name: 'value',
+              model: StringModel(context: context),
+            ),
+          ],
+          name: 'Upload',
         ),
       },
     );
@@ -677,50 +707,6 @@ Future<Object?> _data({required Payload body}) async {
     );
   });
 
-  test('does not bind an unsupported multipart variant', () {
-    final requestBody = RequestBodyObject(
-      name: 'payload',
-      context: context,
-      description: null,
-      isRequired: true,
-      content: {
-        RequestContent(
-          model: StringModel(context: context),
-          contentType: ContentType.json,
-          rawContentType: 'application/json',
-          examples: const [],
-        ),
-        RequestContent(
-          model: BinaryModel(context: context),
-          contentType: ContentType.multipart,
-          rawContentType: 'multipart/form-data',
-          examples: const [],
-        ),
-      },
-    );
-    final method = generator.generateBodyMethod(
-      _operation(context, requestBody: requestBody),
-    );
-
-    const expected = '''
-Future<Object?> _data({required Payload body}) async {
-  return switch (body) {
-    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
-    PayloadFormData _ => await () async {
-      throw UnsupportedError(
-        'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
-      );
-    }(),
-  };
-}
-''';
-
-    expect(
-      collapseWhitespace(format('${method.accept(emitter)}')),
-      collapseWhitespace(format(expected)),
-    );
-  });
-
   group('multipart bodies', () {
     test(
       'emits ordered duplicate-preserving scalar JSON and file parts',
@@ -738,72 +724,59 @@ Future<Object?> _data({required Payload body}) async {
           isDeprecated: false,
           examples: const [],
         );
-        final text = _formProperty(
-          context,
-          name: 'item',
-          model: StringModel(context: context),
-        );
-        final json = _formProperty(
-          context,
-          name: 'metadata',
-          model: metadata,
-        );
-        final file = _formProperty(
-          context,
-          name: 'item',
-          model: BinaryModel(context: context),
-        );
-        final optionalText = _formProperty(
-          context,
-          name: 'note',
-          model: StringModel(context: context),
-          isRequired: false,
-          isNullable: true,
-        );
-        final upload = ClassModel(
-          name: 'Upload',
-          properties: [text, json, file, optionalText],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-        );
 
         final method = generator.generateBodyMethod(
           _operation(
             context,
-            requestBody: _body(
+            requestBody: _multipartBody(
               context,
-              model: upload,
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-              multipartEncoding: {
-                text: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain; charset=iso-8859-1',
-                  wireContentType: 'text/plain; charset=iso-8859-1',
-                  textEncoding: TextEncoding.latin1,
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
+              [
+                multipartPartFixture(
+                  name: 'item',
+                  model: StringModel(context: context),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain; charset=iso-8859-1',
+                    wireContentType: 'text/plain; charset=iso-8859-1',
+                    textEncoding: TextEncoding.latin1,
+                    headers: null,
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
+                  ),
                 ),
-                json: const PartEncoding(
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
+                multipartPartFixture(
+                  name: 'metadata',
+                  model: metadata,
+                  encoding: const PartEncoding(
+                    contentType: ContentType.json,
+                    rawContentType: 'application/json',
+                    headers: null,
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
+                  ),
                 ),
-                file: const PartEncoding(
-                  contentType: ContentType.bytes,
-                  rawContentType: 'image/png',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
+                multipartPartFixture(
+                  name: 'item',
+                  model: BinaryModel(context: context),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.bytes,
+                    rawContentType: 'image/png',
+                    headers: null,
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
+                  ),
                 ),
-              },
+                multipartPartFixture(
+                  name: 'note',
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isNullable: true,
+                ),
+              ],
+              name: 'Upload',
             ),
           ),
         );
@@ -854,40 +827,30 @@ Future<Object?> _data({required Upload body}) async {
     );
 
     test('emits repeated scalar and file parts in collection order', () {
-      final tags = _formProperty(
-        context,
-        name: 'tag',
-        model: ListModel(
-          content: StringModel(context: context),
-          context: context,
-          examples: const [],
-        ),
-      );
-      final files = _formProperty(
-        context,
-        name: 'file',
-        model: ListModel(
-          content: BinaryModel(context: context),
-          context: context,
-          examples: const [],
-        ),
-      );
-      final upload = ClassModel(
-        name: 'BatchUpload',
-        properties: [tags, files],
-        context: context,
-        isDeprecated: false,
-        examples: const [],
-      );
-
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _body(
+          requestBody: _multipartBody(
             context,
-            model: upload,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
+            [
+              multipartPartFixture(
+                name: 'tag',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+              ),
+              multipartPartFixture(
+                name: 'file',
+                model: ListModel(
+                  content: BinaryModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+              ),
+            ],
+            name: 'BatchUpload',
           ),
         ),
       );
@@ -925,27 +888,18 @@ Future<Object?> _data({required BatchUpload body}) async {
     });
 
     test('omits an optional multipart body without emitting an empty part', () {
-      final upload = ClassModel(
-        name: 'OptionalUpload',
-        properties: [
-          _formProperty(
-            context,
-            name: 'value',
-            model: StringModel(context: context),
-          ),
-        ],
-        context: context,
-        isDeprecated: false,
-        examples: const [],
-      );
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _body(
+          requestBody: _multipartBody(
             context,
-            model: upload,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
+            [
+              multipartPartFixture(
+                name: 'value',
+                model: StringModel(context: context),
+              ),
+            ],
+            name: 'OptionalUpload',
             isRequired: false,
           ),
         ),
@@ -973,37 +927,27 @@ Future<Object?> _data({OptionalUpload? body}) async {
     });
 
     test('uses normalized semantic fallback for HTTP multipart text', () {
-      final value = _formProperty(
-        context,
-        name: 'value',
-        model: StringModel(context: context),
-      );
-      final upload = ClassModel(
-        name: 'UnsupportedTextUpload',
-        properties: [value],
-        context: context,
-        isDeprecated: false,
-        examples: const [],
-      );
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _body(
+          requestBody: _multipartBody(
             context,
-            model: upload,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: {
-              value: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain; charset=utf-16',
-                wireContentType: 'text/plain; charset=utf-8',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
+            [
+              multipartPartFixture(
+                name: 'value',
+                model: StringModel(context: context),
+                encoding: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain; charset=utf-16',
+                  wireContentType: 'text/plain; charset=utf-8',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
-            },
+            ],
+            name: 'UnsupportedTextUpload',
           ),
         ),
       );
@@ -1029,48 +973,38 @@ Future<Object?> _data({required UnsupportedTextUpload body}) async {
     });
 
     test('attaches required per-part headers to the encoded body', () {
-      final value = _formProperty(
-        context,
-        name: 'value',
-        model: StringModel(context: context),
-      );
-      final upload = ClassModel(
-        name: 'HeaderUpload',
-        properties: [value],
-        context: context,
-        isDeprecated: false,
-        examples: const [],
-      );
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _body(
+          requestBody: _multipartBody(
             context,
-            model: upload,
-            contentType: ContentType.multipart,
-            rawContentType: 'multipart/form-data',
-            multipartEncoding: {
-              value: PartEncoding(
-                contentType: null,
-                rawContentType: null,
-                headers: {
-                  'X-Trace': ResponseHeaderObject(
-                    name: 'X-Trace',
-                    description: null,
-                    isRequired: true,
-                    isDeprecated: false,
-                    explode: false,
-                    model: IntegerModel(context: context),
-                    context: context,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
+            [
+              multipartPartFixture(
+                name: 'value',
+                model: StringModel(context: context),
+                encoding: PartEncoding(
+                  contentType: null,
+                  rawContentType: null,
+                  headers: {
+                    'X-Trace': ResponseHeaderObject(
+                      name: 'X-Trace',
+                      description: null,
+                      isRequired: true,
+                      isDeprecated: false,
+                      explode: false,
+                      model: IntegerModel(context: context),
+                      context: context,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
+                    ),
+                  },
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
               ),
-            },
+            ],
+            name: 'HeaderUpload',
           ),
         ),
       );
@@ -1131,14 +1065,13 @@ RequestBodyObject _body(
   TextEncoding textEncoding = TextEncoding.utf8,
   bool isRequired = true,
   Map<Property, FieldEncoding>? formEncoding,
-  Map<Property, PartEncoding>? multipartEncoding,
 }) => RequestBodyObject(
   name: 'payload',
   context: context,
   description: null,
   isRequired: isRequired,
   content: {
-    RequestContent(
+    ModelRequestContent(
       model: model,
       contentType: contentType,
       rawContentType: rawContentType,
@@ -1146,9 +1079,21 @@ RequestBodyObject _body(
       textEncoding: textEncoding,
       examples: const [],
       formEncoding: formEncoding,
-      multipartEncoding: multipartEncoding,
     ),
   },
+);
+
+RequestBodyObject _multipartBody(
+  Context context,
+  List<MultipartPart> parts, {
+  required String name,
+  bool isRequired = true,
+}) => RequestBodyObject(
+  name: 'payload',
+  context: context,
+  description: null,
+  isRequired: isRequired,
+  content: {multipartContentFixture(context, parts, name: name)},
 );
 
 typedef _ProfileForm = ({

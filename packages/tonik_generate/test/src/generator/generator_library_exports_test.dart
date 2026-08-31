@@ -203,13 +203,13 @@ ApiDocument _completeDocument(Context context) {
     description: 'Multiple request values',
     isRequired: true,
     content: {
-      RequestContent(
+      ModelRequestContent(
         model: StringModel(context: context),
         contentType: ContentType.json,
         rawContentType: 'application/json',
         examples: const [],
       ),
-      RequestContent(
+      ModelRequestContent(
         model: StringModel(context: context),
         contentType: ContentType.json,
         rawContentType: 'application/problem+json',

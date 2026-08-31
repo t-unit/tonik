@@ -11,6 +11,9 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   const HttpBackendGenerator();
 
   @override
+  TransportBackend get backend => TransportBackend.http;
+
+  @override
   List<DependencyDescriptor> get dependencies => const [
     DependencyDescriptor(name: 'http', versionConstraint: '^1.6.0'),
   ];
@@ -218,6 +221,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   @override
   Method generateBodyMethod({
     required Operation operation,
+    required OperationRequestPlan requestPlan,
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,
@@ -225,7 +229,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     nameManager: nameManager,
     package: package,
     useImmutableCollections: useImmutableCollections,
-  ).generateBodyMethod(operation);
+  ).generateBodyMethod(operation, bodyPlan: requestPlan.body);
 
   @override
   Method generateOptionsMethod({

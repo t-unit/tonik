@@ -6,6 +6,8 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_options_generator.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
   late DioOptionsGenerator generator;
   late Context context;
@@ -810,7 +812,7 @@ void main() {
           description: 'Request body with single content type',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -867,7 +869,7 @@ void main() {
         description: 'Optional request body with single content type',
         isRequired: false,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
@@ -926,13 +928,13 @@ void main() {
           description: 'Request body with multiple content types',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'multipart/form-data',
@@ -4514,17 +4516,10 @@ void main() {
           description: 'Multipart body',
           isRequired: true,
           content: {
-            RequestContent(
-              model: ClassModel(
-                name: 'UploadForm',
-                isDeprecated: false,
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-              examples: const [],
+            multipartContentFixture(
+              context,
+              [],
+              name: 'UploadForm',
             ),
           },
         );
@@ -4576,17 +4571,10 @@ void main() {
           description: 'Optional multipart body',
           isRequired: false,
           content: {
-            RequestContent(
-              model: ClassModel(
-                name: 'UploadForm',
-                isDeprecated: false,
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-              examples: const [],
+            multipartContentFixture(
+              context,
+              [],
+              name: 'UploadForm',
             ),
           },
         );
@@ -4640,23 +4628,16 @@ void main() {
             description: 'Mixed content body',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
-                model: ClassModel(
-                  name: 'FormModel',
-                  isDeprecated: false,
-                  properties: const [],
-                  context: context,
-                  examples: const [],
-                ),
-                contentType: ContentType.multipart,
-                rawContentType: 'multipart/form-data',
-                examples: const [],
+              multipartContentFixture(
+                context,
+                [],
+                name: 'FormModel',
               ),
             },
           );

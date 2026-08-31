@@ -44,6 +44,129 @@ void main() {
       expect(result.name, 'User');
     });
 
+    test(
+      'generates nullable multipart values with defaults and read-only fields',
+      () {
+        const encoding = PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain',
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        );
+        final content = MultipartRequestContent(
+          name: 'Upload',
+          context: context,
+          isNullable: true,
+          description: 'Upload fields.',
+          rawContentType: 'multipart/form-data',
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 'wire example',
+            ),
+          ],
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+          parts: [
+            MultipartPart(
+              name: 'server_id',
+              nameOverride: 'serverId',
+              model: StringModel(context: context),
+              encoding: encoding,
+              isRequired: true,
+              isNullable: false,
+              isReadOnly: true,
+              isDeprecated: false,
+              defaultValue: null,
+              examples: const [],
+            ),
+            MultipartPart(
+              name: 'count',
+              model: IntegerModel(context: context),
+              encoding: encoding,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              defaultValue: 3,
+              examples: const [],
+            ),
+          ],
+        );
+
+        final declarations = generator.generateMultipartClasses(content);
+        final valueClass = declarations.whereType<Class>().first;
+        expect(valueClass.name, r'$RawUpload');
+        expect(valueClass.docs, ['/// Upload fields.']);
+        final fields = valueClass.fields
+            .where((field) => !field.static)
+            .toList();
+        expect(fields.map((field) => field.name), [
+          'serverId',
+          'count',
+          'additionalProperties',
+        ]);
+        expect(fields.map((field) => field.type?.accept(emitter).toString()), [
+          'String?',
+          'int',
+          'Map<String,String>',
+        ]);
+        final constructor = valueClass.constructors.first;
+        expect(constructor.constant, isTrue);
+        expect(
+          constructor.optionalParameters.map((parameter) => parameter.required),
+          [false, false, false],
+        );
+        expect(
+          constructor.optionalParameters[1].defaultTo
+              ?.accept(emitter)
+              .toString(),
+          'countDefault',
+        );
+        final alias = declarations.whereType<TypeDef>().single;
+        expect(alias.name, 'Upload');
+        expect(alias.definition.accept(emitter).toString(), r'$RawUpload?');
+      },
+    );
+
+    test('generates a local multipart alias without encoding imports', () {
+      final content = MultipartRequestContent(
+        context: context.pushAll(['upload', 'body']),
+        sourceName: 'Upload',
+        sourceContext: context,
+        alias: MultipartContentAlias(
+          targetName: 'UploadAlias',
+          targetContext: context,
+          description: 'Local upload.',
+          isNullable: true,
+        ),
+        parts: const [],
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+      );
+
+      final result = generator.generateMultipartAlias(content);
+
+      expect(result.filename, 'upload_body_model.dart');
+      expect(
+        collapseWhitespace(format(result.code)),
+        collapseWhitespace(
+          format('''
+          // Generated code - do not modify by hand
+          // ignore_for_file: no_leading_underscores_for_library_prefixes
+          import 'package:example/src/model/upload_alias.dart' as _i1;
+
+        /// Local upload.
+        typedef UploadBodyModel = _i1.UploadAlias?;
+      '''),
+        ),
+      );
+    });
+
     test('generates class with immutable annotation', () {
       final model = ClassModel(
         isDeprecated: false,
@@ -1552,9 +1675,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           }
         ''';
 
+        final constructor = result.constructors.firstWhere(
+          (constructor) => constructor.name == 'fromForm',
+        );
+        final constructorClass = Class(
+          (builder) => builder
+            ..name = 'EmptyModel'
+            ..constructors.add(constructor),
+        );
         expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedFromFormBody)),
+          collapseWhitespace(
+            format(constructorClass.accept(emitter).toString()),
+          ),
+          collapseWhitespace(
+            format('class EmptyModel {$expectedFromFormBody}'),
+          ),
         );
       });
 
@@ -2268,8 +2403,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2338,8 +2473,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2371,8 +2506,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final generatedCode = result.accept(emitter).toString();
         expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
         );
       });
 
@@ -2418,8 +2553,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
           final generatedCode = result.accept(emitter).toString();
           expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedToMatrixMethod)),
+            collapseWhitespace(format(generatedCode)),
+            contains(collapseWhitespace(format(expectedToMatrixMethod))),
           );
         },
       );

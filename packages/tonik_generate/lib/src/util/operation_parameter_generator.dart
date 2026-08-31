@@ -25,8 +25,8 @@ List<Parameter> generateParameters({
   if (hasRequestBody) {
     final requestBody = operation.requestBody!;
     final parameterType = requestBody.contentCount == 1
-        ? typeReference(
-            requestBody.resolvedContent.first.model,
+        ? requestContentTypeReference(
+            requestBody.resolvedContent.first,
             nameManager,
             package,
             isNullableOverride: !requestBody.isRequired,

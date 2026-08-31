@@ -2,8 +2,10 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 void main() {
   const generator = DioBackendGenerator();
@@ -11,6 +13,47 @@ void main() {
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
+
+  test('constructs a multipart form with a native text part', () {
+    final plan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: [
+        MultipartAppend(
+          name: specLiteralString('value'),
+          value: refer('body').property('value'),
+          source: MultipartValueSource.text,
+          contentType: 'text/plain',
+        ),
+      ],
+    );
+    final method = Method(
+      (builder) => builder
+        ..name = 'test'
+        ..returns = refer('Object?', 'dart:core')
+        ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+    );
+    const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  _$formData.files.add(
+    MapEntry(
+      r'value',
+      MultipartFile.fromString(
+        body.value,
+        contentType: DioMediaType.parse(r'text/plain'),
+      ),
+    ),
+  );
+  return _$formData;
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
 
   test('exposes portable cancellation while keeping Dio bridging private', () {
     final parameter = generator.cancellationParameter;

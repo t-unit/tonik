@@ -9,6 +9,19 @@ void main() {
       context = Context.initial();
     });
 
+    test('ordinary content rejects multipart category', () {
+      final model = StringModel(context: context);
+      expect(
+        () => ModelRequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+        throwsArgumentError,
+      );
+    });
+
     group('contentCount', () {
       test('RequestBodyObject - returns number of content objects', () {
         final body = RequestBodyObject(
@@ -17,13 +30,13 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/vnd.api+json',
@@ -54,7 +67,7 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -76,7 +89,7 @@ void main() {
     group('resolvedContent', () {
       test('RequestBodyObject - returns its own content', () {
         final content = {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
@@ -97,7 +110,7 @@ void main() {
 
       test('RequestBodyAlias - returns content of referenced body', () {
         final content = {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',

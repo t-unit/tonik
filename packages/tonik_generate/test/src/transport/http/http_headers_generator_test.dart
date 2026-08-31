@@ -58,7 +58,7 @@ Map<String, String> _options() {
           description: null,
           isRequired: false,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -99,13 +99,13 @@ Map<String, String> _options({String? body}) {
           description: null,
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/merge-patch+json',
@@ -146,7 +146,7 @@ Map<String, String> _options({required Payload body}) {
         description: null,
         isRequired: true,
         content: {
-          RequestContent(
+          ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.text,
             rawContentType: 'text/plain; charset=utf-16',

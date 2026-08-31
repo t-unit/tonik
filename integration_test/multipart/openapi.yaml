@@ -18,6 +18,21 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/read-only:
+    post:
+      operationId: postReadOnlyFields
+      tags:
+        - multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReadOnlyFields'
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/simple:
     post:
       operationId: postSimpleFields
@@ -520,6 +535,19 @@ paths:
 
 components:
   schemas:
+    ReadOnlyFields:
+      type: object
+      required:
+        - name
+      properties:
+        serverId:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        note:
+          type: string
+
     Latin1MultipartForm:
       type: object
       required:

@@ -7,6 +7,89 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 void main() {
   group('TypeReference Generator', () {
+    group('requestContentTypeReference', () {
+      late NameManager manager;
+      late Context context;
+
+      setUp(() {
+        manager = NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
+        context = Context.initial().pushAll(['components', 'schemas']);
+      });
+
+      test('keeps a named nullable alias as the multipart value type', () {
+        final content = MultipartRequestContent(
+          name: 'UploadAlias',
+          sourceName: 'Upload',
+          context: context,
+          parts: const [],
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        );
+
+        final type = requestContentTypeReference(content, manager, 'example');
+
+        expect(type.symbol, 'UploadAlias');
+        expect(type.url, 'package:example/src/model/upload_alias.dart');
+        expect(type.isNullable, isFalse);
+      });
+
+      test(
+        'uses the immediate reference and local nullability '
+        'for an annotated alias',
+        () {
+          final content = MultipartRequestContent(
+            context: Context.initial().pushAll(['upload', 'body']),
+            sourceName: 'Upload',
+            sourceContext: context,
+            alias: MultipartContentAlias(
+              targetName: 'UploadAlias',
+              targetContext: context,
+              isNullable: true,
+            ),
+            parts: const [],
+            rawContentType: 'multipart/form-data',
+            examples: const [],
+          );
+
+          final type = requestContentTypeReference(content, manager, 'example');
+
+          expect(type.symbol, 'UploadAlias');
+          expect(type.url, 'package:example/src/model/upload_alias.dart');
+          expect(type.isNullable, isTrue);
+        },
+      );
+
+      test(
+        'does not add a nullable suffix already owned by an object typedef',
+        () {
+          final content = MultipartRequestContent(
+            name: 'Upload',
+            context: context,
+            isNullable: true,
+            parts: const [],
+            rawContentType: 'multipart/form-data',
+            examples: const [],
+          );
+
+          final type = requestContentTypeReference(content, manager, 'example');
+          final optionalType = requestContentTypeReference(
+            content,
+            manager,
+            'example',
+            isNullableOverride: true,
+          );
+
+          expect(type.symbol, 'Upload');
+          expect(type.isNullable, isFalse);
+          expect(optionalType.symbol, 'Upload');
+          expect(optionalType.isNullable, isTrue);
+        },
+      );
+    });
+
     group('buildBoolParameter', () {
       test('returns correct Parameter for bool with default value', () {
         final result = buildBoolParameter('explode');

@@ -1,8 +1,11 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/data_method_generator.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
@@ -24,381 +27,205 @@ class DioDataGenerator {
   final String package;
   final bool useImmutableCollections;
 
-  /// Generates a data expression for the operation.
-  Method generateDataMethod(Operation operation) {
+  Method generateDataMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
-      return Method(
-        (b) => b
-          ..name = '_data'
-          ..returns = refer('Object?', 'dart:core')
-          ..lambda = false
-          ..body = const Code('return null;'),
-      );
+      return buildDataMethod(statements: [const Code('return null;')]);
     }
 
     final content = requestBody.resolvedContent;
-    final hasMultipleContent = content.length > 1;
     final isRequired = requestBody.isRequired;
-    final multipartHeaderInfo = extractOperationMultipartHeaderParamInfo(
-      operation,
-    );
-
+    final headerInfo = extractOperationMultipartHeaderParamInfo(operation);
+    bodyPlan ??= const OperationRequestPlanner(
+      backend: TransportBackend.dio,
+    ).planBody(operation);
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
-    if (hasMultipleContent) {
-      final hasMultipartArm = content.any(
-        (c) => c.contentType == ContentType.multipart,
+    if (content.length > 1) {
+      final (baseName, subclassNames) = nameManager.requestBodyNames(
+        requestBody,
       );
-
-      final requestBodyBaseName = nameManager.requestBodyNames(requestBody).$1;
-      final parameterType = TypeReference(
-        (b) => b
-          ..symbol = requestBodyBaseName
-          ..url = sourceFileUrl(package, 'request_body', requestBodyBaseName)
-          ..isNullable = !isRequired,
-      );
-
-      final switchCases = <Code>[];
-      for (final c in content) {
-        final variantName = nameManager
-            .requestBodyNames(requestBody)
-            .$2[c.rawContentType]!;
-
-        final requestBodyUrl = sourceFileUrl(
-          package,
-          'request_body',
-          nameManager.requestBodyNames(requestBody).$1,
-        );
-        switchCases
-          ..add(const Code('final '))
-          ..add(refer(variantName, requestBodyUrl).code);
-
-        switch (c.contentType) {
-          case .text:
-            switchCases
-              ..add(const Code(' value => '))
-              ..add(
-                requestTextBytesExpression(
-                  c.textEncoding,
-                  const CodeExpression(Code('value')).property('value'),
-                ).code,
-              )
-              ..add(const Code(','));
-          case .bytes:
-            switch (c.model) {
-              case BinaryModel():
-                switchCases.add(const Code(' value => value.value.toBytes(),'));
-              case PrimitiveModel():
-                switchCases.add(const Code(' value => value.value,'));
-              case AliasModel() ||
-                  ListModel() ||
-                  ClassModel() ||
-                  EnumModel() ||
-                  AllOfModel() ||
-                  OneOfModel() ||
-                  AnyOfModel() ||
-                  AnyModel() ||
-                  NeverModel() ||
-                  NamedModel() ||
-                  CompositeModel():
-                switchCases
-                  ..add(const Code(' _ => '))
-                  ..add(
-                    generateEncodingExceptionExpression(
-                      'Unsupported model for bytes content type.',
-                    ).code,
-                  )
-                  ..add(const Code(','));
-            }
-          case .json:
-            final jsonBuilt = buildToJsonPropertyExpression(
-              'value.value',
-              Property(
-                name: 'value',
-                model: c.model,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                defaultValue: null,
-                examples: const [],
-              ),
-              nameManager: nameManager,
-              package: package,
+      final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
+      final cases = <Code>[];
+      for (final item in content) {
+        final BuiltExpression built;
+        final bool bindsValue;
+        switch (item) {
+          case MultipartRequestContent():
+            final plan =
+                (bodyPlan as BodySelectionPlan).variants.firstWhere(
+                      (variant) =>
+                          variant.rawContentType == item.rawContentType,
+                    )
+                    as MultipartBodyPlan;
+            built = buildMultipartBodyExpression(plan);
+            bindsValue = plan.emissions.isNotEmpty;
+          case ModelRequestContent():
+            built = _bodyExpression(
+              operation: operation,
+              content: item,
+              valueName: 'value.value',
+              propertyName: 'value',
+              isRequired: true,
               helperContext: helperContext,
-              contextClass: operation.operationId,
-              contextProperty: 'body',
             );
-            inlineHelpers.addAll(jsonBuilt.inlineFunctions);
-            switchCases
-              ..add(const Code(' value => '))
-              ..add(_jsonRequestBodyExpression(jsonBuilt, c.model).code)
-              ..add(const Code(','));
-          case .form:
-            switchCases
-              ..add(const Code(' value => '))
-              ..add(
-                buildToFormValueExpression(
-                  'value.value',
-                  c.model,
-                  useQueryComponent: true,
-                  textEncoding: c.textEncoding,
-                  encoding: c.formEncoding,
-                ).code,
-              )
-              ..add(const Code(','));
-          case .multipart:
-            final isClassModel = c.model.resolved is ClassModel;
-            switchCases
-              ..add(Code(isClassModel ? ' value => ' : ' _ => '))
-              ..add(
-                buildMultipartBodyExpression(
-                  c,
-                  'value.value',
-                  nameManager,
-                  package,
-                  headerParameters: multipartHeaderInfo
-                      .where((info) => identical(info.content, c))
-                      .toList(),
-                ).code,
-              )
-              ..add(const Code(','));
+            bindsValue =
+                item.contentType != ContentType.bytes ||
+                item.model is PrimitiveModel;
         }
+        inlineHelpers.addAll(built.inlineFunctions);
+        cases.addAll([
+          const Code('final '),
+          refer(subclassNames[item.rawContentType]!, requestBodyUrl).code,
+          Code(bindsValue ? ' value => ' : ' _ => '),
+          built.unsafeRawBody.code,
+          const Code(','),
+        ]);
       }
-
-      final multipartHeaderParams = <Parameter>[];
-      for (final info in multipartHeaderInfo) {
-        multipartHeaderParams.add(
-          Parameter(
-            (b) => b
-              ..name = info.name
-              ..type = typeReference(
-                info.model,
-                nameManager,
-                package,
-                isNullableOverride: !info.isRequired,
-                useImmutableCollections: useImmutableCollections,
-              )
-              ..named = true
-              ..required = info.isRequired,
-          ),
-        );
-      }
-
-      return Method(
-        (b) => b
-          ..name = '_data'
-          ..returns = hasMultipartArm
-              ? TypeReference(
-                  (b) => b
-                    ..symbol = 'Future'
-                    ..url = 'dart:async'
-                    ..types.add(refer('Object?', 'dart:core')),
-                )
-              : refer('Object?', 'dart:core')
-          ..modifier = hasMultipartArm ? MethodModifier.async : null
-          ..optionalParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'body'
-                ..type = parameterType
-                ..named = true
-                ..required = isRequired,
-            ),
-          )
-          ..optionalParameters.addAll(multipartHeaderParams)
-          ..lambda = false
-          ..body = Block.of([
-            if (!isRequired) const Code('if (body == null) return null;\n'),
-            ...spliceInlineHelpers(inlineHelpers),
-            const Code('return switch (body) {'),
-            ...switchCases,
-            const Code('\n};'),
-          ]),
+      return buildDataMethod(
+        bodyType: TypeReference(
+          (type) => type
+            ..symbol = baseName
+            ..url = requestBodyUrl
+            ..isNullable = !isRequired,
+        ),
+        isRequired: isRequired,
+        isAsync: content.any((item) => item is MultipartRequestContent),
+        headerParameters: buildMultipartHeaderParameters(
+          headerInfo,
+          nameManager,
+          package,
+          useImmutableCollections: useImmutableCollections,
+        ),
+        statements: [
+          if (!isRequired) const Code('if (body == null) return null;'),
+          ...spliceInlineHelpers(inlineHelpers),
+          const Code('return switch (body) {'),
+          ...cases,
+          const Code('};'),
+        ],
       );
     }
 
-    final model = content.first.model;
-    final contentType = content.first.contentType;
-    final parameterType = typeReference(
-      model,
+    final item = content.single;
+    final bodyType = requestContentTypeReference(
+      item,
       nameManager,
       package,
       isNullableOverride: !isRequired,
       useImmutableCollections: useImmutableCollections,
     );
-
-    final property = Property(
-      name: 'body',
-      model: model,
-      isRequired: isRequired,
-      isNullable: !isRequired,
-      isDeprecated: false,
-      defaultValue: null,
-      examples: const [],
+    if (item is MultipartRequestContent) {
+      return buildDataMethod(
+        bodyType: bodyType,
+        isRequired: isRequired,
+        isAsync: true,
+        headerParameters: buildMultipartHeaderParameters(
+          headerInfo,
+          nameManager,
+          package,
+          useImmutableCollections: false,
+        ),
+        statements: [
+          if (!isRequired) const Code('if (body == null) return null;'),
+          ...buildMultipartBodyStatements(
+            bodyPlan as MultipartBodyPlan,
+          ).statements,
+        ],
+      );
+    }
+    item as ModelRequestContent;
+    final guardNull =
+        !isRequired &&
+        switch (item.contentType) {
+          ContentType.text || ContentType.form => true,
+          ContentType.json => _encodesJsonRoot(item.model),
+          _ => false,
+        };
+    final built = _bodyExpression(
+      operation: operation,
+      content: item,
+      valueName: 'body',
+      propertyName: 'body',
+      isRequired: isRequired || guardNull,
+      helperContext: helperContext,
     );
+    return buildDataMethod(
+      bodyType: bodyType,
+      isRequired: isRequired,
+      statements: [
+        ...spliceInlineHelpers(built.inlineFunctions),
+        if (guardNull) const Code('if (body == null) return null;'),
+        const Code('return '),
+        built.unsafeRawBody.code,
+        const Code(';'),
+      ],
+    );
+  }
 
-    final bodyCode = [const Code('return ')];
-    switch (contentType) {
-      case ContentType.text:
-        bodyCode
-          ..clear()
-          ..addAll([
-            if (!isRequired) const Code('if (body == null) return null;\n'),
-            const Code('return '),
-            requestTextBytesExpression(
-              content.first.textEncoding,
-              const CodeExpression(Code('body')),
-            ).code,
-            const Code(';'),
-          ]);
-      case ContentType.bytes:
-        switch (model) {
-          case BinaryModel():
-            if (isRequired) {
-              bodyCode.add(const Code('body.toBytes();'));
-            } else {
-              bodyCode.add(const Code('body?.toBytes();'));
-            }
-          case PrimitiveModel():
-            bodyCode.add(const Code('body;'));
-          case AliasModel() ||
-              ListModel() ||
-              ClassModel() ||
-              EnumModel() ||
-              AllOfModel() ||
-              OneOfModel() ||
-              AnyOfModel() ||
-              AnyModel() ||
-              NeverModel() ||
-              NamedModel() ||
-              CompositeModel():
-            bodyCode
-              ..add(
-                generateEncodingExceptionExpression(
-                  'Unsupported model for bytes content type.',
-                ).code,
-              )
-              ..add(const Code(';'));
-        }
+  BuiltExpression _bodyExpression({
+    required Operation operation,
+    required ModelRequestContent content,
+    required String valueName,
+    required String propertyName,
+    required bool isRequired,
+    required InlineHelperContext helperContext,
+  }) {
+    final value = refer(valueName);
+    switch (content.contentType) {
       case ContentType.json:
-        final encodesJsonRoot = _encodesJsonRoot(model);
-        final jsonBuilt = buildToJsonPropertyExpression(
-          'body',
-          encodesJsonRoot && !isRequired
-              ? Property(
-                  name: 'body',
-                  model: model,
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  defaultValue: null,
-                  examples: const [],
-                )
-              : property,
+        final json = buildToJsonPropertyExpression(
+          valueName,
+          Property(
+            name: propertyName,
+            model: content.model,
+            isRequired: isRequired,
+            isNullable: !isRequired,
+            isDeprecated: false,
+            defaultValue: null,
+            examples: const [],
+          ),
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
           contextClass: operation.operationId,
           contextProperty: 'body',
         );
-        inlineHelpers.addAll(jsonBuilt.inlineFunctions);
-        if (encodesJsonRoot && !isRequired) {
-          bodyCode.insert(0, const Code('if (body == null) return null;\n'));
-        }
-        bodyCode
-          ..add(_jsonRequestBodyExpression(jsonBuilt, model).code)
-          ..add(const Code(';'));
+        return BuiltExpression(
+          body: _encodesJsonRoot(content.model)
+              ? refer('jsonEncode', 'dart:convert').call([json.unsafeRawBody])
+              : json.unsafeRawBody,
+          inlineFunctions: json.inlineFunctions,
+        );
+      case ContentType.text:
+        return BuiltExpression.simple(
+          requestTextBytesExpression(content.textEncoding, value),
+        );
+      case ContentType.bytes:
+        return BuiltExpression.simple(switch (content.model) {
+          BinaryModel() =>
+            (isRequired
+                    ? value.property('toBytes')
+                    : value.nullSafeProperty('toBytes'))
+                .call([]),
+          PrimitiveModel() => value,
+          _ => generateEncodingExceptionExpression(
+            'Unsupported model for bytes content type.',
+          ),
+        });
       case ContentType.form:
-        final formExpr = buildToFormValueExpression(
-          'body',
-          model,
+        return buildToFormValueExpression(
+          valueName,
+          content.model,
           useQueryComponent: true,
-          textEncoding: content.first.textEncoding,
-          encoding: content.first.formEncoding,
+          textEncoding: content.textEncoding,
+          encoding: content.formEncoding,
         );
-        bodyCode
-          ..clear()
-          ..addAll([
-            if (!isRequired) const Code('if (body == null) return null;\n'),
-            const Code('return '),
-            formExpr.code,
-            const Code(';'),
-          ]);
       case ContentType.multipart:
-        bodyCode
-          ..clear()
-          ..addAll([
-            if (!isRequired) const Code('if (body == null) return null;\n'),
-            ...buildMultipartBodyStatements(
-              content.first,
-              'body',
-              nameManager,
-              package,
-              headerParameters: multipartHeaderInfo,
-            ).statements,
-          ]);
+        throw StateError('Multipart content must own parts.');
     }
-
-    // Collect multipart header params for single-content multipart bodies.
-    final multipartHeaderParams = <Parameter>[];
-    if (contentType == ContentType.multipart) {
-      for (final info in multipartHeaderInfo) {
-        multipartHeaderParams.add(
-          Parameter(
-            (b) => b
-              ..name = info.name
-              ..type = typeReference(
-                info.model,
-                nameManager,
-                package,
-                isNullableOverride: !info.isRequired,
-              )
-              ..named = true
-              ..required = info.isRequired,
-          ),
-        );
-      }
-    }
-
-    final isMultipart = contentType == ContentType.multipart;
-
-    return Method(
-      (b) => b
-        ..name = '_data'
-        ..returns = isMultipart
-            ? TypeReference(
-                (b) => b
-                  ..symbol = 'Future'
-                  ..url = 'dart:async'
-                  ..types.add(refer('Object?', 'dart:core')),
-              )
-            : refer('Object?', 'dart:core')
-        ..modifier = isMultipart ? MethodModifier.async : null
-        ..optionalParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'body'
-              ..type = parameterType
-              ..named = true
-              ..required = isRequired,
-          ),
-        )
-        ..optionalParameters.addAll(multipartHeaderParams)
-        ..lambda = false
-        ..body = Block.of([
-          ...spliceInlineHelpers(inlineHelpers),
-          ...bodyCode,
-        ]),
-    );
   }
-}
-
-Expression _jsonRequestBodyExpression(BuiltExpression built, Model model) {
-  final expression = built.unsafeRawBody;
-  if (!_encodesJsonRoot(model)) return expression;
-  return refer('jsonEncode', 'dart:convert').call([expression]);
 }
 
 bool _encodesJsonRoot(Model model) {
@@ -413,7 +240,7 @@ bool _encodesJsonRoot(Model model) {
     Base64Model() ||
     EnumModel<String>() ||
     AnyModel() => true,
-    final CompositeModel m => m.containedModels.any(_encodesJsonRoot),
+    final CompositeModel model => model.containedModels.any(_encodesJsonRoot),
     _ => false,
   };
 }

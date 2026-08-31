@@ -905,7 +905,7 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
@@ -929,13 +929,13 @@ void main() {
             description: '',
             isRequired: true,
             content: {
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: Context.initial()),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              RequestContent(
+              ModelRequestContent(
                 model: StringModel(context: Context.initial()),
                 contentType: ContentType.json,
                 rawContentType: 'application/x-www-form-urlencoded',
@@ -961,13 +961,13 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json+v2',
@@ -1002,13 +1002,13 @@ void main() {
           description: '',
           isRequired: true,
           content: {
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
             ),
-            RequestContent(
+            ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/x-www-form-urlencoded',

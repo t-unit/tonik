@@ -11,6 +11,9 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   const DioBackendGenerator();
 
   @override
+  TransportBackend get backend => TransportBackend.dio;
+
+  @override
   List<DependencyDescriptor> get dependencies => const [
     DependencyDescriptor(name: 'dio', versionConstraint: '^5.8.0+1'),
   ];
@@ -123,6 +126,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   @override
   Method generateBodyMethod({
     required Operation operation,
+    required OperationRequestPlan requestPlan,
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,
@@ -130,7 +134,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
     nameManager: nameManager,
     package: package,
     useImmutableCollections: useImmutableCollections,
-  ).generateDataMethod(operation);
+  ).generateDataMethod(operation, bodyPlan: requestPlan.body);
 
   @override
   Method generateOptionsMethod({

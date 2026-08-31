@@ -210,7 +210,7 @@ void main() {
       (content) => content.rawContentType == 'application/json',
     );
     expect(content, isNotNull);
-    expect(content?.model, isA<ClassModel>());
+    expect((content as ModelRequestContent?)?.model, isA<ClassModel>());
     expect(
       (content?.model as ClassModel?)?.properties.any((p) => p.name == 'test'),
       isTrue,
