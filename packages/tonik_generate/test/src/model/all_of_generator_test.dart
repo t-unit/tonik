@@ -857,7 +857,7 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-Object? toJson() => string;
+          Object? toJson() => bigDecimal.toString();
         ''';
 
       expect(
@@ -1024,7 +1024,7 @@ Object? toJson() => string;
     });
 
     test(
-      'handles number models with single value encoded as first declared type',
+      'handles number models with single value encoded as most general type',
       () {
         final model = AllOfModel(
           isDeprecated: false,
@@ -1062,7 +1062,7 @@ Object? toJson() => string;
         expect(integerField.type?.accept(emitter).toString(), 'int');
 
         const expectedToJson = '''
-Object? toJson() => num;
+          Object? toJson() => double;
         ''';
 
         expect(
@@ -1137,7 +1137,7 @@ Object? toJson() => num;
     });
 
     test(
-      'generates toJson returning first declared primitive for mixed types',
+      'generates toJson returning most appropriate value for mixed types',
       () {
         final model = AllOfModel(
           isDeprecated: false,
@@ -1153,7 +1153,7 @@ Object? toJson() => num;
         final combinedClass = generator.generateClass(model);
 
         const expectedToJson = '''
-Object? toJson() => string;
+          Object? toJson() => date.toJson();
         ''';
 
         expect(

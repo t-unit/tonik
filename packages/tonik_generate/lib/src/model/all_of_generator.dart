@@ -317,6 +317,21 @@ class AllOfGenerator {
         .toList();
   }
 
+  List<({String normalizedName, Property property})> _semanticProperties(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final sortedModels = stableModelSorter.sortModels(
+      properties.map((property) => property.property.model),
+    );
+    return sortedModels
+        .map(
+          (model) => properties.firstWhere(
+            (property) => identical(property.property.model, model),
+          ),
+        )
+        .toList();
+  }
+
   List<Field> _buildFields(
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
@@ -894,8 +909,9 @@ class AllOfGenerator {
         );
 
       case EncodingShape.simple:
-        final firstModel = model.models.first;
-        final firstFieldName = normalizedProperties.first.normalizedName;
+        final primaryProperty = _semanticProperties(normalizedProperties).first;
+        final firstModel = primaryProperty.property.model;
+        final firstFieldName = primaryProperty.normalizedName;
         final simpleBuilt = buildToJsonPropertyExpression(
           firstFieldName,
           Property(
@@ -1528,7 +1544,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -1823,7 +1839,7 @@ class AllOfGenerator {
       return form(emptyEntries);
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final primaryReceiver = isNullableProp(primaryField)
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
@@ -1912,7 +1928,7 @@ class AllOfGenerator {
         ]);
       }
 
-      final primaryField = normalizedProperties.first;
+      final primaryField = _semanticProperties(normalizedProperties).first;
       final isPrimaryFieldNullable =
           primaryField.property.isNullable ||
           !primaryField.property.isRequired ||
@@ -2066,7 +2082,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -2440,11 +2456,12 @@ class AllOfGenerator {
       ];
 
       if (normalizedProperties.isNotEmpty) {
-        final simpleProp = normalizedProperties.firstWhere(
+        final semanticProperties = _semanticProperties(normalizedProperties);
+        final simpleProp = semanticProperties.firstWhere(
           (prop) =>
               prop.property.model.encodingShape == EncodingShape.simple ||
               prop.property.model.encodingShape == EncodingShape.mixed,
-          orElse: () => normalizedProperties.first,
+          orElse: () => semanticProperties.first,
         );
         final isSimplePropNullable =
             simpleProp.property.isNullable ||

@@ -4384,8 +4384,8 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: [
-          (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: NumberModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -4434,11 +4434,11 @@ bool operator ==(Object other) {
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is int) {
-                return ValueInt(json);
-              }
               if (json is double) {
                 return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
               }
               throw JsonDecodingException(r'Invalid JSON for Value');
             }
@@ -4504,11 +4504,11 @@ bool operator ==(Object other) {
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is int) {
-                return ValueInt(json);
-              }
               if (json is double) {
                 return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
               }
               try {
                 return ValueString(json.decodeJsonString(context: r'Value'));
@@ -4546,11 +4546,11 @@ bool operator ==(Object other) {
           contains(
             collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is int) {
-                return ValueInt(json);
-              }
               if (json is double) {
                 return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
               }
               try {
                 return ValueDecimal(json.decodeJsonBigDecimal(context: r'Value'));
@@ -4563,6 +4563,50 @@ bool operator ==(Object other) {
               throw JsonDecodingException(r'Invalid JSON for Value');
             }
           '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'string-encoded primitives decode before a declared plain string',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: [
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: DecimalModel(context: context)),
+            (discriminatorValue: null, model: DateModel(context: context)),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              factory Value.fromJson(Object? json) {
+                try {
+                  return ValueDate(json.decodeJsonDate(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                try {
+                  return ValueDecimal(json.decodeJsonBigDecimal(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                try {
+                  return ValueString(json.decodeJsonString(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                throw JsonDecodingException(r'Invalid JSON for Value');
+              }
+            '''),
           ),
         );
       },

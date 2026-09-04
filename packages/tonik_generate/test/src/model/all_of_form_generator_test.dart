@@ -289,7 +289,7 @@ void main() {
           bool allowReserved = false,
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
-          return string.toForm(
+          return bigDecimal.toForm(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
