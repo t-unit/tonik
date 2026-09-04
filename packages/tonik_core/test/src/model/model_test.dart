@@ -109,7 +109,7 @@ void main() {
     test('an omitted policy defaults to the implicit Any policy', () {
       final model = AllOfModel(
         name: 'Test',
-        models: {StringModel(context: context)},
+        models: [StringModel(context: context)],
         context: context,
         isDeprecated: false,
         examples: const [],
@@ -123,7 +123,7 @@ void main() {
     test('toString includes the additional-properties policy', () {
       final model = AllOfModel(
         name: 'Test',
-        models: {StringModel(context: context)},
+        models: [StringModel(context: context)],
         context: context,
         isDeprecated: false,
         additionalPropertiesPolicy: AllowedAdditionalProperties(

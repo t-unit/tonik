@@ -692,10 +692,10 @@ void main() {
         name: 'OneOfIdentifier',
         context: context,
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         examples: const [],
       );
 
@@ -758,10 +758,10 @@ void main() {
         name: 'AnyOfValue',
         context: context,
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         examples: const [],
       );
 
@@ -824,7 +824,7 @@ void main() {
         name: 'AllOfEntity',
         context: context,
         isDeprecated: false,
-        models: {
+        models: [
           ClassModel(
             name: 'EntityId',
             context: context,
@@ -859,7 +859,7 @@ void main() {
             ],
             examples: const [],
           ),
-        },
+        ],
         examples: const [],
       );
 

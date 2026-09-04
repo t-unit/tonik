@@ -152,7 +152,7 @@ void main() {
         model: AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: const {},
+          models: const [],
           context: context,
           examples: const [],
         ),
@@ -182,7 +182,7 @@ void main() {
         model: OneOfModel(
           isDeprecated: false,
           name: 'Variant',
-          models: const {},
+          models: const [],
           context: context,
           examples: const [],
         ),
@@ -212,7 +212,7 @@ void main() {
         model: AnyOfModel(
           isDeprecated: false,
           name: 'Flexible',
-          models: const {},
+          models: const [],
           context: context,
           examples: const [],
         ),

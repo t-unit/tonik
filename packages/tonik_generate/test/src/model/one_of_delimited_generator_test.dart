@@ -36,10 +36,10 @@ void main() {
     OneOfModel simpleModel() => OneOfModel(
       isDeprecated: false,
       name: 'OneOfPrimitive',
-      models: {
+      models: [
         (discriminatorValue: 'string', model: StringModel(context: context)),
         (discriminatorValue: 'int', model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -78,7 +78,7 @@ List<ParameterEntry> toSpaceDelimited( String paramName, { required bool allowEm
       final model = OneOfModel(
         isDeprecated: false,
         name: 'EmptyOneOf',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -101,7 +101,7 @@ List<ParameterEntry> toPipeDelimited( String paramName, { required bool allowEmp
       final model = OneOfModel(
         isDeprecated: false,
         name: 'EmptyOneOf',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );

@@ -53,11 +53,11 @@ void main() {
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'Flexible',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (discriminatorValue: null, model: complex),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -177,11 +177,11 @@ void main() {
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'MixedAnyOf',
-          models: {
+          models: [
             (discriminatorValue: null, model: listA),
             (discriminatorValue: null, model: listB),
             (discriminatorValue: null, model: StringModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -260,10 +260,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'PayloadSimple',
-        models: {
+        models: [
           (discriminatorValue: 'a', model: modelA),
           (discriminatorValue: 'b', model: modelB),
-        },
+        ],
         discriminator: 'disc',
         context: context,
         examples: const [],
@@ -328,10 +328,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'PayloadSimpleNoDisc',
-          models: {
+          models: [
             (discriminatorValue: null, model: modelA),
             (discriminatorValue: 'b', model: modelB),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -357,11 +357,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyPrimitivesSimple',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: BooleanModel(context: context)),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -433,10 +433,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'MixedSimple',
-          models: {
+          models: [
             (discriminatorValue: 'user', model: user),
             (discriminatorValue: 'str', model: StringModel(context: context)),
-          },
+          ],
           discriminator: 'disc',
           context: context,
           examples: const [],
@@ -468,10 +468,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'WithBinary',
-        models: {
+        models: [
           (discriminatorValue: null, model: BinaryModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );

@@ -36,10 +36,10 @@ void main() {
     AllOfModel simpleModel() => AllOfModel(
       isDeprecated: false,
       name: 'AllOfSimple',
-      models: {
+      models: [
         StringModel(context: context),
         IntegerModel(context: context),
-      },
+      ],
       context: context,
       examples: const [],
     );

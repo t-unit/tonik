@@ -823,14 +823,14 @@ void main() {
 
       final model1 = AllOfModel(
         isDeprecated: false,
-        models: {StringModel(context: sharedContext)},
+        models: [StringModel(context: sharedContext)],
         context: sharedContext,
         examples: const [],
       );
 
       final model2 = AllOfModel(
         isDeprecated: false,
-        models: {IntegerModel(context: sharedContext)},
+        models: [IntegerModel(context: sharedContext)],
         context: sharedContext,
         examples: const [],
       );

@@ -41,7 +41,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: StringModel(context: context),
@@ -50,7 +50,7 @@ void main() {
               discriminatorValue: 'error',
               model: IntegerModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -120,7 +120,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: ClassModel(
@@ -161,7 +161,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -248,7 +248,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: ClassModel(
@@ -290,7 +290,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'discriminator',
           context: context,
           examples: const [],
@@ -384,7 +384,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'TimestampValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'timestamp',
               model: DateTimeModel(context: context),
@@ -393,7 +393,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -424,7 +424,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'DateValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'date',
               model: DateModel(context: context),
@@ -433,7 +433,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -464,7 +464,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'NumericValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'decimal',
               model: DecimalModel(context: context),
@@ -473,7 +473,7 @@ void main() {
               discriminatorValue: 'integer',
               model: IntegerModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -504,7 +504,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'UriValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'uri',
               model: UriModel(context: context),
@@ -513,7 +513,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -556,7 +556,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'StatusValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'status',
               model: enumModel,
@@ -565,7 +565,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -614,7 +614,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'UserValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'user',
               model: classModel,
@@ -623,7 +623,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -654,7 +654,7 @@ void main() {
         final allOfModel = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -672,7 +672,7 @@ void main() {
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -680,7 +680,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'CombinedValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'combined',
               model: allOfModel,
@@ -689,7 +689,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -728,7 +728,7 @@ void main() {
           final model = OneOfModel(
             isDeprecated: false,
             name: 'ListValue',
-            models: {
+            models: [
               (
                 discriminatorValue: 'list',
                 model: listModel,
@@ -737,7 +737,7 @@ void main() {
                 discriminatorValue: 'string',
                 model: StringModel(context: context),
               ),
-            },
+            ],
             context: context,
             examples: const [],
           );
@@ -795,7 +795,7 @@ void main() {
           final model = OneOfModel(
             isDeprecated: false,
             name: 'ItemListValue',
-            models: {
+            models: [
               (
                 discriminatorValue: 'items',
                 model: listModel,
@@ -804,7 +804,7 @@ void main() {
                 discriminatorValue: 'string',
                 model: StringModel(context: context),
               ),
-            },
+            ],
             context: context,
             examples: const [],
           );
@@ -836,7 +836,7 @@ void main() {
         final anyOfModel = AnyOfModel(
           isDeprecated: false,
           name: 'Flexible',
-          models: {
+          models: [
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -845,7 +845,7 @@ void main() {
               discriminatorValue: 'int',
               model: IntegerModel(context: context),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -854,7 +854,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'FlexibleValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'flexible',
               model: anyOfModel,
@@ -863,7 +863,7 @@ void main() {
               discriminatorValue: 'boolean',
               model: BooleanModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -902,7 +902,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'IdentifierValue',
-          models: {
+          models: [
             (
               discriminatorValue: 'userId',
               model: aliasModel,
@@ -911,7 +911,7 @@ void main() {
               discriminatorValue: 'number',
               model: IntegerModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -947,7 +947,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Pet',
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: ClassModel(
@@ -968,7 +968,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isNullable: true,
           examples: const [],
@@ -1004,7 +1004,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: "it's-success",
               model: ClassModel(
@@ -1025,7 +1025,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -1061,7 +1061,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: ClassModel(
@@ -1082,7 +1082,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: "it's-type",
           context: context,
           examples: const [],
@@ -1127,10 +1127,10 @@ void main() {
           final model = OneOfModel(
             isDeprecated: false,
             name: 'Result',
-            models: {
+            models: [
               (discriminatorValue: null, model: aliasModel),
               (discriminatorValue: null, model: IntegerModel(context: context)),
-            },
+            ],
             context: context,
             examples: const [],
           );
@@ -1172,7 +1172,7 @@ void main() {
           final model = OneOfModel(
             isDeprecated: false,
             name: 'Result',
-            models: {
+            models: [
               (discriminatorValue: null, model: aliasModel),
               (
                 discriminatorValue: null,
@@ -1194,7 +1194,7 @@ void main() {
                   examples: const [],
                 ),
               ),
-            },
+            ],
             context: context,
             examples: const [],
           );
@@ -1231,7 +1231,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Empty',
-        models: const <DiscriminatedModel>{},
+        models: const <DiscriminatedModel>[],
         context: context,
         examples: const [],
       );
@@ -1254,7 +1254,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Empty',
-        models: const <DiscriminatedModel>{},
+        models: const <DiscriminatedModel>[],
         context: context,
         isReadOnly: true,
         examples: const [],
@@ -1278,7 +1278,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Empty',
-        models: const <DiscriminatedModel>{},
+        models: const <DiscriminatedModel>[],
         context: context,
         examples: const [],
       );
@@ -1308,7 +1308,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Empty',
-          models: const <DiscriminatedModel>{},
+          models: const <DiscriminatedModel>[],
           context: context,
           examples: const [],
         );
@@ -1398,7 +1398,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Empty',
-        models: const <DiscriminatedModel>{},
+        models: const <DiscriminatedModel>[],
         context: context,
         isWriteOnly: true,
         examples: const [],

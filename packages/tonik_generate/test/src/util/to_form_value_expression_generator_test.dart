@@ -642,7 +642,7 @@ void main() {
       );
       final model = AllOfModel(
         name: 'Form',
-        models: {base, tagged},
+        models: [base, tagged],
         context: context,
         isDeprecated: false,
         examples: const [],

@@ -37,10 +37,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfPrimitive',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -63,10 +63,10 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfSimple',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -89,7 +89,7 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfComplex',
-        models: {
+        models: [
           (
             discriminatorValue: 'model1',
             model: ClassModel(
@@ -130,7 +130,7 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -153,10 +153,10 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfWithAllowLists',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -179,9 +179,9 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfEncoded',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -204,7 +204,7 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
       final model = OneOfModel(
         isDeprecated: false,
         name: 'OneOfWithDiscriminator',
-        models: {
+        models: [
           (
             discriminatorValue: 'model1',
             model: ClassModel(
@@ -245,7 +245,7 @@ List<ParameterEntry> toDeepObject( String paramName, { required bool explode, re
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],

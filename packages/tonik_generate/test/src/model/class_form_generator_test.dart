@@ -259,7 +259,7 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'DynamicValue',
-          models: {
+          models: [
             (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'class',
@@ -281,7 +281,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],

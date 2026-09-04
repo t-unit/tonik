@@ -36,10 +36,10 @@ void main() {
     AnyOfModel simpleModel() => AnyOfModel(
       isDeprecated: false,
       name: 'AnyOfSimple',
-      models: {
+      models: [
         (discriminatorValue: 'string', model: StringModel(context: context)),
         (discriminatorValue: 'int', model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );

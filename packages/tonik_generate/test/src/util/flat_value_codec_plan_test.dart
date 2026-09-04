@@ -362,19 +362,19 @@ void main() {
           examples: const [],
         ),
         AllOfModel(
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           isDeprecated: false,
           examples: const [],
         ),
         OneOfModel(
-          models: const {},
+          models: const [],
           context: context,
           isDeprecated: false,
           examples: const [],
         ),
         AnyOfModel(
-          models: const {},
+          models: const [],
           context: context,
           isDeprecated: false,
           examples: const [],
@@ -521,7 +521,7 @@ void main() {
           examples: const [],
         ),
         AllOfModel(
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           isDeprecated: false,
           examples: const [],

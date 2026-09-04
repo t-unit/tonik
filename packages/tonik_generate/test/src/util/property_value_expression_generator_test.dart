@@ -106,10 +106,10 @@ void main() {
         OneOfModel(
           isDeprecated: false,
           name: 'StringOrInt',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         ),
@@ -124,10 +124,10 @@ void main() {
         OneOfModel(
           isDeprecated: false,
           name: 'StringOrInt',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         ),

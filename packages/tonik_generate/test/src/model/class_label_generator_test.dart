@@ -204,7 +204,7 @@ void main() {
                 context: context,
                 name: 'Value',
                 discriminator: 'type',
-                models: {
+                models: [
                   (
                     discriminatorValue: 'string',
                     model: StringModel(context: context),
@@ -213,7 +213,7 @@ void main() {
                     discriminatorValue: 'integer',
                     model: IntegerModel(context: context),
                   ),
-                },
+                ],
                 examples: const [],
               ),
               isRequired: true,
@@ -266,7 +266,7 @@ void main() {
                 context: context,
                 name: 'OptionalValue',
                 discriminator: 'type',
-                models: {
+                models: [
                   (
                     discriminatorValue: 'date',
                     model: DateTimeModel(context: context),
@@ -275,7 +275,7 @@ void main() {
                     discriminatorValue: 'decimal',
                     model: DecimalModel(context: context),
                   ),
-                },
+                ],
                 examples: const [],
               ),
               isRequired: false,

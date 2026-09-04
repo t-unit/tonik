@@ -319,7 +319,7 @@ void main() {
         context: ctx.push('components').push('schemas').push('Combined'),
         description: 'A composite model',
         isDeprecated: true,
-        models: {nonDeprecatedClass},
+        models: [nonDeprecatedClass],
         examples: const [],
       );
 

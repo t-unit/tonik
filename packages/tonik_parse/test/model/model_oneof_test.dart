@@ -79,6 +79,77 @@ void main() {
     },
   };
 
+  test('warns and omits repeated oneOf members in first-occurrence order', () {
+    final logs = <LogRecord>[];
+    final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+    addTearDown(subscription.cancel);
+
+    final api = Importer().import({
+      'openapi': '3.0.3',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Zebra': {'type': 'string'},
+          'Alpha': {'type': 'string'},
+          'Compound': {
+            'oneOf': [
+              {r'$ref': '#/components/schemas/Zebra'},
+              {r'$ref': '#/components/schemas/Alpha'},
+              {r'$ref': '#/components/schemas/Zebra'},
+            ],
+            'discriminator': {
+              'propertyName': 'kind',
+              'mapping': {
+                'z': '#/components/schemas/Zebra',
+                'a': '#/components/schemas/Alpha',
+              },
+            },
+          },
+          'Wrapper': {
+            'type': 'object',
+            'properties': {
+              'value': {
+                'oneOf': [
+                  {r'$ref': '#/components/schemas/Zebra'},
+                  {r'$ref': '#/components/schemas/Alpha'},
+                  {r'$ref': '#/components/schemas/Zebra'},
+                ],
+              },
+            },
+          },
+        },
+      },
+    });
+    final zebra = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'Zebra',
+    );
+    final alpha = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'Alpha',
+    );
+    final compound = api.models.whereType<OneOfModel>().singleWhere(
+      (model) => model.name == 'Compound',
+    );
+    final wrapper = api.models.whereType<ClassModel>().single;
+    final nested = wrapper.properties.single.model as OneOfModel;
+
+    expect(compound.discriminator, 'kind');
+    expect(compound.models, [
+      (model: zebra, discriminatorValue: 'z'),
+      (model: alpha, discriminatorValue: 'a'),
+    ]);
+    expect(nested.discriminator, isNull);
+    expect(nested.models, [
+      (model: zebra, discriminatorValue: null),
+      (model: alpha, discriminatorValue: null),
+    ]);
+    final warnings = logs.where((record) => record.level == Level.WARNING);
+    expect(warnings.map((record) => record.message), [
+      'Ignoring duplicate member in oneOf at components/schemas/Compound.',
+      'Ignoring duplicate member in oneOf at components/schemas/Wrapper/value/oneOf.',
+    ]);
+  });
+
   test('Imports oneOf with inline schema', () {
     final api = Importer().import(fileContent);
 
