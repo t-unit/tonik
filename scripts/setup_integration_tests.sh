@@ -2,13 +2,27 @@
 set -euo pipefail
 
 BACKEND="dio"
-if [ "$#" -gt 0 ]; then
-  if [ "$#" -ne 2 ] || [ "$1" != "--backend" ]; then
-    echo "Usage: $0 [--backend dio|http]" >&2
-    exit 64
-  fi
-  BACKEND="$2"
-fi
+SKIP_IMPOSTER=false
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --backend)
+      if [ "$#" -lt 2 ]; then
+        echo "Error: --backend requires dio or http." >&2
+        exit 64
+      fi
+      BACKEND="$2"
+      shift 2
+      ;;
+    --skip-imposter)
+      SKIP_IMPOSTER=true
+      shift
+      ;;
+    *)
+      echo "Usage: $0 [--backend dio|http] [--skip-imposter]" >&2
+      exit 64
+      ;;
+  esac
+done
 
 if [ "$BACKEND" != "dio" ] && [ "$BACKEND" != "http" ]; then
   echo "Error: backend must be either 'dio' or 'http'." >&2
@@ -19,18 +33,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INTEGRATION_TEST_DIR="$REPO_ROOT/integration_test"
 TONIK_BINARY="$REPO_ROOT/.dart_tool/tonik_compiled"
-
-if ! command -v java >/dev/null 2>&1; then
-  echo "Error: Java is not installed. Please install Java to run the tests." >&2
-  exit 1
-fi
-
-JAVA_VERSION="$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')"
-JAVA_MAJOR="$(printf '%s' "$JAVA_VERSION" | cut -d. -f1)"
-if [ "$JAVA_MAJOR" -lt 11 ]; then
-  echo "Error: Java 11 or higher is required. Found version $JAVA_VERSION" >&2
-  exit 1
-fi
 
 if command -v nproc >/dev/null 2>&1; then
   SETUP_JOBS="$(nproc)"
@@ -234,16 +236,8 @@ PUB_GET_COMMANDS+=("cd 'test_helpers' && dart pub get")
 echo "Resolving dependencies for 44 generated, 40 test, and 1 helper package..."
 run_commands "$SETUP_JOBS" "${PUB_GET_COMMANDS[@]}"
 
-if [ ! -f imposter.jar ]; then
-  echo "Downloading Imposter JAR..."
-  curl -fL \
-    https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.6.8/imposter-4.6.8.jar \
-    -o imposter.jar
-fi
-
-if ! java -jar imposter.jar --version >/dev/null 2>&1; then
-  echo "Error: failed to execute Imposter JAR." >&2
-  exit 1
+if [ "$SKIP_IMPOSTER" = false ]; then
+  bash "$SCRIPT_DIR/setup_imposter.sh"
 fi
 
 echo "Setup complete: backend=$BACKEND generated=$generated_count tests=${#TEST_DIRS[@]}"
