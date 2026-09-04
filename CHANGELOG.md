@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## Unreleased
+
+- **BREAKING FIX**: Operation tags no longer require top-level `tags`
+  declarations. Operations with previously undeclared tags move from
+  `DefaultApi` to their tag clients, using the existing Dart naming and collision
+  rules. For example, Cloudflare's `accountsListAccounts` now belongs to
+  `AccountsApi`, and `zonesGet` to `ZoneApi`. Instantiate these clients with the
+  same server configuration; method signatures, requests, responses, and error
+  handling are unchanged. Operations with multiple tags remain available in
+  every matching client. Only operations without tags stay in the default client.
+- Declared tag descriptions and `x-dart-name` overrides are preserved. Tag
+  filters and configured name overrides also apply to undeclared operation tags.
+
 ## 2026-07-19
 
 ### Changes

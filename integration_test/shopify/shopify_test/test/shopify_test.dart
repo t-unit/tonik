@@ -14,13 +14,11 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  DefaultApi buildDefaultApi({required String responseStatus}) {
-    return DefaultApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(
-          headers: {'X-Response-Status': responseStatus},
-        ),
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -29,7 +27,7 @@ void main() {
 
   group('GetProducts', () {
     test('getProducts 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = ProductsApi(buildServer(responseStatus: '200'));
 
       final result = await api.getProducts();
 
@@ -43,7 +41,7 @@ void main() {
     });
 
     test('getProducts error returns TonikError', () async {
-      final api = buildDefaultApi(responseStatus: '401');
+      final api = ProductsApi(buildServer(responseStatus: '401'));
 
       final result = await api.getProducts();
 
@@ -57,7 +55,7 @@ void main() {
 
   group('GetCustomers', () {
     test('getCustomers 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = CustomersApi(buildServer(responseStatus: '200'));
 
       final result = await api.getCustomers();
 
@@ -75,7 +73,7 @@ void main() {
 
   group('CreateProducts', () {
     test('createProducts 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = ProductsApi(buildServer(responseStatus: '200'));
 
       final result = await api.createProducts();
 
@@ -96,7 +94,7 @@ void main() {
 
   group('DeleteProducts', () {
     test('deleteProducts 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = ProductsApi(buildServer(responseStatus: '200'));
 
       final result = await api.deleteProductsParamProductId(productId: '123');
 
