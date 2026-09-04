@@ -477,12 +477,14 @@ class OneOfGenerator {
       (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
     );
 
-    final members = model.models;
+    final semanticMembers = stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    );
 
     // int and double arrive as distinct Dart runtime types and the numeric
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the ordered try-each below.
-    for (final m in members.where(
+    for (final m in semanticMembers.where(
       (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
       final variantName = variantNames[m]!;
@@ -518,14 +520,30 @@ class OneOfGenerator {
       ]);
     }
 
-    // Members are attempted in schema order. A string-encoded variant is
-    // only reachable when the plain-string member appears after it.
-    for (final m in members.where(
-      (m) =>
-          _scalarRuntimeType(m.model.resolved) == null &&
-          m.model.resolved is! AnyModel &&
-          m.model.resolved is! NeverModel,
-    )) {
+    final semanticPrimitiveMembers = semanticMembers
+        .where(
+          (m) =>
+              _scalarRuntimeType(m.model.resolved) == null &&
+              m.model.resolved is PrimitiveModel,
+        )
+        .toList();
+    var primitiveIndex = 0;
+    final fallbackMembers = model.models
+        .where(
+          (m) =>
+              _scalarRuntimeType(m.model.resolved) == null &&
+              m.model.resolved is! AnyModel &&
+              m.model.resolved is! NeverModel,
+        )
+        .map((m) {
+          if (m.model.resolved is! PrimitiveModel) return m;
+          return semanticPrimitiveMembers[primitiveIndex++];
+        });
+
+    // Composite fallbacks retain their schema positions. Primitive slots use
+    // stable semantic order so a string-encoded variant is tried before the
+    // plain-string member that would otherwise capture every string value.
+    for (final m in fallbackMembers) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
       final variantName = variantNames[m]!;
@@ -557,10 +575,6 @@ class OneOfGenerator {
         ..add(const Code('try {'))
         ..add(refer(variantName).call([decodeArg]).returned.statement);
 
-      // Only a string-encoded primitive can pass its raw String to a sibling
-      // plain-string variant, so its catch must fall through on the strict
-      // decoders' DecodingException/FormatException. Every other decoder can
-      // throw arbitrary types and stays on the broad Object catch.
       if (resolvedType is PrimitiveModel) {
         blocks.addAll([
           const Code('} on '),

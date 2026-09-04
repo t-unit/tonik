@@ -187,7 +187,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           required bool allowEmpty,
           bool literal = false,
         }) {
-          return string.toSimple(
+          return bigDecimal.toSimple(
             explode: explode,
             allowEmpty: allowEmpty,
             literal: literal,
@@ -332,7 +332,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             required bool allowEmpty,
             bool literal = false,
           }) {
-            return string.toSimple(
+            return status.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
