@@ -444,21 +444,25 @@ void main() {
   group('multipart per-part header parameters', () {
     test('generates parameter for property with one header', () {
       final partModel1 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -526,21 +530,25 @@ void main() {
 
     test('generates multiple header parameters for multiple headers', () {
       final partModel2 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -627,21 +635,25 @@ void main() {
       'optional property with required header produces optional parameter',
       () {
         final partModel3 = MultipartRequestContent(
+          model: ClassModel(
+            name: 'UploadForm',
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+            properties: [
+              Property(
+                name: 'avatar',
+                model: BinaryModel(context: context),
+                isRequired: false,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+          ),
+          encoding: {'avatar': _binaryEncoding},
           rawContentType: 'multipart/form-data',
-          name: 'UploadForm',
-          parts: [
-            MultipartPart(
-              encoding: _binaryEncoding,
-              name: 'avatar',
-              model: BinaryModel(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
           examples: const [],
         );
         final requestBody = RequestBodyObject(
@@ -708,21 +720,25 @@ void main() {
 
     test('does not filter out Content-Type header', () {
       final partModel4 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -799,21 +815,25 @@ void main() {
 
     test('no extra parameters for property without headers', () {
       final partModel5 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'name': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -868,21 +888,25 @@ void main() {
       // Multipart header "X-Custom" on property "file" also normalizes to
       // "fileCustom". We need unique names.
       final partModel6 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -968,21 +992,25 @@ void main() {
 
     test('multipart header parameter does not collide with cancellation', () {
       final model = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'c',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'c': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'c',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -1046,21 +1074,25 @@ void main() {
     test('multipart headers remain unique after repeated normalization '
         'collisions', () {
       final model = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final headers = {
@@ -1127,21 +1159,25 @@ void main() {
 
     test('generates deprecated annotation for deprecated multipart header', () {
       final partModel7 = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
       final requestBody = RequestBodyObject(
@@ -1219,21 +1255,25 @@ void main() {
       );
 
       final bodyModel = MultipartRequestContent(
+        model: ClassModel(
+          name: 'UploadForm',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+        ),
+        encoding: {'file': _binaryEncoding},
         rawContentType: 'multipart/form-data',
-        name: 'UploadForm',
-        parts: [
-          MultipartPart(
-            encoding: _binaryEncoding,
-            name: 'file',
-            model: BinaryModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ],
-        context: context,
         examples: const [],
       );
 
@@ -1311,21 +1351,25 @@ void main() {
         );
 
         final partModel8 = MultipartRequestContent(
+          model: ClassModel(
+            name: 'UploadForm',
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+            properties: [
+              Property(
+                name: 'file',
+                model: BinaryModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+          ),
+          encoding: {'file': _binaryEncoding},
           rawContentType: 'multipart/form-data',
-          name: 'UploadForm',
-          parts: [
-            MultipartPart(
-              encoding: _binaryEncoding,
-              name: 'file',
-              model: BinaryModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
           examples: const [],
         );
         final requestBody = RequestBodyObject(
@@ -2357,9 +2401,7 @@ MultipartRequestContent _withEncoding(
   MultipartRequestContent content,
   Map<String, PartEncoding> byName,
 ) {
-  for (final part in content.parts) {
-    part.encoding = byName[part.name] ?? part.encoding;
-  }
+  content.encoding.addAll(byName);
   return content;
 }
 

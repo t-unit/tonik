@@ -1,8 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/multipart_model_plan.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 typedef MultipartHeaderParamInfo = ({
@@ -120,31 +120,10 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
   return result;
 }
 
-List<({String normalizedName, MultipartPart part})> normalizeMultipartParts(
+List<({String normalizedName, MultipartPropertyPlan part})>
+normalizeMultipartParts(
   MultipartRequestContent content,
-) =>
-    ensureUniqueness(
-          content.parts
-              .where((part) => !part.isReadOnly)
-              .map(
-                (part) => (
-                  normalizedName: normalizeSingle(
-                    part.nameOverride ?? part.name,
-                    preserveNumbers: true,
-                  ),
-                  originalValue: part,
-                ),
-              )
-              .toList(),
-          defaultPrefix: defaultFieldPrefix,
-        )
-        .map(
-          (item) => (
-            normalizedName: item.normalizedName,
-            part: item.originalValue,
-          ),
-        )
-        .toList();
+) => planMultipartProperties(content);
 
 String _uniqueMultipartHeaderParameterName(
   String baseName,

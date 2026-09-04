@@ -43,7 +43,10 @@ class HttpBodyGenerator {
       package,
       useImmutableCollections: useImmutableCollections,
     );
-    bodyPlan ??= const OperationRequestPlanner(
+    bodyPlan ??= OperationRequestPlanner(
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
       backend: TransportBackend.http,
     ).planBody(operation);
 

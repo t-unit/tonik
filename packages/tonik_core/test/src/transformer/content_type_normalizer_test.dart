@@ -22,7 +22,7 @@ void main() {
         TextEncoding.ascii,
       ]);
 
-      final partProperty = MultipartPart(
+      final partProperty = Property(
         name: 'message',
         model: StringModel(context: context),
         isRequired: true,
@@ -30,16 +30,16 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
-        encoding: const PartEncoding(
-          contentType: ContentType.text,
-          rawContentType: 'text/plain; charset=iso-8859-1',
-          wireContentType: 'text/plain; charset=iso-8859-1',
-          textEncoding: TextEncoding.latin1,
-          headers: null,
-          style: null,
-          explode: null,
-          allowReserved: null,
-        ),
+      );
+      const partPropertyEncoding = PartEncoding(
+        contentType: ContentType.text,
+        rawContentType: 'text/plain; charset=iso-8859-1',
+        wireContentType: 'text/plain; charset=iso-8859-1',
+        textEncoding: TextEncoding.latin1,
+        headers: null,
+        style: null,
+        explode: null,
+        allowReserved: null,
       );
       final textContent = ModelRequestContent(
         model: BooleanModel(context: context),
@@ -50,9 +50,14 @@ void main() {
         examples: const [],
       );
       final multipartContent = MultipartRequestContent(
-        name: 'MultipartBody',
-        parts: [partProperty],
-        context: context,
+        model: ClassModel(
+          name: 'MultipartBody',
+          context: context,
+          properties: [partProperty],
+          isDeprecated: false,
+          examples: const [],
+        ),
+        encoding: {'message': partPropertyEncoding},
         rawContentType: 'multipart/form-data',
         examples: const [],
       );
@@ -88,9 +93,7 @@ void main() {
         (content) => content.contentType == ContentType.multipart,
       );
       final transformedPart = (transformedMultipart as MultipartRequestContent)
-          .parts
-          .single
-          .encoding;
+          .encoding['message']!;
 
       expect(
         (transformedText as ModelRequestContent).model,
@@ -1034,9 +1037,13 @@ void main() {
 
       test('keeps multipart request content unchanged', () {
         final originalContent = MultipartRequestContent(
-          name: 'MultipartData',
-          parts: const [],
-          context: context,
+          model: ClassModel(
+            name: 'MultipartData',
+            context: context,
+            properties: const [],
+            isDeprecated: false,
+            examples: const [],
+          ),
           rawContentType: 'multipart/form-data',
           examples: const [],
         );
@@ -1073,7 +1080,7 @@ void main() {
       });
 
       test('preserves encoding when normalizing multipart request content', () {
-        final filePart = MultipartPart(
+        final filePart = Property(
           name: 'file',
           model: BinaryModel(context: context),
           isRequired: true,
@@ -1081,14 +1088,14 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
-          encoding: const PartEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-            headers: null,
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: null,
-          ),
+        );
+        const filePartEncoding = PartEncoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'application/octet-stream',
+          headers: null,
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: null,
         );
 
         final requestBody = RequestBodyObject(
@@ -1098,9 +1105,14 @@ void main() {
           isRequired: true,
           content: {
             MultipartRequestContent(
-              name: 'UploadData',
-              parts: [filePart],
-              context: context,
+              model: ClassModel(
+                name: 'UploadData',
+                context: context,
+                properties: [filePart],
+                isDeprecated: false,
+                examples: const [],
+              ),
+              encoding: {'file': filePartEncoding},
               rawContentType: 'multipart/form-data',
               examples: const [],
             ),
@@ -1129,10 +1141,10 @@ void main() {
             transformedBody.content.first as MultipartRequestContent;
 
         expect(
-          content.parts.single,
+          (content.model as ClassModel).properties.single,
           same(filePart),
         );
-        expect(content.parts.single.encoding, same(filePart.encoding));
+        expect(content.encoding['file'], same(filePartEncoding));
       });
 
       test('preserves encoding when normalizing form request content', () {

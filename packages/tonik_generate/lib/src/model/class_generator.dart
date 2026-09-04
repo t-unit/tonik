@@ -3,7 +3,6 @@ import 'package:dart_style/dart_style.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/model/object_declaration.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_builders.dart';
@@ -47,50 +46,8 @@ class ClassGenerator {
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
-  ({String code, String filename}) generate(ClassModel model) => _generate(
-    ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
-  );
-
-  ({String code, String filename}) generateMultipart(
-    MultipartRequestContent content,
-  ) => _generate(
-    ObjectDeclaration.fromMultipart(
-      content,
-      nameManager.multipartObjectName(content),
-    ),
-  );
-
-  ({String code, String filename}) _generate(ObjectDeclaration model) {
-    return _generateFile(model.name, _generateClasses(model));
-  }
-
-  ({String code, String filename}) generateMultipartAlias(
-    MultipartRequestContent content,
-  ) {
-    final alias = content.alias!;
-    final targetType = requestContentTypeReference(
-      content,
-      nameManager,
-      package,
-    );
-    final name = nameManager.multipartAliasName(content);
-    return _generateFile(name, [
-      TypeDef(
-        (b) => b
-          ..name = name
-          ..docs.addAll(
-            formatDocsWithExamples(alias.description, alias.examples),
-          )
-          ..annotations.addAll([
-            if (alias.isDeprecated)
-              refer('Deprecated', 'dart:core').call([
-                literalString('This typedef is deprecated.'),
-              ]),
-          ])
-          ..definition = targetType,
-      ),
-    ]);
-  }
+  ({String code, String filename}) generate(ClassModel model) =>
+      _generateFile(nameManager.modelName(model), _generateClasses(model));
 
   ({String code, String filename}) _generateFile(
     String name,
@@ -123,21 +80,10 @@ class ClassGenerator {
   }
 
   @visibleForTesting
-  List<Spec> generateClasses(ClassModel model) => _generateClasses(
-    ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
-  );
+  List<Spec> generateClasses(ClassModel model) => _generateClasses(model);
 
-  @visibleForTesting
-  List<Spec> generateMultipartClasses(MultipartRequestContent content) =>
-      _generateClasses(
-        ObjectDeclaration.fromMultipart(
-          content,
-          nameManager.multipartObjectName(content),
-        ),
-      );
-
-  List<Spec> _generateClasses(ObjectDeclaration model) {
-    final className = model.name;
+  List<Spec> _generateClasses(ClassModel model) {
+    final className = nameManager.modelName(model);
     final actualClassName = model.isNullable
         ? nameManager.rawObjectName(className)
         : className;
@@ -173,14 +119,14 @@ class ClassGenerator {
   Class generateClass(ClassModel model, [Method? copyWithGetter]) {
     final className = nameManager.modelName(model);
     return _generateClassWithName(
-      ObjectDeclaration.fromModel(model, className),
+      model,
       className,
       copyWithGetter: copyWithGetter,
     );
   }
 
   Class _generateClassWithName(
-    ObjectDeclaration model,
+    ClassModel model,
     String className, {
     Method? copyWithGetter,
   }) {
@@ -446,7 +392,7 @@ class ClassGenerator {
   CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ObjectDeclaration model,
+    ClassModel model,
   ) {
     final copyWithProps = properties.map(
       (prop) {
@@ -485,7 +431,7 @@ class ClassGenerator {
 
   Constructor _buildFromSimpleConstructor(
     String className,
-    ObjectDeclaration model,
+    ClassModel model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -570,7 +516,7 @@ class ClassGenerator {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
-    ObjectDeclaration classModel,
+    ClassModel classModel,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {
@@ -708,7 +654,7 @@ class ClassGenerator {
 
   Constructor _buildFromJsonConstructor(
     String className,
-    ObjectDeclaration model,
+    ClassModel model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -749,7 +695,7 @@ class ClassGenerator {
 
   Code _buildFromJsonBody(
     String className,
-    ObjectDeclaration model,
+    ClassModel model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     final normalizedProperties = normalizeProperties(
@@ -890,8 +836,8 @@ class ClassGenerator {
     ]);
   }
 
-  Method _buildToJsonMethod(ObjectDeclaration model) {
-    final className = model.name;
+  Method _buildToJsonMethod(ClassModel model) {
+    final className = nameManager.modelName(model);
 
     // Schema-level readOnly: encoding is never valid.
     if (model.isReadOnly) {
@@ -1080,7 +1026,7 @@ class ClassGenerator {
   Field _generateField(
     Property property,
     String normalizedName, {
-    ObjectDeclaration? classModel,
+    ClassModel? classModel,
   }) {
     final fieldBuilder = FieldBuilder()
       ..name = normalizedName
@@ -1120,7 +1066,7 @@ class ClassGenerator {
 
   TypeReference _getSchemaAwareTypeReference(
     Property property,
-    ObjectDeclaration model,
+    ClassModel model,
   ) {
     return typeReference(
       property.model,
@@ -1156,10 +1102,10 @@ class ClassGenerator {
   }
 
   Method _buildParameterPropertiesMethod(
-    ObjectDeclaration model,
+    ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final className = model.name;
+    final className = nameManager.modelName(model);
 
     // Schema-level readOnly: encoding is never valid.
     if (model.isReadOnly) {
@@ -1219,7 +1165,7 @@ class ClassGenerator {
     );
   }
 
-  List<Code> _buildAdditionalPropertiesParameterLoop(ObjectDeclaration model) {
+  List<Code> _buildAdditionalPropertiesParameterLoop(ClassModel model) {
     final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
     if (apPolicy == null) return [];
 
@@ -1227,7 +1173,7 @@ class ClassGenerator {
     final apFieldName = nameManager.additionalPropertiesFieldName(
       allNormalized,
     );
-    final className = model.name;
+    final className = nameManager.modelName(model);
 
     return buildApPropertyValueEntries(
       AdditionalPropertiesPlan(
@@ -1306,7 +1252,7 @@ class ClassGenerator {
   Method _buildSimpleParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ObjectDeclaration model,
+    ClassModel model,
   ) {
     if (properties.isEmpty &&
         activeApPolicy(model.additionalPropertiesPolicy) == null) {
@@ -1374,7 +1320,7 @@ class ClassGenerator {
   Method _buildListParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ObjectDeclaration model,
+    ClassModel model,
   ) {
     final propertyAssignments = <Code>[];
 
@@ -1474,7 +1420,7 @@ class ClassGenerator {
   Method _buildMixedParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
-    ObjectDeclaration model,
+    ClassModel model,
   ) {
     final propertyAssignments = <Code>[];
 
@@ -1621,7 +1567,7 @@ class ClassGenerator {
 
   Constructor _buildFromFormConstructor(
     String className,
-    ObjectDeclaration model,
+    ClassModel model,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
@@ -1706,7 +1652,7 @@ class ClassGenerator {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
-    ObjectDeclaration classModel,
+    ClassModel classModel,
     Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {

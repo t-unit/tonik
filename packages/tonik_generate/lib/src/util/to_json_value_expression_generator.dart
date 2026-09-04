@@ -148,6 +148,26 @@ BuiltExpression buildToJsonAdditionalPropertiesExpression(
   );
 }
 
+/// Serializes a typed value, including nested collections and recursive
+/// typedefs.
+BuiltExpression buildToJsonValueExpression(
+  Expression receiver,
+  Model model, {
+  required bool isNullable,
+  required NameManager nameManager,
+  String? package,
+  InlineHelperContext? helperContext,
+  bool useImmutableCollections = false,
+}) => _buildSerializationExpression(
+  receiver,
+  model,
+  isNullable,
+  nameManager: nameManager,
+  package: package,
+  helperContext: helperContext ?? InlineHelperContext(nameManager: nameManager),
+  useImmutableCollections: useImmutableCollections,
+);
+
 BuiltExpression _buildSerializationExpression(
   Expression receiver,
   Model model,

@@ -96,9 +96,9 @@ $expectedPartCode
               rawContentType: 'text/plain; charset=us-ascii',
               wireContentType: 'text/plain; charset=us-ascii',
               textEncoding: TextEncoding.latin1,
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -247,7 +247,7 @@ $expectedPartCode
         r'value',
         MultipartFile.fromBytes(
           latin1.encode(item),
-          contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+          contentType: DioMediaType.parse(r'text/plain'),
         ),
       ),
     );
@@ -436,12 +436,9 @@ $expectedPartCode
     });
 
     test('serializes parts from aliased multipart content', () {
-      final content = MultipartRequestContent(
-        name: 'FormAlias',
-        sourceName: 'InnerForm',
-        context: testContext,
-        rawContentType: 'multipart/form-data',
-        parts: [
+      final inner = multipartContentFixture(
+        testContext,
+        [
           multipartPartFixture(
             name: 'title',
             model: StringModel(context: testContext),
@@ -455,6 +452,18 @@ $expectedPartCode
             ),
           ),
         ],
+        name: 'InnerForm',
+      );
+      final content = MultipartRequestContent(
+        model: AliasModel(
+          name: 'FormAlias',
+          context: testContext,
+          model: inner.model,
+          examples: const [],
+          defaultValue: null,
+        ),
+        encoding: inner.encoding,
+        rawContentType: 'multipart/form-data',
         examples: const [],
       );
 
@@ -551,7 +560,10 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse(r'text/plain'))));
+            if (body.password == null) {
+              throw EncodingException('Required multipart property "password" cannot be null.');
+            }
+            _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -569,9 +581,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -1044,9 +1056,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -1083,9 +1095,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -1122,9 +1134,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -1162,9 +1174,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -1584,9 +1596,9 @@ $expectedPartCode
               encoding: const PartEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
+                style: null,
+                explode: null,
+                allowReserved: null,
                 headers: null,
               ),
             ),
@@ -1637,9 +1649,9 @@ $expectedPartCode
               encoding: const PartEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
+                style: null,
+                explode: null,
+                allowReserved: null,
                 headers: null,
               ),
             ),
@@ -1937,9 +1949,9 @@ $expectedPartCode
             encoding: const PartEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'image/png',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           ),
@@ -4795,89 +4807,94 @@ $expectedPartCode
       );
     });
 
-    test('list of integers, application/json, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'scores',
-            model: ListModel(
-              content: IntegerModel(context: testContext),
-              context: testContext,
-              examples: const [],
+    test(
+      'list of integers, application/json, explode: true uses style encoding precedence',
+      () {
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
+              name: 'scores',
+              model: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ],
-      );
+          ],
+        );
 
-      final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
-      );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry(r'scores', jsonEncode(item)));
+              _$formData.fields.add(MapEntry(r'scores', item.toString()));
             }
             return _$formData;
           }
         '''),
-        ),
-      );
-    });
-
-    test('list of integers, application/json, explode: false', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'scores',
-            model: ListModel(
-              content: IntegerModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
           ),
-        ],
-      );
+        );
+      },
+    );
 
-      final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
-      );
+    test(
+      'list of integers, application/json, explode: false uses style encoding precedence',
+      () {
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
+              name: 'scores',
+              model: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: false,
+                allowReserved: false,
+                headers: null,
+              ),
+            ),
+          ],
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format(r'''
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
             void test() {
               final _$formData = FormData();
               _$formData.fields.add(
                 MapEntry(
                   r'scores',
                   body.scores
-                      .map((item) => jsonEncode(item))
+                      .map((item) => item.toString())
                       .toList()
                       .uriEncode(
                         allowEmpty: true,
@@ -4889,9 +4906,10 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
 
     test('list of DateTimeModel, text/plain, explode: true', () {
       final content = multipartContentFixture(
@@ -4937,49 +4955,52 @@ $expectedPartCode
       );
     });
 
-    test('list of DateTimeModel, application/json, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'dates',
-            model: ListModel(
-              content: DateTimeModel(context: testContext),
-              context: testContext,
-              examples: const [],
+    test(
+      'list of DateTimeModel, application/json, explode: true uses style encoding precedence',
+      () {
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
+              name: 'dates',
+              model: ListModel(
+                content: DateTimeModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ],
-      );
+          ],
+        );
 
-      final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
-      );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry(r'dates', jsonEncode(item)));
+              _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
             }
             return _$formData;
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
 
     // --- Binary tests ---
 
@@ -5135,57 +5156,60 @@ $expectedPartCode
       );
     });
 
-    test('list of ClassModel, custom contentType', () {
-      final innerClass = ClassModel(
-        name: 'Address',
-        isDeprecated: false,
-        properties: [],
-        context: testContext,
-        examples: const [],
-      );
+    test(
+      'list of ClassModel, custom contentType uses style encoding precedence',
+      () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'addresses',
-            model: ListModel(
-              content: innerClass,
-              context: testContext,
-              examples: const [],
+        final content = multipartContentFixture(
+          testContext,
+          [
+            multipartPartFixture(
+              name: 'addresses',
+              model: ListModel(
+                content: innerClass,
+                context: testContext,
+                examples: const [],
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/xml',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
+              ),
             ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/xml',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ],
-      );
+          ],
+        );
 
-      final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
-      );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
+              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
             return _$formData;
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
 
     // --- Nullable / optional tests ---
 
@@ -7575,9 +7599,9 @@ $expectedPartCode
               encoding: const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: "text/it's-plain",
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
+                style: null,
+                explode: null,
+                allowReserved: null,
                 headers: null,
               ),
             ),

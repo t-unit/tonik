@@ -169,39 +169,6 @@ class ConfigTransformer {
       _applyEnumFallbacks(document.models, enumConfig);
     }
 
-    final multipart = {
-      for (final body in document.requestBodies) ...body.resolvedContent,
-      for (final operation in document.operations)
-        ...?operation.requestBody?.resolvedContent,
-    }.whereType<MultipartRequestContent>();
-    for (final content in multipart) {
-      final alias = content.alias;
-      if (alias != null) {
-        alias.targetNameOverride =
-            overrides.schemas[alias.targetName] ?? alias.targetNameOverride;
-      }
-      content
-        ..nameOverride = overrides.schemas[content.name] ?? content.nameOverride
-        ..sourceNameOverride =
-            overrides.schemas[content.sourceName] ?? content.sourceNameOverride;
-      if (deprecated.schemas == DeprecatedHandling.ignore) {
-        content.isDeprecated = false;
-      }
-      if (deprecated.properties == DeprecatedHandling.exclude) {
-        content.parts = content.parts
-            .where((part) => !part.isDeprecated)
-            .toList();
-      }
-      for (final part in content.parts) {
-        part.nameOverride =
-            overrides.properties['${content.sourceName}.${part.name}'] ??
-            part.nameOverride;
-        if (deprecated.properties == DeprecatedHandling.ignore) {
-          part.isDeprecated = false;
-        }
-      }
-    }
-
     return document;
   }
 

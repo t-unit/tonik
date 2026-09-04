@@ -134,7 +134,6 @@ class Generator {
 
     final requestBodyFileGenerator = RequestBodyFileGenerator(
       requestBodyGenerator: requestBodyGenerator,
-      classGenerator: classGenerator,
     );
 
     final responseGenerator = ResponseGenerator(
@@ -226,8 +225,6 @@ class Generator {
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
-      excludeSchemas: config.filter.excludeSchemas,
-      deprecatedSchemas: config.deprecated.schemas,
     );
     publicArtifacts.addAll(requestBodyFiles);
 

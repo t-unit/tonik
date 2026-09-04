@@ -73,11 +73,24 @@ void main() {
       (model: zebra, discriminatorValue: 'again'),
     ]);
 
+    final content = MultipartRequestContent(
+      model: allOf,
+      rawContentType: 'multipart/form-data',
+      examples: const [],
+    );
     final document = ApiDocument(
       title: 'Test',
       version: '1',
       models: {zebra, alpha, wrapped, allOf, oneOf, anyOf},
-      requestBodies: const {},
+      requestBodies: {
+        RequestBodyObject(
+          name: 'Upload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {content},
+        ),
+      },
       responseHeaders: const {},
       requestHeaders: const {},
       servers: const {},
@@ -92,6 +105,7 @@ void main() {
       (m) => m.name == 'Wrapped',
     );
     expect(normalized.model, same(zebra));
+    expect(content.model, same(allOf));
     expect(allOf.models, [normalized, alpha, zebra, zebra]);
     expect(oneOf.models.map((m) => m.model), [normalized, alpha, zebra, zebra]);
     expect(anyOf.models.map((m) => m.model), [normalized, alpha, zebra, zebra]);

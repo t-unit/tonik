@@ -257,8 +257,12 @@ void main() {
             content: {
               if (contentType == ContentType.multipart)
                 MultipartRequestContent(
-                  parts: const [],
-                  context: context,
+                  model: ClassModel(
+                    context: context,
+                    properties: const [],
+                    isDeprecated: false,
+                    examples: const [],
+                  ),
                   rawContentType: _rawContentTypes[contentType]!,
                   examples: const [],
                 )
@@ -280,7 +284,7 @@ void main() {
       }
     });
 
-    test('retains multipart property order, duplicates, and file metadata', () {
+    test('retains multipart scalar and file order and file metadata', () {
       final context = Context.initial();
 
       final content = multipartContentFixture(
@@ -299,7 +303,7 @@ void main() {
             ),
           ),
           multipartPartFixture(
-            name: 'item',
+            name: 'file',
             model: BinaryModel(context: context),
             isRequired: false,
             isNullable: true,
@@ -349,12 +353,12 @@ Object? test() {
       contentType: MediaType.parse(r'text/plain'),
     ),
   );
-  if (body.item2 != null) {
+  if (body.file != null) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'item',
-        body.item2!.toBytes(),
-        filename: body.item2!.fileName ?? r'item',
+        r'file',
+        body.file!.toBytes(),
+        filename: body.file!.fileName ?? r'file',
         contentType: MediaType.parse(r'application/octet-stream'),
       ),
     );

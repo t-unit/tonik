@@ -192,9 +192,7 @@ void main() {
               examples: const [],
             ),
             MultipartRequestContent(
-              name: 'SharedInput',
-              context: testContext,
-              parts: const [],
+              model: model,
               rawContentType: 'multipart/form-data',
               examples: const [],
             ),

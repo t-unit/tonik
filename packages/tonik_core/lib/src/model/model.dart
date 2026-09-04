@@ -14,6 +14,13 @@ sealed class Model {
   final Context context;
   EncodingShape get encodingShape;
 
+  /// Whether importing this model removed a cyclic composition member.
+  ///
+  /// The remaining model graph stays usable for ordinary recursive models,
+  /// while consumers requiring complete composition structure can reject it.
+  /// This evidence must survive transformations that replace the model.
+  bool hasPrunedCompositionCycle = false;
+
   /// The terminal model after resolving through any [AliasModel] chains.
   ///
   /// For non-alias models this returns `this`. For [AliasModel] it walks

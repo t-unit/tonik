@@ -21,15 +21,12 @@ TypeReference requestContentTypeReference(
     isNullableOverride: isNullableOverride,
     useImmutableCollections: useImmutableCollections,
   ),
-  MultipartRequestContent() => TypeReference(
-    (b) => b
-      ..symbol = nameManager.multipartName(content)
-      ..url = sourceFileUrl(
-        package,
-        'model',
-        nameManager.multipartName(content),
-      )
-      ..isNullable = isNullableOverride || (content.alias?.isNullable ?? false),
+  MultipartRequestContent(:final model) => typeReference(
+    model,
+    nameManager,
+    package,
+    isNullableOverride: isNullableOverride,
+    useImmutableCollections: useImmutableCollections,
   ),
 };
 

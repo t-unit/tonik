@@ -600,7 +600,7 @@ Object? test() {
       MultipartFile.fromBytes(
         r'value',
         latin1.encode(item),
-        contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
+        contentType: MediaType.parse(r'text/plain'),
       ),
     );
   }''',

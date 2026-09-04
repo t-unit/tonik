@@ -18,6 +18,25 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/composed-upload:
+    post:
+      operationId: postComposedUpload
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComposedUpload'
+            encoding:
+              files:
+                contentType: application/octet-stream
+              metadata:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/read-only:
     post:
       operationId: postReadOnlyFields
@@ -535,6 +554,68 @@ paths:
 
 components:
   schemas:
+    ComposedUpload:
+      allOf:
+        - $ref: '#/components/schemas/UploadFiles'
+        - $ref: '#/components/schemas/UploadDetails'
+    UploadFiles:
+      type: object
+      required: [files, metadata]
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        metadata:
+          $ref: '#/components/schemas/UploadBaseMetadata'
+    UploadDetails:
+      allOf:
+        - $ref: '#/components/schemas/UploadAnnotations'
+        - $ref: '#/components/schemas/UploadOptional'
+    UploadAnnotations:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/UploadAnnotationMetadata'
+    UploadOptional:
+      type: object
+      properties:
+        note:
+          type: string
+          nullable: true
+    UploadBaseMetadata:
+      type: object
+      required: [name, settings]
+      properties:
+        name:
+          type: string
+        settings:
+          $ref: '#/components/schemas/UploadBaseSettings'
+    UploadBaseSettings:
+      type: object
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+    UploadAnnotationMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        settings:
+          $ref: '#/components/schemas/UploadExtraSettings'
+        annotations:
+          type: object
+          additionalProperties:
+            type: string
+    UploadExtraSettings:
+      type: object
+      required: [region]
+      properties:
+        region:
+          type: string
+
     ReadOnlyFields:
       type: object
       required:

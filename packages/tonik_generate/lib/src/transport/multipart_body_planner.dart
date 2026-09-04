@@ -1,15 +1,32 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/multipart_model_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/text_encoding_expression.dart';
+import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Resolves serialization before native multipart containers are constructed.
 class MultipartBodyPlanner {
-  const MultipartBodyPlanner({required this.backend});
+  const MultipartBodyPlanner({
+    required this.backend,
+    this.nameManager,
+    this.package = 'api',
+    this.useImmutableCollections = false,
+  });
+
+  final String package;
+  final bool useImmutableCollections;
+
+  final NameManager? nameManager;
 
   final TransportBackend backend;
   bool get _dio => backend == TransportBackend.dio;
@@ -20,14 +37,115 @@ class MultipartBodyPlanner {
     required bool isRequired,
     List<MultipartHeaderParamInfo>? headerParameters,
   }) {
+    final manager =
+        nameManager ??
+        NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
+    final helperContext = InlineHelperContext(nameManager: manager);
+    final helpers = <InlineHelper>[];
     final parameters =
         (headerParameters ?? extractMultipartHeaderParamInfo(content))
             .where((parameter) => identical(parameter.content, content))
             .toList();
-    final emissions = <MultipartEmission>[];
-    for (final (:normalizedName, :part) in normalizeMultipartParts(content)) {
+    final parts = planMultipartProperties(
+      content,
+      bodyAccessor: bodyAccessor,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
+    );
+    final emissions = <MultipartEmission>[
+      if (parts.any((p) => p.part.sources.length > 1))
+        MultipartCode(_mergeHelper()),
+    ];
+    for (final (:normalizedName, :part) in parts) {
       final nullable = part.isNullable || !part.isRequired;
-      final accessor = refer(bodyAccessor).property(normalizedName);
+      final repeated = part.sources.length > 1;
+      final object = part.sources.any(
+        (source) => switch (source.property.model.resolved) {
+          ClassModel() || CompositeModel() || MapModel() => true,
+          _ => false,
+        },
+      );
+      final enumValue =
+          repeated &&
+          part.sources.any(
+            (source) => source.property.model.resolved is EnumModel,
+          );
+      final normalizedList =
+          repeated &&
+          part.sources.any(
+            (source) => switch (source.property.model.resolved) {
+              ListModel(:final content) => switch (content.resolved) {
+                ClassModel() ||
+                CompositeModel() ||
+                MapModel() ||
+                ListModel() ||
+                EnumModel() ||
+                AnyModel() => true,
+                _ => false,
+              },
+              _ => false,
+            },
+          );
+      final requiresValue =
+          !nullable &&
+          part.sources.any(
+            (source) => source.property.isWriteOnly,
+          );
+      Expression accessor;
+      if (repeated) {
+        final values = part.sources.map((source) {
+          final optional =
+              source.optionalParent ||
+              !source.property.isRequired ||
+              source.property.isWriteOnly ||
+              source.property.isNullable ||
+              multipartValueIsNullable(source.property.model);
+          if (object || enumValue || normalizedList) {
+            final serialized = buildToJsonValueExpression(
+              source.value,
+              source.property.model,
+              isNullable: optional,
+              nameManager: manager,
+              package: package,
+              helperContext: helperContext,
+              useImmutableCollections: useImmutableCollections,
+            );
+            helpers.addAll(serialized.inlineFunctions);
+            return serialized.unsafeRawBody;
+          }
+          return source.value;
+        }).toList();
+        var merged = values.first;
+        for (final value in values.skip(1)) {
+          merged = refer(r'_$mergeMultipartValues').call([merged, value]);
+        }
+        final variable = '_\$$normalizedName';
+        emissions.add(
+          MultipartCode(declareFinal(variable).assign(merged).statement),
+        );
+        accessor = refer(variable);
+      } else {
+        accessor = part.sources.single.value;
+      }
+      if (requiresValue) {
+        emissions.add(
+          MultipartCode(
+            Block.of([
+              const Code('if ('),
+              accessor.code,
+              const Code(' == null) {'),
+              generateEncodingExceptionExpression(
+                'Required multipart property "${part.name}" cannot be null.',
+              ).statement,
+              const Code('}'),
+            ]),
+          ),
+        );
+      }
       if (nullable) {
         emissions.add(
           MultipartCode(
@@ -49,20 +167,81 @@ class MultipartBodyPlanner {
       final input = (
         name: part.name,
         normalizedName: normalizedName,
-        value: nullable ? accessor.nullChecked : accessor,
+        value: repeated
+            ? (normalizedList
+                  ? accessor.asA(
+                      TypeReference(
+                        (b) => b
+                          ..symbol = 'List'
+                          ..url = 'dart:core'
+                          ..types.add(refer('Object?', 'dart:core')),
+                      ),
+                    )
+                  : object || enumValue
+                  ? accessor
+                  : _mergedValue(accessor, part.model))
+            : nullable || requiresValue
+            ? accessor.nullChecked
+            : accessor,
         encoding: part.encoding,
         headers: headers,
+        preserveOrder: content.model.resolved is AllOfModel,
       );
-      emissions.addAll(_part(input, part.model.resolved));
+      emissions.addAll(
+        normalizedList
+            ? _list(
+                input,
+                part.sources
+                    .map((source) => source.property.model.resolved)
+                    .whereType<ListModel>()
+                    .first,
+                merged: true,
+              )
+            : repeated && object
+            ? (part.model.resolved is MapModel
+                  ? _map(input)
+                  : _object(input, merged: true))
+            : enumValue
+            ? [
+                _text(
+                  input,
+                  input.encoding.contentType == ContentType.json
+                      ? _json(input.value)
+                      : part.model.resolved is EnumModel<String>
+                      ? input.value.asA(refer('String', 'dart:core'))
+                      : input.value.property('toString').call([]),
+                ),
+              ]
+            : _part(input, part.model.resolved),
+      );
       if (nullable) emissions.add(const MultipartCode(Code('}')));
     }
     return MultipartBodyPlan(
       value: refer(bodyAccessor),
       rawContentType: content.rawContentType,
       isRequired: isRequired,
-      emissions: emissions,
+      emissions: [
+        ...spliceInlineHelpers(helpers).map(MultipartCode.new),
+        ...emissions,
+      ],
       usesCustomParts: !_dio && parameters.isNotEmpty,
     );
+  }
+
+  Expression _mergedValue(Expression accessor, Model model) {
+    final typed = accessor.asA(
+      typeReference(
+        model,
+        nameManager ??
+            NameManager(
+              generator: NameGenerator(),
+              stableModelSorter: StableModelSorter(),
+            ),
+        package,
+        useImmutableCollections: useImmutableCollections,
+      ),
+    );
+    return multipartValueIsNullable(model) ? typed.nullChecked : typed;
   }
 
   List<MultipartEmission> _part(_Part part, Model model) => switch (model) {
@@ -172,7 +351,11 @@ class MultipartBodyPlanner {
     ];
   }
 
-  List<MultipartEmission> _list(_Part part, ListModel model) {
+  List<MultipartEmission> _list(
+    _Part part,
+    ListModel model, {
+    bool merged = false,
+  }) {
     final encoding = part.encoding;
     final item = model.content.resolved;
     final contentBased =
@@ -225,7 +408,7 @@ class MultipartBodyPlanner {
         _text(
           part,
           _json(
-            itemJson == null
+            merged || itemJson == null
                 ? part.value
                 : _mapped(part.value, itemJson, variable: variable),
           ),
@@ -236,20 +419,32 @@ class MultipartBodyPlanner {
     if (item is ClassModel ||
         item is CompositeModel ||
         (!_dio && (item is MapModel || item is AnyModel))) {
-      final json = switch (item) {
-        MapModel() => refer('item'),
-        AnyModel() => _anyJson(refer('item')),
-        _ => refer('item').property('toJson').call([]),
-      };
+      final json = merged
+          ? refer('item')
+          : switch (item) {
+              MapModel() => refer('item'),
+              AnyModel() => _anyJson(refer('item')),
+              _ => refer('item').property('toJson').call([]),
+            };
       return _loop('item', part.value, [
         _text(part, _json(json), fallback: 'application/json'),
       ]);
     }
-    final itemText = _itemText(itemPart, item);
+    var itemText = merged
+        ? (item is EnumModel<String>
+              ? itemPart.value.asA(refer('String', 'dart:core'))
+              : itemPart.value.property('toString').call([]))
+        : _itemText(itemPart, item);
+    if (merged && _dio && item is EnumModel) {
+      itemText = itemText.property('uriEncode').call([], {
+        'allowEmpty': literalTrue,
+        'textEncoding': textEncodingExpression(encoding.textEncoding),
+      });
+    }
     if (encoding.explode ?? true) {
       return _loop('item', part.value, [_listText(part, itemText)]);
     }
-    final strings = item is StringModel
+    final strings = item is StringModel && !merged
         ? part.value
         : _mapped(part.value, itemText);
     if (encoding.style == EncodingStyle.spaceDelimited ||
@@ -273,6 +468,11 @@ class MultipartBodyPlanner {
             'textEncoding': textEncodingExpression(encoding.textEncoding),
             'alreadyEncoded': literalTrue,
           })
+        : merged
+        ? strings.property('toSimple').call([], {
+            'explode': literalFalse,
+            'allowEmpty': literalTrue,
+          })
         : buildSimpleValueExpression(
             part.value,
             model,
@@ -285,7 +485,7 @@ class MultipartBodyPlanner {
   MultipartAppend _listText(_Part part, Expression text) => _text(
     part,
     text,
-    field: _dio,
+    field: _dio && !part.preserveOrder,
     omitContentType:
         _dio &&
         part.encoding.textEncoding == TextEncoding.utf8 &&
@@ -346,10 +546,10 @@ class MultipartBodyPlanner {
     return [_text(part, _json(part.value), fallback: 'application/json')];
   }
 
-  List<MultipartEmission> _object(_Part part) {
+  List<MultipartEmission> _object(_Part part, {bool merged = false}) {
     final encoding = part.encoding;
     if (encoding.style == EncodingStyle.deepObject) {
-      final entries = part.value
+      final entries = (merged ? _mergedProperties(part.value) : part.value)
           .property('toDeepObject')
           .call(
             [specLiteralString(part.name)],
@@ -365,7 +565,7 @@ class MultipartBodyPlanner {
           part,
           refer('entry').property('value'),
           name: refer('entry').property('name'),
-          field: _dio,
+          field: _dio && !part.preserveOrder,
           omitContentType: _dio,
           contentType: 'application/x-www-form-urlencoded',
         ),
@@ -379,14 +579,17 @@ class MultipartBodyPlanner {
           'supported for object multipart part ${part.name}',
         );
       }
-      final entries = part.value
-          .property('parameterProperties')
-          .call([], {'allowEmpty': literalTrue})
-          .property('toRawStyleParts')
-          .call(
-            [specLiteralString(part.name)],
-            {'explode': literalBool(encoding.explode ?? true)},
-          );
+      final entries =
+          (merged
+                  ? _mergedProperties(part.value)
+                  : part.value.property('parameterProperties').call([], {
+                      'allowEmpty': literalTrue,
+                    }))
+              .property('toRawStyleParts')
+              .call(
+                [specLiteralString(part.name)],
+                {'explode': literalBool(encoding.explode ?? true)},
+              );
       final variable = _dio ? r'_$part' : 'entry';
       final partsVariable = '${part.normalizedName}RawParts';
       return [
@@ -404,7 +607,7 @@ class MultipartBodyPlanner {
       ];
     }
     if (encoding.contentType == ContentType.form) {
-      final entries = part.value
+      final entries = (merged ? _mergedProperties(part.value) : part.value)
           .property('toForm')
           .call(
             [specLiteralString(part.name)],
@@ -441,7 +644,7 @@ class MultipartBodyPlanner {
     return [
       _text(
         part,
-        _json(part.value.property('toJson').call([])),
+        _json(merged ? part.value : part.value.property('toJson').call([])),
         fallback: 'application/json',
       ),
     ];
@@ -514,7 +717,7 @@ class MultipartBodyPlanner {
   }
 
   Expression? _headers(
-    MultipartPart part,
+    MultipartPropertyPlan part,
     String normalizedName,
     List<MultipartHeaderParamInfo> parameters,
     bool nullable,
@@ -591,6 +794,7 @@ typedef _Part = ({
   Expression value,
   PartEncoding encoding,
   Expression? headers,
+  bool preserveOrder,
 });
 
 _Part _withValue(_Part part, Expression value) => (
@@ -599,6 +803,7 @@ _Part _withValue(_Part part, Expression value) => (
   value: value,
   encoding: part.encoding,
   headers: part.headers,
+  preserveOrder: part.preserveOrder,
 );
 
 Expression _json(Expression value) =>
@@ -645,3 +850,106 @@ List<MultipartEmission> _loop(
   ...body,
   const MultipartCode(Code('}')),
 ];
+
+Code _mergeHelper() {
+  final object = refer('Object?', 'dart:core');
+  final map = TypeReference(
+    (b) => b
+      ..symbol = 'Map'
+      ..url = 'dart:core'
+      ..types.addAll([refer('String', 'dart:core'), object]),
+  );
+  final method = Method(
+    (b) => b
+      ..name = r'_$mergeMultipartValues'
+      ..returns = object
+      ..requiredParameters.addAll([
+        Parameter(
+          (p) => p
+            ..name = 'first'
+            ..type = object,
+        ),
+        Parameter(
+          (p) => p
+            ..name = 'second'
+            ..type = object,
+        ),
+      ])
+      ..body = Block.of([
+        const Code(
+          'if (first == null) return second; '
+          'if (second == null) return first; if (first is ',
+        ),
+        map.code,
+        const Code(' && second is '),
+        map.code,
+        const Code(') {'),
+        const Code('final result = <'),
+        refer('String', 'dart:core').code,
+        const Code(', '),
+        object.code,
+        const Code('>{...first};'),
+        const Code(
+          'for (final entry in second.entries) { '
+          'result[entry.key] = result.containsKey(entry.key) '
+          r'? _$mergeMultipartValues(result[entry.key], entry.value) '
+          ': entry.value; } return result; }',
+        ),
+        const Code('if ('),
+        refer('DeepCollectionEquality', 'package:collection/collection.dart')
+            .constInstance([])
+            .property('equals')
+            .call([refer('first'), refer('second')])
+            .code,
+        const Code(') return first;'),
+        generateEncodingExceptionExpression(
+          'Conflicting values for a repeated multipart property.',
+          raw: true,
+        ).statement,
+      ]),
+  );
+  return Block.of([object.code, const Code(' '), method.closure.code]);
+}
+
+Expression _mergedProperties(Expression value) {
+  final map = TypeReference(
+    (b) => b
+      ..symbol = 'Map'
+      ..url = 'dart:core'
+      ..types.addAll([
+        refer('String', 'dart:core'),
+        refer('Object?', 'dart:core'),
+      ]),
+  );
+  Expression raw(Expression item) =>
+      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
+        [item],
+        {
+          'explode': literalFalse,
+          'allowEmpty': literalTrue,
+          'literal': literalTrue,
+        },
+      );
+  final property = refer('PropertyValue', 'package:tonik_util/tonik_util.dart');
+  return value.asA(map).property('map').call([
+    Method(
+      (b) => b
+        ..requiredParameters.addAll([
+          Parameter((p) => p..name = 'key'),
+          Parameter((p) => p..name = 'value'),
+        ])
+        ..lambda = true
+        ..body = refer('MapEntry', 'dart:core').call([
+          refer('key'),
+          refer('value')
+              .isA(refer('List', 'dart:core'))
+              .conditional(
+                property.property('array').call([
+                  _mapped(refer('value'), raw(refer('item'))),
+                ]),
+                property.property('scalar').call([raw(refer('value'))]),
+              ),
+        ]).code,
+    ).closure,
+  ]);
+}

@@ -21,11 +21,6 @@ class ModelImporter {
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};
 
-  // A component reused by multipart keeps the same nested schema identities.
-  final _propertyModels = <(Schema, Context), Model>{};
-  final _additionalProperties =
-      <(Schema, Context), AdditionalPropertiesPolicy>{};
-
   /// Set of named schemas whose composite shells have been populated.
   ///
   /// Used during pass 2 to determine whether a referenced model's composite
@@ -85,8 +80,6 @@ class ModelImporter {
     models = <Model>{};
     _modelsByName.clear();
     _placeholders.clear();
-    _propertyModels.clear();
-    _additionalProperties.clear();
     _populatedComposites.clear();
     _collectAllDefs();
 
@@ -247,7 +240,7 @@ class ModelImporter {
       return;
     }
 
-    if (isOpenMapSchema(schema, types)) {
+    if (_isOpenMapSchema(schema, types)) {
       final model = MapModel(
         valueModel: AnyModel(context: context),
         context: context,
@@ -484,7 +477,7 @@ class ModelImporter {
       return;
     }
 
-    if (isOpenMapSchema(schema, types)) {
+    if (_isOpenMapSchema(schema, types)) {
       _populateMapShell(name, schema, context, existingModel as MapModel);
       applyExamples(existingModel, examples);
       return;
@@ -687,7 +680,7 @@ class ModelImporter {
   ) {
     final modelContext = context.push(name);
 
-    shell.additionalPropertiesPolicy = importAdditionalProperties(
+    shell.additionalPropertiesPolicy = _importAdditionalProperties(
       schema,
       modelContext,
     );
@@ -849,6 +842,7 @@ class ModelImporter {
         final refModel = _findNamedModel(refName);
         if (refModel != null &&
             _compositeContains(refModel, currentShell, <Model>{})) {
+          currentShell.hasPrunedCompositionCycle = true;
           log.fine(
             'Skipping back-edge to $refName during composite population '
             'to prevent cycle.',
@@ -936,7 +930,7 @@ class ModelImporter {
   }
 
   // Bare objects need maps to preserve unknown members.
-  bool isOpenMapSchema(Schema schema, List<String> types) {
+  bool _isOpenMapSchema(Schema schema, List<String> types) {
     if (schema.properties != null && schema.properties!.isNotEmpty) {
       return false;
     }
@@ -971,7 +965,7 @@ class ModelImporter {
     Context context,
     ClassModel shell,
   ) {
-    shell.additionalPropertiesPolicy = importAdditionalProperties(
+    shell.additionalPropertiesPolicy = _importAdditionalProperties(
       schema,
       context,
     );
@@ -1004,7 +998,7 @@ class ModelImporter {
 
       final property = Property(
         name: propertyName,
-        model: importPropertySchema(
+        model: _resolveSchemaRefForProperty(
           propertySchema,
           context.pushAll([name, contextPropertyName]),
         ),
@@ -1055,12 +1049,6 @@ class ModelImporter {
 
     return model;
   }
-
-  Model importPropertySchema(Schema schema, Context context) =>
-      _propertyModels[(schema, context)] ??= _resolveSchemaRefForProperty(
-        schema,
-        context,
-      );
 
   /// Resolves a schema that may have a $ref field.
   Model _resolveSchemaRef(String? name, Schema schema, Context context) {
@@ -1247,7 +1235,7 @@ class ModelImporter {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
     }
 
-    if (name != null || hasAnnotationSiblings(schema)) {
+    if (name != null || _hasAnnotationSiblings(schema)) {
       if (name != null) {
         final existing = _findNamedModel(name);
         if (existing != null) {
@@ -1339,7 +1327,7 @@ class ModelImporter {
     }
   }
 
-  bool hasAnnotationSiblings(Schema schema) {
+  bool _hasAnnotationSiblings(Schema schema) {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
         (schema.isNullable ?? false) ||
@@ -1394,7 +1382,7 @@ class ModelImporter {
       );
     }
 
-    if (name != null || hasAnnotationSiblings(schema)) {
+    if (name != null || _hasAnnotationSiblings(schema)) {
       if (name != null) {
         final existing = _findNamedModel(name);
         if (existing != null) {
@@ -1508,7 +1496,7 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
-    if (isOpenMapSchema(schema, types)) {
+    if (_isOpenMapSchema(schema, types)) {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
       Model valueModel;
@@ -1733,7 +1721,7 @@ class ModelImporter {
       context: modelContext,
       name: name,
       description: schema.description,
-      additionalPropertiesPolicy: importAdditionalProperties(
+      additionalPropertiesPolicy: _importAdditionalProperties(
         schema,
         modelContext,
       ),
@@ -1983,14 +1971,6 @@ class ModelImporter {
     return null;
   }
 
-  AdditionalPropertiesPolicy importAdditionalProperties(
-    Schema schema,
-    Context context,
-  ) => _additionalProperties[(schema, context)] ??= _importAdditionalProperties(
-    schema,
-    context,
-  );
-
   AdditionalPropertiesPolicy _importAdditionalProperties(
     Schema schema,
     Context context,
@@ -2047,7 +2027,7 @@ class ModelImporter {
       properties: properties,
       context: context,
       description: schema.description,
-      additionalPropertiesPolicy: importAdditionalProperties(schema, context),
+      additionalPropertiesPolicy: _importAdditionalProperties(schema, context),
       isNullable:
           schema.isNullable ??
           (schema.type.contains('object') && schema.hasNullType),
@@ -2088,7 +2068,7 @@ class ModelImporter {
 
       final property = Property(
         name: propertyName,
-        model: importPropertySchema(
+        model: _resolveSchemaRefForProperty(
           propertySchema,
           context.pushAll(
             [name, contextPropertyName].whereType<String>(),

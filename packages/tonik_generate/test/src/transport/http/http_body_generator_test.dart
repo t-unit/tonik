@@ -709,7 +709,7 @@ Future<Object?> _data({required Payload body}) async {
 
   group('multipart bodies', () {
     test(
-      'emits ordered duplicate-preserving scalar JSON and file parts',
+      'emits ordered scalar JSON and file parts',
       () {
         final metadata = ClassModel(
           name: 'Metadata',
@@ -758,7 +758,7 @@ Future<Object?> _data({required Payload body}) async {
                   ),
                 ),
                 multipartPartFixture(
-                  name: 'item',
+                  name: 'file',
                   model: BinaryModel(context: context),
                   encoding: const PartEncoding(
                     contentType: ContentType.bytes,
@@ -800,9 +800,9 @@ Future<Object?> _data({required Upload body}) async {
   );
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'item',
-      body.item2.toBytes(),
-      filename: body.item2.fileName ?? r'item',
+      r'file',
+      body.file.toBytes(),
+      filename: body.file.fileName ?? r'file',
       contentType: MediaType.parse(r'image/png'),
     ),
   );
@@ -1085,7 +1085,7 @@ RequestBodyObject _body(
 
 RequestBodyObject _multipartBody(
   Context context,
-  List<MultipartPart> parts, {
+  List<MultipartPartFixture> parts, {
   required String name,
   bool isRequired = true,
 }) => RequestBodyObject(

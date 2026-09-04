@@ -45,39 +45,23 @@ void main() {
     });
 
     test(
-      'generates nullable multipart values with defaults and read-only fields',
+      'generates nullable model values with defaults and read-only fields',
       () {
-        const encoding = PartEncoding(
-          contentType: ContentType.text,
-          rawContentType: 'text/plain',
-          headers: null,
-          style: null,
-          explode: null,
-          allowReserved: null,
-        );
-        final content = MultipartRequestContent(
+        final model = ClassModel(
+          isDeprecated: false,
           name: 'Upload',
           context: context,
           isNullable: true,
           description: 'Upload fields.',
-          rawContentType: 'multipart/form-data',
-          examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 'wire example',
-            ),
-          ],
+          examples: const [],
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
-          parts: [
-            MultipartPart(
+          properties: [
+            Property(
               name: 'server_id',
               nameOverride: 'serverId',
               model: StringModel(context: context),
-              encoding: encoding,
               isRequired: true,
               isNullable: false,
               isReadOnly: true,
@@ -85,10 +69,9 @@ void main() {
               defaultValue: null,
               examples: const [],
             ),
-            MultipartPart(
+            Property(
               name: 'count',
               model: IntegerModel(context: context),
-              encoding: encoding,
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
@@ -98,7 +81,7 @@ void main() {
           ],
         );
 
-        final declarations = generator.generateMultipartClasses(content);
+        final declarations = generator.generateClasses(model);
         final valueClass = declarations.whereType<Class>().first;
         expect(valueClass.name, r'$RawUpload');
         expect(valueClass.docs, ['/// Upload fields.']);
@@ -132,40 +115,6 @@ void main() {
         expect(alias.definition.accept(emitter).toString(), r'$RawUpload?');
       },
     );
-
-    test('generates a local multipart alias without encoding imports', () {
-      final content = MultipartRequestContent(
-        context: context.pushAll(['upload', 'body']),
-        sourceName: 'Upload',
-        sourceContext: context,
-        alias: MultipartContentAlias(
-          targetName: 'UploadAlias',
-          targetContext: context,
-          description: 'Local upload.',
-          isNullable: true,
-        ),
-        parts: const [],
-        rawContentType: 'multipart/form-data',
-        examples: const [],
-      );
-
-      final result = generator.generateMultipartAlias(content);
-
-      expect(result.filename, 'upload_body_model.dart');
-      expect(
-        collapseWhitespace(format(result.code)),
-        collapseWhitespace(
-          format('''
-          // Generated code - do not modify by hand
-          // ignore_for_file: no_leading_underscores_for_library_prefixes
-          import 'package:example/src/model/upload_alias.dart' as _i1;
-
-        /// Local upload.
-        typedef UploadBodyModel = _i1.UploadAlias?;
-      '''),
-        ),
-      );
-    });
 
     test('generates class with immutable annotation', () {
       final model = ClassModel(

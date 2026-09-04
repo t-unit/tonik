@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
@@ -8,7 +9,17 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
 class OperationRequestPlanner {
-  const OperationRequestPlanner({required this.backend});
+  const OperationRequestPlanner({
+    required this.backend,
+    this.nameManager,
+    this.package = 'api',
+    this.useImmutableCollections = false,
+  });
+
+  final String package;
+  final bool useImmutableCollections;
+
+  final NameManager? nameManager;
 
   final TransportBackend backend;
 
@@ -156,7 +167,12 @@ class OperationRequestPlanner {
     required List<MultipartHeaderParamInfo> headerParameters,
   }) {
     if (content is MultipartRequestContent) {
-      return MultipartBodyPlanner(backend: backend).plan(
+      return MultipartBodyPlanner(
+        backend: backend,
+        nameManager: nameManager,
+        package: package,
+        useImmutableCollections: useImmutableCollections,
+      ).plan(
         content,
         bodyAccessor: bodyAccessor,
         isRequired: isRequired,

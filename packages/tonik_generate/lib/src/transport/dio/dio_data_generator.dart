@@ -36,7 +36,10 @@ class DioDataGenerator {
     final content = requestBody.resolvedContent;
     final isRequired = requestBody.isRequired;
     final headerInfo = extractOperationMultipartHeaderParamInfo(operation);
-    bodyPlan ??= const OperationRequestPlanner(
+    bodyPlan ??= OperationRequestPlanner(
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
       backend: TransportBackend.dio,
     ).planBody(operation);
     final helperContext = InlineHelperContext(nameManager: nameManager);

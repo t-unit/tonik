@@ -28,7 +28,7 @@ void main() {
       expect(name2, 'PetsApi', reason: 'Should return cached name');
     });
 
-    test('sorts inline multipart objects alongside ordinary object models', () {
+    test('sorts multipart models alongside other registered models', () {
       final bodyContext = context.pushAll(['upload', 'body']);
       final ordinary = ClassModel(
         context: bodyContext,
@@ -46,14 +46,19 @@ void main() {
           ),
         ],
       );
-      final multipart = MultipartRequestContent(
+      final multipartModel = ClassModel(
         context: bodyContext,
-        parts: const [],
+        isDeprecated: false,
+        properties: const [],
+        examples: const [],
+      );
+      final multipart = MultipartRequestContent(
+        model: multipartModel,
         rawContentType: 'multipart/form-data',
         examples: const [],
       );
       manager.prime(
-        models: [ordinary],
+        models: [ordinary, multipartModel],
         requestBodies: [
           RequestBodyObject(
             name: null,
@@ -69,11 +74,11 @@ void main() {
         servers: const [],
       );
 
-      expect(manager.multipartName(multipart), 'UploadBodyModel');
+      expect(manager.modelName(multipart.model), 'UploadBodyModel');
       expect(manager.modelName(ordinary), 'UploadBodyModel2');
     });
 
-    test('sorts local multipart aliases alongside ordinary aliases', () {
+    test('reuses registered alias names for multipart requests', () {
       final schemaContext = context.pushAll(['components', 'schemas']);
       final bodyContext = context.pushAll(['upload', 'body']);
       final object = ClassModel(
@@ -97,15 +102,7 @@ void main() {
         examples: const [],
       );
       final multipart = MultipartRequestContent(
-        context: bodyContext,
-        sourceName: 'Upload',
-        sourceContext: schemaContext,
-        alias: MultipartContentAlias(
-          targetName: 'UploadAlias',
-          targetContext: schemaContext,
-          description: 'Upload input.',
-        ),
-        parts: const [],
+        model: namedAlias,
         rawContentType: 'multipart/form-data',
         examples: const [],
       );
@@ -127,10 +124,9 @@ void main() {
         servers: const [],
       );
 
-      expect(manager.multipartAliasName(multipart), 'UploadBodyModel');
-      expect(manager.modelName(ordinaryAlias), 'UploadBodyModel2');
-      expect(manager.multipartName(multipart), 'UploadAlias');
-      expect(manager.multipartObjectName(multipart), 'Upload');
+      expect(manager.modelName(ordinaryAlias), 'UploadBodyModel');
+      expect(manager.modelName(multipart.model), 'UploadAlias');
+      expect(manager.modelName(object), 'Upload');
     });
 
     group('responseWrapperNames', () {

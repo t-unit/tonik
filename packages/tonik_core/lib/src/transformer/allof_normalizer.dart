@@ -105,7 +105,7 @@ class AllOfNormalizer {
         nameOverride: model.nameOverride,
         defaultValue: null,
         examples: model.examples,
-      );
+      )..hasPrunedCompositionCycle = model.hasPrunedCompositionCycle;
     } else if (model is AllOfModel) {
       final newModels = <Model>[];
       for (final m in model.models) {
@@ -191,23 +191,7 @@ class AllOfNormalizer {
                 content.model = transformed;
               }
             case MultipartRequestContent():
-              for (final part in content.parts) {
-                part.model = _transformModel(part.model, cache);
-              }
-              if (content.additionalPropertiesPolicy
-                  case AllowedAdditionalProperties(
-                    :final valueModel,
-                    :final origin,
-                  )) {
-                final transformed = _transformModel(valueModel, cache);
-                if (!identical(transformed, valueModel)) {
-                  content.additionalPropertiesPolicy =
-                      AllowedAdditionalProperties(
-                        valueModel: transformed,
-                        origin: origin,
-                      );
-                }
-              }
+              content.model = _transformModel(content.model, cache);
           }
         }
     }

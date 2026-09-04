@@ -20,11 +20,22 @@ void main() {
       });
 
       test('keeps a named nullable alias as the multipart value type', () {
-        final content = MultipartRequestContent(
-          name: 'UploadAlias',
-          sourceName: 'Upload',
+        final model = ClassModel(
+          name: 'Upload',
           context: context,
-          parts: const [],
+          properties: const [],
+          isDeprecated: false,
+          examples: const [],
+        );
+        final content = MultipartRequestContent(
+          model: AliasModel(
+            name: 'UploadAlias',
+            context: context,
+            model: model,
+            isNullable: true,
+            examples: const [],
+            defaultValue: null,
+          ),
           rawContentType: 'multipart/form-data',
           examples: const [],
         );
@@ -40,16 +51,27 @@ void main() {
         'uses the immediate reference and local nullability '
         'for an annotated alias',
         () {
+          final model = ClassModel(
+            name: 'Upload',
+            context: context,
+            properties: const [],
+            isDeprecated: false,
+            examples: const [],
+          );
           final content = MultipartRequestContent(
-            context: Context.initial().pushAll(['upload', 'body']),
-            sourceName: 'Upload',
-            sourceContext: context,
-            alias: MultipartContentAlias(
-              targetName: 'UploadAlias',
-              targetContext: context,
+            model: AliasModel(
+              context: Context.initial().pushAll(['upload', 'body']),
+              model: AliasModel(
+                name: 'UploadAlias',
+                context: context,
+                model: model,
+                examples: const [],
+                defaultValue: null,
+              ),
               isNullable: true,
+              examples: const [],
+              defaultValue: null,
             ),
-            parts: const [],
             rawContentType: 'multipart/form-data',
             examples: const [],
           );
@@ -66,10 +88,14 @@ void main() {
         'does not add a nullable suffix already owned by an object typedef',
         () {
           final content = MultipartRequestContent(
-            name: 'Upload',
-            context: context,
-            isNullable: true,
-            parts: const [],
+            model: ClassModel(
+              name: 'Upload',
+              context: context,
+              isNullable: true,
+              properties: const [],
+              isDeprecated: false,
+              examples: const [],
+            ),
             rawContentType: 'multipart/form-data',
             examples: const [],
           );

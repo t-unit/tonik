@@ -1,18 +1,25 @@
 import 'package:tonik_core/tonik_core.dart';
 
+typedef MultipartPartFixture = ({Property property, PartEncoding encoding});
+
 MultipartRequestContent multipartContentFixture(
   Context context,
-  List<MultipartPart> parts, {
+  List<MultipartPartFixture> parts, {
   String name = 'MultipartBody',
 }) => MultipartRequestContent(
-  name: name,
-  context: context,
-  parts: parts,
+  model: ClassModel(
+    name: name,
+    context: context,
+    properties: [for (final part in parts) part.property],
+    isDeprecated: false,
+    examples: const [],
+  ),
+  encoding: {for (final part in parts) part.property.name: part.encoding},
   rawContentType: 'multipart/form-data',
   examples: const [],
 );
 
-MultipartPart multipartPartFixture({
+MultipartPartFixture multipartPartFixture({
   required String name,
   required Model model,
   bool isRequired = true,
@@ -21,16 +28,18 @@ MultipartPart multipartPartFixture({
   bool isWriteOnly = false,
   Object? defaultValue,
   PartEncoding? encoding,
-}) => MultipartPart(
-  name: name,
-  model: model,
-  isRequired: isRequired,
-  isNullable: isNullable,
-  isDeprecated: false,
-  isReadOnly: isReadOnly,
-  isWriteOnly: isWriteOnly,
-  examples: const [],
-  defaultValue: defaultValue,
+}) => (
+  property: Property(
+    name: name,
+    model: model,
+    isRequired: isRequired,
+    isNullable: isNullable,
+    isDeprecated: false,
+    isReadOnly: isReadOnly,
+    isWriteOnly: isWriteOnly,
+    examples: const [],
+    defaultValue: defaultValue,
+  ),
   encoding:
       encoding ??
       const PartEncoding(

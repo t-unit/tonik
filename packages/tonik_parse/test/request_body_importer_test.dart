@@ -130,15 +130,6 @@ void main() {
   };
 
   test('resolves request text encodings at the semantic boundary', () {
-    Map<String, dynamic> textBody(String contentType) => {
-      'required': true,
-      'content': {
-        contentType: {
-          'schema': {'type': 'string'},
-        },
-      },
-    };
-
     final api =
         Importer(
           contentTypes: {
@@ -150,19 +141,78 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'requestBodies': {
-              'DefaultUtf8': textBody('text/plain'),
-              'Utf8Hyphen': textBody('text/plain; charset=UTF-8'),
-              'Utf8Compact': textBody('text/plain; charset=utf8'),
-              'Latin1Iso': textBody(
-                'text/plain; charset = "ISO-8859-1"',
-              ),
-              'Latin1Alias': textBody('text/plain; CHARSET=LaTiN1'),
-              'AsciiUs': textBody('text/plain; charset = "US-ASCII"'),
-              'AsciiAlias': textBody('text/plain; charset=ASCII'),
-              'Unsupported': textBody('text/plain; charset=utf-16'),
-              'CustomText': textBody(
-                'application/vnd.custom-text; charset=latin1',
-              ),
+              'DefaultUtf8': {
+                'required': true,
+                'content': {
+                  'text/plain': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'Utf8Hyphen': {
+                'required': true,
+                'content': {
+                  'text/plain; charset=UTF-8': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'Utf8Compact': {
+                'required': true,
+                'content': {
+                  'text/plain; charset=utf8': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'Latin1Iso': {
+                'required': true,
+                'content': {
+                  'text/plain; charset = "ISO-8859-1"': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'Latin1Alias': {
+                'required': true,
+                'content': {
+                  'text/plain; CHARSET=LaTiN1': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'AsciiUs': {
+                'required': true,
+                'content': {
+                  'text/plain; charset = "US-ASCII"': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'AsciiAlias': {
+                'required': true,
+                'content': {
+                  'text/plain; charset=ASCII': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'Unsupported': {
+                'required': true,
+                'content': {
+                  'text/plain; charset=utf-16': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+              'CustomText': {
+                'required': true,
+                'content': {
+                  'application/vnd.custom-text; charset=latin1': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
               'Multipart': {
                 'required': true,
                 'content': {
@@ -224,54 +274,76 @@ void main() {
           },
         });
 
-    RequestContent contentNamed(String name) =>
-        (api.requestBodies.singleWhere((body) => body.name == name)
-                as RequestBodyObject)
-            .content
-            .single;
-
-    final expectedBodies = <String, TextEncoding>{
-      'DefaultUtf8': TextEncoding.utf8,
-      'Utf8Hyphen': TextEncoding.utf8,
-      'Utf8Compact': TextEncoding.utf8,
-      'Latin1Iso': TextEncoding.latin1,
-      'Latin1Alias': TextEncoding.latin1,
-      'AsciiUs': TextEncoding.ascii,
-      'AsciiAlias': TextEncoding.ascii,
-      'CustomText': TextEncoding.latin1,
-    };
-    for (final entry in expectedBodies.entries) {
-      final content = contentNamed(entry.key);
-      expect(content.textEncoding, entry.value, reason: entry.key);
-      expect(content.wireContentType, content.rawContentType);
-    }
-
-    final unsupported = contentNamed('Unsupported');
+    final defaultUtf8 = api.requestBodies
+        .singleWhere((body) => body.name == 'DefaultUtf8')
+        .resolvedContent
+        .single;
+    expect(defaultUtf8.textEncoding, TextEncoding.utf8);
+    expect(defaultUtf8.wireContentType, defaultUtf8.rawContentType);
+    final utf8Hyphen = api.requestBodies
+        .singleWhere((body) => body.name == 'Utf8Hyphen')
+        .resolvedContent
+        .single;
+    expect(utf8Hyphen.textEncoding, TextEncoding.utf8);
+    expect(utf8Hyphen.wireContentType, utf8Hyphen.rawContentType);
+    final utf8Compact = api.requestBodies
+        .singleWhere((body) => body.name == 'Utf8Compact')
+        .resolvedContent
+        .single;
+    expect(utf8Compact.textEncoding, TextEncoding.utf8);
+    expect(utf8Compact.wireContentType, utf8Compact.rawContentType);
+    final latin1Iso = api.requestBodies
+        .singleWhere((body) => body.name == 'Latin1Iso')
+        .resolvedContent
+        .single;
+    expect(latin1Iso.textEncoding, TextEncoding.latin1);
+    expect(latin1Iso.wireContentType, latin1Iso.rawContentType);
+    final latin1Alias = api.requestBodies
+        .singleWhere((body) => body.name == 'Latin1Alias')
+        .resolvedContent
+        .single;
+    expect(latin1Alias.textEncoding, TextEncoding.latin1);
+    expect(latin1Alias.wireContentType, latin1Alias.rawContentType);
+    final asciiUs = api.requestBodies
+        .singleWhere((body) => body.name == 'AsciiUs')
+        .resolvedContent
+        .single;
+    expect(asciiUs.textEncoding, TextEncoding.ascii);
+    expect(asciiUs.wireContentType, asciiUs.rawContentType);
+    final asciiAlias = api.requestBodies
+        .singleWhere((body) => body.name == 'AsciiAlias')
+        .resolvedContent
+        .single;
+    expect(asciiAlias.textEncoding, TextEncoding.ascii);
+    expect(asciiAlias.wireContentType, asciiAlias.rawContentType);
+    final customText = api.requestBodies
+        .singleWhere((body) => body.name == 'CustomText')
+        .resolvedContent
+        .single;
+    expect(customText.textEncoding, TextEncoding.latin1);
+    expect(customText.wireContentType, customText.rawContentType);
+    final unsupported = api.requestBodies
+        .singleWhere((body) => body.name == 'Unsupported')
+        .resolvedContent
+        .single;
     expect(unsupported.textEncoding, TextEncoding.utf8);
     expect(unsupported.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupported.wireContentType, 'text/plain; charset=utf-8');
 
-    final multipart = contentNamed('Multipart');
-    final expectedParts = <String, TextEncoding>{
-      'latin': TextEncoding.latin1,
-      'ascii': TextEncoding.ascii,
-      'jsonText': TextEncoding.latin1,
-      'formText': TextEncoding.ascii,
-      'repeated': TextEncoding.latin1,
-      'defaulted': TextEncoding.utf8,
-      'unsupported': TextEncoding.utf8,
-    };
-    for (final entry in expectedParts.entries) {
-      expect(
-        partEncodingFor(multipart, entry.key)!.textEncoding,
-        entry.value,
-        reason: entry.key,
-      );
-    }
-    final defaulted = partEncodingFor(multipart, 'defaulted')!;
-    expect(defaulted.rawContentType, 'text/plain');
-    expect(defaulted.wireContentType, 'text/plain');
-    final unsupportedPart = partEncodingFor(multipart, 'unsupported')!;
+    final multipart =
+        api.requestBodies
+                .singleWhere((body) => body.name == 'Multipart')
+                .resolvedContent
+                .single
+            as MultipartRequestContent;
+    expect(multipart.encoding['latin']!.textEncoding, TextEncoding.latin1);
+    expect(multipart.encoding['ascii']!.textEncoding, TextEncoding.ascii);
+    expect(multipart.encoding['jsonText']!.textEncoding, TextEncoding.latin1);
+    expect(multipart.encoding['formText']!.textEncoding, TextEncoding.ascii);
+    expect(multipart.encoding['repeated']!.textEncoding, TextEncoding.latin1);
+    expect(multipart.encoding['unsupported']!.textEncoding, TextEncoding.utf8);
+    expect(multipart.encoding['defaulted'], isNull);
+    final unsupportedPart = multipart.encoding['unsupported']!;
     expect(
       unsupportedPart.rawContentType,
       'text/plain; charset=utf-16',
@@ -1046,1343 +1118,6 @@ void main() {
     });
   });
 
-  group('multipart/form-data support', () {
-    test('imports multipart/form-data request body with schema', () {
-      final fileContentWithMultipart = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'requestBodies': {
-            'FileUpload': {
-              'description': 'Upload a file',
-              'required': true,
-              'content': {
-                'multipart/form-data': {
-                  'schema': {
-                    'type': 'object',
-                    'properties': {
-                      'file': {'type': 'string', 'format': 'binary'},
-                      'description': {'type': 'string'},
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      final api = Importer().import(fileContentWithMultipart);
-      final body = api.requestBodies.firstWhereOrNull(
-        (r) => r.name == 'FileUpload',
-      );
-
-      expect(body, isNotNull);
-      expect(body, isA<RequestBodyObject>());
-      final bodyObj = body! as RequestBodyObject;
-      expect(bodyObj.content, hasLength(1));
-
-      final content = bodyObj.content.first as MultipartRequestContent;
-      expect(content.contentType, ContentType.multipart);
-      expect(content, isA<MultipartRequestContent>());
-
-      // Default encoding should be populated for all properties
-      expect(content.parts, hasLength(2));
-
-      final fileEncoding = partEncodingFor(content, 'file')!;
-      expect(fileEncoding.contentType, ContentType.bytes);
-      expect(fileEncoding.rawContentType, 'application/octet-stream');
-
-      final descriptionEncoding = partEncodingFor(content, 'description')!;
-      expect(descriptionEncoding.contentType, ContentType.text);
-      expect(descriptionEncoding.rawContentType, 'text/plain');
-    });
-
-    test(
-      'format: byte property defaults to application/octet-stream in multipart',
-      () {
-        final fileContentWithBase64 = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'requestBodies': {
-              'Base64Upload': {
-                'description': 'Upload with base64 field',
-                'required': true,
-                'content': {
-                  'multipart/form-data': {
-                    'schema': {
-                      'type': 'object',
-                      'properties': {
-                        'data': {'type': 'string', 'format': 'byte'},
-                        'name': {'type': 'string'},
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        };
-
-        final api = Importer().import(fileContentWithBase64);
-        final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'Base64Upload',
-                )!
-                as RequestBodyObject;
-
-        final content = body.content.first as MultipartRequestContent;
-        expect(content.parts, hasLength(2));
-
-        // format: byte → Base64Model → application/octet-stream (spec-correct)
-        final dataEncoding = partEncodingFor(content, 'data')!;
-        expect(dataEncoding.contentType, ContentType.bytes);
-        expect(dataEncoding.rawContentType, 'application/octet-stream');
-
-        // plain string → text/plain
-        final nameEncoding = partEncodingFor(content, 'name')!;
-        expect(nameEncoding.contentType, ContentType.text);
-        expect(nameEncoding.rawContentType, 'text/plain');
-      },
-    );
-
-    test('imports multipart/form-data with encoding', () {
-      final fileContentWithEncoding = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'requestBodies': {
-            'EncodedUpload': {
-              'description': 'Upload with encoding',
-              'required': true,
-              'content': {
-                'multipart/form-data': {
-                  'schema': {
-                    'type': 'object',
-                    'properties': {
-                      'id': {'type': 'string'},
-                      'address': {
-                        'type': 'object',
-                        'properties': {
-                          'street': {'type': 'string'},
-                        },
-                      },
-                      'profileImage': {
-                        'type': 'string',
-                        'format': 'binary',
-                      },
-                    },
-                  },
-                  'encoding': {
-                    'id': {
-                      'contentType': 'text/plain',
-                      'style': 'form',
-                      'explode': true,
-                      'allowReserved': false,
-                    },
-                    'address': {
-                      'contentType': 'application/json',
-                      'style': 'deepObject',
-                      'explode': true,
-                    },
-                    'profileImage': {
-                      'contentType': 'image/png',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      final api = Importer().import(fileContentWithEncoding);
-      final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'EncodedUpload',
-              )!
-              as RequestBodyObject;
-
-      final content = body.content.first as MultipartRequestContent;
-      expect(content.parts, hasLength(3));
-
-      final idEncoding = partEncodingFor(content, 'id')!;
-      // OAS 3.1: contentType SHALL be ignored when style fields are present
-      expect(idEncoding.contentType, isNull);
-      expect(idEncoding.rawContentType, isNull);
-      expect(idEncoding.style, EncodingStyle.form);
-      expect(idEncoding.explode, isTrue);
-      expect(idEncoding.allowReserved, isFalse);
-
-      final addressEncoding = partEncodingFor(content, 'address')!;
-      // OAS 3.1: contentType SHALL be ignored when style fields are present
-      expect(addressEncoding.contentType, isNull);
-      expect(addressEncoding.rawContentType, isNull);
-      expect(addressEncoding.style, EncodingStyle.deepObject);
-      expect(addressEncoding.explode, isTrue);
-      expect(addressEncoding.allowReserved, isFalse);
-
-      final imageEncoding = partEncodingFor(content, 'profileImage')!;
-      expect(imageEncoding.rawContentType, 'image/png');
-      expect(imageEncoding.style, isNull);
-      expect(imageEncoding.explode, isNull);
-    });
-
-    test('imports multipart/form-data with encoding headers', () {
-      final fileContentWithHeaders = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'headers': {
-            'X-Custom': {
-              'description': 'A custom header',
-              'schema': {'type': 'string'},
-            },
-          },
-          'requestBodies': {
-            'HeaderUpload': {
-              'description': 'Upload with encoding headers',
-              'required': true,
-              'content': {
-                'multipart/form-data': {
-                  'schema': {
-                    'type': 'object',
-                    'properties': {
-                      'file': {'type': 'string', 'format': 'binary'},
-                    },
-                  },
-                  'encoding': {
-                    'file': {
-                      'contentType': 'application/octet-stream',
-                      'headers': {
-                        'X-Custom': {
-                          r'$ref': '#/components/headers/X-Custom',
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      final api = Importer().import(fileContentWithHeaders);
-      final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'HeaderUpload',
-              )!
-              as RequestBodyObject;
-
-      final content = body.content.first as MultipartRequestContent;
-
-      final fileEncoding = partEncodingFor(content, 'file')!;
-      expect(fileEncoding.contentType, ContentType.bytes);
-      expect(fileEncoding.rawContentType, 'application/octet-stream');
-      expect(fileEncoding.style, isNull);
-      expect(fileEncoding.explode, isNull);
-      expect(fileEncoding.allowReserved, isNull);
-      expect(fileEncoding.headers, isNotNull);
-      expect(fileEncoding.headers, hasLength(1));
-      expect(fileEncoding.headers!['X-Custom'], isA<ResponseHeaderObject>());
-    });
-
-    test('imports multipart/form-data without encoding', () {
-      final fileContentNoEncoding = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'requestBodies': {
-            'SimpleMultipart': {
-              'description': 'Simple multipart',
-              'required': true,
-              'content': {
-                'multipart/form-data': {
-                  'schema': {
-                    'type': 'object',
-                    'properties': {
-                      'name': {'type': 'string'},
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      final api = Importer().import(fileContentNoEncoding);
-      final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'SimpleMultipart',
-              )!
-              as RequestBodyObject;
-
-      final content = body.content.first as MultipartRequestContent;
-      expect(content.contentType, ContentType.multipart);
-      expect(content.parts, hasLength(1));
-
-      final nameEncoding = partEncodingFor(content, 'name')!;
-      expect(nameEncoding.contentType, ContentType.text);
-      expect(nameEncoding.rawContentType, 'text/plain');
-      expect(nameEncoding.style, isNull);
-      expect(nameEncoding.explode, isNull);
-      expect(nameEncoding.allowReserved, isNull);
-    });
-
-    group('multipart default encoding', () {
-      Map<String, dynamic> multipartSpec({
-        Map<String, dynamic> properties = const {},
-        String version = '3.1.0',
-        Map<String, dynamic>? schema,
-        Map<String, dynamic>? encoding,
-        Map<String, dynamic>? schemas,
-        Object? example,
-      }) {
-        final mediaType = <String, dynamic>{
-          'schema': schema ?? {'type': 'object', 'properties': properties},
-          'example': ?example,
-        };
-        if (encoding != null) {
-          mediaType['encoding'] = encoding;
-        }
-        final components = <String, dynamic>{
-          'requestBodies': {
-            'TestBody': {
-              'description': 'Test',
-              'required': true,
-              'content': {
-                'multipart/form-data': mediaType,
-              },
-            },
-          },
-        };
-        if (schemas != null) {
-          components['schemas'] = schemas;
-        }
-        return {
-          'openapi': version,
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': components,
-        };
-      }
-
-      MultipartRequestContent importMultipartContent(
-        Map<String, dynamic> spec,
-      ) {
-        final api = Importer().import(spec);
-        final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'TestBody',
-                )!
-                as RequestBodyObject;
-        return body.content.first as MultipartRequestContent;
-      }
-
-      test('parts preserve order and property metadata', () {
-        for (final version in ['3.0.3', '3.1.0']) {
-          final content = importMultipartContent(
-            multipartSpec(
-              version: version,
-              schema: {
-                'type': 'object',
-                'required': ['name'],
-                'properties': {
-                  'serverId': {'type': 'string', 'readOnly': true},
-                  'name': {
-                    'type': 'string',
-                    'description': 'Public label',
-                    'deprecated': true,
-                    'default': 'guest',
-                    'x-dart-name': 'label',
-                  },
-                  'tags': {
-                    'type': version.startsWith('3.0')
-                        ? 'array'
-                        : ['array', 'null'],
-                    if (version.startsWith('3.0')) 'nullable': true,
-                    'items': {'type': 'string'},
-                  },
-                },
-              },
-            ),
-          );
-          final parts = content.parts;
-          expect(parts.map((part) => part.name), ['serverId', 'name', 'tags']);
-          expect(parts[0].isReadOnly, isTrue);
-          expect(parts[1].isRequired, isTrue);
-          expect(parts[1].isDeprecated, isTrue);
-          expect(parts[1].defaultValue, 'guest');
-          expect(parts[1].nameOverride, 'label');
-          expect(parts[1].description, 'Public label');
-          expect(parts[2].isRequired, isFalse);
-          expect(parts[2].isNullable, isTrue);
-        }
-      });
-
-      test('read-only recursive parts do not warn about encoding', () {
-        final records = <LogRecord>[];
-        final subscription = Logger.root.onRecord.listen(records.add);
-        addTearDown(subscription.cancel);
-        importMultipartContent(
-          multipartSpec(
-            properties: {
-              'serverId': {
-                r'$ref': '#/components/schemas/Values',
-                'readOnly': true,
-              },
-            },
-            schemas: {
-              'Values': {
-                'type': 'array',
-                'items': {r'$ref': '#/components/schemas/Values'},
-              },
-            },
-          ),
-        );
-        expect(
-          records.where((record) => record.level == Level.WARNING),
-          isEmpty,
-        );
-      });
-
-      test('configuration preserves part identity and overrides', () {
-        final api = Importer().import(
-          multipartSpec(
-            schema: {r'$ref': '#/components/schemas/Upload'},
-            schemas: {
-              'Upload': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-          ),
-        );
-        final content =
-            api.requestBodies.single.resolvedContent.single
-                as MultipartRequestContent;
-        final part = content.parts.single;
-        const ConfigTransformer().apply(
-          api,
-          const TonikConfig(
-            nameOverrides: NameOverridesConfig(
-              schemas: {'Upload': 'UploadValue'},
-              properties: {'Upload.name': 'label'},
-            ),
-          ),
-        );
-        expect(content.parts.single, same(part));
-        expect(part.nameOverride, 'label');
-        expect(content.sourceNameOverride, 'UploadValue');
-      });
-
-      test('configuration filters deprecated parts', () {
-        final api = Importer().import(
-          multipartSpec(
-            properties: {
-              'name': {'type': 'string', 'deprecated': true},
-              'file': {'type': 'string', 'format': 'binary'},
-            },
-          ),
-        );
-        const ConfigTransformer().apply(
-          api,
-          const TonikConfig(
-            deprecated: DeprecatedConfig(
-              properties: DeprecatedHandling.exclude,
-            ),
-          ),
-        );
-        final content =
-            api.requestBodies.single.resolvedContent.single
-                as MultipartRequestContent;
-        expect(content.parts.map((part) => part.name), ['file']);
-      });
-
-      test('aliases preserve source metadata and nested model identity', () {
-        final api = Importer().import(
-          multipartSpec(
-            schema: {
-              r'$ref': '#/components/schemas/UploadAlias',
-              'nullable': true,
-              'description': 'Nullable upload',
-            },
-            schemas: {
-              'Upload': {
-                'type': 'object',
-                'properties': {
-                  'name': {
-                    'type': 'object',
-                    'properties': {
-                      'label': {'type': 'string'},
-                    },
-                  },
-                },
-                'examples': [
-                  {
-                    'name': {'label': 'schema label'},
-                  },
-                ],
-                'additionalProperties': {
-                  'type': 'object',
-                  'properties': {
-                    'code': {'type': 'integer'},
-                  },
-                },
-              },
-              'UploadAlias': {r'$ref': '#/components/schemas/Upload'},
-            },
-            example: {
-              'name': {'label': 'media label'},
-            },
-          ),
-        );
-        final content =
-            api.requestBodies.single.resolvedContent.single
-                as MultipartRequestContent;
-        final source = api.models.whereType<ClassModel>().singleWhere(
-          (model) => model.name == 'Upload',
-        );
-        expect(content.name, isNull);
-        expect(content.sourceName, 'Upload');
-        expect(content.alias!.targetName, 'UploadAlias');
-        expect(content.alias!.isNullable, isTrue);
-        expect(content.alias!.description, 'Nullable upload');
-        expect(content.isNullable, isFalse);
-        expect(
-          content.parts.single.model,
-          same(source.properties.single.model),
-        );
-        expect(
-          content.additionalPropertiesPolicy,
-          same(source.additionalPropertiesPolicy),
-        );
-        expect(content.schemaExamples.single, source.examples.single);
-        expect(content.examples.single, isNot(content.schemaExamples.single));
-      });
-
-      test(
-        'part normalization preserves raw defaults and encoding identity',
-        () {
-          final api = Importer().import(
-            multipartSpec(
-              properties: {
-                'name': {
-                  r'$ref': '#/components/schemas/Wrapper',
-                  'default': 'hello',
-                },
-              },
-              schemas: {
-                'Value': {'type': 'string'},
-                'Wrapper': {
-                  'allOf': [
-                    {r'$ref': '#/components/schemas/Value'},
-                  ],
-                },
-              },
-            ),
-          );
-          final content =
-              api.requestBodies.single.resolvedContent.single
-                  as MultipartRequestContent;
-          final part = content.parts.single;
-          final encoding = part.encoding;
-          const AllOfNormalizer().apply(api);
-          expect(content.parts.single, same(part));
-          expect(part.encoding, same(encoding));
-          expect(part.model.resolved, isA<StringModel>());
-          expect(part.defaultValue, 'hello');
-        },
-      );
-
-      test('string property gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'name': {'type': 'string'},
-            },
-          ),
-        );
-        expect(content.parts, hasLength(1));
-
-        final encoding = partEncodingFor(content, 'name')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-        expect(encoding.style, isNull);
-        expect(encoding.explode, isNull);
-        expect(encoding.allowReserved, isNull);
-      });
-
-      test('integer property gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'count': {'type': 'integer'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'count')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-        expect(encoding.style, isNull);
-        expect(encoding.explode, isNull);
-        expect(encoding.allowReserved, isNull);
-      });
-
-      test('boolean property gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'active': {'type': 'boolean'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'active')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test('binary property gets application/octet-stream default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'file': {'type': 'string', 'format': 'binary'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'file')!;
-        expect(encoding.contentType, ContentType.bytes);
-        expect(encoding.rawContentType, 'application/octet-stream');
-        expect(encoding.style, isNull);
-        expect(encoding.explode, isNull);
-        expect(encoding.allowReserved, isNull);
-      });
-
-      test('object property gets application/json default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'address': {
-                'type': 'object',
-                'properties': {
-                  'street': {'type': 'string'},
-                },
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'address')!;
-        expect(encoding.contentType, ContentType.json);
-        expect(encoding.rawContentType, 'application/json');
-      });
-
-      test('AnyModel property gets application/json default', () {
-        // AnyModel is created from boolean schemas (true/false), which are
-        // OAS 3.1 only (JSON Schema 2020-12). In OAS 3.0, {} becomes a
-        // ClassModel, not AnyModel, so AnyModel in 3.0 is unreachable.
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {r'$ref': '#/components/schemas/AnyValue'},
-            },
-            schemas: {
-              'AnyValue': true,
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        expect(encoding.contentType, ContentType.json);
-        expect(encoding.rawContentType, 'application/json');
-      });
-
-      test('array of objects gets application/json default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'items': {
-                'type': 'array',
-                'items': {
-                  'type': 'object',
-                  'properties': {
-                    'name': {'type': 'string'},
-                  },
-                },
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'items')!;
-        expect(encoding.contentType, ContentType.json);
-        expect(encoding.rawContentType, 'application/json');
-      });
-
-      test('array of strings gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'tags': {
-                'type': 'array',
-                'items': {'type': 'string'},
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'tags')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test('nested array of strings gets text/plain default (recursive)', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'matrix': {
-                'type': 'array',
-                'items': {
-                  'type': 'array',
-                  'items': {'type': 'string'},
-                },
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'matrix')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test('self-recursive array property gets application/json default '
-          'and logs warning', () {
-        final logs = <LogRecord>[];
-        final sub = Logger.root.onRecord.listen(logs.add);
-
-        addTearDown(sub.cancel);
-
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'tree': {r'$ref': '#/components/schemas/RecursiveList'},
-            },
-            schemas: {
-              'RecursiveList': {
-                'type': 'array',
-                'items': {r'$ref': '#/components/schemas/RecursiveList'},
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'tree')!;
-        expect(encoding.contentType, ContentType.json);
-        expect(encoding.rawContentType, 'application/json');
-        expect(
-          logs.any(
-            (r) => r.level == Level.WARNING && r.message.contains('"tree"'),
-          ),
-          isTrue,
-        );
-      });
-
-      test(
-        'mutually recursive array property gets application/json default',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'chain': {r'$ref': '#/components/schemas/LinkA'},
-              },
-              schemas: {
-                'LinkA': {
-                  'type': 'array',
-                  'items': {r'$ref': '#/components/schemas/LinkB'},
-                },
-                'LinkB': {
-                  'type': 'array',
-                  'items': {r'$ref': '#/components/schemas/LinkA'},
-                },
-              },
-            ),
-          );
-
-          final encoding = partEncodingFor(content, 'chain')!;
-          expect(encoding.contentType, ContentType.json);
-          expect(encoding.rawContentType, 'application/json');
-        },
-      );
-
-      test('array of AnyModel gets application/json default', () {
-        // See AnyModel test above — AnyModel is OAS 3.1 only.
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'values': {
-                'type': 'array',
-                'items': {r'$ref': '#/components/schemas/AnyValue'},
-              },
-            },
-            schemas: {
-              'AnyValue': true,
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'values')!;
-        expect(encoding.contentType, ContentType.json);
-        expect(encoding.rawContentType, 'application/json');
-      });
-
-      test('AliasModel wrapping string gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'label': {r'$ref': '#/components/schemas/MyString'},
-            },
-            schemas: {
-              'MyString': {'type': 'string'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'label')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test('enum property gets text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'status': {
-                'type': 'string',
-                'enum': ['active', 'inactive'],
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'status')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test(
-        'explicit encoding (OAS 3.1) preserves values and fills defaults',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'data': {
-                  'type': 'object',
-                  'properties': {
-                    'name': {'type': 'string'},
-                  },
-                },
-              },
-              encoding: {
-                'data': {
-                  'contentType': 'application/xml',
-                  'style': 'deepObject',
-                },
-              },
-            ),
-          );
-
-          final encoding = partEncodingFor(content, 'data')!;
-          // OAS 3.1: when style fields are present, contentType SHALL be
-          // ignored
-          expect(encoding.rawContentType, isNull);
-          expect(encoding.contentType, isNull);
-          expect(encoding.style, EncodingStyle.deepObject);
-          // deepObject: explode defaults to false per OAS spec
-          expect(encoding.explode, isFalse);
-          expect(encoding.allowReserved, isFalse);
-        },
-      );
-
-      test('OAS 3.0 ignores explicit style fields (always content-based)', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            version: '3.0.3',
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {
-                'contentType': 'application/xml',
-                'style': 'deepObject',
-                'explode': false,
-                'allowReserved': true,
-              },
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // contentType is preserved (not affected by version)
-        expect(encoding.rawContentType, 'application/xml');
-        // OAS 3.0 always uses content-based mode: style fields are null
-        expect(encoding.style, isNull);
-        expect(encoding.explode, isNull);
-        expect(encoding.allowReserved, isNull);
-      });
-
-      test(
-        'content-based when only contentType is explicit (no style fields)',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'data': {
-                  'type': 'object',
-                  'properties': {
-                    'name': {'type': 'string'},
-                  },
-                },
-              },
-              encoding: {
-                'data': {'contentType': 'application/xml'},
-              },
-            ),
-          );
-
-          final encoding = partEncodingFor(content, 'data')!;
-          expect(encoding.rawContentType, 'application/xml');
-          // No style fields set → content-based mode
-          expect(encoding.style, isNull);
-          expect(encoding.explode, isNull);
-          expect(encoding.allowReserved, isNull);
-        },
-      );
-
-      test('style-based when only explode is explicit', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {'explode': false},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // explode explicitly set → style-based mode with defaults filled
-        expect(encoding.style, EncodingStyle.form);
-        expect(encoding.explode, isFalse);
-        expect(encoding.allowReserved, isFalse);
-      });
-
-      test('style-based when explode is explicitly true (default value)', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {'explode': true},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // explode explicitly set to true (even though it's the form default)
-        // still triggers style-based mode
-        expect(encoding.style, EncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isFalse);
-      });
-
-      test('style-based when only allowReserved is explicit', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {'allowReserved': true},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // allowReserved explicitly set → style-based mode with defaults filled
-        expect(encoding.style, EncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isTrue);
-      });
-
-      test('style-based when only style (form) is explicit: '
-          'explode defaults true', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {'style': 'form'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // form style → explode defaults to true per OAS spec
-        expect(encoding.style, EncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isFalse);
-      });
-
-      test('style-based when only style (deepObject) is explicit: '
-          'explode defaults false', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-            },
-            encoding: {
-              'data': {'style': 'deepObject'},
-            },
-          ),
-        );
-
-        final encoding = partEncodingFor(content, 'data')!;
-        // non-form style → explode defaults to false per OAS spec
-        expect(encoding.style, EncodingStyle.deepObject);
-        expect(encoding.explode, isFalse);
-        expect(encoding.allowReserved, isFalse);
-      });
-
-      test('multipart part retains its alias model and effective encoding', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'label': {r'$ref': '#/components/schemas/MyString'},
-            },
-            schemas: {
-              'MyString': {'type': 'string'},
-            },
-          ),
-        );
-
-        final part = content.parts.single;
-        expect(part.model, isA<AliasModel>());
-        expect(
-          part.encoding.contentType,
-          ContentType.text,
-        );
-      });
-
-      test('mixed map: style-based property and content-based property '
-          'coexist correctly', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'styled': {
-                'type': 'object',
-                'properties': {
-                  'key': {'type': 'string'},
-                },
-              },
-              'plain': {'type': 'string'},
-            },
-            encoding: {
-              'styled': {'style': 'deepObject'},
-            },
-          ),
-        );
-
-        // 'styled' has explicit style → style-based mode
-        final styledEncoding = partEncodingFor(content, 'styled')!;
-        expect(styledEncoding.style, EncodingStyle.deepObject);
-        expect(styledEncoding.explode, isFalse);
-        expect(styledEncoding.allowReserved, isFalse);
-        expect(styledEncoding.isStyleBased, isTrue);
-
-        // 'plain' has no explicit encoding → content-based mode
-        final plainEncoding = partEncodingFor(content, 'plain')!;
-        expect(plainEncoding.style, isNull);
-        expect(plainEncoding.explode, isNull);
-        expect(plainEncoding.allowReserved, isNull);
-        expect(plainEncoding.isStyleBased, isFalse);
-      });
-
-      test('readOnly parts retain their request visibility', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'id': {
-                'type': 'string',
-                'readOnly': true,
-              },
-              'name': {'type': 'string'},
-            },
-          ),
-        );
-
-        expect(content.parts, hasLength(2));
-        expect(content.parts.first.isReadOnly, isTrue);
-        expect(partEncodingFor(content, 'name'), isNotNull);
-      });
-
-      test('writeOnly properties are included in encoding map', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'password': {
-                'type': 'string',
-                'writeOnly': true,
-              },
-            },
-          ),
-        );
-
-        expect(content.parts, hasLength(1));
-        final password = partEncodingFor(content, 'password')!;
-        expect(password.contentType, ContentType.text);
-        expect(password.rawContentType, 'text/plain');
-      });
-
-      test(
-        'format: byte string property gets application/octet-stream',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'encoded': {'type': 'string', 'format': 'byte'},
-              },
-            ),
-          );
-
-          final encoding = partEncodingFor(content, 'encoded')!;
-          expect(encoding.contentType, ContentType.bytes);
-          expect(encoding.rawContentType, 'application/octet-stream');
-        },
-      );
-
-      test('explicit contentType overrides format:byte text/plain default', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {'type': 'string', 'format': 'byte'},
-            },
-            encoding: {
-              'data': {'contentType': 'text/plain'},
-            },
-          ),
-        );
-        final encoding = partEncodingFor(content, 'data')!;
-        expect(encoding.contentType, ContentType.text);
-        expect(encoding.rawContentType, 'text/plain');
-      });
-
-      test('resolves charset only for multipart values serialized as text', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'count': {'type': 'integer'},
-              'file': {'type': 'string', 'format': 'binary'},
-            },
-            encoding: {
-              'count': {
-                'contentType':
-                    'application/vnd.example.count; charset=iso-8859-1',
-              },
-              'file': {
-                'contentType': 'application/vnd.example.binary; charset=utf-16',
-              },
-            },
-          ),
-        );
-
-        final count = partEncodingFor(content, 'count')!;
-        expect(count.contentType, ContentType.bytes);
-        expect(
-          count.rawContentType,
-          'application/vnd.example.count; charset=iso-8859-1',
-        );
-        expect(count.wireContentType, count.rawContentType);
-        expect(count.textEncoding, TextEncoding.latin1);
-
-        final file = partEncodingFor(content, 'file')!;
-        expect(file.contentType, ContentType.bytes);
-        expect(
-          file.rawContentType,
-          'application/vnd.example.binary; charset=utf-16',
-        );
-        expect(file.wireContentType, file.rawContentType);
-        expect(file.textEncoding, TextEncoding.utf8);
-      });
-
-      test(
-        r'format:byte via $ref property schema gets application/octet-stream',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'data': {r'$ref': '#/components/schemas/ByteData'},
-              },
-              schemas: {
-                'ByteData': {'type': 'string', 'format': 'byte'},
-              },
-            ),
-          );
-          final encoding = partEncodingFor(content, 'data')!;
-          expect(encoding.contentType, ContentType.bytes);
-          expect(encoding.rawContentType, 'application/octet-stream');
-        },
-      );
-
-      test('form-urlencoded body does not get default encoding populated', () {
-        final spec = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'requestBodies': {
-              'FormBody': {
-                'description': 'Form body',
-                'required': true,
-                'content': {
-                  'application/x-www-form-urlencoded': {
-                    'schema': {
-                      'type': 'object',
-                      'properties': {
-                        'name': {'type': 'string'},
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        };
-
-        final api = Importer().import(spec);
-        final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'FormBody',
-                )!
-                as RequestBodyObject;
-
-        final content = body.content.first as ModelRequestContent;
-        expect(content.contentType, ContentType.form);
-        expect(content.formEncoding, isNull);
-      });
-
-      test('encoding keys not matching any property log warning '
-          'and are dropped', () {
-        final logs = <LogRecord>[];
-        final sub = Logger.root.onRecord.listen(logs.add);
-
-        addTearDown(sub.cancel);
-
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'name': {'type': 'string'},
-            },
-            encoding: {
-              'name': {'contentType': 'text/plain'},
-              'nonExistent': {'contentType': 'application/json'},
-            },
-          ),
-        );
-
-        expect(content.parts, hasLength(1));
-        expect(partEncodingFor(content, 'name'), isNotNull);
-        expect(
-          content.parts.where((part) => part.name == 'nonExistent'),
-          isEmpty,
-        );
-        expect(
-          logs.any(
-            (r) =>
-                r.level == Level.WARNING && r.message.contains('nonExistent'),
-          ),
-          isTrue,
-        );
-      });
-
-      test('multiple properties each get correct default content type', () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'name': {'type': 'string'},
-              'age': {'type': 'integer'},
-              'photo': {'type': 'string', 'format': 'binary'},
-              'metadata': {
-                'type': 'object',
-                'properties': {
-                  'key': {'type': 'string'},
-                },
-              },
-            },
-          ),
-        );
-
-        expect(content.parts, hasLength(4));
-        expect(partEncodingFor(content, 'name')!.contentType, ContentType.text);
-        expect(partEncodingFor(content, 'age')!.contentType, ContentType.text);
-        expect(
-          partEncodingFor(content, 'photo')!.contentType,
-          ContentType.bytes,
-        );
-        expect(
-          partEncodingFor(content, 'metadata')!.contentType,
-          ContentType.json,
-        );
-      });
-    });
-  });
-
   group('form-urlencoded encoding support', () {
     ModelRequestContent importFormContent(Map<String, dynamic> spec) {
       final api = Importer().import(spec);
@@ -2841,11 +1576,6 @@ Property? _propertyNamedIn(Model model, String name) {
       return null;
   }
 }
-
-PartEncoding? partEncodingFor(RequestContent content, String name) =>
-    (content as MultipartRequestContent).parts
-        .firstWhereOrNull((part) => part.name == name)
-        ?.encoding;
 
 FieldEncoding? fieldEncodingFor(ModelRequestContent content, String name) {
   final property = _propertyNamed(content, name);

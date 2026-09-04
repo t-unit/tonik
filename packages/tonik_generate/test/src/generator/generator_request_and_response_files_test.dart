@@ -20,18 +20,40 @@ void main() {
     });
 
     test(
-      'emits and exports an inline multipart value without schema models',
+      'uses only regular model artifacts for shared multipart bodies',
       () async {
-        final content = MultipartRequestContent(
-          context: ctx.pushAll(['upload', 'body']),
-          parts: const [],
-          rawContentType: 'multipart/form-data',
+        final left = ClassModel(
+          name: 'Left',
+          context: ctx.push('Left'),
+          properties: const [],
+          isDeprecated: false,
           examples: const [],
+        );
+        final right = ClassModel(
+          name: 'Right',
+          context: ctx.push('Right'),
+          properties: const [],
+          isDeprecated: false,
+          examples: const [],
+        );
+        final model = AllOfModel(
+          name: 'Upload',
+          context: ctx.push('Upload'),
+          models: [left, right],
+          isDeprecated: false,
+          examples: const [],
+        );
+        final alias = AliasModel(
+          name: 'UploadAlias',
+          context: ctx.push('UploadAlias'),
+          model: model,
+          examples: const [],
+          defaultValue: null,
         );
         final document = ApiDocument(
           title: 'Test',
-          version: '1.0.0',
-          models: const {},
+          version: '1',
+          models: {left, right, model, alias},
           responseHeaders: const {},
           requestHeaders: const {},
           servers: const {},
@@ -46,38 +68,66 @@ void main() {
               context: ctx.push('upload'),
               description: null,
               isRequired: true,
-              content: {content},
+              content: {
+                MultipartRequestContent(
+                  model: model,
+                  rawContentType: 'multipart/form-data',
+                  examples: const [],
+                ),
+              },
+            ),
+            RequestBodyObject(
+              name: null,
+              context: ctx.push('upload'),
+              description: null,
+              isRequired: true,
+              content: {
+                MultipartRequestContent(
+                  model: alias,
+                  rawContentType: 'multipart/form-data',
+                  examples: const [],
+                ),
+              },
+            ),
+            RequestBodyObject(
+              name: 'Json',
+              context: ctx.push('json'),
+              description: null,
+              isRequired: true,
+              content: {
+                ModelRequestContent(
+                  model: model,
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                  examples: const [],
+                ),
+              },
             ),
           },
         );
-
         await const Generator().generate(
           apiDocument: document,
           outputDirectory: tempDir.path,
           package: 'test_package',
         );
-
         final lib = path.join(tempDir.path, 'test_package', 'lib');
-        expect(
-          File(
-            path.join(lib, 'src', 'model', 'upload_body_model.dart'),
-          ).existsSync(),
-          isTrue,
-        );
+        final models =
+            Directory(path.join(lib, 'src', 'model'))
+                .listSync()
+                .whereType<File>()
+                .map((f) => path.basename(f.path))
+                .toList()
+              ..sort();
+        expect(models, [
+          'left.dart',
+          'right.dart',
+          'upload.dart',
+          'upload_alias.dart',
+        ]);
         expect(
           Directory(path.join(lib, 'src', 'request_body')).existsSync(),
           isFalse,
         );
-        final exports = RegExp(r"^export '([^']+)';$", multiLine: true)
-            .allMatches(
-              File(path.join(lib, 'test_package.dart')).readAsStringSync(),
-            )
-            .map((match) => match.group(1)!)
-            .toList();
-        expect(exports, [
-          'src/model/upload_body_model.dart',
-          'src/server/server.dart',
-        ]);
       },
     );
 

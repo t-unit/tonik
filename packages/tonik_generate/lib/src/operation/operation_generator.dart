@@ -114,6 +114,9 @@ class OperationGenerator {
     );
 
     final requestPlan = OperationRequestPlanner(
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
       backend: backendGenerator.backend,
     ).plan(operation, normalizedParams);
 
@@ -224,6 +227,9 @@ class OperationGenerator {
     final headerArgs = <String, Expression>{};
     final cookieArgs = <String, Expression>{};
     requestPlan ??= OperationRequestPlanner(
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
       backend: backendGenerator.backend,
     ).plan(operation, normalizedParams);
 
