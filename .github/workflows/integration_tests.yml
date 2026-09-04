@@ -82,14 +82,13 @@ jobs:
           retention-days: 1
 
   analyze-generated:
-    name: Analyze (${{ matrix.backend }}, shard ${{ matrix.shard }})
+    name: Analyze (${{ matrix.backend }})
     needs: generate-integration
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         backend: [dio, http]
-        shard: [0, 1, 2]
 
     steps:
       - uses: actions/checkout@v7
@@ -107,12 +106,12 @@ jobs:
       - name: Extract generated code (${{ matrix.backend }})
         run: tar -xzf generated-integration-code.tar.gz
 
-      - name: Analyze packages (${{ matrix.backend }}, shard ${{ matrix.shard }})
+      - name: Analyze packages (${{ matrix.backend }})
         shell: bash
-        run: ./scripts/analyze_integration_packages.sh "${{ matrix.backend }}" "${{ matrix.shard }}"
+        run: ./scripts/analyze_integration_packages.sh "${{ matrix.backend }}"
 
   test:
-    name: Test (${{ matrix.backend }}, ${{ matrix.os }}, Dart ${{ matrix.sdk }}, shard ${{ matrix.shard }})
+    name: Test (${{ matrix.backend }}, ${{ matrix.os }}, Dart ${{ matrix.sdk }})
     needs: generate-integration
     runs-on: ${{ matrix.os }}
     strategy:
@@ -121,7 +120,6 @@ jobs:
         backend: [dio, http]
         os: [ubuntu-latest, macos-latest, windows-latest]
         sdk: [stable, beta]
-        shard: [0, 1, 2]
         exclude:
           - os: macos-latest
             sdk: beta
@@ -161,9 +159,9 @@ jobs:
             ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
-      - name: Run integration tests (${{ matrix.backend }}, shard ${{ matrix.shard }})
+      - name: Run integration tests (${{ matrix.backend }})
         shell: bash
-        run: ./scripts/test_integration_packages.sh "${{ matrix.backend }}" "${{ matrix.shard }}"
+        run: ./scripts/test_integration_packages.sh "${{ matrix.backend }}"
 
   dependencies:
     name: Dependencies (${{ matrix.backend }}, ubuntu-latest, Dart stable)
