@@ -1,12 +1,3 @@
-## Unreleased
-
-- **BREAKING FIX**: Register undeclared operation tags, sharing one `Tag` per
-  exact name within each import. Previously discarded tags now generate their
-  own clients instead of `DefaultApi`; migrate calls to the corresponding tag
-  clients (for example, Cloudflare `AccountsApi` and `ZoneApi`). Preserve declared
-  descriptions, `x-dart-name`, multi-tag membership, and untagged operations.
-  Tag filtering and configuration overrides now apply to these tags as well.
-
 ## 0.9.0
 
 > Note: This release has breaking changes.
