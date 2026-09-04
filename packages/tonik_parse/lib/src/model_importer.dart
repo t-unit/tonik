@@ -35,10 +35,6 @@ class ModelImporter {
 
   late Set<Model> models;
 
-  // Match the existing name-only lookups, including across component, $defs
-  // and inline contexts. Names are immutable; nameOverride is not a lookup key.
-  // Buckets retain model-set insertion order so duplicate names keep their
-  // first-match behavior, including after removal and re-registration.
   final Map<String, Set<Model>> _modelsByName = {};
 
   Model? _findNamedModel(String? name) {
