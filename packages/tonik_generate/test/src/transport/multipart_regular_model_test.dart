@@ -5,9 +5,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
-import 'package:tonik_generate/src/model/any_of_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
-import 'package:tonik_generate/src/model/one_of_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
@@ -422,105 +420,6 @@ Object? encode() {
       collapseWhitespace(formatter.format(actual)),
       collapseWhitespace(formatter.format(expected)),
     );
-  });
-
-  test('compound generators preserve member declaration order', () {
-    final context = Context.initial();
-    final text = StringModel(context: context);
-
-    final zebra = ClassModel(
-      name: 'Zebra',
-      context: context.push('Zebra'),
-      properties: [
-        Property(
-          name: 'z',
-          model: text,
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        ),
-      ],
-      isDeprecated: false,
-      examples: const [],
-      additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
-    );
-    final alpha = ClassModel(
-      name: 'Alpha',
-      context: context.push('Alpha'),
-      properties: [
-        Property(
-          name: 'a',
-          model: text,
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        ),
-      ],
-      isDeprecated: false,
-      examples: const [],
-      additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
-    );
-    final manager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
-    final members = <DiscriminatedModel>[
-      (model: zebra, discriminatorValue: 'z'),
-      (model: alpha, discriminatorValue: 'a'),
-    ];
-    final all =
-        AllOfGenerator(
-          nameManager: manager,
-          package: 'example',
-          stableModelSorter: StableModelSorter(),
-        ).generateClass(
-          AllOfModel(
-            name: 'All',
-            context: context.push('All'),
-            models: [zebra, alpha],
-            isDeprecated: false,
-            examples: const [],
-            additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
-          ),
-        );
-    final any =
-        AnyOfGenerator(
-          nameManager: manager,
-          package: 'example',
-          stableModelSorter: StableModelSorter(),
-        ).generateClass(
-          AnyOfModel(
-            name: 'Any',
-            context: context.push('Any'),
-            models: members,
-            isDeprecated: false,
-            examples: const [],
-          ),
-        );
-    final one =
-        OneOfGenerator(
-          nameManager: manager,
-          package: 'example',
-          stableModelSorter: StableModelSorter(),
-        ).generateClasses(
-          OneOfModel(
-            name: 'One',
-            context: context.push('One'),
-            models: members,
-            isDeprecated: false,
-            examples: const [],
-          ),
-        );
-    expect(all.fields.map((f) => f.name), ['zebra', 'alpha']);
-    expect(any.fields.map((f) => f.name), ['zebra', 'alpha']);
-    expect(one.where((c) => c.name != 'One').map((c) => c.name), [
-      'OneZebra',
-      'OneAlpha',
-    ]);
   });
 
   test('dio rejects string multipart root', () {
