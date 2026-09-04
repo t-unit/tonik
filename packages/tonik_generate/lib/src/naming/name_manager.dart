@@ -336,13 +336,16 @@ class NameManager {
   /// - [parentClassName]: The name of the parent composite model
   /// - [model]: The model to generate a variant name for
   /// - [discriminatorValue]: Optional discriminator value to use as fallback
+  /// - [occurrenceIndex]: Distinguishes repeated members of one composition.
   String generateVariantName({
     required String parentClassName,
     required Model model,
     required String? discriminatorValue,
+    int occurrenceIndex = 0,
   }) {
     final cacheKey =
-        '$parentClassName:${model.hashCode}:${discriminatorValue ?? 'null'}';
+        '$parentClassName:${model.hashCode}:${discriminatorValue ?? 'null'}:'
+        '$occurrenceIndex';
 
     return variantNames.putIfAbsent(cacheKey, () {
       return generator.generateVariantName(

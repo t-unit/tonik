@@ -39,7 +39,7 @@ void main() {
       isDeprecated: false,
       isReadOnly: true,
       name: 'ServerEvent',
-      models: {
+      models: [
         ClassModel(
           name: 'BaseEvent',
           isDeprecated: false,
@@ -74,7 +74,7 @@ void main() {
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -87,7 +87,7 @@ void main() {
       isDeprecated: false,
       isWriteOnly: true,
       name: 'UserCommand',
-      models: {
+      models: [
         ClassModel(
           name: 'CommandBase',
           isDeprecated: false,
@@ -122,7 +122,7 @@ void main() {
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );

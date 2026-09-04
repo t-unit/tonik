@@ -495,7 +495,7 @@ void main() {
       test('generates nullable typedef for nullable AllOfModel', () {
         final allOfModel = AllOfModel(
           name: 'ExtendedUser',
-          models: {
+          models: [
             ClassModel(
               name: 'User',
               properties: const [],
@@ -503,7 +503,7 @@ void main() {
               isDeprecated: false,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           isNullable: true,
@@ -530,7 +530,7 @@ void main() {
       test('generates non-nullable typedef for non-nullable AllOfModel', () {
         final allOfModel = AllOfModel(
           name: 'ExtendedUser',
-          models: {
+          models: [
             ClassModel(
               name: 'User',
               properties: const [],
@@ -538,7 +538,7 @@ void main() {
               isDeprecated: false,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           examples: const [],
@@ -563,7 +563,7 @@ void main() {
       test('generates nullable typedef for nullable OneOfModel', () {
         final oneOfModel = OneOfModel(
           name: 'Pet',
-          models: {
+          models: [
             (
               discriminatorValue: 'cat',
               model: ClassModel(
@@ -584,7 +584,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           isNullable: true,
@@ -611,7 +611,7 @@ void main() {
       test('generates non-nullable typedef for non-nullable OneOfModel', () {
         final oneOfModel = OneOfModel(
           name: 'Pet',
-          models: {
+          models: [
             (
               discriminatorValue: 'cat',
               model: ClassModel(
@@ -632,7 +632,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           examples: const [],
@@ -657,7 +657,7 @@ void main() {
       test('generates nullable typedef for nullable AnyOfModel', () {
         final anyOfModel = AnyOfModel(
           name: 'Response',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: ClassModel(
@@ -678,7 +678,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           isNullable: true,
@@ -705,7 +705,7 @@ void main() {
       test('generates non-nullable typedef for non-nullable AnyOfModel', () {
         final anyOfModel = AnyOfModel(
           name: 'Response',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: ClassModel(
@@ -726,7 +726,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           examples: const [],

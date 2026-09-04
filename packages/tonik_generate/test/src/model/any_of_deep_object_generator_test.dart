@@ -37,10 +37,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfPrimitive',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -73,10 +73,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfSimple',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -100,7 +100,7 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfComplex',
-        models: {
+        models: [
           (
             discriminatorValue: 'model1',
             model: ClassModel(
@@ -141,7 +141,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -165,10 +165,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfWithAllowLists',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -192,9 +192,9 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfEncoded',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -218,7 +218,7 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfWithDiscriminator',
-        models: {
+        models: [
           (
             discriminatorValue: 'model1',
             model: ClassModel(
@@ -259,7 +259,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],

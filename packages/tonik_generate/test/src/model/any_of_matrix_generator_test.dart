@@ -36,10 +36,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfPrimitive',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -69,11 +69,11 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfPrimitive',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -163,10 +163,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfComplex',
-        models: {
+        models: [
           (discriminatorValue: 'class1', model: class1),
           (discriminatorValue: 'class2', model: class2),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -191,7 +191,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'AnyOfMixed',
-          models: {
+          models: [
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -216,7 +216,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -252,10 +252,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfEnum',
-        models: {
+        models: [
           (discriminatorValue: 'status', model: enumModel),
           (discriminatorValue: 'string', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -301,7 +301,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfEmpty',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -329,10 +329,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'OneOfType',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -340,10 +340,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfNested',
-        models: {
+        models: [
           (discriminatorValue: 'oneof', model: oneOfModel),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -389,7 +389,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'InnerChoice',
-        models: {
+        models: [
           (discriminatorValue: 'str', model: StringModel(context: context)),
           (
             discriminatorValue: 'obj',
@@ -411,7 +411,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -420,10 +420,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'TestAnyOf',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: innerOneOf),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -509,10 +509,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'StringOrList',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: listModel),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -563,10 +563,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'StringOrIntList',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: listModel),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -628,10 +628,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'StringListOrIntList',
-          models: {
+          models: [
             (discriminatorValue: null, model: listStringModel),
             (discriminatorValue: null, model: listIntModel),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -707,10 +707,10 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           final model = AnyOfModel(
             isDeprecated: false,
             name: 'RowsOrModel',
-            models: {
+            models: [
               (discriminatorValue: null, model: listOfClassModel),
               (discriminatorValue: null, model: classModel),
-            },
+            ],
             context: context,
             examples: const [],
           );

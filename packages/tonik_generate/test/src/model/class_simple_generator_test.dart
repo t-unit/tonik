@@ -351,11 +351,11 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'PrimitiveOneOf',
-          models: {
+          models: [
             (discriminatorValue: 'int', model: IntegerModel(context: context)),
             (discriminatorValue: 'bool', model: BooleanModel(context: context)),
             (discriminatorValue: 'str', model: StringModel(context: context)),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -429,7 +429,7 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'MixedOneOf',
-          models: {
+          models: [
             (discriminatorValue: 'int', model: IntegerModel(context: context)),
             (
               discriminatorValue: 'class',
@@ -441,7 +441,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -502,7 +502,7 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'DynamicValue',
-          models: {
+          models: [
             (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'class',
@@ -524,7 +524,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -647,10 +647,10 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'PrimitiveOneOf',
-        models: {
+        models: [
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],

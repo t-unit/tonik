@@ -120,7 +120,7 @@ void main() {
         () {
           final simpleOneOf = OneOfModel(
             name: 'SimpleOneOf',
-            models: {
+            models: [
               (
                 discriminatorValue: 'a',
                 model: StringModel(context: Context.initial()),
@@ -129,7 +129,7 @@ void main() {
                 discriminatorValue: 'b',
                 model: IntegerModel(context: Context.initial()),
               ),
-            },
+            ],
             context: Context.initial(),
             isDeprecated: false,
             examples: const [],
@@ -138,7 +138,7 @@ void main() {
 
           final complexOneOf = OneOfModel(
             name: 'ComplexOneOf',
-            models: {
+            models: [
               (
                 discriminatorValue: null,
                 model: ClassModel(
@@ -148,7 +148,7 @@ void main() {
                   examples: const [],
                 ),
               ),
-            },
+            ],
             context: Context.initial(),
             isDeprecated: false,
             examples: const [],
@@ -157,7 +157,7 @@ void main() {
 
           final mixedOneOf = OneOfModel(
             name: 'MixedOneOf',
-            models: {
+            models: [
               (
                 discriminatorValue: null,
                 model: StringModel(context: Context.initial()),
@@ -171,7 +171,7 @@ void main() {
                   examples: const [],
                 ),
               ),
-            },
+            ],
             context: Context.initial(),
             isDeprecated: false,
             examples: const [],
@@ -184,10 +184,10 @@ void main() {
     test('AllOf/OneOf/AnyOf: simple, complex, mixed', () {
       final simpleAllOf = AllOfModel(
         name: 'SimpleAllOf',
-        models: {
+        models: [
           StringModel(context: Context.initial()),
           IntegerModel(context: Context.initial()),
-        },
+        ],
         context: Context.initial(),
         isDeprecated: false,
         examples: const [],
@@ -196,7 +196,7 @@ void main() {
 
       final complexAllOf = AllOfModel(
         name: 'ComplexAllOf',
-        models: {
+        models: [
           ClassModel(
             properties: const [],
             context: Context.initial(),
@@ -208,7 +208,7 @@ void main() {
             context: Context.initial(),
             examples: const [],
           ),
-        },
+        ],
         context: Context.initial(),
         isDeprecated: false,
         examples: const [],
@@ -217,7 +217,7 @@ void main() {
 
       final mixedAllOf = AllOfModel(
         name: 'MixedAllOf',
-        models: {
+        models: [
           StringModel(context: Context.initial()),
           ClassModel(
             properties: const [],
@@ -225,7 +225,7 @@ void main() {
             isDeprecated: false,
             examples: const [],
           ),
-        },
+        ],
         context: Context.initial(),
         isDeprecated: false,
         examples: const [],

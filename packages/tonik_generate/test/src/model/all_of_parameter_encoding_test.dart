@@ -37,9 +37,9 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -66,9 +66,9 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -94,7 +94,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'ComplexOnly',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -102,7 +102,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -130,7 +130,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Mixed',
-        models: {
+        models: [
           StringModel(context: context),
           ClassModel(
             isDeprecated: false,
@@ -139,7 +139,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -165,7 +165,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModels',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'FirstModel',
@@ -180,7 +180,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -214,7 +214,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'DuplicateShapeAllOf',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'ArrayMember',
@@ -253,7 +253,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -287,7 +287,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final anyOfModel = AnyOfModel(
           isDeprecated: false,
           name: 'StringOrComplex',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -309,7 +309,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -317,7 +317,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'MixedEncodingAllOf',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'SimpleModel',
@@ -336,7 +336,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
             anyOfModel,
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -368,7 +368,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Empty',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );

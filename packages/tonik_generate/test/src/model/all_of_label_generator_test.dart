@@ -72,7 +72,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfComplex',
-        models: {class1, class2},
+        models: [class1, class2],
         context: context,
         examples: const [],
       );
@@ -107,10 +107,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfPrimitive',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -132,7 +132,7 @@ void main() {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfModel',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'complex',
@@ -154,7 +154,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -181,7 +181,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfWithDynamic',
-        models: {anyOfModel, classModel},
+        models: [anyOfModel, classModel],
         context: context,
         examples: const [],
       );
@@ -242,7 +242,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfComplex',
-        models: {classModel},
+        models: [classModel],
         context: context,
         examples: const [],
       );

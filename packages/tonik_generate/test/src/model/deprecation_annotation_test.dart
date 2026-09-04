@@ -153,10 +153,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: true,
         name: 'LegacyResult',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -181,10 +181,10 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -216,10 +216,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: true,
         name: 'LegacyMixed',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -243,10 +243,10 @@ void main() {
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'Mixed',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -277,7 +277,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: true,
         name: 'LegacyCombined',
-        models: {StringModel(context: context)},
+        models: [StringModel(context: context)],
         context: context,
         examples: const [],
       );
@@ -301,7 +301,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );

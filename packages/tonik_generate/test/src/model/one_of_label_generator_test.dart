@@ -37,10 +37,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'PrimitiveChoice',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -98,9 +98,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: {
+        models: [
           (discriminatorValue: 'a', model: classA),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -141,10 +141,10 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'MixedChoice',
-        models: {
+        models: [
           (discriminatorValue: 'm', model: classM),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         discriminator: 'kind',
         context: context,
         examples: const [],
@@ -175,7 +175,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'Inner',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -197,7 +197,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -205,9 +205,9 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: {
+        models: [
           (discriminatorValue: null, model: innerOneOf),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -233,7 +233,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'Inner',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -255,7 +255,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -263,9 +263,9 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: {
+        models: [
           (discriminatorValue: 'inner', model: innerOneOf),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -290,7 +290,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
         final innerOneOfA = OneOfModel(
           isDeprecated: false,
           name: 'InnerA',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -312,7 +312,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -320,7 +320,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
         final innerOneOfB = OneOfModel(
           isDeprecated: false,
           name: 'InnerB',
-          models: {
+          models: [
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (
               discriminatorValue: null,
@@ -342,7 +342,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -350,10 +350,10 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Outer',
-          models: {
+          models: [
             (discriminatorValue: 'a', model: innerOneOfA),
             (discriminatorValue: 'b', model: innerOneOfB),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -377,7 +377,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'WithBinary',
-        models: {
+        models: [
           (
             discriminatorValue: 'binary',
             model: BinaryModel(context: context),
@@ -386,7 +386,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
             discriminatorValue: 'label',
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );

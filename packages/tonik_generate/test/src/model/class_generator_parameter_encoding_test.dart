@@ -257,7 +257,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'StringOrClass',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -279,7 +279,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -334,7 +334,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final anyOfModel = AnyOfModel(
           isDeprecated: false,
           name: 'StringOrInt',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -356,7 +356,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -430,7 +430,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final allOfModel = AllOfModel(
           isDeprecated: false,
           name: 'StringAndInt',
-          models: {stringModel, complexModel},
+          models: [stringModel, complexModel],
           context: context,
           examples: const [],
         );
@@ -587,7 +587,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'StringOrClass',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -609,7 +609,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -666,7 +666,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final oneOfModel1 = OneOfModel(
           isDeprecated: false,
           name: 'StringOrInt1',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -688,7 +688,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -696,7 +696,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final oneOfModel2 = OneOfModel(
           isDeprecated: false,
           name: 'StringOrInt2',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -718,7 +718,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -726,7 +726,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final anyOfModel = AnyOfModel(
           isDeprecated: false,
           name: 'FlexibleData',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -748,7 +748,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1240,10 +1240,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'StringOrInt',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2429,7 +2429,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'StringOrClass',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -2451,7 +2451,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );

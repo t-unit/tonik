@@ -70,7 +70,7 @@ mixin NamedModel on Model {
 }
 
 mixin CompositeModel on Model {
-  Set<Model> get containedModels;
+  List<Model> get containedModels;
 
   @override
   EncodingShape get encodingShape {
@@ -409,11 +409,11 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
-  Set<Model> models;
+  List<Model> models;
   List<Example> examples;
 
   @override
-  Set<Model> get containedModels => models;
+  List<Model> get containedModels => models;
 
   @override
   String toString() =>
@@ -451,12 +451,12 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
-  Set<DiscriminatedModel> models;
+  List<DiscriminatedModel> models;
   String? discriminator;
   List<Example> examples;
 
   @override
-  Set<Model> get containedModels => models.map((m) => m.model).toSet();
+  List<Model> get containedModels => models.map((m) => m.model).toList();
 
   @override
   String toString() =>
@@ -491,12 +491,12 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
-  Set<DiscriminatedModel> models;
+  List<DiscriminatedModel> models;
   String? discriminator;
   List<Example> examples;
 
   @override
-  Set<Model> get containedModels => models.map((m) => m.model).toSet();
+  List<Model> get containedModels => models.map((m) => m.model).toList();
 
   @override
   String toString() =>

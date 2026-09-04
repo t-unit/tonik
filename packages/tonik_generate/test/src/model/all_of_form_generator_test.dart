@@ -36,7 +36,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -71,7 +71,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -97,7 +97,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -132,7 +132,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -172,7 +172,7 @@ void main() {
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'Choice',
-      models: {
+      models: [
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
@@ -194,7 +194,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -220,10 +220,10 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         classModel,
         oneOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -269,10 +269,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'StringDecimalModel',
-        models: <Model>{
+        models: <Model>[
           StringModel(context: context),
           DecimalModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -312,10 +312,10 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'StringDecimalModel',
-          models: <Model>{
+          models: <Model>[
             StringModel(context: context),
             DecimalModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -346,7 +346,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'EnumStringModel',
-          models: {
+          models: [
             EnumModel(
               isDeprecated: false,
               name: 'Status',
@@ -359,7 +359,7 @@ void main() {
               examples: const [],
             ),
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -400,7 +400,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'EnumStringModel',
-          models: {
+          models: [
             EnumModel(
               isDeprecated: false,
               name: 'Status',
@@ -413,7 +413,7 @@ void main() {
               examples: const [],
             ),
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -444,7 +444,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'MixedModel',
-          models: {
+          models: [
             StringModel(context: context),
             ClassModel(
               isDeprecated: false,
@@ -463,7 +463,7 @@ void main() {
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -492,7 +492,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'MixedModel',
-          models: {
+          models: [
             IntegerModel(context: context),
             ClassModel(
               isDeprecated: false,
@@ -501,7 +501,7 @@ void main() {
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -536,7 +536,7 @@ void main() {
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'Choice',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -558,7 +558,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -566,10 +566,10 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         IntegerModel(context: context),
         oneOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -633,7 +633,7 @@ void main() {
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'Choice',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -655,7 +655,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -663,10 +663,10 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         IntegerModel(context: context),
         oneOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -693,7 +693,7 @@ void main() {
     final anyOfModel1 = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleA',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -715,7 +715,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -723,7 +723,7 @@ void main() {
     final anyOfModel2 = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleB',
-      models: {
+      models: [
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
@@ -745,7 +745,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -753,11 +753,11 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'MultiDynamic',
-      models: {
+      models: [
         StringModel(context: context),
         anyOfModel1,
         anyOfModel2,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -832,7 +832,7 @@ void main() {
     final anyOfModel = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleValue',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -854,7 +854,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -862,7 +862,7 @@ void main() {
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'Choice',
-      models: {
+      models: [
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
@@ -884,7 +884,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -892,12 +892,12 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'ComplexMixed',
-      models: {
+      models: [
         StringModel(context: context),
         anyOfModel,
         oneOfModel,
         DecimalModel(context: context),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -981,13 +981,13 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfIntList',
-      models: {
+      models: [
         ListModel(
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1045,13 +1045,13 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDateTimeList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1109,7 +1109,7 @@ void main() {
     final anyOfModel = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleValue',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -1131,7 +1131,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1139,10 +1139,10 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         IntegerModel(context: context),
         anyOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1206,13 +1206,13 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDoubleList',
-      models: {
+      models: [
         ListModel(
           content: DoubleModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1241,13 +1241,13 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDateTimeList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );

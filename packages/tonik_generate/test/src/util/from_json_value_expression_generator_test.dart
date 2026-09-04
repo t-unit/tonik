@@ -625,7 +625,7 @@ void main() {
       test('composite items short-circuit null per element', () {
         final oneOfModel = OneOfModel(
           name: 'Pet',
-          models: const {},
+          models: const [],
           context: context,
           isDeprecated: false,
           examples: const [],

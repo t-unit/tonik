@@ -37,7 +37,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (
             discriminatorValue: 'success',
             model: StringModel(context: context),
@@ -46,7 +46,7 @@ void main() {
             discriminatorValue: 'error',
             model: IntegerModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -98,7 +98,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Response',
-          models: {
+          models: [
             (
               discriminatorValue: 'user',
               model: userModel,
@@ -107,7 +107,7 @@ void main() {
               discriminatorValue: 'message',
               model: StringModel(context: context),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -170,10 +170,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Entity',
-          models: {
+          models: [
             (discriminatorValue: 'person', model: person),
             (discriminatorValue: 'company', model: company),
-          },
+          ],
           discriminator: 'entity_type',
           context: context,
           examples: const [],
@@ -217,10 +217,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
         final model = OneOfModel(
           name: 'MixedEntity',
-          models: {
+          models: [
             (discriminatorValue: 'person', model: person),
             (discriminatorValue: 'id', model: StringModel(context: context)),
-          },
+          ],
           discriminator: 'type',
           context: context,
           isDeprecated: false,
@@ -283,10 +283,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Entity',
-        models: {
+        models: [
           (discriminatorValue: 'person', model: person),
           (discriminatorValue: 'company', model: company),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -316,7 +316,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (
             discriminatorValue: 'error',
             model: IntegerModel(context: context),
@@ -325,7 +325,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             discriminatorValue: 'success',
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -393,10 +393,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Entity',
-          models: {
+          models: [
             (discriminatorValue: 'person', model: person),
             (discriminatorValue: 'company', model: company),
-          },
+          ],
           discriminator: 'entity_type',
           context: context,
           examples: const [],
@@ -468,10 +468,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'MixedEntity',
-          models: {
+          models: [
             (discriminatorValue: 'person', model: person),
             (discriminatorValue: 'id', model: StringModel(context: context)),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -558,10 +558,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'EntityNoDisc',
-          models: {
+          models: [
             (discriminatorValue: null, model: person),
             (discriminatorValue: null, model: company),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -611,10 +611,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       model = OneOfModel(
         isDeprecated: false,
         name: 'Entity',
-        models: {
+        models: [
           (discriminatorValue: null, model: person),
           (discriminatorValue: null, model: company),
-        },
+        ],
         context: context,
         isNullable: true,
         examples: const [],
@@ -648,7 +648,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'WithBinary',
-        models: {
+        models: [
           (
             discriminatorValue: 'binary',
             model: BinaryModel(context: context),
@@ -657,7 +657,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             discriminatorValue: 'text',
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -691,10 +691,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Payload',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: mapVariant),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -746,10 +746,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Payload',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: listVariant),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -787,10 +787,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Payload',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: listVariant),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -818,7 +818,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: "it's-success",
               model: ClassModel(
@@ -839,7 +839,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -887,7 +887,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Result',
-          models: {
+          models: [
             (
               discriminatorValue: 'success',
               model: ClassModel(
@@ -908,7 +908,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                 examples: const [],
               ),
             ),
-          },
+          ],
           discriminator: "it's-type",
           context: context,
           examples: const [],
@@ -964,10 +964,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (discriminatorValue: null, model: aliasModel),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );

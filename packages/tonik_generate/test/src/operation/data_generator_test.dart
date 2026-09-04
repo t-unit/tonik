@@ -1904,7 +1904,7 @@ Object? _data({required String body}) {
                 name: 'choice',
                 model: OneOfModel(
                   name: 'Choice',
-                  models: {
+                  models: [
                     (
                       discriminatorValue: null,
                       model: StringModel(context: testContext),
@@ -1913,7 +1913,7 @@ Object? _data({required String body}) {
                       discriminatorValue: null,
                       model: IntegerModel(context: testContext),
                     ),
-                  },
+                  ],
                   isDeprecated: false,
                   context: testContext,
                   examples: const [],
@@ -2064,7 +2064,7 @@ Object? _data({required String body}) {
                 name: 'choice',
                 model: OneOfModel(
                   name: 'Choice',
-                  models: {
+                  models: [
                     (
                       discriminatorValue: null,
                       model: StringModel(context: testContext),
@@ -2073,7 +2073,7 @@ Object? _data({required String body}) {
                       discriminatorValue: null,
                       model: IntegerModel(context: testContext),
                     ),
-                  },
+                  ],
                   isDeprecated: false,
                   context: testContext,
                   examples: const [],
@@ -2543,7 +2543,7 @@ Object? _data({required String body}) {
           final formModel = AllOfModel(
             name: 'CompositeForm',
             isDeprecated: false,
-            models: {
+            models: [
               ClassModel(
                 name: 'Member',
                 isDeprecated: false,
@@ -2551,7 +2551,7 @@ Object? _data({required String body}) {
                 context: testContext,
                 examples: const [],
               ),
-            },
+            ],
             context: testContext,
             examples: const [],
           );

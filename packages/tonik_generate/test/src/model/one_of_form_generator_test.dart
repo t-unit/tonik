@@ -37,7 +37,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (
             discriminatorValue: 'success',
             model: StringModel(context: context),
@@ -46,7 +46,7 @@ void main() {
             discriminatorValue: 'error',
             model: IntegerModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -113,7 +113,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           (
             discriminatorValue: 'user',
             model: userModel,
@@ -122,7 +122,7 @@ void main() {
             discriminatorValue: 'message',
             model: StringModel(context: context),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -177,9 +177,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Test',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -223,9 +223,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Test',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -260,7 +260,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (
             discriminatorValue: 'error',
             model: IntegerModel(context: context),
@@ -269,7 +269,7 @@ void main() {
             discriminatorValue: 'success',
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -317,10 +317,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           (discriminatorValue: 'user', model: userModel),
           (discriminatorValue: 'msg', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -388,10 +388,10 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Choice',
-          models: {
+          models: [
             (discriminatorValue: 'a', model: classA),
             (discriminatorValue: 'b', model: classB),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -443,7 +443,7 @@ void main() {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'Inner',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -465,7 +465,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -473,9 +473,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: {
+        models: [
           (discriminatorValue: null, model: innerOneOf),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -516,7 +516,7 @@ void main() {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'Inner',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -538,7 +538,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -546,9 +546,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: {
+        models: [
           (discriminatorValue: 'inner', model: innerOneOf),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -606,7 +606,7 @@ void main() {
         final innerOneOfA = OneOfModel(
           isDeprecated: false,
           name: 'InnerA',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -628,7 +628,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -636,7 +636,7 @@ void main() {
         final innerOneOfB = OneOfModel(
           isDeprecated: false,
           name: 'InnerB',
-          models: {
+          models: [
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (
               discriminatorValue: null,
@@ -658,7 +658,7 @@ void main() {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -666,10 +666,10 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Outer',
-          models: {
+          models: [
             (discriminatorValue: 'a', model: innerOneOfA),
             (discriminatorValue: 'b', model: innerOneOfB),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -750,7 +750,7 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'WithBinary',
-          models: {
+          models: [
             (
               discriminatorValue: 'binary',
               model: BinaryModel(context: context),
@@ -759,7 +759,7 @@ void main() {
               discriminatorValue: 'text',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -815,10 +815,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (discriminatorValue: null, model: aliasModel),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );

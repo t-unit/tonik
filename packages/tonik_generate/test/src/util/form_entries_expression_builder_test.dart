@@ -241,7 +241,7 @@ void main() {
     test('composite form param threads allowReserved into toForm when set', () {
       final result = build(
         OneOfModel(
-          models: const {},
+          models: const [],
           isDeprecated: false,
           examples: const [],
           context: context,
@@ -655,19 +655,19 @@ void main() {
         examples: const [],
       ),
       AnyOfModel(
-        models: const {},
+        models: const [],
         context: context,
         isDeprecated: false,
         examples: const [],
       ),
       OneOfModel(
-        models: const {},
+        models: const [],
         context: context,
         isDeprecated: false,
         examples: const [],
       ),
       AllOfModel(
-        models: const {},
+        models: const [],
         context: context,
         isDeprecated: false,
         examples: const [],

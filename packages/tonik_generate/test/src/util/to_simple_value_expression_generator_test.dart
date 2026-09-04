@@ -1838,7 +1838,7 @@ void main() {
         AllOfModel(
           isDeprecated: false,
           name: 'AllOfX',
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         ),
@@ -1848,9 +1848,9 @@ void main() {
         OneOfModel(
           isDeprecated: false,
           name: 'OneOfX',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         ),
@@ -1860,9 +1860,9 @@ void main() {
         AnyOfModel(
           isDeprecated: false,
           name: 'AnyOfX',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         ),
@@ -2144,7 +2144,7 @@ void main() {
           content: AllOfModel(
             isDeprecated: false,
             name: 'AllOfX',
-            models: {StringModel(context: context)},
+            models: [StringModel(context: context)],
             context: context,
             examples: const [],
           ),
@@ -2158,9 +2158,9 @@ void main() {
           content: OneOfModel(
             isDeprecated: false,
             name: 'OneOfX',
-            models: {
+            models: [
               (discriminatorValue: null, model: StringModel(context: context)),
-            },
+            ],
             context: context,
             examples: const [],
           ),
@@ -2174,9 +2174,9 @@ void main() {
           content: AnyOfModel(
             isDeprecated: false,
             name: 'AnyOfX',
-            models: {
+            models: [
               (discriminatorValue: null, model: StringModel(context: context)),
-            },
+            ],
             context: context,
             examples: const [],
           ),

@@ -39,7 +39,7 @@ void main() {
       isDeprecated: false,
       isReadOnly: true,
       name: 'ServerEvent',
-      models: {
+      models: [
         (
           discriminatorValue: null,
           model: ClassModel(
@@ -80,7 +80,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -93,7 +93,7 @@ void main() {
       isDeprecated: false,
       isWriteOnly: true,
       name: 'UserCommand',
-      models: {
+      models: [
         (
           discriminatorValue: null,
           model: ClassModel(
@@ -134,7 +134,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );

@@ -36,11 +36,11 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfPrimitive',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -120,10 +120,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfComplex',
-        models: {
+        models: [
           (discriminatorValue: 'class1', model: class1),
           (discriminatorValue: 'class2', model: class2),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -146,7 +146,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$mapV
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfMixed',
-        models: {
+        models: [
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'data',
@@ -168,7 +168,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$mapV
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -191,7 +191,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfEmpty',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -215,7 +215,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'InnerChoice',
-        models: {
+        models: [
           (discriminatorValue: 'str', model: StringModel(context: context)),
           (
             discriminatorValue: 'obj',
@@ -237,7 +237,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -246,10 +246,10 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'TestAnyOf',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: innerOneOf),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -273,10 +273,10 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'WithBinary',
-        models: {
+        models: [
           (discriminatorValue: null, model: BinaryModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
