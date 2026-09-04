@@ -33,7 +33,6 @@ class OperationImporter {
   final log = Logger('OperationImporter');
 
   late Set<core.Operation> operations;
-  // Tags use identity equality, so every exact name needs one instance.
   late Map<String, core.Tag> _tagsByName;
 
   void import() {
