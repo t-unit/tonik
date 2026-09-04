@@ -678,7 +678,11 @@ class ModelImporter {
         resolvedModels.add(model);
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'allOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
   }
@@ -727,7 +731,11 @@ class ModelImporter {
         ));
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'oneOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
 
@@ -773,9 +781,30 @@ class ModelImporter {
         ));
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'anyOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
+  }
+
+  List<T> _deduplicateCompoundMembers<T>(
+    List<T> members,
+    String keyword,
+    Context context,
+  ) {
+    final seen = <T>{};
+    final uniqueMembers = <T>[];
+    for (final member in members) {
+      if (seen.add(member)) {
+        uniqueMembers.add(member);
+      } else {
+        log.warning('Ignoring duplicate member in $keyword at $context.');
+      }
+    }
+    return uniqueMembers;
   }
 
   /// Resolves a sub-model for a composite (oneOf/allOf/anyOf) shell.
@@ -1092,7 +1121,11 @@ class ModelImporter {
     }
 
     final allOfModel = AllOfModel(
-      models: modelsToMerge,
+      models: _deduplicateCompoundMembers(
+        modelsToMerge,
+        'allOf',
+        modelContext,
+      ),
       context: modelContext,
       isDeprecated: false,
       examples: const [],
@@ -1414,7 +1447,11 @@ class ModelImporter {
 
     final allOfModel = AllOfModel(
       name: name,
-      models: modelsToMerge,
+      models: _deduplicateCompoundMembers(
+        modelsToMerge,
+        'allOf',
+        modelContext,
+      ),
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -1712,7 +1749,11 @@ class ModelImporter {
         )
         .toList();
 
-    allOfModel.models = resolvedModels;
+    allOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'allOf',
+      modelContext,
+    );
 
     return allOfModel;
   }
@@ -1772,7 +1813,11 @@ class ModelImporter {
       ));
     }
 
-    oneOfModel.models = resolvedModels;
+    oneOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'oneOf',
+      modelContext,
+    );
 
     // Nested composite members enter the global model set after resolution.
     for (final nestedModel in oneOfModel.models) {
@@ -1824,7 +1869,11 @@ class ModelImporter {
       ));
     }
 
-    anyOfModel.models = resolvedModels;
+    anyOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'anyOf',
+      modelContext,
+    );
 
     return anyOfModel;
   }

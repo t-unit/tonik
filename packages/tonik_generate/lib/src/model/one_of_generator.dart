@@ -65,29 +65,22 @@ class OneOfGenerator {
     return [baseClass, ...subClasses];
   }
 
-  /// Generate one variant class name per member occurrence, in stable order.
-  List<String> _generateVariantNames(
+  /// Generate a map of discriminated model to variant class name
+  Map<DiscriminatedModel, String> _generateVariantNames(
     OneOfModel model,
     String parentClassName,
   ) {
-    final variantNames = <String>[];
-    final occurrences = <DiscriminatedModel, int>{};
+    final variantNames = <DiscriminatedModel, String>{};
 
     for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
       model.models,
     )) {
-      final occurrence = occurrences.update(
-        discriminatedModel,
-        (count) => count + 1,
-        ifAbsent: () => 0,
-      );
       final uniqueVariantName = nameManager.generateVariantName(
         parentClassName: parentClassName,
         model: discriminatedModel.model,
         discriminatorValue: discriminatedModel.discriminatorValue,
-        occurrenceIndex: occurrence,
       );
-      variantNames.add(uniqueVariantName);
+      variantNames[discriminatedModel] = uniqueVariantName;
     }
 
     return variantNames;
@@ -96,7 +89,7 @@ class OneOfGenerator {
   Class _generateBaseClass(
     OneOfModel model,
     String className,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     return Class(
       (b) {
@@ -249,13 +242,14 @@ class OneOfGenerator {
   List<Class> _generateSubClasses(
     OneOfModel model,
     String parentClassName,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final classes = <Class>[];
 
-    for (final (index, discriminatedModel)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    )) {
+      final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
         discriminatedModel.model,
@@ -315,7 +309,7 @@ class OneOfGenerator {
   Code _generateToJsonBody(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
@@ -325,7 +319,7 @@ class OneOfGenerator {
     );
     for (var i = 0; i < sortedModels.length; i++) {
       final discriminatedModel = sortedModels[i];
-      final variantName = variantNames[i];
+      final variantName = variantNames[discriminatedModel]!;
       final resolvedType = discriminatedModel.model.resolved;
 
       final discriminatorValue = discriminatedModel.discriminatorValue != null
@@ -417,7 +411,7 @@ class OneOfGenerator {
   Code _generateFromJsonBody(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     if (model.models.isEmpty) {
       return generateJsonDecodingExceptionExpression(
@@ -440,24 +434,20 @@ class OneOfGenerator {
       ];
 
       final resultCases = <Code>[];
-      final dispatchedValues = <String>{};
 
-      for (final (index, m)
+      for (final m
           in stableModelSorter
               .sortDiscriminatedModels(model.models)
-              .indexed
               .where(
-                (entry) =>
-                    entry.$2.discriminatorValue != null &&
-                    entry.$2.model.resolved is! PrimitiveModel &&
-                    entry.$2.model.resolved is! ListModel &&
-                    entry.$2.model.resolved is! MapModel &&
-                    entry.$2.model.resolved is! AnyModel &&
-                    entry.$2.model.resolved is! NeverModel,
+                (m) =>
+                    m.discriminatorValue != null &&
+                    m.model.resolved is! PrimitiveModel &&
+                    m.model.resolved is! ListModel &&
+                    m.model.resolved is! MapModel &&
+                    m.model.resolved is! AnyModel &&
+                    m.model.resolved is! NeverModel,
               )) {
-        // Repeated discriminator values select the first sorted occurrence.
-        if (!dispatchedValues.add(m.discriminatorValue!)) continue;
-        final variantName = variantNames[index];
+        final variantName = variantNames[m]!;
 
         resultCases.addAll([
           Code('${specLiteralStringCode(m.discriminatorValue!)} => '),
@@ -503,10 +493,10 @@ class OneOfGenerator {
     // int and double arrive as distinct Dart runtime types and the numeric
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the ordered try-each below.
-    for (final (index, m) in sortedModels.indexed.where(
-      (entry) => _scalarRuntimeType(entry.$2.model.resolved) != null,
+    for (final m in sortedModels.where(
+      (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
-      final variantName = variantNames[index];
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
       if (resolvedType is IntegerModel && !hasNumberMember) {
@@ -541,15 +531,15 @@ class OneOfGenerator {
 
     // Members are attempted in stable member order. A string-encoded variant is
     // only reachable when the plain-string member sorts after it.
-    for (final (index, m) in sortedModels.indexed.where(
-      (entry) =>
-          _scalarRuntimeType(entry.$2.model.resolved) == null &&
-          entry.$2.model.resolved is! AnyModel &&
-          entry.$2.model.resolved is! NeverModel,
+    for (final m in sortedModels.where(
+      (m) =>
+          _scalarRuntimeType(m.model.resolved) == null &&
+          m.model.resolved is! AnyModel &&
+          m.model.resolved is! NeverModel,
     )) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
-      final variantName = variantNames[index];
+      final variantName = variantNames[m]!;
 
       final Expression decodeArg;
       if (resolvedType is ListModel ||
@@ -602,12 +592,10 @@ class OneOfGenerator {
     // AnyModel is a catch-all: wraps the raw JSON value directly.
     // Must be tried last since it accepts any value.
     if (hasAnyModel) {
-      final anyModelIndex = stableModelSorter
+      final anyModelVariant = stableModelSorter
           .sortDiscriminatedModels(model.models)
-          .indexWhere(
-            (m) => m.model.resolved is AnyModel,
-          );
-      final variantName = variantNames[anyModelIndex];
+          .firstWhere((m) => m.model.resolved is AnyModel);
+      final variantName = variantNames[anyModelVariant]!;
       blocks.add(
         refer(variantName).call([refer('json')]).returned.statement,
       );
@@ -639,7 +627,7 @@ class OneOfGenerator {
     required bool isForm,
     required String className,
     required OneOfModel model,
-    required List<String> variantNames,
+    required Map<DiscriminatedModel, String> variantNames,
   }) {
     final constructorName = isForm ? 'fromForm' : 'fromSimple';
     final encodingStyleName = isForm ? 'form' : 'simple';
@@ -707,22 +695,19 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        final dispatchedValues = <String>{};
-        for (final (index, m)
+        for (final m
             in stableModelSorter
                 .sortDiscriminatedModels(model.models)
-                .indexed
                 .where(
-                  (entry) =>
-                      entry.$2.discriminatorValue != null &&
-                      entry.$2.model.resolved is! PrimitiveModel &&
-                      entry.$2.model.resolved is! ListModel &&
-                      entry.$2.model.resolved is! MapModel &&
-                      entry.$2.model.resolved is! AnyModel &&
-                      entry.$2.model.resolved is! NeverModel,
+                  (m) =>
+                      m.discriminatorValue != null &&
+                      m.model.resolved is! PrimitiveModel &&
+                      m.model.resolved is! ListModel &&
+                      m.model.resolved is! MapModel &&
+                      m.model.resolved is! AnyModel &&
+                      m.model.resolved is! NeverModel,
                 )) {
-          if (!dispatchedValues.add(m.discriminatorValue!)) continue;
-          final variantName = variantNames[index];
+          final variantName = variantNames[m]!;
           final modelType = m.model;
 
           bodyBlocks.addAll([
@@ -754,9 +739,8 @@ class OneOfGenerator {
       }
     }
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final modelType = m.model;
 
       final tryBody = <Code>[];
@@ -895,13 +879,12 @@ class OneOfGenerator {
   Method _generateToSimpleMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
       final encodingShape = m.model.encodingShape;
@@ -1113,7 +1096,7 @@ class OneOfGenerator {
   Method _generateToFormMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final emptyEntries = <Code>[
       const Code('const <'),
@@ -1142,9 +1125,8 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
@@ -1281,13 +1263,12 @@ class OneOfGenerator {
 
   Method _generateCurrentEncodingShapeGetter(
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final isList = resolvedType is ListModel;
@@ -1366,7 +1347,7 @@ class OneOfGenerator {
   Method _generateParameterPropertiesMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final hasOnlyPrimitives = !model.models.any(
       (m) => m.model.resolved is! PrimitiveModel,
@@ -1388,9 +1369,8 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
@@ -1543,13 +1523,12 @@ class OneOfGenerator {
   Method _generateToLabelMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
       final encodingShape = m.model.encodingShape;
@@ -1754,13 +1733,12 @@ class OneOfGenerator {
   Method _generateToMatrixMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
@@ -1832,13 +1810,12 @@ class OneOfGenerator {
   Method _generateUriEncodeMethod(
     String className,
     OneOfModel model,
-    List<String> variantNames,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
 
-    for (final (index, m)
-        in stableModelSorter.sortDiscriminatedModels(model.models).indexed) {
-      final variantName = variantNames[index];
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+      final variantName = variantNames[m]!;
       final modelType = m.model;
       final resolvedType = modelType.resolved;
 
