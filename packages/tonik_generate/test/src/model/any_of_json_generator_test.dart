@@ -80,33 +80,30 @@ void main() {
 
         const expectedMethod = '''
         factory Flexible.fromJson(Object? json) {
-          User? user;
-          try {
-            user = User.fromJson(json);
-          } on Object catch (_) {
-            user = null;
-          }
-
-          int? int;
-          try {
-            int = json.decodeJsonInt(context: r'Flexible');
-          } on Object catch (_) {
-            int = null;
-          }
-
           String? string;
           try {
             string = json.decodeJsonString(context: r'Flexible');
           } on Object catch (_) {
             string = null;
           }
-
-          if (user == null && int == null && string == null) {
+          int? int;
+          try {
+            int = json.decodeJsonInt(context: r'Flexible');
+          } on Object catch (_) {
+            int = null;
+          }
+          User? user;
+          try {
+            user = User.fromJson(json);
+          } on Object catch (_) {
+            user = null;
+          }
+          if (string == null && int == null && user == null) {
             throw JsonDecodingException(
               r'Invalid JSON for Flexible: all variants failed to decode',
             );
           }
-          return Flexible(user: user, int: int, string: string);
+          return Flexible(string: string, int: int, user: user);
         }
       ''';
 
@@ -372,13 +369,12 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-
-        if (bool != null) {
-          final Object? _$boolJson = bool!;
-          if (_$boolJson is Map<String, Object?>) {
-            _$mapValues.add(_$boolJson);
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
           } else {
-            _$values.add(_$boolJson);
+            _$values.add(_$stringJson);
           }
         }
         if (int != null) {
@@ -389,27 +385,23 @@ void main() {
             _$values.add(_$intJson);
           }
         }
-        if (string != null) {
-          final Object? _$stringJson = string!;
-          if (_$stringJson is Map<String, Object?>) {
-            _$mapValues.add(_$stringJson);
+        if (bool != null) {
+          final Object? _$boolJson = bool!;
+          if (_$boolJson is Map<String, Object?>) {
+            _$mapValues.add(_$boolJson);
           } else {
-            _$values.add(_$stringJson);
+            _$values.add(_$boolJson);
           }
         }
-
         if (_$values.isEmpty && _$mapValues.isEmpty) return null;
-
         if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
           );
         }
-
         if (_$values.isNotEmpty) {
           return _$values.first;
         }
-
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
@@ -421,7 +413,6 @@ void main() {
           }
           return _$map;
         }
-
         return null;
       }
     ''';
@@ -477,38 +468,33 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-
-        if (string != null) {
-          final Object? _$stringJson = string!;
-          if (_$stringJson is Map<String, Object?>) {
-            _$mapValues.add(_$stringJson);
-              _$discriminatorValue ??= r'str';
-          } else {
-            _$values.add(_$stringJson);
-          }
-        }
         if (user != null) {
           final Object? _$userJson = user!.toJson();
           if (_$userJson is Map<String, Object?>) {
             _$mapValues.add(_$userJson);
-              _$discriminatorValue ??= r'user';
+            _$discriminatorValue ??= r'user';
           } else {
             _$values.add(_$userJson);
           }
         }
-
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+            _$discriminatorValue ??= r'str';
+          } else {
+            _$values.add(_$stringJson);
+          }
+        }
         if (_$values.isEmpty && _$mapValues.isEmpty) return null;
-
         if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
           );
         }
-
         if (_$values.isNotEmpty) {
           return _$values.first;
         }
-
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
@@ -520,7 +506,6 @@ void main() {
           }
           return _$map;
         }
-
         return null;
       }
     ''';

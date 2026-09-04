@@ -51,8 +51,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueInt() => EncodingShape.simple,
           ValueString() => EncodingShape.simple,
+          ValueInt() => EncodingShape.simple,
         };
       }
     ''';
@@ -313,8 +313,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueA(:final value) => value.currentEncodingShape,
           ValueString() => EncodingShape.simple,
+          ValueA(:final value) => value.currentEncodingShape,
         };
       }
     ''';
@@ -918,7 +918,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
       const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'company'), }, EntityUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }, }; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { EntityUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }, EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'company'), }, }; }
 ''';
 
       expect(
@@ -1013,7 +1013,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ResponseMessage() => throw EncodingException( r'parameterProperties not supported for Response: cannot determine properties at runtime', ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }, }; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }, ResponseMessage() => throw EncodingException( r'parameterProperties not supported for Response: cannot determine properties at runtime', ), }; }
 ''';
 
         expect(
@@ -1149,7 +1149,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
     );
   });
 
-  test('uses stable sorting for discriminated models', () {
+  test('preserves declaration order for discriminated models', () {
     final sharedContext = context.push('TestOneOf').push('oneOf');
 
     final model = OneOfModel(
@@ -1189,11 +1189,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         .map((c) => c.name)
         .toList();
 
-    // Verify variants are in stable sorted order by discriminator value.
+    // Variants follow the schema member order, including discriminator values.
     expect(variantNames, [
+      'TestOneOfZebra',
       'TestOneOfApple',
       'TestOneOfBanana',
-      'TestOneOfZebra',
     ]);
   });
 
@@ -1542,8 +1542,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           collapseWhitespace('''
             EncodingShape get currentEncodingShape {
               return switch (this) {
-                ValueInt() => EncodingShape.simple,
                 ValueList() => EncodingShape.complex,
+                ValueInt() => EncodingShape.simple,
               };
             }
           '''),
@@ -2622,8 +2622,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           collapseWhitespace('''
             EncodingShape get currentEncodingShape {
               return switch (this) {
-                ValueInt() => EncodingShape.simple,
                 ValueTags() => EncodingShape.complex,
+                ValueInt() => EncodingShape.simple,
               };
             }
           '''),
@@ -3611,12 +3611,12 @@ bool operator ==(Object other) {
             bool literal = false,
           }) {
             return switch (this) {
-              ValueBase64(:final value) => value.toBase64String().toSimple(
+              ValueText(:final value) => value.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
               ),
-              ValueText(:final value) => value.toSimple(
+              ValueBase64(:final value) => value.toBase64String().toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
@@ -3689,18 +3689,19 @@ bool operator ==(Object other) {
             bool literal = false,
           }) {
             return switch (this) {
-              ValueNullableData(:final value) => value == null
-                  ? ''
-                  : value.toBase64String().toSimple(
-                      explode: explode,
-                      allowEmpty: allowEmpty,
-                      literal: literal,
-                    ),
               ValueText(:final value) => value.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
               ),
+              ValueNullableData(:final value) =>
+                value == null
+                    ? ''
+                    : value.toBase64String().toSimple(
+                        explode: explode,
+                        allowEmpty: allowEmpty,
+                        literal: literal,
+                      ),
             };
           }
         ''';
@@ -3757,23 +3758,27 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            required Encoding textEncoding,bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
-              ValueBase64(:final value) => value.toBase64String().toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved, textEncoding: textEncoding,
-              ),
               ValueText(:final value) => value.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved, textEncoding: textEncoding,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              ),
+              ValueBase64(:final value) => value.toBase64String().toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
               ),
             };
           }
@@ -3841,10 +3846,20 @@ bool operator ==(Object other) {
             String paramName, {
             required bool explode,
             required bool allowEmpty,
-            required Encoding textEncoding,bool useQueryComponent = false,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+            required Encoding textEncoding,
+            bool useQueryComponent = false,
+            bool allowReserved = false,
+            Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
+              ValueText(:final value) => value.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              ),
               ValueNullableData(:final value) =>
                 value == null
                     ? const <ParameterEntry>[]
@@ -3853,15 +3868,9 @@ bool operator ==(Object other) {
                         explode: explode,
                         allowEmpty: allowEmpty,
                         useQueryComponent: useQueryComponent,
-                        allowReserved: allowReserved, textEncoding: textEncoding,
+                        allowReserved: allowReserved,
+                        textEncoding: textEncoding,
                       ),
-              ValueText(:final value) => value.toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved, textEncoding: textEncoding,
-              ),
             };
           }
         ''';
@@ -3916,11 +3925,11 @@ bool operator ==(Object other) {
           @override
           String toLabel({required bool explode, required bool allowEmpty}) {
             return switch (this) {
-              ValueBase64(:final value) => value.toBase64String().toLabel(
+              ValueText(:final value) => value.toLabel(
                 explode: explode,
                 allowEmpty: allowEmpty,
               ),
-              ValueText(:final value) => value.toLabel(
+              ValueBase64(:final value) => value.toBase64String().toLabel(
                 explode: explode,
                 allowEmpty: allowEmpty,
               ),
@@ -3988,16 +3997,17 @@ bool operator ==(Object other) {
           @override
           String toLabel({required bool explode, required bool allowEmpty}) {
             return switch (this) {
-              ValueNullableData(:final value) => value == null
-                  ? ''
-                  : value.toBase64String().toLabel(
-                      explode: explode,
-                      allowEmpty: allowEmpty,
-                    ),
               ValueText(:final value) => value.toLabel(
                 explode: explode,
                 allowEmpty: allowEmpty,
               ),
+              ValueNullableData(:final value) =>
+                value == null
+                    ? ''
+                    : value.toBase64String().toLabel(
+                        explode: explode,
+                        allowEmpty: allowEmpty,
+                      ),
             };
           }
         ''';
@@ -4057,14 +4067,14 @@ bool operator ==(Object other) {
             bool allowReserved = false,
           }) {
             return switch (this) {
+              ValueText() => throw EncodingException(
+                r'Cannot uriEncode Value: variant contains complex type',
+              ),
               ValueBase64(:final value) => value.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
                 textEncoding: textEncoding,
                 useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
-              ),
-              ValueText() => throw EncodingException(
-                r'Cannot uriEncode Value: variant contains complex type',
               ),
             };
           }
@@ -4129,10 +4139,9 @@ bool operator ==(Object other) {
               return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              TreeOrClassAClassA(:final value) => (value.toJson(), null),
               TreeOrClassATree(:final value) => (_$encodeTree(value), null),
+              TreeOrClassAClassA(:final value) => (value.toJson(), null),
             };
-
             return _$json;
           }
         ''';
@@ -4190,13 +4199,15 @@ bool operator ==(Object other) {
           class TreeOrClassA {
             factory TreeOrClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _$decodeTree;
-              _$decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeOrClassA')");
-              try {
-                return TreeOrClassAClassA(ClassA.fromJson(json));
-              } on Object catch (_) {}
+              _$decodeTree = (Object? v) => v.decodeJsonMap(
+                (v) => _$decodeTree(v),
+                context: r"Tree (at 'TreeOrClassA')",
+              );
               try {
                 return TreeOrClassATree(_$decodeTree(json));
+              } on Object catch (_) {}
+              try {
+                return TreeOrClassAClassA(ClassA.fromJson(json));
               } on Object catch (_) {}
               throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
             }
@@ -4423,11 +4434,11 @@ bool operator ==(Object other) {
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is double) {
-                return ValueDouble(json);
-              }
               if (json is int) {
                 return ValueInt(json);
+              }
+              if (json is double) {
+                return ValueDouble(json);
               }
               throw JsonDecodingException(r'Invalid JSON for Value');
             }
@@ -4493,11 +4504,11 @@ bool operator ==(Object other) {
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is double) {
-                return ValueDouble(json);
-              }
               if (json is int) {
                 return ValueInt(json);
+              }
+              if (json is double) {
+                return ValueDouble(json);
               }
               try {
                 return ValueString(json.decodeJsonString(context: r'Value'));
@@ -4535,11 +4546,11 @@ bool operator ==(Object other) {
           contains(
             collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is double) {
-                return ValueDouble(json);
-              }
               if (json is int) {
                 return ValueInt(json);
+              }
+              if (json is double) {
+                return ValueDouble(json);
               }
               try {
                 return ValueDecimal(json.decodeJsonBigDecimal(context: r'Value'));

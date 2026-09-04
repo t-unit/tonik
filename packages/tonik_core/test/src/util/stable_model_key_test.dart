@@ -223,7 +223,7 @@ void main() {
     });
 
     test(
-      'generates stable key for AllOfModel with sorted children',
+      'generates stable key for AllOfModel with ordered children',
       () {
         final sharedContext = context.push('Test').push('allOf');
 
@@ -252,7 +252,7 @@ void main() {
         final key1 = sorter.stableKeyOf(model1);
         final key2 = sorter.stableKeyOf(model2);
 
-        expect(key1, key2);
+        expect(key1, isNot(key2));
         expect(key1, contains('BooleanModel'));
         expect(key1, contains('IntegerModel'));
         expect(key1, contains('StringModel'));
@@ -330,7 +330,7 @@ void main() {
 
         expect(
           sorter.stableKeyOf(model1),
-          sorter.stableKeyOf(model2),
+          isNot(sorter.stableKeyOf(model2)),
         );
       },
     );
@@ -372,7 +372,7 @@ void main() {
 
       expect(
         sorter.stableKeyOf(model1),
-        sorter.stableKeyOf(model2),
+        isNot(sorter.stableKeyOf(model2)),
       );
     });
 

@@ -97,9 +97,7 @@ class StableModelSorter {
   /// densely connected graphs. Beyond [_maxDepth], only the runtime type
   /// is emitted instead of a full structural traversal.
   ///
-  /// For compound children (AllOf, OneOf, AnyOf), children are sorted by a
-  /// cheap deterministic key before traversal so the result is independent
-  /// of member iteration order.
+  /// Compound members are traversed in declaration order.
   String _computeStableKey(Model model, Set<Model> visited, int depth) {
     if (depth > _maxDepth) {
       return switch (model) {
@@ -116,14 +114,14 @@ class StableModelSorter {
 
     return switch (model) {
       AllOfModel(:final models, :final additionalPropertiesPolicy) =>
-        'AllOfModel{${_stableSortedModels(models, visited, depth)},'
+        'AllOfModel{${_orderedModels(models, visited, depth)},'
             'ap:${_policyKey(additionalPropertiesPolicy, visited, depth)}}',
       OneOfModel(:final models, :final discriminator) =>
         'OneOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
+            '${_orderedDiscriminatedModels(models, visited, depth)}}',
       AnyOfModel(:final models, :final discriminator) =>
         'AnyOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
+            '${_orderedDiscriminatedModels(models, visited, depth)}}',
       ListModel(:final content, :final name) =>
         'ListModel{$name,${_computeStableKey(content, visited, depth + 1)}}',
       ClassModel(
@@ -175,28 +173,24 @@ class StableModelSorter {
           '${_computeStableKey(valueModel, visited, depth + 1)})',
   };
 
-  /// Sorts models by a cheap deterministic key, then computes full keys
-  /// in that fixed order.
-  String _stableSortedModels(
-    Iterable<Model> models,
+  /// Computes compound member keys in declaration order.
+  String _orderedModels(
+    List<Model> models,
     Set<Model> visited,
     int depth,
   ) {
-    final sorted = models.toList()..sort(_cheapModelCompare);
-    return sorted
+    return models
         .map((m) => _computeStableKey(m, visited, depth + 1))
         .join(',');
   }
 
-  /// Sorts discriminated models by discriminator value first, then by a
-  /// cheap model key, before computing full keys in that fixed order.
-  String _stableSortedDiscriminatedModels(
-    Iterable<DiscriminatedModel> models,
+  /// Computes discriminated member keys in declaration order.
+  String _orderedDiscriminatedModels(
+    List<DiscriminatedModel> models,
     Set<Model> visited,
     int depth,
   ) {
-    final sorted = models.toList()..sort(_cheapDiscriminatedModelCompare);
-    return sorted
+    return models
         .map(
           (dm) =>
               '${dm.discriminatorValue}:'
@@ -209,26 +203,5 @@ class StableModelSorter {
     final sorted = values.toList()
       ..sort((a, b) => a.value.toString().compareTo(b.value.toString()));
     return sorted.map((v) => v.value.toString()).join(',');
-  }
-
-  /// Cheap, non-recursive comparator for pre-sorting Set children.
-  static int _cheapModelCompare(Model a, Model b) {
-    final typeComp = a.runtimeType.toString().compareTo(
-      b.runtimeType.toString(),
-    );
-    if (typeComp != 0) return typeComp;
-    return a.context.toString().compareTo(b.context.toString());
-  }
-
-  /// Cheap, non-recursive comparator for pre-sorting discriminated models.
-  static int _cheapDiscriminatedModelCompare(
-    DiscriminatedModel a,
-    DiscriminatedModel b,
-  ) {
-    if (a.discriminatorValue != null && b.discriminatorValue != null) {
-      final discComp = a.discriminatorValue!.compareTo(b.discriminatorValue!);
-      if (discComp != 0) return discComp;
-    }
-    return _cheapModelCompare(a.model, b.model);
   }
 }

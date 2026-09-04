@@ -67,12 +67,12 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              ResultError(:final value) => (value, r'error'),
               ResultSuccess(:final value) => (value, r'success'),
+              ResultError(:final value) => (value, r'error'),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),
@@ -178,16 +178,15 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              ResultError(:final value) => (value.toJson(), r'error'),
               ResultSuccess(:final value) => (value.toJson(), r'success'),
+              ResultError(:final value) => (value.toJson(), r'error'),
             };
-
             if (_$discriminator != null && _$json is Map<String, Object?>) {
               _$json.putIfAbsent(r'type', () => _$discriminator);
             }
-
             return _$json;
-          }''';
+          }
+''';
 
         final generatedCode = format(baseClass.accept(emitter).toString());
         expect(
@@ -211,27 +210,23 @@ void main() {
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
             final _$discriminator = json is Map<String, Object?> ? json[r'type'] : null;
-
             final _$result = switch (_$discriminator) {
-              r'error' => ResultError(Error.fromJson(json)),
               r'success' => ResultSuccess(Success.fromJson(json)),
+              r'error' => ResultError(Error.fromJson(json)),
               _ => null,
             };
-
             if (_$result != null) {
               return _$result;
             }
-
-            try {
-              return ResultError(Error.fromJson(json));
-            } on Object catch (_) {}
-
             try {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
-
+            try {
+              return ResultError(Error.fromJson(json));
+            } on Object catch (_) {}
             throw JsonDecodingException(r'Invalid JSON for Result');
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -311,17 +306,16 @@ void main() {
           const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              ResultError(:final value) => (value.toJson(), r'error'),
               ResultSuccess(:final value) => (value.toJson(), null),
               ResultString(:final value) => (value, null),
+              ResultError(:final value) => (value.toJson(), r'error'),
             };
-
             if (_$discriminator != null && _$json is Map<String, Object?>) {
               _$json.putIfAbsent(r'discriminator', () => _$discriminator);
             }
-
             return _$json;
-          }''';
+          }
+''';
 
           final generatedCode = format(baseClass.accept(emitter).toString());
           expect(
@@ -345,32 +339,29 @@ void main() {
 
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
-            final _$discriminator = json is Map<String, Object?> ? json[r'discriminator'] : null;
-
+            final _$discriminator = json is Map<String, Object?>
+                ? json[r'discriminator']
+                : null;
             final _$result = switch (_$discriminator) {
               r'error' => ResultError(Error.fromJson(json)),
               _ => null,
             };
-
             if (_$result != null) {
               return _$result;
             }
-
-            try {
-              return ResultError(Error.fromJson(json));
-            } on Object catch (_) {}
-
             try {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
-
             try {
               return ResultString(json.decodeJsonString(context: r'Result'));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
-
+            try {
+              return ResultError(Error.fromJson(json));
+            } on Object catch (_) {}
             throw JsonDecodingException(r'Invalid JSON for Result');
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -407,12 +398,15 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
+              TimestampValueTimestamp(:final value) => (
+                value.toTimeZonedIso8601String(),
+                r'timestamp',
+              ),
               TimestampValueString(:final value) => (value, r'string'),
-              TimestampValueTimestamp(:final value) => ( value.toTimeZonedIso8601String(), r'timestamp', ),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),
@@ -527,12 +521,12 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              UriValueString(:final value) => (value, r'string'),
               UriValueUri(:final value) => (value.toString(), r'uri'),
+              UriValueString(:final value) => (value, r'string'),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),
@@ -637,12 +631,12 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              UserValueString(:final value) => (value, r'string'),
               UserValueUser(:final value) => (value.toJson(), r'user'),
+              UserValueString(:final value) => (value, r'string'),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),
@@ -877,12 +871,12 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              FlexibleValueBoolean(:final value) => (value, r'boolean'),
               FlexibleValueFlexible(:final value) => (value.toJson(), r'flexible'),
+              FlexibleValueBoolean(:final value) => (value, r'boolean'),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),
@@ -925,12 +919,12 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              IdentifierValueNumber(:final value) => (value, r'number'),
               IdentifierValueUserId(:final value) => (value, r'userId'),
+              IdentifierValueNumber(:final value) => (value, r'number'),
             };
-
             return _$json;
-          }''';
+          }
+''';
 
         expect(
           collapseWhitespace(generatedCode),

@@ -72,9 +72,7 @@ class OneOfGenerator {
   ) {
     final variantNames = <DiscriminatedModel, String>{};
 
-    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    )) {
+    for (final discriminatedModel in model.models) {
       final uniqueVariantName = nameManager.generateVariantName(
         parentClassName: parentClassName,
         model: discriminatedModel.model,
@@ -246,9 +244,7 @@ class OneOfGenerator {
   ) {
     final classes = <Class>[];
 
-    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    )) {
+    for (final discriminatedModel in model.models) {
       final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
@@ -314,11 +310,9 @@ class OneOfGenerator {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final caseCodes = <Code>[];
-    final sortedModels = stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    );
-    for (var i = 0; i < sortedModels.length; i++) {
-      final discriminatedModel = sortedModels[i];
+    final members = model.models;
+    for (var i = 0; i < members.length; i++) {
+      final discriminatedModel = members[i];
       final variantName = variantNames[discriminatedModel]!;
       final resolvedType = discriminatedModel.model.resolved;
 
@@ -371,7 +365,7 @@ class OneOfGenerator {
           ..add(jsonValueBuilt.unsafeRawBody.code)
           ..add(Code(', $discriminatorValue)'));
       }
-      if (i < sortedModels.length - 1) {
+      if (i < members.length - 1) {
         caseCodes.add(const Code(',\n'));
       }
     }
@@ -435,18 +429,15 @@ class OneOfGenerator {
 
       final resultCases = <Code>[];
 
-      for (final m
-          in stableModelSorter
-              .sortDiscriminatedModels(model.models)
-              .where(
-                (m) =>
-                    m.discriminatorValue != null &&
-                    m.model.resolved is! PrimitiveModel &&
-                    m.model.resolved is! ListModel &&
-                    m.model.resolved is! MapModel &&
-                    m.model.resolved is! AnyModel &&
-                    m.model.resolved is! NeverModel,
-              )) {
+      for (final m in model.models.where(
+        (m) =>
+            m.discriminatorValue != null &&
+            m.model.resolved is! PrimitiveModel &&
+            m.model.resolved is! ListModel &&
+            m.model.resolved is! MapModel &&
+            m.model.resolved is! AnyModel &&
+            m.model.resolved is! NeverModel,
+      )) {
         final variantName = variantNames[m]!;
 
         resultCases.addAll([
@@ -486,14 +477,12 @@ class OneOfGenerator {
       (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
     );
 
-    final sortedModels = stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    );
+    final members = model.models;
 
     // int and double arrive as distinct Dart runtime types and the numeric
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the ordered try-each below.
-    for (final m in sortedModels.where(
+    for (final m in members.where(
       (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
       final variantName = variantNames[m]!;
@@ -529,9 +518,9 @@ class OneOfGenerator {
       ]);
     }
 
-    // Members are attempted in stable member order. A string-encoded variant is
-    // only reachable when the plain-string member sorts after it.
-    for (final m in sortedModels.where(
+    // Members are attempted in schema order. A string-encoded variant is
+    // only reachable when the plain-string member appears after it.
+    for (final m in members.where(
       (m) =>
           _scalarRuntimeType(m.model.resolved) == null &&
           m.model.resolved is! AnyModel &&
@@ -592,9 +581,9 @@ class OneOfGenerator {
     // AnyModel is a catch-all: wraps the raw JSON value directly.
     // Must be tried last since it accepts any value.
     if (hasAnyModel) {
-      final anyModelVariant = stableModelSorter
-          .sortDiscriminatedModels(model.models)
-          .firstWhere((m) => m.model.resolved is AnyModel);
+      final anyModelVariant = model.models.firstWhere(
+        (m) => m.model.resolved is AnyModel,
+      );
       final variantName = variantNames[anyModelVariant]!;
       blocks.add(
         refer(variantName).call([refer('json')]).returned.statement,
@@ -695,18 +684,15 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        for (final m
-            in stableModelSorter
-                .sortDiscriminatedModels(model.models)
-                .where(
-                  (m) =>
-                      m.discriminatorValue != null &&
-                      m.model.resolved is! PrimitiveModel &&
-                      m.model.resolved is! ListModel &&
-                      m.model.resolved is! MapModel &&
-                      m.model.resolved is! AnyModel &&
-                      m.model.resolved is! NeverModel,
-                )) {
+        for (final m in model.models.where(
+          (m) =>
+              m.discriminatorValue != null &&
+              m.model.resolved is! PrimitiveModel &&
+              m.model.resolved is! ListModel &&
+              m.model.resolved is! MapModel &&
+              m.model.resolved is! AnyModel &&
+              m.model.resolved is! NeverModel,
+        )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
 
@@ -739,7 +725,7 @@ class OneOfGenerator {
       }
     }
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -883,7 +869,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
@@ -1125,7 +1111,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
@@ -1267,7 +1253,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
@@ -1369,7 +1355,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
@@ -1527,7 +1513,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
@@ -1737,7 +1723,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
@@ -1814,7 +1800,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
       final resolvedType = modelType.resolved;

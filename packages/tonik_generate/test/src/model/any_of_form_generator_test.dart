@@ -155,10 +155,10 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (int != null) {
+          if (string != null) {
             _$shapes.add(EncodingShape.simple);
           }
-          if (string != null) {
+          if (int != null) {
             _$shapes.add(EncodingShape.simple);
           }
           if (_$shapes.isEmpty) {
@@ -264,11 +264,11 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (data != null) {
-            _$shapes.add(data!.currentEncodingShape);
-          }
           if (string != null) {
             _$shapes.add(EncodingShape.simple);
+          }
+          if (data != null) {
+            _$shapes.add(data!.currentEncodingShape);
           }
           if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -303,26 +303,24 @@ void main() {
 
       const expectedMethod = '''
         factory Flexible.fromForm(String? value, {required bool explode}) {
-          int? int;
-          try {
-            int = value.decodeFormInt(context: r'Flexible');
-          } on Object catch (_) {
-            int = null;
-          }
-
           String? string;
           try {
             string = value.decodeFormString(context: r'Flexible');
           } on Object catch (_) {
             string = null;
           }
-
-          if (int == null && string == null) {
+          int? int;
+          try {
+            int = value.decodeFormInt(context: r'Flexible');
+          } on Object catch (_) {
+            int = null;
+          }
+          if (string == null && int == null) {
             throw FormDecodingException(
               r'Invalid form value for Flexible: all variants failed to decode',
             );
           }
-          return Flexible(int: int, string: string);
+          return Flexible(string: string, int: int);
         }
       ''';
 
@@ -449,26 +447,24 @@ void main() {
 
       const expectedMethod = '''
         factory SearchKey.fromForm(String? value, {required bool explode}) {
-          User? user;
-          try {
-            user = User.fromForm(value, explode: explode);
-          } on Object catch (_) {
-            user = null;
-          }
-
           String? string;
           try {
             string = value.decodeFormString(context: r'SearchKey');
           } on Object catch (_) {
             string = null;
           }
-
-          if (user == null && string == null) {
+          User? user;
+          try {
+            user = User.fromForm(value, explode: explode);
+          } on Object catch (_) {
+            user = null;
+          }
+          if (string == null && user == null) {
             throw FormDecodingException(
               r'Invalid form value for SearchKey: all variants failed to decode',
             );
           }
-          return SearchKey(user: user, string: string);
+          return SearchKey(string: string, user: user);
         }
       ''';
 
@@ -598,18 +594,6 @@ void main() {
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
-          if (int != null) {
-            final _$intForm = int!.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            );
-            _$entryLists.add(_$intForm);
-            _$values.add(_$intForm.map((e) => e.value).join(','));
-          }
           if (string != null) {
             final _$stringForm = string!.toForm(
               paramName,
@@ -621,6 +605,18 @@ void main() {
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (int != null) {
+            final _$intForm = int!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
+            );
+            _$entryLists.add(_$intForm);
+            _$values.add(_$intForm.map((e) => e.value).join(','));
           }
           if (_$values.isEmpty) {
             return const <ParameterEntry>[];
@@ -850,10 +846,6 @@ void main() {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, PropertyValue>>[];
-          if (data != null) {
-            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
-            _$mapValues.add(_$dataForm);
-          }
           if (string != null) {
             final _$stringForm = string!.toForm(
               paramName,
@@ -865,6 +857,10 @@ void main() {
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (data != null) {
+            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$dataForm);
           }
           if (_$values.isEmpty && _$mapValues.isEmpty) {
             return const <ParameterEntry>[];
@@ -930,26 +926,24 @@ void main() {
 
       const expectedMethod = '''
         factory Outer.fromForm(String? value, {required bool explode}) {
-          Inner? inner;
-          try {
-            inner = Inner.fromForm(value, explode: explode);
-          } on Object catch (_) {
-            inner = null;
-          }
-
           String? string;
           try {
             string = value.decodeFormString(context: r'Outer');
           } on Object catch (_) {
             string = null;
           }
-
-          if (inner == null && string == null) {
+          Inner? inner;
+          try {
+            inner = Inner.fromForm(value, explode: explode);
+          } on Object catch (_) {
+            inner = null;
+          }
+          if (string == null && inner == null) {
             throw FormDecodingException(
               r'Invalid form value for Outer: all variants failed to decode',
             );
           }
-          return Outer(inner: inner, string: string);
+          return Outer(string: string, inner: inner);
         }
       ''';
 
@@ -1024,6 +1018,18 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
                 case EncodingShape.simple:
@@ -1049,18 +1055,6 @@ void main() {
                     'Cannot encode field with mixed encoding shape',
                   );
               }
-            }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
-                textEncoding: textEncoding,
-              );
-              _$entryLists.add(_$stringForm);
-              _$values.add(_$stringForm.map((e) => e.value).join(','));
             }
             if (_$values.isEmpty && _$mapValues.isEmpty) {
               return const <ParameterEntry>[];
@@ -1154,6 +1148,18 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
             if (innerAnyOf != null) {
               switch (innerAnyOf!.currentEncodingShape) {
                 case EncodingShape.simple:
@@ -1179,18 +1185,6 @@ void main() {
                     'Cannot encode field with mixed encoding shape',
                   );
               }
-            }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
-                textEncoding: textEncoding,
-              );
-              _$entryLists.add(_$stringForm);
-              _$values.add(_$stringForm.map((e) => e.value).join(','));
             }
             if (_$values.isEmpty && _$mapValues.isEmpty) {
               return const <ParameterEntry>[];
@@ -1274,9 +1268,17 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
-            if (myClass != null) {
-              final _$myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
-              _$mapValues.add(_$myClassForm);
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
+                textEncoding: textEncoding,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
             }
             if (int != null) {
               final _$intForm = int!.toForm(
@@ -1290,17 +1292,9 @@ void main() {
               _$entryLists.add(_$intForm);
               _$values.add(_$intForm.map((e) => e.value).join(','));
             }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
-                textEncoding: textEncoding,
-              );
-              _$entryLists.add(_$stringForm);
-              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            if (myClass != null) {
+              final _$myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$myClassForm);
             }
             if (_$values.isEmpty && _$mapValues.isEmpty) {
               return const <ParameterEntry>[];
@@ -1499,14 +1493,6 @@ void main() {
             bool literal = false,
           }) {
             final _$values = <String>{};
-            if (int != null) {
-              final _$intSimple = int!.toSimple(
-                explode: explode,
-                allowEmpty: allowEmpty,
-                literal: literal,
-              );
-              _$values.add(_$intSimple);
-            }
             if (string != null) {
               final _$stringSimple = string!.toSimple(
                 explode: explode,
@@ -1515,6 +1501,17 @@ void main() {
               );
               _$values.add(_$stringSimple);
             }
+            if (int != null) {
+              final _$intSimple = int!.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+              _$values.add(_$intSimple);
+            }
+            if (_$values.isEmpty) return '';
+            return _$values.first;
+          }
         ''';
 
         expect(

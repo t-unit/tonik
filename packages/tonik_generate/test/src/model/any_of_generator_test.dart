@@ -435,15 +435,15 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is ValueChoice &&
-            other.int == this.int &&
-            other.string == this.string;
+              other.string == this.string &&
+              other.int == this.int;
         }
       ''';
 
       const expectedHash = '''
         @override
         int get hashCode {
-          return Object.hashAll([int, string]);
+          return Object.hashAll([string, int]);
         }
       ''';
 
@@ -506,10 +506,10 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (int != null) {
+          if (string != null) {
             _$shapes.add(EncodingShape.simple);
           }
-          if (string != null) {
+          if (int != null) {
             _$shapes.add(EncodingShape.simple);
           }
           if (_$shapes.isEmpty) {
@@ -559,11 +559,11 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (adminProfile != null) {
-            _$shapes.add(adminProfile!.currentEncodingShape);
-          }
           if (userProfile != null) {
             _$shapes.add(userProfile!.currentEncodingShape);
+          }
+          if (adminProfile != null) {
+            _$shapes.add(adminProfile!.currentEncodingShape);
           }
           if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -615,11 +615,11 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (data != null) {
-            _$shapes.add(data!.currentEncodingShape);
-          }
           if (string != null) {
             _$shapes.add(EncodingShape.simple);
+          }
+          if (data != null) {
+            _$shapes.add(data!.currentEncodingShape);
           }
           if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -728,17 +728,17 @@ String toSimple({
 }) {
   final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
+  if (person != null) {
+    final _$personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$personSimple);
+    _$discriminatorValue ??= r'person';
+  }
   if (company != null) {
     final _$companySimple = company!.parameterProperties(
       allowEmpty: allowEmpty,
     );
     _$mapValues.add(_$companySimple);
     _$discriminatorValue ??= r'company';
-  }
-  if (person != null) {
-    final _$personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
-    _$mapValues.add(_$personSimple);
-    _$discriminatorValue ??= r'person';
   }
   final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
@@ -868,15 +868,15 @@ String toSimple({
           }) {
             final _$mapValues = <Map<String, PropertyValue>>[];
             String? _$discriminatorValue;
-            if (company != null) {
-              final _$companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
-              _$mapValues.add(_$companyForm);
-              _$discriminatorValue ??= r'company';
-            }
             if (person != null) {
               final _$personForm = person!.parameterProperties(allowEmpty: allowEmpty);
               _$mapValues.add(_$personForm);
               _$discriminatorValue ??= r'person';
+            }
+            if (company != null) {
+              final _$companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$companyForm);
+              _$discriminatorValue ??= r'company';
             }
             final _$map = <String, PropertyValue>{};
             for (final _$m in _$mapValues) {
@@ -941,14 +941,6 @@ String toSimple({
   bool literal = false,
 }) {
   final _$values = <String>{};
-  if (int != null) {
-    final _$intSimple = int!.toSimple(
-      explode: explode,
-      allowEmpty: allowEmpty,
-      literal: literal,
-    );
-    _$values.add(_$intSimple);
-  }
   if (string != null) {
     final _$stringSimple = string!.toSimple(
       explode: explode,
@@ -956,6 +948,14 @@ String toSimple({
       literal: literal,
     );
     _$values.add(_$stringSimple);
+  }
+  if (int != null) {
+    final _$intSimple = int!.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
+    _$values.add(_$intSimple);
   }
   if (_$values.isEmpty) return '';
   return _$values.first;
@@ -1024,11 +1024,6 @@ String toSimple({
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
-  if (data != null) {
-    final _$dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
-    _$mapValues.add(_$dataSimple);
-    _$discriminatorValue ??= r'data';
-  }
   if (string != null) {
     final _$stringSimple = string!.toSimple(
       explode: explode,
@@ -1036,6 +1031,11 @@ String toSimple({
       literal: literal,
     );
     _$values.add(_$stringSimple);
+  }
+  if (data != null) {
+    final _$dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$dataSimple);
+    _$discriminatorValue ??= r'data';
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -1195,7 +1195,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -1561,7 +1561,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -2874,8 +2874,8 @@ Object? toJson() {
 bool operator ==(Object other) {
   if (identical(this, other)) return true;
   return other is FlexibleModel &&
-      other.int == this.int &&
-      other.iList == this.iList;
+      other.iList == this.iList &&
+      other.int == this.int;
 }
 ''';
       expect(
@@ -2933,6 +2933,10 @@ String toSimple({
 }) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
+  if (text != null) {
+    final _$textSimple = text!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$textSimple);
+  }
   if (tonikFile != null) {
     final _$tonikFileSimple = tonikFile!.toBase64String().toSimple(
       explode: explode,
@@ -2940,10 +2944,6 @@ String toSimple({
       literal: literal,
     );
     _$values.add(_$tonikFileSimple);
-  }
-  if (text != null) {
-    final _$textSimple = text!.parameterProperties(allowEmpty: allowEmpty);
-    _$mapValues.add(_$textSimple);
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -3023,6 +3023,10 @@ String toSimple({
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
+            if (text != null) {
+              final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$textForm);
+            }
             if (tonikFile != null) {
               final _$tonikFileForm = tonikFile!.toBase64String().toForm(
                 paramName,
@@ -3034,10 +3038,6 @@ String toSimple({
               );
               _$entryLists.add(_$tonikFileForm);
               _$values.add(_$tonikFileForm.map((e) => e.value).join(','));
-            }
-            if (text != null) {
-              final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty);
-              _$mapValues.add(_$textForm);
             }
             if (_$values.isEmpty && _$mapValues.isEmpty) {
               return const <ParameterEntry>[];
@@ -3114,16 +3114,16 @@ String toSimple({
 String toLabel({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
+  if (text != null) {
+    final _$textLabel = text!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$textLabel);
+  }
   if (tonikFile != null) {
     final _$tonikFileLabel = tonikFile!.toBase64String().toLabel(
       explode: explode,
       allowEmpty: allowEmpty,
     );
     _$values.add(_$tonikFileLabel);
-  }
-  if (text != null) {
-    final _$textLabel = text!.parameterProperties(allowEmpty: allowEmpty);
-    _$mapValues.add(_$textLabel);
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -3138,10 +3138,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toLabel(
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toLabel(explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -3196,17 +3193,17 @@ String toLabel({required bool explode, required bool allowEmpty}) {
             bool useQueryComponent = false,
             bool allowReserved = false,
           }) {
+            if (text != null) {
+              throw EncodingException(
+                r'Cannot uriEncode AnyOfBase64: contains complex type',
+              );
+            }
             if (tonikFile != null) {
               return tonikFile!.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
                 textEncoding: textEncoding,
                 useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
-              );
-            }
-            if (text != null) {
-              throw EncodingException(
-                r'Cannot uriEncode AnyOfBase64: contains complex type',
               );
             }
             throw EncodingException(r'Cannot uriEncode AnyOfBase64: no value set');
@@ -3270,13 +3267,13 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         const expected = r'''
 EncodingShape get currentEncodingShape {
   final _$shapes = <EncodingShape>{};
+  if (detailedFilter != null) {
+    _$shapes.add(detailedFilter!.currentEncodingShape);
+  }
   if (object != null) {
     throw EncodingException(
       r'AnyModel variant of MixedFilter cannot determine encoding shape',
     );
-  }
-  if (detailedFilter != null) {
-    _$shapes.add(detailedFilter!.currentEncodingShape);
   }
   if (_$shapes.isEmpty) {
     throw StateError('At least one field must be non-null in anyOf');
@@ -3300,14 +3297,14 @@ EncodingShape get currentEncodingShape {
       const expected = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mapValues = <Map<String, PropertyValue>>[];
-  if (object != null) {
-    throw EncodingException(
-      r'AnyModel variant of MixedFilter cannot be parameter encoded',
-    );
-  }
   if (detailedFilter != null) {
     _$mapValues.add(
       detailedFilter!.parameterProperties(allowEmpty: allowEmpty),
+    );
+  }
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be parameter encoded',
     );
   }
   final _$map = <String, PropertyValue>{};
@@ -3335,16 +3332,16 @@ String toSimple({
 }) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
-  if (object != null) {
-    throw EncodingException(
-      r'AnyModel variant of MixedFilter cannot be simple-encoded',
-    );
-  }
   if (detailedFilter != null) {
     final _$detailedFilterSimple = detailedFilter!.parameterProperties(
       allowEmpty: allowEmpty,
     );
     _$mapValues.add(_$detailedFilterSimple);
+  }
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be simple-encoded',
+    );
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -3390,16 +3387,16 @@ String toSimple({
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, PropertyValue>>[];
-          if (object != null) {
-            throw EncodingException(
-              r'AnyModel variant of MixedFilter cannot be form-encoded',
-            );
-          }
           if (detailedFilter != null) {
             final _$detailedFilterForm = detailedFilter!.parameterProperties(
               allowEmpty: allowEmpty,
             );
             _$mapValues.add(_$detailedFilterForm);
+          }
+          if (object != null) {
+            throw EncodingException(
+              r'AnyModel variant of MixedFilter cannot be form-encoded',
+            );
           }
           if (_$values.isEmpty && _$mapValues.isEmpty) {
             return const <ParameterEntry>[];
@@ -3442,16 +3439,16 @@ String toSimple({
 String toLabel({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
-  if (object != null) {
-    throw EncodingException(
-      r'AnyModel variant of MixedFilter cannot be label-encoded',
-    );
-  }
   if (detailedFilter != null) {
     final _$detailedFilterLabel = detailedFilter!.parameterProperties(
       allowEmpty: allowEmpty,
     );
     _$mapValues.add(_$detailedFilterLabel);
+  }
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be label-encoded',
+    );
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -3466,10 +3463,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toLabel(
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toLabel(explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -3491,16 +3485,16 @@ String toMatrix(
 }) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
-  if (object != null) {
-    throw EncodingException(
-      r'AnyModel variant of MixedFilter cannot be matrix-encoded',
-    );
-  }
   if (detailedFilter != null) {
     final _$detailedFilterMatrix = detailedFilter!.parameterProperties(
       allowEmpty: allowEmpty,
     );
     _$mapValues.add(_$detailedFilterMatrix);
+  }
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be matrix-encoded',
+    );
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return '';
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
@@ -3515,11 +3509,7 @@ String toMatrix(
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toMatrix(
-      paramName,
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -3540,14 +3530,14 @@ String toMatrix(
           bool useQueryComponent = false,
           bool allowReserved = false,
         }) {
-          if (object != null) {
-            throw EncodingException(
-              r'AnyModel variant of MixedFilter cannot be URI encoded',
-            );
-          }
           if (detailedFilter != null) {
             throw EncodingException(
               r'Cannot uriEncode MixedFilter: contains complex type',
+            );
+          }
+          if (object != null) {
+            throw EncodingException(
+              r'AnyModel variant of MixedFilter cannot be URI encoded',
             );
           }
           throw EncodingException(r'Cannot uriEncode MixedFilter: no value set');
@@ -3567,6 +3557,14 @@ String toMatrix(
 Object? toJson() {
   final _$values = <Object?>{};
   final _$mapValues = <Map<String, Object?>>[];
+  if (detailedFilter != null) {
+    final Object? _$detailedFilterJson = detailedFilter!.toJson();
+    if (_$detailedFilterJson is Map<String, Object?>) {
+      _$mapValues.add(_$detailedFilterJson);
+    } else {
+      _$values.add(_$detailedFilterJson);
+    }
+  }
   if (object != null) {
     final Object? _$objectJson = encodeUnknownJson(
       object!,
@@ -3576,14 +3574,6 @@ Object? toJson() {
       _$mapValues.add(_$objectJson);
     } else {
       _$values.add(_$objectJson);
-    }
-  }
-  if (detailedFilter != null) {
-    final Object? _$detailedFilterJson = detailedFilter!.toJson();
-    if (_$detailedFilterJson is Map<String, Object?>) {
-      _$mapValues.add(_$detailedFilterJson);
-    } else {
-      _$values.add(_$detailedFilterJson);
     }
   }
   if (_$values.isEmpty && _$mapValues.isEmpty) return null;
@@ -3641,7 +3631,7 @@ void wrap() {
       r'Invalid JSON for MixedFilter: all variants failed to decode',
     );
   }
-  return MixedFilter(object: object, detailedFilter: detailedFilter);
+  return MixedFilter(detailedFilter: detailedFilter, object: object);
 }
 ''';
 
@@ -3676,7 +3666,7 @@ void wrap() {
       r'Invalid simple value for MixedFilter: all variants failed to decode',
     );
   }
-  return MixedFilter(object: null, detailedFilter: detailedFilter);
+  return MixedFilter(detailedFilter: detailedFilter, object: null);
 }
 ''';
 
@@ -3711,7 +3701,7 @@ void wrap() {
       r'Invalid form value for MixedFilter: all variants failed to decode',
     );
   }
-  return MixedFilter(object: null, detailedFilter: detailedFilter);
+  return MixedFilter(detailedFilter: detailedFilter, object: null);
 }
 ''';
 
@@ -3956,20 +3946,20 @@ Object? toJson() {
             };
             final _$values = <Object?>{};
             final _$mapValues = <Map<String, Object?>>[];
-            if (classA != null) {
-              final Object? _$classAJson = classA!.toJson();
-              if (_$classAJson is Map<String, Object?>) {
-                _$mapValues.add(_$classAJson);
-              } else {
-                _$values.add(_$classAJson);
-              }
-            }
             if (tree != null) {
               final Object? _$treeJson = _$encodeTree(tree!);
               if (_$treeJson is Map<String, Object?>) {
                 _$mapValues.add(_$treeJson);
               } else {
                 _$values.add(_$treeJson);
+              }
+            }
+            if (classA != null) {
+              final Object? _$classAJson = classA!.toJson();
+              if (_$classAJson is Map<String, Object?>) {
+                _$mapValues.add(_$classAJson);
+              } else {
+                _$values.add(_$classAJson);
               }
             }
             if (_$values.isEmpty && _$mapValues.isEmpty) return null;
@@ -4043,26 +4033,28 @@ Object? toJson() {
           class TreeAndClassA {
             factory TreeAndClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _$decodeTree;
-              _$decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
-              ClassA? classA;
-              try {
-                classA = ClassA.fromJson(json);
-              } on Object catch (_) {
-                classA = null;
-              }
+              _$decodeTree = (Object? v) => v.decodeJsonMap(
+                (v) => _$decodeTree(v),
+                context: r"Tree (at 'TreeAndClassA')",
+              );
               Tree? tree;
               try {
                 tree = _$decodeTree(json);
               } on Object catch (_) {
                 tree = null;
               }
-              if (classA == null && tree == null) {
+              ClassA? classA;
+              try {
+                classA = ClassA.fromJson(json);
+              } on Object catch (_) {
+                classA = null;
+              }
+              if (tree == null && classA == null) {
                 throw JsonDecodingException(
                   r'Invalid JSON for TreeAndClassA: all variants failed to decode',
                 );
               }
-              return TreeAndClassA(classA: classA, tree: tree);
+              return TreeAndClassA(tree: tree, classA: classA);
             }
           }
         ''';

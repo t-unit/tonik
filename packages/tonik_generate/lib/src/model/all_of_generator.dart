@@ -58,7 +58,7 @@ class AllOfGenerator {
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(
@@ -119,7 +119,7 @@ class AllOfGenerator {
               )
             : publicClassName);
 
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(

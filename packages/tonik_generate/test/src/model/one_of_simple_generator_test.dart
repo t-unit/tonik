@@ -61,8 +61,16 @@ void main() {
           bool literal = false,
         }) {
           return switch (this) {
-            ResultError(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
-            ResultSuccess(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
+            ResultSuccess(:final value) => value.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            ),
+            ResultError(:final value) => value.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            ),
           };
         }
       ''';
@@ -117,7 +125,7 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), }; }
 ''';
 
         expect(
@@ -183,7 +191,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
 ''';
 
         expect(
@@ -231,7 +239,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), }; }
 ''';
 
         expect(
@@ -297,11 +305,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       const expectedMethod = '''
         factory Entity.fromSimple(String? value, {required bool explode}) {
           try {
-            return EntityCompany(Company.fromSimple(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
-          try {
             return EntityPerson(Person.fromSimple(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
+          try {
+            return EntityCompany(Company.fromSimple(value, explode: explode));
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid simple value for Entity');
         }
       ''';
@@ -420,19 +430,21 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
-              if (_$discriminator == r'company') {
-                return EntityCompany(Company.fromSimple(value, explode: explode));
-              }
               if (_$discriminator == r'person') {
                 return EntityPerson(Person.fromSimple(value, explode: explode));
               }
+              if (_$discriminator == r'company') {
+                return EntityCompany(Company.fromSimple(value, explode: explode));
+              }
             }
             try {
-              return EntityCompany(Company.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
-            try {
               return EntityPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
+            try {
+              return EntityCompany(Company.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Entity');
           }
         ''';
@@ -500,11 +512,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               }
             }
             try {
-              return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
-            try {
               return MixedEntityPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
+            try {
+              return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
           }
         ''';
@@ -572,11 +586,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         const expectedMethod = '''
           factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
             try {
-              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
-            try {
               return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
+            try {
+              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');
           }
         ''';

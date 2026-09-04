@@ -56,8 +56,7 @@ class AnyOfGenerator {
     final actualClassName = className ?? nameManager.modelName(model);
 
     // NeverModel has no runtime value; emitting Never? is dead weight.
-    final pseudoProperties = stableModelSorter
-        .sortDiscriminatedModels(model.models)
+    final pseudoProperties = model.models
         .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
@@ -141,8 +140,7 @@ class AnyOfGenerator {
               )
             : publicClassName);
 
-    final pseudoProperties = stableModelSorter
-        .sortDiscriminatedModels(model.models)
+    final pseudoProperties = model.models
         .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
@@ -660,8 +658,7 @@ class AnyOfGenerator {
   }
 
   Map<Model, String?> _discriminatorMap(AnyOfModel model) => {
-    for (final dm in stableModelSorter.sortDiscriminatedModels(model.models))
-      dm.model: dm.discriminatorValue,
+    for (final dm in model.models) dm.model: dm.discriminatorValue,
   };
 
   Constructor _buildFromJsonConstructor(

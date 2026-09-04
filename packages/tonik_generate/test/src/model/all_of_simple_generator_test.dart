@@ -187,7 +187,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           required bool allowEmpty,
           bool literal = false,
         }) {
-          return bigDecimal.toSimple(
+          return string.toSimple(
             explode: explode,
             allowEmpty: allowEmpty,
             literal: literal,
@@ -332,7 +332,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             required bool allowEmpty,
             bool literal = false,
           }) {
-            return status.toSimple(
+            return string.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -462,8 +462,8 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     const expectedFromSimpleMethod = '''
         factory Combined.fromSimple(String? value, {required bool explode}) {
           return Combined(
-            flexibleValue: FlexibleValue.fromSimple(value, explode: explode),
             int: value.decodeSimpleInt(context: r'Combined.int'),
+            flexibleValue: FlexibleValue.fromSimple(value, explode: explode),
           );
         }
       ''';
@@ -720,10 +720,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           required bool explode,
         }) {
           return StringDecimalModel(
+            string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
             bigDecimal: value.decodeSimpleBigDecimal(
               context: r'StringDecimalModel.bigDecimal',
             ),
-            string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
           );
         }
       ''';
@@ -823,9 +823,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       const expectedFromSimpleMethod = '''
         factory MixedModel.fromSimple(String? value, {required bool explode}) {
           return MixedModel(
-            userData: UserData.fromSimple(value, explode: explode),
-            status: Status.fromSimple(value, explode: explode),
             string: value.decodeSimpleString(context: r'MixedModel.string'),
+            status: Status.fromSimple(value, explode: explode),
+            userData: UserData.fromSimple(value, explode: explode),
           );
         }
       ''';
