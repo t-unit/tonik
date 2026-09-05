@@ -1,13 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
-final Reference _string = refer('String', 'dart:core');
-final Reference _dynamic = refer('dynamic', 'dart:core');
-final Reference _propertyValue = refer(
-  'PropertyValue',
-  'package:tonik_util/tonik_util.dart',
-);
-
 /// Generates operation-local helpers needed to merge repeated multipart
 /// properties. These methods are emitted only for operations that use them.
 Iterable<Method> generateMultipartMergeMethods(RequestBodyPlan body) sync* {
@@ -24,6 +17,13 @@ Iterable<Method> generateMultipartMergeMethods(RequestBodyPlan body) sync* {
     yield _mergeMapMethod();
   }
 }
+
+final Reference _string = refer('String', 'dart:core');
+final Reference _dynamic = refer('dynamic', 'dart:core');
+final Reference _propertyValue = refer(
+  'PropertyValue',
+  'package:tonik_util/tonik_util.dart',
+);
 
 Set<MultipartMergeHelper> _mergeHelpers(RequestBodyPlan body) => switch (body) {
   MultipartBodyPlan(:final mergeHelpers) => mergeHelpers,
