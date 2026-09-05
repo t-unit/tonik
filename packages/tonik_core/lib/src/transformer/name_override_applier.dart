@@ -5,9 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// This class is responsible for setting the `nameOverride` field on
 /// models, operations, tags, and parameters based on the configuration
 /// mappings.
-class NameOverrideApplier {
-  NameOverrideApplier();
-
+class NameOverrideApplier() {
   /// Applies schema name overrides to models.
   ///
   /// [models] - The set of models to apply overrides to.

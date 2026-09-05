@@ -1,79 +1,56 @@
 /// Base class for all decoding related exceptions.
-abstract class DecodingException implements Exception {
-  /// Creates a new [DecodingException] with the specified [message].
-  const DecodingException(this.message);
-
+abstract class const DecodingException(
   /// The error message.
-  final String message;
-
+  final String message,
+) implements Exception {
   @override
   String toString() => 'DecodingException: $message';
 }
 
 /// Exception thrown when a value has invalid format for the expected type.
-class InvalidFormatException extends DecodingException {
-  /// Creates a new [InvalidFormatException] with the specified [value] and
-  /// expected [format].
-  const InvalidFormatException({required this.value, required this.format})
-    : super('Invalid format for value "$value". Expected format: $format');
-
+class const InvalidFormatException({
   /// The value that couldn't be decoded.
-  final String value;
+  required final String value,
 
   /// The expected format description.
-  final String format;
+  required final String format,
+}) extends DecodingException {
+  this : super('Invalid format for value "$value". Expected format: $format');
 
   @override
   String toString() => 'InvalidFormatException: $message';
 }
 
 /// Exception thrown when a value cannot be converted to the target type.
-class InvalidTypeException extends DecodingException {
-  /// Creates a new [InvalidTypeException] with the specified [value],
-  /// [targetType] and optional [context].
-  const InvalidTypeException({
-    required this.value,
-    required this.targetType,
-    this.context,
-  }) : super(
-         'Cannot convert "$value" to type '
-         '$targetType${context != null ? ': $context' : ''}',
-       );
-
+class const InvalidTypeException({
   /// The value that couldn't be converted.
-  final String value;
+  required final String value,
 
   /// The target type that was requested.
-  final Type targetType;
+  required final Type targetType,
 
   /// The context of the conversion failure, if any.
-  final String? context;
+  final String? context,
+}) extends DecodingException {
+  this
+    : super(
+        'Cannot convert "$value" to type '
+        '$targetType${context != null ? ': $context' : ''}',
+      );
 
   @override
   String toString() => 'InvalidTypeException: $message';
 }
 
 /// Exception thrown when a value cannot be decoded using fromSimple.
-class SimpleDecodingException extends DecodingException {
-  /// Creates a new [SimpleDecodingException] with the specified [message].
-  const SimpleDecodingException(super.message);
-}
+class const SimpleDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a value cannot be decoded using fromJson.
-class JsonDecodingException extends DecodingException {
-  /// Creates a new [JsonDecodingException] with the specified [message].
-  const JsonDecodingException(super.message);
-}
+class const JsonDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a value cannot be decoded using fromFormat.
-class FormDecodingException extends DecodingException {
-  /// Creates a new [FormDecodingException] with the specified [message].
-  const FormDecodingException(super.message);
-}
+class const FormDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a response body cannot be decoded due to
 /// content-type mismatch or decoding failure.
-class ResponseDecodingException extends DecodingException {
-  /// Creates a new [ResponseDecodingException] with the specified [message].
-  const ResponseDecodingException(super.message);
-}
+class const ResponseDecodingException(super.message) extends DecodingException;

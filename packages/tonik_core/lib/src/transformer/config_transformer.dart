@@ -3,9 +3,7 @@ import 'package:tonik_core/src/transformer/filter_applier.dart';
 import 'package:tonik_core/src/transformer/name_override_applier.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-class ConfigTransformer {
-  const ConfigTransformer();
-
+class const ConfigTransformer() {
   ApiDocument apply(ApiDocument document, TonikConfig config) {
     final overrides = config.nameOverrides;
     final filter = config.filter;

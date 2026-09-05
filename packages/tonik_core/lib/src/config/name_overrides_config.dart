@@ -3,34 +3,25 @@ import 'package:meta/meta.dart';
 
 /// Configuration for overriding generated names.
 @immutable
-class NameOverridesConfig {
-  const NameOverridesConfig({
-    this.schemas = const {},
-    this.properties = const {},
-    this.operations = const {},
-    this.parameters = const {},
-    this.enums = const {},
-    this.tags = const {},
-  });
-
+class const NameOverridesConfig({
   /// Schema name overrides: `originalName -> newName`.
-  final Map<String, String> schemas;
+  final Map<String, String> schemas = const {},
 
   /// Property name overrides: `"SchemaName.propertyName" -> newName`.
-  final Map<String, String> properties;
+  final Map<String, String> properties = const {},
 
   /// Operation name overrides: `operationId -> newMethodName`.
-  final Map<String, String> operations;
+  final Map<String, String> operations = const {},
 
   /// Parameter name overrides: `"operationId.parameterName" -> newName`.
-  final Map<String, String> parameters;
+  final Map<String, String> parameters = const {},
 
   /// Enum value name overrides: `"EnumName.VALUE" -> newValue`.
-  final Map<String, String> enums;
+  final Map<String, String> enums = const {},
 
   /// Tag to API class name overrides: `tagName -> ApiClassName`.
-  final Map<String, String> tags;
-
+  final Map<String, String> tags = const {},
+}) {
   static const _mapEquality = MapEquality<String, String>();
 
   @override

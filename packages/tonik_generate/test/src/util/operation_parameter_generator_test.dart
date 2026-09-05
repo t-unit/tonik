@@ -2312,8 +2312,11 @@ MultipartRequestContent _multipartContent({
   examples: examples,
 );
 
-final class MultipartPartFixture {
-  MultipartPartFixture({
+final class MultipartPartFixture._({
+  required final Property property,
+  required final PartEncoding encoding,
+}) {
+  new({
     required String name,
     required Model model,
     required bool isRequired,
@@ -2321,19 +2324,19 @@ final class MultipartPartFixture {
     required bool isDeprecated,
     required List<Example> examples,
     required Object? defaultValue,
-    required this.encoding,
-  }) : property = Property(
-         name: name,
-         model: model,
-         isRequired: isRequired,
-         isNullable: isNullable,
-         isDeprecated: isDeprecated,
-         examples: examples,
-         defaultValue: defaultValue,
+    required PartEncoding encoding,
+  }) : this._(
+         property: Property(
+           name: name,
+           model: model,
+           isRequired: isRequired,
+           isNullable: isNullable,
+           isDeprecated: isDeprecated,
+           examples: examples,
+           defaultValue: defaultValue,
+         ),
+         encoding: encoding,
        );
-
-  final Property property;
-  final PartEncoding encoding;
 }
 
 MultipartRequestContent _withEncoding(

@@ -3,17 +3,13 @@ import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding styles supported for cookie parameters.
-enum CookieParameterEncoding {
+enum CookieParameterEncoding() {
   /// Form style encoding. The only style for cookies.
   /// Example: sessionId=abc123
   form,
 }
 
-sealed class CookieParameter {
-  const CookieParameter({required this.context});
-
-  final Context context;
-
+sealed class const CookieParameter({required final Context context}) {
   /// The description of the parameter.
   /// For aliases, this may override the referenced parameter's description.
   String? get description;
@@ -45,20 +41,12 @@ sealed class CookieParameter {
 }
 
 @immutable
-class CookieParameterAlias extends CookieParameter {
-  const CookieParameterAlias({
-    required this.name,
-    required this.parameter,
-    required super.context,
-    this.description,
-  });
-
-  final String name;
-  final CookieParameter parameter;
-
-  @override
-  final String? description;
-
+class const CookieParameterAlias({
+  required final String name,
+  required final CookieParameter parameter,
+  required super.context,
+  @override final String? description,
+}) extends CookieParameter {
   @override
   String toString() =>
       'CookieParameterAlias{name: $name, parameter: $parameter, '
@@ -78,40 +66,22 @@ class CookieParameterAlias extends CookieParameter {
   int get hashCode => Object.hash(name, parameter, description, context);
 }
 
-class CookieParameterObject extends CookieParameter {
-  CookieParameterObject({
-    required this.name,
-    required this.rawName,
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.explode,
-    required this.model,
-    required this.encoding,
-    required super.context,
-    required this.examples,
-    required this.defaultValue,
-    this.nameOverride,
-  });
-
-  final String? name;
+class CookieParameterObject({
+  required final String? name,
 
   /// The name used inside the HTTP request to identify the cookie.
-  final String rawName;
-
-  String? nameOverride;
-
-  @override
-  String? description;
-  bool isRequired;
-  bool isDeprecated;
-  bool explode;
-  Model model;
-  CookieParameterEncoding encoding;
-  List<Example> examples;
-
-  Object? defaultValue;
-
+  required final String rawName,
+  @override required var String? description,
+  required var bool isRequired,
+  required var bool isDeprecated,
+  required var bool explode,
+  required var Model model,
+  required var CookieParameterEncoding encoding,
+  required super.context,
+  required var List<Example> examples,
+  required var Object? defaultValue,
+  var String? nameOverride,
+}) extends CookieParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override

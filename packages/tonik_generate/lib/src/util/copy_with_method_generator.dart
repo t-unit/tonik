@@ -46,22 +46,16 @@ CopyWithResult? generateCopyWith({
 }
 
 /// Result of generating copyWith infrastructure.
-class CopyWithResult {
-  const CopyWithResult({
-    required this.getter,
-    required this.interfaceClass,
-    required this.implClass,
-  });
-
+class const CopyWithResult({
   /// The getter method to add to the main class.
-  final Method getter;
+  required final Method getter,
 
   /// The abstract interface class.
-  final Class interfaceClass;
+  required final Class interfaceClass,
 
   /// The implementation class.
-  final Class implClass;
-}
+  required final Class implClass,
+});
 
 Method _generateCopyWithGetter(
   String className,
@@ -187,9 +181,8 @@ Class _generateCopyWithImpl(
         Constructor(
           (b) => b
             ..requiredParameters.add(
-              Parameter(
-                (b) => b..name = '_value',
-              ).rebuild((b) => b..toThis = true),
+              Parameter((b) => b..name = '_value')
+                  .rebuild((b) => b..toThis = true),
             ),
         ),
       )
@@ -249,7 +242,9 @@ Code _buildCallMethodBody(String className, List<CopyWithProperty> properties) {
         .conditional(refer('this').property(name), valueExpression);
   }
 
-  return refer(
-    className,
-  ).call([], namedArgs).asA(refer(r'$Res')).returned.statement;
+  return refer(className)
+      .call([], namedArgs)
+      .asA(refer(r'$Res'))
+      .returned
+      .statement;
 }

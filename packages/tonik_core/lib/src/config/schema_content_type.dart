@@ -1,1 +1,4 @@
-enum SchemaContentType { binary, text }
+enum SchemaContentType() {
+  binary,
+  text,
+}

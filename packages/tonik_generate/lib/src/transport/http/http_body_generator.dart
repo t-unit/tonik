@@ -16,17 +16,11 @@ import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart'
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generates exact request body bytes for ordinary `package:http` requests.
-class HttpBodyGenerator {
-  const HttpBodyGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const HttpBodyGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   Method generateBodyMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
@@ -65,9 +59,8 @@ class HttpBodyGenerator {
         final isMultipart = item is MultipartRequestContent;
         final multipartPlan = isMultipart
             ? (bodyPlan as BodySelectionPlan).variants.firstWhere(
-                    (variant) => variant.rawContentType == item.rawContentType,
-                  )
-                  as MultipartBodyPlan
+                (variant) => variant.rawContentType == item.rawContentType,
+              ) as MultipartBodyPlan
             : null;
         final built = isMultipart
             ? null

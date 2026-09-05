@@ -12,37 +12,34 @@ void main() {
   group(
     'OAS 3.1 style-based primitive encoding (null rawContentType fallback)',
     () {
-      test(
-        'serializes string, integer and boolean as text/plain when only style is set',
-        () async {
-          final server = await _jsonServer();
+      test('serializes string, integer and boolean as text/plain when only style is set', () async {
+        final server = await _jsonServer();
 
-          final response = await _api(server).postStylePrimitives(
-            body: const StylePrimitivesForm(
-              name: 'hello',
-              count: 42,
-              active: true,
-            ),
-          );
+        final response = await _api(server).postStylePrimitives(
+          body: const StylePrimitivesForm(
+            name: 'hello',
+            count: 42,
+            active: true,
+          ),
+        );
 
-          expect(response, isTonikSuccess);
-          final wire = MultipartWire(await server.takeRequest());
-          expect(wire.parts.map((part) => part.name), [
-            'name',
-            'count',
-            'active',
-          ]);
-          expect(wire.parts.map((part) => part.bodyText), [
-            'hello',
-            '42',
-            'true',
-          ]);
-          expect(
-            wire.parts.map((part) => part.contentType),
-            everyElement(startsWith('text/plain')),
-          );
-        },
-      );
+        expect(response, isTonikSuccess);
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.parts.map((part) => part.name), [
+          'name',
+          'count',
+          'active',
+        ]);
+        expect(wire.parts.map((part) => part.bodyText), [
+          'hello',
+          '42',
+          'true',
+        ]);
+        expect(
+          wire.parts.map((part) => part.contentType),
+          everyElement(startsWith('text/plain')),
+        );
+      });
     },
   );
 
@@ -78,9 +75,8 @@ void main() {
     test('omits the optional array when it is null', () async {
       final server = await _jsonServer();
 
-      final response = await _api(
-        server,
-      ).postFormNonExploded(body: const FormNonExplodedForm());
+      final response = await _api(server)
+          .postFormNonExploded(body: const FormNonExplodedForm());
 
       expect(response, isTonikSuccess);
       expect(MultipartWire(await server.takeRequest()).named('tags'), isEmpty);
@@ -89,9 +85,8 @@ void main() {
     test('serializes an empty array as one empty multipart field', () async {
       final server = await _jsonServer();
 
-      final response = await _api(
-        server,
-      ).postFormNonExploded(body: const FormNonExplodedForm(tags: []));
+      final response = await _api(server)
+          .postFormNonExploded(body: const FormNonExplodedForm(tags: []));
 
       expect(response, isTonikSuccess);
       final parts = MultipartWire(await server.takeRequest()).named('tags');
@@ -112,9 +107,9 @@ void main() {
 
         expect(response, isTonikSuccess);
         expect(
-          MultipartWire(
-            await server.takeRequest(),
-          ).named('values').map((part) => part.bodyText),
+          MultipartWire(await server.takeRequest())
+              .named('values')
+              .map((part) => part.bodyText),
           ['one', 'two', 'three'],
         );
       },
@@ -230,9 +225,8 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        final part = MultipartWire(
-          await server.takeRequest(),
-        ).single('address');
+        final part = MultipartWire(await server.takeRequest())
+            .single('address');
         expect(
           part.contentType,
           startsWith('application/x-www-form-urlencoded'),
@@ -307,9 +301,8 @@ void main() {
     test('serializes primitive integer as JSON number', () async {
       final server = await _jsonServer();
 
-      final response = await _api(
-        server,
-      ).postAnyModel(body: const AnyModelForm(data: 42));
+      final response = await _api(server)
+          .postAnyModel(body: const AnyModelForm(data: 42));
 
       expect(response, isTonikSuccess);
       final part = MultipartWire(await server.takeRequest()).single('data');

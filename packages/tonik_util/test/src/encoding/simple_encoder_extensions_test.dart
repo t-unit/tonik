@@ -1261,9 +1261,8 @@ void main() {
 
     test('BigDecimal uses plain string form', () {
       expect(
-        BigDecimal.parse(
-          '123.456',
-        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        BigDecimal.parse('123.456')
+            .toSimple(explode: false, allowEmpty: true, literal: true),
         '123.456',
       );
     });

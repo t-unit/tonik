@@ -4082,9 +4082,8 @@ Future<TonikResult<void, Response<Object?>>> call({
       test('emits exactly one warning when a primitive default value does not '
           'match the expected type', () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('OperationParameterDefaults').onRecord
+            .listen(logs.add);
         addTearDown(sub.cancel);
 
         final queryParam = QueryParameterObject(

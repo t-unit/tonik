@@ -458,9 +458,8 @@ ApiDocument _emptyDocument() => ApiDocument(
 /// NameManager that invokes [onLookup] on every `modelName` call once
 /// [armed] is true. Replaces the family of one-off subclasses used to
 /// exercise the worker pool's failure paths.
-class _HookedNameManager extends NameManager {
-  _HookedNameManager(StableModelSorter sorter)
-    : super(generator: NameGenerator(), stableModelSorter: sorter);
+class _HookedNameManager(StableModelSorter sorter) extends NameManager {
+  this : super(generator: NameGenerator(), stableModelSorter: sorter);
 
   void Function() onLookup = () {};
   bool armed = false;
@@ -472,16 +471,12 @@ class _HookedNameManager extends NameManager {
   }
 }
 
-class _PortBearingError implements Exception {
-  _PortBearingError(this.port);
-  final ReceivePort port;
+class _PortBearingError(final ReceivePort port) implements Exception {
   @override
   String toString() => 'PortBearingError carrying $port';
 }
 
-class _AttachedException implements Exception {
-  _AttachedException(this.message);
-  final String message;
+class _AttachedException(final String message) implements Exception {
   @override
   String toString() => '_AttachedException: $message';
 }

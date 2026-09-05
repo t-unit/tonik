@@ -8,9 +8,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// regardless of what the schema says. This transformer is applied after
 /// parsing completes.
 @immutable
-class ContentTypeNormalizer {
-  const ContentTypeNormalizer();
-
+class const ContentTypeNormalizer() {
   static final log = Logger('ContentTypeNormalizer');
 
   /// Applies content type normalization to an API document.

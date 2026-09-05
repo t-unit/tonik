@@ -7,11 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 /// pairs already have their body emitted (so dedup works), and the
 /// recursion stack (so a self-reference mid-descent resolves to a call
 /// instead of rebuilding the body).
-class InlineHelperContext {
-  InlineHelperContext({required this.nameManager});
-
-  final NameManager nameManager;
-
+class InlineHelperContext({required final NameManager nameManager}) {
   final Set<(NamedModel, String)> _emitted = {};
   final List<NamedModel> _stack = [];
 

@@ -14,14 +14,12 @@ import 'package:tonik_util/src/tonik_file/file_reader_stub.dart'
 /// file-system references. The generator converts [TonikFileBytes] to
 /// `MultipartFile.fromBytes` and [TonikFilePath] to
 /// `await MultipartFile.fromFile` at serialization time.
-sealed class TonikFile {
-  const TonikFile({this.fileName});
-
+sealed class const TonikFile({
   /// Optional filename (including extension) for the multipart part.
   ///
   /// When null, the generator uses the OAS property name as a fallback.
-  final String? fileName;
-
+  final String? fileName,
+}) {
   /// Returns the raw binary content.
   ///
   /// For [TonikFileBytes], returns the in-memory bytes directly.
@@ -60,14 +58,11 @@ sealed class TonikFile {
 
 /// In-memory binary data, optionally with a filename.
 @immutable
-class TonikFileBytes extends TonikFile {
-  /// Creates a [TonikFileBytes] with the given [bytes] and optional
-  /// [fileName].
-  const TonikFileBytes(this.bytes, {super.fileName});
-
+class const TonikFileBytes(
   /// The raw binary content.
-  final List<int> bytes;
-
+  final List<int> bytes, {
+  super.fileName,
+}) extends TonikFile {
   @override
   List<int> toBytes() => bytes;
 
@@ -94,14 +89,11 @@ class TonikFileBytes extends TonikFile {
 /// synchronously. On web, it throws [UnsupportedError] — use
 /// [TonikFileBytes] instead.
 @immutable
-class TonikFilePath extends TonikFile {
-  /// Creates a [TonikFilePath] with the given [path] and optional
-  /// [fileName].
-  const TonikFilePath(this.path, {super.fileName});
-
+class const TonikFilePath(
   /// Absolute or relative path to the file on disk.
-  final String path;
-
+  final String path, {
+  super.fileName,
+}) extends TonikFile {
   @override
   List<int> toBytes() => reader.readFileAsBytes(path);
 

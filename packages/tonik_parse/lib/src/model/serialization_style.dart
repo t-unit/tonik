@@ -1,4 +1,4 @@
-enum SerializationStyle {
+enum SerializationStyle() {
   matrix,
   label,
   form,

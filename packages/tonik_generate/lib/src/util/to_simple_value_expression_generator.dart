@@ -337,17 +337,16 @@ Expression _handleListExpression(
 
     IntegerModel() || DoubleModel() || NumberModel() || BooleanModel() =>
       mappedList(
-        nullGuard(
-          refer('e').property('uriEncode').call([], {
-            'allowEmpty': literalBool(allowEmpty),
-            'textEncoding': refer('utf8', 'dart:convert'),
-            if (literal) 'literal': literalBool(true),
-          }),
-        ),
-      ).property('toSimple').call([], {
-        ...toSimpleArgs,
-        'alreadyEncoded': literalBool(true),
-      }),
+            nullGuard(
+              refer('e').property('uriEncode').call([], {
+                'allowEmpty': literalBool(allowEmpty),
+                'textEncoding': refer('utf8', 'dart:convert'),
+                if (literal) 'literal': literalBool(true),
+              }),
+            ),
+          )
+          .property('toSimple')
+          .call([], {...toSimpleArgs, 'alreadyEncoded': literalBool(true)}),
 
     DateTimeModel() ||
     DecimalModel() ||
@@ -373,16 +372,15 @@ Expression _handleListExpression(
     AnyModel() => callToSimpleOnList(receiver),
     Base64Model() =>
       mappedList(
-        isContentNullable
-            ? refer('e')
-                  .nullSafeProperty('toBase64String')
-                  .call([])
-                  .ifNullThen(literalString(''))
-            : refer('e').property('toBase64String').call([]),
-      ).property('toSimple').call([], {
-        ...toSimpleArgs,
-        'alreadyEncoded': literalBool(true),
-      }),
+            isContentNullable
+                ? refer('e')
+                      .nullSafeProperty('toBase64String')
+                      .call([])
+                      .ifNullThen(literalString(''))
+                : refer('e').property('toBase64String').call([]),
+          )
+          .property('toSimple')
+          .call([], {...toSimpleArgs, 'alreadyEncoded': literalBool(true)}),
 
     MapModel() => _buildListMapContentSimpleExpression(
       receiver,

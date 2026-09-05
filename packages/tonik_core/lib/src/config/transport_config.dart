@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
 
 /// Transport backend emitted into a generated package.
-enum TransportBackend {
+enum TransportBackend() {
   /// Generate a client backed by `package:dio`.
   dio,
 
@@ -11,12 +11,10 @@ enum TransportBackend {
 
 /// Package-wide generation-time transport configuration.
 @immutable
-final class TransportConfig {
-  const TransportConfig({this.backend = TransportBackend.dio});
-
+final class const TransportConfig({
   /// Backend emitted into the generated package.
-  final TransportBackend backend;
-
+  final TransportBackend backend = TransportBackend.dio,
+}) {
   @override
   String toString() => 'TransportConfig{backend: $backend}';
 

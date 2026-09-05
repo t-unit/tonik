@@ -20,8 +20,12 @@ MultipartRequestContent multipartContentFixture(
   examples: const [],
 );
 
-final class MultipartPartFixture {
-  MultipartPartFixture({
+final class MultipartPartFixture._({
+  required final Property property,
+  required final PartEncoding encoding,
+  required final bool hasExplicitEncoding,
+}) {
+  new({
     required String name,
     required Model model,
     required bool isRequired,
@@ -29,29 +33,29 @@ final class MultipartPartFixture {
     required bool isDeprecated,
     required List<Example> examples,
     required Object? defaultValue,
-    required this.encoding,
+    required PartEncoding encoding,
     bool isReadOnly = false,
     bool isWriteOnly = false,
     String? nameOverride,
     String? description,
-    this.hasExplicitEncoding = true,
-  }) : property = Property(
-         name: name,
-         nameOverride: nameOverride,
-         description: description,
-         model: model,
-         isRequired: isRequired,
-         isNullable: isNullable,
-         isDeprecated: isDeprecated,
-         isReadOnly: isReadOnly,
-         isWriteOnly: isWriteOnly,
-         examples: examples,
-         defaultValue: defaultValue,
+    bool hasExplicitEncoding = true,
+  }) : this._(
+         property: Property(
+           name: name,
+           nameOverride: nameOverride,
+           description: description,
+           model: model,
+           isRequired: isRequired,
+           isNullable: isNullable,
+           isDeprecated: isDeprecated,
+           isReadOnly: isReadOnly,
+           isWriteOnly: isWriteOnly,
+           examples: examples,
+           defaultValue: defaultValue,
+         ),
+         encoding: encoding,
+         hasExplicitEncoding: hasExplicitEncoding,
        );
-
-  final Property property;
-  final PartEncoding encoding;
-  final bool hasExplicitEncoding;
 }
 
 MultipartPartFixture multipartPartFixture({

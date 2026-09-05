@@ -6,17 +6,21 @@ import 'package:tonik_parse/src/model/discriminator.dart' as parse;
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
-class ModelImporter {
-  ModelImporter(
+class ModelImporter._(
+  final ExampleImporter exampleImporter,
+  final Map<String, SchemaContentType> _contentMediaTypes,
+  final Map<String, Schema> _schemas,
+) {
+  new(
     OpenApiObject openApiObject, {
-    required this.exampleImporter,
+    required ExampleImporter exampleImporter,
     Map<String, SchemaContentType> contentMediaTypes = const {},
-  }) : _schemas = openApiObject.components?.schemas ?? {},
-       _contentMediaTypes = contentMediaTypes;
+  }) : this._(
+         exampleImporter,
+         contentMediaTypes,
+         openApiObject.components?.schemas ?? {},
+       );
 
-  final Map<String, Schema> _schemas;
-  final Map<String, SchemaContentType> _contentMediaTypes;
-  final ExampleImporter exampleImporter;
   final Map<String, Schema> _defs = {};
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};

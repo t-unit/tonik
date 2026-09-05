@@ -326,9 +326,9 @@ void main() {
       );
 
       expect(
-        () => const OperationRequestPlanner(
-          backend: TransportBackend.http,
-        ).plan(operation, parameters),
+        () =>
+            const OperationRequestPlanner(backend: TransportBackend.http)
+                .plan(operation, parameters),
         throwsA(
           isA<ArgumentError>().having(
             (error) => error.message,

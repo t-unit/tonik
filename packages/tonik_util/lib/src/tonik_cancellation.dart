@@ -1,9 +1,11 @@
 import 'dart:async';
 
 /// A backend-neutral signal used to cancel an API operation.
-final class TonikCancellation {
-  final Completer<void> _completer = Completer<void>();
-  Object? _reason;
+final class TonikCancellation._(
+  final Completer<void> _completer,
+  var Object? _reason,
+) {
+  factory() => TonikCancellation._(Completer<void>(), null);
 
   /// Whether cancellation has been requested.
   bool get isCancelled => _completer.isCompleted;

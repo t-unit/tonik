@@ -43,4 +43,4 @@ void main() {
   });
 }
 
-final class _NativeResponse {}
+final class _NativeResponse();

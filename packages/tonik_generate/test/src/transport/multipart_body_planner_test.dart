@@ -22,9 +22,8 @@ void main() {
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
           buildHttpMultipartBodyStatements(
-            const MultipartBodyPlanner(
-              backend: TransportBackend.http,
-            ).plan(content, bodyAccessor: 'body', isRequired: true),
+            const MultipartBodyPlanner(backend: TransportBackend.http)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           ),
         ),
     );
@@ -976,9 +975,8 @@ Object? test() {
       final nullableClass = _classWithProperties(context, 'Upload', [
         _property(context, 'value', nullableValue),
       ], isNullable: true);
-      final property = normalizeMultipartProperties(
-        _content(nullableClass),
-      ).single;
+      final property = normalizeMultipartProperties(_content(nullableClass))
+          .single;
       expect(property.isNullable, isTrue);
       expect(emit(_content(nullableClass)), contains('body?.value'));
 

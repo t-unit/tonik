@@ -26,9 +26,8 @@ void main() {
     );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
-    format = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    ).format;
+    format = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+        .format;
   });
 
   group('generateDataMethod', () {

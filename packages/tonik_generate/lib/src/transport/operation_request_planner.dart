@@ -8,19 +8,12 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
-class OperationRequestPlanner {
-  const OperationRequestPlanner({
-    required this.backend,
-    this.nameManager,
-    this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final TransportBackend backend;
-  final NameManager? nameManager;
-  final String? package;
-  final bool useImmutableCollections;
-
+class const OperationRequestPlanner({
+  required final TransportBackend backend,
+  final NameManager? nameManager,
+  final String? package,
+  final bool useImmutableCollections = false,
+}) {
   OperationRequestPlan plan(
     Operation operation,
     NormalizedRequestParameters parameters,

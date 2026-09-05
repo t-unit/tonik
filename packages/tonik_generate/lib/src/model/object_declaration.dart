@@ -1,24 +1,27 @@
 import 'package:tonik_core/tonik_core.dart';
 
 /// The object facts shared by schema and multipart value declarations.
-class ObjectDeclaration {
-  ObjectDeclaration.fromModel(ClassModel model, this.name)
-    : properties = model.properties,
-      additionalPropertiesPolicy = model.additionalPropertiesPolicy,
-      examples = model.examples,
-      description = model.description,
-      isDeprecated = model.isDeprecated,
-      isNullable = model.isNullable,
-      isReadOnly = model.isReadOnly,
-      isWriteOnly = model.isWriteOnly;
-
-  final String name;
-  final List<Property> properties;
-  final AdditionalPropertiesPolicy additionalPropertiesPolicy;
-  final List<Example> examples;
-  final String? description;
-  final bool isDeprecated;
-  final bool isNullable;
-  final bool isReadOnly;
-  final bool isWriteOnly;
+class ObjectDeclaration._({
+  required final String name,
+  required final List<Property> properties,
+  required final AdditionalPropertiesPolicy additionalPropertiesPolicy,
+  required final List<Example> examples,
+  required final String? description,
+  required final bool isDeprecated,
+  required final bool isNullable,
+  required final bool isReadOnly,
+  required final bool isWriteOnly,
+}) {
+  new fromModel(ClassModel model, String name)
+    : this._(
+        name: name,
+        properties: model.properties,
+        additionalPropertiesPolicy: model.additionalPropertiesPolicy,
+        examples: model.examples,
+        description: model.description,
+        isDeprecated: model.isDeprecated,
+        isNullable: model.isNullable,
+        isReadOnly: model.isReadOnly,
+        isWriteOnly: model.isWriteOnly,
+      );
 }

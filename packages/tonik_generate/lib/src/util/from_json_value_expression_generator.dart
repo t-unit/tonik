@@ -335,9 +335,10 @@ BuiltExpression _buildListFromJsonBody(
     return Method(
       (b) => b
         ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-        ..body = refer(
-          'e',
-        ).equalTo(literalNull).conditional(literalNull, decodeOfE).code,
+        ..body = refer('e')
+            .equalTo(literalNull)
+            .conditional(literalNull, decodeOfE)
+            .code,
     ).closure;
   }
 
@@ -728,9 +729,9 @@ BuiltExpression _buildTypedefHelperBody({
           ..requiredParameters.add(Parameter((p) => p..name = 'v'))
           ..body = innerBuilt.unsafeRawBody.code,
       ).closure;
-      var result = refer(
-        'v',
-      ).property('decodeJsonMap').call([decoderClosure], contextParam);
+      var result = refer('v')
+          .property('decodeJsonMap')
+          .call([decoderClosure], contextParam);
       if (useImmutableCollections) {
         result = _wrapImmutable(
           'IMap',

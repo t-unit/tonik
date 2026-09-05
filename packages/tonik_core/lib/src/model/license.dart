@@ -1,13 +1,11 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class License {
-  const License({required this.name, this.identifier, this.url});
-
-  final String? name;
-  final String? identifier;
-  final String? url;
-
+class const License({
+  required final String? name,
+  final String? identifier,
+  final String? url,
+}) {
   @override
   String toString() =>
       'License{name: $name, identifier: $identifier, url: $url}';

@@ -66,9 +66,8 @@ void main() {
     test('explicit defaultValue: null is treated as no default — no field, '
         'no warning, no byName entry', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final region = QueryParameterObject(
@@ -210,9 +209,8 @@ void main() {
 
     test('drops type-mismatched default with a single warning, no field', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final bad = QueryParameterObject(
@@ -393,9 +391,8 @@ void main() {
     test('date-time target falls through to a runtime getter — no const field, '
         'isRuntime flag set, single routing log emitted', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final since = QueryParameterObject(
@@ -441,9 +438,8 @@ void main() {
     test('ClassModel target with default falls through to a runtime getter — '
         'no const field, isRuntime flag set, routing log emitted', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final region = QueryParameterObject(
@@ -497,9 +493,8 @@ void main() {
       'getter — no const field, no DefaultResolution drop callback fires',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('OperationParameterDefaults').onRecord
+            .listen(logs.add);
         addTearDown(sub.cancel);
 
         final hPolicy = RequestHeaderObject(
@@ -566,9 +561,8 @@ void main() {
       'without emitting a const field, routing log emitted',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('OperationParameterDefaults').onRecord
+            .listen(logs.add);
         addTearDown(sub.cancel);
 
         final region = QueryParameterObject(
@@ -697,9 +691,8 @@ void main() {
     test('enum parameter with a valid defaulted variant emits a static const '
         'field referencing the matching enum variant', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final order = QueryParameterObject(
@@ -754,9 +747,8 @@ void main() {
     test('header enum parameter with a valid defaulted variant emits a static '
         'const field referencing the matching enum variant', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final mode = RequestHeaderObject(
@@ -812,9 +804,8 @@ void main() {
     test('path enum parameter with a valid defaulted variant emits a static '
         'const field referencing the matching enum variant', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final kind = PathParameterObject(
@@ -870,9 +861,8 @@ void main() {
     test('cookie enum parameter with a valid defaulted variant emits a static '
         'const field referencing the matching enum variant', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final flavor = CookieParameterObject(
@@ -928,9 +918,8 @@ void main() {
     test('int-valued enum query parameter materialises a static const field '
         'referencing the matching enum variant', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final priority = QueryParameterObject(
@@ -988,9 +977,8 @@ void main() {
     test('enum query parameter with default value outside the enum values is '
         'dropped with a warning', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final order = QueryParameterObject(
@@ -1044,9 +1032,8 @@ void main() {
     test('alias-wrapped enum default surfaces via effectiveDefaultValue and '
         'materialises the matching variant const', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final status = QueryParameterObject(

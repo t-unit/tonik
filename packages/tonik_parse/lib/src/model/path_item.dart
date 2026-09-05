@@ -3,23 +3,21 @@ import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
-class PathItem {
-  PathItem({
-    required this.summary,
-    required this.description,
-    required this.get,
-    required this.put,
-    required this.post,
-    required this.delete,
-    required this.patch,
-    required this.parameters,
-    required this.head,
-    required this.options,
-    required this.servers,
-    required this.trace,
-  });
-
-  factory PathItem.fromJson(Map<String, dynamic> json) => PathItem(
+class PathItem({
+  required final String? summary,
+  required final String? description,
+  required final Operation? get,
+  required final Operation? put,
+  required final Operation? post,
+  required final Operation? delete,
+  required final Operation? patch,
+  required final List<ReferenceWrapper<Parameter>>? parameters,
+  required final Operation? head,
+  required final Operation? options,
+  required final List<Server>? servers,
+  required final Operation? trace,
+}) {
+  factory fromJson(Map<String, dynamic> json) => PathItem(
     summary: json['summary'] as String?,
     description: json['description'] as String?,
     get: json['get'] == null
@@ -53,20 +51,6 @@ class PathItem {
         ? null
         : Operation.fromJson(json['trace'] as Map<String, dynamic>),
   );
-
-  final String? summary;
-  final String? description;
-  final Operation? get;
-  final Operation? put;
-  final Operation? post;
-  final Operation? delete;
-  final Operation? patch;
-  final Operation? head;
-  final Operation? options;
-  final Operation? trace;
-  final List<Server>? servers;
-
-  final List<ReferenceWrapper<Parameter>>? parameters;
 
   @override
   String toString() =>

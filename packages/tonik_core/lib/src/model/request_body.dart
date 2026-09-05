@@ -2,12 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-sealed class RequestBody {
-  const RequestBody({required this.name, required this.context});
-
-  final String? name;
-  final Context context;
-
+sealed class const RequestBody({
+  required final String? name,
+  required final Context context,
+}) {
   String? get description;
 
   int get contentCount;
@@ -18,19 +16,12 @@ sealed class RequestBody {
 }
 
 @immutable
-class RequestBodyAlias extends RequestBody {
-  const RequestBodyAlias({
-    required super.name,
-    required this.requestBody,
-    required super.context,
-    this.description,
-  });
-
-  final RequestBody requestBody;
-
-  @override
-  final String? description;
-
+class const RequestBodyAlias({
+  required super.name,
+  required final RequestBody requestBody,
+  required super.context,
+  @override final String? description,
+}) extends RequestBody {
   @override
   int get contentCount => requestBody.contentCount;
 
@@ -60,23 +51,13 @@ class RequestBodyAlias extends RequestBody {
 }
 
 @immutable
-class RequestBodyObject extends RequestBody {
-  const RequestBodyObject({
-    required super.name,
-    required super.context,
-    required this.description,
-    required this.isRequired,
-    required this.content,
-  });
-
-  @override
-  final String? description;
-
-  @override
-  final bool isRequired;
-
-  final Set<RequestContent> content;
-
+class const RequestBodyObject({
+  required super.name,
+  required super.context,
+  @override required final String? description,
+  @override required final bool isRequired,
+  required final Set<RequestContent> content,
+}) extends RequestBody {
   @override
   int get contentCount => content.length;
 
@@ -110,44 +91,45 @@ class RequestBodyObject extends RequestBody {
       'isRequired: $isRequired, content: $content)';
 }
 
-sealed class RequestContent {
-  RequestContent({
-    required this.rawContentType,
-    required this.examples,
+sealed class RequestContent._({
+  required var String rawContentType,
+  required var List<Example> examples,
+  required var String wireContentType,
+  required var TextEncoding textEncoding,
+}) {
+  new({
+    required String rawContentType,
+    required List<Example> examples,
     String? wireContentType,
-    this.textEncoding = TextEncoding.utf8,
-  }) : wireContentType = wireContentType ?? rawContentType;
+    TextEncoding textEncoding = TextEncoding.utf8,
+  }) : this._(
+         rawContentType: rawContentType,
+         examples: examples,
+         wireContentType: wireContentType ?? rawContentType,
+         textEncoding: textEncoding,
+       );
 
   ContentType get contentType;
-  String rawContentType;
-  String wireContentType;
-  TextEncoding textEncoding;
-  List<Example> examples;
 }
 
-final class ModelRequestContent extends RequestContent {
-  ModelRequestContent({
-    required this.model,
-    required this.contentType,
-    required super.rawContentType,
-    required super.examples,
-    super.wireContentType,
-    super.textEncoding,
-    this.formEncoding,
-  }) {
-    if (contentType == ContentType.multipart) {
-      throw ArgumentError('Multipart content requires multipart parts.');
-    }
-  }
-
-  Model model;
-  @override
-  final ContentType contentType;
+final class ModelRequestContent({
+  required var Model model,
+  @override required final ContentType contentType,
+  required super.rawContentType,
+  required super.examples,
+  super.wireContentType,
+  super.textEncoding,
 
   /// Per-property encoding for application/x-www-form-urlencoded bodies, keyed
   /// by identity on [model]'s resolved [Property] instances — transformers must
   /// mutate those in place, never rebuild, or lookups silently miss.
-  Map<Property, FieldEncoding>? formEncoding;
+  var Map<Property, FieldEncoding>? formEncoding,
+}) extends RequestContent {
+  this {
+    if (contentType == ContentType.multipart) {
+      throw ArgumentError('Multipart content requires multipart parts.');
+    }
+  }
 
   @override
   String toString() =>
@@ -156,22 +138,17 @@ final class ModelRequestContent extends RequestContent {
       'textEncoding: $textEncoding, examples: $examples)';
 }
 
-final class MultipartRequestContent extends RequestContent {
-  MultipartRequestContent({
-    required super.rawContentType,
-    required super.examples,
-    required this.model,
-    required this.encoding,
-    super.wireContentType,
-    super.textEncoding,
-  });
-
-  @override
-  ContentType get contentType => ContentType.multipart;
-
-  Model model;
+final class MultipartRequestContent({
+  required var Model model,
 
   /// Per-use multipart encoding settings keyed by the raw schema property
   /// name. Defaults are resolved from the property's model by the generator.
-  final Map<String, PartEncoding> encoding;
+  required final Map<String, PartEncoding> encoding,
+  required super.rawContentType,
+  required super.examples,
+  super.wireContentType,
+  super.textEncoding,
+}) extends RequestContent {
+  @override
+  ContentType get contentType => ContentType.multipart;
 }

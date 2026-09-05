@@ -29,56 +29,54 @@ void main() {
   });
 
   group('fromJson', () {
-    test(
-      'generates fromJson factory that wraps each property decode in try/catch and assigns null on failure',
-      () {
-        final complex = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates fromJson factory that wraps each property decode in try/catch and assigns null on failure', () {
+      final complex = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'Flexible',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (discriminatorValue: null, model: IntegerModel(context: context)),
-            (discriminatorValue: null, model: complex),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Flexible',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: complex),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
+      final klass = generator.generateClass(model);
 
-        final fromJson = klass.constructors.firstWhere(
-          (c) => c.name == 'fromJson',
-        );
-        expect(fromJson.factory, isTrue);
-        expect(
-          fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-          'Object?',
-        );
+      final fromJson = klass.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      expect(fromJson.factory, isTrue);
+      expect(
+        fromJson.requiredParameters.first.type?.accept(emitter).toString(),
+        'Object?',
+      );
 
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(klass.accept(emitter).toString());
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
         factory Flexible.fromJson(Object? json) {
           User? user;
           try {
@@ -110,12 +108,11 @@ void main() {
         }
       ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   test(

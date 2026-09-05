@@ -229,9 +229,8 @@ void main() {
       );
       expect(clientDir.listSync(), hasLength(1));
       expect(clientDir.listSync().first.path, endsWith('default_api.dart'));
-      final fileContent = File(
-        clientDir.listSync().first.path,
-      ).readAsStringSync();
+      final fileContent = File(clientDir.listSync().first.path)
+          .readAsStringSync();
 
       expect(fileContent, contains('untaggedOperation'));
       expect(fileContent, contains('class DefaultApi'));
@@ -308,9 +307,8 @@ void main() {
       ).readAsStringSync();
       expect(defaultApiContent, contains('untaggedOperation'));
       expect(defaultApiContent, contains('class DefaultApi'));
-      final usersApiContent = File(
-        path.join(clientDir.path, 'users_api.dart'),
-      ).readAsStringSync();
+      final usersApiContent = File(path.join(clientDir.path, 'users_api.dart'))
+          .readAsStringSync();
       expect(usersApiContent, contains('getUser'));
       expect(usersApiContent, contains('class UsersApi'));
     });

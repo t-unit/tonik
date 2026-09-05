@@ -66,9 +66,9 @@ Method generateHashCodeMethod({
 
     final hashArgs = properties.map((prop) {
       if (prop.hasCollectionValue) {
-        return refer(
-          'deepEquals',
-        ).property('hash').call([refer(prop.normalizedName)]);
+        return refer('deepEquals')
+            .property('hash')
+            .call([refer(prop.normalizedName)]);
       } else {
         return refer(prop.normalizedName);
       }

@@ -5,10 +5,9 @@ import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 
 /// Generates and writes response wrapper files to disk.
-class ResponseWrapperFileGenerator {
-  ResponseWrapperFileGenerator({required this.responseWrapperGenerator});
-
-  final ResponseWrapperGenerator responseWrapperGenerator;
+class ResponseWrapperFileGenerator({
+  required final ResponseWrapperGenerator responseWrapperGenerator,
+}) {
   final log = Logger('ResponseWrapperFileGenerator');
 
   List<String> writeFiles({

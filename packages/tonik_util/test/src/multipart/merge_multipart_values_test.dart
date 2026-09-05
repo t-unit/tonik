@@ -216,4 +216,7 @@ void main() {
   });
 }
 
-enum _Status { ready, complete }
+enum _Status() {
+  ready,
+  complete,
+}

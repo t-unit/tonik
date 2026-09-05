@@ -31,19 +31,12 @@ import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating Dart classes from allOf model definitions.
 @immutable
-class AllOfGenerator {
-  const AllOfGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.stableModelSorter,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final StableModelSorter stableModelSorter;
-  final bool useImmutableCollections;
-
+class const AllOfGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final StableModelSorter stableModelSorter,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(AllOfModel model) {
     return generateCompositeLibrary(
       model: model,
@@ -661,9 +654,9 @@ class AllOfGenerator {
     // If all properties are lists, handle like simple encoding
     if (allListProperties) {
       final jsonParts = <Code>[
-        declareFinal(
-          r'_$values',
-        ).assign(literalList([], refer('Object?', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalList([], refer('Object?', 'dart:core')))
+            .statement,
       ];
 
       for (final normalized in normalizedProperties) {
@@ -685,9 +678,10 @@ class AllOfGenerator {
           Code('final $fieldNameJson = '),
           built.unsafeRawBody.code,
           const Code(';'),
-          refer(
-            r'_$values',
-          ).property('add').call([refer(fieldNameJson)]).statement,
+          refer(r'_$values')
+              .property('add')
+              .call([refer(fieldNameJson)])
+              .statement,
         ]);
       }
 
@@ -1102,9 +1096,10 @@ class AllOfGenerator {
           ..optionalParameters.add(
             buildBoolParameter('explode', required: true),
           )
-          ..body = refer(
-            className,
-          ).call([], constructorArgs).returned.statement,
+          ..body = refer(className)
+              .call([], constructorArgs)
+              .returned
+              .statement,
       );
     }
 
@@ -1256,9 +1251,9 @@ class AllOfGenerator {
     }
 
     final propertyMergingLines = [
-      declareFinal(
-        r'_$mergedProperties',
-      ).assign(buildEmptyMapStringPropertyValue()).statement,
+      declareFinal(r'_$mergedProperties')
+          .assign(buildEmptyMapStringPropertyValue())
+          .statement,
     ];
 
     for (final normalized in normalizedProperties) {
@@ -1393,9 +1388,9 @@ class AllOfGenerator {
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          declareFinal(r'_$values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
         ];
 
         final allNullable = normalizedProperties.every((prop) {
@@ -1424,9 +1419,10 @@ class AllOfGenerator {
                   ).expression,
                 )
                 .statement,
-            refer(r'_$values').property('add').call([
-              refer('_\$${prop.normalizedName}Simple'),
-            ]).statement,
+            refer(r'_$values')
+                .property('add')
+                .call([refer('_\$${prop.normalizedName}Simple')])
+                .statement,
             if (isFieldNullable) const Code('}'),
           ]);
         }
@@ -1649,12 +1645,12 @@ class AllOfGenerator {
       required String inconsistentMessage,
     }) {
       final code = <Code>[
-        declareFinal(
-          r'_$entryLists',
-        ).assign(literalList([], buildParameterEntryListType())).statement,
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$entryLists')
+            .assign(literalList([], buildParameterEntryListType()))
+            .statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       ];
 
       final allNullable = props.every(isNullableProp);
@@ -1667,12 +1663,13 @@ class AllOfGenerator {
         final entries = propFormEntries(receiver, prop.property.model);
         code.addAll([
           if (nullable) Code('if (${prop.normalizedName} != null) {'),
-          declareFinal(
-            '_\$${prop.normalizedName}Form',
-          ).assign(entries).statement,
-          refer(r'_$entryLists').property('add').call([
-            refer('_\$${prop.normalizedName}Form'),
-          ]).statement,
+          declareFinal('_\$${prop.normalizedName}Form')
+              .assign(entries)
+              .statement,
+          refer(r'_$entryLists')
+              .property('add')
+              .call([refer('_\$${prop.normalizedName}Form')])
+              .statement,
           refer(r'_$values').property('add').call([
             refer('_\$${prop.normalizedName}Form')
                 .property('map')
@@ -1932,9 +1929,9 @@ class AllOfGenerator {
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          declareFinal(r'_$values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
         ];
 
         final allNullableLabel = normalizedProperties.every((prop) {
@@ -1962,9 +1959,10 @@ class AllOfGenerator {
                   ).expression,
                 )
                 .statement,
-            refer(r'_$values').property('add').call([
-              refer('_\$${prop.normalizedName}Label'),
-            ]).statement,
+            refer(r'_$values')
+                .property('add')
+                .call([refer('_\$${prop.normalizedName}Label')])
+                .statement,
             if (isFieldNullable) const Code('}'),
           ]);
         }
@@ -2163,9 +2161,9 @@ class AllOfGenerator {
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          declareFinal(r'_$values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
         ];
 
         final allNullableMatrix = normalizedProperties.every((prop) {
@@ -2194,9 +2192,10 @@ class AllOfGenerator {
                   ).expression,
                 )
                 .statement,
-            refer(r'_$values').property('add').call([
-              refer('_\$${prop.normalizedName}Matrix'),
-            ]).statement,
+            refer(r'_$values')
+                .property('add')
+                .call([refer('_\$${prop.normalizedName}Matrix')])
+                .statement,
             if (isFieldNullable) const Code('}'),
           ]);
         }
@@ -2299,9 +2298,9 @@ class AllOfGenerator {
 
     // For primitive-only AllOf, collect all values and validate they're equal
     final valueCollectionCode = <Code>[
-      declareFinal(
-        r'_$values',
-      ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+      declareFinal(r'_$values')
+          .assign(literalSet([], refer('String', 'dart:core')))
+          .statement,
     ];
 
     final allNullableMatrixPrim = normalizedProperties.every((prop) {
@@ -2330,9 +2329,10 @@ class AllOfGenerator {
               ).expression,
             )
             .statement,
-        refer(r'_$values').property('add').call([
-          refer('_\$${prop.normalizedName}Matrix'),
-        ]).statement,
+        refer(r'_$values')
+            .property('add')
+            .call([refer('_\$${prop.normalizedName}Matrix')])
+            .statement,
         if (isFieldNullable) const Code('}'),
       ]);
     }
@@ -2476,9 +2476,9 @@ class AllOfGenerator {
 
     // For AllOf, all properties must encode to the same value
     final valueCollectionCode = <Code>[
-      declareFinal(
-        r'_$values',
-      ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+      declareFinal(r'_$values')
+          .assign(literalSet([], refer('String', 'dart:core')))
+          .statement,
     ];
 
     final allNullableUri = normalizedProperties.every((prop) {
@@ -2509,9 +2509,10 @@ class AllOfGenerator {
               }),
             )
             .statement,
-        refer(r'_$values').property('add').call([
-          refer('_\$${prop.normalizedName}Encoded'),
-        ]).statement,
+        refer(r'_$values')
+            .property('add')
+            .call([refer('_\$${prop.normalizedName}Encoded')])
+            .statement,
         if (isNullable) const Code('}'),
       ]);
     }

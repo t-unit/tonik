@@ -131,23 +131,14 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
   return result;
 }
 
-class MultipartPropertyPlan {
-  const MultipartPropertyPlan({
-    required this.rawName,
-    required this.normalizedName,
-    required this.properties,
-    required this.accessPaths,
-    required this.isRequired,
-    required this.isNullable,
-  });
-
-  final String rawName;
-  final String normalizedName;
-  final List<Property> properties;
-  final List<List<MultipartAccessSegment>> accessPaths;
-  final bool isRequired;
-  final bool isNullable;
-
+class const MultipartPropertyPlan({
+  required final String rawName,
+  required final String normalizedName,
+  required final List<Property> properties,
+  required final List<List<MultipartAccessSegment>> accessPaths,
+  required final bool isRequired,
+  required final bool isNullable,
+}) {
   Property get property => properties.first;
 }
 

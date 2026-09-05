@@ -14,11 +14,7 @@ const _rawValueFieldName = r'_$rawValue';
 
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
-class EnumGenerator {
-  const EnumGenerator({required this.nameManager});
-
-  final NameManager nameManager;
-
+class const EnumGenerator({required final NameManager nameManager}) {
   ({String code, String filename}) generate<T>(EnumModel<T> model) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(
@@ -227,9 +223,9 @@ class EnumGenerator {
           refer(actualEnumName)
               .property('fromJson')
               .call([
-                refer(valueParam).property(decodeMethod).call([], {
-                  contextParam: refer(contextParam),
-                }, []),
+                refer(valueParam)
+                    .property(decodeMethod)
+                    .call([], {contextParam: refer(contextParam)}, []),
               ])
               .returned
               .statement,
@@ -276,9 +272,9 @@ class EnumGenerator {
           refer(actualEnumName)
               .property('fromJson')
               .call([
-                refer(valueParam).property(decodeMethod).call([], {
-                  contextParam: refer(contextParam),
-                }, []),
+                refer(valueParam)
+                    .property(decodeMethod)
+                    .call([], {contextParam: refer(contextParam)}, []),
               ])
               .returned
               .statement,
@@ -326,10 +322,11 @@ class EnumGenerator {
 
     final orElse = fallbackNormalizedName != null
         ? Method(
-            (mb) => mb
-              ..body = refer(
-                actualEnumName,
-              ).property(fallbackNormalizedName).code,
+            (mb) =>
+                mb
+                  ..body = refer(actualEnumName)
+                      .property(fallbackNormalizedName)
+                      .code,
           ).closure
         : Method(
             (mb) => mb

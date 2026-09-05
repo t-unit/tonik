@@ -16,17 +16,11 @@ import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart'
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating data method for operations.
-class DioDataGenerator {
-  const DioDataGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const DioDataGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   Method generateDataMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
@@ -60,12 +54,9 @@ class DioDataGenerator {
         final bool bindsValue;
         switch (item) {
           case MultipartRequestContent():
-            final plan =
-                (bodyPlan as BodySelectionPlan).variants.firstWhere(
-                      (variant) =>
-                          variant.rawContentType == item.rawContentType,
-                    )
-                    as MultipartBodyPlan;
+            final plan = (bodyPlan as BodySelectionPlan).variants.firstWhere(
+              (variant) => variant.rawContentType == item.rawContentType,
+            ) as MultipartBodyPlan;
             built = buildMultipartBodyExpression(plan);
             bindsValue = plan.emissions.isNotEmpty;
           case ModelRequestContent():
@@ -136,9 +127,8 @@ class DioDataGenerator {
         ),
         statements: [
           if (!isRequired) const Code('if (body == null) return null;'),
-          ...buildMultipartBodyStatements(
-            bodyPlan as MultipartBodyPlan,
-          ).statements,
+          ...buildMultipartBodyStatements(bodyPlan as MultipartBodyPlan)
+              .statements,
         ],
       );
     }

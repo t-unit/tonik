@@ -7,12 +7,10 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 
 /// Manages name generation and caches results for consistent naming.
-class NameManager {
-  NameManager({required this.generator, required this.stableModelSorter});
-
-  final NameGenerator generator;
-  final StableModelSorter stableModelSorter;
-
+class NameManager({
+  required final NameGenerator generator,
+  required final StableModelSorter stableModelSorter,
+}) {
   final modelNames = <Model, String>{};
 
   final _schemaNames = <(Context, String), String>{};

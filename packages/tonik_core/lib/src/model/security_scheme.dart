@@ -2,107 +2,89 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-sealed class SecurityScheme {
-  const SecurityScheme({required this.type, required this.description});
-
-  final SecuritySchemeType type;
-  final String? description;
-
+sealed class const SecurityScheme({
+  required final SecuritySchemeType type,
+  required final String? description,
+}) {
   @override
   String toString() => 'SecurityScheme{type: $type, description: $description}';
 }
 
-enum SecuritySchemeType { apiKey, http, mutualTLS, oauth2, openIdConnect }
+enum SecuritySchemeType() {
+  apiKey,
+  http,
+  mutualTLS,
+  oauth2,
+  openIdConnect,
+}
 
-class ApiKeySecurityScheme extends SecurityScheme {
-  const ApiKeySecurityScheme({
-    required super.type,
-    required this.location,
-    required super.description,
-  });
-
-  final ApiKeyLocation location;
-
+class const ApiKeySecurityScheme({
+  required super.type,
+  required final ApiKeyLocation location,
+  required super.description,
+}) extends SecurityScheme {
   @override
   String toString() =>
       'ApiKeySecurityScheme{type: $type, description: $description, '
       'location: $location}';
 }
 
-enum ApiKeyLocation { query, header, cookie }
+enum ApiKeyLocation() {
+  query,
+  header,
+  cookie,
+}
 
-class HttpSecurityScheme extends SecurityScheme {
-  const HttpSecurityScheme({
-    required super.type,
-    required this.scheme,
-    required super.description,
-    required this.bearerFormat,
-  });
-
-  final String scheme;
-  final String? bearerFormat;
-
+class const HttpSecurityScheme({
+  required super.type,
+  required final String scheme,
+  required super.description,
+  required final String? bearerFormat,
+}) extends SecurityScheme {
   @override
   String toString() =>
       'HttpSecurityScheme{type: $type, description: $description, '
       'scheme: $scheme, bearerFormat: $bearerFormat}';
 }
 
-class OAuth2SecurityScheme extends SecurityScheme {
-  const OAuth2SecurityScheme({
-    required super.type,
-    required this.flows,
-    required super.description,
-  });
-
-  final OAuth2Flows flows;
-
+class const OAuth2SecurityScheme({
+  required super.type,
+  required final OAuth2Flows flows,
+  required super.description,
+}) extends SecurityScheme {
   @override
   String toString() =>
       'OAuth2SecurityScheme{type: $type, description: $description, '
       'flows: $flows}';
 }
 
-class OpenIdConnectSecurityScheme extends SecurityScheme {
-  const OpenIdConnectSecurityScheme({
-    required super.type,
-    required this.openIdConnectUrl,
-    required super.description,
-  });
-
-  final String openIdConnectUrl;
-
+class const OpenIdConnectSecurityScheme({
+  required super.type,
+  required final String openIdConnectUrl,
+  required super.description,
+}) extends SecurityScheme {
   @override
   String toString() =>
       'OpenIdConnectSecurityScheme{type: $type, description: $description, '
       'openIdConnectUrl: $openIdConnectUrl}';
 }
 
-class MutualTlsSecurityScheme extends SecurityScheme {
-  const MutualTlsSecurityScheme({
-    required super.type,
-    required super.description,
-  });
-
+class const MutualTlsSecurityScheme({
+  required super.type,
+  required super.description,
+}) extends SecurityScheme {
   @override
   String toString() =>
       'MutualTlsSecurityScheme{type: $type, description: $description}';
 }
 
 @immutable
-class OAuth2Flows {
-  const OAuth2Flows({
-    required this.implicit,
-    required this.password,
-    required this.clientCredentials,
-    required this.authorizationCode,
-  });
-
-  final OAuth2Flow? implicit;
-  final OAuth2Flow? password;
-  final OAuth2Flow? clientCredentials;
-  final OAuth2Flow? authorizationCode;
-
+class const OAuth2Flows({
+  required final OAuth2Flow? implicit,
+  required final OAuth2Flow? password,
+  required final OAuth2Flow? clientCredentials,
+  required final OAuth2Flow? authorizationCode,
+}) {
   @override
   String toString() =>
       'OAuth2Flows{implicit: $implicit, password: $password, '
@@ -111,19 +93,12 @@ class OAuth2Flows {
 }
 
 @immutable
-class OAuth2Flow {
-  const OAuth2Flow({
-    required this.authorizationUrl,
-    required this.tokenUrl,
-    required this.scopes,
-    required this.refreshUrl,
-  });
-
-  final String authorizationUrl;
-  final String tokenUrl;
-  final String? refreshUrl;
-  final Map<String, String> scopes;
-
+class const OAuth2Flow({
+  required final String authorizationUrl,
+  required final String tokenUrl,
+  required final Map<String, String> scopes,
+  required final String? refreshUrl,
+}) {
   @override
   String toString() =>
       'OAuth2Flow{authorizationUrl: $authorizationUrl, '
@@ -131,12 +106,10 @@ class OAuth2Flow {
 }
 
 @immutable
-class SecurityRequirement {
-  const SecurityRequirement({required this.scheme, required this.scopes});
-
-  final SecurityScheme scheme;
-  final List<String> scopes;
-
+class const SecurityRequirement({
+  required final SecurityScheme scheme,
+  required final List<String> scopes,
+}) {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

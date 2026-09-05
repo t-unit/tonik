@@ -4,20 +4,22 @@ import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
-class Header {
-  Header({
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.style,
-    required this.explode,
-    required this.schema,
-    required this.content,
-    this.example,
-    this.examples,
-  });
+class Header({
+  required final String? description,
+  required final bool? isRequired,
+  required final bool? isDeprecated,
+  required final SerializationStyle? style,
+  required final bool? explode,
+  required final Schema? schema,
+  required final Map<String, MediaType>? content,
 
-  factory Header.fromJson(Map<String, dynamic> json) => Header(
+  /// Single example inline value.
+  final Object? example,
+
+  /// Multiple named examples; each value may be inline or a `$ref`.
+  final Map<String, ReferenceWrapper<Example>>? examples,
+}) {
+  factory fromJson(Map<String, dynamic> json) => Header(
     description: json['description'] as String?,
     isRequired: json['required'] as bool?,
     isDeprecated: json['deprecated'] as bool?,
@@ -34,20 +36,6 @@ class Header {
       (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
     ),
   );
-
-  final String? description;
-  final bool? isRequired;
-  final bool? isDeprecated;
-  final SerializationStyle? style;
-  final bool? explode;
-  final Schema? schema;
-  final Map<String, MediaType>? content;
-
-  /// Single example inline value.
-  final Object? example;
-
-  /// Multiple named examples; each value may be inline or a `$ref`.
-  final Map<String, ReferenceWrapper<Example>>? examples;
 
   @override
   String toString() =>

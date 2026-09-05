@@ -25,9 +25,8 @@ void main() {
         id: 1,
         name: 'Widget',
         tags: <String>[].lock,
-        children: <ChildModel>[
-          const ChildModel(childName: 'bolt', value: 10),
-        ].lock,
+        children: <ChildModel>[const ChildModel(childName: 'bolt', value: 10)]
+            .lock,
         metadata: <String, String>{}.lock,
       );
       expect(item.children, isA<IList<ChildModel>>());
@@ -103,9 +102,8 @@ void main() {
         id: 42,
         name: 'Widget',
         tags: <String>['cool', 'useful'].lock,
-        children: <ChildModel>[
-          const ChildModel(childName: 'bolt', value: 10),
-        ].lock,
+        children: <ChildModel>[const ChildModel(childName: 'bolt', value: 10)]
+            .lock,
         metadata: IMap(const {'color': 'red'}),
       );
 
