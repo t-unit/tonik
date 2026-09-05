@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/operation/dio_operation_base_generator.dart';
+import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/dio/dio_data_generator.dart';
 import 'package:tonik_generate/src/transport/dio/dio_options_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
@@ -10,6 +12,10 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 final class const DioBackendGenerator() implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.dio;
+
+  @override
+  OperationBaseGenerator get operationBaseGenerator =>
+      const DioOperationBaseGenerator();
 
   @override
   List<DependencyDescriptor> get dependencies => const [
@@ -150,191 +156,6 @@ final class const DioBackendGenerator() implements TransportBackendGenerator {
   ).generateOptionsMethod(operation, headers, cookies);
 
   @override
-  Code generateDispatchStatements({
-    required OperationRequestPlan plan,
-    required String responseVariable,
-    required Reference resultValueType,
-  }) {
-    final cancelTokenType = TypeReference(
-      (b) => b
-        ..symbol = 'CancelToken'
-        ..url = 'package:dio/dio.dart'
-        ..isNullable = true,
-    );
-    final cancellation = plan.cancellation;
-    const internalCancelToken = r'_$cancelToken';
-    const resolvedDio = r'_$dio';
-
-    return Block.of([
-      const Code('final '),
-      operationResponseType.code,
-      Code(' $responseVariable;'),
-      cancelTokenType.code,
-      const Code(' $internalCancelToken;'),
-      Block.of([
-        const Code('if ('),
-        cancellation.code,
-        const Code(' != null) {'),
-        refer(internalCancelToken)
-            .assign(
-              refer('CancelToken', 'package:dio/dio.dart').newInstance([]),
-            )
-            .statement,
-        Block.of([
-          const Code('if ('),
-          cancellation.property('isCancelled').code,
-          const Code(') {'),
-          refer(internalCancelToken)
-              .property('cancel')
-              .call([cancellation.property('reason')])
-              .statement,
-          _resultClass('TonikError', resultValueType)
-              .call(
-                [
-                  refer(internalCancelToken)
-                      .property('cancelError')
-                      .nullChecked,
-                ],
-                {
-                  'stackTrace': refer(internalCancelToken)
-                      .property('cancelError')
-                      .nullChecked
-                      .property('stackTrace'),
-                  'type': refer(
-                    'TonikErrorType.cancelled',
-                    'package:tonik_util/tonik_util.dart',
-                  ),
-                  'response': literalNull,
-                },
-              )
-              .returned
-              .statement,
-          const Code('}'),
-        ]),
-        refer('unawaited', 'dart:async').call([
-          cancellation.property('whenCancelled').property('then').call([
-            Method(
-              (m) => m
-                ..requiredParameters.add(Parameter((p) => p..name = '_'))
-                ..body = refer(internalCancelToken).nullChecked
-                    .property('cancel')
-                    .call([cancellation.property('reason')])
-                    .statement,
-            ).closure,
-          ]),
-        ]).statement,
-        const Code('}'),
-      ]),
-      const Code(''),
-      const Code('final '),
-      nativeClientType.code,
-      const Code(' $resolvedDio;'),
-      Block.of([
-        const Code('try {'),
-        refer(resolvedDio)
-            .assign(refer(clientAccessorFieldName).call([]))
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.other',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}\n'),
-      ]),
-      Block.of([
-        const Code('try {'),
-        refer(responseVariable)
-            .assign(
-              refer(resolvedDio).property('requestUri').call(
-                [plan.uri],
-                {
-                  'data': refer(r'_$data'),
-                  'options': refer(r'_$options'),
-                  'cancelToken': refer(internalCancelToken),
-                },
-                [
-                  TypeReference(
-                    (b) => b
-                      ..symbol = 'List'
-                      ..url = 'dart:core'
-                      ..types.add(refer('int', 'dart:core')),
-                  ),
-                ],
-              ).awaited,
-            )
-            .statement,
-        const Code('} on '),
-        refer('DioException', 'package:dio/dio.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        Block.of([
-          const Code('if (exception.type == '),
-          refer('DioExceptionType.cancel', 'package:dio/dio.dart').code,
-          const Code(') {'),
-          _resultClass('TonikError', resultValueType)
-              .call(
-                [refer('exception')],
-                {
-                  'stackTrace': refer('stackTrace'),
-                  'type': refer(
-                    'TonikErrorType.cancelled',
-                    'package:tonik_util/tonik_util.dart',
-                  ),
-                  'response': refer('exception').property('response'),
-                },
-              )
-              .returned
-              .statement,
-          const Code('}'),
-        ]),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.network',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': refer('exception').property('response'),
-              },
-            )
-            .returned
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.network',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}\n'),
-      ]),
-    ]);
-  }
-
-  @override
   Class generateClientAdapter() {
     final dioType = nativeClientType;
 
@@ -450,15 +271,6 @@ final class const DioBackendGenerator() implements TransportBackendGenerator {
               ]),
           ),
         ]),
-    );
-  }
-
-  Reference _resultClass(String symbol, Reference resultValueType) {
-    return TypeReference(
-      (b) => b
-        ..symbol = symbol
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.addAll([resultValueType, nativeResponseType]),
     );
   }
 }

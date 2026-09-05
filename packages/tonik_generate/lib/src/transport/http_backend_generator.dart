@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/operation/http_operation_base_generator.dart';
+import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_headers_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
@@ -12,6 +14,10 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
   TransportBackend get backend => TransportBackend.http;
 
   @override
+  OperationBaseGenerator get operationBaseGenerator =>
+      const HttpOperationBaseGenerator();
+
+  @override
   List<DependencyDescriptor> get dependencies => const [
     DependencyDescriptor(name: 'http', versionConstraint: '^1.6.0'),
   ];
@@ -21,21 +27,21 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
 
   @override
   TypeReference get nativeResponseType => TypeReference(
-    (b) => b
+    (builder) => builder
       ..symbol = 'Response'
       ..url = 'package:http/http.dart',
   );
 
   @override
   TypeReference get operationResponseType => TypeReference(
-    (b) => b
+    (builder) => builder
       ..symbol = 'Response'
       ..url = 'package:http/http.dart',
   );
 
   @override
   Reference get requestOptionsType => TypeReference(
-    (b) => b
+    (builder) => builder
       ..symbol = 'Map'
       ..url = 'dart:core'
       ..types.addAll([
@@ -46,10 +52,10 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
 
   @override
   Parameter get cancellationParameter => Parameter(
-    (b) => b
+    (builder) => builder
       ..name = 'cancellation'
       ..type = TypeReference(
-        (b) => b
+        (type) => type
           ..symbol = 'TonikCancellation'
           ..url = 'package:tonik_util/tonik_util.dart'
           ..isNullable = true,
@@ -81,7 +87,7 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
 
   @override
   Reference get serverConfigType => TypeReference(
-    (b) => b
+    (builder) => builder
       ..symbol = 'ServerConfig'
       ..url = 'package:tonik_util/tonik_util.dart'
       ..types.add(nativeClientType),
@@ -95,7 +101,7 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
 
   @override
   Reference get nativeClientAccessorType =>
-      FunctionType((b) => b..returnType = nativeClientType);
+      FunctionType((builder) => builder..returnType = nativeClientType);
 
   @override
   String get clientAdapterName => '_HttpClientAdapter';
@@ -114,39 +120,39 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
     final clientType = nativeClientType;
 
     return Class(
-      (b) => b
+      (builder) => builder
         ..name = clientAdapterName
         ..fields.addAll([
           Field(
-            (f) => f
+            (field) => field
               ..name = 'serverConfig'
               ..type = serverConfigType
               ..modifier = FieldModifier.final$,
           ),
           Field(
-            (f) => f
+            (field) => field
               ..name = r'_$client'
               ..type = TypeReference(
-                (b) => b
+                (type) => type
                   ..symbol = 'Client'
                   ..url = 'package:http/http.dart'
                   ..isNullable = true,
               ),
           ),
           Field(
-            (f) => f
+            (field) => field
               ..name = r'_$ownsClient'
               ..type = refer('bool', 'dart:core')
               ..assignment = literalFalse.code,
           ),
           Field(
-            (f) => f
+            (field) => field
               ..name = r'_$isClosed'
               ..type = refer('bool', 'dart:core')
               ..assignment = literalFalse.code,
           ),
           Field(
-            (f) => f
+            (field) => field
               ..name = r'_$closedError'
               ..type = refer('StateError', 'dart:core')
               ..modifier = FieldModifier.final$
@@ -160,9 +166,9 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
         ])
         ..constructors.add(
           Constructor(
-            (c) => c.requiredParameters.add(
+            (constructor) => constructor.requiredParameters.add(
               Parameter(
-                (p) => p
+                (parameter) => parameter
                   ..name = 'serverConfig'
                   ..toThis = true,
               ),
@@ -171,7 +177,7 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
         )
         ..methods.addAll([
           Method(
-            (m) => m
+            (method) => method
               ..name = clientGetterName
               ..type = MethodType.getter
               ..returns = clientType
@@ -197,7 +203,7 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
               ]),
           ),
           Method(
-            (m) => m
+            (method) => method
               ..name = 'close'
               ..returns = refer('void')
               ..body = Block.of([
@@ -243,464 +249,4 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
     package: package,
     useImmutableCollections: useImmutableCollections,
   ).generateHeadersMethod(operation, headers, cookies);
-
-  @override
-  Code generateDispatchStatements({
-    required OperationRequestPlan plan,
-    required String responseVariable,
-    required Reference resultValueType,
-  }) {
-    final cancellation = plan.cancellation;
-    const resolvedClient = r'_$client';
-    const request = r'_$request';
-    final bodyBytesType = TypeReference(
-      (b) => b
-        ..symbol = 'List'
-        ..url = 'dart:core'
-        ..types.add(refer('int', 'dart:core')),
-    );
-    final multipartFilesType = TypeReference(
-      (b) => b
-        ..symbol = 'List'
-        ..url = 'dart:core'
-        ..types.add(refer('MultipartFile', 'package:http/http.dart')),
-    );
-    final multipartBodyType = refer(
-      'TonikMultipartBody',
-      'package:tonik_util/tonik_util.dart',
-    );
-    final isRequiredMultipart = switch (plan.body) {
-      MultipartBodyPlan(:final isRequired) => isRequired,
-      _ => false,
-    };
-    final canBeMultipart = switch (plan.body) {
-      MultipartBodyPlan() => true,
-      BodySelectionPlan(:final variants) => variants.any(
-        (variant) => variant is MultipartBodyPlan,
-      ),
-      _ => false,
-    };
-    final requestType = canBeMultipart
-        ? refer('BaseRequest', 'package:http/http.dart')
-        : refer('AbortableRequest', 'package:http/http.dart');
-
-    return Block.of([
-      const Code('late final '),
-      nativeResponseType.code,
-      Code(' $responseVariable;'),
-      Block.of([
-        const Code('if ('),
-        cancellation.code,
-        const Code(' != null && '),
-        cancellation.property('isCancelled').code,
-        const Code(') {'),
-        declareFinal('exception')
-            .assign(
-              refer(
-                'RequestAbortedException',
-                'package:http/http.dart',
-              ).newInstance([plan.uri]),
-            )
-            .statement,
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer(
-                  'StackTrace',
-                  'dart:core',
-                ).property('current'),
-                'type': refer(
-                  'TonikErrorType.cancelled',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}'),
-      ]),
-      const Code(''),
-      const Code('final '),
-      nativeClientType.code,
-      const Code(' $resolvedClient;'),
-      Block.of([
-        const Code('try {'),
-        refer(resolvedClient)
-            .assign(refer(clientAccessorFieldName).call([]))
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.other',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}\n'),
-      ]),
-      const Code('late final '),
-      requestType.code,
-      const Code(' $request;'),
-      Block.of([
-        const Code('try {'),
-        if (isRequiredMultipart)
-          ..._requiredMultipartRequestStatements(
-            plan: plan,
-            request: request,
-            cancellation: cancellation,
-            multipartFilesType: multipartFilesType,
-            multipartBodyType: multipartBodyType,
-          )
-        else if (canBeMultipart)
-          ..._selectedRequestStatements(
-            plan: plan,
-            request: request,
-            cancellation: cancellation,
-            bodyBytesType: bodyBytesType,
-            multipartFilesType: multipartFilesType,
-            multipartBodyType: multipartBodyType,
-          )
-        else
-          ..._ordinaryRequestStatements(
-            plan: plan,
-            request: request,
-            cancellation: cancellation,
-          ),
-        refer(request)
-            .property('headers')
-            .property('addAll')
-            .call([refer(r'_$options')])
-            .statement,
-        if (canBeMultipart)
-          Block.of([
-            const Code(r'if (_$data is '),
-            multipartBodyType.code,
-            const Code(') {'),
-            refer(request)
-                .property('headers')
-                .index(literalString('content-type'))
-                .assign(refer(r'_$data').property('contentType'))
-                .statement,
-            const Code('}'),
-          ])
-        else
-          Block.of([
-            const Code(r'if (_$data != null) {'),
-            refer(request)
-                .property('bodyBytes')
-                .assign(refer(r'_$data').asA(bodyBytesType))
-                .statement,
-            const Code('}'),
-          ]),
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.encoding',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}\n'),
-      ]),
-      const Code('final '),
-      refer('StreamedResponse', 'package:http/http.dart').code,
-      const Code(r' _$streamedResponse;'),
-      Block.of([
-        const Code('try {'),
-        refer(r'_$streamedResponse')
-            .assign(
-              refer(resolvedClient)
-                  .property('send')
-                  .call([refer(request)])
-                  .awaited,
-            )
-            .statement,
-        const Code('} on '),
-        refer('RequestAbortedException', 'package:http/http.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': _requestAbortErrorType(cancellation),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('} on '),
-        refer('ClientException', 'package:http/http.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _transportErrorReturn(
-          resultValueType,
-          type: refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
-        ),
-        const Code('} on '),
-        refer('TimeoutException', 'dart:async').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _transportErrorReturn(
-          resultValueType,
-          type: refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
-        ),
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _transportErrorReturn(
-          resultValueType,
-          type: refer(
-            'TonikErrorType.other',
-            'package:tonik_util/tonik_util.dart',
-          ),
-        ),
-        const Code('}\n'),
-      ]),
-      Block.of([
-        const Code('try {'),
-        refer(responseVariable)
-            .assign(
-              refer('Response', 'package:http/http.dart')
-                  .property('fromStream')
-                  .call([refer(r'_$streamedResponse')])
-                  .awaited,
-            )
-            .statement,
-        const Code('} on '),
-        refer('RequestAbortedException', 'package:http/http.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': _requestAbortErrorType(cancellation),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _transportErrorReturn(
-          resultValueType,
-          type: refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
-        ),
-        const Code('}\n'),
-      ]),
-    ]);
-  }
-
-  Code _transportErrorReturn(
-    Reference resultValueType, {
-    required Expression type,
-  }) => _resultClass('TonikError', resultValueType)
-      .call(
-        [refer('exception')],
-        {
-          'stackTrace': refer('stackTrace'),
-          'type': type,
-          'response': literalNull,
-        },
-      )
-      .returned
-      .statement;
-
-  Expression _requestAbortErrorType(Expression cancellation) => cancellation
-      .nullSafeProperty('isCancelled')
-      .ifNullThen(literalFalse)
-      .conditional(
-        refer('TonikErrorType.cancelled', 'package:tonik_util/tonik_util.dart'),
-        refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
-      );
-
-  List<Code> _requiredMultipartRequestStatements({
-    required OperationRequestPlan plan,
-    required String request,
-    required Expression cancellation,
-    required TypeReference multipartFilesType,
-    required Reference multipartBodyType,
-  }) {
-    const bodyRequest = r'_$bodyRequest';
-    const multipartRequest = r'_$multipartRequest';
-    final abortTrigger = <String, Expression>{
-      'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
-    };
-    return [
-      Block.of([
-        const Code(r'if (_$data is '),
-        multipartBodyType.code,
-        const Code(') {'),
-        declareFinal(bodyRequest)
-            .assign(
-              refer('AbortableRequest', 'package:http/http.dart').newInstance([
-                literalString(plan.methodName),
-                plan.uri,
-              ], abortTrigger),
-            )
-            .statement,
-        refer(bodyRequest)
-            .property('bodyBytes')
-            .assign(refer(r'_$data').property('bodyBytes'))
-            .statement,
-        refer(request).assign(refer(bodyRequest)).statement,
-        const Code('} else {'),
-        declareFinal(multipartRequest)
-            .assign(
-              refer(
-                'AbortableMultipartRequest',
-                'package:http/http.dart',
-              ).newInstance([
-                literalString(plan.methodName),
-                plan.uri,
-              ], abortTrigger),
-            )
-            .statement,
-        refer(multipartRequest)
-            .property('files')
-            .property('addAll')
-            .call([refer(r'_$data').asA(multipartFilesType)])
-            .statement,
-        refer(request).assign(refer(multipartRequest)).statement,
-        const Code('}'),
-      ]),
-    ];
-  }
-
-  List<Code> _ordinaryRequestStatements({
-    required OperationRequestPlan plan,
-    required String request,
-    required Expression cancellation,
-  }) => [
-    refer(request)
-        .assign(
-          refer('AbortableRequest', 'package:http/http.dart').newInstance(
-            [literalString(plan.methodName), plan.uri],
-            {'abortTrigger': cancellation.nullSafeProperty('whenCancelled')},
-          ),
-        )
-        .statement,
-  ];
-
-  List<Code> _selectedRequestStatements({
-    required OperationRequestPlan plan,
-    required String request,
-    required Expression cancellation,
-    required TypeReference bodyBytesType,
-    required TypeReference multipartFilesType,
-    required Reference multipartBodyType,
-  }) {
-    const bodyRequest = r'_$bodyRequest';
-    const multipartRequest = r'_$multipartRequest';
-    const ordinaryRequest = r'_$ordinaryRequest';
-    return [
-      Block.of([
-        const Code(r'if (_$data is '),
-        multipartBodyType.code,
-        const Code(') {'),
-        declareFinal(bodyRequest)
-            .assign(
-              refer('AbortableRequest', 'package:http/http.dart').newInstance(
-                [literalString(plan.methodName), plan.uri],
-                {
-                  'abortTrigger': cancellation.nullSafeProperty(
-                    'whenCancelled',
-                  ),
-                },
-              ),
-            )
-            .statement,
-        refer(bodyRequest)
-            .property('bodyBytes')
-            .assign(refer(r'_$data').property('bodyBytes'))
-            .statement,
-        refer(request).assign(refer(bodyRequest)).statement,
-        const Code(r'} else if (_$data is '),
-        multipartFilesType.code,
-        const Code(') {'),
-        declareFinal(multipartRequest)
-            .assign(
-              refer(
-                'AbortableMultipartRequest',
-                'package:http/http.dart',
-              ).newInstance(
-                [literalString(plan.methodName), plan.uri],
-                {
-                  'abortTrigger': cancellation.nullSafeProperty(
-                    'whenCancelled',
-                  ),
-                },
-              ),
-            )
-            .statement,
-        refer(multipartRequest)
-            .property('files')
-            .property('addAll')
-            .call([refer(r'_$data')])
-            .statement,
-        refer(request).assign(refer(multipartRequest)).statement,
-        const Code('} else {'),
-        declareFinal(ordinaryRequest)
-            .assign(
-              refer('AbortableRequest', 'package:http/http.dart').newInstance(
-                [literalString(plan.methodName), plan.uri],
-                {
-                  'abortTrigger': cancellation.nullSafeProperty(
-                    'whenCancelled',
-                  ),
-                },
-              ),
-            )
-            .statement,
-        Block.of([
-          const Code(r'if (_$data != null) {'),
-          refer(ordinaryRequest)
-              .property('bodyBytes')
-              .assign(refer(r'_$data').asA(bodyBytesType))
-              .statement,
-          const Code('}'),
-        ]),
-        refer(request).assign(refer(ordinaryRequest)).statement,
-        const Code('}'),
-      ]),
-    ];
-  }
-
-  Reference _resultClass(String symbol, Reference resultValueType) {
-    return TypeReference(
-      (b) => b
-        ..symbol = symbol
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.addAll([resultValueType, nativeResponseType]),
-    );
-  }
 }
