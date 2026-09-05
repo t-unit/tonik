@@ -9,6 +9,7 @@ import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/multipart_merge_method_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
@@ -170,6 +171,7 @@ class OperationGenerator({
             operation,
             normalizedParams.pathParameters,
           ),
+          ...generateMultipartMergeMethods(requestPlan.body),
           backendGenerator.generateBodyMethod(
             operation: operation,
             requestPlan: requestPlan,

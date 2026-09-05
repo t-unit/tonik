@@ -33,6 +33,7 @@ class const MultipartBodyPlanner({
             .where((parameter) => identical(parameter.content, content))
             .toList();
     final emissions = <MultipartEmission>[];
+    final mergeHelpers = <MultipartMergeHelper>{};
     final properties = normalizeMultipartProperties(
       content,
       nameManager: nameManager,
@@ -75,45 +76,51 @@ class const MultipartBodyPlanner({
         accessor = accesses.single;
       } else {
         final variable = '_\$${property.normalizedName}MultipartValue';
-        final mergeFunction = mergedObjectProperties
-            ? 'mergeMultipartPropertyValues'
+        final mergeHelper = mergedObjectProperties
+            ? MultipartMergeHelper.propertyValues
             : mergedLists
-            ? 'mergeMultipartLists'
-            : 'mergeMultipartValues';
-        var mergeExpression =
-            refer(mergeFunction, 'package:tonik_util/tonik_util.dart').call(
-              [
-                literalList([
-                  for (var i = 0; i < accesses.length; i++)
-                    if (mergedObjects)
-                      _objectMergeValue(
-                        accesses[i],
-                        nullable: _occurrenceIsNullable(
-                          property.accessPaths[i],
-                          property.properties[i],
-                        ),
-                        asProperties: mergedObjectProperties,
-                      )
-                    else if (useImmutableCollections &&
-                        (property.properties[i].model.resolved is ListModel ||
-                            property.properties[i].model.resolved is MapModel))
-                      _immutableMergeValue(
-                        accesses[i],
-                        nullable: _occurrenceIsNullable(
-                          property.accessPaths[i],
-                          property.properties[i],
-                        ),
-                      )
-                    else
-                      accesses[i],
-                ]),
-              ],
-              {
-                'propertyName': specLiteralString(property.rawName),
-                if ((mergedObjects && !mergedObjectProperties) || mergedMaps)
-                  'mergeObjects': literalTrue,
-              },
-            );
+            ? MultipartMergeHelper.lists
+            : MultipartMergeHelper.dynamicValues;
+        mergeHelpers.add(mergeHelper);
+        final mergeFunction = switch (mergeHelper) {
+          MultipartMergeHelper.propertyValues =>
+            '_mergeMultipartPropertyValues',
+          MultipartMergeHelper.lists => '_mergeMultipartLists',
+          MultipartMergeHelper.dynamicValues => '_mergeMultipartValues',
+        };
+        var mergeExpression = refer(mergeFunction).call(
+          [
+            literalList([
+              for (var i = 0; i < accesses.length; i++)
+                if (mergedObjects)
+                  _objectMergeValue(
+                    accesses[i],
+                    nullable: _occurrenceIsNullable(
+                      property.accessPaths[i],
+                      property.properties[i],
+                    ),
+                    asProperties: mergedObjectProperties,
+                  )
+                else if (useImmutableCollections &&
+                    (property.properties[i].model.resolved is ListModel ||
+                        property.properties[i].model.resolved is MapModel))
+                  _immutableMergeValue(
+                    accesses[i],
+                    nullable: _occurrenceIsNullable(
+                      property.accessPaths[i],
+                      property.properties[i],
+                    ),
+                  )
+                else
+                  accesses[i],
+            ]),
+          ],
+          {
+            'propertyName': specLiteralString(property.rawName),
+            if ((mergedObjects && !mergedObjectProperties) || mergedMaps)
+              'mergeObjects': literalTrue,
+          },
+        );
         if (!nullable && (mergedObjectProperties || mergedLists)) {
           mergeExpression = mergeExpression.nullChecked;
         }
@@ -176,6 +183,7 @@ class const MultipartBodyPlanner({
       isRequired: isRequired,
       emissions: emissions,
       usesCustomParts: !_dio && parameters.isNotEmpty,
+      mergeHelpers: mergeHelpers,
     );
   }
 

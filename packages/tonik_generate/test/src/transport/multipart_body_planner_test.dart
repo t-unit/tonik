@@ -5,6 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 import 'multipart_test_support.dart';
 
@@ -1164,14 +1165,17 @@ Object? test() {
       expect(jsonCode, contains('mergeObjects: true'));
       expect(jsonCode, contains(r'jsonEncode(_$metadataMultipartValue)'));
 
-      final styleCode = emit(
-        _content(
-          root,
-          encoding: {
-            'metadata': _encoding(style: EncodingStyle.form, explode: true),
-          },
-        ),
+      final styleContent = _content(
+        root,
+        encoding: {
+          'metadata': _encoding(style: EncodingStyle.form, explode: true),
+        },
       );
+      final stylePlan = const MultipartBodyPlanner(
+        backend: TransportBackend.http,
+      ).plan(styleContent, bodyAccessor: 'body', isRequired: true);
+      expect(stylePlan.mergeHelpers, {MultipartMergeHelper.propertyValues});
+      final styleCode = emit(styleContent);
       expect(styleCode, contains('body.left.metadata.parameterProperties'));
       expect(styleCode, contains('body.right.metadata.parameterProperties'));
       expect(styleCode, contains('mergeMultipartPropertyValues'));
@@ -1224,7 +1228,15 @@ Object? test() {
           _property(context, 'metadata', map),
         ]),
       ]);
-      final mutable = emit(_content(root));
+      final mutableContent = _content(root);
+      final mutablePlan = const MultipartBodyPlanner(
+        backend: TransportBackend.http,
+      ).plan(mutableContent, bodyAccessor: 'body', isRequired: true);
+      expect(mutablePlan.mergeHelpers, {
+        MultipartMergeHelper.lists,
+        MultipartMergeHelper.dynamicValues,
+      });
+      final mutable = emit(mutableContent);
       expect(mutable, contains('body.first.items'));
       expect(mutable, contains('body.second.items'));
       expect(mutable, contains("propertyName: r'items'"));

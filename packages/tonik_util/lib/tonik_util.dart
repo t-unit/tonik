@@ -30,7 +30,6 @@ export 'src/encoding/string_map_delimited_encoder_extensions.dart';
 export 'src/encoding/unknown_value_encoding.dart';
 export 'src/encoding/uri_encoder_extensions.dart';
 export 'src/encoding_shape.dart';
-export 'src/multipart/merge_multipart_values.dart';
 export 'src/multipart/tonik_multipart_body.dart';
 export 'src/offset_date_time.dart';
 export 'src/server_config.dart';

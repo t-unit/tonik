@@ -158,6 +158,12 @@ sealed class const MultipartEmission();
 
 final class const MultipartCode(final Code code) extends MultipartEmission;
 
+enum MultipartMergeHelper() {
+  dynamicValues,
+  lists,
+  propertyValues,
+}
+
 final class const MultipartAppend({
   required final Expression name,
   required final Expression value,
@@ -174,6 +180,7 @@ final class const MultipartBodyPlan._({
   required final List<MultipartEmission> emissions,
   required super.isRequired,
   required final bool usesCustomParts,
+  required final Set<MultipartMergeHelper> mergeHelpers,
 }) extends PresentBodyPlan {
   new({
     required Expression value,
@@ -181,12 +188,14 @@ final class const MultipartBodyPlan._({
     required List<MultipartEmission> emissions,
     required bool isRequired,
     bool usesCustomParts = false,
+    Set<MultipartMergeHelper> mergeHelpers = const {},
   }) : this._(
          value: value,
          rawContentType: rawContentType,
          emissions: List.unmodifiable(emissions),
          isRequired: isRequired,
          usesCustomParts: usesCustomParts,
+         mergeHelpers: Set.unmodifiable(mergeHelpers),
        );
 }
 
