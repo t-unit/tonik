@@ -49,8 +49,30 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; if (string != null) { final _$stringLabel = string!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringLabel); } if (int != null) { final _$intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty); _$values.add(_$intLabel); } if (bool != null) { final _$boolLabel = bool!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$boolLabel); } if (_$values.isEmpty) return ''; return _$values.first; }
-''';
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          final _$values = <String>{};
+          if (bool != null) {
+            final _$boolLabel = bool!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$boolLabel);
+          }
+          if (int != null) {
+            final _$intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            _$values.add(_$intLabel);
+          }
+          if (string != null) {
+            final _$stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$stringLabel);
+          }
+          if (_$values.isEmpty) return '';
+          return _$values.first;
+        }
+      ''';
 
       expect(
         collapseWhitespace(classCode),
@@ -156,7 +178,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$mapV
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (string != null) { final _$stringLabel = string!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringLabel); } if (data != null) { final _$dataLabel = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataLabel); _$discriminatorValue ??= r'data'; } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toLabel(explode: explode, allowEmpty: allowEmpty); } }
+String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { final _$dataLabel = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataLabel); _$discriminatorValue ??= r'data'; } if (string != null) { final _$stringLabel = string!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringLabel); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toLabel(explode: explode, allowEmpty: allowEmpty); } }
 ''';
 
       expect(
@@ -236,7 +258,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { final _$valu
       final generated = format(klass.accept(emitter).toString());
 
       const expected = r'''
-String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (string != null) { final _$stringLabel = string!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringLabel); } if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: _$values.add( innerChoice!.toLabel(explode: explode, allowEmpty: allowEmpty), ); break; case EncodingShape.complex: final _$innerChoiceLabel = innerChoice!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerChoiceLabel); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toLabel(explode: explode, allowEmpty: allowEmpty); } }
+String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: _$values.add( innerChoice!.toLabel(explode: explode, allowEmpty: allowEmpty), ); break; case EncodingShape.complex: final _$innerChoiceLabel = innerChoice!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerChoiceLabel); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (string != null) { final _$stringLabel = string!.toLabel( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringLabel); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toLabel(explode: explode, allowEmpty: allowEmpty); } }
 ''';
 
       expect(

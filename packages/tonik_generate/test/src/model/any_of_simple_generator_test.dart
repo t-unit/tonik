@@ -86,30 +86,33 @@ void main() {
 
         const expectedMethod = '''
           factory Flexible.fromSimple(String? value, {required bool explode}) {
-            String? string;
-            try {
-              string = value.decodeSimpleString(context: r'Flexible');
-            } on Object catch (_) {
-              string = null;
-            }
-            int? int;
-            try {
-              int = value.decodeSimpleInt(context: r'Flexible');
-            } on Object catch (_) {
-              int = null;
-            }
             User? user;
             try {
               user = User.fromSimple(value, explode: explode);
             } on Object catch (_) {
               user = null;
             }
-            if (string == null && int == null && user == null) {
+
+            int? int;
+            try {
+              int = value.decodeSimpleInt(context: r'Flexible');
+            } on Object catch (_) {
+              int = null;
+            }
+
+            String? string;
+            try {
+              string = value.decodeSimpleString(context: r'Flexible');
+            } on Object catch (_) {
+              string = null;
+            }
+
+            if (user == null && int == null && string == null) {
               throw SimpleDecodingException(
                 r'Invalid simple value for Flexible: all variants failed to decode',
               );
             }
-            return Flexible(string: string, int: int, user: user);
+            return Flexible(user: user, int: int, string: string);
           }
         ''';
 
@@ -377,13 +380,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           bool literal = false,
         }) {
           final _$values = <String>{};
-          if (string != null) {
-            final _$stringSimple = string!.toSimple(
-              explode: explode,
-              allowEmpty: allowEmpty,
-              literal: literal,
-            );
-            _$values.add(_$stringSimple);
+          if (bool != null) {
+            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+            _$values.add(_$boolSimple);
           }
           if (int != null) {
             final _$intSimple = int!.toSimple(
@@ -393,13 +392,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             );
             _$values.add(_$intSimple);
           }
-          if (bool != null) {
-            final _$boolSimple = bool!.toSimple(
-              explode: explode,
-              allowEmpty: allowEmpty,
-              literal: literal,
-            );
-            _$values.add(_$boolSimple);
+          if (string != null) {
+            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+            _$values.add(_$stringSimple);
           }
           if (_$values.isEmpty) return '';
           return _$values.first;

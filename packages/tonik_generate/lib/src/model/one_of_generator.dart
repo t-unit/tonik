@@ -107,9 +107,10 @@ class OneOfGenerator {
 
         if (model.isDeprecated) {
           b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This class is deprecated.'),
-            ]),
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This class is deprecated.')]),
           );
         }
 
@@ -205,11 +206,7 @@ class OneOfGenerator {
                   ..annotations.add(refer('override', 'dart:core'))
                   ..name = 'toJson'
                   ..returns = refer('Object?', 'dart:core')
-                  ..body = _generateToJsonBody(
-                    className,
-                    model,
-                    variantNames,
-                  ),
+                  ..body = _generateToJsonBody(className, model, variantNames),
               ),
           ])
           ..constructors.add(
@@ -396,10 +393,7 @@ class OneOfGenerator {
 
     blocks.add(const Code(r'return _$json;'));
 
-    return Block.of([
-      ...spliceInlineHelpers(inlineHelpers),
-      ...blocks,
-    ]);
+    return Block.of([...spliceInlineHelpers(inlineHelpers), ...blocks]);
   }
 
   Code _generateFromJsonBody(
@@ -445,11 +439,7 @@ class OneOfGenerator {
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
-              sourceFileUrl(
-                package,
-                'model',
-                nameManager.modelName(m.model),
-              ),
+              sourceFileUrl(package, 'model', nameManager.modelName(m.model)),
             ).property('fromJson').call([refer('json')]),
           ]).code,
           const Code(','),
@@ -469,9 +459,7 @@ class OneOfGenerator {
       ]);
     }
 
-    final hasAnyModel = model.models.any(
-      (m) => m.model.resolved is AnyModel,
-    );
+    final hasAnyModel = model.models.any((m) => m.model.resolved is AnyModel);
 
     final hasNumberMember = model.models.any(
       (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
@@ -520,30 +508,15 @@ class OneOfGenerator {
       ]);
     }
 
-    final semanticPrimitiveMembers = semanticMembers
-        .where(
-          (m) =>
-              _scalarRuntimeType(m.model.resolved) == null &&
-              m.model.resolved is PrimitiveModel,
-        )
-        .toList();
-    var primitiveIndex = 0;
-    final fallbackMembers = model.models
-        .where(
-          (m) =>
-              _scalarRuntimeType(m.model.resolved) == null &&
-              m.model.resolved is! AnyModel &&
-              m.model.resolved is! NeverModel,
-        )
-        .map((m) {
-          if (m.model.resolved is! PrimitiveModel) return m;
-          return semanticPrimitiveMembers[primitiveIndex++];
-        });
-
-    // Composite fallbacks retain their schema positions. Primitive slots use
-    // stable semantic order so a string-encoded variant is tried before the
-    // plain-string member that would otherwise capture every string value.
-    for (final m in fallbackMembers) {
+    // Members are attempted in stable semantic order. This keeps narrower
+    // string-encoded and structured variants reachable before catch-all wire
+    // representations such as plain strings and maps.
+    for (final m in semanticMembers.where(
+      (m) =>
+          _scalarRuntimeType(m.model.resolved) == null &&
+          m.model.resolved is! AnyModel &&
+          m.model.resolved is! NeverModel,
+    )) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
       final variantName = variantNames[m]!;
@@ -599,9 +572,7 @@ class OneOfGenerator {
         (m) => m.model.resolved is AnyModel,
       );
       final variantName = variantNames[anyModelVariant]!;
-      blocks.add(
-        refer(variantName).call([refer('json')]).returned.statement,
-      );
+      blocks.add(refer(variantName).call([refer('json')]).returned.statement);
     } else {
       blocks.add(
         generateJsonDecodingExceptionExpression(
@@ -611,10 +582,7 @@ class OneOfGenerator {
       );
     }
 
-    return Block.of([
-      ...spliceInlineHelpers(inlineHelpers),
-      ...blocks,
-    ]);
+    return Block.of([...spliceInlineHelpers(inlineHelpers), ...blocks]);
   }
 
   Reference? _scalarRuntimeType(Model resolved) => switch (resolved) {
@@ -726,10 +694,7 @@ class OneOfGenerator {
                     ),
                   )
                   .property(constructorName)
-                  .call(
-                    [refer('value')],
-                    {'explode': refer('explode')},
-                  ),
+                  .call([refer('value')], {'explode': refer('explode')}),
             ]).statement,
             const Code('}'),
           ]);
@@ -739,7 +704,7 @@ class OneOfGenerator {
       }
     }
 
-    for (final m in model.models) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -835,9 +800,7 @@ class OneOfGenerator {
                 )
                 .property(constructorName)
                 .call([refer('value')], {'explode': refer('explode')});
-        tryBody.add(
-          refer(variantName).call([innerDecode]).returned.statement,
-        );
+        tryBody.add(refer(variantName).call([innerDecode]).returned.statement);
       }
 
       bodyBlocks.addAll([
@@ -869,9 +832,7 @@ class OneOfGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = Block.of(bodyBlocks),
     );
   }
@@ -892,9 +853,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be simple-encoded',
@@ -916,9 +875,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -955,9 +912,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -996,9 +951,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is ListModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
                 literalString(
@@ -1015,9 +968,7 @@ class OneOfGenerator {
         caseCodes.add(Code('$variantName(:final value) => '));
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1032,9 +983,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Binary data cannot be simple-encoded',
           ).code,
@@ -1042,9 +991,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is MapModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Map types cannot be simple-encoded',
           ).code,
@@ -1060,9 +1007,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1335,10 +1280,7 @@ class OneOfGenerator {
       (b) => b
         ..name = 'currentEncodingShape'
         ..type = MethodType.getter
-        ..returns = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
-        )
+        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
         ..lambda = false
         ..body = body,
     );
@@ -1536,9 +1478,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be label-encoded',
@@ -1560,9 +1500,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -1580,9 +1518,7 @@ class OneOfGenerator {
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
             const Code(','),
             const Code('}'),
-            const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty) : ',
-            ),
+            const Code('.toLabel(explode: explode, allowEmpty: allowEmpty) : '),
             refer('value').property('toLabel').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
@@ -1597,9 +1533,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -1612,9 +1546,7 @@ class OneOfGenerator {
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
             const Code(','),
             const Code('}'),
-            const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty),',
-            ),
+            const Code('.toLabel(explode: explode, allowEmpty: allowEmpty),'),
           ]);
         }
       } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
@@ -1635,9 +1567,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is ListModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
                 literalString(
@@ -1654,9 +1584,7 @@ class OneOfGenerator {
         caseCodes.add(Code('$variantName(:final value) => '));
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1670,9 +1598,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Binary data cannot be label-encoded',
           ).code,
@@ -1680,9 +1606,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is MapModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Map types cannot be label-encoded',
           ).code,
@@ -1698,9 +1622,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1743,9 +1665,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be matrix-encoded',
@@ -1765,9 +1685,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1821,9 +1739,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be URI encoded',
@@ -1833,9 +1749,7 @@ class OneOfGenerator {
       } else if (modelType.encodingShape == EncodingShape.complex) {
         // Avoid destructuring values that cannot be URI encoded.
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Cannot uriEncode $className: variant contains complex type',
             raw: true,
@@ -1852,9 +1766,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([

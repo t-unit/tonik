@@ -325,10 +325,10 @@ void main() {
         const expectedFromFormMethod = '''
         factory StringDecimalModel.fromForm(String? value, {required bool explode}) {
           return StringDecimalModel(
-            string: value.decodeFormString(context: r'StringDecimalModel.string'),
             bigDecimal: value.decodeFormBigDecimal(
               context: r'StringDecimalModel.bigDecimal',
             ),
+            string: value.decodeFormString(context: r'StringDecimalModel.string'),
           );
         }
       ''';
@@ -473,8 +473,8 @@ void main() {
         const expectedFromFormMethod = '''
         factory MixedModel.fromForm(String? value, {required bool explode}) {
           return MixedModel(
-            string: value.decodeFormString(context: r'MixedModel.string'),
             complex: Complex.fromForm(value, explode: explode),
+            string: value.decodeFormString(context: r'MixedModel.string'),
           );
         }
       ''';
@@ -782,16 +782,6 @@ void main() {
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$stringForm = string.toForm(
-          paramName,
-          explode: explode,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
-          textEncoding: textEncoding,
-        );
-        _$entryLists.add(_$stringForm);
-        _$values.add(_$stringForm.map((e) => e.value).join(','));
         final _$flexibleAForm = flexibleA.toForm(
           paramName,
           explode: explode,
@@ -812,6 +802,16 @@ void main() {
         );
         _$entryLists.add(_$flexibleBForm);
         _$values.add(_$flexibleBForm.map((e) => e.value).join(','));
+        final _$stringForm = string.toForm(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        );
+        _$entryLists.add(_$stringForm);
+        _$values.add(_$stringForm.map((e) => e.value).join(','));
         if (_$values.length > 1) {
           throw EncodingException(
             r'Inconsistent allOf form encoding for MultiDynamic: all values must encode to the same result',
@@ -922,16 +922,6 @@ void main() {
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$stringForm = string.toForm(
-          paramName,
-          explode: explode,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
-          textEncoding: textEncoding,
-        );
-        _$entryLists.add(_$stringForm);
-        _$values.add(_$stringForm.map((e) => e.value).join(','));
         final _$flexibleValueForm = flexibleValue.toForm(
           paramName,
           explode: explode,
@@ -942,16 +932,6 @@ void main() {
         );
         _$entryLists.add(_$flexibleValueForm);
         _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
-        final _$choiceForm = choice.toForm(
-          paramName,
-          explode: explode,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
-          textEncoding: textEncoding,
-        );
-        _$entryLists.add(_$choiceForm);
-        _$values.add(_$choiceForm.map((e) => e.value).join(','));
         final _$bigDecimalForm = bigDecimal.toForm(
           paramName,
           explode: explode,
@@ -962,6 +942,26 @@ void main() {
         );
         _$entryLists.add(_$bigDecimalForm);
         _$values.add(_$bigDecimalForm.map((e) => e.value).join(','));
+        final _$choiceForm = choice.toForm(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        );
+        _$entryLists.add(_$choiceForm);
+        _$values.add(_$choiceForm.map((e) => e.value).join(','));
+        final _$stringForm = string.toForm(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        );
+        _$entryLists.add(_$stringForm);
+        _$values.add(_$stringForm.map((e) => e.value).join(','));
         if (_$values.length > 1) {
           throw EncodingException(
             r'Inconsistent allOf form encoding for ComplexMixed: all values must encode to the same result',
@@ -1167,16 +1167,6 @@ void main() {
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$intForm = int.toForm(
-          paramName,
-          explode: explode,
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
-          textEncoding: textEncoding,
-        );
-        _$entryLists.add(_$intForm);
-        _$values.add(_$intForm.map((e) => e.value).join(','));
         final _$flexibleValueForm = flexibleValue.toForm(
           paramName,
           explode: explode,
@@ -1187,6 +1177,16 @@ void main() {
         );
         _$entryLists.add(_$flexibleValueForm);
         _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
+        final _$intForm = int.toForm(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        );
+        _$entryLists.add(_$intForm);
+        _$values.add(_$intForm.map((e) => e.value).join(','));
         if (_$values.length > 1) {
           throw EncodingException(
             r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
