@@ -40,7 +40,18 @@ class const MultipartBodyPlanner({
       package: package,
     );
     for (final property in properties) {
-      _validateCompatibleDefinitions(property);
+      final runtimeEncodingError = _incompatibleDefinitionsError(property);
+      if (runtimeEncodingError != null) {
+        return MultipartBodyPlan(
+          value: refer(bodyAccessor),
+          rawContentType: content.rawContentType,
+          isRequired: isRequired,
+          emissions: const [],
+          runtimeEncodingError: runtimeEncodingError,
+        );
+      }
+    }
+    for (final property in properties) {
       final resolvedEncoding = _resolveEncoding(
         content.encoding[property.rawName],
         property.property.model,
@@ -756,17 +767,16 @@ class const MultipartBodyPlanner({
     }
   }
 
-  void _validateCompatibleDefinitions(MultipartPropertyPlan property) {
+  String? _incompatibleDefinitionsError(MultipartPropertyPlan property) {
     final first = property.properties.first.model;
     for (final candidate in property.properties.skip(1)) {
       if (!_compatibleModels(first, candidate.model, <(Model, Model)>{})) {
-        throw ArgumentError(
-          'Multipart property "${property.rawName}" has incompatible '
-          'definitions (${first.runtimeType} and '
-          '${candidate.model.runtimeType}).',
-        );
+        return 'Multipart property "${property.rawName}" has incompatible '
+            'definitions (${first.runtimeType} and '
+            '${candidate.model.runtimeType}).';
       }
     }
+    return null;
   }
 
   bool _compatibleModels(Model left, Model right, Set<(Model, Model)> active) {

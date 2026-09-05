@@ -38,6 +38,25 @@ Object? test() {
 }
 ''');
   });
+
+  test('HTTP multipart body emits a terminal encoding error', () {
+    final errorPlan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: const [],
+      runtimeEncodingError:
+          'Multipart property "item" has incompatible definitions.',
+    );
+
+    _expectBody(buildHttpMultipartBodyStatements(errorPlan), '''
+Object? test() {
+  throw EncodingException(
+    r'Multipart property "item" has incompatible definitions.',
+  );
+}
+''');
+  });
 }
 
 void _expectBody(List<Code> statements, String expected) {

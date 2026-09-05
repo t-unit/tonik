@@ -202,6 +202,7 @@ void main() {
       expect(parts.last.source, MultipartValueSource.bytes);
       expect(parts.last.filename, same(filename));
       expect(parts.last.contentType, 'application/octet-stream');
+      expect(multipart.runtimeEncodingError, isNull);
     });
   });
 
@@ -283,7 +284,7 @@ void main() {
       }
     });
 
-    test('rejects incompatible duplicate multipart definitions', () {
+    test('plans incompatible duplicate definitions as a runtime error', () {
       final context = Context.initial();
 
       final content = multipartContentFixture(context, [
@@ -325,17 +326,15 @@ void main() {
         ),
       );
 
+      final plan = const OperationRequestPlanner(backend: TransportBackend.http)
+          .plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(body.emissions, isEmpty);
       expect(
-        () =>
-            const OperationRequestPlanner(backend: TransportBackend.http)
-                .plan(operation, parameters),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('Multipart property "item" has incompatible definitions'),
-          ),
-        ),
+        body.runtimeEncodingError,
+        'Multipart property "item" has incompatible definitions '
+        '(StringModel and BinaryModel).',
       );
     });
 

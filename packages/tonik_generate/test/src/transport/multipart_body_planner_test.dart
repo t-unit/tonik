@@ -31,6 +31,22 @@ void main() {
     return format('${method.accept(emitter)}');
   }
 
+  void expectRuntimeEncodingError(
+    MultipartRequestContent content,
+    String message,
+  ) {
+    final expected =
+        '''
+Object? test() {
+  throw EncodingException(r'$message');
+}
+''';
+    expect(
+      collapseWhitespace(emit(content)),
+      collapseWhitespace(format(expected)),
+    );
+  }
+
   void expectPropertyCode(
     Model model,
     String expectedPartCode, {
@@ -1036,7 +1052,7 @@ Object? test() {
       expect(properties.map((property) => property.rawName), ['client']);
     });
 
-    test('rejects incompatible nested duplicate definitions structurally', () {
+    test('defers incompatible nested duplicate definitions to runtime', () {
       final leftMetadata = _classWithProperties(context, 'LeftMetadata', [
         _property(context, 'id', StringModel(context: context)),
       ]);
@@ -1051,15 +1067,10 @@ Object? test() {
           _property(context, 'metadata', rightMetadata, isRequired: false),
         ]),
       ]);
-      expect(
-        () => emit(_content(root)),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('incompatible definitions'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(root),
+        'Multipart property "metadata" has incompatible definitions '
+        '(ClassModel and ClassModel).',
       );
     });
 
@@ -1103,15 +1114,10 @@ Object? test() {
           metadata(const ForbiddenAdditionalProperties()),
         ),
       ]) {
-        expect(
-          () => emit(_content(incompatible)),
-          throwsA(
-            isA<ArgumentError>().having(
-              (error) => error.message,
-              'message',
-              contains('incompatible definitions'),
-            ),
-          ),
+        expectRuntimeEncodingError(
+          _content(incompatible),
+          'Multipart property "metadata" has incompatible definitions '
+          '(ClassModel and ClassModel).',
         );
       }
 
@@ -1145,15 +1151,10 @@ Object? test() {
         emit(_content(root(shared, shared))),
         contains('body.left.status'),
       );
-      expect(
-        () => emit(_content(root(_stringEnum(context), _stringEnum(context)))),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('incompatible definitions'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(root(_stringEnum(context), _stringEnum(context))),
+        'Multipart property "status" has incompatible definitions '
+        '(EnumModel<String> and EnumModel<String>).',
       );
     });
 

@@ -181,6 +181,7 @@ final class const MultipartBodyPlan._({
   required super.isRequired,
   required final bool usesCustomParts,
   required final Set<MultipartMergeHelper> mergeHelpers,
+  required final String? runtimeEncodingError,
 }) extends PresentBodyPlan {
   new({
     required Expression value,
@@ -189,6 +190,7 @@ final class const MultipartBodyPlan._({
     required bool isRequired,
     bool usesCustomParts = false,
     Set<MultipartMergeHelper> mergeHelpers = const {},
+    String? runtimeEncodingError,
   }) : this._(
          value: value,
          rawContentType: rawContentType,
@@ -196,6 +198,7 @@ final class const MultipartBodyPlan._({
          isRequired: isRequired,
          usesCustomParts: usesCustomParts,
          mergeHelpers: Set.unmodifiable(mergeHelpers),
+         runtimeEncodingError: runtimeEncodingError,
        );
 }
 

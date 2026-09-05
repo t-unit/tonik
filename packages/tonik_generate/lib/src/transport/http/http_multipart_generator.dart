@@ -1,9 +1,15 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Native HTTP parts stay ordered, including duplicate field names.
 List<Code> buildHttpMultipartBodyStatements(MultipartBodyPlan plan) {
+  if (plan.runtimeEncodingError case final encodingError?) {
+    return [
+      generateEncodingExceptionExpression(encodingError, raw: true).statement,
+    ];
+  }
   final custom = plan.usesCustomParts;
   final variable = custom ? r'_$multipartParts' : r'_$multipartFiles';
   return [

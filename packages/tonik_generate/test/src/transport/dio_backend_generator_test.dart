@@ -54,6 +54,34 @@ Object? test() {
     );
   });
 
+  test('emits a multipart encoding error without constructing a form', () {
+    final plan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: const [],
+      runtimeEncodingError:
+          'Multipart property "item" has incompatible definitions.',
+    );
+    final method = Method(
+      (builder) => builder
+        ..name = 'test'
+        ..returns = refer('Object?', 'dart:core')
+        ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+    );
+    const expected = '''
+Object? test() {
+  throw EncodingException(
+    r'Multipart property "item" has incompatible definitions.',
+  );
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   test('exposes portable cancellation while keeping Dio bridging private', () {
     final parameter = generator.cancellationParameter;
 
