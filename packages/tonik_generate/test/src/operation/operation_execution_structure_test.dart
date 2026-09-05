@@ -577,9 +577,8 @@ void main() {
           )
           .toList();
       expect(imports, isEmpty);
-      final pubspecLines = File(
-        path.join(root, 'pubspec.yaml'),
-      ).readAsLinesSync();
+      final pubspecLines = File(path.join(root, 'pubspec.yaml'))
+          .readAsLinesSync();
       final dependenciesStart = pubspecLines.indexOf('dependencies:');
       final devDependenciesStart = pubspecLines.indexOf('dev_dependencies:');
       final dependencyNames = pubspecLines

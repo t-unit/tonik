@@ -209,9 +209,9 @@ Operation operation(
   );
 }
 
-String operationSource(Directory root, String package, String filename) => File(
-  path.join(root.path, package, 'lib', 'src', 'operation', filename),
-).readAsStringSync();
+String operationSource(Directory root, String package, String filename) =>
+    File(path.join(root.path, package, 'lib', 'src', 'operation', filename))
+        .readAsStringSync();
 
 String normalizeGeneratedSource(String source) => source
     .replaceAll(RegExp(r'\b_i\d+\.'), '')
@@ -221,9 +221,8 @@ String normalizeGeneratedSource(String source) => source
 String get repositoryRoot {
   var directory = Directory.current.absolute;
   while (!File(path.join(directory.path, 'pubspec.yaml')).existsSync() ||
-      !Directory(
-        path.join(directory.path, 'packages', 'tonik_generate'),
-      ).existsSync()) {
+      !Directory(path.join(directory.path, 'packages', 'tonik_generate'))
+          .existsSync()) {
     final parent = directory.parent;
     if (parent.path == directory.path) {
       throw StateError('Could not locate the repository root.');

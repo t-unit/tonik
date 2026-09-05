@@ -2,9 +2,8 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
-final class DioOperationBaseGenerator implements OperationBaseGenerator {
-  const DioOperationBaseGenerator();
-
+final class const DioOperationBaseGenerator()
+    implements OperationBaseGenerator {
   static final _nativeResponse = TypeReference(
     (builder) => builder
       ..symbol = 'Response'

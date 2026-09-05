@@ -9,15 +9,10 @@ import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 
-class OperationBaseFileGenerator {
-  const OperationBaseFileGenerator({
-    required this.operationBaseGenerator,
-    required this.nameManager,
-  });
-
-  final OperationBaseGenerator operationBaseGenerator;
-  final NameManager nameManager;
-
+class const OperationBaseFileGenerator({
+  required final OperationBaseGenerator operationBaseGenerator,
+  required final NameManager nameManager,
+}) {
   String writeFile({required String outputDirectory, required String package}) {
     final selectedFilename = _selectedFilename;
     final operationDirectory = Directory(

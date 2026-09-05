@@ -4,9 +4,7 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Generates the backend-specific operation base shared by generated
 /// operations.
-abstract interface class OperationBaseGenerator {
-  const OperationBaseGenerator();
-
+abstract interface class const OperationBaseGenerator() {
   String get className;
 
   String get filename;

@@ -2,9 +2,8 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
-final class HttpOperationBaseGenerator implements OperationBaseGenerator {
-  const HttpOperationBaseGenerator();
-
+final class const HttpOperationBaseGenerator()
+    implements OperationBaseGenerator {
   static final Reference _nativeResponse = refer(
     'Response',
     'package:http/http.dart',
@@ -251,9 +250,10 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
                 .returned
                 .statement,
             const Code('}'),
-            _tonikSuccess(
-              valueType,
-            ).call([literalNull, refer('response')]).returned.statement,
+            _tonikSuccess(valueType)
+                .call([literalNull, refer('response')])
+                .returned
+                .statement,
           ] else ...[
             const Code('final T value;'),
             const Code('try {'),
@@ -276,9 +276,10 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
                 .returned
                 .statement,
             const Code('}'),
-            _tonikSuccess(
-              valueType,
-            ).call([refer('value'), refer('response')]).returned.statement,
+            _tonikSuccess(valueType)
+                .call([refer('value'), refer('response')])
+                .returned
+                .statement,
           ],
         ]),
     );
