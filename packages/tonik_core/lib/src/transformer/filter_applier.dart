@@ -1,9 +1,7 @@
 import 'package:tonik_core/tonik_core.dart';
 
 /// Applies filtering rules to operations and models based on configuration.
-class FilterApplier {
-  const FilterApplier();
-
+class const FilterApplier() {
   /// Filters operations by tags.
   ///
   /// If [includeTags] is not empty, only operations with at least one tag

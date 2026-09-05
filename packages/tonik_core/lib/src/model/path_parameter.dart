@@ -3,7 +3,7 @@ import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding styles supported for path parameters.
-enum PathParameterEncoding {
+enum PathParameterEncoding() {
   /// Comma-separated values. Default style.
   /// Example: /users/3,4,5
   simple,
@@ -17,11 +17,7 @@ enum PathParameterEncoding {
   matrix,
 }
 
-sealed class PathParameter {
-  const PathParameter({required this.context});
-
-  final Context context;
-
+sealed class const PathParameter({required final Context context}) {
   /// The description of the parameter.
   /// For aliases, this may override the referenced parameter's description.
   String? get description;
@@ -54,20 +50,12 @@ sealed class PathParameter {
 }
 
 @immutable
-class PathParameterAlias extends PathParameter {
-  const PathParameterAlias({
-    required this.name,
-    required this.parameter,
-    required super.context,
-    this.description,
-  });
-
-  final String name;
-  final PathParameter parameter;
-
-  @override
-  final String? description;
-
+class const PathParameterAlias({
+  required final String name,
+  required final PathParameter parameter,
+  required super.context,
+  @override final String? description,
+}) extends PathParameter {
   @override
   String toString() =>
       'PathParameterAlias{name: $name, parameter: $parameter, '
@@ -87,40 +75,21 @@ class PathParameterAlias extends PathParameter {
   int get hashCode => Object.hash(name, parameter, description, context);
 }
 
-class PathParameterObject extends PathParameter {
-  PathParameterObject({
-    required this.name,
-    required this.rawName,
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.allowEmptyValue,
-    required this.explode,
-    required this.model,
-    required this.encoding,
-    required super.context,
-    required this.examples,
-    required this.defaultValue,
-    this.nameOverride,
-  });
-
-  final String? name;
-  final String rawName;
-
-  String? nameOverride;
-
-  @override
-  String? description;
-  bool isRequired;
-  bool isDeprecated;
-  bool allowEmptyValue;
-  bool explode;
-  Model model;
-  PathParameterEncoding encoding;
-  List<Example> examples;
-
-  Object? defaultValue;
-
+class PathParameterObject({
+  required final String? name,
+  required final String rawName,
+  @override required var String? description,
+  required var bool isRequired,
+  required var bool isDeprecated,
+  required var bool allowEmptyValue,
+  required var bool explode,
+  required var Model model,
+  required var PathParameterEncoding encoding,
+  required super.context,
+  required var List<Example> examples,
+  required var Object? defaultValue,
+  var String? nameOverride,
+}) extends PathParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override

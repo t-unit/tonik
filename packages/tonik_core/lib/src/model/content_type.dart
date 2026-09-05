@@ -1,4 +1,4 @@
-enum ContentType {
+enum ContentType() {
   json,
   text,
   bytes,

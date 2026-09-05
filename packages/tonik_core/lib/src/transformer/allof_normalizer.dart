@@ -6,9 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// This transformer performs in-place replacement throughout the entire
 /// document, ensuring referential consistency by memoizing transformations.
 @immutable
-class AllOfNormalizer {
-  const AllOfNormalizer();
-
+class const AllOfNormalizer() {
   /// Normalizes allOf schemas with a single model to type aliases.
   ///
   /// This simplifies patterns like `allOf: [$ref, {description: ...}]` used
@@ -258,10 +256,7 @@ class AllOfNormalizer {
     }
   }
 
-  void _updatePathParameterModel(
-    PathParameter param,
-    Map<Model, Model> cache,
-  ) {
+  void _updatePathParameterModel(PathParameter param, Map<Model, Model> cache) {
     switch (param) {
       case PathParameterAlias():
         _updatePathParameterModel(param.parameter, cache);

@@ -11,7 +11,7 @@ import 'package:tonik_core/src/model/model.dart';
 /// (O(n log n) comparator calls) don't recompute the key each time. This is
 /// critical for specs with deeply circular model graphs (e.g. Stripe's 90+
 /// cyclic schemas), where uncached computation effectively hangs.
-class StableModelSorter {
+class StableModelSorter() {
   static const _maxDepth = 5;
 
   final _cache = <Model, String>{};
@@ -35,12 +35,7 @@ class StableModelSorter {
   );
 
   String stableAliasKey({required Model model}) {
-    final modelKey = _computeKey(
-      model,
-      {},
-      1,
-      preserveCompoundOrder: true,
-    );
+    final modelKey = _computeKey(model, {}, 1, preserveCompoundOrder: true);
     return 'AliasModel{null,$modelKey}';
   }
 
@@ -64,21 +59,38 @@ class StableModelSorter {
     Set<Model> visited,
     int depth, {
     required bool preserveCompoundOrder,
-  }) =>
-      'ClassModel{$name,'
-      '${properties.map((p) => '${p.$1}:'
-          '${_computeKey(
-            p.$2,
+  }) {
+    final propertyKeys = properties
+        .map((property) {
+          final key = _nestedKey(
+            property.$2,
             visited,
-            depth + 1,
-            preserveCompoundOrder: preserveCompoundOrder,
-          )}').join(',')},'
-      'ap:${_policyKey(
-        policy,
-        visited,
-        depth,
-        preserveCompoundOrder: preserveCompoundOrder,
-      )}}';
+            depth,
+            preserveCompoundOrder,
+          );
+          return '${property.$1}:$key';
+        })
+        .join(',');
+    final policyKey = _policyKey(
+      policy,
+      visited,
+      depth,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'ClassModel{$name,$propertyKeys,ap:$policyKey}';
+  }
+
+  String _nestedKey(
+    Model model,
+    Set<Model> visited,
+    int depth,
+    bool preserveCompoundOrder,
+  ) => _computeKey(
+    model,
+    visited,
+    depth + 1,
+    preserveCompoundOrder: preserveCompoundOrder,
+  );
 
   /// Returns a deterministically sorted list of [models].
   ///
@@ -180,12 +192,8 @@ class StableModelSorter {
         preserveCompoundOrder: preserveCompoundOrder,
       ),
       ListModel(:final content, :final name) =>
-        'ListModel{$name,${_computeKey(
-          content,
-          visited,
-          depth + 1,
-          preserveCompoundOrder: preserveCompoundOrder,
-        )}}',
+        'ListModel{$name,'
+            '${_nestedKey(content, visited, depth, preserveCompoundOrder)}}',
       ClassModel(
         :final name,
         :final properties,
@@ -202,20 +210,11 @@ class StableModelSorter {
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>
-        'AliasModel{$name,${_computeKey(
-          model,
-          visited,
-          depth + 1,
-          preserveCompoundOrder: preserveCompoundOrder,
-        )}}',
+        'AliasModel{$name,'
+            '${_nestedKey(model, visited, depth, preserveCompoundOrder)}}',
       MapModel(:final name, :final valueModel) =>
         'MapModel{$name,'
-            '${_computeKey(
-              valueModel,
-              visited,
-              depth + 1,
-              preserveCompoundOrder: preserveCompoundOrder,
-            )}}',
+            '${_nestedKey(valueModel, visited, depth, preserveCompoundOrder)}}',
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',
@@ -277,28 +276,15 @@ class StableModelSorter {
     ForbiddenAdditionalProperties() => 'forbidden',
     AllowedAdditionalProperties(:final valueModel, :final origin) =>
       'allowed(${origin.name},'
-          '${_computeKey(
-            valueModel,
-            visited,
-            depth + 1,
-            preserveCompoundOrder: preserveCompoundOrder,
-          )})',
+          '${_nestedKey(valueModel, visited, depth, preserveCompoundOrder)})',
   };
 
   /// Computes compound member keys in declaration order.
-  String _orderedModels(
-    List<Model> models,
-    Set<Model> visited,
-    int depth,
-  ) {
+  String _orderedModels(List<Model> models, Set<Model> visited, int depth) {
     return models
         .map(
-          (m) => _computeKey(
-            m,
-            visited,
-            depth + 1,
-            preserveCompoundOrder: true,
-          ),
+          (m) =>
+              _computeKey(m, visited, depth + 1, preserveCompoundOrder: true),
         )
         .join(',');
   }
@@ -313,12 +299,7 @@ class StableModelSorter {
         .map(
           (dm) =>
               '${dm.discriminatorValue}:'
-              '${_computeKey(
-                dm.model,
-                visited,
-                depth + 1,
-                preserveCompoundOrder: true,
-              )}',
+              '${_nestedKey(dm.model, visited, depth, true)}',
         )
         .join(',');
   }
@@ -351,12 +332,7 @@ class StableModelSorter {
         .map(
           (model) =>
               '${model.discriminatorValue}:'
-              '${_computeKey(
-                model.model,
-                visited,
-                depth + 1,
-                preserveCompoundOrder: false,
-              )}',
+              '${_nestedKey(model.model, visited, depth, false)}',
         )
         .join(',');
   }

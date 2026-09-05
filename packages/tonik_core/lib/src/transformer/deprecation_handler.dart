@@ -1,8 +1,6 @@
 import 'package:tonik_core/tonik_core.dart';
 
-class DeprecationHandler {
-  const DeprecationHandler();
-
+class const DeprecationHandler() {
   Set<Operation> handleOperations({
     required Set<Operation> operations,
     required DeprecatedHandling mode,

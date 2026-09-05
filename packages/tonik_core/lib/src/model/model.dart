@@ -8,10 +8,7 @@ import 'package:tonik_util/tonik_util.dart';
 
 final Logger _aliasModelLog = Logger('AliasModel');
 
-sealed class Model {
-  Model({required this.context});
-
-  final Context context;
+sealed class Model({required final Context context}) {
   EncodingShape get encodingShape;
 
   /// The terminal model after resolving through any [AliasModel] chains.
@@ -110,33 +107,20 @@ mixin CompositeModel on Model {
   }
 }
 
-class MapModel extends Model with NamedModel {
-  MapModel({
-    required this.valueModel,
-    required super.context,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.isNullable = false,
-    this.isValueNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  });
-
-  @override
-  final String? name;
-  @override
-  String? nameOverride;
-  Model valueModel;
-  bool isNullable;
+class MapModel({
+  required var Model valueModel,
+  required super.context,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var bool isNullable = false,
 
   /// Describes the value, not the map itself, so it does not affect
   /// [isEffectivelyNullable] — mirrors [Property.isNullable].
-  bool isValueNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
+  var bool isValueNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
 
@@ -147,34 +131,44 @@ class MapModel extends Model with NamedModel {
       'examples: $examples}';
 }
 
-class AliasModel extends Model with NamedModel {
-  AliasModel({
-    required this.model,
-    required super.context,
-    required this.examples,
+class AliasModel._({
+  required var Model model,
+  required super.context,
+  required var List<Example> examples,
+  required final Object? _localDefault,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
+  var bool isDeprecated = false,
+  var bool isNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel {
+  new({
+    required Model model,
+    required Context context,
+    required List<Example> examples,
     required Object? defaultValue,
-    this.name,
-    this.nameOverride,
-    this.description,
-    this.isDeprecated = false,
-    this.isNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  }) : _localDefault = defaultValue;
-
-  @override
-  final String? name;
-  @override
-  String? nameOverride;
-  Model model;
-  String? description;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
-  final Object? _localDefault;
+    String? name,
+    String? nameOverride,
+    String? description,
+    bool isDeprecated = false,
+    bool isNullable = false,
+    bool isReadOnly = false,
+    bool isWriteOnly = false,
+  }) : this._(
+         model: model,
+         context: context,
+         examples: examples,
+         localDefault: defaultValue,
+         name: name,
+         nameOverride: nameOverride,
+         description: description,
+         isDeprecated: isDeprecated,
+         isNullable: isNullable,
+         isReadOnly: isReadOnly,
+         isWriteOnly: isWriteOnly,
+       );
 
   /// The locally declared default if set, otherwise the first one found
   /// while walking nested [AliasModel]s.
@@ -221,34 +215,20 @@ class AliasModel extends Model with NamedModel {
       'examples: $examples}';
 }
 
-class ListModel extends Model with NamedModel {
-  ListModel({
-    required this.content,
-    required super.context,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.isNullable = false,
-    this.isContentNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  });
-
-  Model content;
-
-  @override
-  final String? name;
-  @override
-  String? nameOverride;
-  bool isNullable;
+class ListModel({
+  required var Model content,
+  required super.context,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var bool isNullable = false,
 
   /// Describes the item, not the list itself, so it does not affect
   /// [isEffectivelyNullable] — mirrors [Property.isNullable].
-  bool isContentNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
+  var bool isContentNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
 
@@ -261,20 +241,20 @@ class ListModel extends Model with NamedModel {
       'examples: $examples}';
 }
 
-class ClassModel extends Model with NamedModel {
-  ClassModel({
-    required this.properties,
-    required super.context,
-    required this.isDeprecated,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.description,
-    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
-    this.isNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  }) {
+class ClassModel({
+  required var List<Property> properties,
+  required super.context,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
+  AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+  var bool isNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel {
+  this {
     this.additionalPropertiesPolicy =
         additionalPropertiesPolicy ??
         AllowedAdditionalProperties(
@@ -283,20 +263,7 @@ class ClassModel extends Model with NamedModel {
         );
   }
 
-  @override
-  final String? name;
-
-  @override
-  String? nameOverride;
-  List<Property> properties;
-  String? description;
   late AdditionalPropertiesPolicy additionalPropertiesPolicy;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
 
@@ -311,13 +278,7 @@ class ClassModel extends Model with NamedModel {
 
 /// Represents an individual value within an enum, with optional name override.
 @immutable
-class EnumEntry<T> {
-  const EnumEntry({required this.value, this.nameOverride});
-
-  final T value;
-
-  final String? nameOverride;
-
+class const EnumEntry<T>({required final T value, final String? nameOverride}) {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -334,37 +295,21 @@ class EnumEntry<T> {
       'EnumEntry<$T>{value: $value, nameOverride: $nameOverride}';
 }
 
-class EnumModel<T> extends Model with NamedModel {
-  EnumModel({
-    required this.values,
-    required this.isNullable,
-    required super.context,
-    required this.isDeprecated,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.description,
-    this.fallbackValue,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  });
-
-  @override
-  final String? name;
-
-  @override
-  String? nameOverride;
-  Set<EnumEntry<T>> values;
+class EnumModel<T>({
+  required var Set<EnumEntry<T>> values,
+  required var bool isNullable,
+  required super.context,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
 
   /// Optional fallback value if no other value matches.
-  EnumEntry<T>? fallbackValue;
-  String? description;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
+  var EnumEntry<T>? fallbackValue,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
 
@@ -376,20 +321,20 @@ class EnumModel<T> extends Model with NamedModel {
       'examples: $examples}';
 }
 
-class AllOfModel extends Model with NamedModel, CompositeModel {
-  AllOfModel({
-    required this.models,
-    required super.context,
-    required this.isDeprecated,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.description,
-    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
-    this.isNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  }) {
+class AllOfModel({
+  required var List<Model> models,
+  required super.context,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
+  AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+  var bool isNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel, CompositeModel {
+  this {
     this.additionalPropertiesPolicy =
         additionalPropertiesPolicy ??
         AllowedAdditionalProperties(
@@ -398,20 +343,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
         );
   }
 
-  @override
-  final String? name;
-
-  @override
-  String? nameOverride;
-  String? description;
   late AdditionalPropertiesPolicy additionalPropertiesPolicy;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Model> models;
-  List<Example> examples;
-
   @override
   List<Model> get containedModels => models;
 
@@ -426,35 +358,19 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
 
 typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
 
-class OneOfModel extends Model with NamedModel, CompositeModel {
-  OneOfModel({
-    required this.models,
-    required super.context,
-    required this.isDeprecated,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.description,
-    this.discriminator,
-    this.isNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  });
-
-  @override
-  final String? name;
-
-  @override
-  String? nameOverride;
-  String? description;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<DiscriminatedModel> models;
-  String? discriminator;
-  List<Example> examples;
-
+class OneOfModel({
+  required var List<DiscriminatedModel> models,
+  required super.context,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
+  var String? discriminator,
+  var bool isNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
 
@@ -466,35 +382,19 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
       'isDeprecated: $isDeprecated, examples: $examples}';
 }
 
-class AnyOfModel extends Model with NamedModel, CompositeModel {
-  AnyOfModel({
-    required this.models,
-    required super.context,
-    required this.isDeprecated,
-    required this.examples,
-    this.name,
-    this.nameOverride,
-    this.description,
-    this.discriminator,
-    this.isNullable = false,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-  });
-
-  @override
-  final String? name;
-
-  @override
-  String? nameOverride;
-  String? description;
-  bool isDeprecated;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<DiscriminatedModel> models;
-  String? discriminator;
-  List<Example> examples;
-
+class AnyOfModel({
+  required var List<DiscriminatedModel> models,
+  required super.context,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  @override final String? name,
+  @override var String? nameOverride,
+  var String? description,
+  var String? discriminator,
+  var bool isNullable = false,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+}) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
 
@@ -506,93 +406,67 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
       'isDeprecated: $isDeprecated, examples: $examples}';
 }
 
-sealed class PrimitiveModel extends Model {
-  PrimitiveModel({required super.context});
-
+sealed class PrimitiveModel({required super.context}) extends Model {
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
 }
 
-class IntegerModel extends PrimitiveModel {
-  IntegerModel({required super.context});
-
+class IntegerModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'IntegerModel';
 }
 
-class DoubleModel extends PrimitiveModel {
-  DoubleModel({required super.context});
-
+class DoubleModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'DoubleModel';
 }
 
-class NumberModel extends PrimitiveModel {
-  NumberModel({required super.context});
-
+class NumberModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'NumberModel';
 }
 
-class StringModel extends PrimitiveModel {
-  StringModel({required super.context});
-
+class StringModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'StringModel';
 }
 
-class BooleanModel extends PrimitiveModel {
-  BooleanModel({required super.context});
-
+class BooleanModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'BooleanModel';
 }
 
-class DateTimeModel extends PrimitiveModel {
-  DateTimeModel({required super.context});
-
+class DateTimeModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'DateTimeModel';
 }
 
-class DateModel extends PrimitiveModel {
-  DateModel({required super.context});
-
+class DateModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'DateModel';
 }
 
-class DecimalModel extends PrimitiveModel {
-  DecimalModel({required super.context});
-
+class DecimalModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'DecimalModel';
 }
 
-class UriModel extends PrimitiveModel {
-  UriModel({required super.context});
-
+class UriModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'UriModel';
 }
 
-class BinaryModel extends PrimitiveModel {
-  BinaryModel({required super.context});
-
+class BinaryModel({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'BinaryModel';
 }
 
-class Base64Model extends PrimitiveModel {
-  Base64Model({required super.context});
-
+class Base64Model({required super.context}) extends PrimitiveModel {
   @override
   String toString() => 'Base64Model';
 }
 
-class AnyModel extends Model {
-  AnyModel({required super.context});
-
+class AnyModel({required super.context}) extends Model {
   @override
   EncodingShape get encodingShape => EncodingShape.mixed;
 
@@ -600,11 +474,8 @@ class AnyModel extends Model {
   String toString() => 'AnyModel';
 }
 
-class NeverModel extends Model {
-  NeverModel({required super.context, required this.isNullable});
-
-  final bool isNullable;
-
+class NeverModel({required super.context, required final bool isNullable})
+    extends Model {
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
 
@@ -612,35 +483,19 @@ class NeverModel extends Model {
   String toString() => 'NeverModel';
 }
 
-class Property {
-  Property({
-    required this.name,
-    required this.model,
-    required this.isRequired,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.examples,
-    required this.defaultValue,
-    this.isReadOnly = false,
-    this.isWriteOnly = false,
-    this.nameOverride,
-    this.description,
-  });
-
-  final String name;
-
-  String? nameOverride;
-  String? description;
-  bool isDeprecated;
-  Model model;
-  bool isRequired;
-  bool isNullable;
-  bool isReadOnly;
-  bool isWriteOnly;
-  List<Example> examples;
-
-  Object? defaultValue;
-
+class Property({
+  required final String name,
+  required var Model model,
+  required var bool isRequired,
+  required var bool isNullable,
+  required var bool isDeprecated,
+  required var List<Example> examples,
+  required var Object? defaultValue,
+  var bool isReadOnly = false,
+  var bool isWriteOnly = false,
+  var String? nameOverride,
+  var String? description,
+}) {
   /// The property's own [defaultValue] when set, otherwise the default
   /// carried by its [model] when that model is an [AliasModel] chain.
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);

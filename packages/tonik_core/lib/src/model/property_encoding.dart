@@ -4,7 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// Serialization styles for encoding properties.
 ///
 /// These match the query parameter styles allowed in the OAS encoding object.
-enum EncodingStyle {
+enum EncodingStyle() {
   form,
   spaceDelimited,
   pipeDelimited,
@@ -14,17 +14,11 @@ enum EncodingStyle {
 /// Encoding metadata for a single property in an
 /// application/x-www-form-urlencoded request body.
 @immutable
-class FieldEncoding {
-  const FieldEncoding({
-    required this.allowReserved,
-    required this.style,
-    required this.explode,
-  });
-
-  final bool allowReserved;
-  final EncodingStyle? style;
-  final bool? explode;
-
+class const FieldEncoding({
+  required final bool allowReserved,
+  required final EncodingStyle? style,
+  required final bool? explode,
+}) {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -46,26 +40,35 @@ class FieldEncoding {
 /// Encoding metadata for a single property in a multipart/form-data
 /// request body.
 @immutable
-class PartEncoding {
-  const PartEncoding({
-    required this.contentType,
-    required this.rawContentType,
-    required this.headers,
-    required this.style,
-    required this.explode,
-    required this.allowReserved,
+class const PartEncoding._({
+  required final ContentType? contentType,
+  required final String? rawContentType,
+  required final String? wireContentType,
+  required final TextEncoding textEncoding,
+  required final Map<String, ResponseHeader>? headers,
+  required final EncodingStyle? style,
+  required final bool? explode,
+  required final bool? allowReserved,
+}) {
+  const new({
+    required ContentType? contentType,
+    required String? rawContentType,
+    required Map<String, ResponseHeader>? headers,
+    required EncodingStyle? style,
+    required bool? explode,
+    required bool? allowReserved,
     String? wireContentType,
-    this.textEncoding = TextEncoding.utf8,
-  }) : wireContentType = wireContentType ?? rawContentType;
-
-  final ContentType? contentType;
-  final String? rawContentType;
-  final String? wireContentType;
-  final TextEncoding textEncoding;
-  final Map<String, ResponseHeader>? headers;
-  final EncodingStyle? style;
-  final bool? explode;
-  final bool? allowReserved;
+    TextEncoding textEncoding = TextEncoding.utf8,
+  }) : this._(
+         contentType: contentType,
+         rawContentType: rawContentType,
+         wireContentType: wireContentType ?? rawContentType,
+         textEncoding: textEncoding,
+         headers: headers,
+         style: style,
+         explode: explode,
+         allowReserved: allowReserved,
+       );
 
   /// When false, serialization is content-based, driven by [contentType].
   bool get isStyleBased =>

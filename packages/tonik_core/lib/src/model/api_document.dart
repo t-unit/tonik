@@ -1,50 +1,25 @@
 import 'package:tonik_core/tonik_core.dart';
 
-class ApiDocument {
-  ApiDocument({
-    required this.title,
-    required this.version,
-    required this.models,
-    required this.responseHeaders,
-    required this.requestHeaders,
-    required this.servers,
-    required this.operations,
-    required this.responses,
-    required this.queryParameters,
-    required this.pathParameters,
-    required this.cookieParameters,
-    required this.requestBodies,
-    this.summary,
-    this.description,
-    this.contact,
-    this.license,
-    this.termsOfService,
-    this.externalDocs,
-  });
-
-  final String title;
-  final String version;
-
-  String? summary;
-  String? description;
-  Contact? contact;
-  License? license;
-  String? termsOfService;
-  ExternalDocumentation? externalDocs;
-
-  Set<Model> models;
-  Set<ResponseHeader> responseHeaders;
-  Set<RequestHeader> requestHeaders;
-  Set<QueryParameter> queryParameters;
-  Set<PathParameter> pathParameters;
-  Set<CookieParameter> cookieParameters;
-
-  Set<Server> servers;
-
-  Set<Operation> operations;
-  Set<Response> responses;
-  Set<RequestBody> requestBodies;
-
+class ApiDocument({
+  required final String title,
+  required final String version,
+  required var Set<Model> models,
+  required var Set<ResponseHeader> responseHeaders,
+  required var Set<RequestHeader> requestHeaders,
+  required var Set<Server> servers,
+  required var Set<Operation> operations,
+  required var Set<Response> responses,
+  required var Set<QueryParameter> queryParameters,
+  required var Set<PathParameter> pathParameters,
+  required var Set<CookieParameter> cookieParameters,
+  required var Set<RequestBody> requestBodies,
+  var String? summary,
+  var String? description,
+  var Contact? contact,
+  var License? license,
+  var String? termsOfService,
+  var ExternalDocumentation? externalDocs,
+}) {
   Map<Tag, Set<Operation>> get operationsByTag {
     final taggedOperations = <Tag, Set<Operation>>{};
 
