@@ -246,9 +246,8 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: '0')],
       );
       expect(
-        BigDecimal.parse(
-          '-42.5',
-        ).toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
+        BigDecimal.parse('-42.5')
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: '-42.5')],
       );
     });
@@ -348,22 +347,16 @@ void main() {
       );
     });
 
-    test(
-      'explode=true encodes an empty item to an empty value among populated '
-      'items',
-      () {
-        expect(
-          [
-            '',
-            'a',
-          ].toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
-          const <ParameterEntry>[
-            (name: 'p', value: ''),
-            (name: 'p', value: 'a'),
-          ],
-        );
-      },
-    );
+    test('explode=true encodes an empty item to an empty value among populated '
+        'items', () {
+      expect(
+        [
+          '',
+          'a',
+        ].toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        const <ParameterEntry>[(name: 'p', value: ''), (name: 'p', value: 'a')],
+      );
+    });
 
     test('URL-encodes special characters in list items', () {
       expect(
@@ -487,9 +480,8 @@ void main() {
 
     test('explode=true encodes an empty key to an empty name', () {
       expect(
-        {
-          '': 'v',
-        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        {'': 'v'}
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: '', value: 'v')],
       );
     });
@@ -531,31 +523,21 @@ void main() {
     test('explode=false encodes reserved-char keys with + when '
         'useQueryComponent=true', () {
       expect(
-        {
-          'first name': 'Jane',
-          'a,b': 'v1',
-        }.toForm(
+        {'first name': 'Jane', 'a,b': 'v1'}.toForm(
           'p',
           explode: false,
           allowEmpty: true,
           useQueryComponent: true,
           textEncoding: utf8,
         ),
-        const <ParameterEntry>[
-          (name: 'p', value: 'first+name,Jane,a%2Cb,v1'),
-        ],
+        const <ParameterEntry>[(name: 'p', value: 'first+name,Jane,a%2Cb,v1')],
       );
     });
 
     test('explode=false keeps reserved chars in keys literal except & = + '
         'when allowReserved=true', () {
       expect(
-        {
-          'a&b': 'v1',
-          'c=d': 'v2',
-          'e:f': 'v3',
-          'g+h': 'v4',
-        }.toForm(
+        {'a&b': 'v1', 'c=d': 'v2', 'e:f': 'v3', 'g+h': 'v4'}.toForm(
           'p',
           explode: false,
           allowEmpty: true,
@@ -570,10 +552,7 @@ void main() {
 
     test('does not re-encode values when alreadyEncoded=true', () {
       expect(
-        {
-          'email': 'albert%40example.com',
-          'name': 'John%20Doe',
-        }.toForm(
+        {'email': 'albert%40example.com', 'name': 'John%20Doe'}.toForm(
           'p',
           explode: false,
           allowEmpty: true,
@@ -585,10 +564,7 @@ void main() {
         ],
       );
       expect(
-        {
-          'email': 'albert%40example.com',
-          'name': 'John%20Doe',
-        }.toForm(
+        {'email': 'albert%40example.com', 'name': 'John%20Doe'}.toForm(
           'p',
           explode: true,
           allowEmpty: true,
@@ -659,22 +635,19 @@ void main() {
       },
     );
 
-    test(
-      'FormStringEncoder distinguishes literal + (%2B) from space (+) when '
-      'useQueryComponent=true',
-      () {
-        expect(
-          'a+b c'.toForm(
-            'p',
-            explode: false,
-            allowEmpty: true,
-            useQueryComponent: true,
-            textEncoding: utf8,
-          ),
-          const <ParameterEntry>[(name: 'p', value: 'a%2Bb+c')],
-        );
-      },
-    );
+    test('FormStringEncoder distinguishes literal + (%2B) from space (+) when '
+        'useQueryComponent=true', () {
+      expect(
+        'a+b c'.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a%2Bb+c')],
+      );
+    });
 
     test('FormStringListEncoder encodes items with + (explode=true)', () {
       expect(
@@ -738,9 +711,7 @@ void main() {
           allowReserved: true,
           textEncoding: utf8,
         ),
-        const <ParameterEntry>[
-          (name: 'p', value: r":/?#[]@!$%26'()*%2B,;%3D"),
-        ],
+        const <ParameterEntry>[(name: 'p', value: r":/?#[]@!$%26'()*%2B,;%3D")],
       );
     });
 

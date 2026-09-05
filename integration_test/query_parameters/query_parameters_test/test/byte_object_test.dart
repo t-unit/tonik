@@ -39,10 +39,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'signature=3q2%2B7w%3D%3D',
-        );
+        expect(recordedRequest.uri.query, 'signature=3q2%2B7w%3D%3D');
       },
     );
 
@@ -58,10 +55,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'signature=3q2%2B7w%3D%3D&label=',
-      );
+      expect(recordedRequest.uri.query, 'signature=3q2%2B7w%3D%3D&label=');
     });
 
     test('decoder round-trips the encoder output for a byte property', () {
@@ -76,9 +70,8 @@ void main() {
         allowEmpty: true,
         textEncoding: utf8,
       );
-      final wire = [
-        for (final entry in encoded) '${entry.name}=${entry.value}',
-      ].join('&');
+      final wire = [for (final entry in encoded) '${entry.name}=${entry.value}']
+          .join('&');
 
       final decoded = Filter.fromForm(wire, explode: true);
       expect(decoded.signature.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);

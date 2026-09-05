@@ -30,10 +30,7 @@ void main() {
 
       final result = await api.listModels();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -69,19 +66,13 @@ void main() {
 
       final result = await api.deleteModel(model: 'ft:gpt-4o:org:suffix:id');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
-      expect(
-        uri.path,
-        '/v1/models/ft%3Agpt-4o%3Aorg%3Asuffix%3Aid',
-      );
+      expect(uri.path, '/v1/models/ft%3Agpt-4o%3Aorg%3Asuffix%3Aid');
       expect(recordedRequest.method, 'DELETE');
     });
   });
@@ -94,19 +85,14 @@ void main() {
 
       final result = await api.createEmbedding(
         body: const CreateEmbeddingRequest(
-          input: CreateEmbeddingRequestInputOneOfModelString(
-            'Hello world',
-          ),
+          input: CreateEmbeddingRequestInputOneOfModelString('Hello world'),
           model: CreateEmbeddingRequestModelAnyOfModel(
             string: 'text-embedding-ada-002',
           ),
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -124,16 +110,11 @@ void main() {
 
       final result = await api.createModeration(
         body: const CreateModerationRequest(
-          input: CreateModerationRequestInputOneOfModelString(
-            'Test input',
-          ),
+          input: CreateModerationRequestInputOneOfModelString('Test input'),
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -171,16 +152,10 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<ChatCompletionsPost200ResponseJson>(),
-      );
+      expect(success.value, isA<ChatCompletionsPost200ResponseJson>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
@@ -256,19 +231,13 @@ void main() {
         limit: 5,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
-      expect(
-        uri.path,
-        '/v1/fine_tuning/jobs/ftjob-abc123/events',
-      );
+      expect(uri.path, '/v1/fine_tuning/jobs/ftjob-abc123/events');
       expect(uri.queryParameters['after'], 'evt-abc');
       expect(uri.queryParameters['limit'], '5');
     });
@@ -282,19 +251,13 @@ void main() {
           fineTuningJobId: 'ftjob-abc123',
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
         final uri = recordedRequest.uri;
-        expect(
-          uri.path,
-          '/v1/fine_tuning/jobs/ftjob-abc123/events',
-        );
+        expect(uri.path, '/v1/fine_tuning/jobs/ftjob-abc123/events');
         expect(uri.queryParameters['limit'], '20');
         expect(uri.queryParameters.containsKey('after'), isFalse);
       },
@@ -317,10 +280,7 @@ void main() {
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
-      expect(
-        uri.path,
-        '/v1/fine_tuning/jobs/ftjob-abc123/cancel',
-      );
+      expect(uri.path, '/v1/fine_tuning/jobs/ftjob-abc123/cancel');
     });
   });
 }

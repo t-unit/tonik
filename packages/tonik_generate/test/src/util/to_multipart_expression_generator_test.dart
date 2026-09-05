@@ -54,17 +54,14 @@ void main() {
     PartEncoding? encoding,
     Object? defaultValue,
   }) {
-    final content = multipartContentFixture(
-      testContext,
-      [
-        multipartPartFixture(
-          name: 'value',
-          model: propertyModel,
-          defaultValue: defaultValue,
-          encoding: encoding,
-        ),
-      ],
-    );
+    final content = multipartContentFixture(testContext, [
+      multipartPartFixture(
+        name: 'value',
+        model: propertyModel,
+        defaultValue: defaultValue,
+        encoding: encoding,
+      ),
+    ]);
     final result = buildMultipartBodyStatements(
       _planMultipartBody(content, 'body'),
     );
@@ -85,25 +82,22 @@ $expectedPartCode
 
   group('buildMultipartBodyStatements', () {
     test('semantic encoding selects Dio multipart text bytes', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'name',
-            model: StringModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain; charset=us-ascii',
-              wireContentType: 'text/plain; charset=us-ascii',
-              textEncoding: TextEncoding.latin1,
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'name',
+          model: StringModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain; charset=us-ascii',
+            wireContentType: 'text/plain; charset=us-ascii',
+            textEncoding: TextEncoding.latin1,
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -169,9 +163,7 @@ $expectedPartCode
           headers: null,
         ),
       );
-      expectPropertyCode(
-        IntegerModel(context: testContext),
-        r'''
+      expectPropertyCode(IntegerModel(context: testContext), r'''
   _$formData.files.add(
     MapEntry(
       r'value',
@@ -180,12 +172,8 @@ $expectedPartCode
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
       ),
     ),
-  );''',
-        encoding: latin1Text,
-      );
-      expectPropertyCode(
-        _testStringEnum(testContext),
-        r'''
+  );''', encoding: latin1Text);
+      expectPropertyCode(_testStringEnum(testContext), r'''
   _$formData.files.add(
     MapEntry(
       r'value',
@@ -194,12 +182,8 @@ $expectedPartCode
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
       ),
     ),
-  );''',
-        encoding: latin1Text,
-      );
-      expectPropertyCode(
-        AnyModel(context: testContext),
-        r'''
+  );''', encoding: latin1Text);
+      expectPropertyCode(AnyModel(context: testContext), r'''
   _$formData.files.add(
     MapEntry(
       r'value',
@@ -208,9 +192,7 @@ $expectedPartCode
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
       ),
     ),
-  );''',
-        encoding: latin1Text,
-      );
+  );''', encoding: latin1Text);
       expectPropertyCode(
         _testClassModel(testContext),
         r'''
@@ -288,24 +270,21 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for required nullable string', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'name',
-            model: StringModel(context: testContext),
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'name',
+          model: StringModel(context: testContext),
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -329,24 +308,21 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for optional non-nullable string', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'nickname',
-            model: StringModel(context: testContext),
-            isRequired: false,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'nickname',
+          model: StringModel(context: testContext),
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -370,25 +346,22 @@ $expectedPartCode
     });
 
     test('generates null-check wrapping for optional nullable string', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'bio',
-            model: StringModel(context: testContext),
-            isRequired: false,
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'bio',
+          model: StringModel(context: testContext),
+          isRequired: false,
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -412,10 +385,7 @@ $expectedPartCode
     });
 
     test('generates empty FormData when there are no parts', () {
-      final content = multipartContentFixture(
-        testContext,
-        [],
-      );
+      final content = multipartContentFixture(testContext, []);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -478,28 +448,25 @@ $expectedPartCode
     });
 
     test('excludes readOnly properties', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'id',
-            model: StringModel(context: testContext),
-            isReadOnly: true,
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'id',
+          model: StringModel(context: testContext),
+          isReadOnly: true,
+        ),
+        multipartPartFixture(
+          name: 'name',
+          model: StringModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-          multipartPartFixture(
-            name: 'name',
-            model: StringModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -521,24 +488,21 @@ $expectedPartCode
     });
 
     test('includes writeOnly properties', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'password',
-            model: StringModel(context: testContext),
-            isWriteOnly: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'password',
+          model: StringModel(context: testContext),
+          isWriteOnly: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -560,23 +524,20 @@ $expectedPartCode
     });
 
     test('serializes AnyModel property via jsonEncode()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'data',
-            model: AnyModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'data',
+          model: AnyModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -598,23 +559,20 @@ $expectedPartCode
     });
 
     test('generates EncodingException for NeverModel property', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'impossible',
-            model: NeverModel(context: testContext, isNullable: false),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'impossible',
+          model: NeverModel(context: testContext, isNullable: false),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -637,36 +595,31 @@ $expectedPartCode
       );
     });
 
-    test(
-      'NeverModel property name with dollar sign emits raw literal',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: r'$total',
-              model: NeverModel(context: testContext, isNullable: false),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+    test('NeverModel property name with dollar sign emits raw literal', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: r'$total',
+          model: NeverModel(context: testContext, isNullable: false),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               throw EncodingException(
@@ -675,31 +628,27 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
   });
 
   group('primitive types', () {
     test('serializes IntegerModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'age',
-            model: IntegerModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'age',
+          model: IntegerModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -721,23 +670,20 @@ $expectedPartCode
     });
 
     test('serializes DoubleModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'score',
-            model: DoubleModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'score',
+          model: DoubleModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -759,23 +705,20 @@ $expectedPartCode
     });
 
     test('serializes NumberModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'value',
-            model: NumberModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'value',
+          model: NumberModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -797,23 +740,20 @@ $expectedPartCode
     });
 
     test('serializes BooleanModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'active',
-            model: BooleanModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'active',
+          model: BooleanModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -835,23 +775,20 @@ $expectedPartCode
     });
 
     test('serializes DateModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'birth_date',
-            model: DateModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'birth_date',
+          model: DateModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -873,23 +810,20 @@ $expectedPartCode
     });
 
     test('serializes DecimalModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'amount',
-            model: DecimalModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'amount',
+          model: DecimalModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -911,23 +845,20 @@ $expectedPartCode
     });
 
     test('serializes UriModel with text/plain via toString()', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'website',
-            model: UriModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'website',
+          model: UriModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -951,23 +882,20 @@ $expectedPartCode
     test(
       'serializes DateTimeModel with text/plain via toTimeZonedIso8601String()',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'created_at',
-              model: DateTimeModel(context: testContext),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'created_at',
+            model: DateTimeModel(context: testContext),
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -992,24 +920,21 @@ $expectedPartCode
     test(
       'wraps nullable required primitive with text/plain with null-check',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: IntegerModel(context: testContext),
-              isNullable: true,
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'count',
+            model: IntegerModel(context: testContext),
+            isNullable: true,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1035,23 +960,20 @@ $expectedPartCode
 
     test('serializes IntegerModel with application/json contentType '
         'via jsonEncode', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'age',
-            model: IntegerModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'age',
+          model: IntegerModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1074,23 +996,20 @@ $expectedPartCode
 
     test('serializes DateTimeModel with application/json contentType '
         'via jsonEncode (not toTimeZonedIso8601String)', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'createdAt',
-            model: DateTimeModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'createdAt',
+          model: DateTimeModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1113,23 +1032,20 @@ $expectedPartCode
 
     test('serializes BooleanModel with application/json contentType '
         'via jsonEncode', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'active',
-            model: BooleanModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'active',
+          model: BooleanModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1152,24 +1068,21 @@ $expectedPartCode
 
     test('wraps nullable primitive with null-check when using '
         'application/json contentType', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'score',
-            model: IntegerModel(context: testContext),
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'score',
+          model: IntegerModel(context: testContext),
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1197,23 +1110,20 @@ $expectedPartCode
     test(
       'StringModel falls back to text/plain when rawContentType is null',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'name',
-              model: StringModel(context: testContext),
-              encoding: const PartEncoding(
-                style: EncodingStyle.form,
-                explode: true,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'name',
+            model: StringModel(context: testContext),
+            encoding: const PartEncoding(
+              style: EncodingStyle.form,
+              explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1238,23 +1148,20 @@ $expectedPartCode
     test(
       'IntegerModel falls back to text/plain when rawContentType is null',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: IntegerModel(context: testContext),
-              encoding: const PartEncoding(
-                style: EncodingStyle.form,
-                explode: true,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'count',
+            model: IntegerModel(context: testContext),
+            encoding: const PartEncoding(
+              style: EncodingStyle.form,
+              explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1279,23 +1186,20 @@ $expectedPartCode
     test(
       'BooleanModel falls back to text/plain when rawContentType is null',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'active',
-              model: BooleanModel(context: testContext),
-              encoding: const PartEncoding(
-                allowReserved: true,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                style: null,
-                explode: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'active',
+            model: BooleanModel(context: testContext),
+            encoding: const PartEncoding(
+              allowReserved: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              style: null,
+              explode: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1320,23 +1224,20 @@ $expectedPartCode
     test(
       'DateTimeModel falls back to text/plain when rawContentType is null',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'createdAt',
-              model: DateTimeModel(context: testContext),
-              encoding: const PartEncoding(
-                style: EncodingStyle.form,
-                explode: false,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'createdAt',
+            model: DateTimeModel(context: testContext),
+            encoding: const PartEncoding(
+              style: EncodingStyle.form,
+              explode: false,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1361,23 +1262,20 @@ $expectedPartCode
     test(
       'AnyModel falls back to application/json when rawContentType is null',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'value',
-              model: AnyModel(context: testContext),
-              encoding: const PartEncoding(
-                style: EncodingStyle.form,
-                explode: true,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'value',
+            model: AnyModel(context: testContext),
+            encoding: const PartEncoding(
+              style: EncodingStyle.form,
+              explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1414,23 +1312,20 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'status',
-              model: enumModel,
-              encoding: const PartEncoding(
-                style: EncodingStyle.form,
-                explode: true,
-                contentType: null,
-                rawContentType: null,
-                headers: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'status',
+            model: enumModel,
+            encoding: const PartEncoding(
+              style: EncodingStyle.form,
+              explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1469,23 +1364,20 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'status',
-              model: enumModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'status',
+            model: enumModel,
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -1507,164 +1399,140 @@ $expectedPartCode
       },
     );
 
-    test(
-      'serializes required EnumModel<int> with text/plain via toJson().toString()',
-      () {
-        final enumModel = EnumModel<int>(
-          name: 'Count',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-          },
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+    test('serializes required EnumModel<int> with text/plain via toJson().toString()', () {
+      final enumModel = EnumModel<int>(
+        name: 'Count',
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: enumModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'count',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
+        ),
+      );
+    });
+
+    test('serializes required EnumModel<String> with application/json via toJson()', () {
+      final enumModel = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'status',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'serializes required EnumModel<String> with application/json via toJson()',
-      () {
-        final enumModel = EnumModel<String>(
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
-          },
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'status',
-              model: enumModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
+        ),
+      );
+    });
+
+    test('serializes required EnumModel<int> with application/json via toJson().toString()', () {
+      final enumModel = EnumModel<int>(
+        name: 'Count',
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'count',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'serializes required EnumModel<int> with application/json via toJson().toString()',
-      () {
-        final enumModel = EnumModel<int>(
-          name: 'Count',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-          },
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: enumModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('wraps optional enum with null-check', () {
       final enumModel = EnumModel<String>(
@@ -1679,24 +1547,21 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'status',
-            model: enumModel,
-            isRequired: false,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'status',
+          model: enumModel,
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1732,24 +1597,21 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'status',
-            model: enumModel,
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'status',
+          model: enumModel,
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1775,23 +1637,20 @@ $expectedPartCode
 
   group('binary properties', () {
     test('generates MultipartFile.fromBytes for required binary property', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'avatar',
-            model: BinaryModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'avatar',
+          model: BinaryModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1824,24 +1683,21 @@ $expectedPartCode
     });
 
     test('wraps optional binary property with null-check', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'document',
-            model: BinaryModel(context: testContext),
-            isRequired: false,
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'document',
+          model: BinaryModel(context: testContext),
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1876,24 +1732,21 @@ $expectedPartCode
     });
 
     test('wraps required-but-nullable binary property with null-check', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'photo',
-            model: BinaryModel(context: testContext),
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'photo',
+          model: BinaryModel(context: testContext),
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1928,23 +1781,20 @@ $expectedPartCode
     });
 
     test('passes explicit contentType encoding to MultipartFile', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'image',
-            model: BinaryModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'image/png',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'image',
+          model: BinaryModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'image/png',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -1985,23 +1835,20 @@ $expectedPartCode
     });
 
     test('uses default application/octet-stream contentType for binary', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2036,23 +1883,20 @@ $expectedPartCode
     test(
       'generates binary switch for Base64Model property (same as BinaryModel)',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'avatar',
-              model: Base64Model(context: testContext),
-              encoding: const PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'avatar',
+            model: Base64Model(context: testContext),
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -2098,23 +1942,20 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: innerClass,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: null,
-                explode: null,
-                allowReserved: null,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: null,
+              explode: null,
+              allowReserved: null,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -2146,30 +1987,25 @@ $expectedPartCode
       final allOfModel = AllOfModel(
         name: 'CombinedAddress',
         isDeprecated: false,
-        models: [
-          StringModel(context: testContext),
-        ],
+        models: [StringModel(context: testContext)],
         context: testContext,
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: allOfModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: allOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2207,23 +2043,20 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: oneOfModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: oneOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2261,23 +2094,20 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: anyOfModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: anyOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2313,24 +2143,21 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: innerClass,
-            isRequired: false,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: innerClass,
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2368,24 +2195,21 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: innerClass,
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: innerClass,
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2423,23 +2247,20 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: innerClass,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/xml',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: innerClass,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/xml',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2477,23 +2298,20 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: innerClass,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -2529,24 +2347,21 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: innerClass,
-              isRequired: false,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            isRequired: false,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: EncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+              headers: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -2573,46 +2388,39 @@ $expectedPartCode
       },
     );
 
-    test(
-      'generates deepObject-encoded file part for AllOfModel property',
-      () {
-        final allOfModel = AllOfModel(
-          name: 'CombinedAddress',
-          isDeprecated: false,
-          models: [
-            StringModel(context: testContext),
-          ],
-          context: testContext,
-          examples: const [],
-        );
+    test('generates deepObject-encoded file part for AllOfModel property', () {
+      final allOfModel = AllOfModel(
+        name: 'CombinedAddress',
+        isDeprecated: false,
+        models: [StringModel(context: testContext)],
+        context: testContext,
+        examples: const [],
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: allOfModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: allOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.deepObject,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
@@ -2622,54 +2430,45 @@ $expectedPartCode
               return _$formData;
             }
           '''),
+        ),
+      );
+    });
+
+    test('generates deepObject-encoded file part for OneOfModel property', () {
+      final oneOfModel = OneOfModel(
+        name: 'AddressVariant',
+        isDeprecated: false,
+        models: [
+          (discriminatorValue: null, model: StringModel(context: testContext)),
+        ],
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: oneOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.deepObject,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates deepObject-encoded file part for OneOfModel property',
-      () {
-        final oneOfModel = OneOfModel(
-          name: 'AddressVariant',
-          isDeprecated: false,
-          models: [
-            (
-              discriminatorValue: null,
-              model: StringModel(context: testContext),
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: oneOfModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
@@ -2679,54 +2478,45 @@ $expectedPartCode
               return _$formData;
             }
           '''),
+        ),
+      );
+    });
+
+    test('generates deepObject-encoded file part for AnyOfModel property', () {
+      final anyOfModel = AnyOfModel(
+        name: 'AddressMixed',
+        isDeprecated: false,
+        models: [
+          (discriminatorValue: null, model: StringModel(context: testContext)),
+        ],
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: anyOfModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.deepObject,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates deepObject-encoded file part for AnyOfModel property',
-      () {
-        final anyOfModel = AnyOfModel(
-          name: 'AddressMixed',
-          isDeprecated: false,
-          models: [
-            (
-              discriminatorValue: null,
-              model: StringModel(context: testContext),
-            ),
-          ],
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: anyOfModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
@@ -2736,10 +2526,9 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('resolves AliasModel wrapping ClassModel for complex property', () {
       final innerClass = ClassModel(
@@ -2758,23 +2547,20 @@ $expectedPartCode
         defaultValue: null,
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: aliasModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: null,
-              explode: null,
-              allowReserved: null,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: aliasModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: null,
+            explode: null,
+            allowReserved: null,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -2813,23 +2599,20 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'address',
+              model: innerClass,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            ],
-          );
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -2865,44 +2648,39 @@ $expectedPartCode
         },
       );
 
-      test(
-        'generates URL-encoded file part for AllOfModel property',
-        () {
-          final allOfModel = AllOfModel(
-            name: 'CombinedAddress',
-            isDeprecated: false,
-            models: [StringModel(context: testContext)],
-            context: testContext,
-            examples: const [],
-          );
+      test('generates URL-encoded file part for AllOfModel property', () {
+        final allOfModel = AllOfModel(
+          name: 'CombinedAddress',
+          isDeprecated: false,
+          models: [StringModel(context: testContext)],
+          context: testContext,
+          examples: const [],
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: allOfModel,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: allOfModel,
+            encoding: const PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 final addressEntries = body.address.toForm(
@@ -2923,10 +2701,9 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test(
         'URL-encoded ClassModel property with single quote in rawName escapes '
@@ -2940,23 +2717,20 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: "it's-form",
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: "it's-form",
+              model: innerClass,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            ],
-          );
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -2992,45 +2766,40 @@ $expectedPartCode
         },
       );
 
-      test(
-        'URL-encoded ClassModel property with backslash in rawName escapes '
-        'rawName in the part name literal',
-        () {
-          final innerClass = ClassModel(
-            name: 'PathTo',
-            isDeprecated: false,
-            properties: [],
-            context: testContext,
-            examples: const [],
-          );
+      test('URL-encoded ClassModel property with backslash in rawName escapes '
+          'rawName in the part name literal', () {
+        final innerClass = ClassModel(
+          name: 'PathTo',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: r'path\form',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: r'path\form',
+            model: innerClass,
+            encoding: const PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 final pathBackslashFormEntries = body.pathBackslashForm.toForm(
@@ -3053,10 +2822,9 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test(
         'URL-encoded ClassModel property with dollar sign in rawName escapes '
@@ -3070,23 +2838,20 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: r'$total',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: r'$total',
+              model: innerClass,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            ],
-          );
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -3131,24 +2896,21 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'address',
-              model: innerClass,
-              isRequired: false,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            isRequired: false,
+            encoding: const PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -3196,23 +2958,20 @@ $expectedPartCode
             examples: const [],
           );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  style: EncodingStyle.form,
-                  explode: true,
-                  allowReserved: false,
-                  headers: null,
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'address',
+              model: innerClass,
+              encoding: const PartEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+                headers: null,
               ),
-            ],
-          );
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -3241,56 +3000,51 @@ $expectedPartCode
         },
       );
 
-      test(
-        'style-based raw parts pass per-part headers to every part',
-        () {
-          final innerClass = ClassModel(
-            name: 'Address',
-            isDeprecated: false,
-            properties: [],
-            context: testContext,
-            examples: const [],
-          );
+      test('style-based raw parts pass per-part headers to every part', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: PartEncoding(
-                  contentType: null,
-                  rawContentType: null,
-                  style: EncodingStyle.form,
-                  explode: true,
-                  allowReserved: null,
-                  headers: {
-                    'X-Custom-Header': ResponseHeaderObject(
-                      name: 'X-Custom-Header',
-                      description: null,
-                      isRequired: true,
-                      isDeprecated: false,
-                      explode: false,
-                      model: StringModel(context: testContext),
-                      context: testContext,
-                      encoding: ResponseHeaderEncoding.simple,
-                      examples: const [],
-                    ),
-                  },
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: PartEncoding(
+              contentType: null,
+              rawContentType: null,
+              style: EncodingStyle.form,
+              explode: true,
+              allowReserved: null,
+              headers: {
+                'X-Custom-Header': ResponseHeaderObject(
+                  name: 'X-Custom-Header',
+                  description: null,
+                  isRequired: true,
+                  isDeprecated: false,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  context: testContext,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
-              ),
-            ],
-          );
+              },
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 final _$addressHeaders = <String, List<String>>{};
@@ -3314,50 +3068,44 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('non-form styled object parts throw instead of rendering with '
+          'form semantics', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: const PartEncoding(
+              contentType: null,
+              rawContentType: null,
+              style: EncodingStyle.pipeDelimited,
+              explode: true,
+              allowReserved: null,
+              headers: null,
             ),
-          );
-        },
-      );
+          ),
+        ]);
 
-      test(
-        'non-form styled object parts throw instead of rendering with '
-        'form semantics',
-        () {
-          final innerClass = ClassModel(
-            name: 'Address',
-            isDeprecated: false,
-            properties: [],
-            context: testContext,
-            examples: const [],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: null,
-                  rawContentType: null,
-                  style: EncodingStyle.pipeDelimited,
-                  explode: true,
-                  allowReserved: null,
-                  headers: null,
-                ),
-              ),
-            ],
-          );
-
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -3366,49 +3114,43 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('non-exploded style-based mode emits one raw comma-joined part', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: const PartEncoding(
+              contentType: null,
+              rawContentType: null,
+              style: EncodingStyle.form,
+              explode: false,
+              allowReserved: null,
+              headers: null,
             ),
-          );
-        },
-      );
+          ),
+        ]);
 
-      test(
-        'non-exploded style-based mode emits one raw comma-joined part',
-        () {
-          final innerClass = ClassModel(
-            name: 'Address',
-            isDeprecated: false,
-            properties: [],
-            context: testContext,
-            examples: const [],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: const PartEncoding(
-                  contentType: null,
-                  rawContentType: null,
-                  style: EncodingStyle.form,
-                  explode: false,
-                  allowReserved: null,
-                  headers: null,
-                ),
-              ),
-            ],
-          );
-
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 final addressRawParts = body.address
@@ -3422,62 +3164,56 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
-      test(
-        'URL-encoded property with per-part headers passes headers to '
-        'MultipartFile',
-        () {
-          final innerClass = ClassModel(
-            name: 'Address',
-            isDeprecated: false,
-            properties: [],
-            context: testContext,
-            examples: const [],
-          );
+      test('URL-encoded property with per-part headers passes headers to '
+          'MultipartFile', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+          examples: const [],
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'address',
-                model: innerClass,
-                encoding: PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: {
-                    'X-Custom-Header': ResponseHeaderObject(
-                      name: 'X-Custom-Header',
-                      description: null,
-                      isRequired: true,
-                      isDeprecated: false,
-                      explode: false,
-                      model: StringModel(context: testContext),
-                      context: testContext,
-                      encoding: ResponseHeaderEncoding.simple,
-                      examples: const [],
-                    ),
-                  },
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'address',
+            model: innerClass,
+            encoding: PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: {
+                'X-Custom-Header': ResponseHeaderObject(
+                  name: 'X-Custom-Header',
+                  description: null,
+                  isRequired: true,
+                  isDeprecated: false,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  context: testContext,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
-              ),
-            ],
-          );
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 final _$addressHeaders = <String, List<String>>{};
@@ -3503,10 +3239,9 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test('colliding per-part header names use their distinct parameters', () {
         final headers = {
@@ -3523,28 +3258,23 @@ $expectedPartCode
               examples: const [],
             ),
         };
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'file',
-              model: BinaryModel(context: testContext),
-              encoding: PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: headers,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: headers,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final code = emitStatements(
-          buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          ),
+          buildMultipartBodyStatements(_planMultipartBody(content, 'body')),
         );
 
         expect(
@@ -3561,42 +3291,37 @@ $expectedPartCode
   });
 
   group('MapModel properties', () {
-    test(
-      'generates JSON-encoded file part for required MapModel property',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+    test('generates JSON-encoded file part for required MapModel property', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(
@@ -3609,48 +3334,42 @@ $expectedPartCode
               return _$formData;
             }
           '''),
+        ),
+      );
+    });
+
+    test('generates JSON-encoded file part for optional MapModel property', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: mapModel,
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates JSON-encoded file part for optional MapModel property',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-              isRequired: false,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               if (body.metadata != null) {
@@ -3665,10 +3384,9 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'generates JSON-encoded file part for MapModel with default encoding',
@@ -3679,15 +3397,9 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-            ),
-          ],
-        );
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(name: 'metadata', model: mapModel),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -3715,42 +3427,37 @@ $expectedPartCode
       },
     );
 
-    test(
-      'generates deepObject error for MapModel property',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+    test('generates deepObject error for MapModel property', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.deepObject,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               throw EncodingException(
@@ -3759,48 +3466,42 @@ $expectedPartCode
               return _$formData;
             }
           '''),
+        ),
+      );
+    });
+
+    test('deepObject error for MapModel uses raw literal when property name '
+        'has special characters', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: "it's-meta",
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.deepObject,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'deepObject error for MapModel uses raw literal when property name '
-      'has special characters',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: "it's-meta",
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.deepObject,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -3809,47 +3510,41 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('URL-encoded map dynamic values use typed form encoding', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'URL-encoded map dynamic values use typed form encoding',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 final metadataParts = <String>[];
@@ -3892,48 +3587,42 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('generates URL-encoded file part for optional MapModel property', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: mapModel,
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates URL-encoded file part for optional MapModel property',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: mapModel,
-              isRequired: false,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 if (body.metadata != null) {
@@ -3978,48 +3667,42 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('URL-encoded MapModel property with single quote in rawName escapes '
+        'rawName in the EncodingException literal', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: "it's-meta",
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'URL-encoded MapModel property with single quote in rawName escapes '
-      'rawName in the EncodingException literal',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: "it's-meta",
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 final itsMetaParts = <String>[];
@@ -4062,48 +3745,42 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('URL-encoded MapModel property with backslash in rawName escapes '
+        'rawName in the EncodingException literal', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: r'path\to',
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'URL-encoded MapModel property with backslash in rawName escapes '
-      'rawName in the EncodingException literal',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: r'path\to',
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 final pathBackslashToParts = <String>[];
@@ -4146,48 +3823,42 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('URL-encoded MapModel property with dollar sign in rawName escapes '
+        'rawName in the EncodingException literal', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: r'$total',
+          model: mapModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'URL-encoded MapModel property with dollar sign in rawName escapes '
-      'rawName in the EncodingException literal',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: r'$total',
-              model: mapModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.form,
-                rawContentType: 'application/x-www-form-urlencoded',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
               void test() {
                 final _$formData = FormData();
                 final $totalParts = <String>[];
@@ -4230,55 +3901,49 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+        ),
+      );
+    });
+
+    test('generates JSON-encoded file part for MapModel through alias', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: testContext),
+        context: testContext,
+        examples: const [],
+      );
+
+      final aliasModel = AliasModel(
+        name: 'MetadataAlias',
+        model: mapModel,
+        context: testContext,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'metadata',
+          model: aliasModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates JSON-encoded file part for MapModel through alias',
-      () {
-        final mapModel = MapModel(
-          valueModel: StringModel(context: testContext),
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final aliasModel = AliasModel(
-          name: 'MetadataAlias',
-          model: mapModel,
-          context: testContext,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'metadata',
-              model: aliasModel,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(
@@ -4291,37 +3956,33 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
   });
 
   group('array properties', () {
     // --- Style / explode tests (text/plain contentType) ---
 
     test('list of strings, explode: true, style: form', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4345,27 +4006,24 @@ $expectedPartCode
     });
 
     test('list of strings, explode: true, style: spaceDelimited', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.spaceDelimited,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.spaceDelimited,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4389,27 +4047,24 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: form', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4440,27 +4095,24 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: spaceDelimited', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.spaceDelimited,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.spaceDelimited,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4484,27 +4136,24 @@ $expectedPartCode
     });
 
     test('list of strings, explode: false, style: pipeDelimited', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.pipeDelimited,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.pipeDelimited,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4529,27 +4178,24 @@ $expectedPartCode
 
     test('list of strings, explode: false, style: deepObject '
         'generates runtime error', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.deepObject,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.deepObject,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4572,41 +4218,36 @@ $expectedPartCode
       );
     });
 
-    test(
-      'deepObject error for list uses raw literal when property name '
-      'has special characters',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: "it's-tags",
-              model: ListModel(
-                content: StringModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.deepObject,
-                explode: false,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+    test('deepObject error for list uses raw literal when property name '
+        'has special characters', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: "it's-tags",
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
+          ),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.deepObject,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               throw EncodingException(
@@ -4615,10 +4256,9 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     // --- Enum tests ---
 
@@ -4635,27 +4275,24 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'statuses',
-            model: ListModel(
-              content: enumModel,
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'statuses',
+          model: ListModel(
+            content: enumModel,
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4686,37 +4323,31 @@ $expectedPartCode
     test('list of int enums, explode: false, style: form', () {
       final enumModel = EnumModel<int>(
         name: 'Code',
-        values: {
-          const EnumEntry(value: 1),
-          const EnumEntry(value: 2),
-        },
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'codes',
-            model: ListModel(
-              content: enumModel,
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'codes',
+          model: ListModel(
+            content: enumModel,
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4752,27 +4383,24 @@ $expectedPartCode
     // --- ContentType tests ---
 
     test('list of integers, text/plain, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'scores',
-            model: ListModel(
-              content: IntegerModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'scores',
+          model: ListModel(
+            content: IntegerModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4796,27 +4424,24 @@ $expectedPartCode
     });
 
     test('list of integers, application/json, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'scores',
-            model: ListModel(
-              content: IntegerModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'scores',
+          model: ListModel(
+            content: IntegerModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4840,27 +4465,24 @@ $expectedPartCode
     });
 
     test('list of integers, application/json, explode: false', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'scores',
-            model: ListModel(
-              content: IntegerModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'scores',
+          model: ListModel(
+            content: IntegerModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4894,27 +4516,24 @@ $expectedPartCode
     });
 
     test('list of DateTimeModel, text/plain, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'dates',
-            model: ListModel(
-              content: DateTimeModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'dates',
+          model: ListModel(
+            content: DateTimeModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4938,27 +4557,24 @@ $expectedPartCode
     });
 
     test('list of DateTimeModel, application/json, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'dates',
-            model: ListModel(
-              content: DateTimeModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'dates',
+          model: ListModel(
+            content: DateTimeModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -4984,27 +4600,24 @@ $expectedPartCode
     // --- Binary tests ---
 
     test('list of binary, explode: true', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'files',
-            model: ListModel(
-              content: BinaryModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'files',
+          model: ListModel(
+            content: BinaryModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5033,27 +4646,24 @@ $expectedPartCode
     });
 
     test('list of binary, explode: false (treated as exploded)', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'files',
-            model: ListModel(
-              content: BinaryModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: false,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'files',
+          model: ListModel(
+            content: BinaryModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: false,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5092,27 +4702,24 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'addresses',
-            model: ListModel(
-              content: innerClass,
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'addresses',
+          model: ListModel(
+            content: innerClass,
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5144,27 +4751,24 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'addresses',
-            model: ListModel(
-              content: innerClass,
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/xml',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'addresses',
+          model: ListModel(
+            content: innerClass,
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/xml',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5190,28 +4794,25 @@ $expectedPartCode
     // --- Nullable / optional tests ---
 
     test('optional list property wraps in null-check', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            isRequired: false,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          isRequired: false,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5237,28 +4838,25 @@ $expectedPartCode
     });
 
     test('required-but-nullable list wraps in null-check', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -5285,27 +4883,24 @@ $expectedPartCode
 
     group('content-based mode (no style fields)', () {
       test('list of strings, application/json, content-based mode', () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5327,27 +4922,24 @@ $expectedPartCode
       });
 
       test('list of integers, application/json, content-based mode', () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'scores',
-              model: ListModel(
-                content: IntegerModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'scores',
+            model: ListModel(
+              content: IntegerModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5371,19 +4963,16 @@ $expectedPartCode
       test(
         'list of strings, no encoding at all → repeated text/plain fields',
         () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'tags',
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+                examples: const [],
               ),
-            ],
-          );
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -5416,27 +5005,24 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'addresses',
-              model: ListModel(
-                content: innerClass,
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'addresses',
+            model: ListModel(
+              content: innerClass,
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5458,27 +5044,24 @@ $expectedPartCode
       });
 
       test('list of DateTimeModel, content-based mode', () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'dates',
-              model: ListModel(
-                content: DateTimeModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'dates',
+            model: ListModel(
+              content: DateTimeModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5500,28 +5083,25 @@ $expectedPartCode
       });
 
       test('optional list, content-based mode, null-wrapping applies', () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              isRequired: false,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            isRequired: false,
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5544,45 +5124,40 @@ $expectedPartCode
         );
       });
 
-      test(
-        'list of strings, text/plain contentType (parser default) '
-        '→ repeated text/plain fields',
-        () {
-          // In OAS 3.0/3.1 the parser computes contentType: text/plain as the
-          // default for string/scalar array items. With no style fields set,
-          // the default is repeated parts (one per element), not a JSON blob.
+      test('list of strings, text/plain contentType (parser default) '
+          '→ repeated text/plain fields', () {
+        // In OAS 3.0/3.1 the parser computes contentType: text/plain as the
+        // default for string/scalar array items. With no style fields set,
+        // the default is repeated parts (one per element), not a JSON blob.
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'tags',
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 for (final item in body.tags) {
@@ -5591,35 +5166,31 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test(
         'list of integers, text/plain (parser default) → repeated form fields',
         () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'scores',
-                model: ListModel(
-                  content: IntegerModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'scores',
+              model: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+                examples: const [],
               ),
-            ],
-          );
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            ),
+          ]);
 
           final result = buildMultipartBodyStatements(
             _planMultipartBody(content, 'body'),
@@ -5643,40 +5214,35 @@ $expectedPartCode
         },
       );
 
-      test(
-        'list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'dates',
-                model: ListModel(
-                  content: DateTimeModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+      test('list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'dates',
+            model: ListModel(
+              content: DateTimeModel(context: testContext),
+              context: testContext,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 for (final item in body.dates) {
@@ -5685,57 +5251,51 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('list of enums, text/plain (parser default) → repeated uriEncode fields', () {
+        final enumModel = EnumModel<String>(
+          name: 'Priority',
+          isNullable: false,
+          isDeprecated: false,
+          values: {
+            const EnumEntry(value: 'high'),
+            const EnumEntry(value: 'low'),
+          },
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'priorities',
+            model: ListModel(
+              content: enumModel,
+              context: testContext,
+              examples: const [],
             ),
-          );
-        },
-      );
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-      test(
-        'list of enums, text/plain (parser default) → repeated uriEncode fields',
-        () {
-          final enumModel = EnumModel<String>(
-            name: 'Priority',
-            isNullable: false,
-            isDeprecated: false,
-            values: {
-              const EnumEntry(value: 'high'),
-              const EnumEntry(value: 'low'),
-            },
-            context: testContext,
-            examples: const [],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'priorities',
-                model: ListModel(
-                  content: enumModel,
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
-
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
                 void test() {
                   final _$formData = FormData();
                   for (final item in body.priorities) {
@@ -5749,38 +5309,32 @@ $expectedPartCode
                   return _$formData;
                 }
               '''),
+          ),
+        );
+      });
+
+      test('optional list, no encoding → repeated fields with null guard', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          );
-        },
-      );
+            isRequired: false,
+          ),
+        ]);
 
-      test(
-        'optional list, no encoding → repeated fields with null guard',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'tags',
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                isRequired: false,
-              ),
-            ],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 if (body.tags != null) {
@@ -5791,10 +5345,9 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test('list of string enums, content-based mode → JSON-encoded array', () {
         final enumModel = EnumModel<String>(
@@ -5809,27 +5362,24 @@ $expectedPartCode
           examples: const [],
         );
 
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'priorities',
-              model: ListModel(
-                content: enumModel,
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'priorities',
+            model: ListModel(
+              content: enumModel,
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -5850,45 +5400,40 @@ $expectedPartCode
         );
       });
 
-      test(
-        'list of BinaryModel, content-based mode (no style) → '
-        'binary for-loop per item',
-        () {
-          // BinaryModel items bypass the content-based/style-based check and
-          // always produce a for-loop, matching the plan's "one file part per
-          // binary item" rule.
+      test('list of BinaryModel, content-based mode (no style) → '
+          'binary for-loop per item', () {
+        // BinaryModel items bypass the content-based/style-based check and
+        // always produce a for-loop, matching the plan's "one file part per
+        // binary item" rule.
 
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'files',
-                model: ListModel(
-                  content: BinaryModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.bytes,
-                  rawContentType: 'application/octet-stream',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'files',
+            model: ListModel(
+              content: BinaryModel(context: testContext),
+              context: testContext,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 for (final item in body.files) {
@@ -5902,50 +5447,44 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
-      test(
-        'list of ListModel items (array-of-arrays), '
-        'content-based mode → EncodingException',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'matrix',
-                model: ListModel(
-                  content: ListModel(
-                    content: IntegerModel(context: testContext),
-                    context: testContext,
-                    examples: const [],
-                  ),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+      test('list of ListModel items (array-of-arrays), '
+          'content-based mode → EncodingException', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'matrix',
+            model: ListModel(
+              content: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+                examples: const [],
               ),
-            ],
-          );
+              context: testContext,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -5954,50 +5493,44 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
-      test(
-        'arrays-of-arrays error uses raw literal when property name '
-        'has special characters',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: r'$matrix',
-                model: ListModel(
-                  content: ListModel(
-                    content: IntegerModel(context: testContext),
-                    context: testContext,
-                    examples: const [],
-                  ),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+      test('arrays-of-arrays error uses raw literal when property name '
+          'has special characters', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: r'$matrix',
+            model: ListModel(
+              content: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+                examples: const [],
               ),
-            ],
-          );
+              context: testContext,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -6006,46 +5539,40 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('list with explicit unsupported contentType, '
+          'content-based mode → EncodingException', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'items',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          );
-        },
-      );
+            encoding: const PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-      test(
-        'list with explicit unsupported contentType, '
-        'content-based mode → EncodingException',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: 'items',
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -6054,46 +5581,40 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('unsupported contentType error uses raw literal when property name '
+          'has special characters', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: "it's-items",
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          );
-        },
-      );
+            encoding: const PartEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-      test(
-        'unsupported contentType error uses raw literal when property name '
-        'has special characters',
-        () {
-          final content = multipartContentFixture(
-            testContext,
-            [
-              multipartPartFixture(
-                name: "it's-items",
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                encoding: const PartEncoding(
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
-              ),
-            ],
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
-
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
@@ -6102,32 +5623,28 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
     });
   });
 
   group('buildMultipartBodyExpression', () {
     test('returns IIFE for ClassModel with string property', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'name',
-            model: StringModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'name',
+          model: StringModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyExpression(
         _planMultipartBody(content, 'body'),
@@ -6154,35 +5671,32 @@ $expectedPartCode
   group('per-part headers', () {
     test('binary property with one required header passes headers to '
         'MultipartFile', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: {
-                'X-Rate-Limit': ResponseHeaderObject(
-                  name: 'X-Rate-Limit',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: IntegerModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6217,35 +5731,32 @@ $expectedPartCode
     });
 
     test('binary property with optional header wraps in null check', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'X-Tag': ResponseHeaderObject(
-                  name: 'X-Tag',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: false,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Tag': ResponseHeaderObject(
+                name: 'X-Tag',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6290,35 +5801,32 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'address',
-            model: innerClass,
-            encoding: PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'address',
+          model: innerClass,
+          encoding: PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6349,35 +5857,32 @@ $expectedPartCode
     });
 
     test('string field with headers converts to MultipartFile.fromString', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'description',
-            model: StringModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: {
-                'X-Language': ResponseHeaderObject(
-                  name: 'X-Language',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'description',
+          model: StringModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: {
+              'X-Language': ResponseHeaderObject(
+                name: 'X-Language',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6406,35 +5911,32 @@ $expectedPartCode
     test(
       'primitive field with headers converts to MultipartFile.fromString',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: IntegerModel(context: testContext),
-              encoding: PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: {
-                  'X-Source': ResponseHeaderObject(
-                    name: 'X-Source',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'count',
+            model: IntegerModel(context: testContext),
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Source': ResponseHeaderObject(
+                  name: 'X-Source',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -6474,35 +5976,32 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'status',
-            model: enumModel,
-            encoding: PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'status',
+          model: enumModel,
+          encoding: PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6529,35 +6028,32 @@ $expectedPartCode
     });
 
     test('Content-Type header is filtered out from per-part headers', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'Content-Type': ResponseHeaderObject(
-                  name: 'Content-Type',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: false,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'Content-Type': ResponseHeaderObject(
+                name: 'Content-Type',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6591,46 +6087,43 @@ $expectedPartCode
     });
 
     test('multiple headers on one property are all included', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'X-Rate-Limit': ResponseHeaderObject(
-                  name: 'X-Rate-Limit',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: IntegerModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-                'X-Tag': ResponseHeaderObject(
-                  name: 'X-Tag',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: false,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+              'X-Tag': ResponseHeaderObject(
+                name: 'X-Tag',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6668,23 +6161,20 @@ $expectedPartCode
     });
 
     test('property without headers does not generate headers map', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6718,39 +6208,36 @@ $expectedPartCode
 
     test('exploded string list with headers uses MultipartFile.fromString '
         'per item', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6777,39 +6264,36 @@ $expectedPartCode
 
     test('non-exploded string list with headers uses MultipartFile.fromString '
         'for encoded value', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'tags',
-            model: ListModel(
-              content: StringModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: false,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: false,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -6846,53 +6330,48 @@ $expectedPartCode
       );
     });
 
-    test(
-      'non-exploded space-delimited string list with headers wraps the '
-      'encoded value in MultipartFile.fromString',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: testContext),
+    test('non-exploded space-delimited string list with headers wraps the '
+        'encoded value in MultipartFile.fromString', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: testContext),
+            context: testContext,
+            examples: const [],
+          ),
+          encoding: PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.spaceDelimited,
+            explode: false,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
                 context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
                 examples: const [],
               ),
-              encoding: PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.spaceDelimited,
-                explode: false,
-                headers: {
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                allowReserved: null,
-              ),
-            ),
-          ],
-        );
+            },
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
@@ -6903,48 +6382,44 @@ $expectedPartCode
             return _$formData;
           }
         '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'non-exploded pipe-delimited DateTime list with headers maps items and '
       'wraps the encoded value in MultipartFile.fromString',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'dates',
-              model: ListModel(
-                content: DateTimeModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.pipeDelimited,
-                explode: false,
-                headers: {
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'dates',
+            model: ListModel(
+              content: DateTimeModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.pipeDelimited,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -6972,39 +6447,36 @@ $expectedPartCode
 
     test('exploded binary list with headers passes headers to '
         'MultipartFile.fromBytes', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'files',
-            model: ListModel(
-              content: BinaryModel(context: testContext),
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              style: EncodingStyle.form,
-              explode: true,
-              headers: {
-                'X-Checksum': ResponseHeaderObject(
-                  name: 'X-Checksum',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'files',
+          model: ListModel(
+            content: BinaryModel(context: testContext),
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Checksum': ResponseHeaderObject(
+                name: 'X-Checksum',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -7044,39 +6516,36 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'addresses',
-            model: ListModel(
-              content: innerClass,
-              context: testContext,
-              examples: const [],
-            ),
-            encoding: PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              headers: {
-                'X-Custom': ResponseHeaderObject(
-                  name: 'X-Custom',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'addresses',
+          model: ListModel(
+            content: innerClass,
+            context: testContext,
+            examples: const [],
           ),
-        ],
-      );
+          encoding: PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -7102,36 +6571,33 @@ $expectedPartCode
     });
 
     test('required header on optional property uses null assertion', () {
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'file',
-            model: BinaryModel(context: testContext),
-            isRequired: false,
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'X-Rate-Limit': ResponseHeaderObject(
-                  name: 'X-Rate-Limit',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: IntegerModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'file',
+          model: BinaryModel(context: testContext),
+          isRequired: false,
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -7172,36 +6638,33 @@ $expectedPartCode
     test(
       'required header on nullable required property uses null assertion',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'file',
-              model: BinaryModel(context: testContext),
-              isNullable: true,
-              encoding: PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Checksum': ResponseHeaderObject(
-                    name: 'X-Checksum',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isNullable: true,
+            encoding: PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Checksum': ResponseHeaderObject(
+                  name: 'X-Checksum',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -7241,35 +6704,32 @@ $expectedPartCode
     test(
       'AnyModel field with headers converts to MultipartFile.fromString',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'data',
-              model: AnyModel(context: testContext),
-              encoding: PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: {
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'data',
+            model: AnyModel(context: testContext),
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -7296,49 +6756,44 @@ $expectedPartCode
       },
     );
 
-    test(
-      'primitive field with json contentType and headers uses jsonEncode in '
-      'MultipartFile.fromString',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'count',
-              model: IntegerModel(context: testContext),
-              encoding: PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: {
-                  'X-Source': ResponseHeaderObject(
-                    name: 'X-Source',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
+    test('primitive field with json contentType and headers uses jsonEncode in '
+        'MultipartFile.fromString', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'count',
+          model: IntegerModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            headers: {
+              'X-Source': ResponseHeaderObject(
+                name: 'X-Source',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
-            ),
-          ],
-        );
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             final _$countHeaders = <String, List<String>>{};
@@ -7350,44 +6805,40 @@ $expectedPartCode
             return _$formData;
           }
         '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'DateTimeModel field with json contentType and headers uses jsonEncode '
       'in MultipartFile.fromString',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'createdAt',
-              model: DateTimeModel(context: testContext),
-              encoding: PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: {
-                  'X-Source': ResponseHeaderObject(
-                    name: 'X-Source',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'createdAt',
+            model: DateTimeModel(context: testContext),
+            encoding: PartEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: {
+                'X-Source': ResponseHeaderObject(
+                  name: 'X-Source',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-        );
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -7417,39 +6868,36 @@ $expectedPartCode
     test(
       'non-exploded DateTime list with headers sends one mapped encoded part',
       () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'dates',
-              model: ListModel(
-                content: DateTimeModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                style: EncodingStyle.form,
-                explode: false,
-                headers: {
-                  'X-Custom': ResponseHeaderObject(
-                    name: 'X-Custom',
-                    context: testContext,
-                    description: null,
-                    explode: false,
-                    model: StringModel(context: testContext),
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                allowReserved: null,
-              ),
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'dates',
+            model: ListModel(
+              content: DateTimeModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ],
-        );
+            encoding: PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.form,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
         final result = buildMultipartBodyStatements(
           _planMultipartBody(content, 'body'),
@@ -7504,29 +6952,26 @@ $expectedPartCode
         examples: const [],
       );
 
-      final content = multipartContentFixture(
-        testContext,
-        [
-          multipartPartFixture(
-            name: 'document',
-            model: BinaryModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: {
-                'X-Trace-Id': ResponseHeaderAlias(
-                  name: 'X-Trace-Id',
-                  context: testContext,
-                  header: underlyingHeader,
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'document',
+          model: BinaryModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Trace-Id': ResponseHeaderAlias(
+                name: 'X-Trace-Id',
+                context: testContext,
+                header: underlyingHeader,
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-      );
+        ),
+      ]);
 
       final result = buildMultipartBodyStatements(
         _planMultipartBody(content, 'body'),
@@ -7563,77 +7008,66 @@ $expectedPartCode
   });
 
   group('special characters in multipart field names and content types', () {
-    test(
-      'generates valid code when rawContentType contains single quote',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: 'name',
-              model: StringModel(context: testContext),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: "text/it's-plain",
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+    test('generates valid code when rawContentType contains single quote', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'name',
+          model: StringModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: "text/it's-plain",
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
+          ),
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
               return _$formData;
             }
           '''),
+        ),
+      );
+    });
+
+    test('generates valid code when field name contains single quote', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: "it's-field",
+          model: BinaryModel(context: testContext),
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'generates valid code when field name contains single quote',
-      () {
-        final content = multipartContentFixture(
-          testContext,
-          [
-            multipartPartFixture(
-              name: "it's-field",
-              model: BinaryModel(context: testContext),
-              encoding: const PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                style: EncodingStyle.form,
-                explode: true,
-                allowReserved: false,
-                headers: null,
-              ),
-            ),
-          ],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
             void test() {
               final _$formData = FormData();
               switch (body.itsField) {
@@ -7651,21 +7085,18 @@ $expectedPartCode
               return _$formData;
             }
           '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
   });
 }
 
 MultipartBodyPlan _planMultipartBody(
   MultipartRequestContent content,
   String bodyAccessor,
-) => const MultipartBodyPlanner(backend: TransportBackend.dio).plan(
-  content,
-  bodyAccessor: bodyAccessor,
-  isRequired: true,
-);
+) =>
+    const MultipartBodyPlanner(backend: TransportBackend.dio)
+        .plan(content, bodyAccessor: bodyAccessor, isRequired: true);
 
 ClassModel _testClassModel(Context context) => ClassModel(
   name: 'NestedValue',

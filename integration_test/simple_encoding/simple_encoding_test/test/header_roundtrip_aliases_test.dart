@@ -35,10 +35,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userId: userId);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
       });
@@ -48,10 +45,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userId: userId);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
       });
@@ -61,10 +55,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userId: userId);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
       });
@@ -74,10 +65,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userId: userId);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
       });
@@ -89,10 +77,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userName: userName);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserName, userName);
       });
@@ -106,10 +91,7 @@ void main() {
             userName: userName,
           );
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
           expect(recordedRequest.headers['x-user-name'], '');
@@ -122,10 +104,7 @@ void main() {
 
         final result = await api.testHeaderRoundtripAliases(userName: userName);
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserName, isNotNull);
       });
@@ -140,10 +119,7 @@ void main() {
             userName: userName,
           );
 
-          expect(
-            result,
-            isTonikError,
-          );
+          expect(result, isTonikError);
         },
       );
     });
@@ -156,10 +132,7 @@ void main() {
           timestamp: timestamp,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTimestamp, isNotNull);
       });
@@ -171,10 +144,7 @@ void main() {
           timestamp: timestamp,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTimestamp, isNotNull);
       });
@@ -186,10 +156,7 @@ void main() {
           timestamp: timestamp,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTimestamp, isNotNull);
       });
@@ -207,10 +174,7 @@ void main() {
           timestamp: timestamp,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, userName);
@@ -220,10 +184,7 @@ void main() {
       test('roundtrips with no parameters', () async {
         final result = await api.testHeaderRoundtripAliases();
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, isNull);
         expect(success.value.xUserName, isNull);
@@ -240,10 +201,7 @@ void main() {
           // userName omitted
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, isNull);

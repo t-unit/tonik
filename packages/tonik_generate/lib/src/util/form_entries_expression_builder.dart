@@ -134,11 +134,7 @@ Expression? _buildListFormEntriesExpression(
   required Expression? useQueryComponent,
   required Expression textEncoding,
   required bool isContentNullable,
-  required Expression Function(
-    Expression, {
-    bool alreadyEncoded,
-    bool reserved,
-  })
+  required Expression Function(Expression, {bool alreadyEncoded, bool reserved})
   toForm,
   required bool allowReserved,
 }) {

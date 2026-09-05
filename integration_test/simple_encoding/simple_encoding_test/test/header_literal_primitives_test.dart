@@ -120,26 +120,17 @@ void main() {
         final api = buildApi();
 
         final control = await api.testHeaderRoundtripPrimitives(string: 'ab');
-        expect(
-          control,
-          isTonikSuccess,
-        );
+        expect(control, isTonikSuccess);
 
         final response = await api.testHeaderRoundtripPrimitives(
           string: entry.value,
         );
 
-        expect(
-          response,
-          isTonikError,
-        );
+        expect(response, isTonikError);
         final error = requireError(response);
         // Both clients reject before dispatch. Dio reports a network error;
         // package:http reports its argument error as an uncategorized error.
-        expect(
-          error.type,
-          anyOf(TonikErrorType.network, TonikErrorType.other),
-        );
+        expect(error.type, anyOf(TonikErrorType.network, TonikErrorType.other));
         expect(error.response, isNull);
       });
     }

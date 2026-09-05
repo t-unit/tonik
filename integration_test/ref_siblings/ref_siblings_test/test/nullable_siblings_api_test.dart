@@ -121,15 +121,10 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.createOptionalPet(
-          body: const ContainerWithOptionalPet(
-            requiredPet: Pet(name: 'Test'),
-          ),
+          body: const ContainerWithOptionalPet(requiredPet: Pet(name: 'Test')),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
       });
@@ -168,9 +163,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.createOptionalPet(
-          body: const ContainerWithOptionalPet(
-            requiredPet: Pet(name: 'Solo'),
-          ),
+          body: const ContainerWithOptionalPet(requiredPet: Pet(name: 'Solo')),
         );
 
         final success = requireSuccess(response);

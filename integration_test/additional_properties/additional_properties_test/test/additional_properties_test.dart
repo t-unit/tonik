@@ -146,11 +146,7 @@ void main() {
         name: 'test',
         additionalProperties: {'extra': 'value'},
       );
-      expect(obj.toJson(), {
-        'id': 1,
-        'name': 'test',
-        'extra': 'value',
-      });
+      expect(obj.toJson(), {'id': 1, 'name': 'test', 'extra': 'value'});
     });
 
     test('fromJson collects unknown keys', () {
@@ -234,9 +230,7 @@ void main() {
         name: 'test',
         additionalProperties: {'k': 'v'},
       );
-      final copy = obj.copyWith(
-        additionalProperties: {'new': 'value'},
-      );
+      final copy = obj.copyWith(additionalProperties: {'new': 'value'});
       expect(copy.additionalProperties, {'new': 'value'});
     });
   });
@@ -252,11 +246,7 @@ void main() {
         label: 'test',
         additionalProperties: {'tag': 'important'},
       );
-      expect(obj.toJson(), {
-        'id': 1,
-        'label': 'test',
-        'tag': 'important',
-      });
+      expect(obj.toJson(), {'id': 1, 'label': 'test', 'tag': 'important'});
     });
 
     test('fromJson decodes typed string AP', () {
@@ -266,17 +256,14 @@ void main() {
         'tag': 'important',
         'category': 'docs',
       });
-      expect(
-        obj.additionalProperties,
-        {'tag': 'important', 'category': 'docs'},
-      );
+      expect(obj.additionalProperties, {
+        'tag': 'important',
+        'category': 'docs',
+      });
     });
 
     test('json roundtrip', () {
-      const obj = MixedTypedString(
-        id: 1,
-        additionalProperties: {'x': 'y'},
-      );
+      const obj = MixedTypedString(id: 1, additionalProperties: {'x': 'y'});
       final json = obj.toJson();
       final decoded = MixedTypedString.fromJson(json);
       expect(decoded, obj);
@@ -311,19 +298,11 @@ void main() {
     test('toJson encodes complex AP values via toJson', () {
       const obj = MixedTypedObject(
         primaryAddress: Address(street: '1 Main', city: 'NYC'),
-        additionalProperties: {
-          'work': Address(street: '2 Office', city: 'LA'),
-        },
+        additionalProperties: {'work': Address(street: '2 Office', city: 'LA')},
       );
       final json = obj.toJson()! as Map<String, Object?>;
-      expect(json['primaryAddress'], {
-        'street': '1 Main',
-        'city': 'NYC',
-      });
-      expect(json['work'], {
-        'street': '2 Office',
-        'city': 'LA',
-      });
+      expect(json['primaryAddress'], {'street': '1 Main', 'city': 'NYC'});
+      expect(json['work'], {'street': '2 Office', 'city': 'LA'});
     });
 
     test('fromJson decodes complex AP values', () {
@@ -340,9 +319,7 @@ void main() {
     test('json roundtrip', () {
       const obj = MixedTypedObject(
         primaryAddress: Address(street: '1 Main', city: 'NYC'),
-        additionalProperties: {
-          'work': Address(street: '2 Office', city: 'LA'),
-        },
+        additionalProperties: {'work': Address(street: '2 Office', city: 'LA')},
       );
       final json = obj.toJson();
       final decoded = MixedTypedObject.fromJson(json);
@@ -372,10 +349,7 @@ void main() {
         additionalProperties: 'prop-value',
         additionalProperties2: {'score': 99},
       );
-      expect(obj.toJson(), {
-        'additionalProperties': 'prop-value',
-        'score': 99,
-      });
+      expect(obj.toJson(), {'additionalProperties': 'prop-value', 'score': 99});
     });
 
     test('fromJson separates named vs additional', () {
@@ -412,10 +386,7 @@ void main() {
         'email': 'john@example.com',
         'nickname': 'JD',
       });
-      expect(
-        obj.additionalProperties,
-        {'nickname': 'JD'},
-      );
+      expect(obj.additionalProperties, {'nickname': 'JD'});
     });
 
     test('toJson includes additional properties', () {
@@ -505,12 +476,8 @@ void main() {
     test('toJson encodes list of address maps', () {
       const obj = AddressMapListHolder(
         departments: [
-          {
-            'main': Address(street: '1 Main', city: 'NYC'),
-          },
-          {
-            'branch': Address(street: '2 Oak', city: 'LA'),
-          },
+          {'main': Address(street: '1 Main', city: 'NYC')},
+          {'branch': Address(street: '2 Oak', city: 'LA')},
         ],
       );
       expect(obj.toJson(), {
@@ -550,9 +517,7 @@ void main() {
     test('json roundtrip', () {
       const obj = AddressMapListHolder(
         departments: [
-          {
-            'main': Address(street: '1 Main', city: 'NYC'),
-          },
+          {'main': Address(street: '1 Main', city: 'NYC')},
         ],
       );
       final json = obj.toJson();
@@ -569,9 +534,7 @@ void main() {
     test('toJson works (JSON encoding always valid)', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(obj.toJson, returnsNormally);
     });
@@ -579,9 +542,7 @@ void main() {
     test('parameterProperties throws when AP is non-empty', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(
         () => obj.parameterProperties(),
@@ -597,9 +558,7 @@ void main() {
     test('toSimple throws when AP is non-empty', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(
         () => obj.toSimple(explode: true, allowEmpty: true),
@@ -610,9 +569,7 @@ void main() {
     test('toForm throws when AP is non-empty', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(
         () => obj.toForm(
@@ -628,9 +585,7 @@ void main() {
     test('toLabel throws when AP is non-empty', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(
         () => obj.toLabel(explode: true, allowEmpty: true),
@@ -641,9 +596,7 @@ void main() {
     test('toMatrix throws when AP is non-empty', () {
       const obj = MixedComplexAp(
         id: 1,
-        additionalProperties: {
-          'home': Address(street: '1 Main', city: 'NYC'),
-        },
+        additionalProperties: {'home': Address(street: '1 Main', city: 'NYC')},
       );
       expect(
         () => obj.toMatrix('p', explode: true, allowEmpty: true),
@@ -654,18 +607,12 @@ void main() {
 
   group('ClassWithMapProperty - runtime encoding errors', () {
     test('toJson works', () {
-      const obj = ClassWithMapProperty(
-        id: 1,
-        metadata: {'key': 'value'},
-      );
+      const obj = ClassWithMapProperty(id: 1, metadata: {'key': 'value'});
       expect(obj.toJson, returnsNormally);
     });
 
     test('parameterProperties throws (complex property)', () {
-      const obj = ClassWithMapProperty(
-        id: 1,
-        metadata: {'key': 'value'},
-      );
+      const obj = ClassWithMapProperty(id: 1, metadata: {'key': 'value'});
       expect(
         () => obj.parameterProperties(),
         throwsA(isA<EncodingException>()),
@@ -673,10 +620,7 @@ void main() {
     });
 
     test('toSimple throws (complex property)', () {
-      const obj = ClassWithMapProperty(
-        id: 1,
-        metadata: {'key': 'value'},
-      );
+      const obj = ClassWithMapProperty(id: 1, metadata: {'key': 'value'});
       expect(
         () => obj.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
@@ -684,10 +628,7 @@ void main() {
     });
 
     test('toForm throws (complex property)', () {
-      const obj = ClassWithMapProperty(
-        id: 1,
-        metadata: {'key': 'value'},
-      );
+      const obj = ClassWithMapProperty(id: 1, metadata: {'key': 'value'});
       expect(
         () => obj.toForm(
           'p',
@@ -733,9 +674,7 @@ void main() {
     });
 
     test('fromJson with no AP entries', () {
-      final obj = MixedNullableValues.fromJson({
-        'name': 'test',
-      });
+      final obj = MixedNullableValues.fromJson({'name': 'test'});
       expect(obj.additionalProperties, isEmpty);
     });
   });

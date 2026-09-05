@@ -64,9 +64,8 @@ void main() {
           id: 1,
           name: 'Widget',
           tags: <String>['cool', 'useful'].lock,
-          children: <ChildModel>[
-            const ChildModel(childName: 'bolt', value: 10),
-          ].lock,
+          children: <ChildModel>[const ChildModel(childName: 'bolt', value: 10)]
+              .lock,
           metadata: IMap(const {'color': 'red', 'size': 'large'}),
         ),
       );

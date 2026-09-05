@@ -26,10 +26,7 @@ void main() {
         generator: NameGenerator(),
         stableModelSorter: StableModelSorter(),
       );
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -78,49 +75,44 @@ void main() {
       expect(nameParam.defaultTo?.accept(emitter).toString(), 'nameDefault');
     });
 
-    test(
-      'required property with default emits non-required param and '
-      'non-nullable field',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'anon',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('required property with default emits non-required param and '
+        'non-nullable field', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'anon',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final constField = result.fields.firstWhere(
-          (f) => f.name == 'nameDefault',
-        );
-        expect(constField.type?.accept(emitter).toString(), 'String');
-        expect(renderAssignment(constField.assignment), "r'anon'");
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'nameDefault',
+      );
+      expect(constField.type?.accept(emitter).toString(), 'String');
+      expect(renderAssignment(constField.assignment), "r'anon'");
 
-        final nameField = result.fields.firstWhere((f) => f.name == 'name');
-        expect(nameField.type?.accept(emitter).toString(), 'String');
+      final nameField = result.fields.firstWhere((f) => f.name == 'name');
+      expect(nameField.type?.accept(emitter).toString(), 'String');
 
-        final constructor = result.constructors.firstWhere(
-          (c) => c.name == null,
-        );
-        final nameParam = constructor.optionalParameters.firstWhere(
-          (p) => p.name == 'name',
-        );
-        expect(nameParam.required, isFalse);
-        expect(nameParam.defaultTo?.accept(emitter).toString(), 'nameDefault');
-      },
-    );
+      final constructor = result.constructors.firstWhere((c) => c.name == null);
+      final nameParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'name',
+      );
+      expect(nameParam.required, isFalse);
+      expect(nameParam.defaultTo?.accept(emitter).toString(), 'nameDefault');
+    });
 
     test('integer default emits static const int', () {
       final model = ClassModel(
@@ -271,10 +263,7 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      expect(
-        result.fields.where((f) => f.name == 'tierDefault'),
-        isEmpty,
-      );
+      expect(result.fields.where((f) => f.name == 'tierDefault'), isEmpty);
 
       final constructor = result.constructors.firstWhere((c) => c.name == null);
       final tierParam = constructor.optionalParameters.firstWhere(
@@ -326,78 +315,71 @@ void main() {
       ]);
     });
 
-    test(
-      'ClassModel property target with default emits a runtime getter '
-      'instead of a static const field, "object target" warning emitted',
-      () {
-        final logs = <LogRecord>[];
-        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
-        addTearDown(subscription.cancel);
+    test('ClassModel property target with default emits a runtime getter '
+        'instead of a static const field, "object target" warning emitted', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'WithChild',
-          properties: [
-            Property(
-              name: 'child',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Child',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WithChild',
+        properties: [
+          Property(
+            name: 'child',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'Child',
+              properties: const [],
+              context: context,
               examples: const [],
-              defaultValue: const <String, Object?>{},
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final result = generator.generateClass(model);
-        expect(
-          result.fields.where((f) => f.name == 'childDefault'),
-          isEmpty,
-        );
-        final getter = result.methods.firstWhere(
-          (m) => m.name == 'childDefault',
-        );
-        expect(getter.static, isTrue);
-        expect(getter.type, MethodType.getter);
-        final routingLogs = logs
-            .where(
-              (r) => r.level == Level.FINE && r.loggerName == 'ClassGenerator',
-            )
-            .toList();
-        expect(routingLogs.map((r) => r.message), [
-          'Routing default to runtime fallback for WithChild.child.',
-        ]);
-        expect(
-          logs.where(
-            (r) =>
-                r.level == Level.WARNING && r.loggerName == 'DefaultResolution',
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: const <String, Object?>{},
           ),
-          isEmpty,
-        );
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generated = format(result.accept(emitter).toString());
-        const expectedGetter =
-            'static Child get childDefault => '
-            'Child.fromJson(const <String, Object?>{});';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedGetter)),
-        );
-        const expectedCtor = 'const WithChild({required this.child});';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedCtor)),
-        );
-        const expectedFromJson = r'''
+      final result = generator.generateClass(model);
+      expect(result.fields.where((f) => f.name == 'childDefault'), isEmpty);
+      final getter = result.methods.firstWhere((m) => m.name == 'childDefault');
+      expect(getter.static, isTrue);
+      expect(getter.type, MethodType.getter);
+      final routingLogs = logs
+          .where(
+            (r) => r.level == Level.FINE && r.loggerName == 'ClassGenerator',
+          )
+          .toList();
+      expect(routingLogs.map((r) => r.message), [
+        'Routing default to runtime fallback for WithChild.child.',
+      ]);
+      expect(
+        logs.where(
+          (r) =>
+              r.level == Level.WARNING && r.loggerName == 'DefaultResolution',
+        ),
+        isEmpty,
+      );
+
+      final generated = format(result.accept(emitter).toString());
+      const expectedGetter =
+          'static Child get childDefault => '
+          'Child.fromJson(const <String, Object?>{});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+      const expectedCtor = 'const WithChild({required this.child});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedCtor)),
+      );
+      const expectedFromJson = r'''
 factory WithChild.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'WithChild');
   return WithChild(
@@ -407,12 +389,11 @@ factory WithChild.fromJson(Object? json) {
   );
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
 
     test(
       'AllOf composite property target with default emits a runtime getter',
@@ -446,10 +427,7 @@ factory WithChild.fromJson(Object? json) {
         );
 
         final result = generator.generateClass(model);
-        expect(
-          result.fields.where((f) => f.name == 'unionDefault'),
-          isEmpty,
-        );
+        expect(result.fields.where((f) => f.name == 'unionDefault'), isEmpty);
         final getter = result.methods.firstWhere(
           (m) => m.name == 'unionDefault',
         );
@@ -501,47 +479,42 @@ factory WithComposite.fromJson(Object? json) {
       },
     );
 
-    test(
-      'nullable + default: null produces no static const',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Nickname',
-          properties: [
-            Property(
-              name: 'nickname',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('nullable + default: null produces no static const', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Nickname',
+        properties: [
+          Property(
+            name: 'nickname',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        expect(
-          result.fields.where((f) => f.name == 'nicknameDefault'),
-          isEmpty,
-          reason:
-              'raw default is null and Property.defaultValue is null — '
-              'absent and explicit-null defaults collapse to the no-default '
-              'path',
-        );
+      expect(
+        result.fields.where((f) => f.name == 'nicknameDefault'),
+        isEmpty,
+        reason:
+            'raw default is null and Property.defaultValue is null — '
+            'absent and explicit-null defaults collapse to the no-default '
+            'path',
+      );
 
-        final constructor = result.constructors.firstWhere(
-          (c) => c.name == null,
-        );
-        final nicknameParam = constructor.optionalParameters.firstWhere(
-          (p) => p.name == 'nickname',
-        );
-        expect(nicknameParam.defaultTo, isNull);
-      },
-    );
+      final constructor = result.constructors.firstWhere((c) => c.name == null);
+      final nicknameParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'nickname',
+      );
+      expect(nicknameParam.defaultTo, isNull);
+    });
 
     test(
       'nullable string property with non-null default (via alias) materialises'
@@ -587,53 +560,49 @@ factory WithComposite.fromJson(Object? json) {
       },
     );
 
-    test(
-      'required + nullable + literal default: const stays nullable, '
-      'param is non-required, present-null still decodes to null',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Greeting',
-          properties: [
-            Property(
-              name: 'salutation',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'hi',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('required + nullable + literal default: const stays nullable, '
+        'param is non-required, present-null still decodes to null', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Greeting',
+        properties: [
+          Property(
+            name: 'salutation',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'hi',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final constField = result.fields.firstWhere(
-          (f) => f.name == 'salutationDefault',
-        );
-        expect(constField.static, isTrue);
-        expect(constField.modifier, FieldModifier.constant);
-        expect(constField.type?.symbol, 'String');
-        expect(constField.type?.accept(emitter).toString(), 'String?');
-        expect(renderAssignment(constField.assignment), "r'hi'");
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'salutationDefault',
+      );
+      expect(constField.static, isTrue);
+      expect(constField.modifier, FieldModifier.constant);
+      expect(constField.type?.symbol, 'String');
+      expect(constField.type?.accept(emitter).toString(), 'String?');
+      expect(renderAssignment(constField.assignment), "r'hi'");
 
-        final constructor = result.constructors.firstWhere(
-          (c) => c.name == null,
-        );
-        final salutationParam = constructor.optionalParameters.firstWhere(
-          (p) => p.name == 'salutation',
-        );
-        expect(salutationParam.required, isFalse);
-        expect(
-          salutationParam.defaultTo?.accept(emitter).toString(),
-          'salutationDefault',
-        );
+      final constructor = result.constructors.firstWhere((c) => c.name == null);
+      final salutationParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'salutation',
+      );
+      expect(salutationParam.required, isFalse);
+      expect(
+        salutationParam.defaultTo?.accept(emitter).toString(),
+        'salutationDefault',
+      );
 
-        final generated = format(result.accept(emitter).toString());
-        const expectedFromJson = r'''
+      final generated = format(result.accept(emitter).toString());
+      const expectedFromJson = r'''
 factory Greeting.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'Greeting');
   return Greeting(
@@ -645,38 +614,35 @@ factory Greeting.fromJson(Object? json) {
   );
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
 
-    test(
-      'fromJson body uses containsKey template for defaulted property',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'DefaultedPrimitives',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'anon',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromJson body uses containsKey template for defaulted property', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'DefaultedPrimitives',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'anon',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final generated = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final generated = format(result.accept(emitter).toString());
 
-        const expectedFromJson = r'''
+      const expectedFromJson = r'''
 factory DefaultedPrimitives.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'DefaultedPrimitives');
   return DefaultedPrimitives(
@@ -689,12 +655,11 @@ factory DefaultedPrimitives.fromJson(Object? json) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
 
     test('fromJson nullable defaulted property decodes in nullable mode', () {
       final model = ClassModel(
@@ -744,67 +709,59 @@ factory WithNullable.fromJson(Object? json) {
       );
     });
 
-    test(
-      'collision: property valueDefault forces suffix on value default',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Collide',
-          properties: [
-            Property(
-              name: 'value',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'x',
-            ),
-            Property(
-              name: 'valueDefault',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('collision: property valueDefault forces suffix on value default', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Collide',
+        properties: [
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'x',
+          ),
+          Property(
+            name: 'valueDefault',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final constField = result.fields.firstWhere(
-          (f) => f.name == 'valueDefault2',
-        );
-        expect(constField.static, isTrue);
-        expect(constField.modifier, FieldModifier.constant);
-        expect(constField.type?.symbol, 'String');
-        expect(constField.type?.accept(emitter).toString(), 'String');
-        expect(renderAssignment(constField.assignment), "r'x'");
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'valueDefault2',
+      );
+      expect(constField.static, isTrue);
+      expect(constField.modifier, FieldModifier.constant);
+      expect(constField.type?.symbol, 'String');
+      expect(constField.type?.accept(emitter).toString(), 'String');
+      expect(renderAssignment(constField.assignment), "r'x'");
 
-        final constructor = result.constructors.firstWhere(
-          (c) => c.name == null,
-        );
-        final valueParam = constructor.optionalParameters.firstWhere(
-          (p) => p.name == 'value',
-        );
-        expect(
-          valueParam.defaultTo?.accept(emitter).toString(),
-          'valueDefault2',
-        );
+      final constructor = result.constructors.firstWhere((c) => c.name == null);
+      final valueParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'value',
+      );
+      expect(valueParam.defaultTo?.accept(emitter).toString(), 'valueDefault2');
 
-        expect(
-          result.fields.where((f) => f.name == 'valueDefault'),
-          isNotEmpty,
-          reason:
-              'the original property field named valueDefault still '
-              'exists; the renamed const must not shadow it',
-        );
-      },
-    );
+      expect(
+        result.fields.where((f) => f.name == 'valueDefault'),
+        isNotEmpty,
+        reason:
+            'the original property field named valueDefault still '
+            'exists; the renamed const must not shadow it',
+      );
+    });
 
     test('fromSimple uses containsKey template for defaulted property', () {
       final model = ClassModel(
@@ -898,33 +855,31 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
       );
     });
 
-    test(
-      'fromSimple uses containsKey template for a runtime-defaulted '
-      'property — the absent-key branch references the runtime getter '
-      'identifier just like the const-default path',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'DefaultedSimpleRuntime',
-          properties: [
-            Property(
-              name: 'startsAt',
-              model: DateTimeModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: '2024-01-01T00:00:00Z',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromSimple uses containsKey template for a runtime-defaulted '
+        'property — the absent-key branch references the runtime getter '
+        'identifier just like the const-default path', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'DefaultedSimpleRuntime',
+        properties: [
+          Property(
+            name: 'startsAt',
+            model: DateTimeModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: '2024-01-01T00:00:00Z',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final generated = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final generated = format(result.accept(emitter).toString());
 
-        const expectedFromSimple = r'''
+      const expectedFromSimple = r'''
 factory DefaultedSimpleRuntime.fromSimple(
   String? value, {
   required bool explode,
@@ -946,12 +901,11 @@ factory DefaultedSimpleRuntime.fromSimple(
 }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromSimple)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+    });
 
     test(
       'alias-carried default propagates when property has no local default',
@@ -993,42 +947,39 @@ factory DefaultedSimpleRuntime.fromSimple(
       },
     );
 
-    test(
-      'property-local default overrides alias-carried default',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'OverridingHolder',
-          properties: [
-            Property(
-              name: 'region',
-              model: AliasModel(
-                name: 'Region',
-                model: StringModel(context: context),
-                context: context,
-                examples: const [],
-                defaultValue: 'us',
-              ),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
+    test('property-local default overrides alias-carried default', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'OverridingHolder',
+        properties: [
+          Property(
+            name: 'region',
+            model: AliasModel(
+              name: 'Region',
+              model: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: 'eu',
+              defaultValue: 'us',
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'eu',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final constField = result.fields.firstWhere(
-          (f) => f.name == 'regionDefault',
-        );
-        expect(constField.type?.accept(emitter).toString(), 'Region');
-        expect(renderAssignment(constField.assignment), "r'eu'");
-      },
-    );
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'regionDefault',
+      );
+      expect(constField.type?.accept(emitter).toString(), 'Region');
+      expect(renderAssignment(constField.assignment), "r'eu'");
+    });
 
     test('AliasModel chain to primitive still materialises default', () {
       final model = ClassModel(
@@ -1086,10 +1037,7 @@ factory DefaultedSimpleRuntime.fromSimple(
         generator: NameGenerator(),
         stableModelSorter: StableModelSorter(),
       );
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -1226,10 +1174,7 @@ factory DefaultedSimpleRuntime.fromSimple(
 
         final result = generator.generateClass(model);
 
-        expect(
-          result.fields.where((f) => f.name == 'statusDefault'),
-          isEmpty,
-        );
+        expect(result.fields.where((f) => f.name == 'statusDefault'), isEmpty);
 
         final constructor = result.constructors.firstWhere(
           (c) => c.name == null,
@@ -1247,92 +1192,87 @@ factory DefaultedSimpleRuntime.fromSimple(
       },
     );
 
-    test(
-      'fallbackValue set and default outside values — no static const',
-      () {
-        final logs = <LogRecord>[];
-        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
-        addTearDown(subscription.cancel);
+    test('fallbackValue set and default outside values — no static const', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
 
-        final fallbackEnum = EnumModel<String>(
-          name: 'Status',
-          values: {
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
-          },
-          isNullable: false,
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-          fallbackValue: const EnumEntry<String>(value: 'unknown'),
-        );
+      final fallbackEnum = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry<String>(value: 'active'),
+          const EnumEntry<String>(value: 'inactive'),
+        },
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+        fallbackValue: const EnumEntry<String>(value: 'unknown'),
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Subscription',
-          properties: [
-            Property(
-              name: 'status',
-              model: fallbackEnum,
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'unknown',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Subscription',
+        properties: [
+          Property(
+            name: 'status',
+            model: fallbackEnum,
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'unknown',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        expect(
-          result.fields.where((f) => f.name == 'statusDefault'),
-          isEmpty,
-          reason: 'fallbackValue must never be auto-selected as a default',
-        );
+      expect(
+        result.fields.where((f) => f.name == 'statusDefault'),
+        isEmpty,
+        reason: 'fallbackValue must never be auto-selected as a default',
+      );
 
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-      },
-    );
+      final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+      expect(warnings, hasLength(1));
+    });
 
-    test(
-      'fromJson body for enum-defaulted property uses containsKey + '
-      'static const',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Subscription',
-          properties: [
-            Property(
-              name: 'status',
-              model: statusEnum(),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: 'active',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromJson body for enum-defaulted property uses containsKey + '
+        'static const', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Subscription',
+        properties: [
+          Property(
+            name: 'status',
+            model: statusEnum(),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'active',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final fromJsonCtor = result.constructors.firstWhere(
-          (c) => c.name == 'fromJson',
-        );
-        final wrapper = Class(
-          (b) => b
-            ..name = result.name
-            ..constructors.add(fromJsonCtor),
-        );
-        final actualFromJson = format(wrapper.accept(emitter).toString());
+      final fromJsonCtor = result.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      final wrapper = Class(
+        (b) => b
+          ..name = result.name
+          ..constructors.add(fromJsonCtor),
+      );
+      final actualFromJson = format(wrapper.accept(emitter).toString());
 
-        const expectedFromJson = r'''
+      const expectedFromJson = r'''
 class Subscription {
   factory Subscription.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'Subscription');
@@ -1345,12 +1285,11 @@ class Subscription {
 }
 ''';
 
-        expect(
-          collapseWhitespace(actualFromJson),
-          collapseWhitespace(expectedFromJson),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(actualFromJson),
+        collapseWhitespace(expectedFromJson),
+      );
+    });
 
     test('nameOverride on matched entry produces override-derived variant', () {
       final namedEnum = EnumModel<String>(

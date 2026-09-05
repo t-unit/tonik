@@ -24,10 +24,7 @@ void main() {
         generator: nameGenerator,
         stableModelSorter: StableModelSorter(),
       );
-      generator = QueryGenerator(
-        nameManager: nameManager,
-        package: 'api',
-      );
+      generator = QueryGenerator(nameManager: nameManager, package: 'api');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -1601,46 +1598,44 @@ void main() {
       );
     });
 
-    test(
-      'generates code that throws when non-list type used with '
-      'delimited encoding',
-      () {
-        final stringModel = StringModel(context: context);
+    test('generates code that throws when non-list type used with '
+        'delimited encoding', () {
+      final stringModel = StringModel(context: context);
 
-        final stringParam = QueryParameterObject(
-          name: 'name',
-          rawName: 'name',
-          description: 'Name parameter',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          encoding: QueryParameterEncoding.spaceDelimited,
-          allowReserved: false,
-          model: stringModel,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final stringParam = QueryParameterObject(
+        name: 'name',
+        rawName: 'name',
+        description: 'Name parameter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        model: stringModel,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'getData',
-          context: context,
-          summary: 'Get data',
-          description: 'Gets data',
-          tags: const {},
-          isDeprecated: false,
-          path: '/data',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {stringParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {stringParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           String? _queryParameters({required String name}) {
             final _$entries = <ParameterEntry>[];
             throw EncodingException(
@@ -1653,90 +1648,87 @@ void main() {
           }
         ''';
 
-        final queryParameters =
-            <({String normalizedName, QueryParameterObject parameter})>[
-              (normalizedName: 'name', parameter: stringParam),
-            ];
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'name', parameter: stringParam),
+          ];
 
-        final method = generator.generateQueryParametersMethod(
-          operation,
-          queryParameters,
-        );
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
 
-        expect(method, isA<Method>());
-        expect(method.optionalParameters.first.named, isTrue);
-        expect(method.optionalParameters.first.required, isTrue);
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates code for list of oneOf with mixed types requiring '
-      'runtime check',
-      () {
-        final stringModel = StringModel(context: context);
-        final classModel = ClassModel(
-          isDeprecated: false,
-          context: context,
-          properties: const [],
-          examples: const [],
-        );
+    test('generates code for list of oneOf with mixed types requiring '
+        'runtime check', () {
+      final stringModel = StringModel(context: context);
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+        examples: const [],
+      );
 
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          context: context,
-          models: [
-            (discriminatorValue: 'string', model: stringModel),
-            (discriminatorValue: 'object', model: classModel),
-          ],
-          name: 'MixedOneOf',
-          discriminator: 'type',
-          examples: const [],
-        );
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        context: context,
+        models: [
+          (discriminatorValue: 'string', model: stringModel),
+          (discriminatorValue: 'object', model: classModel),
+        ],
+        name: 'MixedOneOf',
+        discriminator: 'type',
+        examples: const [],
+      );
 
-        final oneOfListModel = ListModel(
-          context: context,
-          content: oneOfModel,
-          examples: const [],
-        );
+      final oneOfListModel = ListModel(
+        context: context,
+        content: oneOfModel,
+        examples: const [],
+      );
 
-        final oneOfListParam = QueryParameterObject(
-          name: 'values',
-          rawName: 'values',
-          description: 'Value list',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          encoding: QueryParameterEncoding.pipeDelimited,
-          allowReserved: false,
-          model: oneOfListModel,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final oneOfListParam = QueryParameterObject(
+        name: 'values',
+        rawName: 'values',
+        description: 'Value list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: false,
+        model: oneOfListModel,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'getValues',
-          context: context,
-          summary: 'Get values',
-          description: 'Gets values',
-          tags: const {},
-          isDeprecated: false,
-          path: '/data',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {oneOfListParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'getValues',
+        context: context,
+        summary: 'Get values',
+        description: 'Gets values',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {oneOfListParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           String? _queryParameters({required List<MixedOneOf> values}) {
             final _$entries = <ParameterEntry>[];
             for (final item in values) {
@@ -1766,84 +1758,81 @@ void main() {
           }
         ''';
 
-        final queryParameters =
-            <({String normalizedName, QueryParameterObject parameter})>[
-              (normalizedName: 'values', parameter: oneOfListParam),
-            ];
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'values', parameter: oneOfListParam),
+          ];
 
-        final method = generator.generateQueryParametersMethod(
-          operation,
-          queryParameters,
-        );
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
 
-        expect(method, isA<Method>());
-        expect(method.optionalParameters.first.named, isTrue);
-        expect(method.optionalParameters.first.required, isTrue);
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates code for list of oneOf with explode=true',
-      () {
-        final stringModel = StringModel(context: context);
-        final intModel = IntegerModel(context: context);
+    test('generates code for list of oneOf with explode=true', () {
+      final stringModel = StringModel(context: context);
+      final intModel = IntegerModel(context: context);
 
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          context: context,
-          models: [
-            (discriminatorValue: 'string', model: stringModel),
-            (discriminatorValue: 'int', model: intModel),
-          ],
-          name: 'SimpleOneOf',
-          discriminator: 'type',
-          examples: const [],
-        );
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        context: context,
+        models: [
+          (discriminatorValue: 'string', model: stringModel),
+          (discriminatorValue: 'int', model: intModel),
+        ],
+        name: 'SimpleOneOf',
+        discriminator: 'type',
+        examples: const [],
+      );
 
-        final oneOfListModel = ListModel(
-          context: context,
-          content: oneOfModel,
-          examples: const [],
-        );
+      final oneOfListModel = ListModel(
+        context: context,
+        content: oneOfModel,
+        examples: const [],
+      );
 
-        final oneOfListParam = QueryParameterObject(
-          name: 'items',
-          rawName: 'items',
-          description: 'Item list',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: true,
-          encoding: QueryParameterEncoding.spaceDelimited,
-          allowReserved: false,
-          model: oneOfListModel,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final oneOfListParam = QueryParameterObject(
+        name: 'items',
+        rawName: 'items',
+        description: 'Item list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        model: oneOfListModel,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'getItems',
-          context: context,
-          summary: 'Get items',
-          description: 'Gets items',
-          tags: const {},
-          isDeprecated: false,
-          path: '/data',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {oneOfListParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'getItems',
+        context: context,
+        summary: 'Get items',
+        description: 'Gets items',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {oneOfListParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           String? _queryParameters({required List<SimpleOneOf> items}) {
             final _$entries = <ParameterEntry>[];
             for (final item in items) {
@@ -1866,76 +1855,73 @@ void main() {
           }
         ''';
 
-        final queryParameters =
-            <({String normalizedName, QueryParameterObject parameter})>[
-              (normalizedName: 'items', parameter: oneOfListParam),
-            ];
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'items', parameter: oneOfListParam),
+          ];
 
-        final method = generator.generateQueryParametersMethod(
-          operation,
-          queryParameters,
-        );
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
 
-        expect(method, isA<Method>());
-        expect(method.optionalParameters.first.named, isTrue);
-        expect(method.optionalParameters.first.required, isTrue);
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates code that throws when list of class models used with '
-      'delimited encoding',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          context: context,
-          properties: const [],
-          examples: const [],
-        );
-        final classListModel = ListModel(
-          context: context,
-          content: classModel,
-          examples: const [],
-        );
+    test('generates code that throws when list of class models used with '
+        'delimited encoding', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+        examples: const [],
+      );
+      final classListModel = ListModel(
+        context: context,
+        content: classModel,
+        examples: const [],
+      );
 
-        final classListParam = QueryParameterObject(
-          name: 'filters',
-          rawName: 'filters',
-          description: 'Filter list',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          encoding: QueryParameterEncoding.spaceDelimited,
-          allowReserved: false,
-          model: classListModel,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final classListParam = QueryParameterObject(
+        name: 'filters',
+        rawName: 'filters',
+        description: 'Filter list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        model: classListModel,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'getFiltered',
-          context: context,
-          summary: 'Get filtered',
-          description: 'Gets filtered data',
-          tags: const {},
-          isDeprecated: false,
-          path: '/data',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {classListParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'getFiltered',
+        context: context,
+        summary: 'Get filtered',
+        description: 'Gets filtered data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {classListParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           String? _queryParameters({required List<AnonymousModel> filters}) {
             final _$entries = <ParameterEntry>[];
             throw EncodingException(
@@ -1948,25 +1934,24 @@ void main() {
           }
         ''';
 
-        final queryParameters =
-            <({String normalizedName, QueryParameterObject parameter})>[
-              (normalizedName: 'filters', parameter: classListParam),
-            ];
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'filters', parameter: classListParam),
+          ];
 
-        final method = generator.generateQueryParametersMethod(
-          operation,
-          queryParameters,
-        );
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
 
-        expect(method, isA<Method>());
-        expect(method.optionalParameters.first.named, isTrue);
-        expect(method.optionalParameters.first.required, isTrue);
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('handles parameter names that are Dart keywords', () {
       final parameter = QueryParameterObject(
@@ -3007,23 +2992,22 @@ void main() {
       );
     });
 
-    QueryParameterObject anyDeepObjectParam({
-      required bool allowReserved,
-    }) => QueryParameterObject(
-      name: 'data',
-      rawName: 'data',
-      description: null,
-      isRequired: false,
-      isDeprecated: false,
-      allowEmptyValue: false,
-      explode: true,
-      encoding: QueryParameterEncoding.deepObject,
-      allowReserved: allowReserved,
-      model: AnyModel(context: context),
-      context: context,
-      examples: const [],
-      defaultValue: null,
-    );
+    QueryParameterObject anyDeepObjectParam({required bool allowReserved}) =>
+        QueryParameterObject(
+          name: 'data',
+          rawName: 'data',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: true,
+          encoding: QueryParameterEncoding.deepObject,
+          allowReserved: allowReserved,
+          model: AnyModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
     test('emits allowReserved for deepObject AnyModel when set', () {
       final queryParam = anyDeepObjectParam(allowReserved: true);

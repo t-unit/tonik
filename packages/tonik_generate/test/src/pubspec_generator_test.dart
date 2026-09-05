@@ -112,9 +112,8 @@ void main() {
         backendGenerator: const DioBackendGenerator(),
       );
 
-      final content = File(
-        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
 
       expect(content, contains('version: 0.0.1-2026-02-25.clover'));
       expect(content, contains("sdk: '>=3.13.0 <4.0.0'"));
@@ -144,9 +143,8 @@ void main() {
         backendGenerator: const DioBackendGenerator(),
       );
 
-      final content = File(
-        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
 
       expect(content, contains('version: 1.0.0'));
     });
@@ -175,9 +173,8 @@ void main() {
         useImmutableCollections: true,
       );
 
-      final content = File(
-        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
 
       expect(content, contains('fast_immutable_collections: ^11.2.0'));
     });
@@ -206,9 +203,8 @@ void main() {
         backendGenerator: const DioBackendGenerator(),
       );
 
-      final content = File(
-        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
 
       expect(content, isNot(contains('fast_immutable_collections')));
     });
@@ -242,12 +238,10 @@ void main() {
         backendGenerator: const HttpBackendGenerator(),
       );
 
-      final dio = File(
-        path.join(tempDir.path, 'dio_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
-      final http = File(
-        path.join(tempDir.path, 'http_pkg', 'pubspec.yaml'),
-      ).readAsStringSync();
+      final dio = File(path.join(tempDir.path, 'dio_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final http = File(path.join(tempDir.path, 'http_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
 
       expect(dio, contains('dio: ^5.11.1'));
       expect(dio, isNot(contains('http:')));

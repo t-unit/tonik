@@ -116,10 +116,7 @@ void main() {
           body: const Pet(name: 'Test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<Pet>());
@@ -156,10 +153,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.createDeprecatedUser(
-          body: const User(
-            username: 'testUser',
-            email: 'test@example.com',
-          ),
+          body: const User(username: 'testUser', email: 'test@example.com'),
         );
 
         final success = requireSuccess(response);
@@ -177,10 +171,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.createDeprecatedUser(
-          body: const User(
-            username: 'admin',
-            email: 'admin@example.com',
-          ),
+          body: const User(username: 'admin', email: 'admin@example.com'),
         );
 
         final success = requireSuccess(response);
@@ -201,10 +192,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.createDeprecatedUser(
-          body: const User(
-            username: 'testUser',
-            email: 'test@example.com',
-          ),
+          body: const User(username: 'testUser', email: 'test@example.com'),
         );
 
         expect(response, isTonikSuccess);
@@ -217,10 +205,7 @@ void main() {
       test('roundtrip preserves all values', () async {
         final api = buildApi(responseStatus: '200');
 
-        const original = User(
-          username: 'john doe',
-          email: 'john@example.com',
-        );
+        const original = User(username: 'john doe', email: 'john@example.com');
 
         final response = await api.createDeprecatedUser(body: original);
 

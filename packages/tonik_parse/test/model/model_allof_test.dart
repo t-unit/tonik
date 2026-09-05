@@ -284,22 +284,18 @@ void main() {
 
     test('import allOf with description', () {
       final api = Importer().import(allOfWithDescription);
-      final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'ExtendedUser',
-              )
-              as AllOfModel;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'ExtendedUser',
+      ) as AllOfModel;
 
       expect(model.description, 'A user with extended attributes');
     });
 
     test('import allOf without description', () {
       final api = Importer().import(allOfWithoutDescription);
-      final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'CombinedModel',
-              )
-              as AllOfModel;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'CombinedModel',
+      ) as AllOfModel;
 
       expect(model.description, isNull);
     });
@@ -329,9 +325,7 @@ void main() {
             ],
           },
           // Base is a bare $ref alias (declared after Composite)
-          'Base': {
-            r'$ref': '#/components/schemas/Compact',
-          },
+          'Base': {r'$ref': '#/components/schemas/Compact'},
           // Compact is the actual object
           'Compact': {
             'type': 'object',
@@ -343,94 +337,81 @@ void main() {
       },
     };
 
-    test(
-      'allOf member and top-level model are the identical object '
-      'when allOf is processed before the bare ref alias',
-      () {
-        final api = Importer().import(specWithRefBeforeDeclaration);
+    test('allOf member and top-level model are the identical object '
+        'when allOf is processed before the bare ref alias', () {
+      final api = Importer().import(specWithRefBeforeDeclaration);
 
-        final composite =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Composite',
-                )
-                as AllOfModel;
+      final composite = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Composite',
+      ) as AllOfModel;
 
-        // The first allOf member should be the Base alias
-        final baseInAllOf = composite.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'Base',
-        );
+      // The first allOf member should be the Base alias
+      final baseInAllOf = composite.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Base',
+      );
 
-        // Base should also exist in the top-level models set
-        final baseInModels = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'Base',
-        );
+      // Base should also exist in the top-level models set
+      final baseInModels = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Base',
+      );
 
-        // They must be the SAME object instance
-        expect(identical(baseInAllOf, baseInModels), isTrue);
-      },
-    );
+      // They must be the SAME object instance
+      expect(identical(baseInAllOf, baseInModels), isTrue);
+    });
 
-    test(
-      'bare ref alias is present in models set even when first resolved '
-      'through an allOf reference path',
-      () {
-        final api = Importer().import(specWithRefBeforeDeclaration);
+    test('bare ref alias is present in models set even when first resolved '
+        'through an allOf reference path', () {
+      final api = Importer().import(specWithRefBeforeDeclaration);
 
-        final baseModel = api.models.where(
-          (m) => m is NamedModel && m.name == 'Base',
-        );
+      final baseModel = api.models.where(
+        (m) => m is NamedModel && m.name == 'Base',
+      );
 
-        // Exactly one Base model should exist
-        expect(baseModel, hasLength(1));
-        expect(baseModel.first, isA<AliasModel>());
-      },
-    );
+      // Exactly one Base model should exist
+      expect(baseModel, hasLength(1));
+      expect(baseModel.first, isA<AliasModel>());
+    });
 
-    test(
-      'x-dart-name override is applied correctly when model was first '
-      'created through the allOf resolution path',
-      () {
-        const specWithOverride = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Composite': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/Base'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'extra': {'type': 'string'},
-                    },
+    test('x-dart-name override is applied correctly when model was first '
+        'created through the allOf resolution path', () {
+      const specWithOverride = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Composite': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/Base'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'extra': {'type': 'string'},
                   },
-                ],
-              },
-              'Base': {
-                r'$ref': '#/components/schemas/Compact',
-                'x-dart-name': 'MyCustomBase',
-              },
-              'Compact': {
-                'type': 'object',
-                'properties': {
-                  'id': {'type': 'string'},
                 },
+              ],
+            },
+            'Base': {
+              r'$ref': '#/components/schemas/Compact',
+              'x-dart-name': 'MyCustomBase',
+            },
+            'Compact': {
+              'type': 'object',
+              'properties': {
+                'id': {'type': 'string'},
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(specWithOverride);
+      final api = Importer().import(specWithOverride);
 
-        final baseModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Base',
-                )
-                as NamedModel;
+      final baseModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Base',
+      ) as NamedModel;
 
-        expect(baseModel.nameOverride, 'MyCustomBase');
-      },
-    );
+      expect(baseModel.nameOverride, 'MyCustomBase');
+    });
   });
 }

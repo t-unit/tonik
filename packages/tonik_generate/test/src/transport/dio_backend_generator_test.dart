@@ -59,10 +59,7 @@ Object? test() {
     final parameter = generator.cancellationParameter;
 
     expect(parameter.name, 'cancellation');
-    expect(
-      parameter.type?.accept(emitter).toString(),
-      'TonikCancellation?',
-    );
+    expect(parameter.type?.accept(emitter).toString(), 'TonikCancellation?');
     expect(parameter.named, isTrue);
     expect(parameter.required, isFalse);
   });
@@ -75,25 +72,19 @@ Object? test() {
     });
 
     test('tracks cached ownership and one stable closed error', () {
-      expect(
-        adapter.fields.map((field) => field.name),
-        [
-          'baseUrl',
-          'serverConfig',
-          r'_$dio',
-          r'_$ownsDio',
-          r'_$isClosed',
-          r'_$closedError',
-        ],
-      );
+      expect(adapter.fields.map((field) => field.name), [
+        'baseUrl',
+        'serverConfig',
+        r'_$dio',
+        r'_$ownsDio',
+        r'_$isClosed',
+        r'_$closedError',
+      ]);
 
       final closedError = adapter.fields.singleWhere(
         (field) => field.name == r'_$closedError',
       );
-      expect(
-        closedError.type?.accept(emitter).toString(),
-        'StateError',
-      );
+      expect(closedError.type?.accept(emitter).toString(), 'StateError');
       expect(closedError.modifier, FieldModifier.final$);
     });
 
@@ -136,10 +127,7 @@ Dio dio() {
         (method) => method.name == 'close',
       );
 
-      expect(
-        close.returns?.accept(emitter).toString(),
-        'void',
-      );
+      expect(close.returns?.accept(emitter).toString(), 'void');
 
       const expectedMethod = r'''
 void close() {
@@ -161,45 +149,43 @@ void close() {
     });
   });
 
-  test(
-    'guards pre-cancellation, resolves lazily, and bridges in-flight cancel '
-    'without a shadow-prone local',
-    () {
-      final statements = generator.generateDispatchStatements(
-        plan: OperationRequestPlan(
-          method: HttpMethod.get,
-          uri: refer(r'_$uri'),
-          pathParameters: const [],
-          queryParameters: const [],
-          headers: const [],
-          cookies: const [],
-          contentType: null,
-          cancellation: refer('cancellation'),
-          response: ResponseRequirements(
-            expectsBytes: true,
-            statuses: const [],
-            contentTypes: const [],
-          ),
-          body: const AbsentBodyPlan(),
+  test('guards pre-cancellation, resolves lazily, and bridges in-flight cancel '
+      'without a shadow-prone local', () {
+    final statements = generator.generateDispatchStatements(
+      plan: OperationRequestPlan(
+        method: HttpMethod.get,
+        uri: refer(r'_$uri'),
+        pathParameters: const [],
+        queryParameters: const [],
+        headers: const [],
+        cookies: const [],
+        contentType: null,
+        cancellation: refer('cancellation'),
+        response: ResponseRequirements(
+          expectsBytes: true,
+          statuses: const [],
+          contentTypes: const [],
         ),
-        responseVariable: r'_$response',
-        resultValueType: refer('void'),
-      );
+        body: const AbsentBodyPlan(),
+      ),
+      responseVariable: r'_$response',
+      resultValueType: refer('void'),
+    );
 
-      final method = Method(
-        (b) => b
-          ..name = 'dispatch'
-          ..returns = TypeReference(
-            (b) => b
-              ..symbol = 'Future'
-              ..url = 'dart:core'
-              ..types.add(refer('void')),
-          )
-          ..modifier = MethodModifier.async
-          ..body = Block.of([statements]),
-      );
+    final method = Method(
+      (b) => b
+        ..name = 'dispatch'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'Future'
+            ..url = 'dart:core'
+            ..types.add(refer('void')),
+        )
+        ..modifier = MethodModifier.async
+        ..body = Block.of([statements]),
+    );
 
-      const expectedMethod = r'''
+    const expectedMethod = r'''
 Future<void> dispatch() async {
   final Response<List<int>> _$response;
   CancelToken? _$cancelToken;
@@ -266,12 +252,11 @@ Future<void> dispatch() async {
 }
 ''';
 
-      expect(
-        collapseWhitespace(format('${method.accept(emitter)}')),
-        collapseWhitespace(format(expectedMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expectedMethod)),
+    );
+  });
 }
 
 String _asMethod(Method method, DartEmitter emitter) {

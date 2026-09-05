@@ -74,10 +74,11 @@ void main() {
     final int32Property = model.properties.firstWhere((p) => p.name == 'int32');
 
     expect(int32Property.model, isA<EnumModel<int>>());
-    expect(
-      (int32Property.model as EnumModel<int>).values.map((e) => e.value),
-      [1, 2, 3],
-    );
+    expect((int32Property.model as EnumModel<int>).values.map((e) => e.value), [
+      1,
+      2,
+      3,
+    ]);
   });
 
   test('imports enum for string', () {
@@ -87,10 +88,11 @@ void main() {
     );
 
     expect(model, isA<EnumModel<String>>());
-    expect(
-      (model as EnumModel<String>).values.map((e) => e.value),
-      ['a', 'b', 'c'],
-    );
+    expect((model as EnumModel<String>).values.map((e) => e.value), [
+      'a',
+      'b',
+      'c',
+    ]);
   });
 
   test('parses nullability for enum', () {
@@ -133,21 +135,15 @@ void main() {
       };
 
       final api = Importer().import(spec);
-      final emptyString =
-          api.models.firstWhere(
-                (model) => model is NamedModel && model.name == 'EmptyString',
-              )
-              as EnumModel<String>;
-      final emptyInteger =
-          api.models.firstWhere(
-                (model) => model is NamedModel && model.name == 'EmptyInteger',
-              )
-              as EnumModel<int>;
-      final emptyNullable =
-          api.models.firstWhere(
-                (model) => model is NamedModel && model.name == 'EmptyNullable',
-              )
-              as EnumModel<String>;
+      final emptyString = api.models.firstWhere(
+        (model) => model is NamedModel && model.name == 'EmptyString',
+      ) as EnumModel<String>;
+      final emptyInteger = api.models.firstWhere(
+        (model) => model is NamedModel && model.name == 'EmptyInteger',
+      ) as EnumModel<int>;
+      final emptyNullable = api.models.firstWhere(
+        (model) => model is NamedModel && model.name == 'EmptyNullable',
+      ) as EnumModel<String>;
 
       expect(emptyString.values, isEmpty);
       expect(
@@ -198,11 +194,9 @@ void main() {
       };
 
       final api = Importer().import(spec);
-      final model =
-          api.models.firstWhere(
-                (model) => model is NamedModel && model.name == 'InvalidString',
-              )
-              as EnumModel<String>;
+      final model = api.models.firstWhere(
+        (model) => model is NamedModel && model.name == 'InvalidString',
+      ) as EnumModel<String>;
 
       expect(model.values, isEmpty);
       expect(
@@ -253,22 +247,18 @@ void main() {
 
     test('import enum with description', () {
       final api = Importer().import(enumWithDescription);
-      final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Status',
-              )
-              as EnumModel<String>;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Status',
+      ) as EnumModel<String>;
 
       expect(model.description, 'The status of the order');
     });
 
     test('import enum without description', () {
       final api = Importer().import(enumWithoutDescription);
-      final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Priority',
-              )
-              as EnumModel<int>;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Priority',
+      ) as EnumModel<int>;
 
       expect(model.description, isNull);
     });

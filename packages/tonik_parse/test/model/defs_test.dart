@@ -38,9 +38,7 @@ void main() {
           'Outer': {
             'type': 'object',
             r'$defs': {
-              'Inner': {
-                'type': 'string',
-              },
+              'Inner': {'type': 'string'},
             },
           },
         },
@@ -69,10 +67,7 @@ void main() {
     });
 
     test(r'handles empty $defs', () {
-      final json = {
-        'type': 'object',
-        r'$defs': <String, dynamic>{},
-      };
+      final json = {'type': 'object', r'$defs': <String, dynamic>{}};
 
       final schema = Schema.fromJson(json);
 
@@ -115,11 +110,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final orderModel =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Order',
-              )
-              as ClassModel;
+      final orderModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Order',
+      ) as ClassModel;
 
       expect(orderModel, isNotNull);
       expect(orderModel.properties, hasLength(1));
@@ -133,14 +126,8 @@ void main() {
 
       final lineItemModel = listModel.content as ClassModel;
       expect(lineItemModel.properties, hasLength(2));
-      expect(
-        lineItemModel.properties.any((p) => p.name == 'product'),
-        isTrue,
-      );
-      expect(
-        lineItemModel.properties.any((p) => p.name == 'quantity'),
-        isTrue,
-      );
+      expect(lineItemModel.properties.any((p) => p.name == 'product'), isTrue);
+      expect(lineItemModel.properties.any((p) => p.name == 'quantity'), isTrue);
     });
 
     test(r'resolves $ref to namespace schema $defs', () {
@@ -164,9 +151,7 @@ void main() {
             'MyModel': {
               'type': 'object',
               'properties': {
-                'foo': {
-                  r'$ref': r'#/components/schemas/ns/$defs/Foo',
-                },
+                'foo': {r'$ref': r'#/components/schemas/ns/$defs/Foo'},
               },
             },
           },
@@ -175,11 +160,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final myModel =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'MyModel',
-              )
-              as ClassModel;
+      final myModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'MyModel',
+      ) as ClassModel;
 
       expect(myModel, isNotNull);
       expect(myModel.properties, hasLength(1));
@@ -230,11 +213,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final containerModel =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Container',
-              )
-              as ClassModel;
+      final containerModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Container',
+      ) as ClassModel;
 
       expect(containerModel, isNotNull);
       expect(containerModel.properties, hasLength(1));
@@ -283,11 +264,9 @@ void main() {
       // Should not throw and should not create a model for Unused.
       final api = Importer().import(fileContent);
 
-      final mySchema =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'MySchema',
-              )
-              as ClassModel;
+      final mySchema = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'MySchema',
+      ) as ClassModel;
 
       expect(mySchema, isNotNull);
       expect(mySchema.properties, hasLength(1));
@@ -318,9 +297,7 @@ void main() {
                 },
               },
               'responses': {
-                '200': {
-                  'description': 'OK',
-                },
+                '200': {'description': 'OK'},
               },
             },
           },
@@ -442,9 +419,7 @@ void main() {
                 'Order': {
                   'type': 'object',
                   'properties': {
-                    'user': {
-                      r'$ref': '#/components/schemas/User',
-                    },
+                    'user': {r'$ref': '#/components/schemas/User'},
                     'total': {'type': 'number'},
                   },
                 },
@@ -453,9 +428,7 @@ void main() {
             'Invoice': {
               'type': 'object',
               'properties': {
-                'order': {
-                  r'$ref': r'#/components/schemas/ns/$defs/Order',
-                },
+                'order': {r'$ref': r'#/components/schemas/ns/$defs/Order'},
               },
             },
           },
@@ -464,11 +437,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final invoiceModel =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Invoice',
-              )
-              as ClassModel;
+      final invoiceModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Invoice',
+      ) as ClassModel;
 
       final orderProperty = invoiceModel.properties.first;
       expect(orderProperty.model, isA<ClassModel>());

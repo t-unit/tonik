@@ -33,18 +33,14 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final schemaA =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaA',
-              )
-              as ClassModel;
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      ) as ClassModel;
       expect(schemaA.name, 'SchemaA');
 
-      final schemaB =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaB',
-              )
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaA.children is a list of SchemaB
@@ -99,11 +95,9 @@ void main() {
       );
       expect(schemaA, isA<AllOfModel>());
 
-      final schemaB =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaB',
-              )
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA (the AllOfModel)
@@ -143,21 +137,15 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final schemaA =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaA',
-              )
-              as ClassModel;
-      final schemaB =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaB',
-              )
-              as ClassModel;
-      final schemaC =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaC',
-              )
-              as ClassModel;
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      ) as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
 
       expect(schemaA.name, 'SchemaA');
       expect(schemaB.name, 'SchemaB');
@@ -215,21 +203,15 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaA',
-                )
-                as ClassModel;
-        final schemaB =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaB',
-                )
-                as ClassModel;
-        final schemaC =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaC',
-                )
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
+        final schemaB = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaB',
+        ) as ClassModel;
+        final schemaC = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaC',
+        ) as ClassModel;
 
         // A.items is array of B
         final itemsProp = schemaA.properties.firstWhere(
@@ -284,11 +266,9 @@ void main() {
       );
       expect(schemaA, isA<OneOfModel>());
 
-      final schemaB =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaB',
-              )
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA
@@ -327,11 +307,9 @@ void main() {
       );
       expect(schemaA, isA<AnyOfModel>());
 
-      final schemaB =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'SchemaB',
-              )
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA
@@ -365,11 +343,9 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final treeNode =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'TreeNode',
-                )
-                as ClassModel;
+        final treeNode = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'TreeNode',
+        ) as ClassModel;
         expect(treeNode.name, 'TreeNode');
 
         final valueProp = treeNode.properties.firstWhere(
@@ -422,16 +398,12 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaA',
-                )
-                as ClassModel;
-        final schemaB =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaB',
-                )
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
+        final schemaB = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaB',
+        ) as ClassModel;
 
         // A.bList is array of B
         final bListProp = schemaA.properties.firstWhere(
@@ -455,52 +427,49 @@ void main() {
       },
     );
 
-    test(
-      'cycle through top-level array schemas: '
-      'A(array of B) and B(array of A)',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'SchemaA': {
-                'type': 'array',
-                'items': {r'$ref': '#/components/schemas/SchemaB'},
-              },
-              'SchemaB': {
-                'type': 'array',
-                'items': {r'$ref': '#/components/schemas/SchemaA'},
-              },
+    test('cycle through top-level array schemas: '
+        'A(array of B) and B(array of A)', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'SchemaA': {
+              'type': 'array',
+              'items': {r'$ref': '#/components/schemas/SchemaB'},
+            },
+            'SchemaB': {
+              'type': 'array',
+              'items': {r'$ref': '#/components/schemas/SchemaA'},
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(spec);
+      final api = Importer().import(spec);
 
-        // Both schemas should be present and parsed as ListModel without
-        // causing a stack overflow.
-        final schemaA = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'SchemaA',
-        );
-        final schemaB = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'SchemaB',
-        );
+      // Both schemas should be present and parsed as ListModel without
+      // causing a stack overflow.
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      );
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      );
 
-        // Top-level array schemas become ListModel instances.
-        expect(schemaA, isA<ListModel>());
-        expect(schemaB, isA<ListModel>());
+      // Top-level array schemas become ListModel instances.
+      expect(schemaA, isA<ListModel>());
+      expect(schemaB, isA<ListModel>());
 
-        // Each list's content should reference the other list model.
-        final listA = schemaA as ListModel;
-        final listB = schemaB as ListModel;
-        expect(listA.content, isA<ListModel>());
-        expect(listB.content, isA<ListModel>());
-        expect((listA.content as ListModel).name, 'SchemaB');
-        expect((listB.content as ListModel).name, 'SchemaA');
-      },
-    );
+      // Each list's content should reference the other list model.
+      final listA = schemaA as ListModel;
+      final listB = schemaB as ListModel;
+      expect(listA.content, isA<ListModel>());
+      expect(listB.content, isA<ListModel>());
+      expect((listA.content as ListModel).name, 'SchemaB');
+      expect((listB.content as ListModel).name, 'SchemaA');
+    });
 
     test(
       'deep cycle: class -> array(named) -> class -> array(named) -> first',
@@ -541,18 +510,14 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaA',
-                )
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
         expect(schemaA.name, 'SchemaA');
 
-        final schemaC =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaC',
-                )
-                as ClassModel;
+        final schemaC = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaC',
+        ) as ClassModel;
         expect(schemaC.name, 'SchemaC');
       },
     );
@@ -564,199 +529,181 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'SelfRef': {
-              r'$ref': '#/components/schemas/SelfRef',
+            'SelfRef': {r'$ref': '#/components/schemas/SelfRef'},
+          },
+        },
+      };
+
+      expect(() => Importer().import(spec), throwsA(isA<ArgumentError>()));
+    });
+
+    test('cycle through chained allOfs: '
+        'A(allOf) -> B(allOf) -> C(class) -> ref A', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'SchemaA': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/SchemaB'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'extraA': {'type': 'string'},
+                  },
+                },
+              ],
+            },
+            'SchemaB': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/SchemaC'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'extraB': {'type': 'string'},
+                  },
+                },
+              ],
+            },
+            'SchemaC': {
+              'type': 'object',
+              'properties': {
+                'back': {r'$ref': '#/components/schemas/SchemaA'},
+              },
             },
           },
         },
       };
 
-      expect(
-        () => Importer().import(spec),
-        throwsA(isA<ArgumentError>()),
+      final api = Importer().import(spec);
+
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
       );
+      expect(schemaA, isA<AllOfModel>());
+
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      );
+      expect(schemaB, isA<AllOfModel>());
+
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
+      expect(schemaC.name, 'SchemaC');
+
+      // SchemaC.back should reference SchemaA
+      final backProp = schemaC.properties.firstWhere((p) => p.name == 'back');
+      expect(backProp.model, isA<AllOfModel>());
+      expect((backProp.model as AllOfModel).name, 'SchemaA');
     });
 
-    test(
-      'cycle through chained allOfs: '
-      'A(allOf) -> B(allOf) -> C(class) -> ref A',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'SchemaA': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/SchemaB'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'extraA': {'type': 'string'},
-                    },
-                  },
-                ],
-              },
-              'SchemaB': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/SchemaC'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'extraB': {'type': 'string'},
-                    },
-                  },
-                ],
-              },
-              'SchemaC': {
-                'type': 'object',
-                'properties': {
-                  'back': {r'$ref': '#/components/schemas/SchemaA'},
-                },
-              },
-            },
-          },
-        };
-
-        final api = Importer().import(spec);
-
-        final schemaA = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'SchemaA',
-        );
-        expect(schemaA, isA<AllOfModel>());
-
-        final schemaB = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'SchemaB',
-        );
-        expect(schemaB, isA<AllOfModel>());
-
-        final schemaC =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaC',
-                )
-                as ClassModel;
-        expect(schemaC.name, 'SchemaC');
-
-        // SchemaC.back should reference SchemaA
-        final backProp = schemaC.properties.firstWhere((p) => p.name == 'back');
-        expect(backProp.model, isA<AllOfModel>());
-        expect((backProp.model as AllOfModel).name, 'SchemaA');
-      },
-    );
-
-    test(
-      'cycle through allOf and array: '
-      'A(allOf) -> B(class with array of C) -> C(class) -> ref A',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'SchemaA': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/SchemaB'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'extraA': {'type': 'string'},
-                    },
-                  },
-                ],
-              },
-              'SchemaB': {
-                'type': 'object',
-                'properties': {
-                  'items': {
-                    'type': 'array',
-                    'items': {r'$ref': '#/components/schemas/SchemaC'},
-                  },
-                },
-              },
-              'SchemaC': {
-                'type': 'object',
-                'properties': {
-                  'root': {r'$ref': '#/components/schemas/SchemaA'},
-                },
-              },
-            },
-          },
-        };
-
-        final api = Importer().import(spec);
-
-        final schemaA = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'SchemaA',
-        );
-        expect(schemaA, isA<AllOfModel>());
-
-        final schemaC =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'SchemaC',
-                )
-                as ClassModel;
-
-        // SchemaC.root should reference SchemaA
-        final rootProp = schemaC.properties.firstWhere((p) => p.name == 'root');
-        expect(rootProp.model, isA<AllOfModel>());
-        expect((rootProp.model as AllOfModel).name, 'SchemaA');
-      },
-    );
-
-    test(
-      r'top-level array whose items $ref back to the array via a property '
-      'produces exactly one ListModel (no duplicate)',
-      () {
-        // Reproduces the Cloudflare `request-tracer_trace` bug: a top-level
-        // array schema with inline items that self-reference via a property.
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'TracerTrace': {
-                'type': 'array',
-                'items': {
+    test('cycle through allOf and array: '
+        'A(allOf) -> B(class with array of C) -> C(class) -> ref A', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'SchemaA': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/SchemaB'},
+                {
                   'type': 'object',
                   'properties': {
-                    'trace': {r'$ref': '#/components/schemas/TracerTrace'},
+                    'extraA': {'type': 'string'},
                   },
+                },
+              ],
+            },
+            'SchemaB': {
+              'type': 'object',
+              'properties': {
+                'items': {
+                  'type': 'array',
+                  'items': {r'$ref': '#/components/schemas/SchemaC'},
+                },
+              },
+            },
+            'SchemaC': {
+              'type': 'object',
+              'properties': {
+                'root': {r'$ref': '#/components/schemas/SchemaA'},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      );
+      expect(schemaA, isA<AllOfModel>());
+
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
+
+      // SchemaC.root should reference SchemaA
+      final rootProp = schemaC.properties.firstWhere((p) => p.name == 'root');
+      expect(rootProp.model, isA<AllOfModel>());
+      expect((rootProp.model as AllOfModel).name, 'SchemaA');
+    });
+
+    test(r'top-level array whose items $ref back to the array via a property '
+        'produces exactly one ListModel (no duplicate)', () {
+      // Reproduces the Cloudflare `request-tracer_trace` bug: a top-level
+      // array schema with inline items that self-reference via a property.
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'TracerTrace': {
+              'type': 'array',
+              'items': {
+                'type': 'object',
+                'properties': {
+                  'trace': {r'$ref': '#/components/schemas/TracerTrace'},
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(spec);
+      final api = Importer().import(spec);
 
-        // Exactly ONE ListModel named 'TracerTrace' exists.
-        final tracerTraceModels = api.models
-            .whereType<ListModel>()
-            .where((m) => m.name == 'TracerTrace')
-            .toList();
-        expect(tracerTraceModels.length, 1);
+      // Exactly ONE ListModel named 'TracerTrace' exists.
+      final tracerTraceModels = api.models
+          .whereType<ListModel>()
+          .where((m) => m.name == 'TracerTrace')
+          .toList();
+      expect(tracerTraceModels.length, 1);
 
-        final tracerTrace = tracerTraceModels.single;
+      final tracerTrace = tracerTraceModels.single;
 
-        // The items ClassModel is present in api.models.
-        final itemsModels = api.models.whereType<ClassModel>().toList();
-        expect(itemsModels.length, 1);
-        final itemsModel = itemsModels.single;
+      // The items ClassModel is present in api.models.
+      final itemsModels = api.models.whereType<ClassModel>().toList();
+      expect(itemsModels.length, 1);
+      final itemsModel = itemsModels.single;
 
-        // ListModel.content points to the items ClassModel.
-        expect(identical(tracerTrace.content, itemsModel), isTrue);
+      // ListModel.content points to the items ClassModel.
+      expect(identical(tracerTrace.content, itemsModel), isTrue);
 
-        // The items ClassModel has a property 'trace' whose model is
-        // identical to the registered TracerTrace ListModel.
-        final traceProp = itemsModel.properties.firstWhere(
-          (p) => p.name == 'trace',
-        );
-        expect(identical(traceProp.model, tracerTrace), isTrue);
-      },
-    );
+      // The items ClassModel has a property 'trace' whose model is
+      // identical to the registered TracerTrace ListModel.
+      final traceProp = itemsModel.properties.firstWhere(
+        (p) => p.name == 'trace',
+      );
+      expect(identical(traceProp.model, tracerTrace), isTrue);
+    });
 
     test('bare ref cycle produces valid AliasModels', () {
       const spec = {
@@ -765,12 +712,8 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'AliasA': {
-              r'$ref': '#/components/schemas/AliasB',
-            },
-            'AliasB': {
-              r'$ref': '#/components/schemas/AliasA',
-            },
+            'AliasA': {r'$ref': '#/components/schemas/AliasB'},
+            'AliasB': {r'$ref': '#/components/schemas/AliasA'},
           },
         },
       };
@@ -818,9 +761,7 @@ void main() {
                 'oneOf': [
                   {r'$ref': '#/components/schemas/Circle'},
                 ],
-                'discriminator': {
-                  'propertyName': 'type',
-                },
+                'discriminator': {'propertyName': 'type'},
               },
               'Circle': {
                 'allOf': [
@@ -839,28 +780,18 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final shape =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Shape',
-                )
-                as OneOfModel;
-        final circle =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Circle',
-                )
-                as AllOfModel;
+        final shape = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Shape',
+        ) as OneOfModel;
+        final circle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Circle',
+        ) as AllOfModel;
 
         // Shape's oneOf contains Circle.
-        expect(
-          shape.models.any((m) => identical(m.model, circle)),
-          isTrue,
-        );
+        expect(shape.models.any((m) => identical(m.model, circle)), isTrue);
 
         // Circle's allOf does NOT contain Shape (back-edge skipped).
-        expect(
-          circle.models.any((m) => identical(m, shape)),
-          isFalse,
-        );
+        expect(circle.models.any((m) => identical(m, shape)), isFalse);
 
         // Circle only contains the inline class with radius.
         expect(circle.models.length, 1);
@@ -891,9 +822,7 @@ void main() {
                   {r'$ref': '#/components/schemas/Circle'},
                   {r'$ref': '#/components/schemas/Rectangle'},
                 ],
-                'discriminator': {
-                  'propertyName': 'type',
-                },
+                'discriminator': {'propertyName': 'type'},
               },
               'Circle': {
                 'allOf': [
@@ -924,42 +853,24 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final shape =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Shape',
-                )
-                as OneOfModel;
-        final circle =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Circle',
-                )
-                as AllOfModel;
-        final rectangle =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Rectangle',
-                )
-                as AllOfModel;
+        final shape = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Shape',
+        ) as OneOfModel;
+        final circle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Circle',
+        ) as AllOfModel;
+        final rectangle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Rectangle',
+        ) as AllOfModel;
 
         // Shape contains both Circle and Rectangle.
         expect(shape.models.length, 2);
-        expect(
-          shape.models.any((m) => identical(m.model, circle)),
-          isTrue,
-        );
-        expect(
-          shape.models.any((m) => identical(m.model, rectangle)),
-          isTrue,
-        );
+        expect(shape.models.any((m) => identical(m.model, circle)), isTrue);
+        expect(shape.models.any((m) => identical(m.model, rectangle)), isTrue);
 
         // Neither Circle nor Rectangle contains Shape.
-        expect(
-          circle.models.any((m) => identical(m, shape)),
-          isFalse,
-        );
-        expect(
-          rectangle.models.any((m) => identical(m, shape)),
-          isFalse,
-        );
+        expect(circle.models.any((m) => identical(m, shape)), isFalse);
+        expect(rectangle.models.any((m) => identical(m, shape)), isFalse);
 
         // Each contains only its inline class.
         expect(circle.models.length, 1);
@@ -1020,11 +931,9 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final shape =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Shape',
-              )
-              as OneOfModel;
+      final shape = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Shape',
+      ) as OneOfModel;
 
       expect(shape.discriminator, 'shapeType');
 
@@ -1032,221 +941,176 @@ void main() {
         (m) => m.discriminatorValue == 'circle',
       );
       expect(circleEntry.model, isA<AllOfModel>());
-      expect(
-        (circleEntry.model as AllOfModel).name,
-        'Circle',
-      );
+      expect((circleEntry.model as AllOfModel).name, 'Circle');
 
       final rectEntry = shape.models.firstWhere(
         (m) => m.discriminatorValue == 'rect',
       );
       expect(rectEntry.model, isA<AllOfModel>());
-      expect(
-        (rectEntry.model as AllOfModel).name,
-        'Rectangle',
-      );
+      expect((rectEntry.model as AllOfModel).name, 'Rectangle');
     });
 
-    test(
-      'anyOf+allOf polymorphism cycle is broken',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Vehicle': {
-                'anyOf': [
-                  {r'$ref': '#/components/schemas/Car'},
-                ],
-              },
-              'Car': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/Vehicle'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'doors': {'type': 'integer'},
-                    },
+    test('anyOf+allOf polymorphism cycle is broken', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Vehicle': {
+              'anyOf': [
+                {r'$ref': '#/components/schemas/Car'},
+              ],
+            },
+            'Car': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/Vehicle'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'doors': {'type': 'integer'},
                   },
-                ],
-              },
+                },
+              ],
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(spec);
+      final api = Importer().import(spec);
 
-        final vehicle =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Vehicle',
-                )
-                as AnyOfModel;
-        final car =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Car',
-                )
-                as AllOfModel;
+      final vehicle = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Vehicle',
+      ) as AnyOfModel;
+      final car = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Car',
+      ) as AllOfModel;
 
-        // Vehicle contains Car.
-        expect(
-          vehicle.models.any((m) => identical(m.model, car)),
-          isTrue,
-        );
+      // Vehicle contains Car.
+      expect(vehicle.models.any((m) => identical(m.model, car)), isTrue);
 
-        // Car does NOT contain Vehicle.
-        expect(
-          car.models.any((m) => identical(m, vehicle)),
-          isFalse,
-        );
+      // Car does NOT contain Vehicle.
+      expect(car.models.any((m) => identical(m, vehicle)), isFalse);
 
-        // encodingShape works without stack overflow.
-        expect(vehicle.encodingShape, EncodingShape.complex);
-        expect(car.encodingShape, EncodingShape.complex);
-      },
-    );
+      // encodingShape works without stack overflow.
+      expect(vehicle.encodingShape, EncodingShape.complex);
+      expect(car.encodingShape, EncodingShape.complex);
+    });
 
-    test(
-      'deep polymorphism: Base oneOf [Mid], Mid allOf [Base], '
-      'Mid oneOf [Leaf], Leaf allOf [Mid]',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Base': {
-                'oneOf': [
-                  {r'$ref': '#/components/schemas/Mid'},
-                ],
-              },
-              'Mid': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/Base'},
-                  {
-                    'oneOf': [
-                      {r'$ref': '#/components/schemas/Leaf'},
-                    ],
+    test('deep polymorphism: Base oneOf [Mid], Mid allOf [Base], '
+        'Mid oneOf [Leaf], Leaf allOf [Mid]', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {
+              'oneOf': [
+                {r'$ref': '#/components/schemas/Mid'},
+              ],
+            },
+            'Mid': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/Base'},
+                {
+                  'oneOf': [
+                    {r'$ref': '#/components/schemas/Leaf'},
+                  ],
+                },
+              ],
+            },
+            'Leaf': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/Mid'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'value': {'type': 'string'},
                   },
-                ],
-              },
-              'Leaf': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/Mid'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'value': {'type': 'string'},
-                    },
-                  },
-                ],
-              },
+                },
+              ],
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(spec);
+      final api = Importer().import(spec);
 
-        // All three schemas should be present.
-        final base =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Base',
-                )
-                as OneOfModel;
-        final mid =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Mid',
-                )
-                as AllOfModel;
-        final leaf =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Leaf',
-                )
-                as AllOfModel;
+      // All three schemas should be present.
+      final base = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Base',
+      ) as OneOfModel;
+      final mid = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Mid',
+      ) as AllOfModel;
+      final leaf = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Leaf',
+      ) as AllOfModel;
 
-        // No stack overflow on encodingShape.
-        expect(base.encodingShape, isNotNull);
-        expect(mid.encodingShape, isNotNull);
-        expect(leaf.encodingShape, isNotNull);
-      },
-    );
+      // No stack overflow on encodingShape.
+      expect(base.encodingShape, isNotNull);
+      expect(mid.encodingShape, isNotNull);
+      expect(leaf.encodingShape, isNotNull);
+    });
 
-    test(
-      'mutual allOf cycle: NodeA allOf [NodeB], NodeB allOf [NodeA]',
-      () {
-        const spec = {
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'NodeA': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/NodeB'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'aField': {'type': 'string'},
-                    },
-                    'required': ['aField'],
+    test('mutual allOf cycle: NodeA allOf [NodeB], NodeB allOf [NodeA]', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'NodeA': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/NodeB'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'aField': {'type': 'string'},
                   },
-                ],
-              },
-              'NodeB': {
-                'allOf': [
-                  {r'$ref': '#/components/schemas/NodeA'},
-                  {
-                    'type': 'object',
-                    'properties': {
-                      'bField': {'type': 'integer'},
-                    },
-                    'required': ['bField'],
+                  'required': ['aField'],
+                },
+              ],
+            },
+            'NodeB': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/NodeA'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'bField': {'type': 'integer'},
                   },
-                ],
-              },
+                  'required': ['bField'],
+                },
+              ],
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(spec);
+      final api = Importer().import(spec);
 
-        final nodeA =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'NodeA',
-                )
-                as AllOfModel;
-        final nodeB =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'NodeB',
-                )
-                as AllOfModel;
+      final nodeA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NodeA',
+      ) as AllOfModel;
+      final nodeB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NodeB',
+      ) as AllOfModel;
 
-        // One of the back-edges was skipped to break the cycle.
-        // NodeA references NodeB (forward), NodeB's ref to NodeA
-        // is skipped (back-edge).
-        final nodeAContainsNodeB = nodeA.models.any(
-          (m) => identical(m, nodeB),
-        );
-        final nodeBContainsNodeA = nodeB.models.any(
-          (m) => identical(m, nodeA),
-        );
+      // One of the back-edges was skipped to break the cycle.
+      // NodeA references NodeB (forward), NodeB's ref to NodeA
+      // is skipped (back-edge).
+      final nodeAContainsNodeB = nodeA.models.any((m) => identical(m, nodeB));
+      final nodeBContainsNodeA = nodeB.models.any((m) => identical(m, nodeA));
 
-        // Exactly one direction is kept, the other is skipped.
-        expect(
-          nodeAContainsNodeB || nodeBContainsNodeA,
-          isTrue,
-        );
-        expect(
-          nodeAContainsNodeB && nodeBContainsNodeA,
-          isFalse,
-        );
+      // Exactly one direction is kept, the other is skipped.
+      expect(nodeAContainsNodeB || nodeBContainsNodeA, isTrue);
+      expect(nodeAContainsNodeB && nodeBContainsNodeA, isFalse);
 
-        // encodingShape works without stack overflow.
-        expect(nodeA.encodingShape, EncodingShape.complex);
-        expect(nodeB.encodingShape, EncodingShape.complex);
-      },
-    );
+      // encodingShape works without stack overflow.
+      expect(nodeA.encodingShape, EncodingShape.complex);
+      expect(nodeB.encodingShape, EncodingShape.complex);
+    });
   });
 }

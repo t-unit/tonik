@@ -97,16 +97,10 @@ void main() {
         isA<StringModel>(),
       );
       expect(transformedText.textEncoding, TextEncoding.ascii);
-      expect(
-        transformedText.wireContentType,
-        'text/plain; charset=us-ascii',
-      );
+      expect(transformedText.wireContentType, 'text/plain; charset=us-ascii');
       expect(transformedMultipart.textEncoding, TextEncoding.utf8);
       expect(transformedPart.textEncoding, TextEncoding.latin1);
-      expect(
-        transformedPart.wireContentType,
-        'text/plain; charset=iso-8859-1',
-      );
+      expect(transformedPart.wireContentType, 'text/plain; charset=iso-8859-1');
     });
 
     group('ResponseBody normalization', () {
@@ -387,10 +381,7 @@ void main() {
           logRecords.first.message,
           contains('Replacing ClassModel with BinaryModel'),
         );
-        expect(
-          logRecords.first.message,
-          contains('responses/FileResponse'),
-        );
+        expect(logRecords.first.message, contains('responses/FileResponse'));
       });
 
       test('handles ResponseAlias by normalizing referenced response', () {
@@ -431,11 +422,9 @@ void main() {
         );
 
         final transformed = normalizer.apply(document);
-        final transformedOriginal =
-            transformed.responses.firstWhere(
-                  (r) => r.name == 'OriginalResponse',
-                )
-                as ResponseObject;
+        final transformedOriginal = transformed.responses.firstWhere(
+          (r) => r.name == 'OriginalResponse',
+        ) as ResponseObject;
 
         expect(transformedOriginal.bodies.first.model, isA<BinaryModel>());
       });
@@ -538,11 +527,9 @@ void main() {
           );
 
           final transformed = normalizer.apply(document);
-          final transformedAlias =
-              transformed.responses.firstWhere(
-                    (r) => r.name == 'AliasName',
-                  )
-                  as ResponseAlias;
+          final transformedAlias = transformed.responses.firstWhere(
+            (r) => r.name == 'AliasName',
+          ) as ResponseAlias;
 
           expect(transformedAlias.name, 'AliasName');
           expect(transformedAlias.context, aliasContext);
@@ -599,16 +586,12 @@ void main() {
           );
 
           final transformed = normalizer.apply(document);
-          final transformedAlias1 =
-              transformed.responses.firstWhere(
-                    (r) => r.name == 'Alias1',
-                  )
-                  as ResponseAlias;
-          final transformedAlias2 =
-              transformed.responses.firstWhere(
-                    (r) => r.name == 'Alias2',
-                  )
-                  as ResponseAlias;
+          final transformedAlias1 = transformed.responses.firstWhere(
+            (r) => r.name == 'Alias1',
+          ) as ResponseAlias;
+          final transformedAlias2 = transformed.responses.firstWhere(
+            (r) => r.name == 'Alias2',
+          ) as ResponseAlias;
 
           expect(
             identical(transformedAlias1.response, transformedAlias2.response),
@@ -896,11 +879,9 @@ void main() {
           );
 
           final transformed = normalizer.apply(document);
-          final transformedAlias =
-              transformed.requestBodies.firstWhere(
-                    (r) => r.name == 'AliasName',
-                  )
-                  as RequestBodyAlias;
+          final transformedAlias = transformed.requestBodies.firstWhere(
+            (r) => r.name == 'AliasName',
+          ) as RequestBodyAlias;
 
           expect(transformedAlias.name, 'AliasName');
           expect(transformedAlias.context, aliasContext);
@@ -961,16 +942,12 @@ void main() {
           );
 
           final transformed = normalizer.apply(document);
-          final transformedAlias1 =
-              transformed.requestBodies.firstWhere(
-                    (r) => r.name == 'Alias1',
-                  )
-                  as RequestBodyAlias;
-          final transformedAlias2 =
-              transformed.requestBodies.firstWhere(
-                    (r) => r.name == 'Alias2',
-                  )
-                  as RequestBodyAlias;
+          final transformedAlias1 = transformed.requestBodies.firstWhere(
+            (r) => r.name == 'Alias1',
+          ) as RequestBodyAlias;
+          final transformedAlias2 = transformed.requestBodies.firstWhere(
+            (r) => r.name == 'Alias2',
+          ) as RequestBodyAlias;
 
           expect(
             identical(
@@ -1020,11 +997,9 @@ void main() {
         );
 
         final transformed = normalizer.apply(document);
-        final transformedOriginal =
-            transformed.requestBodies.firstWhere(
-                  (r) => r.name == 'OriginalBody',
-                )
-                as RequestBodyObject;
+        final transformedOriginal = transformed.requestBodies.firstWhere(
+          (r) => r.name == 'OriginalBody',
+        ) as RequestBodyObject;
 
         expect(
           (transformedOriginal.content.first as ModelRequestContent).model,
@@ -1128,10 +1103,7 @@ void main() {
         final content =
             transformedBody.content.first as MultipartRequestContent;
 
-        expect(
-          content.parts.single,
-          same(filePart),
-        );
+        expect(content.parts.single, same(filePart));
         expect(content.parts.single.encoding, same(filePart.encoding));
       });
 
@@ -1239,10 +1211,7 @@ void main() {
           logRecords.first.message,
           contains('Replacing IntegerModel with StringModel'),
         );
-        expect(
-          logRecords.first.message,
-          contains('requestBodies/TextBody'),
-        );
+        expect(logRecords.first.message, contains('requestBodies/TextBody'));
       });
     });
 

@@ -34,10 +34,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'reserved=g%26h%3Di%2Bj',
-        );
+        expect(recordedRequest.uri.query, 'reserved=g%26h%3Di%2Bj');
       },
     );
 
@@ -50,10 +47,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'notReserved=g%26h%3Di%2Bj',
-      );
+      expect(recordedRequest.uri.query, 'notReserved=g%26h%3Di%2Bj');
     });
   });
 
@@ -72,10 +66,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'reservedList=a/b:c,g%26h%3Di%2Bj',
-        );
+        expect(recordedRequest.uri.query, 'reservedList=a/b:c,g%26h%3Di%2Bj');
       },
     );
 

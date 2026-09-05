@@ -170,26 +170,17 @@ void main() {
   group('SimpleStringEncoder', () {
     test('encodes string value', () {
       const value = 'blue';
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'blue',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'blue');
     });
 
     test('encodes string with special characters', () {
       const value = 'John Doe';
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'John%20Doe',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'John%20Doe');
     });
 
     test('encodes empty string with allowEmpty=true', () {
       const value = '';
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '');
     });
 
     test('explode parameter has no effect on string encoding', () {
@@ -254,18 +245,12 @@ void main() {
       group('sub-delims characters', () {
         test('encodes exclamation mark (!) properly', () {
           const value = 'Hello!';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            'Hello!',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), 'Hello!');
         });
 
         test(r'encodes dollar sign ($) properly', () {
           const value = r'$19.99';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            '%2419.99',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), '%2419.99');
         });
 
         test('encodes ampersand (&) properly', () {
@@ -294,18 +279,12 @@ void main() {
 
         test('encodes asterisk (*) properly', () {
           const value = 'file*.txt';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            'file*.txt',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), 'file*.txt');
         });
 
         test('encodes plus (+) properly', () {
           const value = '2+2=4';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            '2%2B2%3D4',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), '2%2B2%3D4');
         });
 
         test('encodes comma (,) properly', () {
@@ -326,20 +305,14 @@ void main() {
 
         test('encodes equals (=) properly', () {
           const value = 'x=y';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            'x%3Dy',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), 'x%3Dy');
         });
       });
 
       group('percent-encoding normalization', () {
         test('properly encodes non-ASCII characters', () {
           const value = 'café';
-          expect(
-            value.toSimple(explode: false, allowEmpty: true),
-            'caf%C3%A9',
-          );
+          expect(value.toSimple(explode: false, allowEmpty: true), 'caf%C3%A9');
         });
 
         test('properly encodes emoji', () {
@@ -379,26 +352,17 @@ void main() {
   group('SimpleIntEncoder', () {
     test('encodes int value', () {
       const value = 25;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '25',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '25');
     });
 
     test('encodes negative int value', () {
       const value = -42;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '-42',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '-42');
     });
 
     test('encodes zero', () {
       const value = 0;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '0',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '0');
     });
 
     test('encodes maximum int value', () {
@@ -437,34 +401,22 @@ void main() {
   group('SimpleDoubleEncoder', () {
     test('encodes double value', () {
       const value = 19.99;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '19.99',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '19.99');
     });
 
     test('encodes negative double value', () {
       const value = -3.14;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '-3.14',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '-3.14');
     });
 
     test('encodes zero double', () {
       const value = 0.0;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '0.0',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '0.0');
     });
 
     test('encodes very small double value', () {
       const value = 0.0000001;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '1e-7',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '1e-7');
     });
 
     test('encodes very large double value', () {
@@ -485,10 +437,7 @@ void main() {
 
     test('encodes negative zero double', () {
       const value = -0.0;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '-0.0',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '-0.0');
     });
 
     test('explode parameter has no effect on double encoding', () {
@@ -511,27 +460,18 @@ void main() {
   group('SimpleNumEncoder', () {
     test('encodes num value (int)', () {
       const num value = 25;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '25',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '25');
     });
 
     test('encodes num value (double)', () {
       const num value = 19.99;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '19.99',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '19.99');
     });
 
     test('percent-encodes plus in a positive exponent', () {
       const num value = 6.022e23;
 
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '6.022e%2B23',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '6.022e%2B23');
     });
 
     test('explode parameter has no effect on num encoding', () {
@@ -546,18 +486,12 @@ void main() {
   group('SimpleBoolEncoder', () {
     test('encodes true value', () {
       const value = true;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'true',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'true');
     });
 
     test('encodes false value', () {
       const value = false;
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'false',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'false');
     });
 
     test('explode parameter has no effect on bool encoding', () {
@@ -652,26 +586,17 @@ void main() {
   group('SimpleBigDecimalEncoder', () {
     test('encodes BigDecimal value using extension', () {
       final value = BigDecimal.parse('123.456789');
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '123.456789',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '123.456789');
     });
 
     test('encodes negative BigDecimal value using extension', () {
       final value = BigDecimal.parse('-999.001');
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '-999.001',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '-999.001');
     });
 
     test('encodes zero BigDecimal using extension', () {
       final value = BigDecimal.parse('0');
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '0',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '0');
     });
 
     test('encodes very large BigDecimal value using extension', () {
@@ -700,10 +625,7 @@ void main() {
 
     test('encodes BigDecimal in scientific notation input using extension', () {
       final value = BigDecimal.parse('1.23E+10');
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '1.23e%2B10',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '1.23e%2B10');
     });
 
     test('explode parameter has no effect on BigDecimal encoding', () {
@@ -742,18 +664,12 @@ void main() {
 
     test('encodes empty List', () {
       const value = <String>[];
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '');
     });
 
     test('encodes single item List', () {
       const value = ['single'];
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'single',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'single');
     });
 
     test('encodes List with RFC 3986 characters', () {
@@ -766,10 +682,7 @@ void main() {
 
     test('encodes List with empty strings', () {
       const value = ['', 'middle', ''];
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        ',middle,',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), ',middle,');
     });
 
     test('encodes List with Unicode characters', () {
@@ -807,18 +720,12 @@ void main() {
 
       test('encodes empty List with explode=true', () {
         const value = <String>[];
-        expect(
-          value.toSimple(explode: true, allowEmpty: true),
-          '',
-        );
+        expect(value.toSimple(explode: true, allowEmpty: true), '');
       });
 
       test('encodes single item List with explode=true', () {
         const value = ['single'];
-        expect(
-          value.toSimple(explode: true, allowEmpty: true),
-          'single',
-        );
+        expect(value.toSimple(explode: true, allowEmpty: true), 'single');
       });
     });
 
@@ -854,18 +761,12 @@ void main() {
     test('very large List encoding', () {
       final value = List.generate(100, (i) => 'item$i');
       final expected = List.generate(100, (i) => 'item$i').join(',');
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        expected,
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), expected);
     });
 
     test('List with all empty strings', () {
       const value = ['', '', ''];
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        ',,',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), ',,');
     });
   });
 
@@ -892,18 +793,12 @@ void main() {
 
       test('encodes empty Map', () {
         const value = <String, String>{};
-        expect(
-          value.toSimple(explode: true, allowEmpty: true),
-          '',
-        );
+        expect(value.toSimple(explode: true, allowEmpty: true), '');
       });
 
       test('encodes single entry Map', () {
         const value = {'key': 'value'};
-        expect(
-          value.toSimple(explode: true, allowEmpty: true),
-          'key=value',
-        );
+        expect(value.toSimple(explode: true, allowEmpty: true), 'key=value');
       });
 
       test('encodes Map with empty keys and values', () {
@@ -965,18 +860,12 @@ void main() {
 
       test('encodes empty Map', () {
         const value = <String, String>{};
-        expect(
-          value.toSimple(explode: false, allowEmpty: true),
-          '',
-        );
+        expect(value.toSimple(explode: false, allowEmpty: true), '');
       });
 
       test('encodes single entry Map', () {
         const value = {'key': 'value'};
-        expect(
-          value.toSimple(explode: false, allowEmpty: true),
-          'key,value',
-        );
+        expect(value.toSimple(explode: false, allowEmpty: true), 'key,value');
       });
 
       test('encodes Map with empty keys and values', () {
@@ -1161,10 +1050,7 @@ void main() {
       test('alreadyEncoded=false encodes values normally', () {
         const value = {'email': 'user@example.com', 'name': 'John Doe'};
         expect(
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true),
           'email=user%40example.com,name=John%20Doe',
         );
       });
@@ -1174,10 +1060,7 @@ void main() {
         () {
           const value = {'email': 'user@example.com', 'name': 'John Doe'};
           expect(
-            value.toSimple(
-              explode: false,
-              allowEmpty: true,
-            ),
+            value.toSimple(explode: false, allowEmpty: true),
             'email,user%40example.com,name,John%20Doe',
           );
         },
@@ -1187,10 +1070,7 @@ void main() {
         const value = {'email': 'user@example.com', 'name': 'John Doe'};
         expect(
           value.toSimple(explode: true, allowEmpty: true),
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true),
         );
       });
 
@@ -1200,11 +1080,7 @@ void main() {
           'unencoded': 'user@example.com',
         };
         expect(
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-            alreadyEncoded: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true, alreadyEncoded: true),
           'encoded=user%40example.com,unencoded=user@example.com',
         );
       });
@@ -1215,11 +1091,7 @@ void main() {
           'email@domain': 'test%40example.com',
         };
         expect(
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-            alreadyEncoded: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true, alreadyEncoded: true),
           'user%20name=John%20Doe,email%40domain=test%40example.com',
         );
       });
@@ -1227,11 +1099,7 @@ void main() {
       test('alreadyEncoded=true with empty values', () {
         const value = {'key1': '', 'key2': 'value'};
         expect(
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-            alreadyEncoded: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true, alreadyEncoded: true),
           'key1,key2=value',
         );
       });
@@ -1239,11 +1107,7 @@ void main() {
       test('alreadyEncoded=true with Unicode characters', () {
         const value = {'café': '你好', 'emoji': '👍'};
         expect(
-          value.toSimple(
-            explode: true,
-            allowEmpty: true,
-            alreadyEncoded: true,
-          ),
+          value.toSimple(explode: true, allowEmpty: true, alreadyEncoded: true),
           'caf%C3%A9=你好,emoji=👍',
         );
       });
@@ -1253,18 +1117,12 @@ void main() {
   group('SimpleBinaryEncoder', () {
     test('encodes List<int> to UTF-8 string', () {
       const value = [72, 101, 108, 108, 111]; // "Hello"
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        'Hello',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), 'Hello');
     });
 
     test('encodes empty List<int>', () {
       const value = <int>[];
-      expect(
-        value.toSimple(explode: false, allowEmpty: true),
-        '',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: true), '');
     });
 
     test('encodes List<int> with special characters', () {
@@ -1403,9 +1261,8 @@ void main() {
 
     test('BigDecimal uses plain string form', () {
       expect(
-        BigDecimal.parse(
-          '123.456',
-        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        BigDecimal.parse('123.456')
+            .toSimple(explode: false, allowEmpty: true, literal: true),
         '123.456',
       );
     });
@@ -1423,22 +1280,21 @@ void main() {
 
     test('list joins members without encoding them', () {
       expect(
-        ['a b', 'c/d', '50%'].toSimple(
-          explode: false,
-          allowEmpty: true,
-          literal: true,
-        ),
+        [
+          'a b',
+          'c/d',
+          '50%',
+        ].toSimple(explode: false, allowEmpty: true, literal: true),
         'a b,c/d,50%',
       );
     });
 
     test('list keeps percent sequences verbatim under explode', () {
       expect(
-        ['%2F', 'plain%'].toSimple(
-          explode: true,
-          allowEmpty: true,
-          literal: true,
-        ),
+        [
+          '%2F',
+          'plain%',
+        ].toSimple(explode: true, allowEmpty: true, literal: true),
         '%2F,plain%',
       );
     });
@@ -1456,33 +1312,24 @@ void main() {
 
     test('non-explode map emits k1,v1,k2,v2 verbatim', () {
       expect(
-        {'k': 'a b'}.toSimple(
-          explode: false,
-          allowEmpty: true,
-          literal: true,
-        ),
+        {'k': 'a b'}.toSimple(explode: false, allowEmpty: true, literal: true),
         'k,a b',
       );
     });
 
     test('explode map emits k=v verbatim', () {
       expect(
-        {'k': 'a b'}.toSimple(
-          explode: true,
-          allowEmpty: true,
-          literal: true,
-        ),
+        {'k': 'a b'}.toSimple(explode: true, allowEmpty: true, literal: true),
         'k=a b',
       );
     });
 
     test('explode map keeps percent sequences in keys and values verbatim', () {
       expect(
-        {'50%': '%2F', 'k2': 'c/d'}.toSimple(
-          explode: true,
-          allowEmpty: true,
-          literal: true,
-        ),
+        {
+          '50%': '%2F',
+          'k2': 'c/d',
+        }.toSimple(explode: true, allowEmpty: true, literal: true),
         '50%=%2F,k2=c/d',
       );
     });
@@ -1502,22 +1349,15 @@ void main() {
       expect(
         utf8
             .encode('a b/:')
-            .toSimple(
-              explode: false,
-              allowEmpty: true,
-              literal: true,
-            ),
+            .toSimple(explode: false, allowEmpty: true, literal: true),
         'a b/:',
       );
     });
 
     test('empty binary still throws when allowEmpty is false', () {
       expect(
-        () => <int>[].toSimple(
-          explode: false,
-          allowEmpty: false,
-          literal: true,
-        ),
+        () =>
+            <int>[].toSimple(explode: false, allowEmpty: false, literal: true),
         throwsA(isA<EmptyValueException>()),
       );
     });
@@ -1534,10 +1374,7 @@ void main() {
     });
 
     test('literal false stays byte-identical to default simple behavior', () {
-      expect(
-        'a b/:'.toSimple(explode: false, allowEmpty: true),
-        'a%20b%2F%3A',
-      );
+      expect('a b/:'.toSimple(explode: false, allowEmpty: true), 'a%20b%2F%3A');
       expect(42.toSimple(explode: false, allowEmpty: true), '42');
       expect(
         ['a b', 'c/d'].toSimple(explode: false, allowEmpty: true),
@@ -1547,10 +1384,7 @@ void main() {
         {'k': 'a b'}.toSimple(explode: false, allowEmpty: true),
         'k,a%20b',
       );
-      expect(
-        {'k': 'a b'}.toSimple(explode: true, allowEmpty: true),
-        'k=a%20b',
-      );
+      expect({'k': 'a b'}.toSimple(explode: true, allowEmpty: true), 'k=a%20b');
       expect(
         utf8.encode('a b/:').toSimple(explode: false, allowEmpty: true),
         'a%20b%2F%3A',

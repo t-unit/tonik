@@ -63,10 +63,7 @@ void main() {
       expect(parameters.first.name, 'sessionId');
       expect(parameters.first.required, isTrue);
       expect(parameters.first.named, isTrue);
-      expect(
-        parameters.first.type?.accept(emitter).toString(),
-        'String',
-      );
+      expect(parameters.first.type?.accept(emitter).toString(), 'String');
     });
 
     test('generates optional parameters for optional cookies', () {
@@ -108,10 +105,7 @@ void main() {
       expect(parameters.length, 1);
       expect(parameters.first.name, 'trackingId');
       expect(parameters.first.required, isFalse);
-      expect(
-        parameters.first.type?.accept(emitter).toString(),
-        'String?',
-      );
+      expect(parameters.first.type?.accept(emitter).toString(), 'String?');
     });
 
     test('adds deprecation annotation for deprecated cookie parameters', () {
@@ -241,10 +235,7 @@ void main() {
 
       expect(parameters.length, 1);
       expect(parameters.first.name, 'pageNum');
-      expect(
-        parameters.first.type?.accept(emitter).toString(),
-        'int',
-      );
+      expect(parameters.first.type?.accept(emitter).toString(), 'int');
     });
 
     test('generates parameters for boolean cookie', () {
@@ -285,10 +276,7 @@ void main() {
 
       expect(parameters.length, 1);
       expect(parameters.first.name, 'debugMode');
-      expect(
-        parameters.first.type?.accept(emitter).toString(),
-        'bool?',
-      );
+      expect(parameters.first.type?.accept(emitter).toString(), 'bool?');
     });
 
     test('adds type suffix when cookie name conflicts with other params', () {
@@ -1287,9 +1275,7 @@ void main() {
       // body + 1 resolved header = 2 parameters.
       expect(parameters.length, 2);
 
-      final headerParam = parameters.firstWhere(
-        (p) => p.name != 'body',
-      );
+      final headerParam = parameters.firstWhere((p) => p.name != 'body');
       expect(headerParam.name, 'fileTraceId');
       expect(headerParam.required, isTrue);
       // The type should come from the resolved underlying header (String).
@@ -1297,318 +1283,304 @@ void main() {
       expect(typeCode, contains('String'));
     });
 
-    test(
-      'per-part header backed by an alias with a default does not receive a '
-      'defaultTo or static const field (defaults pipeline is operation '
-      'parameters only)',
-      () {
-        final aliasedModel = AliasModel(
-          name: 'TraceIdHeader',
-          model: StringModel(context: context),
-          context: context,
-          examples: const [],
-          defaultValue: 'static-trace-id',
-        );
+    test('per-part header backed by an alias with a default does not receive a '
+        'defaultTo or static const field (defaults pipeline is operation '
+        'parameters only)', () {
+      final aliasedModel = AliasModel(
+        name: 'TraceIdHeader',
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: 'static-trace-id',
+      );
 
-        final partModel8 = MultipartRequestContent(
-          rawContentType: 'multipart/form-data',
-          name: 'UploadForm',
-          parts: [
-            MultipartPart(
-              encoding: _binaryEncoding,
-              name: 'file',
-              model: BinaryModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
+      final partModel8 = MultipartRequestContent(
+        rawContentType: 'multipart/form-data',
+        name: 'UploadForm',
+        parts: [
+          MultipartPart(
+            encoding: _binaryEncoding,
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          _withEncoding(partModel8, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Trace-Id': ResponseHeaderObject(
+                  name: 'X-Trace-Id',
+                  context: context,
+                  description: null,
+                  explode: false,
+                  model: aliasedModel,
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
-        final requestBody = RequestBodyObject(
-          name: 'uploadBody',
-          context: context,
-          description: null,
-          isRequired: true,
-          content: {
-            _withEncoding(partModel8, {
-              'file': PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                headers: {
-                  'X-Trace-Id': ResponseHeaderObject(
-                    name: 'X-Trace-Id',
-                    context: context,
-                    description: null,
-                    explode: false,
-                    model: aliasedModel,
-                    isRequired: true,
-                    isDeprecated: false,
-                    encoding: ResponseHeaderEncoding.simple,
-                    examples: const [],
-                  ),
-                },
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            }),
-          },
-        );
+          }),
+        },
+      );
 
-        final operation = Operation(
-          operationId: 'upload',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/upload',
-          method: HttpMethod.post,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final headerParam = parameters.firstWhere(
-          (p) => p.name == 'fileTraceId',
-        );
-        expect(headerParam.defaultTo, isNull);
-        expect(headerParam.required, isTrue);
-      },
-    );
+      final headerParam = parameters.firstWhere((p) => p.name == 'fileTraceId');
+      expect(headerParam.defaultTo, isNull);
+      expect(headerParam.required, isTrue);
+    });
   });
 
   group('body parameter name collision', () {
-    test(
-      'adds Query suffix to query parameter named body when '
-      'request body is present',
-      () {
-        final queryParam = QueryParameterObject(
-          name: null,
-          rawName: 'body',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('adds Query suffix to query parameter named body when '
+        'request body is present', () {
+      final queryParam = QueryParameterObject(
+        name: null,
+        rawName: 'body',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final requestBody = RequestBodyObject(
-          name: 'payload',
-          context: context,
-          description: null,
-          isRequired: true,
-          content: {
-            ModelRequestContent(
-              model: ClassModel(
-                name: 'Payload',
-                properties: const [],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              ),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
+      final requestBody = RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          ModelRequestContent(
+            model: ClassModel(
+              name: 'Payload',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
               examples: const [],
             ),
-          },
-        );
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+        },
+      );
 
-        final operation = Operation(
-          operationId: 'createWithBodyQuery',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/test',
-          method: HttpMethod.post,
-          headers: const {},
-          queryParameters: {queryParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'createWithBodyQuery',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final paramNames = parameters.map((p) => p.name).toList();
-        expect(paramNames, contains('body'));
-        expect(paramNames, contains('bodyQuery'));
-        expect(
-          paramNames.toSet().length,
-          paramNames.length,
-          reason: 'Parameter names must be unique: $paramNames',
-        );
-      },
-    );
+      final paramNames = parameters.map((p) => p.name).toList();
+      expect(paramNames, contains('body'));
+      expect(paramNames, contains('bodyQuery'));
+      expect(
+        paramNames.toSet().length,
+        paramNames.length,
+        reason: 'Parameter names must be unique: $paramNames',
+      );
+    });
 
-    test(
-      'adds Header suffix to header parameter named body when '
-      'request body is present',
-      () {
-        final headerParam = RequestHeaderObject(
-          name: null,
-          rawName: 'body',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('adds Header suffix to header parameter named body when '
+        'request body is present', () {
+      final headerParam = RequestHeaderObject(
+        name: null,
+        rawName: 'body',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final requestBody = RequestBodyObject(
-          name: 'payload',
-          context: context,
-          description: null,
-          isRequired: true,
-          content: {
-            ModelRequestContent(
-              model: ClassModel(
-                name: 'Payload',
-                properties: const [],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              ),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
+      final requestBody = RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          ModelRequestContent(
+            model: ClassModel(
+              name: 'Payload',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
               examples: const [],
             ),
-          },
-        );
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+        },
+      );
 
-        final operation = Operation(
-          operationId: 'createWithBodyHeader',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/test',
-          method: HttpMethod.post,
-          headers: {headerParam},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'createWithBodyHeader',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.post,
+        headers: {headerParam},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final paramNames = parameters.map((p) => p.name).toList();
-        expect(paramNames, contains('body'));
-        expect(paramNames, contains('bodyHeader'));
-        expect(
-          paramNames.toSet().length,
-          paramNames.length,
-          reason: 'Parameter names must be unique: $paramNames',
-        );
-      },
-    );
+      final paramNames = parameters.map((p) => p.name).toList();
+      expect(paramNames, contains('body'));
+      expect(paramNames, contains('bodyHeader'));
+      expect(
+        paramNames.toSet().length,
+        paramNames.length,
+        reason: 'Parameter names must be unique: $paramNames',
+      );
+    });
 
-    test(
-      'adds Cookie suffix to cookie parameter named body when '
-      'request body is present',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: null,
-          rawName: 'body',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('adds Cookie suffix to cookie parameter named body when '
+        'request body is present', () {
+      final cookieParam = CookieParameterObject(
+        name: null,
+        rawName: 'body',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final requestBody = RequestBodyObject(
-          name: 'payload',
-          context: context,
-          description: null,
-          isRequired: true,
-          content: {
-            ModelRequestContent(
-              model: ClassModel(
-                name: 'Payload',
-                properties: const [],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              ),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
+      final requestBody = RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          ModelRequestContent(
+            model: ClassModel(
+              name: 'Payload',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
               examples: const [],
             ),
-          },
-        );
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+        },
+      );
 
-        final operation = Operation(
-          operationId: 'createWithBodyCookie',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/test',
-          method: HttpMethod.post,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'createWithBodyCookie',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final paramNames = parameters.map((p) => p.name).toList();
-        expect(paramNames, contains('body'));
-        expect(paramNames, contains('bodyCookie'));
-        expect(
-          paramNames.toSet().length,
-          paramNames.length,
-          reason: 'Parameter names must be unique: $paramNames',
-        );
-      },
-    );
+      final paramNames = parameters.map((p) => p.name).toList();
+      expect(paramNames, contains('body'));
+      expect(paramNames, contains('bodyCookie'));
+      expect(
+        paramNames.toSet().length,
+        paramNames.length,
+        reason: 'Parameter names must be unique: $paramNames',
+      );
+    });
 
     test(
       'does not add suffix when parameter named body has no request body',
@@ -1841,124 +1813,118 @@ void main() {
       );
     });
 
-    test(
-      'preserves a query parameter named cancelToken when '
-      'request body is present',
-      () {
-        final queryParam = QueryParameterObject(
-          name: null,
-          rawName: 'cancelToken',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('preserves a query parameter named cancelToken when '
+        'request body is present', () {
+      final queryParam = QueryParameterObject(
+        name: null,
+        rawName: 'cancelToken',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final requestBody = RequestBodyObject(
-          name: 'payload',
-          context: context,
-          description: null,
-          isRequired: true,
-          content: {
-            ModelRequestContent(
-              model: ClassModel(
-                name: 'Payload',
-                properties: const [],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              ),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
+      final requestBody = RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          ModelRequestContent(
+            model: ClassModel(
+              name: 'Payload',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
               examples: const [],
             ),
-          },
-        );
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+        },
+      );
 
-        final operation = Operation(
-          operationId: 'createWithCancelTokenQuery',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/test',
-          method: HttpMethod.post,
-          headers: const {},
-          queryParameters: {queryParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'createWithCancelTokenQuery',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final paramNames = parameters.map((p) => p.name).toList();
-        expect(paramNames, contains('body'));
-        expect(paramNames, contains('cancelToken'));
-        expect(
-          paramNames.toSet().length,
-          paramNames.length,
-          reason: 'Parameter names must be unique: $paramNames',
-        );
-      },
-    );
+      final paramNames = parameters.map((p) => p.name).toList();
+      expect(paramNames, contains('body'));
+      expect(paramNames, contains('cancelToken'));
+      expect(
+        paramNames.toSet().length,
+        paramNames.length,
+        reason: 'Parameter names must be unique: $paramNames',
+      );
+    });
 
-    test(
-      'preserves an unrelated query parameter named token',
-      () {
-        final queryParam = QueryParameterObject(
-          name: null,
-          rawName: 'token',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('preserves an unrelated query parameter named token', () {
+      final queryParam = QueryParameterObject(
+        name: null,
+        rawName: 'token',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'getWithToken',
-          context: context,
-          tags: const {},
-          isDeprecated: false,
-          path: '/test',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {queryParam},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'getWithToken',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        expect(parameters.length, 1);
-        expect(parameters.first.name, 'token');
-      },
-    );
+      expect(parameters.length, 1);
+      expect(parameters.first.name, 'token');
+    });
   });
 
   group('cancellation parameter name collision', () {
@@ -2028,286 +1994,260 @@ void main() {
       securitySchemes: const {},
     );
 
-    test(
-      'optional query string with materialised default becomes non-required '
-      'with defaultTo and non-nullable type',
-      () {
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'us',
-        );
+    test('optional query string with materialised default becomes non-required '
+        'with defaultTo and non-nullable type', () {
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'us',
+      );
 
-        final operation = operationWith(queryParameters: {region});
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'region': const OperationParameterDefault.local(
-              memberName: 'regionDefault',
-            ),
-          },
-        );
+      final operation = operationWith(queryParameters: {region});
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'region': const OperationParameterDefault.local(
+            memberName: 'regionDefault',
+          ),
+        },
+      );
 
-        expect(parameters.length, 1);
-        final param = parameters.single;
-        expect(param.name, 'region');
-        expect(param.required, isFalse);
-        expect(param.named, isTrue);
-        expect(param.defaultTo?.accept(emitter).toString(), 'regionDefault');
-        expect(param.type?.accept(emitter).toString(), 'String');
-      },
-    );
+      expect(parameters.length, 1);
+      final param = parameters.single;
+      expect(param.name, 'region');
+      expect(param.required, isFalse);
+      expect(param.named, isTrue);
+      expect(param.defaultTo?.accept(emitter).toString(), 'regionDefault');
+      expect(param.type?.accept(emitter).toString(), 'String');
+    });
 
-    test(
-      'required query int with materialised default becomes non-required '
-      'with defaultTo',
-      () {
-        final page = QueryParameterObject(
-          name: 'page',
-          rawName: 'page',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: IntegerModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 1,
-        );
+    test('required query int with materialised default becomes non-required '
+        'with defaultTo', () {
+      final page = QueryParameterObject(
+        name: 'page',
+        rawName: 'page',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 1,
+      );
 
-        final operation = operationWith(queryParameters: {page});
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'page': const OperationParameterDefault.local(
-              memberName: 'pageDefault',
-            ),
-          },
-        );
+      final operation = operationWith(queryParameters: {page});
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'page': const OperationParameterDefault.local(
+            memberName: 'pageDefault',
+          ),
+        },
+      );
 
-        final param = parameters.single;
-        expect(param.required, isFalse);
-        expect(param.defaultTo?.accept(emitter).toString(), 'pageDefault');
-        expect(param.type?.accept(emitter).toString(), 'int');
-      },
-    );
+      final param = parameters.single;
+      expect(param.required, isFalse);
+      expect(param.defaultTo?.accept(emitter).toString(), 'pageDefault');
+      expect(param.type?.accept(emitter).toString(), 'int');
+    });
 
-    test(
-      'header integer with materialised default exposes defaultTo + '
-      'non-nullable int type',
-      () {
-        final retries = RequestHeaderObject(
-          name: 'retries',
-          rawName: 'X-Retries',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: IntegerModel(context: context),
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: 5,
-        );
+    test('header integer with materialised default exposes defaultTo + '
+        'non-nullable int type', () {
+      final retries = RequestHeaderObject(
+        name: 'retries',
+        rawName: 'X-Retries',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 5,
+      );
 
-        final operation = operationWith(headers: {retries});
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'retries': const OperationParameterDefault.local(
-              memberName: 'retriesDefault',
-            ),
-          },
-        );
+      final operation = operationWith(headers: {retries});
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'retries': const OperationParameterDefault.local(
+            memberName: 'retriesDefault',
+          ),
+        },
+      );
 
-        final param = parameters.single;
-        expect(param.name, 'retries');
-        expect(param.required, isFalse);
-        expect(param.defaultTo?.accept(emitter).toString(), 'retriesDefault');
-        expect(param.type?.accept(emitter).toString(), 'int');
-      },
-    );
+      final param = parameters.single;
+      expect(param.name, 'retries');
+      expect(param.required, isFalse);
+      expect(param.defaultTo?.accept(emitter).toString(), 'retriesDefault');
+      expect(param.type?.accept(emitter).toString(), 'int');
+    });
 
-    test(
-      'cookie boolean with materialised default exposes defaultTo + '
-      'non-nullable bool type',
-      () {
-        final tracking = CookieParameterObject(
-          name: 'tracking',
-          rawName: 'tracking',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          explode: false,
-          model: BooleanModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: false,
-        );
+    test('cookie boolean with materialised default exposes defaultTo + '
+        'non-nullable bool type', () {
+      final tracking = CookieParameterObject(
+        name: 'tracking',
+        rawName: 'tracking',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: BooleanModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: false,
+      );
 
-        final operation = operationWith(cookieParameters: {tracking});
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'tracking': const OperationParameterDefault.local(
-              memberName: 'trackingDefault',
-            ),
-          },
-        );
+      final operation = operationWith(cookieParameters: {tracking});
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'tracking': const OperationParameterDefault.local(
+            memberName: 'trackingDefault',
+          ),
+        },
+      );
 
-        final param = parameters.single;
-        expect(param.name, 'tracking');
-        expect(param.required, isFalse);
-        expect(
-          param.defaultTo?.accept(emitter).toString(),
-          'trackingDefault',
-        );
-        expect(param.type?.accept(emitter).toString(), 'bool');
-      },
-    );
+      final param = parameters.single;
+      expect(param.name, 'tracking');
+      expect(param.required, isFalse);
+      expect(param.defaultTo?.accept(emitter).toString(), 'trackingDefault');
+      expect(param.type?.accept(emitter).toString(), 'bool');
+    });
 
-    test(
-      'path string with materialised default becomes non-required + '
-      'defaultTo, no warning',
-      () {
-        final id = PathParameterObject(
-          name: 'id',
-          rawName: 'id',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: PathParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: 'x',
-        );
+    test('path string with materialised default becomes non-required + '
+        'defaultTo, no warning', () {
+      final id = PathParameterObject(
+        name: 'id',
+        rawName: 'id',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 'x',
+      );
 
-        final operation = operationWith(
-          pathParameters: {id},
-          path: '/things/{id}',
-        );
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'id': const OperationParameterDefault.local(
-              memberName: 'idDefault',
-            ),
-          },
-        );
+      final operation = operationWith(
+        pathParameters: {id},
+        path: '/things/{id}',
+      );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'id': const OperationParameterDefault.local(memberName: 'idDefault'),
+        },
+      );
 
-        final param = parameters.single;
-        expect(param.required, isFalse);
-        expect(param.defaultTo?.accept(emitter).toString(), 'idDefault');
-        expect(param.type?.accept(emitter).toString(), 'String');
-      },
-    );
+      final param = parameters.single;
+      expect(param.required, isFalse);
+      expect(param.defaultTo?.accept(emitter).toString(), 'idDefault');
+      expect(param.type?.accept(emitter).toString(), 'String');
+    });
 
-    test(
-      'parameter without a defaults entry retains normal required/optional '
-      'rules — defaultTo stays null',
-      () {
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('parameter without a defaults entry retains normal required/optional '
+        'rules — defaultTo stays null', () {
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = operationWith(queryParameters: {region});
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-        );
+      final operation = operationWith(queryParameters: {region});
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
 
-        final param = parameters.single;
-        expect(param.required, isTrue);
-        expect(param.defaultTo, isNull);
-        expect(param.type?.accept(emitter).toString(), 'String');
-      },
-    );
+      final param = parameters.single;
+      expect(param.required, isTrue);
+      expect(param.defaultTo, isNull);
+      expect(param.type?.accept(emitter).toString(), 'String');
+    });
 
-    test(
-      'runtime-default path parameter (DateTime, isRequired=true) preserves '
-      'required + non-nullable type, wires no defaultTo — static getter is '
-      'not const',
-      () {
-        final since = PathParameterObject(
-          name: 'since',
-          rawName: 'since',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: DateTimeModel(context: context),
-          encoding: PathParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: '2024-01-01T00:00:00Z',
-        );
+    test('runtime-default path parameter (DateTime, isRequired=true) preserves '
+        'required + non-nullable type, wires no defaultTo — static getter is '
+        'not const', () {
+      final since = PathParameterObject(
+        name: 'since',
+        rawName: 'since',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: DateTimeModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: '2024-01-01T00:00:00Z',
+      );
 
-        final operation = operationWith(
-          pathParameters: {since},
-          path: '/things/{since}',
-        );
-        final parameters = generateParameters(
-          operation: operation,
-          nameManager: nameManager,
-          package: 'api',
-          defaultsByName: {
-            'since': const OperationParameterDefault.local(
-              memberName: 'sinceDefault',
-              isRuntime: true,
-            ),
-          },
-        );
+      final operation = operationWith(
+        pathParameters: {since},
+        path: '/things/{since}',
+      );
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+        defaultsByName: {
+          'since': const OperationParameterDefault.local(
+            memberName: 'sinceDefault',
+            isRuntime: true,
+          ),
+        },
+      );
 
-        final param = parameters.single;
-        expect(param.name, 'since');
-        expect(param.named, isTrue);
-        expect(param.required, isTrue);
-        expect(param.defaultTo, isNull);
-        expect(param.type?.accept(emitter).toString(), 'DateTime');
-      },
-    );
+      final param = parameters.single;
+      expect(param.name, 'since');
+      expect(param.named, isTrue);
+      expect(param.required, isTrue);
+      expect(param.defaultTo, isNull);
+      expect(param.type?.accept(emitter).toString(), 'DateTime');
+    });
 
     test(
       'runtime-default query parameter (DateTime) keeps nullable type, '

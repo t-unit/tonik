@@ -12,37 +12,34 @@ void main() {
   group(
     'OAS 3.1 style-based primitive encoding (null rawContentType fallback)',
     () {
-      test(
-        'serializes string, integer and boolean as text/plain when only style is set',
-        () async {
-          final server = await _jsonServer();
+      test('serializes string, integer and boolean as text/plain when only style is set', () async {
+        final server = await _jsonServer();
 
-          final response = await _api(server).postStylePrimitives(
-            body: const StylePrimitivesForm(
-              name: 'hello',
-              count: 42,
-              active: true,
-            ),
-          );
+        final response = await _api(server).postStylePrimitives(
+          body: const StylePrimitivesForm(
+            name: 'hello',
+            count: 42,
+            active: true,
+          ),
+        );
 
-          expect(response, isTonikSuccess);
-          final wire = MultipartWire(await server.takeRequest());
-          expect(wire.parts.map((part) => part.name), [
-            'name',
-            'count',
-            'active',
-          ]);
-          expect(wire.parts.map((part) => part.bodyText), [
-            'hello',
-            '42',
-            'true',
-          ]);
-          expect(
-            wire.parts.map((part) => part.contentType),
-            everyElement(startsWith('text/plain')),
-          );
-        },
-      );
+        expect(response, isTonikSuccess);
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.parts.map((part) => part.name), [
+          'name',
+          'count',
+          'active',
+        ]);
+        expect(wire.parts.map((part) => part.bodyText), [
+          'hello',
+          '42',
+          'true',
+        ]);
+        expect(
+          wire.parts.map((part) => part.contentType),
+          everyElement(startsWith('text/plain')),
+        );
+      });
     },
   );
 
@@ -78,23 +75,18 @@ void main() {
     test('omits the optional array when it is null', () async {
       final server = await _jsonServer();
 
-      final response = await _api(server).postFormNonExploded(
-        body: const FormNonExplodedForm(),
-      );
+      final response = await _api(server)
+          .postFormNonExploded(body: const FormNonExplodedForm());
 
       expect(response, isTonikSuccess);
-      expect(
-        MultipartWire(await server.takeRequest()).named('tags'),
-        isEmpty,
-      );
+      expect(MultipartWire(await server.takeRequest()).named('tags'), isEmpty);
     });
 
     test('serializes an empty array as one empty multipart field', () async {
       final server = await _jsonServer();
 
-      final response = await _api(server).postFormNonExploded(
-        body: const FormNonExplodedForm(tags: []),
-      );
+      final response = await _api(server)
+          .postFormNonExploded(body: const FormNonExplodedForm(tags: []));
 
       expect(response, isTonikSuccess);
       final parts = MultipartWire(await server.takeRequest()).named('tags');
@@ -115,9 +107,9 @@ void main() {
 
         expect(response, isTonikSuccess);
         expect(
-          MultipartWire(
-            await server.takeRequest(),
-          ).named('values').map((part) => part.bodyText),
+          MultipartWire(await server.takeRequest())
+              .named('values')
+              .map((part) => part.bodyText),
           ['one', 'two', 'three'],
         );
       },
@@ -125,28 +117,25 @@ void main() {
   });
 
   group('OAS 3.1 deepObject style encoding', () {
-    test(
-      'serializes required object as bracket-notation with '
-      'application/x-www-form-urlencoded content type',
-      () async {
-        final server = await _jsonServer();
+    test('serializes required object as bracket-notation with '
+        'application/x-www-form-urlencoded content type', () async {
+      final server = await _jsonServer();
 
-        final response = await _api(server).postDeepObject(
-          body: const DeepObjectForm(
-            address: DeepObjectAddress(city: 'Berlin', zip: '10115'),
-          ),
-        );
+      final response = await _api(server).postDeepObject(
+        body: const DeepObjectForm(
+          address: DeepObjectAddress(city: 'Berlin', zip: '10115'),
+        ),
+      );
 
-        expect(response, isTonikSuccess);
-        final wire = MultipartWire(await server.takeRequest());
-        expect(wire.parts.map((part) => part.name), [
-          'address[city]',
-          'address[zip]',
-        ]);
-        expect(wire.single('address[city]').bodyText, 'Berlin');
-        expect(wire.single('address[zip]').bodyText, '10115');
-      },
-    );
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), [
+        'address[city]',
+        'address[zip]',
+      ]);
+      expect(wire.single('address[city]').bodyText, 'Berlin');
+      expect(wire.single('address[zip]').bodyText, '10115');
+    });
 
     test(
       'encodes string, integer, and boolean property types correctly',
@@ -177,11 +166,7 @@ void main() {
 
       final response = await _api(server).postDeepObjectTypes(
         body: const DeepObjectTypesForm(
-          profile: DeepObjectProfile(
-            name: 'New York',
-            age: 10,
-            active: false,
-          ),
+          profile: DeepObjectProfile(name: 'New York', age: 10, active: false),
         ),
       );
 
@@ -240,9 +225,8 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        final part = MultipartWire(
-          await server.takeRequest(),
-        ).single('address');
+        final part = MultipartWire(await server.takeRequest())
+            .single('address');
         expect(
           part.contentType,
           startsWith('application/x-www-form-urlencoded'),
@@ -317,9 +301,8 @@ void main() {
     test('serializes primitive integer as JSON number', () async {
       final server = await _jsonServer();
 
-      final response = await _api(server).postAnyModel(
-        body: const AnyModelForm(data: 42),
-      );
+      final response = await _api(server)
+          .postAnyModel(body: const AnyModelForm(data: 42));
 
       expect(response, isTonikSuccess);
       final part = MultipartWire(await server.takeRequest()).single('data');
@@ -330,10 +313,7 @@ void main() {
 }
 
 Multipart31Api _api(RawRequestServer server) => Multipart31Api(
-  CustomServer(
-    baseUrl: server.baseUrl,
-    serverConfig: testServerConfig(),
-  ),
+  CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
 );
 
 Future<RawRequestServer> _jsonServer() => RawRequestServer.start(

@@ -46,9 +46,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere(
-        (c) => c.name == 'PrimitiveChoice',
-      );
+      final baseClass = classes.firstWhere((c) => c.name == 'PrimitiveChoice');
 
       final toMatrixMethod = baseClass.methods.firstWhere(
         (m) => m.name == 'toMatrix',
@@ -83,9 +81,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere(
-        (c) => c.name == 'PrimitiveChoice',
-      );
+      final baseClass = classes.firstWhere((c) => c.name == 'PrimitiveChoice');
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
@@ -124,9 +120,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: [
-          (discriminatorValue: 'a', model: classA),
-        ],
+        models: [(discriminatorValue: 'a', model: classA)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -367,9 +361,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'ListChoice',
-        models: [
-          (discriminatorValue: 'list', model: listModel),
-        ],
+        models: [(discriminatorValue: 'list', model: listModel)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -585,9 +577,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'SingleClassChoice',
-        models: [
-          (discriminatorValue: 'a', model: classA),
-        ],
+        models: [(discriminatorValue: 'a', model: classA)],
         discriminator: 'type',
         context: context,
         examples: const [],

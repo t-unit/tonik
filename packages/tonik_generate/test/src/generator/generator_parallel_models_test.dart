@@ -113,36 +113,33 @@ void main() {
       },
     );
 
-    test(
-      'runs serially when model count is below parallelThreshold',
-      () async {
-        final apiDoc = _modelsDocument(Generator.parallelThreshold - 1, ctx);
+    test('runs serially when model count is below parallelThreshold', () async {
+      final apiDoc = _modelsDocument(Generator.parallelThreshold - 1, ctx);
 
-        var poolCount = 0;
-        await const Generator().generate(
-          apiDocument: apiDoc,
-          outputDirectory: tempDir.path,
-          package: 'below_threshold_pkg',
-          config: const TonikConfig(workerCount: 8),
-          workerPoolFactory: () {
-            poolCount++;
-            return ModelWorkerPool();
-          },
-        );
+      var poolCount = 0;
+      await const Generator().generate(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'below_threshold_pkg',
+        config: const TonikConfig(workerCount: 8),
+        workerPoolFactory: () {
+          poolCount++;
+          return ModelWorkerPool();
+        },
+      );
 
-        expect(
-          poolCount,
-          0,
-          reason:
-              'below-threshold path must skip the worker pool entirely '
-              'regardless of how many workers the caller requested',
-        );
+      expect(
+        poolCount,
+        0,
+        reason:
+            'below-threshold path must skip the worker pool entirely '
+            'regardless of how many workers the caller requested',
+      );
 
-        final tree = _readModelTree(tempDir.path, 'below_threshold_pkg');
-        expect(tree, isNotEmpty);
-        expect(tree.length, apiDoc.models.length);
-      },
-    );
+      final tree = _readModelTree(tempDir.path, 'below_threshold_pkg');
+      expect(tree, isNotEmpty);
+      expect(tree.length, apiDoc.models.length);
+    });
   });
 
   group('Generator.clampAutoWorkerCount', () {

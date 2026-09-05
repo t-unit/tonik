@@ -33,10 +33,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'null-edge-case', 'anyData': null},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'null-edge-case',
+        'anyData': null,
+      });
 
       final body = success.value;
       expect(body.name, 'null-edge-case');
@@ -54,10 +54,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'empty-object', 'anyData': <String, Object?>{}},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'empty-object',
+        'anyData': <String, Object?>{},
+      });
 
       final body = success.value;
       expect(body.name, 'empty-object');
@@ -66,19 +66,16 @@ void main() {
 
     test('echoJsonAny with empty array anyData', () async {
       final api = buildApi();
-      const original = ObjectWithAny(
-        name: 'empty-array',
-        anyData: <Object?>[],
-      );
+      const original = ObjectWithAny(name: 'empty-array', anyData: <Object?>[]);
 
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'empty-array', 'anyData': <Object?>[]},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'empty-array',
+        'anyData': <Object?>[],
+      });
 
       final body = success.value;
       expect(body.name, 'empty-array');
@@ -97,9 +94,7 @@ void main() {
             'level1': {
               'level2': {
                 'level3': [
-                  {
-                    'level4': 'deep-value',
-                  },
+                  {'level4': 'deep-value'},
                 ],
               },
             },
@@ -110,21 +105,18 @@ void main() {
         final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          jsonDecode(recordedRequest.body!),
-          {
-            'name': 'deep-nesting',
-            'anyData': {
-              'level1': {
-                'level2': {
-                  'level3': [
-                    {'level4': 'deep-value'},
-                  ],
-                },
+        expect(jsonDecode(recordedRequest.body!), {
+          'name': 'deep-nesting',
+          'anyData': {
+            'level1': {
+              'level2': {
+                'level3': [
+                  {'level4': 'deep-value'},
+                ],
               },
             },
           },
-        );
+        });
 
         final body = success.value;
         expect(body.name, 'deep-nesting');
@@ -183,13 +175,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {
-          'name': 'special-chars',
-          'anyData': 'Hello "world" with \\backslash and \ttab',
-        },
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'special-chars',
+        'anyData': 'Hello "world" with \\backslash and \ttab',
+      });
 
       final body = success.value;
       expect(body.name, 'special-chars');
@@ -207,10 +196,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'unicode-test', 'anyData': '日本語 emoji 🎉 and symbols ™®©'},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'unicode-test',
+        'anyData': '日本語 emoji 🎉 and symbols ™®©',
+      });
 
       final body = success.value;
       expect(body.name, 'unicode-test');
@@ -254,10 +243,7 @@ void main() {
 
     test('echoJsonAny with small decimal', () async {
       final api = buildApi();
-      const original = ObjectWithAny(
-        name: 'small-decimal',
-        anyData: 0.0000001,
-      );
+      const original = ObjectWithAny(name: 'small-decimal', anyData: 0.0000001);
 
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
@@ -269,10 +255,7 @@ void main() {
 
     test('echoJsonAny with negative numbers', () async {
       final api = buildApi();
-      const original = ObjectWithAny(
-        name: 'negative',
-        anyData: -999.999,
-      );
+      const original = ObjectWithAny(name: 'negative', anyData: -999.999);
 
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);

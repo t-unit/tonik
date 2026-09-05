@@ -29,10 +29,7 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'json');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
@@ -51,10 +48,7 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'binary');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
@@ -77,10 +71,7 @@ void main() {
 
       final result = await filesApi.getBinaryWithHeaders(id: 'test-file');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);

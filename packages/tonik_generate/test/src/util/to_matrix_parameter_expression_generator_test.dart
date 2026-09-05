@@ -663,9 +663,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -707,9 +707,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -721,10 +721,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String and toMatrix for Base64Model', () {
@@ -740,9 +737,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -756,10 +753,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String list content for List<Base64Model>', () {
@@ -779,9 +773,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -799,10 +793,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates list-of-map encoding for List<Map<String, int>>', () {
@@ -826,9 +817,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -856,10 +847,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for List<Map<String, ClassModel>> '
@@ -890,9 +878,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -904,10 +892,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 
@@ -923,9 +908,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value?.toMatrix(
           paramName,
@@ -957,9 +940,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value?.toMatrix(
           paramName,
@@ -1027,9 +1008,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value?.toMatrix(
           paramName,
@@ -1054,9 +1033,7 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value.toMatrix(
           paramName,

@@ -1313,32 +1313,29 @@ void main() {
         },
       );
 
-      test(
-        'MapModel whose value reaches a separate recursive typedef erases '
-        'to Object?',
-        () {
-          final a = MapModel(
-            name: 'AMap',
-            valueModel: AnyModel(context: context),
-            context: context,
-            examples: const [],
-          );
-          final b = MapModel(
-            name: 'BMap',
-            valueModel: AnyModel(context: context),
-            context: context,
-            examples: const [],
-          );
-          a.valueModel = b;
-          b.valueModel = a;
+      test('MapModel whose value reaches a separate recursive typedef erases '
+          'to Object?', () {
+        final a = MapModel(
+          name: 'AMap',
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        final b = MapModel(
+          name: 'BMap',
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        a.valueModel = b;
+        b.valueModel = a;
 
-          final aTypedef = generator.generateMapTypedef(a);
-          expect(
-            aTypedef.accept(emitter).toString().trim(),
-            'typedef AMap = Map<String,Object?>;',
-          );
-        },
-      );
+        final aTypedef = generator.generateMapTypedef(a);
+        expect(
+          aTypedef.accept(emitter).toString().trim(),
+          'typedef AMap = Map<String,Object?>;',
+        );
+      });
 
       test(
         'ListModel whose content reaches a separate recursive typedef erases '

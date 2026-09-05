@@ -21,11 +21,8 @@ void main() {
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
           buildHttpMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.http).plan(
-              content,
-              bodyAccessor: 'body',
-              isRequired: true,
-            ),
+            const MultipartBodyPlanner(backend: TransportBackend.http)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           ),
         ),
     );
@@ -215,17 +212,14 @@ Object? test() {
     });
 
     test('JSON encodes unconstrained values', () {
-      expectPropertyCode(
-        AnyModel(context: context),
-        r'''
+      expectPropertyCode(AnyModel(context: context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(jsonEncode(encodeAnyToJson(body.value))),
       contentType: MediaType.parse(r'application/json'),
     ),
-  );''',
-      );
+  );''');
     });
 
     test('JSON encodes maps', () {
@@ -247,10 +241,7 @@ Object? test() {
     });
 
     for (final entry in <({String name, Model model})>[
-      (
-        name: 'class',
-        model: _classModel(context, 'Nested'),
-      ),
+      (name: 'class', model: _classModel(context, 'Nested')),
       (
         name: 'allOf',
         model: AllOfModel(
@@ -293,17 +284,14 @@ Object? test() {
       ),
     ]) {
       test('JSON encodes ${entry.name} objects', () {
-        expectPropertyCode(
-          entry.model,
-          r'''
+        expectPropertyCode(entry.model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(jsonEncode(body.value.toJson())),
       contentType: MediaType.parse(r'application/json'),
     ),
-  );''',
-        );
+  );''');
       });
     }
 
@@ -365,17 +353,14 @@ Object? test() {
 
     test('uses plain and JSON encodings for string enums', () {
       final model = _stringEnum(context);
-      expectPropertyCode(
-        model,
-        r'''
+      expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value.toJson()),
       contentType: MediaType.parse(r'text/plain'),
     ),
-  );''',
-      );
+  );''');
       expectPropertyCode(
         model,
         r'''
@@ -394,32 +379,26 @@ Object? test() {
     });
 
     test('uses a plain string for integer enums', () {
-      expectPropertyCode(
-        _integerEnum(context),
-        r'''
+      expectPropertyCode(_integerEnum(context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value.toJson().toString()),
       contentType: MediaType.parse(r'text/plain'),
     ),
-  );''',
-      );
+  );''');
     });
 
     test('uses plain and JSON encodings for DateTime', () {
       final model = DateTimeModel(context: context);
-      expectPropertyCode(
-        model,
-        r'''
+      expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value.toTimeZonedIso8601String()),
       contentType: MediaType.parse(r'text/plain'),
     ),
-  );''',
-      );
+  );''');
       expectPropertyCode(
         model,
         r'''
@@ -439,17 +418,14 @@ Object? test() {
 
     test('uses plain and JSON encodings for numeric primitives', () {
       final model = IntegerModel(context: context);
-      expectPropertyCode(
-        model,
-        r'''
+      expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value.toString()),
       contentType: MediaType.parse(r'text/plain'),
     ),
-  );''',
-      );
+  );''');
       expectPropertyCode(
         model,
         r'''
@@ -665,43 +641,36 @@ Object? test() {
       );
     });
 
-    for (final entry
-        in <
-          ({
-            String name,
-            Model model,
-            String encodedValue,
-          })
-        >[
-          (
-            name: 'objects',
-            model: _classModel(context, 'ListItem'),
-            encodedValue: 'body.value.map((item) => item.toJson()).toList()',
-          ),
-          (
-            name: 'enums',
-            model: _stringEnum(context),
-            encodedValue: 'body.value.map((item) => item.toJson()).toList()',
-          ),
-          (
-            name: 'dates',
-            model: DateTimeModel(context: context),
-            encodedValue:
-                'body.value.map((item) => '
-                'item.toTimeZonedIso8601String()).toList()',
-          ),
-          (
-            name: 'unconstrained values',
-            model: AnyModel(context: context),
-            encodedValue:
-                'body.value.map((item) => encodeAnyToJson(item)).toList()',
-          ),
-          (
-            name: 'integers',
-            model: IntegerModel(context: context),
-            encodedValue: 'body.value',
-          ),
-        ]) {
+    for (final entry in <({String name, Model model, String encodedValue})>[
+      (
+        name: 'objects',
+        model: _classModel(context, 'ListItem'),
+        encodedValue: 'body.value.map((item) => item.toJson()).toList()',
+      ),
+      (
+        name: 'enums',
+        model: _stringEnum(context),
+        encodedValue: 'body.value.map((item) => item.toJson()).toList()',
+      ),
+      (
+        name: 'dates',
+        model: DateTimeModel(context: context),
+        encodedValue:
+            'body.value.map((item) => '
+            'item.toTimeZonedIso8601String()).toList()',
+      ),
+      (
+        name: 'unconstrained values',
+        model: AnyModel(context: context),
+        encodedValue:
+            'body.value.map((item) => encodeAnyToJson(item)).toList()',
+      ),
+      (
+        name: 'integers',
+        model: IntegerModel(context: context),
+        encodedValue: 'body.value',
+      ),
+    ]) {
       test('JSON encodes ${entry.name}', () {
         expectPropertyCode(
           _list(context, entry.model),
@@ -740,38 +709,29 @@ Object? test() {
       );
     });
 
-    for (final entry
-        in <
-          ({
-            String name,
-            Model model,
-            String encodedItem,
-          })
-        >[
-          (
-            name: 'objects',
-            model: _classModel(context, 'RepeatedItem'),
-            encodedItem: 'jsonEncode(item.toJson())',
-          ),
-          (
-            name: 'maps',
-            model: MapModel(
-              valueModel: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            encodedItem: 'jsonEncode(item)',
-          ),
-          (
-            name: 'unconstrained values',
-            model: AnyModel(context: context),
-            encodedItem: 'jsonEncode(encodeAnyToJson(item))',
-          ),
-        ]) {
+    for (final entry in <({String name, Model model, String encodedItem})>[
+      (
+        name: 'objects',
+        model: _classModel(context, 'RepeatedItem'),
+        encodedItem: 'jsonEncode(item.toJson())',
+      ),
+      (
+        name: 'maps',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        encodedItem: 'jsonEncode(item)',
+      ),
+      (
+        name: 'unconstrained values',
+        model: AnyModel(context: context),
+        encodedItem: 'jsonEncode(encodeAnyToJson(item))',
+      ),
+    ]) {
       test('emits one JSON part for each ${entry.name} item', () {
-        expectPropertyCode(
-          _list(context, entry.model),
-          '''
+        expectPropertyCode(_list(context, entry.model), '''
   for (final item in body.value) {
     _\$multipartFiles.add(
       MultipartFile.fromBytes(
@@ -780,9 +740,7 @@ Object? test() {
         contentType: MediaType.parse(r'application/json'),
       ),
     );
-  }''',
-          encoding: _encoding(style: EncodingStyle.form, explode: true),
-        );
+  }''', encoding: _encoding(style: EncodingStyle.form, explode: true));
       });
     }
 
@@ -838,39 +796,30 @@ Object? test() {
       });
     }
 
-    for (final entry
-        in <
-          ({
-            String name,
-            Model model,
-            String encodedItem,
-          })
-        >[
-          (
-            name: 'string enums',
-            model: _stringEnum(context),
-            encodedItem: 'item.toJson()',
-          ),
-          (
-            name: 'integer enums',
-            model: _integerEnum(context),
-            encodedItem: 'item.toJson().toString()',
-          ),
-          (
-            name: 'dates',
-            model: DateTimeModel(context: context),
-            encodedItem: 'item.toTimeZonedIso8601String()',
-          ),
-          (
-            name: 'integers',
-            model: IntegerModel(context: context),
-            encodedItem: 'item.toString()',
-          ),
-        ]) {
+    for (final entry in <({String name, Model model, String encodedItem})>[
+      (
+        name: 'string enums',
+        model: _stringEnum(context),
+        encodedItem: 'item.toJson()',
+      ),
+      (
+        name: 'integer enums',
+        model: _integerEnum(context),
+        encodedItem: 'item.toJson().toString()',
+      ),
+      (
+        name: 'dates',
+        model: DateTimeModel(context: context),
+        encodedItem: 'item.toTimeZonedIso8601String()',
+      ),
+      (
+        name: 'integers',
+        model: IntegerModel(context: context),
+        encodedItem: 'item.toString()',
+      ),
+    ]) {
       test('emits one text part for each ${entry.name} item', () {
-        expectPropertyCode(
-          _list(context, entry.model),
-          '''
+        expectPropertyCode(_list(context, entry.model), '''
   for (final item in body.value) {
     _\$multipartFiles.add(
       MultipartFile.fromBytes(
@@ -879,8 +828,7 @@ Object? test() {
         contentType: MediaType.parse(r'text/plain'),
       ),
     );
-  }''',
-        );
+  }''');
       });
     }
   });
@@ -894,11 +842,8 @@ ClassModel _classModel(Context context, String name) => ClassModel(
   examples: const [],
 );
 
-ListModel _list(Context context, Model content) => ListModel(
-  content: content,
-  context: context,
-  examples: const [],
-);
+ListModel _list(Context context, Model content) =>
+    ListModel(content: content, context: context, examples: const []);
 
 EnumModel<String> _stringEnum(Context context) => EnumModel(
   name: 'StringValue',

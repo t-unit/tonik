@@ -506,10 +506,7 @@ void main() {
               'description': 'A binary response',
               'content': {
                 'application/octet-stream': {
-                  'schema': {
-                    'type': 'string',
-                    'format': 'binary',
-                  },
+                  'schema': {'type': 'string', 'format': 'binary'},
                 },
               },
             },
@@ -541,10 +538,7 @@ void main() {
               'description': 'A response with unknown content type',
               'content': {
                 'image/png': {
-                  'schema': {
-                    'type': 'string',
-                    'format': 'binary',
-                  },
+                  'schema': {'type': 'string', 'format': 'binary'},
                 },
               },
             },
@@ -584,9 +578,8 @@ void main() {
         },
       };
 
-      final api = Importer(
-        contentTypes: {'text/html': ContentType.text},
-      ).import(fileContentWithCustom);
+      final api = Importer(contentTypes: {'text/html': ContentType.text})
+          .import(fileContentWithCustom);
       final customResponse = api.responses.firstWhereOrNull(
         (r) => r.name == 'CustomResponse',
       );
@@ -599,75 +592,69 @@ void main() {
       expect(body?.rawContentType, 'text/html');
     });
 
-    test(
-      'resolves application/json to ContentType.json',
-      () {
-        final fileContentWithJson = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'responses': {
-              'JsonResponse': {
-                'description': 'A JSON response',
-                'content': {
-                  'application/json': {
-                    'schema': {'type': 'object'},
-                  },
+    test('resolves application/json to ContentType.json', () {
+      final fileContentWithJson = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'JsonResponse': {
+              'description': 'A JSON response',
+              'content': {
+                'application/json': {
+                  'schema': {'type': 'object'},
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContentWithJson);
-        final jsonResponse = api.responses.firstWhereOrNull(
-          (r) => r.name == 'JsonResponse',
-        );
+      final api = Importer().import(fileContentWithJson);
+      final jsonResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'JsonResponse',
+      );
 
-        expect(jsonResponse, isNotNull);
-        expect(jsonResponse, isA<ResponseObject>());
-        expect((jsonResponse as ResponseObject?)?.bodies, hasLength(1));
-        final body = jsonResponse?.bodies.first;
-        expect(body?.contentType, ContentType.json);
-        expect(body?.rawContentType, 'application/json');
-      },
-    );
+      expect(jsonResponse, isNotNull);
+      expect(jsonResponse, isA<ResponseObject>());
+      expect((jsonResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = jsonResponse?.bodies.first;
+      expect(body?.contentType, ContentType.json);
+      expect(body?.rawContentType, 'application/json');
+    });
 
-    test(
-      'resolves application/x-www-form-urlencoded to ContentType.form',
-      () {
-        final fileContentWithForm = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'responses': {
-              'FormResponse': {
-                'description': 'A form-urlencoded response',
-                'content': {
-                  'application/x-www-form-urlencoded': {
-                    'schema': {'type': 'object'},
-                  },
+    test('resolves application/x-www-form-urlencoded to ContentType.form', () {
+      final fileContentWithForm = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'FormResponse': {
+              'description': 'A form-urlencoded response',
+              'content': {
+                'application/x-www-form-urlencoded': {
+                  'schema': {'type': 'object'},
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContentWithForm);
-        final formResponse = api.responses.firstWhereOrNull(
-          (r) => r.name == 'FormResponse',
-        );
+      final api = Importer().import(fileContentWithForm);
+      final formResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'FormResponse',
+      );
 
-        expect(formResponse, isNotNull);
-        expect(formResponse, isA<ResponseObject>());
-        expect((formResponse as ResponseObject?)?.bodies, hasLength(1));
-        final body = formResponse?.bodies.first;
-        expect(body?.contentType, ContentType.form);
-        expect(body?.rawContentType, 'application/x-www-form-urlencoded');
-      },
-    );
+      expect(formResponse, isNotNull);
+      expect(formResponse, isA<ResponseObject>());
+      expect((formResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = formResponse?.bodies.first;
+      expect(body?.contentType, ContentType.form);
+      expect(body?.rawContentType, 'application/x-www-form-urlencoded');
+    });
   });
 
   group('OAS 3.1 empty schema support', () {
@@ -680,9 +667,7 @@ void main() {
           'responses': {
             'BinaryResponse': {
               'description': 'Binary content without explicit schema',
-              'content': {
-                'application/octet-stream': <String, dynamic>{},
-              },
+              'content': {'application/octet-stream': <String, dynamic>{}},
             },
           },
         },
@@ -712,9 +697,7 @@ void main() {
           'responses': {
             'ImageResponse': {
               'description': 'Image content without explicit schema',
-              'content': {
-                'image/jpeg': <String, dynamic>{},
-              },
+              'content': {'image/jpeg': <String, dynamic>{}},
             },
           },
         },
@@ -744,9 +727,7 @@ void main() {
           'responses': {
             'JsonResponse': {
               'description': 'JSON content without explicit schema',
-              'content': {
-                'application/json': <String, dynamic>{},
-              },
+              'content': {'application/json': <String, dynamic>{}},
             },
           },
         },
@@ -776,9 +757,7 @@ void main() {
           'responses': {
             'TextResponse': {
               'description': 'Text content without explicit schema',
-              'content': {
-                'text/plain': <String, dynamic>{},
-              },
+              'content': {'text/plain': <String, dynamic>{}},
             },
           },
         },
@@ -840,9 +819,7 @@ void main() {
           'responses': {
             'AudioResponse': {
               'description': 'Audio content without explicit schema',
-              'content': {
-                'audio/mpeg': <String, dynamic>{},
-              },
+              'content': {'audio/mpeg': <String, dynamic>{}},
             },
           },
         },

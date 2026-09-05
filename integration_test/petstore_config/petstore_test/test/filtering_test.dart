@@ -30,11 +30,7 @@ void main() {
         body: const PetPostBodyRequestBodyJson(
           // we expect Pet to be deprecated
           // ignore: deprecated_member_use
-          Pet(
-            id: 1,
-            petName: 'Fido',
-            imageUrls: <String>[],
-          ),
+          Pet(id: 1, petName: 'Fido', imageUrls: <String>[]),
         ),
       );
       final success = requireSuccess(pet);

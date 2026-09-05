@@ -131,9 +131,8 @@ void main() {
 
     test('keeps an empty scalar with no explode descriptor', () {
       expect(
-        <String, PropertyValue>{
-          'name': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        <String, PropertyValue>{'name': const PropertyValue.scalar('')}
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'name', value: '')],
       );
     });
@@ -234,9 +233,8 @@ void main() {
 
     test('collapses an empty array into an empty value segment', () {
       expect(
-        <String, PropertyValue>{
-          'colors': const PropertyValue.array([]),
-        }.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
+        <String, PropertyValue>{'colors': const PropertyValue.array([])}
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: 'colors,')],
       );
     });
@@ -282,18 +280,15 @@ void main() {
       'applies an object-level override to keys and values when exploded',
       () {
         expect(
-          <String, PropertyValue>{
-            'a:b': const PropertyValue.scalar('c:d'),
-          }.toForm(
-            'p',
-            explode: true,
-            allowEmpty: true,
-            allowReserved: true,
-            textEncoding: utf8,
-          ),
-          const <ParameterEntry>[
-            (name: 'a:b', value: 'c:d'),
-          ],
+          <String, PropertyValue>{'a:b': const PropertyValue.scalar('c:d')}
+              .toForm(
+                'p',
+                explode: true,
+                allowEmpty: true,
+                allowReserved: true,
+                textEncoding: utf8,
+              ),
+          const <ParameterEntry>[(name: 'a:b', value: 'c:d')],
         );
       },
     );
@@ -302,15 +297,14 @@ void main() {
       'applies an object-level override to keys and values when collapsed',
       () {
         expect(
-          <String, PropertyValue>{
-            'a:b': const PropertyValue.scalar('c:d'),
-          }.toForm(
-            'p',
-            explode: false,
-            allowEmpty: true,
-            allowReserved: true,
-            textEncoding: utf8,
-          ),
+          <String, PropertyValue>{'a:b': const PropertyValue.scalar('c:d')}
+              .toForm(
+                'p',
+                explode: false,
+                allowEmpty: true,
+                allowReserved: true,
+                textEncoding: utf8,
+              ),
           const <ParameterEntry>[(name: 'p', value: 'a:b,c:d')],
         );
       },
@@ -318,32 +312,28 @@ void main() {
 
     test('keeps query delimiters encoded in keys when exploded', () {
       expect(
-        <String, PropertyValue>{
-          'a=b&c': const PropertyValue.scalar('d:e'),
-        }.toForm(
-          'p',
-          explode: true,
-          allowEmpty: true,
-          allowReserved: true,
-          textEncoding: utf8,
-        ),
-        const <ParameterEntry>[
-          (name: 'a%3Db%26c', value: 'd:e'),
-        ],
+        <String, PropertyValue>{'a=b&c': const PropertyValue.scalar('d:e')}
+            .toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              allowReserved: true,
+              textEncoding: utf8,
+            ),
+        const <ParameterEntry>[(name: 'a%3Db%26c', value: 'd:e')],
       );
     });
 
     test('keeps query delimiters encoded in keys when collapsed', () {
       expect(
-        <String, PropertyValue>{
-          'a=b&c': const PropertyValue.scalar('d:e'),
-        }.toForm(
-          'p',
-          explode: false,
-          allowEmpty: true,
-          allowReserved: true,
-          textEncoding: utf8,
-        ),
+        <String, PropertyValue>{'a=b&c': const PropertyValue.scalar('d:e')}
+            .toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+              textEncoding: utf8,
+            ),
         const <ParameterEntry>[(name: 'p', value: 'a%3Db%26c,d:e')],
       );
     });
@@ -351,16 +341,15 @@ void main() {
     test('uses the object-level policy for a key when a field descriptor '
         'overrides its value', () {
       expect(
-        <String, PropertyValue>{
-          'a:b': const PropertyValue.scalar('c:d'),
-        }.toForm(
-          'p',
-          explode: true,
-          allowEmpty: true,
-          allowReserved: true,
-          fieldEncodings: const {'a:b': FormFieldEncoding()},
-          textEncoding: utf8,
-        ),
+        <String, PropertyValue>{'a:b': const PropertyValue.scalar('c:d')}
+            .toForm(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              allowReserved: true,
+              fieldEncodings: const {'a:b': FormFieldEncoding()},
+              textEncoding: utf8,
+            ),
         const <ParameterEntry>[(name: 'a:b', value: 'c%3Ad')],
       );
     });
@@ -382,24 +371,22 @@ void main() {
 
     test('keeps a key comma literal when collapsing with allowReserved', () {
       expect(
-        <String, PropertyValue>{
-          'a,b': const PropertyValue.scalar('c:d'),
-        }.toForm(
-          'p',
-          explode: false,
-          allowEmpty: true,
-          allowReserved: true,
-          textEncoding: utf8,
-        ),
+        <String, PropertyValue>{'a,b': const PropertyValue.scalar('c:d')}
+            .toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+              textEncoding: utf8,
+            ),
         const <ParameterEntry>[(name: 'p', value: 'a,b,c:d')],
       );
     });
 
     test('component-encodes keys and values when allowReserved is false', () {
       expect(
-        <String, PropertyValue>{
-          'a:b': const PropertyValue.scalar('c:d'),
-        }.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
+        <String, PropertyValue>{'a:b': const PropertyValue.scalar('c:d')}
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: 'a%3Ab,c%3Ad')],
       );
     });
@@ -441,9 +428,7 @@ void main() {
   group('useQueryComponent space rendering', () {
     test('renders a space as + when useQueryComponent is true', () {
       expect(
-        <String, PropertyValue>{
-          'q': const PropertyValue.scalar('a b'),
-        }.toForm(
+        <String, PropertyValue>{'q': const PropertyValue.scalar('a b')}.toForm(
           'p',
           explode: true,
           allowEmpty: true,
@@ -456,9 +441,8 @@ void main() {
 
     test('renders a space as %20 when useQueryComponent is false', () {
       expect(
-        <String, PropertyValue>{
-          'q': const PropertyValue.scalar('a b'),
-        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        <String, PropertyValue>{'q': const PropertyValue.scalar('a b')}
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'q', value: 'a%20b')],
       );
     });
@@ -524,27 +508,23 @@ void main() {
 
     test('does not throw on a scalar empty string when allowEmpty is true', () {
       expect(
-        <String, PropertyValue>{
-          'key': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        <String, PropertyValue>{'key': const PropertyValue.scalar('')}
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'key', value: '')],
       );
     });
 
     test('throws on an empty array when allowEmpty is false', () {
       expect(
-        () => <String, PropertyValue>{
-          'tags': const PropertyValue.array([]),
-        }.toForm('p', explode: true, allowEmpty: false, textEncoding: utf8),
+        () => <String, PropertyValue>{'tags': const PropertyValue.array([])}
+            .toForm('p', explode: true, allowEmpty: false, textEncoding: utf8),
         throwsA(isA<EmptyValueException>()),
       );
     });
 
     test('does not throw on an empty array when allowEmpty is true', () {
       expect(
-        <String, PropertyValue>{
-          'tags': const PropertyValue.array([]),
-        }.toForm(
+        <String, PropertyValue>{'tags': const PropertyValue.array([])}.toForm(
           'p',
           explode: true,
           allowEmpty: true,
@@ -558,10 +538,8 @@ void main() {
     test('throws on an empty exploded array descriptor when allowEmpty is '
         'false', () {
       expect(
-        () =>
-            <String, PropertyValue>{
-              'tags': const PropertyValue.array([]),
-            }.toForm(
+        () => <String, PropertyValue>{'tags': const PropertyValue.array([])}
+            .toForm(
               'p',
               explode: true,
               allowEmpty: false,

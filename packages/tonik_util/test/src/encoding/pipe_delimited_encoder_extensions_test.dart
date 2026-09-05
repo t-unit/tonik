@@ -6,26 +6,27 @@ void main() {
   group('PipeDelimitedStringListEncoder', () {
     group('with explode=false', () {
       test('encodes list of strings with pipe delimiter', () {
-        final result = ['red', 'green', 'blue'].toPipeDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'red',
+          'green',
+          'blue',
+        ].toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['red|green|blue']);
       });
 
       test('encodes list with special characters', () {
-        final result = ['item 1', 'item 2'].toPipeDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'item 1',
+          'item 2',
+        ].toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['item%201|item%202']);
       });
 
       test('encodes list with reserved characters', () {
-        final result = ['a&b', 'c=d'].toPipeDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'a&b',
+          'c=d',
+        ].toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['a%26b|c%3Dd']);
       });
 
@@ -46,10 +47,8 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = ['single'].toPipeDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = ['single']
+            .toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['single']);
       });
 
@@ -66,28 +65,29 @@ void main() {
       );
 
       test('encodes non-ASCII characters', () {
-        final result = ['café', '你好'].toPipeDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'café',
+          '你好',
+        ].toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['caf%C3%A9|%E4%BD%A0%E5%A5%BD']);
       });
     });
 
     group('with explode=true', () {
       test('encodes list as separate values', () {
-        final result = ['red', 'green', 'blue'].toPipeDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = [
+          'red',
+          'green',
+          'blue',
+        ].toPipeDelimited(explode: true, allowEmpty: true);
         expect(result, ['red', 'green', 'blue']);
       });
 
       test('encodes list with special characters as separate values', () {
-        final result = ['item 1', 'item 2'].toPipeDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = [
+          'item 1',
+          'item 2',
+        ].toPipeDelimited(explode: true, allowEmpty: true);
         expect(result, ['item%201', 'item%202']);
       });
 
@@ -108,10 +108,8 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = ['single'].toPipeDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = ['single']
+            .toPipeDelimited(explode: true, allowEmpty: true);
         expect(result, ['single']);
       });
 
@@ -172,38 +170,34 @@ void main() {
 
   group('allowReserved', () {
     test('reserved literal except & = + per item, explode=false', () {
-      final result = ['a:b', 'c&d=e+f'].toPipeDelimited(
-        explode: false,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c&d=e+f',
+      ].toPipeDelimited(explode: false, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b|c%26d%3De%2Bf']);
     });
 
     test('reserved literal except & = + per item, explode=true', () {
-      final result = ['a:b', 'c&d=e+f'].toPipeDelimited(
-        explode: true,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c&d=e+f',
+      ].toPipeDelimited(explode: true, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b', 'c%26d%3De%2Bf']);
     });
 
     test('literal pipe delimiter is unaffected by allowReserved', () {
-      final result = ['a:b', 'c:d'].toPipeDelimited(
-        explode: false,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c:d',
+      ].toPipeDelimited(explode: false, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b|c:d']);
     });
 
     test('default byte-identical to encodeComponent, explode=false', () {
       const items = ['a:b', 'c&d=e+f', 'x y'];
-      expect(
-        items.toPipeDelimited(explode: false, allowEmpty: true),
-        [items.map(Uri.encodeComponent).join('|')],
-      );
+      expect(items.toPipeDelimited(explode: false, allowEmpty: true), [
+        items.map(Uri.encodeComponent).join('|'),
+      ]);
     });
 
     test('default byte-identical to encodeComponent, explode=true', () {
@@ -228,10 +222,9 @@ void main() {
 
     test('binary default is byte-identical to Uri.encodeComponent', () {
       const value = [97, 58, 98, 32, 99]; // "a:b c"
-      expect(
-        value.toPipeDelimited(explode: false, allowEmpty: true),
-        [Uri.encodeComponent('a:b c')],
-      );
+      expect(value.toPipeDelimited(explode: false, allowEmpty: true), [
+        Uri.encodeComponent('a:b c'),
+      ]);
     });
 
     test('alreadyEncoded short-circuits regardless of allowReserved', () {

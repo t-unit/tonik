@@ -77,9 +77,8 @@ Directory _writeFixtures() {
   directory.createSync();
 
   for (final entry in _fixtureBytes.entries) {
-    File(
-      '${directory.path}/${entry.key}',
-    ).writeAsBytesSync(entry.value, flush: true);
+    File('${directory.path}/${entry.key}')
+        .writeAsBytesSync(entry.value, flush: true);
   }
   return directory;
 }
@@ -155,26 +154,8 @@ final _fixtureBytes = <String, List<int>>{
     0x20,
     0xac,
   ],
-  'utf-16le.bin': const [
-    0x48,
-    0x00,
-    0x69,
-    0x00,
-    0x20,
-    0x00,
-    0xac,
-    0x20,
-  ],
-  'utf-16be.bin': const [
-    0x00,
-    0x48,
-    0x00,
-    0x69,
-    0x00,
-    0x20,
-    0x20,
-    0xac,
-  ],
+  'utf-16le.bin': const [0x48, 0x00, 0x69, 0x00, 0x20, 0x00, 0xac, 0x20],
+  'utf-16be.bin': const [0x00, 0x48, 0x00, 0x69, 0x00, 0x20, 0x20, 0xac],
   'utf-32.bin': const [
     0x00,
     0x00,
@@ -297,18 +278,8 @@ const _successfulCases =
         fixture: 'shift-jis.bin',
         expected: '日本',
       ),
-      (
-        id: 'euc-jp',
-        name: 'EUC-JP',
-        fixture: 'euc-jp.bin',
-        expected: '日本',
-      ),
-      (
-        id: 'gbk',
-        name: 'GBK',
-        fixture: 'gbk.bin',
-        expected: '中文',
-      ),
+      (id: 'euc-jp', name: 'EUC-JP', fixture: 'euc-jp.bin', expected: '日本'),
+      (id: 'gbk', name: 'GBK', fixture: 'gbk.bin', expected: '中文'),
       (
         id: 'x-gbk',
         name: 'the X-GBK alias',

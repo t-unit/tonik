@@ -20,17 +20,11 @@ void main() {
 
   SimpleApi buildSimpleApi() {
     return SimpleApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(),
-      ),
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
     );
   }
 
-  void expectEncodingError(
-    Object response, {
-    required String parameterName,
-  }) {
+  void expectEncodingError(Object response, {required String parameterName}) {
     final (error, type) = switch (response) {
       TonikError(:final error, :final type) => (error, type),
       _ => fail('Expected TonikError, got $response.'),

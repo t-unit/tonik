@@ -13,13 +13,8 @@ void main() {
           'User': {
             'type': 'object',
             'properties': {
-              'id': {
-                'type': 'integer',
-                'readOnly': true,
-              },
-              'name': {
-                'type': 'string',
-              },
+              'id': {'type': 'integer', 'readOnly': true},
+              'name': {'type': 'string'},
             },
           },
         },
@@ -35,13 +30,8 @@ void main() {
           'User': {
             'type': 'object',
             'properties': {
-              'name': {
-                'type': 'string',
-              },
-              'password': {
-                'type': 'string',
-                'writeOnly': true,
-              },
+              'name': {'type': 'string'},
+              'password': {'type': 'string', 'writeOnly': true},
             },
           },
         },
@@ -63,9 +53,7 @@ void main() {
                 'readOnly': true,
                 'description': 'Server-generated ID',
               },
-              'name': {
-                'type': 'string',
-              },
+              'name': {'type': 'string'},
               'password': {
                 'type': 'string',
                 'writeOnly': true,
@@ -187,14 +175,8 @@ void main() {
           'Model': {
             'type': 'object',
             'properties': {
-              'field1': {
-                'type': 'string',
-                'readOnly': false,
-              },
-              'field2': {
-                'type': 'string',
-                'writeOnly': false,
-              },
+              'field1': {'type': 'string', 'readOnly': false},
+              'field2': {'type': 'string', 'writeOnly': false},
             },
           },
         },

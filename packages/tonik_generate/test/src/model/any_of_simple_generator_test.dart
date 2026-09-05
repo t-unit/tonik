@@ -29,62 +29,60 @@ void main() {
   });
 
   group('fromSimple', () {
-    test(
-      'generates fromSimple factory that wraps each property decode in try/catch and assigns null on failure',
-      () {
-        final complex = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates fromSimple factory that wraps each property decode in try/catch and assigns null on failure', () {
+      final complex = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'Flexible',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (discriminatorValue: null, model: IntegerModel(context: context)),
-            (discriminatorValue: null, model: complex),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Flexible',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: complex),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
+      final klass = generator.generateClass(model);
 
-        final fromSimple = klass.constructors.firstWhere(
-          (c) => c.name == 'fromSimple',
-        );
-        expect(fromSimple.factory, isTrue);
-        expect(
-          fromSimple.requiredParameters.first.type?.accept(emitter).toString(),
-          'String?',
-        );
-        expect(fromSimple.optionalParameters, isNotEmpty);
-        expect(fromSimple.optionalParameters.first.name, 'explode');
-        expect(
-          fromSimple.optionalParameters.first.type?.accept(emitter).toString(),
-          'bool',
-        );
+      final fromSimple = klass.constructors.firstWhere(
+        (c) => c.name == 'fromSimple',
+      );
+      expect(fromSimple.factory, isTrue);
+      expect(
+        fromSimple.requiredParameters.first.type?.accept(emitter).toString(),
+        'String?',
+      );
+      expect(fromSimple.optionalParameters, isNotEmpty);
+      expect(fromSimple.optionalParameters.first.name, 'explode');
+      expect(
+        fromSimple.optionalParameters.first.type?.accept(emitter).toString(),
+        'bool',
+      );
 
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(klass.accept(emitter).toString());
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
           factory Flexible.fromSimple(String? value, {required bool explode}) {
             User? user;
             try {
@@ -116,12 +114,11 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'anyOf with complex lists and simple type tries decodable variants',

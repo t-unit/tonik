@@ -658,27 +658,24 @@ void main() {
       });
     });
 
-    test(
-      'honors ListModel(isNullable: true) intrinsic nullability when the '
-      'caller leaves isNullable at the default',
-      () {
-        final listModel = ListModel(
-          content: StringModel(context: context),
-          isNullable: true,
-          context: context,
-          examples: const [],
-        );
-        expect(
-          buildFromJsonValueExpression(
-            'value',
-            model: listModel,
-            nameManager: nameManager,
-            package: 'my_package',
-          ).accept(emitter).toString(),
-          'value.decodeJsonNullableList<String>()',
-        );
-      },
-    );
+    test('honors ListModel(isNullable: true) intrinsic nullability when the '
+        'caller leaves isNullable at the default', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        isNullable: true,
+        context: context,
+        examples: const [],
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableList<String>()',
+      );
+    });
 
     test('generates for list of maps with typed values', () {
       final addressModel = ClassModel(
@@ -1219,72 +1216,66 @@ void main() {
     });
 
     group('respects model own nullability when isNullable is false', () {
-      test(
-        'nullable AliasModel wrapping ClassModel produces null check',
-        () {
-          final classModel = ClassModel(
-            isDeprecated: false,
-            context: context,
-            name: 'License',
-            properties: const [],
-            examples: const [],
-          );
-          final nullableAlias = AliasModel(
-            context: context,
-            name: 'NullableLicense',
-            model: classModel,
-            isNullable: true,
-            examples: const [],
-            defaultValue: null,
-          );
-          expect(
-            buildFromJsonValueExpression(
-              'value',
-              model: nullableAlias,
-              nameManager: nameManager,
-              package: 'my_package',
-            ).accept(emitter).toString(),
-            'value == null ? null : License.fromJson(value)',
-          );
-        },
-      );
+      test('nullable AliasModel wrapping ClassModel produces null check', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'License',
+          properties: const [],
+          examples: const [],
+        );
+        final nullableAlias = AliasModel(
+          context: context,
+          name: 'NullableLicense',
+          model: classModel,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: nullableAlias,
+            nameManager: nameManager,
+            package: 'my_package',
+          ).accept(emitter).toString(),
+          'value == null ? null : License.fromJson(value)',
+        );
+      });
 
-      test(
-        'nested nullable AliasModel produces null check',
-        () {
-          final classModel = ClassModel(
-            isDeprecated: false,
-            context: context,
-            name: 'License',
-            properties: const [],
-            examples: const [],
-          );
-          final innerAlias = AliasModel(
-            context: context,
-            name: 'InnerAlias',
-            model: classModel,
-            isNullable: true,
-            examples: const [],
-            defaultValue: null,
-          );
-          final outerAlias = AliasModel(
-            context: context,
-            name: 'OuterAlias',
-            model: innerAlias,
-            examples: const [],
-            defaultValue: null,
-          );
-          expect(
-            buildFromJsonValueExpression(
-              'value',
-              model: outerAlias,
-              nameManager: nameManager,
-              package: 'my_package',
-            ).accept(emitter).toString(),
-            'value == null ? null : License.fromJson(value)',
-          );
-        },
-      );
+      test('nested nullable AliasModel produces null check', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'License',
+          properties: const [],
+          examples: const [],
+        );
+        final innerAlias = AliasModel(
+          context: context,
+          name: 'InnerAlias',
+          model: classModel,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+        );
+        final outerAlias = AliasModel(
+          context: context,
+          name: 'OuterAlias',
+          model: innerAlias,
+          examples: const [],
+          defaultValue: null,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: outerAlias,
+            nameManager: nameManager,
+            package: 'my_package',
+          ).accept(emitter).toString(),
+          'value == null ? null : License.fromJson(value)',
+        );
+      });
 
       test(
         'nullable AliasModel wrapping primitive produces nullable decode',
@@ -1309,54 +1300,48 @@ void main() {
         },
       );
 
-      test(
-        'nullable ClassModel with isNullable false produces null check',
-        () {
-          final nullableClass = ClassModel(
-            isDeprecated: false,
-            context: context,
-            name: 'License',
-            properties: const [],
-            isNullable: true,
-            examples: const [],
-          );
-          expect(
-            buildFromJsonValueExpression(
-              'value',
-              model: nullableClass,
-              nameManager: nameManager,
-              package: 'my_package',
-            ).accept(emitter).toString(),
-            'value == null ? null : License.fromJson(value)',
-          );
-        },
-      );
+      test('nullable ClassModel with isNullable false produces null check', () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'License',
+          properties: const [],
+          isNullable: true,
+          examples: const [],
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: nullableClass,
+            nameManager: nameManager,
+            package: 'my_package',
+          ).accept(emitter).toString(),
+          'value == null ? null : License.fromJson(value)',
+        );
+      });
 
-      test(
-        'nullable EnumModel with isNullable false produces null check',
-        () {
-          final nullableEnum = EnumModel(
-            isDeprecated: false,
-            context: context,
-            name: 'Status',
-            values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'inactive'),
-            },
-            isNullable: true,
-            examples: const [],
-          );
-          expect(
-            buildFromJsonValueExpression(
-              'value',
-              model: nullableEnum,
-              nameManager: nameManager,
-              package: 'my_package',
-            ).accept(emitter).toString(),
-            'value == null ? null : Status.fromJson(value)',
-          );
-        },
-      );
+      test('nullable EnumModel with isNullable false produces null check', () {
+        final nullableEnum = EnumModel(
+          isDeprecated: false,
+          context: context,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: true,
+          examples: const [],
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: nullableEnum,
+            nameManager: nameManager,
+            package: 'my_package',
+          ).accept(emitter).toString(),
+          'value == null ? null : Status.fromJson(value)',
+        );
+      });
     });
   });
 
@@ -1808,137 +1793,119 @@ void main() {
       );
     });
 
-    test(
-      'nullable List of NeverModel validates elements '
-      'under useImmutableCollections',
-      () {
-        final listModel = ListModel(
-          content: NeverModel(context: context, isNullable: false),
-          isNullable: true,
-          context: context,
-          examples: const [],
-        );
-        expect(
-          buildFromJsonValueExpression(
-            'value',
-            model: listModel,
-            nameManager: nameManager,
-            package: 'my_package',
-            useImmutableCollections: true,
-          ).accept(emitter).toString(),
-          '''value == null ? null : IList(value.decodeJsonList<Object?>().map((e) => throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList())''',
-        );
-      },
-    );
+    test('nullable List of NeverModel validates elements '
+        'under useImmutableCollections', () {
+      final listModel = ListModel(
+        content: NeverModel(context: context, isNullable: false),
+        isNullable: true,
+        context: context,
+        examples: const [],
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        '''value == null ? null : IList(value.decodeJsonList<Object?>().map((e) => throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList())''',
+      );
+    });
 
-    test(
-      'non-nullable List of NeverModel validates elements '
-      'under useImmutableCollections',
-      () {
-        final listModel = ListModel(
-          content: NeverModel(context: context, isNullable: false),
-          context: context,
-          examples: const [],
-        );
-        expect(
-          buildFromJsonValueExpression(
-            'value',
-            model: listModel,
-            nameManager: nameManager,
-            package: 'my_package',
-            useImmutableCollections: true,
-          ).accept(emitter).toString(),
-          '''IList(value.decodeJsonList<Object?>().map((e) => throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList())''',
-        );
-      },
-    );
+    test('non-nullable List of NeverModel validates elements '
+        'under useImmutableCollections', () {
+      final listModel = ListModel(
+        content: NeverModel(context: context, isNullable: false),
+        context: context,
+        examples: const [],
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        '''IList(value.decodeJsonList<Object?>().map((e) => throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList())''',
+      );
+    });
   });
 
   group('buildFromJsonValueExpression with receiverOverride', () {
     final receiverLiteral = literalConstList(<Object?>[1, 2]);
 
-    test(
-      'AliasModel forwards receiverOverride into the underlying recursion '
-      'so the alias decoder sees the literal at the top-level receiver',
-      () {
-        final stringAlias = AliasModel(
-          context: context,
-          name: 'UserId',
-          model: StringModel(context: context),
-          examples: const [],
-          defaultValue: null,
-        );
-        expect(
-          buildFromJsonValueExpression(
-            r'_$raw',
-            model: stringAlias,
-            nameManager: nameManager,
-            package: 'my_package',
-            receiverOverride: receiverLiteral,
-          ).accept(emitter).toString(),
-          'const [1, 2, ].decodeJsonString()',
-        );
-      },
-    );
+    test('AliasModel forwards receiverOverride into the underlying recursion '
+        'so the alias decoder sees the literal at the top-level receiver', () {
+      final stringAlias = AliasModel(
+        context: context,
+        name: 'UserId',
+        model: StringModel(context: context),
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          r'_$raw',
+          model: stringAlias,
+          nameManager: nameManager,
+          package: 'my_package',
+          receiverOverride: receiverLiteral,
+        ).accept(emitter).toString(),
+        'const [1, 2, ].decodeJsonString()',
+      );
+    });
 
-    test(
-      'NeverModel with receiverOverride emits the throw directly — the '
-      'receiver-null guard is skipped because the override is statically '
-      'non-null',
-      () {
-        expect(
-          buildFromJsonValueExpression(
-            r'_$raw',
-            model: NeverModel(context: context, isNullable: false),
-            nameManager: nameManager,
-            package: 'my_package',
-            isNullable: true,
-            receiverOverride: receiverLiteral,
-          ).accept(emitter).toString(),
-          '''throw  JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
-        );
-      },
-    );
+    test('NeverModel with receiverOverride emits the throw directly — the '
+        'receiver-null guard is skipped because the override is statically '
+        'non-null', () {
+      expect(
+        buildFromJsonValueExpression(
+          r'_$raw',
+          model: NeverModel(context: context, isNullable: false),
+          nameManager: nameManager,
+          package: 'my_package',
+          isNullable: true,
+          receiverOverride: receiverLiteral,
+        ).accept(emitter).toString(),
+        '''throw  JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
+      );
+    });
 
-    test(
-      'AnyModel returns the override expression verbatim as a pass-through '
-      'instead of refer(value)',
-      () {
-        expect(
-          buildFromJsonValueExpression(
-            r'_$raw',
-            model: AnyModel(context: context),
-            nameManager: nameManager,
-            package: 'my_package',
-            receiverOverride: receiverLiteral,
-          ).accept(emitter).toString(),
-          'const [1, 2, ]',
-        );
-      },
-    );
+    test('AnyModel returns the override expression verbatim as a pass-through '
+        'instead of refer(value)', () {
+      expect(
+        buildFromJsonValueExpression(
+          r'_$raw',
+          model: AnyModel(context: context),
+          nameManager: nameManager,
+          package: 'my_package',
+          receiverOverride: receiverLiteral,
+        ).accept(emitter).toString(),
+        'const [1, 2, ]',
+      );
+    });
 
-    test(
-      'ListModel<String> applies the override at the outer decode receiver '
-      'but the inner closure parameter (`e`) is unaffected',
-      () {
-        final listModel = ListModel(
-          content: DateTimeModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        expect(
-          buildFromJsonValueExpression(
-            r'_$raw',
-            model: listModel,
-            nameManager: nameManager,
-            package: 'my_package',
-            receiverOverride: receiverLiteral,
-          ).accept(emitter).toString(),
-          'const [1, 2, ].decodeJsonList<String>().map((e) '
-          '=> e.decodeJsonDateTime()).toList()',
-        );
-      },
-    );
+    test('ListModel<String> applies the override at the outer decode receiver '
+        'but the inner closure parameter (`e`) is unaffected', () {
+      final listModel = ListModel(
+        content: DateTimeModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      expect(
+        buildFromJsonValueExpression(
+          r'_$raw',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+          receiverOverride: receiverLiteral,
+        ).accept(emitter).toString(),
+        'const [1, 2, ].decodeJsonList<String>().map((e) '
+        '=> e.decodeJsonDateTime()).toList()',
+      );
+    });
 
     test(
       'ClassModel applies the override at the receiver passed to fromJson',
@@ -1956,9 +1923,7 @@ void main() {
             model: user,
             nameManager: nameManager,
             package: 'my_package',
-            receiverOverride: literalConstMap(<Object?, Object?>{
-              'a': 1,
-            }),
+            receiverOverride: literalConstMap(<Object?, Object?>{'a': 1}),
           ).accept(emitter).toString(),
           "User.fromJson(const {'a': 1})",
         );

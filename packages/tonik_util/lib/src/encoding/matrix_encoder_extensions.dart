@@ -131,11 +131,12 @@ extension MatrixStringListEncoder on List<String> {
             '${alreadyEncoded ? item : Uri.encodeComponent(item)}',
       ).join();
     } else {
-      return ';$paramName=${uriEncode(
+      final encoded = uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
         textEncoding: utf8,
-      )}';
+      );
+      return ';$paramName=$encoded';
     }
   }
 }
@@ -176,11 +177,12 @@ extension MatrixStringMapEncoder on Map<String, String> {
           )
           .join();
     } else {
-      return ';$paramName=${uriEncode(
+      final encoded = uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
         textEncoding: utf8,
-      )}';
+      );
+      return ';$paramName=$encoded';
     }
   }
 }

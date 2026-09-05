@@ -29,88 +29,81 @@ void main() {
       assignment == null ? '' : assignment.accept(emitter).toString();
 
   group('resolveOperationParameterDefaults', () {
-    test(
-      'returns empty result when no parameter carries a default',
-      () {
-        final normalized = normalizeRequestParameters(
-          pathParameters: {
-            PathParameterObject(
-              name: 'id',
-              rawName: 'id',
-              description: null,
-              isRequired: true,
-              isDeprecated: false,
-              allowEmptyValue: false,
-              explode: false,
-              model: StringModel(context: context),
-              encoding: PathParameterEncoding.simple,
-              context: context,
-              examples: const [],
-              defaultValue: null,
-            ),
-          },
-          queryParameters: const {},
-          headers: const {},
-        );
+    test('returns empty result when no parameter carries a default', () {
+      final normalized = normalizeRequestParameters(
+        pathParameters: {
+          PathParameterObject(
+            name: 'id',
+            rawName: 'id',
+            description: null,
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: PathParameterEncoding.simple,
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+        },
+        queryParameters: const {},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
-      },
-    );
+      expect(result.byName, isEmpty);
+      expect(result.fields, isEmpty);
+    });
 
-    test(
-      'explicit defaultValue: null is treated as no default — no field, '
-      'no warning, no byName entry',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
+    test('explicit defaultValue: null is treated as no default — no field, '
+        'no warning, no byName entry', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
 
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {region},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {region},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
+      expect(result.byName, isEmpty);
+      expect(result.fields, isEmpty);
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
 
     test('materialises primitive defaults across all four locations '
         'in path → query → header → cookie field order', () {
@@ -186,14 +179,18 @@ void main() {
         initialReservedNames: const {'_dio'},
       );
 
-      expect(
-        result.byName.keys.toList(),
-        ['id', 'region', 'retries', 'tracking'],
-      );
-      expect(
-        result.fields.map((f) => f.name).toList(),
-        ['idDefault', 'regionDefault', 'retriesDefault', 'trackingDefault'],
-      );
+      expect(result.byName.keys.toList(), [
+        'id',
+        'region',
+        'retries',
+        'tracking',
+      ]);
+      expect(result.fields.map((f) => f.name).toList(), [
+        'idDefault',
+        'regionDefault',
+        'retriesDefault',
+        'trackingDefault',
+      ]);
 
       expect(result.fields[0].type?.symbol, 'String');
       expect(result.fields[0].static, isTrue);
@@ -212,9 +209,8 @@ void main() {
 
     test('drops type-mismatched default with a single warning, no field', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final bad = QueryParameterObject(
@@ -255,268 +251,250 @@ void main() {
       ]);
     });
 
-    test(
-      'alias-carried default surfaces via effectiveDefaultValue',
-      () {
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: AliasModel(
-            name: 'Region',
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: 'us',
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {region},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName['region']?.memberName, 'regionDefault');
-        expect(result.fields, hasLength(1));
-        expect(renderAssignment(result.fields.single.assignment), "r'us'");
-      },
-    );
-
-    test(
-      'parameter-local default takes precedence over alias default',
-      () {
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: AliasModel(
-            name: 'Region',
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: 'us',
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'eu',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {region},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(renderAssignment(result.fields.single.assignment), "r'eu'");
-      },
-    );
-
-    test(
-      'collision: parameter normalized name matches the candidate default '
-      'name — suffix is appended',
-      () {
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
+    test('alias-carried default surfaces via effectiveDefaultValue', () {
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: AliasModel(
+          name: 'Region',
           model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: 'us',
-        );
-        final preExisting = QueryParameterObject(
-          name: 'regionDefault',
-          rawName: 'regionDefault',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {region},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName['region']?.memberName, 'regionDefault');
+      expect(result.fields, hasLength(1));
+      expect(renderAssignment(result.fields.single.assignment), "r'us'");
+    });
+
+    test('parameter-local default takes precedence over alias default', () {
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: AliasModel(
+          name: 'Region',
           model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
-          defaultValue: null,
-        );
+          defaultValue: 'us',
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'eu',
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {region, preExisting},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {region},
+        headers: const {},
+      );
 
-        final reserved = <String>{
-          '_dio',
-          for (final p in normalized.queryParameters) p.normalizedName,
-        };
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: reserved,
-        );
+      expect(renderAssignment(result.fields.single.assignment), "r'eu'");
+    });
 
-        expect(result.byName['region']?.memberName, 'regionDefault2');
-      },
-    );
+    test('collision: parameter normalized name matches the candidate default '
+        'name — suffix is appended', () {
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'us',
+      );
+      final preExisting = QueryParameterObject(
+        name: 'regionDefault',
+        rawName: 'regionDefault',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-    test(
-      'date-time target falls through to a runtime getter — no const field, '
-      'isRuntime flag set, single routing log emitted',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {region, preExisting},
+        headers: const {},
+      );
 
-        final since = QueryParameterObject(
-          name: 'since',
-          rawName: 'since',
-          description: null,
-          isRequired: false,
+      final reserved = <String>{
+        '_dio',
+        for (final p in normalized.queryParameters) p.normalizedName,
+      };
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: reserved,
+      );
+
+      expect(result.byName['region']?.memberName, 'regionDefault2');
+    });
+
+    test('date-time target falls through to a runtime getter — no const field, '
+        'isRuntime flag set, single routing log emitted', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final since = QueryParameterObject(
+        name: 'since',
+        rawName: 'since',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: DateTimeModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: '2024-01-01T00:00:00Z',
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {since},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.fields, isEmpty);
+      expect(result.getters, hasLength(1));
+      expect(result.byName['since']?.memberName, 'sinceDefault');
+      expect(result.byName['since']?.isRuntime, isTrue);
+      final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
+      expect(routingLogs.map((r) => r.message), [
+        'Routing default to runtime fallback for Op.since.',
+      ]);
+    });
+
+    test('ClassModel target with default falls through to a runtime getter — '
+        'no const field, isRuntime flag set, routing log emitted', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final region = QueryParameterObject(
+        name: 'region',
+        rawName: 'region',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: ClassModel(
           isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: DateTimeModel(context: context),
-          encoding: QueryParameterEncoding.form,
+          name: 'Region',
+          properties: const [],
           context: context,
           examples: const [],
-          defaultValue: '2024-01-01T00:00:00Z',
-        );
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: const <String, Object?>{},
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {since},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {region},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.fields, isEmpty);
-        expect(result.getters, hasLength(1));
-        expect(result.byName['since']?.memberName, 'sinceDefault');
-        expect(result.byName['since']?.isRuntime, isTrue);
-        final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
-        expect(routingLogs.map((r) => r.message), [
-          'Routing default to runtime fallback for Op.since.',
-        ]);
-      },
-    );
-
-    test(
-      'ClassModel target with default falls through to a runtime getter — '
-      'no const field, isRuntime flag set, routing log emitted',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final region = QueryParameterObject(
-          name: 'region',
-          rawName: 'region',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: ClassModel(
-            isDeprecated: false,
-            name: 'Region',
-            properties: const [],
-            context: context,
-            examples: const [],
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: const <String, Object?>{},
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {region},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.fields, isEmpty);
-        expect(result.getters, hasLength(1));
-        expect(result.byName['region']?.memberName, 'regionDefault');
-        expect(result.byName['region']?.isRuntime, isTrue);
-        final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
-        expect(routingLogs.map((r) => r.message), [
-          'Routing default to runtime fallback for Op.region.',
-        ]);
-      },
-    );
+      expect(result.fields, isEmpty);
+      expect(result.getters, hasLength(1));
+      expect(result.byName['region']?.memberName, 'regionDefault');
+      expect(result.byName['region']?.isRuntime, isTrue);
+      final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
+      expect(routingLogs.map((r) => r.message), [
+        'Routing default to runtime fallback for Op.region.',
+      ]);
+    });
 
     test(
       'header parameter with ClassModel default falls through to a runtime '
       'getter — no const field, no DefaultResolution drop callback fires',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('OperationParameterDefaults').onRecord
+            .listen(logs.add);
         addTearDown(sub.cancel);
 
         final hPolicy = RequestHeaderObject(
@@ -583,9 +561,8 @@ void main() {
       'without emitting a const field, routing log emitted',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('OperationParameterDefaults').onRecord
+            .listen(logs.add);
         addTearDown(sub.cancel);
 
         final region = QueryParameterObject(
@@ -635,520 +612,486 @@ void main() {
       },
     );
 
-    test(
-      'double parameter with numeric default materialises a double-typed '
-      'const field',
-      () {
-        final ratio = QueryParameterObject(
-          name: 'ratio',
-          rawName: 'ratio',
-          description: null,
-          isRequired: false,
+    test('double parameter with numeric default materialises a double-typed '
+        'const field', () {
+      final ratio = QueryParameterObject(
+        name: 'ratio',
+        rawName: 'ratio',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: DoubleModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 1.5,
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {ratio},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName['ratio']?.memberName, 'ratioDefault');
+      expect(result.fields, hasLength(1));
+      expect(result.fields.single.type?.symbol, 'double');
+      expect(renderAssignment(result.fields.single.assignment), '1.5');
+    });
+
+    test('number parameter with int default materialises a num-typed '
+        'const field', () {
+      final ratio = QueryParameterObject(
+        name: 'ratio',
+        rawName: 'ratio',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: NumberModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 2,
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {ratio},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName['ratio']?.memberName, 'ratioDefault');
+      expect(result.fields, hasLength(1));
+      expect(result.fields.single.type?.symbol, 'num');
+      expect(renderAssignment(result.fields.single.assignment), '2');
+    });
+
+    test('enum parameter with a valid defaulted variant emits a static const '
+        'field referencing the matching enum variant', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final order = QueryParameterObject(
+        name: 'order',
+        rawName: 'order',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: EnumModel<String>(
+          name: 'Order',
+          values: {
+            const EnumEntry(value: 'asc'),
+            const EnumEntry(value: 'desc'),
+          },
+          isNullable: false,
           isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: DoubleModel(context: context),
-          encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
-          defaultValue: 1.5,
-        );
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'desc',
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {ratio},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {order},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName['ratio']?.memberName, 'ratioDefault');
-        expect(result.fields, hasLength(1));
-        expect(result.fields.single.type?.symbol, 'double');
-        expect(renderAssignment(result.fields.single.assignment), '1.5');
-      },
-    );
+      expect(result.byName.keys, ['order']);
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'orderDefault');
+      expect(field.type?.symbol, 'Order');
+      expect(renderAssignment(field.assignment), 'Order.desc');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
 
-    test(
-      'number parameter with int default materialises a num-typed '
-      'const field',
-      () {
-        final ratio = QueryParameterObject(
-          name: 'ratio',
-          rawName: 'ratio',
-          description: null,
-          isRequired: false,
+    test('header enum parameter with a valid defaulted variant emits a static '
+        'const field referencing the matching enum variant', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final mode = RequestHeaderObject(
+        name: 'mode',
+        rawName: 'X-Mode',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: EnumModel<String>(
+          name: 'Mode',
+          values: {
+            const EnumEntry(value: 'fast'),
+            const EnumEntry(value: 'slow'),
+          },
+          isNullable: false,
           isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: NumberModel(context: context),
-          encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
-          defaultValue: 2,
-        );
+        ),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 'slow',
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {ratio},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: {mode},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName['ratio']?.memberName, 'ratioDefault');
-        expect(result.fields, hasLength(1));
-        expect(result.fields.single.type?.symbol, 'num');
-        expect(renderAssignment(result.fields.single.assignment), '2');
-      },
-    );
+      expect(result.byName.keys, ['mode']);
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'modeDefault');
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.type?.symbol, 'Mode');
+      expect(renderAssignment(field.assignment), 'Mode.slow');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
 
-    test(
-      'enum parameter with a valid defaulted variant emits a static const '
-      'field referencing the matching enum variant',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
+    test('path enum parameter with a valid defaulted variant emits a static '
+        'const field referencing the matching enum variant', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
 
-        final order = QueryParameterObject(
-          name: 'order',
-          rawName: 'order',
-          description: null,
-          isRequired: false,
+      final kind = PathParameterObject(
+        name: 'kind',
+        rawName: 'kind',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: EnumModel<String>(
+          name: 'Kind',
+          values: {
+            const EnumEntry(value: 'big'),
+            const EnumEntry(value: 'small'),
+          },
+          isNullable: false,
           isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
+          context: context,
+          examples: const [],
+        ),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 'big',
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: {kind},
+        queryParameters: const {},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName.keys, ['kind']);
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'kindDefault');
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.type?.symbol, 'Kind');
+      expect(renderAssignment(field.assignment), 'Kind.big');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
+
+    test('cookie enum parameter with a valid defaulted variant emits a static '
+        'const field referencing the matching enum variant', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final flavor = CookieParameterObject(
+        name: 'flavor',
+        rawName: 'flavor',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: EnumModel<String>(
+          name: 'Flavor',
+          values: {
+            const EnumEntry(value: 'sweet'),
+            const EnumEntry(value: 'salty'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'salty',
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        cookieParameters: {flavor},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName.keys, ['flavor']);
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'flavorDefault');
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.type?.symbol, 'Flavor');
+      expect(renderAssignment(field.assignment), 'Flavor.salty');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
+
+    test('int-valued enum query parameter materialises a static const field '
+        'referencing the matching enum variant', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final priority = QueryParameterObject(
+        name: 'priority',
+        rawName: 'priority',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: EnumModel<int>(
+          name: 'Tier',
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 2,
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {priority},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName.keys, ['priority']);
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'priorityDefault');
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.type?.symbol, 'Tier');
+      expect(renderAssignment(field.assignment), 'Tier.two');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
+
+    test('enum query parameter with default value outside the enum values is '
+        'dropped with a warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final order = QueryParameterObject(
+        name: 'order',
+        rawName: 'order',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: EnumModel<String>(
+          name: 'Order',
+          values: {
+            const EnumEntry(value: 'asc'),
+            const EnumEntry(value: 'desc'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'archived',
+      );
+
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {order},
+        headers: const {},
+      );
+
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
+
+      expect(result.byName.containsKey('order'), isFalse);
+      expect(result.fields, isEmpty);
+      final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for Op.order.',
+      ]);
+    });
+
+    test('alias-wrapped enum default surfaces via effectiveDefaultValue and '
+        'materialises the matching variant const', () {
+      final logs = <LogRecord>[];
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final status = QueryParameterObject(
+        name: 'status',
+        rawName: 'status',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: AliasModel(
+          name: 'StatusAlias',
           model: EnumModel<String>(
-            name: 'Order',
+            name: 'Status',
             values: {
-              const EnumEntry(value: 'asc'),
-              const EnumEntry(value: 'desc'),
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
             },
             isNullable: false,
             isDeprecated: false,
             context: context,
             examples: const [],
           ),
-          encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
-          defaultValue: 'desc',
-        );
+          defaultValue: 'active',
+        ),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {order},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {status},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'Op',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName.keys, ['order']);
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'orderDefault');
-        expect(field.type?.symbol, 'Order');
-        expect(renderAssignment(field.assignment), 'Order.desc');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'header enum parameter with a valid defaulted variant emits a static '
-      'const field referencing the matching enum variant',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final mode = RequestHeaderObject(
-          name: 'mode',
-          rawName: 'X-Mode',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: EnumModel<String>(
-            name: 'Mode',
-            values: {
-              const EnumEntry(value: 'fast'),
-              const EnumEntry(value: 'slow'),
-            },
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          ),
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: 'slow',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: const {},
-          headers: {mode},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName.keys, ['mode']);
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'modeDefault');
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.type?.symbol, 'Mode');
-        expect(renderAssignment(field.assignment), 'Mode.slow');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'path enum parameter with a valid defaulted variant emits a static '
-      'const field referencing the matching enum variant',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final kind = PathParameterObject(
-          name: 'kind',
-          rawName: 'kind',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: EnumModel<String>(
-            name: 'Kind',
-            values: {
-              const EnumEntry(value: 'big'),
-              const EnumEntry(value: 'small'),
-            },
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          ),
-          encoding: PathParameterEncoding.simple,
-          context: context,
-          examples: const [],
-          defaultValue: 'big',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: {kind},
-          queryParameters: const {},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName.keys, ['kind']);
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'kindDefault');
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.type?.symbol, 'Kind');
-        expect(renderAssignment(field.assignment), 'Kind.big');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'cookie enum parameter with a valid defaulted variant emits a static '
-      'const field referencing the matching enum variant',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final flavor = CookieParameterObject(
-          name: 'flavor',
-          rawName: 'flavor',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          explode: false,
-          model: EnumModel<String>(
-            name: 'Flavor',
-            values: {
-              const EnumEntry(value: 'sweet'),
-              const EnumEntry(value: 'salty'),
-            },
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          ),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'salty',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: const {},
-          headers: const {},
-          cookieParameters: {flavor},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName.keys, ['flavor']);
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'flavorDefault');
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.type?.symbol, 'Flavor');
-        expect(renderAssignment(field.assignment), 'Flavor.salty');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'int-valued enum query parameter materialises a static const field '
-      'referencing the matching enum variant',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final priority = QueryParameterObject(
-          name: 'priority',
-          rawName: 'priority',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: EnumModel<int>(
-            name: 'Tier',
-            values: {
-              const EnumEntry(value: 1),
-              const EnumEntry(value: 2),
-              const EnumEntry(value: 3),
-            },
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 2,
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {priority},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName.keys, ['priority']);
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'priorityDefault');
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.type?.symbol, 'Tier');
-        expect(renderAssignment(field.assignment), 'Tier.two');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'enum query parameter with default value outside the enum values is '
-      'dropped with a warning',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final order = QueryParameterObject(
-          name: 'order',
-          rawName: 'order',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: EnumModel<String>(
-            name: 'Order',
-            values: {
-              const EnumEntry(value: 'asc'),
-              const EnumEntry(value: 'desc'),
-            },
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'archived',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {order},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName.containsKey('order'), isFalse);
-        expect(result.fields, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings.map((r) => r.message), [
-          'Dropping default for Op.order.',
-        ]);
-      },
-    );
-
-    test(
-      'alias-wrapped enum default surfaces via effectiveDefaultValue and '
-      'materialises the matching variant const',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final status = QueryParameterObject(
-          name: 'status',
-          rawName: 'status',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: AliasModel(
-            name: 'StatusAlias',
-            model: EnumModel<String>(
-              name: 'Status',
-              values: {
-                const EnumEntry(value: 'active'),
-                const EnumEntry(value: 'inactive'),
-              },
-              isNullable: false,
-              isDeprecated: false,
-              context: context,
-              examples: const [],
-            ),
-            context: context,
-            examples: const [],
-            defaultValue: 'active',
-          ),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {status},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName['status']?.memberName, 'statusDefault');
-        expect(result.fields, hasLength(1));
-        final field = result.fields.single;
-        expect(field.name, 'statusDefault');
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.type?.symbol, 'StatusAlias');
-        expect(renderAssignment(field.assignment), 'Status.active');
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
+      expect(result.byName['status']?.memberName, 'statusDefault');
+      expect(result.fields, hasLength(1));
+      final field = result.fields.single;
+      expect(field.name, 'statusDefault');
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.type?.symbol, 'StatusAlias');
+      expect(renderAssignment(field.assignment), 'Status.active');
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
   });
 
   group('initialOperationDefaultReservedNames', () {
@@ -1200,10 +1143,7 @@ void main() {
       );
 
       expect(names.contains('body'), isFalse);
-      expect(
-        names,
-        containsAll(<String>['cancellation', 'call']),
-      );
+      expect(names, containsAll(<String>['cancellation', 'call']));
     });
   });
 
@@ -1240,27 +1180,24 @@ void main() {
       );
     });
 
-    test(
-      'preserves isRuntime: true when qualifying a runtime local default '
-      'and keeps the defaultToCode shape pointing at the static getter',
-      () {
-        const local = OperationParameterDefault.local(
-          memberName: 'sinceDefault',
-          isRuntime: true,
-        );
+    test('preserves isRuntime: true when qualifying a runtime local default '
+        'and keeps the defaultToCode shape pointing at the static getter', () {
+      const local = OperationParameterDefault.local(
+        memberName: 'sinceDefault',
+        isRuntime: true,
+      );
 
-        final qualified = local.withOwner(
-          className: 'ListThings',
-          url: 'package:api/src/operation/list_things.dart',
-        );
+      final qualified = local.withOwner(
+        className: 'ListThings',
+        url: 'package:api/src/operation/list_things.dart',
+      );
 
-        expect(qualified.isRuntime, isTrue);
-        expect(qualified.memberName, 'sinceDefault');
-        expect(
-          qualified.defaultToCode().accept(emitter).toString(),
-          'ListThings.sinceDefault',
-        );
-      },
-    );
+      expect(qualified.isRuntime, isTrue);
+      expect(qualified.memberName, 'sinceDefault');
+      expect(
+        qualified.defaultToCode().accept(emitter).toString(),
+        'ListThings.sinceDefault',
+      );
+    });
   });
 }

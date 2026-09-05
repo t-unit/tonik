@@ -30,16 +30,10 @@ void main() {
 
       final result = await api.getWorkspaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<GetWorkspacesResponse200>(),
-      );
+      expect(success.value, isA<GetWorkspacesResponse200>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
@@ -51,16 +45,10 @@ void main() {
 
       final result = await api.getWorkspaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
-      expect(
-        success.value,
-        isA<GetWorkspacesResponse401>(),
-      );
+      expect(success.value, isA<GetWorkspacesResponse401>());
     });
   });
 
@@ -72,16 +60,10 @@ void main() {
 
       final result = await api.getWorkspace(workspaceGid: '12345');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<GetWorkspaceResponse200>(),
-      );
+      expect(success.value, isA<GetWorkspaceResponse200>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
@@ -105,10 +87,7 @@ void main() {
 
       final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/users');
-      expect(
-        uri.queryParameters['workspace'],
-        'ws-123',
-      );
+      expect(uri.queryParameters['workspace'], 'ws-123');
     });
   });
 
@@ -150,10 +129,7 @@ void main() {
 
       final result = await api.getProject(projectGid: '22222');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetProjectResponse200>());
@@ -175,16 +151,10 @@ void main() {
         limit: 10,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<GetTasksForProjectResponse200>(),
-      );
+      expect(success.value, isA<GetTasksForProjectResponse200>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
@@ -206,23 +176,15 @@ void main() {
               taskCompact: TaskCompact(name: 'New Task'),
               taskBaseModel: TaskBaseModel(),
             ),
-            taskRequestModel: TaskRequestModel(
-              workspace: '12345',
-            ),
+            taskRequestModel: TaskRequestModel(workspace: '12345'),
           ),
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
-      expect(
-        success.value,
-        isA<CreateTaskResponse201>(),
-      );
+      expect(success.value, isA<CreateTaskResponse201>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
@@ -241,9 +203,7 @@ void main() {
         body: const WorkspacesWorkspaceGidProjectsPostBodyBodyModel(
           data: ProjectRequest(
             projectBase: ProjectBase(
-              projectCompact: ProjectCompact(
-                name: 'New Project',
-              ),
+              projectCompact: ProjectCompact(name: 'New Project'),
               projectBaseModel: ProjectBaseModel(),
             ),
             projectRequestModel: ProjectRequestModel(),
@@ -251,23 +211,14 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
-      expect(
-        success.value,
-        isA<CreateProjectForWorkspaceResponse201>(),
-      );
+      expect(success.value, isA<CreateProjectForWorkspaceResponse201>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
-      expect(
-        uri.path,
-        '/api/1.0/workspaces/12345/projects',
-      );
+      expect(uri.path, '/api/1.0/workspaces/12345/projects');
     });
   });
 
@@ -282,9 +233,7 @@ void main() {
         body: const TasksTaskGidPutBodyBodyModel(
           data: TaskRequest(
             taskBase: TaskBase(
-              taskCompact: TaskCompact(
-                name: 'Updated Task',
-              ),
+              taskCompact: TaskCompact(name: 'Updated Task'),
               taskBaseModel: TaskBaseModel(),
             ),
             taskRequestModel: TaskRequestModel(),
@@ -292,24 +241,15 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<UpdateTaskResponse200>(),
-      );
+      expect(success.value, isA<UpdateTaskResponse200>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks/11111');
-      expect(
-        recordedRequest.method,
-        'PUT',
-      );
+      expect(recordedRequest.method, 'PUT');
     });
   });
 
@@ -321,24 +261,15 @@ void main() {
 
       final result = await api.deleteTask(taskGid: '11111');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
-      expect(
-        success.value,
-        isA<DeleteTaskResponse200>(),
-      );
+      expect(success.value, isA<DeleteTaskResponse200>());
       final recordedRequest = await imposterServer.takeRequest();
 
       final uri = recordedRequest.uri;
       expect(uri.path, '/api/1.0/tasks/11111');
-      expect(
-        recordedRequest.method,
-        'DELETE',
-      );
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 }

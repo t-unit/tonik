@@ -29,10 +29,7 @@ void main() {
     late ClassGenerator generator;
 
     setUp(() {
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
     });
 
     test('adds @Deprecated annotation when model is deprecated', () {
@@ -321,10 +318,7 @@ void main() {
     late ClassGenerator generator;
 
     setUp(() {
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
     });
 
     test(
@@ -371,38 +365,35 @@ void main() {
       },
     );
 
-    test(
-      'does not add @Deprecated annotation to field when property '
-      'is not deprecated',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'currentField',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              description: 'This field is current',
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('does not add @Deprecated annotation to field when property '
+        'is not deprecated', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'currentField',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            description: 'This field is current',
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final field = result.fields.firstWhere((f) => f.name == 'currentField');
-        final hasDeprecatedAnnotation = field.annotations.any(
-          (a) => a.accept(emitter).toString().contains('Deprecated'),
-        );
+      final field = result.fields.firstWhere((f) => f.name == 'currentField');
+      final hasDeprecatedAnnotation = field.annotations.any(
+        (a) => a.accept(emitter).toString().contains('Deprecated'),
+      );
 
-        expect(hasDeprecatedAnnotation, isFalse);
-      },
-    );
+      expect(hasDeprecatedAnnotation, isFalse);
+    });
   });
 }

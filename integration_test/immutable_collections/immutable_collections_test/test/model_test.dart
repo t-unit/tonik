@@ -25,9 +25,8 @@ void main() {
         id: 1,
         name: 'Widget',
         tags: <String>[].lock,
-        children: <ChildModel>[
-          const ChildModel(childName: 'bolt', value: 10),
-        ].lock,
+        children: <ChildModel>[const ChildModel(childName: 'bolt', value: 10)]
+            .lock,
         metadata: <String, String>{}.lock,
       );
       expect(item.children, isA<IList<ChildModel>>());
@@ -103,9 +102,8 @@ void main() {
         id: 42,
         name: 'Widget',
         tags: <String>['cool', 'useful'].lock,
-        children: <ChildModel>[
-          const ChildModel(childName: 'bolt', value: 10),
-        ].lock,
+        children: <ChildModel>[const ChildModel(childName: 'bolt', value: 10)]
+            .lock,
         metadata: IMap(const {'color': 'red'}),
       );
 
@@ -254,10 +252,7 @@ void main() {
       final restored = TaggedItem.fromJson(json);
 
       expect(restored.name, 'item1');
-      expect(
-        restored.additionalProperties,
-        isA<IMap<String, IList<String>>>(),
-      );
+      expect(restored.additionalProperties, isA<IMap<String, IList<String>>>());
       expect(restored.additionalProperties['colors'], isA<IList<String>>());
       expect(
         restored.additionalProperties['colors'],

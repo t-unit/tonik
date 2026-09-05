@@ -34,7 +34,6 @@ final class const TestHeaders._(final Map<String, List<String>> map) {
             }),
         }),
       );
-
   List<String>? operator [](String name) {
     final normalized = name.toLowerCase();
     for (final entry in map.entries) {

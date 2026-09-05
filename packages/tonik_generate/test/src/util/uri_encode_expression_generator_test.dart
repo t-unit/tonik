@@ -1041,9 +1041,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1084,9 +1084,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -1098,10 +1098,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 
@@ -1126,9 +1123,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -1147,10 +1144,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('threads allowReserved into inner-map and whole-list encode for '
@@ -1175,9 +1169,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -1196,10 +1190,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for List<Map<String, ClassModel>> '
@@ -1229,9 +1220,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal(
-            'result',
-          ).assign(expression.expression).statement,
+          ..body = declareFinal('result')
+              .assign(expression.expression)
+              .statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -1243,10 +1234,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 }

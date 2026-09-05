@@ -37,10 +37,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -68,10 +65,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -96,10 +90,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xEntity, isA<EntityTypePersonEntity>());
@@ -121,10 +112,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -151,10 +139,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -164,10 +149,7 @@ void main() {
         expect(entity.value.companyName, 'Tech Innovations');
         expect(entity.value.foundedYear, 2010);
         expect(entity.value.revenue, BigDecimal.parse('1500000.50'));
-        expect(
-          entity.value.website,
-          Uri.parse('https://techinnovations.com'),
-        );
+        expect(entity.value.website, Uri.parse('https://techinnovations.com'));
       });
 
       test(
@@ -183,10 +165,7 @@ void main() {
             ),
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
 
           expect(success.value.xEntity, isA<EntityTypeCompanyEntity>());
@@ -202,59 +181,47 @@ void main() {
     // (RFC 6570 Section 3.2.2), so the generator correctly throws an
     // EncodingException for any SystemEntity instance, even if config is null.
     group('SystemEntity', () {
-      test(
-        'system entity fails encoding because schema has nested object '
-        '(simple encoding limitation per OpenAPI spec)',
-        () async {
-          final api = buildApi(responseStatus: '200');
-          final response = await api.testHeaderRoundtripOneOfDiscriminated(
-            entity: const EntityTypeSystemEntity(
-              SystemEntity(
-                $type: SystemEntityTypeModel.system,
-                systemId: 'sys-001',
-              ),
+      test('system entity fails encoding because schema has nested object '
+          '(simple encoding limitation per OpenAPI spec)', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripOneOfDiscriminated(
+          entity: const EntityTypeSystemEntity(
+            SystemEntity(
+              $type: SystemEntityTypeModel.system,
+              systemId: 'sys-001',
             ),
-          );
+          ),
+        );
 
-          // Simple encoding does not support types with nested object
-          // properties.
-          // The generator correctly throws EncodingException because
-          // SystemEntity's schema includes a nested 'config' object.
-          expect(
-            response,
-            isTonikError,
-          );
-          final error = requireError(response);
-          expect(error.error, isA<EncodingException>());
-        },
-      );
+        // Simple encoding does not support types with nested object
+        // properties.
+        // The generator correctly throws EncodingException because
+        // SystemEntity's schema includes a nested 'config' object.
+        expect(response, isTonikError);
+        final error = requireError(response);
+        expect(error.error, isA<EncodingException>());
+      });
 
-      test(
-        'system entity with primitive fields also fails encoding '
-        '(schema-level limitation)',
-        () async {
-          final api = buildApi(responseStatus: '200');
-          final response = await api.testHeaderRoundtripOneOfDiscriminated(
-            entity: const EntityTypeSystemEntity(
-              SystemEntity(
-                $type: SystemEntityTypeModel.system,
-                systemId: 'sys-main-002',
-                version: '2.5.0',
-                active: true,
-              ),
+      test('system entity with primitive fields also fails encoding '
+          '(schema-level limitation)', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripOneOfDiscriminated(
+          entity: const EntityTypeSystemEntity(
+            SystemEntity(
+              $type: SystemEntityTypeModel.system,
+              systemId: 'sys-main-002',
+              version: '2.5.0',
+              active: true,
             ),
-          );
+          ),
+        );
 
-          // Even without config set, the schema defines a nested object,
-          // so simple encoding is not supported for this type.
-          expect(
-            response,
-            isTonikError,
-          );
-          final error = requireError(response);
-          expect(error.error, isA<EncodingException>());
-        },
-      );
+        // Even without config set, the schema defines a nested object,
+        // so simple encoding is not supported for this type.
+        expect(response, isTonikError);
+        final error = requireError(response);
+        expect(error.error, isA<EncodingException>());
+      });
 
       test('system entity with nested config object fails encoding '
           '(simple encoding does not support nested objects)', () async {
@@ -266,10 +233,7 @@ void main() {
               systemId: 'sys-003',
               version: '1.0.0',
               active: false,
-              config: SystemEntityConfigModel(
-                timeout: 5000,
-                retries: 3,
-              ),
+              config: SystemEntityConfigModel(timeout: 5000, retries: 3),
             ),
           ),
         );
@@ -298,10 +262,7 @@ void main() {
                   ),
                 ),
               );
-          expect(
-            personResponse,
-            isTonikSuccess,
-          );
+          expect(personResponse, isTonikSuccess);
           final personSuccess = requireSuccess(personResponse);
           expect(personSuccess.value.xEntity, isA<EntityTypePersonEntity>());
 
@@ -315,10 +276,7 @@ void main() {
                   ),
                 ),
               );
-          expect(
-            companyResponse,
-            isTonikSuccess,
-          );
+          expect(companyResponse, isTonikSuccess);
           final companySuccess = requireSuccess(companyResponse);
           expect(companySuccess.value.xEntity, isA<EntityTypeCompanyEntity>());
         },
@@ -340,10 +298,7 @@ void main() {
                   ),
                 ),
               );
-          expect(
-            systemResponse,
-            isTonikError,
-          );
+          expect(systemResponse, isTonikError);
         },
       );
     });
@@ -361,10 +316,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -390,10 +342,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 

@@ -93,101 +93,91 @@ void main() {
         expect(model.description, equals('This is deprecated'));
       });
 
-      test(
-        'single-member AllOf wrapping AliasModel with default exposes '
-        'the wrapped default through the resulting outer alias',
-        () {
-          final innerAlias = AliasModel(
-            name: 'InnerWithDefault',
-            model: StringModel(context: context),
-            context: context.push('InnerWithDefault'),
-            defaultValue: 'hello',
-            examples: const [],
-          );
+      test('single-member AllOf wrapping AliasModel with default exposes '
+          'the wrapped default through the resulting outer alias', () {
+        final innerAlias = AliasModel(
+          name: 'InnerWithDefault',
+          model: StringModel(context: context),
+          context: context.push('InnerWithDefault'),
+          defaultValue: 'hello',
+          examples: const [],
+        );
 
-          final allOfModel = AllOfModel(
-            name: 'OuterWithDescription',
-            models: [innerAlias],
-            context: context.push('OuterWithDescription'),
-            description: 'Adds description',
-            isDeprecated: false,
-            examples: const [],
-          );
+        final allOfModel = AllOfModel(
+          name: 'OuterWithDescription',
+          models: [innerAlias],
+          context: context.push('OuterWithDescription'),
+          description: 'Adds description',
+          isDeprecated: false,
+          examples: const [],
+        );
 
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: {innerAlias, allOfModel},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: const {},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: {innerAlias, allOfModel},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          final transformed = normalizer.apply(document);
+        final transformed = normalizer.apply(document);
 
-          final outer =
-              transformed.models.firstWhere(
-                    (m) => m is NamedModel && m.name == 'OuterWithDescription',
-                  )
-                  as AliasModel;
+        final outer = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'OuterWithDescription',
+        ) as AliasModel;
 
-          expect(outer.defaultValue, 'hello');
-        },
-      );
+        expect(outer.defaultValue, 'hello');
+      });
 
-      test(
-        'single-member AllOf wrapping AliasModel without default surfaces '
-        'null on the resulting outer alias',
-        () {
-          final innerAlias = AliasModel(
-            name: 'InnerWithoutDefault',
-            model: StringModel(context: context),
-            context: context.push('InnerWithoutDefault'),
-            defaultValue: null,
-            examples: const [],
-          );
+      test('single-member AllOf wrapping AliasModel without default surfaces '
+          'null on the resulting outer alias', () {
+        final innerAlias = AliasModel(
+          name: 'InnerWithoutDefault',
+          model: StringModel(context: context),
+          context: context.push('InnerWithoutDefault'),
+          defaultValue: null,
+          examples: const [],
+        );
 
-          final allOfModel = AllOfModel(
-            name: 'OuterWithDescription',
-            models: [innerAlias],
-            context: context.push('OuterWithDescription'),
-            description: 'Adds description',
-            isDeprecated: false,
-            examples: const [],
-          );
+        final allOfModel = AllOfModel(
+          name: 'OuterWithDescription',
+          models: [innerAlias],
+          context: context.push('OuterWithDescription'),
+          description: 'Adds description',
+          isDeprecated: false,
+          examples: const [],
+        );
 
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: {innerAlias, allOfModel},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: const {},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: {innerAlias, allOfModel},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          final transformed = normalizer.apply(document);
+        final transformed = normalizer.apply(document);
 
-          final outer =
-              transformed.models.firstWhere(
-                    (m) => m is NamedModel && m.name == 'OuterWithDescription',
-                  )
-                  as AliasModel;
+        final outer = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'OuterWithDescription',
+        ) as AliasModel;
 
-          expect(outer.defaultValue, isNull);
-        },
-      );
+        expect(outer.defaultValue, isNull);
+      });
 
       test('preserves nullable flag from AllOfModel', () {
         final baseModel = IntegerModel(context: context);
@@ -527,13 +517,10 @@ void main() {
         final transformed = normalizer.apply(document);
 
         // The AllOfModel in document.models should be normalized to AliasModel
-        final normalizedAllOf =
-            transformed.models.firstWhere(
-                  (m) =>
-                      m is NamedModel &&
-                      m.name == 'ArtistObjectExternalUrlsAllOfModel',
-                )
-                as AliasModel;
+        final normalizedAllOf = transformed.models.firstWhere(
+          (m) =>
+              m is NamedModel && m.name == 'ArtistObjectExternalUrlsAllOfModel',
+        ) as AliasModel;
         expect(
           normalizedAllOf.name,
           equals('ArtistObjectExternalUrlsAllOfModel'),
@@ -545,11 +532,9 @@ void main() {
         );
 
         // The ClassModel's property should also reference the transformed model
-        final artist =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ArtistObject',
-                )
-                as ClassModel;
+        final artist = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ArtistObject',
+        ) as ClassModel;
         final externalUrlsProp = artist.properties.first;
         // Property should now reference the AliasModel, not the original
         // AllOfModel
@@ -603,19 +588,15 @@ void main() {
         final transformed = normalizer.apply(document);
 
         // AllOfModel should be normalized
-        final normalizedAllOf =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ItemsAllOfModel',
-                )
-                as AliasModel;
+        final normalizedAllOf = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ItemsAllOfModel',
+        ) as AliasModel;
         expect(normalizedAllOf.model, isA<ClassModel>());
 
         // ListModel's content should also be the AliasModel
-        final list =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ItemList',
-                )
-                as ListModel;
+        final list = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ItemList',
+        ) as ListModel;
         expect(list.content, isA<AliasModel>());
         expect((list.content as AliasModel).name, equals('ItemsAllOfModel'));
       });
@@ -665,18 +646,14 @@ void main() {
         final transformed = normalizer.apply(document);
 
         // Both should be normalized since they have single models
-        final outer =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'OuterAllOf',
-                )
-                as AliasModel;
+        final outer = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'OuterAllOf',
+        ) as AliasModel;
         expect(outer.description, equals('Outer model'));
 
-        final inner =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'InnerAllOf',
-                )
-                as AliasModel;
+        final inner = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'InnerAllOf',
+        ) as AliasModel;
         expect(inner.name, equals('InnerAllOf'));
         expect(inner.model, isA<ClassModel>());
 
@@ -746,11 +723,9 @@ void main() {
 
         final transformed = normalizer.apply(document);
 
-        final container =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ContainerModel',
-                )
-                as ClassModel;
+        final container = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ContainerModel',
+        ) as ClassModel;
 
         // Multi-model AllOf should NOT be normalized
         expect(container.properties.first.model, isA<AllOfModel>());
@@ -801,16 +776,12 @@ void main() {
 
         final transformed = normalizer.apply(document);
 
-        final alias1 =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Wrapper1',
-                )
-                as AliasModel;
-        final alias2 =
-            transformed.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Wrapper2',
-                )
-                as AliasModel;
+        final alias1 = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Wrapper1',
+        ) as AliasModel;
+        final alias2 = transformed.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Wrapper2',
+        ) as AliasModel;
 
         // Both should reference the same transformed ClassModel instance
         expect(identical(alias1.model, alias2.model), isTrue);

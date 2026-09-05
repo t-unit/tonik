@@ -115,70 +115,67 @@ void main() {
     });
 
     group('non-cyclic composite models', () {
-      test(
-        'produce correct encodingShape',
-        () {
-          final simpleOneOf = OneOfModel(
-            name: 'SimpleOneOf',
-            models: [
-              (
-                discriminatorValue: 'a',
-                model: StringModel(context: Context.initial()),
-              ),
-              (
-                discriminatorValue: 'b',
-                model: IntegerModel(context: Context.initial()),
-              ),
-            ],
-            context: Context.initial(),
-            isDeprecated: false,
-            examples: const [],
-          );
-          expect(simpleOneOf.encodingShape, EncodingShape.simple);
+      test('produce correct encodingShape', () {
+        final simpleOneOf = OneOfModel(
+          name: 'SimpleOneOf',
+          models: [
+            (
+              discriminatorValue: 'a',
+              model: StringModel(context: Context.initial()),
+            ),
+            (
+              discriminatorValue: 'b',
+              model: IntegerModel(context: Context.initial()),
+            ),
+          ],
+          context: Context.initial(),
+          isDeprecated: false,
+          examples: const [],
+        );
+        expect(simpleOneOf.encodingShape, EncodingShape.simple);
 
-          final complexOneOf = OneOfModel(
-            name: 'ComplexOneOf',
-            models: [
-              (
-                discriminatorValue: null,
-                model: ClassModel(
-                  properties: [],
-                  context: Context.initial(),
-                  isDeprecated: false,
-                  examples: const [],
-                ),
+        final complexOneOf = OneOfModel(
+          name: 'ComplexOneOf',
+          models: [
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                properties: [],
+                context: Context.initial(),
+                isDeprecated: false,
+                examples: const [],
               ),
-            ],
-            context: Context.initial(),
-            isDeprecated: false,
-            examples: const [],
-          );
-          expect(complexOneOf.encodingShape, EncodingShape.complex);
+            ),
+          ],
+          context: Context.initial(),
+          isDeprecated: false,
+          examples: const [],
+        );
+        expect(complexOneOf.encodingShape, EncodingShape.complex);
 
-          final mixedOneOf = OneOfModel(
-            name: 'MixedOneOf',
-            models: [
-              (
-                discriminatorValue: null,
-                model: StringModel(context: Context.initial()),
+        final mixedOneOf = OneOfModel(
+          name: 'MixedOneOf',
+          models: [
+            (
+              discriminatorValue: null,
+              model: StringModel(context: Context.initial()),
+            ),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                properties: [],
+                context: Context.initial(),
+                isDeprecated: false,
+                examples: const [],
               ),
-              (
-                discriminatorValue: null,
-                model: ClassModel(
-                  properties: [],
-                  context: Context.initial(),
-                  isDeprecated: false,
-                  examples: const [],
-                ),
-              ),
-            ],
-            context: Context.initial(),
-            isDeprecated: false,
-            examples: const [],
-          );
-          expect(mixedOneOf.encodingShape, EncodingShape.mixed);
-        },
-      );
+            ),
+          ],
+          context: Context.initial(),
+          isDeprecated: false,
+          examples: const [],
+        );
+        expect(mixedOneOf.encodingShape, EncodingShape.mixed);
+      });
     });
 
     test('AllOf/OneOf/AnyOf: simple, complex, mixed', () {

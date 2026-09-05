@@ -31,29 +31,20 @@ void main() {
       },
     );
 
-    test(
-      'emits raw triple-quoted string for value with both quotes '
-      'not ending in double quote',
-      () {
-        expect(
-          emit(specLiteralString('it\'s "here" ok')),
-          'r"""it\'s "here" ok"""',
-        );
-      },
-    );
+    test('emits raw triple-quoted string for value with both quotes '
+        'not ending in double quote', () {
+      expect(
+        emit(specLiteralString('it\'s "here" ok')),
+        'r"""it\'s "here" ok"""',
+      );
+    });
 
-    test(
-      'falls back to escaped string when value with both quotes '
-      'ends in double quote',
-      () {
-        // r"""...""" is invalid Dart when content ends with "
-        // so we must use escaped single-quoted string
-        expect(
-          emit(specLiteralString('it\'s "here"')),
-          "'it\\'s \"here\"'",
-        );
-      },
-    );
+    test('falls back to escaped string when value with both quotes '
+        'ends in double quote', () {
+      // r"""...""" is invalid Dart when content ends with "
+      // so we must use escaped single-quoted string
+      expect(emit(specLiteralString('it\'s "here"')), "'it\\'s \"here\"'");
+    });
 
     test('emits raw single-quoted string for empty value', () {
       expect(emit(specLiteralString('')), "r''");
@@ -69,42 +60,33 @@ void main() {
       expect(specLiteralStringCode("it's"), 'r"it\'s"');
     });
 
-    test(
-      'path 3: both quotes uses raw triple-double-quoted string',
-      () {
-        expect(
-          specLiteralStringCode('it\'s "here" ok'),
-          'r"""it\'s "here" ok"""',
-        );
-      },
-    );
+    test('path 3: both quotes uses raw triple-double-quoted string', () {
+      expect(
+        specLiteralStringCode('it\'s "here" ok'),
+        'r"""it\'s "here" ok"""',
+      );
+    });
 
-    test(
-      'path 3 skipped: both quotes but ends with double quote falls '
-      'through to path 4',
-      () {
-        // Ending with " would produce r"""..."""" which is invalid Dart
-        final result = specLiteralStringCode('it\'s "here"');
-        expect(result, isNot(startsWith('r"""')));
-        expect(result, "'it\\'s \"here\"'");
-      },
-    );
+    test('path 3 skipped: both quotes but ends with double quote falls '
+        'through to path 4', () {
+      // Ending with " would produce r"""..."""" which is invalid Dart
+      final result = specLiteralStringCode('it\'s "here"');
+      expect(result, isNot(startsWith('r"""')));
+      expect(result, "'it\\'s \"here\"'");
+    });
 
-    test(
-      'path 4: triple-double-quotes uses escaped single-quoted string',
-      () {
-        // Build a string containing ', ", and """
-        const value =
-            "it's"
-            '"""'
-            'test';
-        final result = specLiteralStringCode(value);
-        expect(result, isNot(startsWith('r')));
-        expect(result, startsWith("'"));
-        expect(result, endsWith("'"));
-        expect(result, contains(r"\'"));
-      },
-    );
+    test('path 4: triple-double-quotes uses escaped single-quoted string', () {
+      // Build a string containing ', ", and """
+      const value =
+          "it's"
+          '"""'
+          'test';
+      final result = specLiteralStringCode(value);
+      expect(result, isNot(startsWith('r')));
+      expect(result, startsWith("'"));
+      expect(result, endsWith("'"));
+      expect(result, contains(r"\'"));
+    });
 
     test('escapes backslash in fallback path', () {
       // Build a string with ', ", and """ plus backslash
@@ -190,47 +172,38 @@ ok''';
         },
       );
 
-      test(
-        'multiline value with triple-double-quotes falls back to escaped '
-        'single-quoted string with escaped newline',
-        () {
-          // Contains ', ", """, and a newline — must use escaped fallback
-          const value = "it's\"\"\"\ntest";
-          final result = specLiteralStringCode(value);
-          expect(result, isNot(startsWith('r')));
-          expect(result, startsWith("'"));
-          expect(result, endsWith("'"));
-          expect(result, contains(r'\n'));
-          expect(result, contains(r"\'"));
-        },
-      );
+      test('multiline value with triple-double-quotes falls back to escaped '
+          'single-quoted string with escaped newline', () {
+        // Contains ', ", """, and a newline — must use escaped fallback
+        const value = "it's\"\"\"\ntest";
+        final result = specLiteralStringCode(value);
+        expect(result, isNot(startsWith('r')));
+        expect(result, startsWith("'"));
+        expect(result, endsWith("'"));
+        expect(result, contains(r'\n'));
+        expect(result, contains(r"\'"));
+      });
 
-      test(
-        r'value with \r in fallback path is escaped as literal \r',
-        () {
-          // Contains ', ", """, and \r — must use escaped fallback
-          const value = "it's\"\"\"\rtest";
-          final result = specLiteralStringCode(value);
-          expect(result, isNot(startsWith('r')));
-          expect(result, contains(r'\r'));
-        },
-      );
+      test(r'value with \r in fallback path is escaped as literal \r', () {
+        // Contains ', ", """, and \r — must use escaped fallback
+        const value = "it's\"\"\"\rtest";
+        final result = specLiteralStringCode(value);
+        expect(result, isNot(startsWith('r')));
+        expect(result, contains(r'\r'));
+      });
 
-      test(
-        'multiline value ending in double quote uses escaped '
-        'single-quoted string',
-        () {
-          // Has both quotes, ends in ", and has a newline
-          const value = '''
+      test('multiline value ending in double quote uses escaped '
+          'single-quoted string', () {
+        // Has both quotes, ends in ", and has a newline
+        const value = '''
 it's "here"
 "end"''';
-          final result = specLiteralStringCode(value);
-          expect(result, isNot(startsWith('r')));
-          expect(result, startsWith("'"));
-          expect(result, endsWith("'"));
-          expect(result, contains(r'\n'));
-        },
-      );
+        final result = specLiteralStringCode(value);
+        expect(result, isNot(startsWith('r')));
+        expect(result, startsWith("'"));
+        expect(result, endsWith("'"));
+        expect(result, contains(r'\n'));
+      });
     });
   });
 }

@@ -23,10 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -1036,50 +1033,48 @@ void main() {
       );
     });
 
-    test(
-      'generates fromJson with null check for required property '
-      'referencing nullable ClassModel',
-      () {
-        // ClassModel with isNullable=true produces `typedef Foo = $RawFoo?`,
-        // so fromJson must use the nullable decoder.
-        final nullableClass = ClassModel(
-          isDeprecated: false,
-          name: 'NullableLicense',
-          properties: [
-            Property(
-              name: 'key',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          isNullable: true,
-          examples: const [],
-        );
+    test('generates fromJson with null check for required property '
+        'referencing nullable ClassModel', () {
+      // ClassModel with isNullable=true produces `typedef Foo = $RawFoo?`,
+      // so fromJson must use the nullable decoder.
+      final nullableClass = ClassModel(
+        isDeprecated: false,
+        name: 'NullableLicense',
+        properties: [
+          Property(
+            name: 'key',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isNullable: true,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          context: context,
-          name: 'Repo',
-          properties: [
-            Property(
-              name: 'license',
-              model: nullableClass,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          examples: const [],
-        );
+      final model = ClassModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Repo',
+        properties: [
+          Property(
+            name: 'license',
+            model: nullableClass,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
   factory Repo.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'Repo');
     return Repo(
@@ -1089,47 +1084,44 @@ void main() {
     );
   }''';
 
-        final generatedClass = generator.generateClass(model);
-        expect(
-          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates fromJson with null check for required property '
-      'referencing nullable AliasModel',
-      () {
-        // AliasModel wrapping a string with isNullable=true
-        final nullableAlias = AliasModel(
-          name: 'NullableDescription',
-          model: StringModel(context: context),
-          isNullable: true,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates fromJson with null check for required property '
+        'referencing nullable AliasModel', () {
+      // AliasModel wrapping a string with isNullable=true
+      final nullableAlias = AliasModel(
+        name: 'NullableDescription',
+        model: StringModel(context: context),
+        isNullable: true,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          context: context,
-          name: 'Item',
-          properties: [
-            Property(
-              name: 'description',
-              model: nullableAlias,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          examples: const [],
-        );
+      final model = ClassModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Item',
+        properties: [
+          Property(
+            name: 'description',
+            model: nullableAlias,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
   factory Item.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'Item');
     return Item(
@@ -1139,13 +1131,12 @@ void main() {
     );
   }''';
 
-        final generatedClass = generator.generateClass(model);
-        expect(
-          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test('generates fromSimple method for class without properties', () {
       final model = ClassModel(
@@ -1215,9 +1206,7 @@ void main() {
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1248,9 +1237,7 @@ void main() {
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1306,9 +1293,7 @@ void main() {
 
         final generatedClass = generator.generateClass(writeOnlyModel);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1339,9 +1324,7 @@ void main() {
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1374,9 +1357,7 @@ void main() {
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1388,9 +1369,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1443,9 +1422,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1468,9 +1445,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1503,9 +1478,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1538,9 +1511,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1597,9 +1568,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1622,9 +1591,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1657,9 +1624,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1722,9 +1687,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1788,9 +1751,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1827,9 +1788,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1878,9 +1837,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1938,9 +1895,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -1996,9 +1951,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -2052,9 +2005,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -2108,9 +2059,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final generatedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });

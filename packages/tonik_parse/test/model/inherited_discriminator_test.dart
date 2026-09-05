@@ -89,11 +89,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final petResponse =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'PetResponse',
-                )
-                as OneOfModel;
+        final petResponse = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'PetResponse',
+        ) as OneOfModel;
 
         expect(petResponse.models, hasLength(2));
         final discriminatorValues = petResponse.models
@@ -120,11 +118,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final petRequest =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'PetRequest',
-                )
-                as AnyOfModel;
+        final petRequest = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'PetRequest',
+        ) as AnyOfModel;
 
         expect(petRequest.models, hasLength(2));
         final discriminatorValues = petRequest.models
@@ -192,11 +188,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final animalChoice =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'AnimalChoice',
-                )
-                as OneOfModel;
+        final animalChoice = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'AnimalChoice',
+        ) as OneOfModel;
 
         expect(animalChoice.discriminator, 'animalType');
         expect(animalChoice.models, hasLength(2));
@@ -209,76 +203,68 @@ void main() {
     );
   });
 
-  group(
-    'No inherited discriminator when not all alternatives share '
-    'parent',
-    () {
-      const fileContent = {
-        'openapi': '3.1.0',
-        'info': {'title': 'Test API', 'version': '1.0.0'},
-        'paths': <String, dynamic>{},
-        'components': {
-          'schemas': {
-            'Pet': {
-              'type': 'object',
-              'properties': {
-                'petType': {'type': 'string'},
-              },
-              'discriminator': {
-                'propertyName': 'petType',
-              },
+  group('No inherited discriminator when not all alternatives share '
+      'parent', () {
+    const fileContent = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Pet': {
+            'type': 'object',
+            'properties': {
+              'petType': {'type': 'string'},
             },
-            'Cat': {
-              'allOf': [
-                {r'$ref': '#/components/schemas/Pet'},
-                {
-                  'type': 'object',
-                  'properties': {
-                    'meowVolume': {'type': 'integer'},
-                  },
+            'discriminator': {'propertyName': 'petType'},
+          },
+          'Cat': {
+            'allOf': [
+              {r'$ref': '#/components/schemas/Pet'},
+              {
+                'type': 'object',
+                'properties': {
+                  'meowVolume': {'type': 'integer'},
                 },
-              ],
-            },
-            // Standalone schema that does NOT inherit from Pet
-            'Robot': {
-              'type': 'object',
-              'properties': {
-                'batteryLevel': {'type': 'integer'},
               },
-            },
-            // oneOf mixing an allOf child and a standalone - no inherited
-            // discriminator
-            'MixedChoice': {
-              'oneOf': [
-                {r'$ref': '#/components/schemas/Cat'},
-                {r'$ref': '#/components/schemas/Robot'},
-              ],
+            ],
+          },
+          // Standalone schema that does NOT inherit from Pet
+          'Robot': {
+            'type': 'object',
+            'properties': {
+              'batteryLevel': {'type': 'integer'},
             },
           },
+          // oneOf mixing an allOf child and a standalone - no inherited
+          // discriminator
+          'MixedChoice': {
+            'oneOf': [
+              {r'$ref': '#/components/schemas/Cat'},
+              {r'$ref': '#/components/schemas/Robot'},
+            ],
+          },
         },
-      };
+      },
+    };
 
-      test(
-        'does not inherit discriminator when alternatives have different '
-        'parents',
-        () {
-          final api = Importer().import(fileContent);
+    test('does not inherit discriminator when alternatives have different '
+        'parents', () {
+      final api = Importer().import(fileContent);
 
-          final mixedChoice = api.models.firstWhere(
-            (m) => m is NamedModel && m.name == 'MixedChoice',
-          );
-
-          expect(mixedChoice, isA<OneOfModel>());
-          expect((mixedChoice as OneOfModel).discriminator, isNull);
-
-          // No discriminator values should be set
-          for (final model in mixedChoice.models) {
-            expect(model.discriminatorValue, isNull);
-          }
-        },
+      final mixedChoice = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'MixedChoice',
       );
-    },
-  );
+
+      expect(mixedChoice, isA<OneOfModel>());
+      expect((mixedChoice as OneOfModel).discriminator, isNull);
+
+      // No discriminator values should be set
+      for (final model in mixedChoice.models) {
+        expect(model.discriminatorValue, isNull);
+      }
+    });
+  });
 
   group(r'Inherited discriminator via allOf with $defs', () {
     // Pattern where parent schema with discriminator is defined in $defs
@@ -358,9 +344,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final wrapper =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Wrapper')
-                as OneOfModel;
+        final wrapper = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Wrapper',
+        ) as OneOfModel;
 
         expect(wrapper.models, hasLength(2));
 
@@ -431,11 +417,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final container =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Container',
-                )
-                as OneOfModel;
+        final container = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Container',
+        ) as OneOfModel;
 
         expect(container.discriminator, 'shapeType');
         expect(container.models, hasLength(2));
@@ -463,9 +447,7 @@ void main() {
             'properties': {
               'vehicleType': {'type': 'string'},
             },
-            'discriminator': {
-              'propertyName': 'vehicleType',
-            },
+            'discriminator': {'propertyName': 'vehicleType'},
           },
           // Intermediate parent (no discriminator)
           'MotorVehicle': {

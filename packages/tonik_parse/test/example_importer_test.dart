@@ -209,10 +209,7 @@ void main() {
         );
 
         expect(result, isEmpty);
-        expect(
-          logs.where((r) => r.level == Level.WARNING),
-          hasLength(1),
-        );
+        expect(logs.where((r) => r.level == Level.WARNING), hasLength(1));
       },
     );
 
@@ -420,12 +417,7 @@ void main() {
       final result = importer.fromHeader(header);
 
       expect(result, const [
-        core.Example(
-          name: null,
-          summary: null,
-          description: null,
-          value: 'hv',
-        ),
+        core.Example(name: null, summary: null, description: null, value: 'hv'),
       ]);
     });
 

@@ -88,18 +88,13 @@ enums:
         expect(config.logLevel, LogLevel.verbose);
 
         expect(config.nameOverrides.schemas, {'UserDTO': 'User'});
-        expect(
-          config.nameOverrides.properties,
-          {'User.unique_identifier': 'id'},
-        );
-        expect(
-          config.nameOverrides.operations,
-          {'GetAllUsers': 'listUsers'},
-        );
-        expect(
-          config.nameOverrides.parameters,
-          {'listUsers.max_results': 'limit'},
-        );
+        expect(config.nameOverrides.properties, {
+          'User.unique_identifier': 'id',
+        });
+        expect(config.nameOverrides.operations, {'GetAllUsers': 'listUsers'});
+        expect(config.nameOverrides.parameters, {
+          'listUsers.max_results': 'limit',
+        });
         expect(config.nameOverrides.enums, {'Status.STATUS_ACTIVE': 'active'});
         expect(config.nameOverrides.tags, {'User Management': 'UserApi'});
 
@@ -229,9 +224,8 @@ transport:
           ),
         ]) {
           test('rejects ${invalidCase.name} with accepted values', () {
-            File(
-              '${tempDir.path}/tonik.yaml',
-            ).writeAsStringSync(invalidCase.yaml);
+            File('${tempDir.path}/tonik.yaml')
+                .writeAsStringSync(invalidCase.yaml);
 
             expect(
               () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
@@ -547,18 +541,12 @@ contentMediaTypes:
         final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
 
         expect(config.contentMediaTypes, hasLength(4));
-        expect(
-          config.contentMediaTypes['image/png'],
-          SchemaContentType.binary,
-        );
+        expect(config.contentMediaTypes['image/png'], SchemaContentType.binary);
         expect(
           config.contentMediaTypes['image/jpeg'],
           SchemaContentType.binary,
         );
-        expect(
-          config.contentMediaTypes['text/csv'],
-          SchemaContentType.text,
-        );
+        expect(config.contentMediaTypes['text/csv'], SchemaContentType.text);
         expect(
           config.contentMediaTypes['application/octet-stream'],
           SchemaContentType.binary,
@@ -840,9 +828,7 @@ nameOverrides:
           transport: TransportConfig(backend: TransportBackend.http),
         );
 
-        final merged = config.merge(
-          backend: TransportBackend.dio,
-        );
+        final merged = config.merge(backend: TransportBackend.dio);
 
         expect(merged.transport.backend, TransportBackend.dio);
       });
@@ -860,14 +846,10 @@ nameOverrides:
       test('merge preserves non-CLI config properties', () {
         const config = CliConfig(
           spec: './config-spec.yaml',
-          nameOverrides: NameOverridesConfig(
-            schemas: {'OldName': 'NewName'},
-          ),
+          nameOverrides: NameOverridesConfig(schemas: {'OldName': 'NewName'}),
           contentTypes: {'application/problem+json': ContentType.json},
           filter: FilterConfig(includeTags: ['Api']),
-          deprecated: DeprecatedConfig(
-            operations: DeprecatedHandling.exclude,
-          ),
+          deprecated: DeprecatedConfig(operations: DeprecatedHandling.exclude),
           enums: EnumConfig(generateUnknownCase: true),
         );
 

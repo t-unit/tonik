@@ -52,9 +52,7 @@ void main() {
       });
 
       test('parses reference without description sibling', () {
-        final json = {
-          r'$ref': '#/components/responses/SimpleResponse',
-        };
+        final json = {r'$ref': '#/components/responses/SimpleResponse'};
 
         final reference = ReferenceWrapper<Response>.fromJson(json);
 

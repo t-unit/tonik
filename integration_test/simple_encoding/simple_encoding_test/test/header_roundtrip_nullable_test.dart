@@ -30,18 +30,12 @@ void main() {
           nullableString: 'hello',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-string'],
-          'hello',
-        );
+        expect(recordedRequest.headers['x-nullable-string'], 'hello');
         expect(success.value.xNullableString, 'hello');
       });
 
@@ -49,19 +43,13 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripNullable();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
         // Null should not be sent as header
-        expect(
-          recordedRequest.headers['x-nullable-string'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-nullable-string'], isNull);
         expect(success.value.xNullableString, isNull);
       });
     });
@@ -73,18 +61,12 @@ void main() {
           nullableInteger: 42,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-integer'],
-          '42',
-        );
+        expect(recordedRequest.headers['x-nullable-integer'], '42');
         expect(success.value.xNullableInteger, 42);
       });
 
@@ -92,18 +74,12 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripNullable();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-integer'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-nullable-integer'], isNull);
         expect(success.value.xNullableInteger, isNull);
       });
     });
@@ -115,10 +91,7 @@ void main() {
           nullableObject: const NullableObject(name: 'test', count: 5),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -135,18 +108,12 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripNullable();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-object'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-nullable-object'], isNull);
         expect(success.value.xNullableObject, isNull);
       });
     });
@@ -160,40 +127,25 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-enum'],
-          'active',
-        );
-        expect(
-          success.value.xNullableEnum?.statusEnum,
-          StatusEnum.active,
-        );
+        expect(recordedRequest.headers['x-nullable-enum'], 'active');
+        expect(success.value.xNullableEnum?.statusEnum, StatusEnum.active);
       });
 
       test('null enum value roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripNullable();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-nullable-enum'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-nullable-enum'], isNull);
         expect(success.value.xNullableEnum, isNull);
       });
     });
@@ -210,30 +162,21 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, 'hello');
         expect(success.value.xNullableInteger, 42);
         expect(success.value.xNullableObject?.name, 'test');
-        expect(
-          success.value.xNullableEnum?.statusEnum,
-          StatusEnum.pending,
-        );
+        expect(success.value.xNullableEnum?.statusEnum, StatusEnum.pending);
       });
 
       test('all null values roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripNullable();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -250,10 +193,7 @@ void main() {
           nullableObject: const NullableObject(name: 'obj', count: 1),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 

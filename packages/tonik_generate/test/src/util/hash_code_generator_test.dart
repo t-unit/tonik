@@ -107,10 +107,7 @@ void main() {
       final method = generateHashCodeMethod(
         properties: List.generate(
           25,
-          (i) => (
-            normalizedName: 'prop$i',
-            hasCollectionValue: i.isEven,
-          ),
+          (i) => (normalizedName: 'prop$i', hasCollectionValue: i.isEven),
         ),
       );
 

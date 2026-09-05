@@ -559,52 +559,49 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         );
       });
 
-      test(
-        'generates toMatrix delegating to parameterProperties for '
-        'ListModel with complex content',
-        () {
-          final complexListModel = ListModel(
-            content: ClassModel(
-              isDeprecated: false,
-              name: 'ComplexItem',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              examples: const [],
-            ),
-            context: context,
-            examples: const [],
-          );
-
-          final model = AllOfModel(
+      test('generates toMatrix delegating to parameterProperties for '
+          'ListModel with complex content', () {
+        final complexListModel = ListModel(
+          content: ClassModel(
             isDeprecated: false,
-            name: 'AllOfComplexList',
-            models: [complexListModel],
+            name: 'ComplexItem',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
             context: context,
             examples: const [],
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
 
-          final generatedClass = generator.generateClass(model);
-          final classCode = format(generatedClass.accept(emitter).toString());
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfComplexList',
+          models: [complexListModel],
+          context: context,
+          examples: const [],
+        );
 
-          const expectedMethod = '''
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
 String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
-          expect(
-            collapseWhitespace(classCode),
-            contains(collapseWhitespace(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
 
       test(
         'generates toMatrix delegating to parameterProperties for MapModel',

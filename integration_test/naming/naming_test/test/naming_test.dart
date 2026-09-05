@@ -144,92 +144,65 @@ void main() {
   });
 
   group('OpenAPI cancelToken parameters', () {
-    test(
-      'API method sends cancelToken query parameter',
-      () async {
-        final api = _api(baseUrl);
-        final response = await api.getWithCancelTokenQuery(
-          cancelToken: 'myToken',
-          cancellation: TonikCancellation(),
-        );
+    test('API method sends cancelToken query parameter', () async {
+      final api = _api(baseUrl);
+      final response = await api.getWithCancelTokenQuery(
+        cancelToken: 'myToken',
+        cancellation: TonikCancellation(),
+      );
 
-        expect(response, isTonikSuccess);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.queryParameters['cancelToken'],
-          'myToken',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.queryParameters['cancelToken'], 'myToken');
+    });
 
-    test(
-      'API method sends cancelToken path parameter',
-      () async {
-        final api = _api(baseUrl);
-        final response = await api.getWithCancelTokenPath(
-          cancelToken: 'myToken',
-          cancellation: TonikCancellation(),
-        );
+    test('API method sends cancelToken path parameter', () async {
+      final api = _api(baseUrl);
+      final response = await api.getWithCancelTokenPath(
+        cancelToken: 'myToken',
+        cancellation: TonikCancellation(),
+      );
 
-        expect(response, isTonikSuccess);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(recordedRequest.uri.path, contains('myToken'));
-      },
-    );
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.path, contains('myToken'));
+    });
 
-    test(
-      'API method sends cancelToken header parameter',
-      () async {
-        final api = _api(baseUrl);
-        final response = await api.getWithCancelTokenHeader(
-          cancelToken: 'myToken',
-          cancellation: TonikCancellation(),
-        );
+    test('API method sends cancelToken header parameter', () async {
+      final api = _api(baseUrl);
+      final response = await api.getWithCancelTokenHeader(
+        cancelToken: 'myToken',
+        cancellation: TonikCancellation(),
+      );
 
-        expect(response, isTonikSuccess);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['canceltoken'],
-          'myToken',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['canceltoken'], 'myToken');
+    });
 
-    test(
-      'API method sends cancelToken cookie parameter',
-      () async {
-        final api = _api(baseUrl);
-        final response = await api.getWithCancelTokenCookie(
-          cancelToken: 'myToken',
-          cancellation: TonikCancellation(),
-        );
+    test('API method sends cancelToken cookie parameter', () async {
+      final api = _api(baseUrl);
+      final response = await api.getWithCancelTokenCookie(
+        cancelToken: 'myToken',
+        cancellation: TonikCancellation(),
+      );
 
-        expect(response, isTonikSuccess);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['cookie'],
-          'cancelToken=myToken',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['cookie'], 'cancelToken=myToken');
+    });
 
-    test(
-      'API method preserves sanitized cancel token wire names',
-      () async {
-        final api = _api(baseUrl);
-        final response = await api.getWithCancelTokenSanitized(
-          cancelToken: 'myToken',
-          cancellation: TonikCancellation(),
-        );
+    test('API method preserves sanitized cancel token wire names', () async {
+      final api = _api(baseUrl);
+      final response = await api.getWithCancelTokenSanitized(
+        cancelToken: 'myToken',
+        cancellation: TonikCancellation(),
+      );
 
-        expect(response, isTonikSuccess);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.queryParameters['Cancel-Token'],
-          'myToken',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.queryParameters['Cancel-Token'], 'myToken');
+    });
 
     test(
       'API method sends colliding query and body with portable cancellation',
@@ -243,10 +216,7 @@ void main() {
 
         expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.queryParameters['cancelToken'],
-          'myToken',
-        );
+        expect(recordedRequest.uri.queryParameters['cancelToken'], 'myToken');
       },
     );
 
@@ -260,19 +230,16 @@ void main() {
 
       final cancellation = TonikCancellation();
       final responseFuture =
-          _api(
-            'http://${server.address.address}:${server.port}',
-          ).getWithCancelTokenQuery(
-            cancelToken: 'myToken',
-            cancellation: cancellation,
-          );
+          _api('http://${server.address.address}:${server.port}')
+              .getWithCancelTokenQuery(
+                cancelToken: 'myToken',
+                cancellation: cancellation,
+              );
 
       await requestArrived.future.timeout(const Duration(seconds: 5));
       cancellation.cancel('cancel in flight');
 
-      final response = await responseFuture.timeout(
-        const Duration(seconds: 5),
-      );
+      final response = await responseFuture.timeout(const Duration(seconds: 5));
       expect(response, isTonikError);
       expect(requireError(response).type, TonikErrorType.cancelled);
     });
@@ -343,9 +310,7 @@ void main() {
 
   group('call parameter collision', () {
     test(r'uses $call in Dart and call on the wire', () async {
-      await _api(baseUrl).getWithCallQuery(
-        $call: 'invoke',
-      );
+      await _api(baseUrl).getWithCallQuery($call: 'invoke');
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.uri.queryParameters, {'call': 'invoke'});
@@ -393,10 +358,7 @@ void main() {
   group('self-referencing schema', () {
     test('SelfReferencer can nest', () {
       const child = SelfReferencer(name: 'child');
-      const parent = SelfReferencer(
-        name: 'parent',
-        children: [child],
-      );
+      const parent = SelfReferencer(name: 'parent', children: [child]);
 
       expect(parent.name, 'parent');
       expect(parent.children?.first.name, 'child');
@@ -418,103 +380,88 @@ void main() {
   });
 
   group('parameter counter-suffix collision (GetParamCounterCollision)', () {
-    test(
-      'exposes four distinct Dart parameter names — tokenPath, tokenQuery, '
-      'tokenQuery2, tokenQuery3 — and tokenQuery3 still serialises under the '
-      'wire key "token"',
-      () async {
-        final api = _api(baseUrl);
+    test('exposes four distinct Dart parameter names — tokenPath, tokenQuery, '
+        'tokenQuery2, tokenQuery3 — and tokenQuery3 still serialises under the '
+        'wire key "token"', () async {
+      final api = _api(baseUrl);
 
-        // The named-arg call site IS the compile-time check on Dart names:
-        // if any of the four were renamed, this wouldn't compile.
-        await api.getParamCounterCollision(
-          tokenPath: 'P',
-          tokenQuery: 'A',
-          tokenQuery2: 'B',
-          tokenQuery3: 'C',
-        );
+      // The named-arg call site IS the compile-time check on Dart names:
+      // if any of the four were renamed, this wouldn't compile.
+      await api.getParamCounterCollision(
+        tokenPath: 'P',
+        tokenQuery: 'A',
+        tokenQuery2: 'B',
+        tokenQuery3: 'C',
+      );
 
-        final recordedRequest = await imposterServer.takeRequest();
-        final uri = recordedRequest.uri;
+      final recordedRequest = await imposterServer.takeRequest();
+      final uri = recordedRequest.uri;
 
-        expect(
-          uri.path,
-          contains('/param-counter-collision/P'),
-        );
+      expect(uri.path, contains('/param-counter-collision/P'));
 
-        final params = uri.queryParametersAll;
+      final params = uri.queryParametersAll;
 
-        expect(
-          params['token'],
-          ['C'],
-          reason:
-              'tokenQuery3 must serialise under wire key "token" — the '
-              'Dart-side counter rename must not change the on-the-wire name.',
-        );
-        expect(
-          params['token_query'],
-          ['A'],
-          reason: 'tokenQuery must keep its raw wire name "token_query".',
-        );
-        expect(
-          params['token_query2'],
-          ['B'],
-          reason: 'tokenQuery2 must keep its raw wire name "token_query2".',
-        );
-        expect(
-          params.containsKey('token_query3'),
-          isFalse,
-          reason:
-              'No query key should adopt the renamed Dart identifier — that '
-              'would corrupt the outgoing request.',
-        );
-      },
-    );
+      expect(
+        params['token'],
+        ['C'],
+        reason:
+            'tokenQuery3 must serialise under wire key "token" — the '
+            'Dart-side counter rename must not change the on-the-wire name.',
+      );
+      expect(params['token_query'], [
+        'A',
+      ], reason: 'tokenQuery must keep its raw wire name "token_query".');
+      expect(params['token_query2'], [
+        'B',
+      ], reason: 'tokenQuery2 must keep its raw wire name "token_query2".');
+      expect(
+        params.containsKey('token_query3'),
+        isFalse,
+        reason:
+            'No query key should adopt the renamed Dart identifier — that '
+            'would corrupt the outgoing request.',
+      );
+    });
   });
 
   group(
     'location-suffix collision with declared name (GetParamSuffixCollision)',
     () {
-      test(
-        'exposes three distinct Dart parameter names — idPath2, idQuery, '
-        'idPath — and each serialises under its declared wire key',
-        () async {
-          final api = _api(baseUrl);
+      test('exposes three distinct Dart parameter names — idPath2, idQuery, '
+          'idPath — and each serialises under its declared wire key', () async {
+        final api = _api(baseUrl);
 
-          await api.getParamSuffixCollision(
-            idPath2: 'P',
-            idQuery: 42,
-            idPath: true,
-          );
+        await api.getParamSuffixCollision(
+          idPath2: 'P',
+          idQuery: 42,
+          idPath: true,
+        );
 
-          final recordedRequest = await imposterServer.takeRequest();
-          final uri = recordedRequest.uri;
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
 
-          expect(uri.path, contains('/param-suffix-collision/P'));
+        expect(uri.path, contains('/param-suffix-collision/P'));
 
-          final params = uri.queryParametersAll;
+        final params = uri.queryParametersAll;
 
-          expect(
-            params['id'],
-            ['42'],
-            reason: 'idQuery must serialise under wire key "id".',
-          );
-          expect(
-            params['idPath'],
-            ['true'],
-            reason:
-                'The declared idPath parameter keeps both its Dart name and '
-                'its wire key "idPath".',
-          );
-          expect(
-            params.containsKey('idPath2'),
-            isFalse,
-            reason:
-                'No query key should adopt the renamed Dart identifier — that '
-                'would corrupt the outgoing request.',
-          );
-        },
-      );
+        expect(params['id'], [
+          '42',
+        ], reason: 'idQuery must serialise under wire key "id".');
+        expect(
+          params['idPath'],
+          ['true'],
+          reason:
+              'The declared idPath parameter keeps both its Dart name and '
+              'its wire key "idPath".',
+        );
+        expect(
+          params.containsKey('idPath2'),
+          isFalse,
+          reason:
+              'No query key should adopt the renamed Dart identifier — that '
+              'would corrupt the outgoing request.',
+        );
+      });
     },
   );
 
@@ -551,22 +498,18 @@ void main() {
 
       late BdBe29Da4Efb88F7DServer server;
       try {
-        server =
-            Function.apply(constructor, const [], {
-                  ...commonArguments,
-                  const Symbol(r'$dio'): 'dio-value',
-                })
-                as BdBe29Da4Efb88F7DServer;
+        server = Function.apply(constructor, const [], {
+          ...commonArguments,
+          const Symbol(r'$dio'): 'dio-value',
+        }) as BdBe29Da4Efb88F7DServer;
         // The escaped name differs because it collides with Dio only in that
         // backend's generated server constructor.
         // ignore: avoid_catching_errors
       } on NoSuchMethodError {
-        server =
-            Function.apply(constructor, const [], {
-                  ...commonArguments,
-                  #dio: 'dio-value',
-                })
-                as BdBe29Da4Efb88F7DServer;
+        server = Function.apply(constructor, const [], {
+          ...commonArguments,
+          #dio: 'dio-value',
+        }) as BdBe29Da4Efb88F7DServer;
       }
 
       expect(
@@ -592,9 +535,7 @@ void main() {
       );
 
       final request = await server.takeRequest();
-      expect(request.uri.queryParameters, {
-        'file_custom': 'query-value',
-      });
+      expect(request.uri.queryParameters, {'file_custom': 'query-value'});
       expect(request.bodyText, contains('name="file"'));
       expect(request.bodyBytes, containsAllInOrder([1, 2, 3]));
     });
@@ -603,9 +544,6 @@ void main() {
 
 DefaultApi2 _api(String baseUrl) {
   return DefaultApi2(
-    CustomServer(
-      baseUrl: baseUrl,
-      serverConfig: testServerConfig(),
-    ),
+    CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
   );
 }

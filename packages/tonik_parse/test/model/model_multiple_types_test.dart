@@ -205,10 +205,7 @@ void main() {
     final listModel = arrayWithNullableItems.model as ListModel;
     expect(listModel.isContentNullable, isTrue);
     expect(listModel.content, isA<StringModel>());
-    expect(
-      (listModel.content as StringModel).context.path,
-      contains('array'),
-    );
+    expect((listModel.content as StringModel).context.path, contains('array'));
   });
 
   test('imports array with nullable items via nullable flag', () {
@@ -228,11 +225,9 @@ void main() {
   test('adds inline type array OneOfModel to models set', () {
     final api = Importer().import(fileContent);
 
-    final classModel =
-        api.models.firstWhere(
-              (m) => m is ClassModel && m.name == 'MultiTypeModel',
-            )
-            as ClassModel;
+    final classModel = api.models.firstWhere(
+      (m) => m is ClassModel && m.name == 'MultiTypeModel',
+    ) as ClassModel;
 
     final stringOrNumber = classModel.properties.firstWhere(
       (p) => p.name == 'stringOrNumber',
@@ -290,11 +285,9 @@ void main() {
 
     final api = Importer().import(spec);
 
-    final model =
-        api.models.firstWhere(
-              (m) => m is ClassModel && m.name == 'Person',
-            )
-            as ClassModel;
+    final model = api.models.firstWhere(
+      (m) => m is ClassModel && m.name == 'Person',
+    ) as ClassModel;
     final name = model.properties.firstWhere((p) => p.name == 'name');
     expect(name.model, isA<StringModel>());
     expect(name.isNullable, isTrue);
@@ -320,11 +313,9 @@ void main() {
   test('adds nested inline type array OneOfModel to models set', () {
     final api = Importer().import(fileContent);
 
-    final classModel =
-        api.models.firstWhere(
-              (m) => m is ClassModel && m.name == 'MultiTypeModel',
-            )
-            as ClassModel;
+    final classModel = api.models.firstWhere(
+      (m) => m is ClassModel && m.name == 'MultiTypeModel',
+    ) as ClassModel;
 
     final multiTypeArray = classModel.properties.firstWhere(
       (p) => p.name == 'multiTypeArray',

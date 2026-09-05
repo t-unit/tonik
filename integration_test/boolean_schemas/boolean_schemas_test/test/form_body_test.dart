@@ -66,11 +66,7 @@ void main() {
 
     test('echoFormAny with null anyValue', () async {
       final api = buildApi();
-      const original = FormWithAny(
-        name: 'null-form',
-        anyValue: null,
-        count: 0,
-      );
+      const original = FormWithAny(name: 'null-form', anyValue: null, count: 0);
 
       final result = await api.echoFormAny(body: original);
       final success = requireSuccess(result);
@@ -98,11 +94,7 @@ void main() {
 
     test('echoFormAny with boolean anyValue', () async {
       final api = buildApi();
-      const original = FormWithAny(
-        name: 'bool-form',
-        anyValue: true,
-        count: 1,
-      );
+      const original = FormWithAny(name: 'bool-form', anyValue: true, count: 1);
 
       final result = await api.echoFormAny(body: original);
       final success = requireSuccess(result);

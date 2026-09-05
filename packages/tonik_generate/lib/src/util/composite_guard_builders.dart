@@ -11,10 +11,7 @@ Method buildReadOnlyCurrentEncodingShapeGetter(Code exceptionBody) {
     (b) => b
       ..name = 'currentEncodingShape'
       ..type = MethodType.getter
-      ..returns = refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      )
+      ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
       ..lambda = true
       ..body = exceptionBody,
   );
@@ -134,10 +131,7 @@ Method buildReadOnlyToDeepObjectMethod(Code exceptionBody) {
           ..symbol = 'List'
           ..url = 'dart:core'
           ..types.add(
-            refer(
-              'ParameterEntry',
-              'package:tonik_util/tonik_util.dart',
-            ),
+            refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
           ),
       )
       ..requiredParameters.add(
@@ -257,9 +251,7 @@ Constructor buildWriteOnlyFromSimpleConstructor(String className) {
             ..type = refer('String?', 'dart:core'),
         ),
       )
-      ..optionalParameters.add(
-        buildBoolParameter('explode', required: true),
-      )
+      ..optionalParameters.add(buildBoolParameter('explode', required: true))
       ..lambda = true
       ..body = generateSimpleDecodingExceptionExpression(
         '$className is write-only and cannot be decoded.',
@@ -281,9 +273,7 @@ Constructor buildWriteOnlyFromFormConstructor(String className) {
             ..type = refer('String?', 'dart:core'),
         ),
       )
-      ..optionalParameters.add(
-        buildBoolParameter('explode', required: true),
-      )
+      ..optionalParameters.add(buildBoolParameter('explode', required: true))
       ..lambda = true
       ..body = generateFormDecodingExceptionExpression(
         '$className is write-only and cannot be decoded.',
@@ -303,10 +293,7 @@ Method buildToDeepObjectMethod() {
           ..symbol = 'List'
           ..url = 'dart:core'
           ..types.add(
-            refer(
-              'ParameterEntry',
-              'package:tonik_util/tonik_util.dart',
-            ),
+            refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
           ),
       )
       ..requiredParameters.add(

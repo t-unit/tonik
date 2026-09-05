@@ -14,10 +14,7 @@ void main() {
 
   LabelApi buildLabelApi() {
     return LabelApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(),
-      ),
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
     );
   }
 
@@ -31,10 +28,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/string/.blue',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/string/.blue');
     });
 
     test('integer value encodes as .value', () async {
@@ -46,10 +40,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/integer/.42',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/integer/.42');
     });
 
     test('number value encodes as .value', () async {
@@ -61,10 +52,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/number/.3.14',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/number/.3.14');
     });
 
     test('boolean value encodes as .value', () async {
@@ -76,10 +64,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/boolean/.true',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/boolean/.true');
     });
 
     test('enum value encodes as .value', () async {
@@ -93,10 +78,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/enum/.active',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/enum/.active');
     });
   });
 
@@ -188,10 +170,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/array/integer/.1,2,3',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/array/integer/.1,2,3');
     });
   });
 
@@ -207,10 +186,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/object/.name,test,count,5',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/object/.name,test,count,5');
     });
 
     test('object (explode=true) encodes as .k1=v1.k2=v2', () async {
@@ -243,10 +219,7 @@ void main() {
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.uri.path,
-          '/v1/label/object/.name,,count,5',
-        );
+        expect(recordedRequest.uri.path, '/v1/label/object/.name,,count,5');
       },
     );
 
@@ -270,28 +243,25 @@ void main() {
       },
     );
 
-    test(
-      'composite-list property comma-joins elements and escapes reserved '
-      'characters once',
-      () async {
-        final api = buildLabelApi();
-        final response = await api.testLabelObjectCompositeList(
-          value: const CompositeListObject(
-            tags: [OneOfPrimitiveString('a,b'), OneOfPrimitiveInt(7)],
-          ),
-        );
+    test('composite-list property comma-joins elements and escapes reserved '
+        'characters once', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelObjectCompositeList(
+        value: const CompositeListObject(
+          tags: [OneOfPrimitiveString('a,b'), OneOfPrimitiveInt(7)],
+        ),
+      );
 
-        expect(response, isTonikSuccess);
-        final success = requireSuccess(response);
-        expect(success.response.statusCode, 200);
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
+      expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.uri.path,
-          '/v1/label/object/composite-list/.tags,a%2Cb,7',
-        );
-      },
-    );
+      expect(
+        recordedRequest.uri.path,
+        '/v1/label/object/composite-list/.tags,a%2Cb,7',
+      );
+    });
   });
 
   group('Label style - Combined', () {
@@ -307,10 +277,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/combined/.hello/.42',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/combined/.hello/.42');
     });
   });
 
@@ -424,19 +391,14 @@ void main() {
 
     test('integerEnum encodes as .value', () async {
       final api = buildLabelApi();
-      final response = await api.testLabelIntegerEnum(
-        value: PriorityEnum.two,
-      );
+      final response = await api.testLabelIntegerEnum(value: PriorityEnum.two);
 
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/v1/label/primitive/integerEnum/.2',
-      );
+      expect(recordedRequest.uri.path, '/v1/label/primitive/integerEnum/.2');
     });
   });
 

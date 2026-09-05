@@ -62,12 +62,10 @@ void main() {
       expect(
         collapseWhitespace(renderGetter(result.getter)),
         collapseWhitespace(
-          formatBody(
-            '''
+          formatBody('''
 static DateTime get startsAtDefault => r'2024-01-01T00:00:00Z'
     .decodeJsonDateTime(context: r'Holder.startsAt');
-''',
-          ),
+'''),
         ),
       );
     });
@@ -89,13 +87,11 @@ static DateTime get startsAtDefault => r'2024-01-01T00:00:00Z'
       expect(
         collapseWhitespace(renderGetter(result.getter)),
         collapseWhitespace(
-          formatBody(
-            '''
+          formatBody('''
 static TonikFile get payloadDefault => TonikFileBytes(
   r'base64-blob'.decodeJsonBinary(context: r'Holder.payload'),
 );
-''',
-          ),
+'''),
         ),
       );
     });
@@ -150,54 +146,49 @@ static TonikFile get payloadDefault => TonikFileBytes(
       expect(
         collapseWhitespace(renderGetter(result.getter)),
         collapseWhitespace(
-          formatBody(
-            '''
+          formatBody('''
 static Pricing get pricingDefault => Pricing.fromJson(
   const <String, Object?>{r'amount': r'9.99', r'currency': r'USD'},
 );
-''',
-          ),
+'''),
         ),
       );
     });
 
-    test(
-      'self-referential MapModel default emits a block body with inline '
-      'helper declarations spliced before the return statement',
-      () {
-        final tree = MapModel(
-          name: 'Tree',
-          valueModel: AnyModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        tree.valueModel = tree;
+    test('self-referential MapModel default emits a block body with inline '
+        'helper declarations spliced before the return statement', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      tree.valueModel = tree;
 
-        final result = resolveRuntimeDefault(
-          normalizedName: 'tree',
-          specName: 'tree',
-          model: tree,
-          rawDefault: const <String, Object?>{},
-          containerName: 'Holder',
-          reservedNames: <String>{'tree'},
-          nameManager: nameManager,
-          package: package,
-        );
+      final result = resolveRuntimeDefault(
+        normalizedName: 'tree',
+        specName: 'tree',
+        model: tree,
+        rawDefault: const <String, Object?>{},
+        containerName: 'Holder',
+        reservedNames: <String>{'tree'},
+        nameManager: nameManager,
+        package: package,
+      );
 
-        expect(result, isNotNull);
-        expect(result!.type.symbol, 'Tree');
-        expect(
-          result.getter.lambda,
-          isNot(isTrue),
-          reason:
-              'self-referential typedefs require an inline helper '
-              'declaration, which cannot live in a lambda body',
-        );
-        expect(
-          collapseWhitespace(renderGetter(result.getter)),
-          collapseWhitespace(
-            formatBody(
-              r'''
+      expect(result, isNotNull);
+      expect(result!.type.symbol, 'Tree');
+      expect(
+        result.getter.lambda,
+        isNot(isTrue),
+        reason:
+            'self-referential typedefs require an inline helper '
+            'declaration, which cannot live in a lambda body',
+      );
+      expect(
+        collapseWhitespace(renderGetter(result.getter)),
+        collapseWhitespace(
+          formatBody(r'''
 static Tree get treeDefault {
   late final Tree Function(Object?) _$decodeTree;
   _$decodeTree = (Object? v) => v.decodeJsonMap(
@@ -206,12 +197,10 @@ static Tree get treeDefault {
   );
   return _$decodeTree(const <String, Object?>{});
 }
-''',
-            ),
-          ),
-        );
-      },
-    );
+'''),
+        ),
+      );
+    });
 
     test(
       'recursive class default emits a fromJson call without a cycle guard',
@@ -252,12 +241,10 @@ static Tree get treeDefault {
         expect(
           collapseWhitespace(renderGetter(result.getter)),
           collapseWhitespace(
-            formatBody(
-              '''
+            formatBody('''
 static Node get nextDefault =>
     Node.fromJson(const <String, Object?>{});
-''',
-            ),
+'''),
           ),
         );
       },
@@ -265,49 +252,44 @@ static Node get nextDefault =>
   });
 
   group('resolveRuntimeDefault — collections with non-const leaves', () {
-    test(
-      'ListModel<DateTime> default decodes each element on the const list '
-      'literal via the receiverOverride plumbing',
-      () {
-        final dateList = ListModel(
-          content: DateTimeModel(context: context),
-          context: context,
-          examples: const [],
-        );
+    test('ListModel<DateTime> default decodes each element on the const list '
+        'literal via the receiverOverride plumbing', () {
+      final dateList = ListModel(
+        content: DateTimeModel(context: context),
+        context: context,
+        examples: const [],
+      );
 
-        final result = resolveRuntimeDefault(
-          normalizedName: 'windows',
-          specName: 'windows',
-          model: dateList,
-          rawDefault: const <Object?>[
-            '2024-01-01T00:00:00Z',
-            '2024-06-15T12:00:00Z',
-          ],
-          containerName: 'Holder',
-          reservedNames: <String>{'windows'},
-          nameManager: nameManager,
-          package: package,
-        );
+      final result = resolveRuntimeDefault(
+        normalizedName: 'windows',
+        specName: 'windows',
+        model: dateList,
+        rawDefault: const <Object?>[
+          '2024-01-01T00:00:00Z',
+          '2024-06-15T12:00:00Z',
+        ],
+        containerName: 'Holder',
+        reservedNames: <String>{'windows'},
+        nameManager: nameManager,
+        package: package,
+      );
 
-        expect(result, isNotNull);
-        expect(result!.type.symbol, 'List');
-        expect(result.getter.lambda, isTrue);
-        expect(
-          collapseWhitespace(renderGetter(result.getter)),
-          collapseWhitespace(
-            formatBody(
-              '''
+      expect(result, isNotNull);
+      expect(result!.type.symbol, 'List');
+      expect(result.getter.lambda, isTrue);
+      expect(
+        collapseWhitespace(renderGetter(result.getter)),
+        collapseWhitespace(
+          formatBody('''
 static List<DateTime> get windowsDefault =>
     const <Object?>[r'2024-01-01T00:00:00Z', r'2024-06-15T12:00:00Z']
         .decodeJsonList<String>(context: r'Holder.windows')
         .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
         .toList();
-''',
-            ),
-          ),
-        );
-      },
-    );
+'''),
+        ),
+      );
+    });
 
     test(
       'useImmutableCollections: true wraps the decoded ListModel in IList',
@@ -336,16 +318,14 @@ static List<DateTime> get windowsDefault =>
         expect(
           collapseWhitespace(renderGetter(result.getter)),
           collapseWhitespace(
-            formatBody(
-              '''
+            formatBody('''
 static IList<DateTime> get windowsDefault => IList(
   const <Object?>[r'2024-01-01T00:00:00Z']
       .decodeJsonList<String>(context: r'Holder.windows')
       .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
       .toList(),
 );
-''',
-            ),
+'''),
           ),
         );
       },
@@ -378,59 +358,52 @@ static IList<DateTime> get windowsDefault => IList(
         expect(
           collapseWhitespace(renderGetter(result.getter)),
           collapseWhitespace(
-            formatBody(
-              '''
+            formatBody('''
 static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
     .decodeJsonDateTime(context: r'Holder.startsAt');
-''',
-            ),
+'''),
           ),
         );
       },
     );
 
-    test(
-      'nullable ClassModel decodes via fromJson without a dead null-check; '
-      'the return type carries the nullable suffix but the const literal is '
-      'statically non-null so the receiver-null guard is omitted',
-      () {
-        final pricing = ClassModel(
-          isDeprecated: false,
-          name: 'Pricing',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
+    test('nullable ClassModel decodes via fromJson without a dead null-check; '
+        'the return type carries the nullable suffix but the const literal is '
+        'statically non-null so the receiver-null guard is omitted', () {
+      final pricing = ClassModel(
+        isDeprecated: false,
+        name: 'Pricing',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final result = resolveRuntimeDefault(
-          normalizedName: 'pricing',
-          specName: 'pricing',
-          model: pricing,
-          rawDefault: const <String, Object?>{},
-          containerName: 'Holder',
-          reservedNames: <String>{'pricing'},
-          nameManager: nameManager,
-          package: package,
-          isNullableOverride: true,
-        );
+      final result = resolveRuntimeDefault(
+        normalizedName: 'pricing',
+        specName: 'pricing',
+        model: pricing,
+        rawDefault: const <String, Object?>{},
+        containerName: 'Holder',
+        reservedNames: <String>{'pricing'},
+        nameManager: nameManager,
+        package: package,
+        isNullableOverride: true,
+      );
 
-        expect(result, isNotNull);
-        expect(result!.type.symbol, 'Pricing');
-        expect(result.type.isNullable, isTrue);
-        expect(result.getter.lambda, isTrue);
-        expect(
-          collapseWhitespace(renderGetter(result.getter)),
-          collapseWhitespace(
-            formatBody(
-              '''
+      expect(result, isNotNull);
+      expect(result!.type.symbol, 'Pricing');
+      expect(result.type.isNullable, isTrue);
+      expect(result.getter.lambda, isTrue);
+      expect(
+        collapseWhitespace(renderGetter(result.getter)),
+        collapseWhitespace(
+          formatBody('''
 static Pricing? get pricingDefault =>
     Pricing.fromJson(const <String, Object?>{});
-''',
-            ),
-          ),
-        );
-      },
-    );
+'''),
+        ),
+      );
+    });
   });
 
   group('resolveRuntimeDefault — EnumModel', () {
@@ -469,11 +442,9 @@ static Pricing? get pricingDefault =>
         expect(
           collapseWhitespace(renderGetter(result.getter)),
           collapseWhitespace(
-            formatBody(
-              '''
+            formatBody('''
 static Status? get statusDefault => Status.fromJson(r'active');
-''',
-            ),
+'''),
           ),
         );
       },
@@ -524,9 +495,7 @@ static Status? get statusDefault => Status.fromJson(r'active');
       'implausible default emits without warning — runtime DecodingException',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'DefaultResolution',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('DefaultResolution').onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final result = resolveRuntimeDefault(
@@ -544,12 +513,10 @@ static Status? get statusDefault => Status.fromJson(r'active');
         expect(
           collapseWhitespace(renderGetter(result!.getter)),
           collapseWhitespace(
-            formatBody(
-              '''
+            formatBody('''
 static DateTime get startsAtDefault =>
     42.decodeJsonDateTime(context: r'Holder.startsAt');
-''',
-            ),
+'''),
           ),
         );
         expect(
@@ -567,9 +534,7 @@ static DateTime get startsAtDefault =>
       'null AND warns once — so the silently dropped default is observable',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger(
-          'DefaultResolution',
-        ).onRecord.listen(logs.add);
+        final sub = Logger('DefaultResolution').onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final yamlDateTime = DateTime.utc(2024, 6, 15);

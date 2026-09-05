@@ -89,10 +89,7 @@ void main() {
       );
       // Complex objects cannot be encoded for path parameters due to lack
       // of reflection in Dart
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.type, TonikErrorType.encoding);
     });
@@ -102,10 +99,7 @@ void main() {
       final result = await api.getPathLabelAnyExplode(anyValue: ['a', 'b']);
       // Complex arrays cannot be encoded for path parameters due to lack
       // of reflection in Dart
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.type, TonikErrorType.encoding);
     });

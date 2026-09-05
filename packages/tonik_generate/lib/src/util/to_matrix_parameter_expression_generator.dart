@@ -52,10 +52,7 @@ Expression _buildMatrixParameterExpression(
     OneOfModel() ||
     AnyOfModel() => propertyAccess.call(
       [paramName],
-      {
-        'explode': explode,
-        'allowEmpty': allowEmpty,
-      },
+      {'explode': explode, 'allowEmpty': allowEmpty},
     ),
     final ListModel m => _buildListMatrixExpression(
       valueExpression,
@@ -86,13 +83,7 @@ Expression _buildMatrixParameterExpression(
               : valueExpression.property('toBase64String'))
           .call([])
           .property('toMatrix')
-          .call(
-            [paramName],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
-          ),
+          .call([paramName], {'explode': explode, 'allowEmpty': allowEmpty}),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),
@@ -149,10 +140,7 @@ Expression _buildAnyModelMatrixExpression(
 }) {
   return refer('encodeAnyToMatrix', 'package:tonik_util/tonik_util.dart').call(
     [valueExpression, paramName],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
+    {'explode': explode, 'allowEmpty': allowEmpty},
   );
 }
 
@@ -182,10 +170,7 @@ Expression _buildListMatrixExpression(
   return switch (contentModel) {
     StringModel() when !isContentNullable => listPropertyAccess.call(
       [paramName],
-      {
-        'explode': explode,
-        'allowEmpty': allowEmpty,
-      },
+      {'explode': explode, 'allowEmpty': allowEmpty},
     ),
     StringModel() ||
     IntegerModel() ||
@@ -202,17 +187,12 @@ Expression _buildListMatrixExpression(
             [
               Method(
                 (b) => b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                   ..body = nullGuard(
-                    refer('e').property('uriEncode').call(
-                      [],
-                      {
-                        'allowEmpty': allowEmpty,
-                        'textEncoding': refer('utf8', 'dart:convert'),
-                      },
-                    ),
+                    refer('e').property('uriEncode').call([], {
+                      'allowEmpty': allowEmpty,
+                      'textEncoding': refer('utf8', 'dart:convert'),
+                    }),
                   ).code,
               ).closure,
             ],
@@ -245,9 +225,7 @@ Expression _buildListMatrixExpression(
             [
               Method(
                 (b) => b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                   ..body =
                       refer(
                             'encodeAnyToUri',
@@ -283,9 +261,7 @@ Expression _buildListMatrixExpression(
             [
               Method(
                 (b) => b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                   ..body = isContentNullable
                       ? refer('e')
                             .nullSafeProperty('toBase64String')
@@ -348,10 +324,7 @@ Expression _buildMapMatrixExpression(
       (isNullable
               ? expression.nullSafeProperty('toMatrix')
               : expression.property('toMatrix'))
-          .call(
-            [paramName],
-            {'explode': explode, 'allowEmpty': allowEmpty},
-          ),
+          .call([paramName], {'explode': explode, 'allowEmpty': allowEmpty}),
     UnsupportedMapPropertyValueConversion() =>
       generateEncodingExceptionExpression(
         'Map with complex value types cannot be matrix-encoded.',
@@ -390,17 +363,12 @@ Expression _buildListMapContentMatrixExpression(
         [
           Method(
             (b) => b
-              ..requiredParameters.add(
-                Parameter((b) => b..name = 'e'),
-              )
+              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
               ..body = converted
                   .property('toMatrix')
                   .call(
                     [paramName],
-                    {
-                      'explode': explode,
-                      'allowEmpty': allowEmpty,
-                    },
+                    {'explode': explode, 'allowEmpty': allowEmpty},
                   )
                   .code,
           ).closure,

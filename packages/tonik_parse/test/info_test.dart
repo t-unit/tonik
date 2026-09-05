@@ -47,10 +47,7 @@ void main() {
     'info': {
       'title': 'Test API',
       'version': '1.0.0',
-      'license': {
-        'name': 'MIT',
-        'url': 'https://opensource.org/licenses/MIT',
-      },
+      'license': {'name': 'MIT', 'url': 'https://opensource.org/licenses/MIT'},
     },
     'paths': <String, dynamic>{},
   };
@@ -60,10 +57,7 @@ void main() {
     'info': {
       'title': 'Test API',
       'version': '1.0.0',
-      'license': {
-        'name': 'Apache 2.0',
-        'identifier': 'Apache-2.0',
-      },
+      'license': {'name': 'Apache 2.0', 'identifier': 'Apache-2.0'},
     },
     'paths': <String, dynamic>{},
   };
@@ -80,10 +74,7 @@ void main() {
 
   const infoWithExternalDocs = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'externalDocs': {
       'description': 'Find out more about our API',

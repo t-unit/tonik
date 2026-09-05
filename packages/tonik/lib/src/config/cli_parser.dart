@@ -81,10 +81,7 @@ CliConfig mergeCliConfig({
   final environmentWorkers =
       cliWorkerCount != null || fileConfig.workerCount != 0
       ? null
-      : _parseWorkerCount(
-          environmentWorkerCount,
-          source: 'TONIK_WORKERS',
-        );
+      : _parseWorkerCount(environmentWorkerCount, source: 'TONIK_WORKERS');
 
   return fileConfig.merge(
     spec: arguments.option('spec'),

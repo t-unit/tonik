@@ -8,9 +8,8 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 
 String _formatClass(Class cls) {
   final emitter = DartEmitter(useNullSafetySyntax: true);
-  return DartFormatter(
-    languageVersion: DartFormatter.latestLanguageVersion,
-  ).format(cls.accept(emitter).toString());
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+      .format(cls.accept(emitter).toString());
 }
 
 void main() {
@@ -182,9 +181,7 @@ int get hashCode => tags.hashCode;
 
       test('generates IMap field type', () {
         final result = generator.generateClass(model);
-        final field = result.fields.firstWhere(
-          (f) => f.name == 'settings',
-        );
+        final field = result.fields.firstWhere((f) => f.name == 'settings');
         final typeRef = field.type! as TypeReference;
         expect(typeRef.symbol, 'IMap');
         expect(

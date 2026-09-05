@@ -129,10 +129,7 @@ void main() {
         final bytes = utf8.encode('Grüße 👋');
 
         expect(
-          decodeResponseText(
-            bytes,
-            contentType: 'Text/Plain; Charset="UTF-8"',
-          ),
+          decodeResponseText(bytes, contentType: 'Text/Plain; Charset="UTF-8"'),
           'Grüße 👋',
         );
       });
@@ -141,10 +138,7 @@ void main() {
         final bytes = utf8.encode('Grüße 👋');
 
         expect(
-          decodeResponseText(
-            bytes,
-            contentType: 'text/plain; charset=utf8',
-          ),
+          decodeResponseText(bytes, contentType: 'text/plain; charset=utf8'),
           'Grüße 👋',
         );
       });
@@ -162,17 +156,7 @@ void main() {
       });
 
       test('decodes Windows-1252 distinctly from ISO-8859-1', () {
-        const bytes = [
-          0x93,
-          0x54,
-          0x6f,
-          0x6e,
-          0x69,
-          0x6b,
-          0x94,
-          0x20,
-          0x80,
-        ];
+        const bytes = [0x93, 0x54, 0x6f, 0x6e, 0x69, 0x6b, 0x94, 0x20, 0x80];
 
         expect(
           decodeResponseText(
@@ -211,10 +195,7 @@ void main() {
         const bytes = [0xd6, 0xd0, 0xce, 0xc4];
 
         expect(
-          decodeResponseText(
-            bytes,
-            contentType: 'text/plain; charset=gbk',
-          ),
+          decodeResponseText(bytes, contentType: 'text/plain; charset=gbk'),
           '中文',
         );
       });
@@ -295,10 +276,11 @@ void main() {
 
       test('throws for unsupported charset', () {
         expect(
-          () => decodeResponseText(
-            const [0x66, 0x6f, 0x6f],
-            contentType: 'text/plain; charset=made-up',
-          ),
+          () => decodeResponseText(const [
+            0x66,
+            0x6f,
+            0x6f,
+          ], contentType: 'text/plain; charset=made-up'),
           throwsA(
             isA<ResponseDecodingException>().having(
               (error) => error.message,
@@ -311,10 +293,9 @@ void main() {
 
       test('wraps malformed encoded bytes', () {
         expect(
-          () => decodeResponseText(
-            const [0x81],
-            contentType: 'text/plain; charset=windows-1252',
-          ),
+          () => decodeResponseText(const [
+            0x81,
+          ], contentType: 'text/plain; charset=windows-1252'),
           throwsA(
             isA<ResponseDecodingException>().having(
               (error) => error.message,
@@ -327,10 +308,11 @@ void main() {
 
       test('throws for malformed Content-Type', () {
         expect(
-          () => decodeResponseText(
-            const [0x66, 0x6f, 0x6f],
-            contentType: 'text/plain; charset',
-          ),
+          () => decodeResponseText(const [
+            0x66,
+            0x6f,
+            0x6f,
+          ], contentType: 'text/plain; charset'),
           throwsA(
             isA<ResponseDecodingException>().having(
               (error) => error.message,
@@ -343,10 +325,11 @@ void main() {
 
       test('does not treat GB18030 as GBK', () {
         expect(
-          () => decodeResponseText(
-            const [0x66, 0x6f, 0x6f],
-            contentType: 'text/plain; charset=gb18030',
-          ),
+          () => decodeResponseText(const [
+            0x66,
+            0x6f,
+            0x6f,
+          ], contentType: 'text/plain; charset=gb18030'),
           throwsA(isA<ResponseDecodingException>()),
         );
       });
@@ -354,10 +337,12 @@ void main() {
       test('does not use the broken EUC-KR decoder', () {
         for (final charsetName in ['euc-kr', 'cp949']) {
           expect(
-            () => decodeResponseText(
-              const [0xc7, 0xd1, 0xb1, 0xb9],
-              contentType: 'text/plain; charset=$charsetName',
-            ),
+            () => decodeResponseText(const [
+              0xc7,
+              0xd1,
+              0xb1,
+              0xb9,
+            ], contentType: 'text/plain; charset=$charsetName'),
             throwsA(
               isA<ResponseDecodingException>().having(
                 (error) => error.message,

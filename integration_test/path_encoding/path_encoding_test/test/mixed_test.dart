@@ -13,10 +13,7 @@ void main() {
 
   LabelApi buildLabelApi() {
     return LabelApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(),
-      ),
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
     );
   }
 
@@ -34,10 +31,7 @@ void main() {
       // First param (label): .hello
       // Second param (matrix): ;matrixValue=world
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.path,
-        '/v1/mixed/.hello/;matrixValue=world',
-      );
+      expect(recordedRequest.uri.path, '/v1/mixed/.hello/;matrixValue=world');
     });
   });
 }
