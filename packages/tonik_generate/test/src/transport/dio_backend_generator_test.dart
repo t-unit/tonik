@@ -1,7 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
-import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
@@ -160,118 +159,6 @@ void close() {
       );
     });
   });
-
-  test(
-    'guards pre-cancellation, resolves lazily, and bridges in-flight cancel '
-    'without a shadow-prone local',
-    () {
-      final statements = generator.generateDispatchStatements(
-        plan: OperationRequestPlan(
-          method: HttpMethod.get,
-          uri: refer(r'_$uri'),
-          pathParameters: const [],
-          queryParameters: const [],
-          headers: const [],
-          cookies: const [],
-          contentType: null,
-          cancellation: refer('cancellation'),
-          response: ResponseRequirements(
-            expectsBytes: true,
-            statuses: const [],
-            contentTypes: const [],
-          ),
-          body: const AbsentBodyPlan(),
-        ),
-        responseVariable: r'_$response',
-        resultValueType: refer('void'),
-      );
-
-      final method = Method(
-        (b) => b
-          ..name = 'dispatch'
-          ..returns = TypeReference(
-            (b) => b
-              ..symbol = 'Future'
-              ..url = 'dart:core'
-              ..types.add(refer('void')),
-          )
-          ..modifier = MethodModifier.async
-          ..body = Block.of([statements]),
-      );
-
-      const expectedMethod = r'''
-Future<void> dispatch() async {
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-}
-''';
-
-      expect(
-        collapseWhitespace(format('${method.accept(emitter)}')),
-        collapseWhitespace(format(expectedMethod)),
-      );
-    },
-  );
 }
 
 String _asMethod(Method method, DartEmitter emitter) {

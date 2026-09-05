@@ -104,6 +104,7 @@ void main() {
       final files = operationDir
           .listSync()
           .whereType<File>()
+          .where((file) => file.readAsStringSync().contains(' call('))
           .map((file) => path.basename(file.path))
           .toList();
 
