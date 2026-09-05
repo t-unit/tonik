@@ -37,9 +37,9 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -65,7 +65,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -73,7 +73,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -99,7 +99,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -107,7 +107,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -129,9 +129,9 @@ void main() {
           isDeprecated: false,
           description: 'Combines multiple schemas into one',
           name: 'Combined',
-          models: {
+          models: [
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -149,9 +149,9 @@ void main() {
           isDeprecated: false,
           description: 'A combined model.\nInherits from multiple schemas.',
           name: 'Combined',
-          models: {
+          models: [
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -168,9 +168,9 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {
+          models: [
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -185,9 +185,9 @@ void main() {
           isDeprecated: false,
           description: '',
           name: 'Combined',
-          models: {
+          models: [
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -201,7 +201,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           examples: const [
             Example(
@@ -228,7 +228,7 @@ void main() {
           isDeprecated: false,
           description: 'A combined model',
           name: 'Combined',
-          models: {StringModel(context: context)},
+          models: [StringModel(context: context)],
           context: context,
           examples: const [
             Example(
@@ -257,7 +257,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
           ClassModel(
             isDeprecated: false,
@@ -266,7 +266,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -292,10 +292,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -317,7 +317,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -352,7 +352,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -374,7 +374,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
           ClassModel(
             isDeprecated: false,
@@ -393,7 +393,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -415,7 +415,7 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -427,7 +427,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -435,10 +435,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           oneOfModel,
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -468,7 +468,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -503,7 +503,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -535,7 +535,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -570,7 +570,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -608,7 +608,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -643,7 +643,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -669,7 +669,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -724,7 +724,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -752,7 +752,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: <Model>{
+        models: <Model>[
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -791,7 +791,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -830,10 +830,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'StringDecimalModel',
-        models: <Model>{
+        models: <Model>[
           StringModel(context: context),
           DecimalModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -884,7 +884,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'EnumStringModel',
-        models: {
+        models: [
           EnumModel(
             isDeprecated: false,
             name: 'Status',
@@ -897,7 +897,7 @@ void main() {
             examples: const [],
           ),
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -973,10 +973,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'DateStringModel',
-        models: <Model>{
+        models: <Model>[
           DateModel(context: context),
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1029,11 +1029,11 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'NumberModel',
-          models: <Model>{
+          models: <Model>[
             NumberModel(context: context),
             DoubleModel(context: context),
             IntegerModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1093,7 +1093,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'MixedModel',
-        models: <Model>{
+        models: <Model>[
           StringModel(context: context),
           ClassModel(
             isDeprecated: false,
@@ -1112,7 +1112,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1142,10 +1142,10 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'MixedModel',
-          models: <Model>{
+          models: <Model>[
             StringModel(context: context),
             DateModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1169,7 +1169,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'User-Profile',
@@ -1204,7 +1204,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1228,7 +1228,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'User',
@@ -1263,7 +1263,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1285,11 +1285,11 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'CombinedModel',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
           DecimalModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1308,13 +1308,13 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfDateTimeList',
-        models: {
+        models: [
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1342,13 +1342,13 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfDateTimeList',
-        models: {
+        models: [
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1394,14 +1394,14 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfNullableList',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1424,14 +1424,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfNullableList',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1497,14 +1497,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfNullableList',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1551,14 +1551,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfNullableList',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1612,13 +1612,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfDateTimeList',
-        models: {
+        models: [
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1653,10 +1653,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'ArrayOneOfModel',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1664,7 +1664,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfDoubleList',
-        models: {
+        models: [
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
@@ -1675,7 +1675,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1712,13 +1712,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfIntList',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1758,14 +1758,14 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfMixedListClass',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
             examples: const [],
           ),
           classModel,
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1798,14 +1798,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfMixedListPrimitive',
-        models: {
+        models: [
           ListModel(
             content: StringModel(context: context),
             context: context,
             examples: const [],
           ),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1856,7 +1856,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfMultiListClass',
-        models: {
+        models: [
           ListModel(
             content: IntegerModel(context: context),
             context: context,
@@ -1868,7 +1868,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             examples: const [],
           ),
           classModel,
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1931,10 +1931,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfComplex',
-          models: {
+          models: [
             classModel1,
             classModel2,
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1968,13 +1968,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfWithList',
-          models: {
+          models: [
             ListModel(
               content: IntegerModel(context: context),
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1999,13 +1999,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfWithMap',
-          models: {
+          models: [
             MapModel(
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2049,14 +2049,14 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfMixedMapClass',
-          models: {
+          models: [
             MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
               examples: const [],
             ),
             classModel,
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2090,7 +2090,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfNullablePrimitive',
-        models: {nullableAlias},
+        models: [nullableAlias],
         context: context,
         examples: const [],
       );
@@ -2149,7 +2149,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Cat',
@@ -2164,7 +2164,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         isNullable: true,
         examples: const [],
@@ -2189,7 +2189,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Cat',
@@ -2204,7 +2204,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2228,7 +2228,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -2236,7 +2236,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         isNullable: true,
         examples: const [],
@@ -2265,7 +2265,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Base',
@@ -2273,7 +2273,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2297,10 +2297,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2339,10 +2339,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2405,7 +2405,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfNullablePrimitive',
-          models: {nullableAlias},
+          models: [nullableAlias],
           context: context,
           examples: const [],
         );
@@ -2476,7 +2476,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'AllOfNullableByte',
-          models: {byteAlias},
+          models: [byteAlias],
           context: context,
           examples: const [],
         );
@@ -2547,7 +2547,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final statusOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Status',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -2559,7 +2559,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2567,7 +2567,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final model = AllOfModel(
           isDeprecated: false,
           name: 'DynamicByte',
-          models: {byteAlias, statusOneOf},
+          models: [byteAlias, statusOneOf],
           context: context,
           examples: const [],
         );
@@ -2630,7 +2630,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfByte',
-        models: {byteAlias},
+        models: [byteAlias],
         context: context,
         examples: const [],
       );
@@ -2649,7 +2649,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfBinary',
-        models: {BinaryModel(context: context)},
+        models: [BinaryModel(context: context)],
         context: context,
         examples: const [],
       );
@@ -2858,10 +2858,10 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2916,7 +2916,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final statusOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Status',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -2928,7 +2928,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           isNullable: true,
           examples: const [],
@@ -2937,10 +2937,10 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {
+          models: [
             StringModel(context: context),
             statusOneOf,
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3022,7 +3022,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3038,7 +3038,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               isNullable: true,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3072,7 +3072,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final statusOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Status',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -3084,14 +3084,14 @@ String toLabel({required bool explode, required bool allowEmpty}) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {statusOneOf, nullableClass},
+          models: [statusOneOf, nullableClass],
           context: context,
           examples: const [],
         );
@@ -3116,7 +3116,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3132,7 +3132,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               isNullable: true,
               examples: const [],
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3157,7 +3157,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedConfig',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3175,7 +3175,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -3259,7 +3259,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         model = AllOfModel(
           isDeprecated: false,
           name: 'TypedExtended',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3277,7 +3277,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
@@ -3322,7 +3322,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         model = AllOfModel(
           isDeprecated: false,
           name: 'ComplexExtended',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3340,7 +3340,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
@@ -3429,7 +3429,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         return AllOfModel(
           isDeprecated: false,
           name: 'TreeBag',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3447,7 +3447,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy:
               overrideAdditionalPropertiesPolicy ??
@@ -3528,7 +3528,7 @@ class Holder {
         () {
           final mixedOneOf = OneOfModel(
             name: 'IdOrUser',
-            models: {
+            models: [
               (
                 discriminatorValue: null,
                 model: StringModel(context: context),
@@ -3543,7 +3543,7 @@ class Holder {
                   examples: const [],
                 ),
               ),
-            },
+            ],
             context: context,
             isDeprecated: false,
             examples: const [],
@@ -3559,7 +3559,7 @@ class Holder {
           final model = AllOfModel(
             isDeprecated: false,
             name: 'DynamicTreeBag',
-            models: {mixedOneOf},
+            models: [mixedOneOf],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: tree,
@@ -3685,7 +3685,7 @@ class Holder {
           final model = AllOfModel(
             isDeprecated: false,
             name: 'AAndBBag',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'Base',
@@ -3703,7 +3703,7 @@ class Holder {
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: a,
@@ -3756,7 +3756,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'StrictAllOf',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3774,7 +3774,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
           examples: const [],
@@ -3800,7 +3800,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'MultiMember',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'First',
@@ -3835,7 +3835,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -3875,7 +3875,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedConfig',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3893,7 +3893,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -3937,7 +3937,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'TypedExtended',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -3955,7 +3955,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
@@ -4002,7 +4002,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ComplexExtended',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -4020,7 +4020,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
@@ -4070,7 +4070,7 @@ class Holder {
           final model = AllOfModel(
             isDeprecated: false,
             name: 'MultiMember',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'First',
@@ -4105,7 +4105,7 @@ class Holder {
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: AnyModel(context: context),
@@ -4153,7 +4153,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedConfig',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -4171,7 +4171,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -4219,7 +4219,7 @@ class Holder {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedConfig',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -4237,7 +4237,7 @@ class Holder {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -4264,7 +4264,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           final model = AllOfModel(
             isDeprecated: false,
             name: 'TypedExtended',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'Base',
@@ -4282,7 +4282,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
@@ -4311,7 +4311,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           final model = AllOfModel(
             isDeprecated: false,
             name: 'TypedByteExtended',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'Base',
@@ -4329,7 +4329,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: Base64Model(context: context),
@@ -4366,7 +4366,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           final model = AllOfModel(
             isDeprecated: false,
             name: 'NullableByteExtended',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'Base',
@@ -4384,7 +4384,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: nullableByte,
@@ -4421,7 +4421,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           final model = AllOfModel(
             isDeprecated: false,
             name: 'ComplexExtended',
-            models: {
+            models: [
               ClassModel(
                 isDeprecated: false,
                 name: 'Base',
@@ -4439,7 +4439,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ],
                 examples: const [],
               ),
-            },
+            ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
@@ -4495,13 +4495,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final model = AllOfModel(
         isDeprecated: false,
         name: 'WithList',
-        models: {
+        models: [
           ListModel(
             content: StringModel(context: context),
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4544,7 +4544,7 @@ bool operator ==(Object other) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedImmutable',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -4562,7 +4562,7 @@ bool operator ==(Object other) {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
@@ -4670,7 +4670,7 @@ Object? toJson() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ExtendedItem',
-          models: {
+          models: [
             ClassModel(
               isDeprecated: false,
               name: 'Base',
@@ -4688,7 +4688,7 @@ Object? toJson() {
               ],
               examples: const [],
             ),
-          },
+          ],
           context: context,
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ListModel(
@@ -4766,7 +4766,7 @@ factory ExtendedItem.fromJson(Object? json) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'CombinedWithMap',
-          models: {classModel, mapModel},
+          models: [classModel, mapModel],
           context: context,
           examples: const [],
         );
@@ -4829,7 +4829,7 @@ factory ExtendedItem.fromJson(Object? json) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'CombinedWithNullableMap',
-          models: {classModel, mapModel},
+          models: [classModel, mapModel],
           context: context,
           examples: const [],
         );
@@ -4871,7 +4871,7 @@ factory ExtendedItem.fromJson(Object? json) {
         final statusOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Status',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -4883,7 +4883,7 @@ factory ExtendedItem.fromJson(Object? json) {
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4897,7 +4897,7 @@ factory ExtendedItem.fromJson(Object? json) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'DynamicWithMap',
-          models: {statusOneOf, mapModel},
+          models: [statusOneOf, mapModel],
           context: context,
           examples: const [],
         );
@@ -4986,7 +4986,7 @@ factory ExtendedItem.fromJson(Object? json) {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: {classModel, mapModel},
+          models: [classModel, mapModel],
           context: context,
           examples: const [],
         );

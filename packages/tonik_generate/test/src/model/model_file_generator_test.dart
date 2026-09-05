@@ -142,10 +142,10 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'FlexibleModel',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: ctx)),
           (discriminatorValue: null, model: IntegerModel(context: ctx)),
-        },
+        ],
         context: ctx,
         examples: const [],
       );
@@ -167,10 +167,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: ctx)),
           (discriminatorValue: null, model: IntegerModel(context: ctx)),
-        },
+        ],
         context: ctx,
         examples: const [],
       );
@@ -190,10 +190,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {
+        models: [
           StringModel(context: ctx),
           IntegerModel(context: ctx),
-        },
+        ],
         context: ctx,
         examples: const [],
       );

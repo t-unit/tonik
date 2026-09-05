@@ -37,10 +37,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfPrimitive',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -73,10 +73,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfSimple',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -100,7 +100,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfComplex',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             name: 'Model1',
@@ -135,7 +135,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -159,7 +159,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfEmpty',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -183,10 +183,10 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfWithAllowLists',
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -210,9 +210,9 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfEncoded',
-        models: {
+        models: [
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );

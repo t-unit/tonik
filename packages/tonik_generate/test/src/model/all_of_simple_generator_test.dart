@@ -36,13 +36,13 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDateTimeList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -64,10 +64,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'ArrayOneOfModel',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (discriminatorValue: null, model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -75,7 +75,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDoubleList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
@@ -86,7 +86,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -108,7 +108,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'CombinedModel',
-      models: <Model>{
+      models: <Model>[
         ClassModel(
           isDeprecated: false,
           name: 'Base',
@@ -143,7 +143,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -171,10 +171,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'StringDecimalModel',
-      models: {
+      models: [
         StringModel(context: context),
         DecimalModel(context: context),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -207,7 +207,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'EnumStringModel',
-        models: {
+        models: [
           EnumModel(
             isDeprecated: false,
             name: 'Status',
@@ -220,7 +220,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             examples: const [],
           ),
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -254,7 +254,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'MixedModel',
-        models: <Model>{
+        models: <Model>[
           StringModel(context: context),
           ClassModel(
             isDeprecated: false,
@@ -273,7 +273,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -306,7 +306,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'MixedModel',
-        models: {
+        models: [
           StringModel(context: context),
           EnumModel(
             isDeprecated: false,
@@ -319,7 +319,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -351,7 +351,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final anyOfModel = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleValue',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -373,7 +373,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -381,10 +381,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         IntegerModel(context: context),
         anyOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -418,7 +418,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final anyOfModel = AnyOfModel(
       isDeprecated: false,
       name: 'FlexibleValue',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
@@ -440,7 +440,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -448,10 +448,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: {
+      models: [
         IntegerModel(context: context),
         anyOfModel,
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -478,13 +478,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfIntList',
-      models: {
+      models: [
         ListModel(
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -513,13 +513,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDateTimeList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -550,13 +550,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDateList',
-      models: {
+      models: [
         ListModel(
           content: DateModel(context: context),
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -585,10 +585,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       name: 'ArrayOneOfModel',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (discriminatorValue: null, model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -596,7 +596,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'AllOfDoubleList',
-      models: {
+      models: [
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
@@ -607,7 +607,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -640,7 +640,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final model = AllOfModel(
       isDeprecated: false,
       name: 'CombinedModel',
-      models: <Model>{
+      models: <Model>[
         ClassModel(
           isDeprecated: false,
           name: 'Base',
@@ -675,7 +675,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -704,10 +704,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'StringDecimalModel',
-        models: <Model>{
+        models: <Model>[
           StringModel(context: context),
           DecimalModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -741,7 +741,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'EnumStringModel',
-        models: {
+        models: [
           EnumModel(
             isDeprecated: false,
             name: 'Status',
@@ -754,7 +754,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             examples: const [],
           ),
           StringModel(context: context),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -783,7 +783,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final model = AllOfModel(
         isDeprecated: false,
         name: 'MixedModel',
-        models: {
+        models: [
           StringModel(context: context),
           EnumModel(
             isDeprecated: false,
@@ -813,7 +813,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             context: context,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );

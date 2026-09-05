@@ -228,22 +228,22 @@ void main() {
         final sharedContext = context.push('Test').push('allOf');
 
         final model1 = AllOfModel(
-          models: {
+          models: [
             StringModel(context: sharedContext),
             IntegerModel(context: sharedContext),
             BooleanModel(context: sharedContext),
-          },
+          ],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
         );
 
         final model2 = AllOfModel(
-          models: {
+          models: [
             BooleanModel(context: sharedContext),
             StringModel(context: sharedContext),
             IntegerModel(context: sharedContext),
-          },
+          ],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
@@ -265,18 +265,18 @@ void main() {
         final sharedContext = context.push('Test').push('allOf');
 
         final model1 = AllOfModel(
-          models: {
+          models: [
             StringModel(context: sharedContext),
-          },
+          ],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
         );
 
         final model2 = AllOfModel(
-          models: {
+          models: [
             IntegerModel(context: sharedContext),
-          },
+          ],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
@@ -296,7 +296,7 @@ void main() {
 
         final model1 = OneOfModel(
           isDeprecated: false,
-          models: {
+          models: [
             (
               discriminatorValue: 'zebra',
               model: StringModel(context: sharedContext),
@@ -305,7 +305,7 @@ void main() {
               discriminatorValue: 'apple',
               model: IntegerModel(context: sharedContext),
             ),
-          },
+          ],
           discriminator: 'type',
           context: sharedContext,
           examples: const [],
@@ -313,7 +313,7 @@ void main() {
 
         final model2 = OneOfModel(
           isDeprecated: false,
-          models: {
+          models: [
             (
               discriminatorValue: 'apple',
               model: IntegerModel(context: sharedContext),
@@ -322,7 +322,7 @@ void main() {
               discriminatorValue: 'zebra',
               model: StringModel(context: sharedContext),
             ),
-          },
+          ],
           discriminator: 'type',
           context: sharedContext,
           examples: const [],
@@ -340,7 +340,7 @@ void main() {
 
       final model1 = AnyOfModel(
         isDeprecated: false,
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: StringModel(context: sharedContext),
@@ -349,14 +349,14 @@ void main() {
             discriminatorValue: null,
             model: IntegerModel(context: sharedContext),
           ),
-        },
+        ],
         context: sharedContext,
         examples: const [],
       );
 
       final model2 = AnyOfModel(
         isDeprecated: false,
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: IntegerModel(context: sharedContext),
@@ -365,7 +365,7 @@ void main() {
             discriminatorValue: null,
             model: StringModel(context: sharedContext),
           ),
-        },
+        ],
         context: sharedContext,
         examples: const [],
       );
@@ -473,20 +473,20 @@ void main() {
 
     test('generates stable key for nested composite models', () {
       final innerAllOf = AllOfModel(
-        models: {
+        models: [
           StringModel(context: context),
           IntegerModel(context: context),
-        },
+        ],
         context: context.push('inner'),
         isDeprecated: false,
         examples: const [],
       );
 
       final outerAllOf = AllOfModel(
-        models: {
+        models: [
           innerAllOf,
           BooleanModel(context: context),
-        },
+        ],
         context: context.push('outer'),
         isDeprecated: false,
         examples: const [],
@@ -914,13 +914,13 @@ void main() {
       () {
         final sharedContext = context.push('Test').push('allOf');
         final withoutAp = AllOfModel(
-          models: {StringModel(context: sharedContext)},
+          models: [StringModel(context: sharedContext)],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
         );
         final withAp = AllOfModel(
-          models: {StringModel(context: sharedContext)},
+          models: [StringModel(context: sharedContext)],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],

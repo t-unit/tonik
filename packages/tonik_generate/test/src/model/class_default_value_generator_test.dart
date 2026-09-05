@@ -430,7 +430,7 @@ factory WithChild.fromJson(Object? json) {
               model: AllOfModel(
                 isDeprecated: false,
                 name: 'Union',
-                models: const {},
+                models: const [],
                 context: context,
                 examples: const [],
               ),

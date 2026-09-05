@@ -48,7 +48,7 @@ class StableModelSorter {
   /// 1. Context path length (shorter first)
   /// 2. Context path string (lexicographic)
   /// 3. Stable model structure key
-  List<Model> sortModels(Set<Model> models) {
+  List<Model> sortModels(Iterable<Model> models) {
     return models.toList()..sort(_compareModelsStably);
   }
 
@@ -58,7 +58,7 @@ class StableModelSorter {
   /// 1. Discriminator value (if both present)
   /// 2. Model comparison (via context path then stable key)
   List<DiscriminatedModel> sortDiscriminatedModels(
-    Set<DiscriminatedModel> models,
+    Iterable<DiscriminatedModel> models,
   ) {
     return models.toList()..sort(_compareDiscriminatedModelsStably);
   }
@@ -97,9 +97,9 @@ class StableModelSorter {
   /// densely connected graphs. Beyond [_maxDepth], only the runtime type
   /// is emitted instead of a full structural traversal.
   ///
-  /// For Set-based children (AllOf, OneOf, AnyOf), children are sorted by a
+  /// For compound children (AllOf, OneOf, AnyOf), children are sorted by a
   /// cheap deterministic key before traversal so the result is independent
-  /// of Set iteration order.
+  /// of member iteration order.
   String _computeStableKey(Model model, Set<Model> visited, int depth) {
     if (depth > _maxDepth) {
       return switch (model) {
@@ -178,7 +178,7 @@ class StableModelSorter {
   /// Sorts models by a cheap deterministic key, then computes full keys
   /// in that fixed order.
   String _stableSortedModels(
-    Set<Model> models,
+    Iterable<Model> models,
     Set<Model> visited,
     int depth,
   ) {
@@ -191,7 +191,7 @@ class StableModelSorter {
   /// Sorts discriminated models by discriminator value first, then by a
   /// cheap model key, before computing full keys in that fixed order.
   String _stableSortedDiscriminatedModels(
-    Set<DiscriminatedModel> models,
+    Iterable<DiscriminatedModel> models,
     Set<Model> visited,
     int depth,
   ) {

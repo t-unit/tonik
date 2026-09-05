@@ -106,7 +106,7 @@ void main() {
           isDeprecated: false,
           name: 'Combined',
           context: context,
-          models: {baseModel, extModel},
+          models: [baseModel, extModel],
           examples: const [],
         );
 
@@ -136,7 +136,7 @@ void main() {
           isDeprecated: false,
           name: 'InnerAllOf',
           context: context,
-          models: {innerClass},
+          models: [innerClass],
           examples: const [],
         );
 
@@ -162,7 +162,7 @@ void main() {
           isDeprecated: false,
           name: 'OuterAllOf',
           context: context,
-          models: {innerAllOf, outerClass},
+          models: [innerAllOf, outerClass],
           examples: const [],
         );
 
@@ -174,7 +174,7 @@ void main() {
           isDeprecated: false,
           name: 'EmptyAllOf',
           context: context,
-          models: const {},
+          models: const [],
           examples: const [],
         );
 
@@ -188,7 +188,7 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: const {},
+          models: const [],
           discriminator: 'petType',
           examples: const [],
         );
@@ -201,7 +201,7 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: const {},
+          models: const [],
           examples: const [],
         );
 
@@ -249,10 +249,10 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: {
+          models: [
             (discriminatorValue: 'cat', model: cat),
             (discriminatorValue: 'dog', model: dog),
-          },
+          ],
           discriminator: 'petType',
           examples: const [],
         );
@@ -286,9 +286,9 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: {
+          models: [
             (discriminatorValue: null, model: cat),
-          },
+          ],
           examples: const [],
         );
 
@@ -302,7 +302,7 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: const {},
+          models: const [],
           discriminator: 'contentType',
           examples: const [],
         );
@@ -315,7 +315,7 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: const {},
+          models: const [],
           examples: const [],
         );
 
@@ -363,10 +363,10 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: {
+          models: [
             (discriminatorValue: 'text', model: text),
             (discriminatorValue: 'image', model: image),
-          },
+          ],
           discriminator: 'kind',
           examples: const [],
         );
@@ -397,9 +397,9 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: {
+          models: [
             (discriminatorValue: null, model: text),
-          },
+          ],
           examples: const [],
         );
 
@@ -547,7 +547,7 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: const {},
+          models: const [],
           discriminator: 'type',
           examples: const [],
         );
@@ -556,7 +556,7 @@ void main() {
           isDeprecated: false,
           name: 'Combined',
           context: context,
-          models: {classModel, oneOfModel},
+          models: [classModel, oneOfModel],
           examples: const [],
         );
 
@@ -586,7 +586,7 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: const {},
+          models: const [],
           discriminator: 'kind',
           examples: const [],
         );
@@ -595,7 +595,7 @@ void main() {
           isDeprecated: false,
           name: 'Combined',
           context: context,
-          models: {classModel, anyOfModel},
+          models: [classModel, anyOfModel],
           examples: const [],
         );
 
@@ -645,10 +645,10 @@ void main() {
             isDeprecated: false,
             name: 'PetVariant',
             context: context,
-            models: {
+            models: [
               (discriminatorValue: 'cat', model: cat),
               (discriminatorValue: 'dog', model: dog),
-            },
+            ],
             examples: const [],
           );
 
@@ -674,7 +674,7 @@ void main() {
             isDeprecated: false,
             name: 'MyModel',
             context: context,
-            models: {oneOfModel, baseModel},
+            models: [oneOfModel, baseModel],
             examples: const [],
           );
 

@@ -412,7 +412,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: const {},
+        models: const [],
         isNullable: true,
         context: context,
         examples: const [],
@@ -443,7 +443,7 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: const {},
+        models: const [],
         discriminator: 'petType',
         isNullable: true,
         context: context,
@@ -475,7 +475,7 @@ void main() {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'Content',
-        models: const {},
+        models: const [],
         discriminator: 'contentType',
         isNullable: true,
         context: context,
@@ -974,7 +974,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -1003,7 +1003,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: const {},
+        models: const [],
         context: context,
         examples: const [],
       );
@@ -1032,7 +1032,7 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: const {},
+        models: const [],
         discriminator: 'petType',
         context: context,
         examples: const [],
@@ -1062,7 +1062,7 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: const {},
+        models: const [],
         discriminator: 'petType',
         context: context,
         examples: const [],
@@ -1092,7 +1092,7 @@ void main() {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'Content',
-        models: const {},
+        models: const [],
         discriminator: 'contentType',
         context: context,
         examples: const [],
@@ -1121,7 +1121,7 @@ void main() {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'Content',
-        models: const {},
+        models: const [],
         discriminator: 'contentType',
         context: context,
         examples: const [],

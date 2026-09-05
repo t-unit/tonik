@@ -163,7 +163,7 @@ class ModelImporter {
       final modelContext = context.push(name);
       final allOfModel = AllOfModel(
         isDeprecated: schema.isDeprecated ?? false,
-        models: <Model>{},
+        models: <Model>[],
         context: modelContext,
         name: name,
         description: schema.description,
@@ -180,7 +180,7 @@ class ModelImporter {
     if (schema.oneOf != null) {
       final oneOfModel = OneOfModel(
         isDeprecated: schema.isDeprecated ?? false,
-        models: <DiscriminatedModel>{},
+        models: <DiscriminatedModel>[],
         context: context,
         name: name,
         description: schema.description,
@@ -197,7 +197,7 @@ class ModelImporter {
     if (schema.anyOf != null) {
       final anyOfModel = AnyOfModel(
         isDeprecated: schema.isDeprecated ?? false,
-        models: <DiscriminatedModel>{},
+        models: <DiscriminatedModel>[],
         context: context,
         name: name,
         description: schema.description,
@@ -233,7 +233,7 @@ class ModelImporter {
       // Multi-type becomes OneOfModel — create shell.
       final oneOfModel = OneOfModel(
         isDeprecated: schema.isDeprecated ?? false,
-        models: <DiscriminatedModel>{},
+        models: <DiscriminatedModel>[],
         context: context,
         name: name,
         description: schema.description,
@@ -692,7 +692,7 @@ class ModelImporter {
       modelContext,
     );
 
-    final resolvedModels = <Model>{};
+    final resolvedModels = <Model>[];
     for (final allOfSchema in schema.allOf!) {
       final model = _resolveCompositeSubModel(
         allOfSchema,
@@ -703,7 +703,11 @@ class ModelImporter {
         resolvedModels.add(model);
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'allOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
   }
@@ -731,7 +735,7 @@ class ModelImporter {
 
     shell.discriminator = effectiveDiscriminator?.propertyName;
 
-    final resolvedModels = <DiscriminatedModel>{};
+    final resolvedModels = <DiscriminatedModel>[];
     for (final oneOfSchema in alternatives) {
       if (_isNullOnlySchema(oneOfSchema)) {
         shell.isNullable = true;
@@ -752,7 +756,11 @@ class ModelImporter {
         ));
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'oneOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
 
@@ -777,7 +785,7 @@ class ModelImporter {
 
     shell.discriminator = effectiveDiscriminator?.propertyName;
 
-    final resolvedModels = <DiscriminatedModel>{};
+    final resolvedModels = <DiscriminatedModel>[];
     for (final anyOfSchema in alternatives) {
       if (_isNullOnlySchema(anyOfSchema)) {
         shell.isNullable = true;
@@ -798,9 +806,30 @@ class ModelImporter {
         ));
       }
     }
-    shell.models = resolvedModels;
+    shell.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'anyOf',
+      modelContext,
+    );
 
     _populatedComposites.add(name);
+  }
+
+  List<T> _deduplicateCompoundMembers<T>(
+    List<T> members,
+    String keyword,
+    Context context,
+  ) {
+    final seen = <T>{};
+    final uniqueMembers = <T>[];
+    for (final member in members) {
+      if (seen.add(member)) {
+        uniqueMembers.add(member);
+      } else {
+        log.warning('Ignoring duplicate member in $keyword at $context.');
+      }
+    }
+    return uniqueMembers;
   }
 
   /// Resolves a sub-model for a composite (oneOf/allOf/anyOf) shell.
@@ -1112,7 +1141,11 @@ class ModelImporter {
     }
 
     final allOfModel = AllOfModel(
-      models: modelsToMerge.toSet(),
+      models: _deduplicateCompoundMembers(
+        modelsToMerge,
+        'allOf',
+        modelContext,
+      ),
       context: modelContext,
       isDeprecated: false,
       examples: const [],
@@ -1421,7 +1454,11 @@ class ModelImporter {
 
     final allOfModel = AllOfModel(
       name: name,
-      models: modelsToMerge.toSet(),
+      models: _deduplicateCompoundMembers(
+        modelsToMerge,
+        'allOf',
+        modelContext,
+      ),
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -1635,7 +1672,7 @@ class ModelImporter {
     });
 
     final oneOfModel = OneOfModel(
-      models: models.toSet(),
+      models: models.toList(),
       name: name,
       context: context,
       description: schema.description,
@@ -1688,11 +1725,11 @@ class ModelImporter {
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'allOf');
 
-    // Register the model early (with an empty models set) so that
+    // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final allOfModel = AllOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: <Model>{},
+      models: <Model>[],
       context: modelContext,
       name: name,
       description: schema.description,
@@ -1715,9 +1752,13 @@ class ModelImporter {
         .map(
           (allOfSchema) => _resolveSchemaRef(null, allOfSchema, modelContext),
         )
-        .toSet();
+        .toList();
 
-    allOfModel.models = resolvedModels;
+    allOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'allOf',
+      modelContext,
+    );
 
     return allOfModel;
   }
@@ -1742,11 +1783,11 @@ class ModelImporter {
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    // Register the model early (with an empty models set) so that
+    // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final oneOfModel = OneOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: <DiscriminatedModel>{},
+      models: <DiscriminatedModel>[],
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
@@ -1762,7 +1803,7 @@ class ModelImporter {
       _registerModel(oneOfModel);
     }
 
-    final resolvedModels = <DiscriminatedModel>{};
+    final resolvedModels = <DiscriminatedModel>[];
     for (final oneOfSchema in alternatives) {
       if (_isNullOnlySchema(oneOfSchema)) {
         oneOfModel.isNullable = true;
@@ -1777,7 +1818,11 @@ class ModelImporter {
       ));
     }
 
-    oneOfModel.models = resolvedModels;
+    oneOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'oneOf',
+      modelContext,
+    );
 
     // Nested composite members enter the global model set after resolution.
     for (final nestedModel in oneOfModel.models) {
@@ -1794,11 +1839,11 @@ class ModelImporter {
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    // Register the model early (with an empty models set) so that
+    // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final anyOfModel = AnyOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: <DiscriminatedModel>{},
+      models: <DiscriminatedModel>[],
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
@@ -1814,7 +1859,7 @@ class ModelImporter {
       _registerModel(anyOfModel);
     }
 
-    final resolvedModels = <DiscriminatedModel>{};
+    final resolvedModels = <DiscriminatedModel>[];
     for (final anyOfSchema in alternatives) {
       if (_isNullOnlySchema(anyOfSchema)) {
         anyOfModel.isNullable = true;
@@ -1829,7 +1874,11 @@ class ModelImporter {
       ));
     }
 
-    anyOfModel.models = resolvedModels;
+    anyOfModel.models = _deduplicateCompoundMembers(
+      resolvedModels,
+      'anyOf',
+      modelContext,
+    );
 
     return anyOfModel;
   }

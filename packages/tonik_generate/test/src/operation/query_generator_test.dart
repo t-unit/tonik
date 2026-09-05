@@ -1237,10 +1237,10 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         context: context,
-        models: {
+        models: [
           (discriminatorValue: 'string', model: stringModel),
           (discriminatorValue: 'integer', model: integerModel),
-        },
+        ],
         name: 'OneOfValue',
         discriminator: 'type',
         examples: const [],
@@ -1688,10 +1688,10 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           context: context,
-          models: {
+          models: [
             (discriminatorValue: 'string', model: stringModel),
             (discriminatorValue: 'object', model: classModel),
-          },
+          ],
           name: 'MixedOneOf',
           discriminator: 'type',
           examples: const [],
@@ -1795,10 +1795,10 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           context: context,
-          models: {
+          models: [
             (discriminatorValue: 'string', model: stringModel),
             (discriminatorValue: 'int', model: intModel),
-          },
+          ],
           name: 'SimpleOneOf',
           discriminator: 'type',
           examples: const [],

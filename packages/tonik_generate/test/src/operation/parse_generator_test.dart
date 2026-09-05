@@ -382,7 +382,7 @@ String _parseResponse(Response<List<int>> response) {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           (
             discriminatorValue: 'cat',
             model: ClassModel(
@@ -403,7 +403,7 @@ String _parseResponse(Response<List<int>> response) {
               examples: const [],
             ),
           ),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],

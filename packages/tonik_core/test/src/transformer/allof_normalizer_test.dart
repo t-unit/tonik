@@ -23,7 +23,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'ExtendedModel',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('ExtendedModel'),
           description: 'Additional documentation',
           isDeprecated: false,
@@ -64,7 +64,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'DeprecatedAlias',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('DeprecatedAlias'),
           description: 'This is deprecated',
           isDeprecated: true,
@@ -107,7 +107,7 @@ void main() {
 
           final allOfModel = AllOfModel(
             name: 'OuterWithDescription',
-            models: {innerAlias},
+            models: [innerAlias],
             context: context.push('OuterWithDescription'),
             description: 'Adds description',
             isDeprecated: false,
@@ -155,7 +155,7 @@ void main() {
 
           final allOfModel = AllOfModel(
             name: 'OuterWithDescription',
-            models: {innerAlias},
+            models: [innerAlias],
             context: context.push('OuterWithDescription'),
             description: 'Adds description',
             isDeprecated: false,
@@ -194,7 +194,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'NullableAlias',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('NullableAlias'),
           isDeprecated: false,
           isNullable: true,
@@ -226,7 +226,7 @@ void main() {
         final baseModel = NumberModel(context: context);
 
         final allOfModel = AllOfModel(
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('allOf'),
           isDeprecated: false,
           examples: const [],
@@ -276,7 +276,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'CompositeModel',
-          models: {model1, model2},
+          models: [model1, model2],
           context: context.push('CompositeModel'),
           isDeprecated: false,
           examples: const [],
@@ -389,7 +389,7 @@ void main() {
 
         final outerAllOf = AllOfModel(
           name: 'OuterAllOf',
-          models: {innerAlias},
+          models: [innerAlias],
           context: context.push('OuterAllOf'),
           description: 'Wraps an alias',
           isDeprecated: false,
@@ -484,7 +484,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'ArtistObjectExternalUrlsAllOfModel',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('ArtistObjectExternalUrlsAllOfModel'),
           description: 'Known external URLs for this artist.',
           isDeprecated: false,
@@ -571,7 +571,7 @@ void main() {
 
         final allOfModel = AllOfModel(
           name: 'ItemsAllOfModel',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('ItemsAllOfModel'),
           description: 'Collection items',
           isDeprecated: false,
@@ -631,7 +631,7 @@ void main() {
 
         final innerAllOf = AllOfModel(
           name: 'InnerAllOf',
-          models: {baseModel},
+          models: [baseModel],
           context: context.push('InnerAllOf'),
           description: 'Inner model',
           isDeprecated: false,
@@ -640,7 +640,7 @@ void main() {
 
         final outerAllOf = AllOfModel(
           name: 'OuterAllOf',
-          models: {innerAllOf},
+          models: [innerAllOf],
           context: context.push('OuterAllOf'),
           description: 'Outer model',
           isDeprecated: false,
@@ -704,7 +704,7 @@ void main() {
 
         final multiAllOf = AllOfModel(
           name: 'MultiAllOf',
-          models: {baseModel1, baseModel2},
+          models: [baseModel1, baseModel2],
           context: context.push('MultiAllOf'),
           description: 'Composition of multiple models',
           isDeprecated: false,
@@ -770,7 +770,7 @@ void main() {
 
         final allOf1 = AllOfModel(
           name: 'Wrapper1',
-          models: {sharedModel},
+          models: [sharedModel],
           context: context.push('Wrapper1'),
           isDeprecated: false,
           examples: const [],
@@ -778,7 +778,7 @@ void main() {
 
         final allOf2 = AllOfModel(
           name: 'Wrapper2',
-          models: {sharedModel},
+          models: [sharedModel],
           context: context.push('Wrapper2'),
           isDeprecated: false,
           examples: const [],

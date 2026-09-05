@@ -2146,9 +2146,9 @@ $expectedPartCode
       final allOfModel = AllOfModel(
         name: 'CombinedAddress',
         isDeprecated: false,
-        models: {
+        models: [
           StringModel(context: testContext),
-        },
+        ],
         context: testContext,
         examples: const [],
       );
@@ -2200,9 +2200,9 @@ $expectedPartCode
       final oneOfModel = OneOfModel(
         name: 'AddressVariant',
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: testContext)),
-        },
+        ],
         context: testContext,
         examples: const [],
       );
@@ -2254,9 +2254,9 @@ $expectedPartCode
       final anyOfModel = AnyOfModel(
         name: 'AddressMixed',
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: testContext)),
-        },
+        ],
         context: testContext,
         examples: const [],
       );
@@ -2579,9 +2579,9 @@ $expectedPartCode
         final allOfModel = AllOfModel(
           name: 'CombinedAddress',
           isDeprecated: false,
-          models: {
+          models: [
             StringModel(context: testContext),
-          },
+          ],
           context: testContext,
           examples: const [],
         );
@@ -2633,12 +2633,12 @@ $expectedPartCode
         final oneOfModel = OneOfModel(
           name: 'AddressVariant',
           isDeprecated: false,
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: StringModel(context: testContext),
             ),
-          },
+          ],
           context: testContext,
           examples: const [],
         );
@@ -2690,12 +2690,12 @@ $expectedPartCode
         final anyOfModel = AnyOfModel(
           name: 'AddressMixed',
           isDeprecated: false,
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: StringModel(context: testContext),
             ),
-          },
+          ],
           context: testContext,
           examples: const [],
         );
@@ -2871,7 +2871,7 @@ $expectedPartCode
           final allOfModel = AllOfModel(
             name: 'CombinedAddress',
             isDeprecated: false,
-            models: {StringModel(context: testContext)},
+            models: [StringModel(context: testContext)],
             context: testContext,
             examples: const [],
           );

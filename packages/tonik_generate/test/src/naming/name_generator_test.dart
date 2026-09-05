@@ -89,7 +89,7 @@ void main() {
           final oneOfModel = OneOfModel(
             isDeprecated: false,
             name: 'Blub',
-            models: {(discriminatorValue: null, model: inlineClassModel)},
+            models: [(discriminatorValue: null, model: inlineClassModel)],
             context: Context.initial().pushAll(['components', 'schemas']),
             examples: const [],
           );

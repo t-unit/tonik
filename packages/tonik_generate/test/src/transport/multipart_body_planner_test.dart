@@ -255,7 +255,7 @@ Object? test() {
         name: 'allOf',
         model: AllOfModel(
           name: 'Combined',
-          models: {_classModel(context, 'AllOfMember')},
+          models: [_classModel(context, 'AllOfMember')],
           context: context,
           isDeprecated: false,
           examples: const [],
@@ -265,12 +265,12 @@ Object? test() {
         name: 'oneOf',
         model: OneOfModel(
           name: 'Either',
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: _classModel(context, 'OneOfMember'),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           examples: const [],
@@ -280,12 +280,12 @@ Object? test() {
         name: 'anyOf',
         model: AnyOfModel(
           name: 'Any',
-          models: {
+          models: [
             (
               discriminatorValue: null,
               model: _classModel(context, 'AnyOfMember'),
             ),
-          },
+          ],
           context: context,
           isDeprecated: false,
           examples: const [],

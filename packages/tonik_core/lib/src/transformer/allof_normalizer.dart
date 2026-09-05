@@ -107,7 +107,7 @@ class AllOfNormalizer {
         examples: model.examples,
       );
     } else if (model is AllOfModel) {
-      final newModels = <Model>{};
+      final newModels = <Model>[];
       for (final m in model.models) {
         newModels.add(_transformModel(m, cache));
       }
@@ -121,7 +121,7 @@ class AllOfNormalizer {
       }
       result = model;
     } else if (model is OneOfModel) {
-      final newModels = <({String? discriminatorValue, Model model})>{};
+      final newModels = <({String? discriminatorValue, Model model})>[];
       for (final m in model.models) {
         newModels.add((
           discriminatorValue: m.discriminatorValue,
@@ -133,7 +133,7 @@ class AllOfNormalizer {
         ..addAll(newModels);
       result = model;
     } else if (model is AnyOfModel) {
-      final newModels = <({String? discriminatorValue, Model model})>{};
+      final newModels = <({String? discriminatorValue, Model model})>[];
       for (final m in model.models) {
         newModels.add((
           discriminatorValue: m.discriminatorValue,

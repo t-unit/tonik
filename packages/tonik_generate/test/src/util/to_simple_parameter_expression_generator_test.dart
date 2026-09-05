@@ -327,10 +327,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -382,10 +382,10 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );

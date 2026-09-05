@@ -600,7 +600,7 @@ void main() {
           model: AllOfModel(
             isDeprecated: false,
             name: 'Region',
-            models: const {},
+            models: const [],
             context: context,
             examples: const [],
           ),

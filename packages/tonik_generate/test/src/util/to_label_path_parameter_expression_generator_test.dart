@@ -562,7 +562,7 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'StringOrInt',
-              models: {
+              models: [
                 (
                   discriminatorValue: 's',
                   model: StringModel(context: context),
@@ -571,7 +571,7 @@ void main() {
                   discriminatorValue: 'i',
                   model: IntegerModel(context: context),
                 ),
-              },
+              ],
               examples: const [],
             ),
             examples: const [],
@@ -606,7 +606,7 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'StringOrInt',
-              models: {
+              models: [
                 (
                   discriminatorValue: 's',
                   model: StringModel(context: context),
@@ -615,7 +615,7 @@ void main() {
                   discriminatorValue: 'i',
                   model: IntegerModel(context: context),
                 ),
-              },
+              ],
               examples: const [],
             ),
             examples: const [],

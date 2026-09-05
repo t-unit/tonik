@@ -90,7 +90,7 @@ void main() {
     AllOfModel allOfModel({
       AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     }) => AllOfModel(
-      models: {StringModel(context: context)},
+      models: [StringModel(context: context)],
       context: context,
       isDeprecated: false,
       examples: const [],

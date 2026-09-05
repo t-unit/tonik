@@ -480,7 +480,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {baseModel, mixinModel},
+        models: [baseModel, mixinModel],
         context: context,
         examples: const [],
       );
@@ -503,10 +503,10 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           (discriminatorValue: 'cat', model: catModel),
           (discriminatorValue: 'dog', model: dogModel),
-        },
+        ],
         discriminator: 'petType',
         context: context,
         examples: const [],
@@ -572,7 +572,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {baseModel, mixinModel},
+        models: [baseModel, mixinModel],
         context: context,
         examples: const [],
       );
@@ -595,10 +595,10 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           (discriminatorValue: 'cat', model: catModel),
           (discriminatorValue: 'dog', model: dogModel),
-        },
+        ],
         discriminator: 'petType',
         context: context,
         examples: const [],

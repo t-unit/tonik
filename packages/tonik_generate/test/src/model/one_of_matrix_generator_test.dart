@@ -37,10 +37,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'PrimitiveChoice',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -74,10 +74,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'PrimitiveChoice',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -124,9 +124,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: {
+        models: [
           (discriminatorValue: 'a', model: classA),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -171,10 +171,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'MixedChoice',
-        models: {
+        models: [
           (discriminatorValue: 'm', model: classM),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         discriminator: 'kind',
         context: context,
         examples: const [],
@@ -208,10 +208,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'MixedEncodingChoice',
-        models: {
+        models: [
           (discriminatorValue: 'list', model: listModel),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -277,10 +277,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'ComplexChoice',
-        models: {
+        models: [
           (discriminatorValue: null, model: classA),
           (discriminatorValue: null, model: classB),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -319,10 +319,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StatusChoice',
-        models: {
+        models: [
           (discriminatorValue: 'status', model: enumModel),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -355,9 +355,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'ListChoice',
-        models: {
+        models: [
           (discriminatorValue: 'list', model: listModel),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -440,11 +440,11 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'MultiChoice',
-          models: {
+          models: [
             (discriminatorValue: 'a', model: classA),
             (discriminatorValue: 'b', model: classB),
             (discriminatorValue: 'c', model: classC),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -474,10 +474,10 @@ void main() {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
         name: 'Inner',
-        models: {
+        models: [
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -485,10 +485,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: {
+        models: [
           (discriminatorValue: 'inner', model: innerOneOf),
           (discriminatorValue: 'b', model: BooleanModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -515,9 +515,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'SingleChoice',
-        models: {
+        models: [
           (discriminatorValue: 's', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -561,9 +561,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'SingleClassChoice',
-        models: {
+        models: [
           (discriminatorValue: 'a', model: classA),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -600,10 +600,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringOrList',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: listModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -649,10 +649,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringOrIntList',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: listModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -705,10 +705,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringOrDateTimeList',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: listModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -775,10 +775,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringOrEnumList',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: listModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -850,10 +850,10 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'RowsOrModel',
-          models: {
+          models: [
             (discriminatorValue: null, model: listOfClassModel),
             (discriminatorValue: null, model: classModel),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -892,10 +892,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringListOrIntList',
-        models: {
+        models: [
           (discriminatorValue: null, model: listStringModel),
           (discriminatorValue: null, model: listIntModel),
-        },
+        ],
         context: context,
         examples: const [],
       );

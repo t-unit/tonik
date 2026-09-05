@@ -36,10 +36,10 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Value',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (discriminatorValue: null, model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -82,10 +82,10 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Value',
-      models: {
+      models: [
         (discriminatorValue: null, model: classA),
         (discriminatorValue: null, model: classB),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -115,10 +115,10 @@ void main() {
         isDeprecated: false,
         description: 'Represents either a string or an integer value',
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -137,10 +137,10 @@ void main() {
         isDeprecated: false,
         description: 'A flexible value type.\nCan be string or integer.',
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -160,10 +160,10 @@ void main() {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -182,10 +182,10 @@ void main() {
           isDeprecated: false,
           description: '',
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -201,10 +201,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [
           Example(
@@ -232,10 +232,10 @@ void main() {
         isDeprecated: false,
         description: 'A flexible value',
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [
           Example(
@@ -267,10 +267,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -298,10 +298,10 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Value',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (discriminatorValue: null, model: classA),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -329,9 +329,9 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Result',
-      models: {
+      models: [
         (discriminatorValue: 'success', model: StringModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -384,10 +384,10 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Result',
-      models: {
+      models: [
         (discriminatorValue: 'success', model: StringModel(context: context)),
         (discriminatorValue: 'error', model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -428,7 +428,7 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Result',
-      models: {
+      models: [
         (
           discriminatorValue: null,
           model: ClassModel(
@@ -449,7 +449,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -479,7 +479,7 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'Result',
-      models: {
+      models: [
         (
           discriminatorValue: 'data',
           model: ListModel(
@@ -488,7 +488,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -522,7 +522,7 @@ void main() {
     final model = OneOfModel(
       isDeprecated: false,
       name: 'TestOneOf',
-      models: {
+      models: [
         (
           discriminatorValue: null,
           model: ClassModel(
@@ -533,7 +533,7 @@ void main() {
             examples: const [],
           ),
         ),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -556,9 +556,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (discriminatorValue: 'success', model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -594,7 +594,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
-        models: {
+        models: [
           (
             discriminatorValue: 'strings',
             model: ListModel(
@@ -603,7 +603,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -644,12 +644,12 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: BooleanModel(context: context)),
           (discriminatorValue: null, model: DateTimeModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -674,7 +674,7 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'AllOfExample',
-        models: {classA},
+        models: [classA],
         context: context,
         examples: const [],
       );
@@ -682,10 +682,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: classA),
           (discriminatorValue: null, model: allOfModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -709,9 +709,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: aliasModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -728,9 +728,9 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -769,10 +769,10 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -802,10 +802,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: aliasModel),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -845,9 +845,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           (discriminatorValue: null, model: userModel),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -905,10 +905,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Entity',
-        models: {
+        models: [
           (discriminatorValue: 'person', model: userModel),
           (discriminatorValue: 'company', model: companyModel),
-        },
+        ],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -951,10 +951,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: userModel),
             (discriminatorValue: null, model: StringModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -997,13 +997,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Response',
-          models: {
+          models: [
             (discriminatorValue: 'user', model: userModel),
             (
               discriminatorValue: 'message',
               model: StringModel(context: context),
             ),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -1030,7 +1030,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final innerOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Inner',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -1052,7 +1052,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1060,9 +1060,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Outer',
-          models: {
+          models: [
             (discriminatorValue: null, model: innerOneOf),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1096,7 +1096,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final innerOneOf = OneOfModel(
           isDeprecated: false,
           name: 'Inner',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
@@ -1118,7 +1118,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 examples: const [],
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1126,9 +1126,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Outer',
-          models: {
+          models: [
             (discriminatorValue: 'inner', model: innerOneOf),
-          },
+          ],
           discriminator: 'type',
           context: context,
           examples: const [],
@@ -1155,7 +1155,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
     final model = OneOfModel(
       isDeprecated: false,
       name: 'TestOneOf',
-      models: {
+      models: [
         (
           discriminatorValue: 'zebra',
           model: StringModel(context: sharedContext),
@@ -1168,7 +1168,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           discriminatorValue: 'banana',
           model: BooleanModel(context: sharedContext),
         ),
-      },
+      ],
       discriminator: 'type',
       context: context.push('TestOneOf'),
       examples: const [],
@@ -1202,7 +1202,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ClassModel(
@@ -1223,7 +1223,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         isNullable: true,
         examples: const [],
@@ -1249,7 +1249,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Pet',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ClassModel(
@@ -1270,7 +1270,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1295,10 +1295,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         isNullable: true,
         examples: const [],
@@ -1326,10 +1326,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Response',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1353,10 +1353,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
     final model = OneOfModel(
       isDeprecated: false,
       name: 'TestOneOf',
-      models: {
+      models: [
         (discriminatorValue: null, model: StringModel(context: context)),
         (discriminatorValue: null, model: IntegerModel(context: context)),
-      },
+      ],
       context: context,
       examples: const [],
     );
@@ -1394,10 +1394,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'StringOrNumber',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1452,10 +1452,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1516,7 +1516,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1526,7 +1526,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1555,7 +1555,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1565,7 +1565,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1599,7 +1599,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1609,7 +1609,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1643,7 +1643,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1653,7 +1653,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1686,7 +1686,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1701,7 +1701,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1729,7 +1729,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -1739,7 +1739,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1776,7 +1776,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -1789,7 +1789,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1829,7 +1829,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -1842,7 +1842,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1880,7 +1880,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -1893,7 +1893,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -1939,7 +1939,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -1957,7 +1957,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2001,7 +2001,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -2014,7 +2014,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2069,7 +2069,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -2087,7 +2087,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2138,7 +2138,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -2151,7 +2151,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2191,7 +2191,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -2209,7 +2209,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2248,7 +2248,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           isDeprecated: false,
           name: 'Value',
           discriminator: 'type',
-          models: {
+          models: [
             (
               discriminatorValue: 'list',
               model: ListModel(
@@ -2261,7 +2261,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               discriminatorValue: 'str',
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2318,13 +2318,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nullableClass),
             (
               discriminatorValue: null,
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2376,13 +2376,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nullableClass),
             (
               discriminatorValue: null,
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2430,9 +2430,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nullableClass),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2477,13 +2477,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nullableClass),
             (
               discriminatorValue: null,
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2513,13 +2513,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nullableList),
             (
               discriminatorValue: null,
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2561,13 +2561,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: nonNullableClass),
             (
               discriminatorValue: null,
               model: StringModel(context: context),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2589,7 +2589,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2603,7 +2603,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: IntegerModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2635,7 +2635,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2649,7 +2649,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2678,7 +2678,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2692,7 +2692,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2739,7 +2739,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2753,7 +2753,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2782,7 +2782,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2796,7 +2796,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2825,7 +2825,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: MapModel(
@@ -2839,7 +2839,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: StringModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2875,7 +2875,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ListModel(
@@ -2888,7 +2888,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             discriminatorValue: null,
             model: IntegerModel(context: context),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2935,10 +2935,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2959,10 +2959,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2987,10 +2987,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3015,10 +3015,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3061,10 +3061,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3089,10 +3089,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3117,10 +3117,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3145,7 +3145,7 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (
             discriminatorValue: null,
@@ -3157,7 +3157,7 @@ bool operator ==(Object other) {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3182,10 +3182,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3208,10 +3208,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3251,10 +3251,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: AnyModel(context: context)),
             (discriminatorValue: null, model: classA),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3285,10 +3285,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3324,10 +3324,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: AnyModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3365,13 +3365,13 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3392,13 +3392,13 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3423,13 +3423,13 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3454,14 +3454,14 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3493,13 +3493,13 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3524,13 +3524,13 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: NeverModel(context: context, isNullable: false),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -3588,10 +3588,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (discriminatorValue: null, model: Base64Model(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3656,7 +3656,7 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (
               discriminatorValue: null,
@@ -3669,7 +3669,7 @@ bool operator ==(Object other) {
                 defaultValue: null,
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3736,10 +3736,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (discriminatorValue: null, model: Base64Model(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3810,7 +3810,7 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (
               discriminatorValue: null,
@@ -3823,7 +3823,7 @@ bool operator ==(Object other) {
                 defaultValue: null,
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3897,10 +3897,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (discriminatorValue: null, model: Base64Model(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -3959,7 +3959,7 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (
               discriminatorValue: null,
@@ -3972,7 +3972,7 @@ bool operator ==(Object other) {
                 defaultValue: null,
               ),
             ),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4033,10 +4033,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: classModel),
             (discriminatorValue: null, model: Base64Model(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4099,10 +4099,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'TreeOrClassA',
-          models: {
+          models: [
             (discriminatorValue: null, model: tree),
             (discriminatorValue: null, model: classA),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4165,10 +4165,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'TreeOrClassA',
-          models: {
+          models: [
             (discriminatorValue: null, model: tree),
             (discriminatorValue: null, model: classA),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4232,10 +4232,10 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'AOrB',
-          models: {
+          models: [
             (discriminatorValue: null, model: a),
             (discriminatorValue: null, model: b),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4294,10 +4294,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4329,7 +4329,7 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (
             discriminatorValue: null,
@@ -4341,7 +4341,7 @@ bool operator ==(Object other) {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4372,10 +4372,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: NumberModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4406,10 +4406,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: DoubleModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4440,10 +4440,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: DecimalModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4475,11 +4475,11 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: IntegerModel(context: context)),
           (discriminatorValue: null, model: DoubleModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4516,12 +4516,12 @@ bool operator ==(Object other) {
         final model = OneOfModel(
           isDeprecated: false,
           name: 'Value',
-          models: {
+          models: [
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (discriminatorValue: null, model: DoubleModel(context: context)),
             (discriminatorValue: null, model: DecimalModel(context: context)),
             (discriminatorValue: null, model: StringModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -4561,10 +4561,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: DateTimeModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4597,10 +4597,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: DateModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4633,10 +4633,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: Base64Model(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -4671,10 +4671,10 @@ bool operator ==(Object other) {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
-        models: {
+        models: [
           (discriminatorValue: null, model: BooleanModel(context: context)),
           (discriminatorValue: null, model: StringModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );

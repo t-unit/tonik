@@ -656,13 +656,13 @@ void main() {
     final oneOfModel = OneOfModel(
       isDeprecated: false,
       context: context,
-      models: {
+      models: [
         (discriminatorValue: 'string', model: StringModel(context: context)),
         (
           discriminatorValue: 'integer',
           model: IntegerModel(context: context),
         ),
-      },
+      ],
       name: 'OneOfValue',
       discriminator: 'type',
       examples: const [],
@@ -2394,7 +2394,7 @@ void main() {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'StringOrInt',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -2405,7 +2405,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2478,14 +2478,14 @@ void main() {
       final allOfModel = AllOfModel(
         isDeprecated: false,
         name: 'CombinedObject',
-        models: {
+        models: [
           ClassModel(
             isDeprecated: false,
             context: context,
             properties: const [],
             examples: const [],
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -2697,10 +2697,10 @@ void main() {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
           name: 'StringOrIntSimple',
-          models: {
+          models: [
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
-          },
+          ],
           context: context,
           examples: const [],
         );
@@ -2776,9 +2776,9 @@ void main() {
         final allOfModel = AllOfModel(
           isDeprecated: false,
           name: 'StringOnly',
-          models: {
+          models: [
             StringModel(context: context),
-          },
+          ],
           context: context,
           examples: const [],
         );

@@ -877,7 +877,7 @@ void main() {
             content: OneOfModel(
               isDeprecated: false,
               name: 'Item',
-              models: {
+              models: [
                 (
                   discriminatorValue: null,
                   model: StringModel(context: context),
@@ -886,7 +886,7 @@ void main() {
                   discriminatorValue: null,
                   model: IntegerModel(context: context),
                 ),
-              },
+              ],
               context: context,
               examples: const [],
             ),
@@ -1402,10 +1402,10 @@ void main() {
       OneOfModel allSimpleOneOf() => OneOfModel(
         name: 'SimpleVariant',
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1413,7 +1413,7 @@ void main() {
       OneOfModel allComplexOneOf() => OneOfModel(
         name: 'ComplexVariant',
         isDeprecated: false,
-        models: {
+        models: [
           (
             discriminatorValue: null,
             model: ClassModel(
@@ -1434,7 +1434,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );
@@ -1442,7 +1442,7 @@ void main() {
       OneOfModel mixedOneOf() => OneOfModel(
         name: 'MixedVariant',
         isDeprecated: false,
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
@@ -1454,7 +1454,7 @@ void main() {
               examples: const [],
             ),
           ),
-        },
+        ],
         context: context,
         examples: const [],
       );

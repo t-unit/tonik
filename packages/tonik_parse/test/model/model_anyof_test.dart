@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -77,6 +78,77 @@ void main() {
       },
     },
   };
+
+  test('warns and omits repeated anyOf members in first-occurrence order', () {
+    final logs = <LogRecord>[];
+    final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+    addTearDown(subscription.cancel);
+
+    final api = Importer().import({
+      'openapi': '3.0.3',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Zebra': {'type': 'string'},
+          'Alpha': {'type': 'string'},
+          'Compound': {
+            'anyOf': [
+              {r'$ref': '#/components/schemas/Zebra'},
+              {r'$ref': '#/components/schemas/Alpha'},
+              {r'$ref': '#/components/schemas/Zebra'},
+            ],
+            'discriminator': {
+              'propertyName': 'kind',
+              'mapping': {
+                'z': '#/components/schemas/Zebra',
+                'a': '#/components/schemas/Alpha',
+              },
+            },
+          },
+          'Wrapper': {
+            'type': 'object',
+            'properties': {
+              'value': {
+                'anyOf': [
+                  {r'$ref': '#/components/schemas/Zebra'},
+                  {r'$ref': '#/components/schemas/Alpha'},
+                  {r'$ref': '#/components/schemas/Zebra'},
+                ],
+              },
+            },
+          },
+        },
+      },
+    });
+    final zebra = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'Zebra',
+    );
+    final alpha = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'Alpha',
+    );
+    final compound = api.models.whereType<AnyOfModel>().singleWhere(
+      (model) => model.name == 'Compound',
+    );
+    final wrapper = api.models.whereType<ClassModel>().single;
+    final nested = wrapper.properties.single.model as AnyOfModel;
+
+    expect(compound.discriminator, 'kind');
+    expect(compound.models, [
+      (model: zebra, discriminatorValue: 'z'),
+      (model: alpha, discriminatorValue: 'a'),
+    ]);
+    expect(nested.discriminator, isNull);
+    expect(nested.models, [
+      (model: zebra, discriminatorValue: null),
+      (model: alpha, discriminatorValue: null),
+    ]);
+    final warnings = logs.where((record) => record.level == Level.WARNING);
+    expect(warnings.map((record) => record.message), [
+      'Ignoring duplicate member in anyOf at components/schemas/Compound.',
+      'Ignoring duplicate member in anyOf at components/schemas/Wrapper/value/anyOf.',
+    ]);
+  });
 
   test('Imports anyOf with inline schema', () {
     final api = Importer().import(fileContent);

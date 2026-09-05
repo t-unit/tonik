@@ -23,10 +23,10 @@ void main() {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'FlexibleModel',
-        models: {
+        models: [
           (discriminatorValue: null, model: StringModel(context: testContext)),
           (discriminatorValue: null, model: IntegerModel(context: testContext)),
-        },
+        ],
         context: testContext,
         examples: const [],
       );

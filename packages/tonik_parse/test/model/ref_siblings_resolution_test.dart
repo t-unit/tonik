@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -426,6 +427,46 @@ void main() {
   });
 
   group(r'$ref in composite types with siblings', () {
+    test('named structural siblings omit duplicate members and warn', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
+
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {'type': 'string'},
+            'Extra': {'type': 'string'},
+            'Combined': {
+              r'$ref': '#/components/schemas/Base',
+              'allOf': [
+                {r'$ref': '#/components/schemas/Extra'},
+                {r'$ref': '#/components/schemas/Base'},
+                {r'$ref': '#/components/schemas/Extra'},
+              ],
+            },
+          },
+        },
+      });
+      final base = api.models.whereType<AliasModel>().singleWhere(
+        (model) => model.name == 'Base',
+      );
+      final extra = api.models.whereType<AliasModel>().singleWhere(
+        (model) => model.name == 'Extra',
+      );
+      final combined = api.models.whereType<AllOfModel>().single;
+
+      expect(combined.models, [base, extra]);
+      final warnings = logs.where((record) => record.level == Level.WARNING);
+      expect(warnings.map((record) => record.message), [
+        'Ignoring duplicate member in allOf at components/schemas/Combined.',
+        'Ignoring duplicate member in allOf at components/schemas/Combined.',
+      ]);
+    });
+
     test(r'$ref + description in allOf member creates AliasModel', () {
       const fileContent = {
         'openapi': '3.1.0',
@@ -745,6 +786,52 @@ void main() {
   });
 
   group(r'$ref in properties with siblings', () {
+    test('property structural siblings omit duplicate members and warn', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
+
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {'type': 'string'},
+            'Extra': {'type': 'string'},
+            'Wrapper': {
+              'type': 'object',
+              'properties': {
+                'value': {
+                  r'$ref': '#/components/schemas/Base',
+                  'allOf': [
+                    {r'$ref': '#/components/schemas/Extra'},
+                    {r'$ref': '#/components/schemas/Base'},
+                    {r'$ref': '#/components/schemas/Extra'},
+                  ],
+                },
+              },
+            },
+          },
+        },
+      });
+      final base = api.models.whereType<AliasModel>().singleWhere(
+        (model) => model.name == 'Base',
+      );
+      final extra = api.models.whereType<AliasModel>().singleWhere(
+        (model) => model.name == 'Extra',
+      );
+      final wrapper = api.models.whereType<ClassModel>().single;
+      final combined = wrapper.properties.single.model as AllOfModel;
+
+      expect(combined.models, [base, extra]);
+      final warnings = logs.where((record) => record.level == Level.WARNING);
+      expect(warnings.map((record) => record.message), [
+        'Ignoring duplicate member in allOf at components/schemas/Wrapper/value/allOf.',
+        'Ignoring duplicate member in allOf at components/schemas/Wrapper/value/allOf.',
+      ]);
+    });
+
     test(r'$ref + description in property sets description on property', () {
       const fileContent = {
         'openapi': '3.1.0',

@@ -146,7 +146,7 @@ void main() {
       );
       final anyOf = AnyOfModel(
         name: 'Outer',
-        models: {(discriminatorValue: null, model: classModel)},
+        models: [(discriminatorValue: null, model: classModel)],
         context: context,
         isDeprecated: false,
         examples: const [],
@@ -177,7 +177,7 @@ void main() {
       );
       final oneOf = OneOfModel(
         name: 'Outer',
-        models: {(discriminatorValue: null, model: classModel)},
+        models: [(discriminatorValue: null, model: classModel)],
         context: context,
         isDeprecated: false,
         examples: const [],
@@ -207,7 +207,7 @@ void main() {
       );
       final allOf = AllOfModel(
         name: 'Outer',
-        models: {classModel},
+        models: [classModel],
         context: context,
         isDeprecated: false,
         examples: const [],
@@ -371,7 +371,7 @@ void main() {
     test('AllOfModel shows model refs without recursing', () {
       final allOf = AllOfModel(
         name: 'Combined',
-        models: {
+        models: [
           ClassModel(
             name: 'Base',
             properties: [],
@@ -379,7 +379,7 @@ void main() {
             isDeprecated: false,
             examples: const [],
           ),
-        },
+        ],
         context: context,
         isDeprecated: false,
         examples: const [],

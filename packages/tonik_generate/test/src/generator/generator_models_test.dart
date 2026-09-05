@@ -57,30 +57,30 @@ void main() {
           OneOfModel(
             isDeprecated: false,
             name: 'Choice',
-            models: {
+            models: [
               (discriminatorValue: null, model: StringModel(context: ctx)),
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
-            },
+            ],
             context: ctx,
             examples: const [],
           ),
           AnyOfModel(
             isDeprecated: false,
             name: 'FlexibleModel',
-            models: {
+            models: [
               (discriminatorValue: null, model: StringModel(context: ctx)),
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
-            },
+            ],
             context: ctx,
             examples: const [],
           ),
           AllOfModel(
             isDeprecated: false,
             name: 'Many',
-            models: {
+            models: [
               StringModel(context: ctx),
               IntegerModel(context: ctx),
-            },
+            ],
             context: ctx,
             examples: const [],
           ),
