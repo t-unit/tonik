@@ -15,8 +15,8 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}/api/v1';
   });
 
-  DefaultApi buildContentEncodedApi({required String responseStatus}) {
-    return DefaultApi(
+  ContentEncodedApi buildContentEncodedApi({required String responseStatus}) {
+    return ContentEncodedApi(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: testServerConfig(

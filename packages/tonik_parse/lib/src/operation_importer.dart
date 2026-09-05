@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/model/open_api_object.dart';
@@ -34,12 +33,12 @@ class OperationImporter {
   final log = Logger('OperationImporter');
 
   late Set<core.Operation> operations;
-  late Set<core.Tag> validTags;
+  late Map<String, core.Tag> _tagsByName;
 
   void import() {
-    validTags = {
+    _tagsByName = {
       for (final tag in openApiObject.tags ?? <Tag>[])
-        core.Tag(
+        tag.name: core.Tag(
           name: tag.name,
           description: tag.description,
           nameOverride: tag.xDartName,
@@ -156,9 +155,8 @@ class OperationImporter {
 
     final tags = operation.tags
         ?.map(
-          (name) => validTags.firstWhereOrNull((tag) => tag.name == name),
+          (name) => _tagsByName.putIfAbsent(name, () => core.Tag(name: name)),
         )
-        .nonNulls
         .toSet();
 
     final pathParameters = pathItem.parameters ?? [];

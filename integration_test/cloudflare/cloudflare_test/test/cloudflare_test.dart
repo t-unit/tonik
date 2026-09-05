@@ -13,13 +13,11 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  DefaultApi buildDefaultApi({required String responseStatus}) {
-    return DefaultApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(
-          headers: {'X-Response-Status': responseStatus},
-        ),
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -28,7 +26,7 @@ void main() {
 
   group('AccountsListAccounts', () {
     test('accountsListAccounts 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = AccountsApi(buildServer(responseStatus: '200'));
 
       final result = await api.accountsListAccounts();
 
@@ -46,7 +44,7 @@ void main() {
     });
 
     test('accountsListAccounts 4xx', () async {
-      final api = buildDefaultApi(responseStatus: '403');
+      final api = AccountsApi(buildServer(responseStatus: '403'));
 
       final result = await api.accountsListAccounts();
 
@@ -64,7 +62,7 @@ void main() {
 
   group('ZonesGet', () {
     test('zonesGet 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = ZoneApi(buildServer(responseStatus: '200'));
 
       final result = await api.zonesGet();
 
@@ -79,7 +77,7 @@ void main() {
     });
 
     test('zonesGet 4xx', () async {
-      final api = buildDefaultApi(responseStatus: '400');
+      final api = ZoneApi(buildServer(responseStatus: '400'));
 
       final result = await api.zonesGet();
 
