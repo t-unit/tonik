@@ -3,7 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
-  test('OAS 3.0 multipart encodings remain content based', () {
+  test('imports OAS 3.0 multipart encodings as content based', () {
     final encoding = _importEncoding(
       version: '3.0.3',
       encoding: {
