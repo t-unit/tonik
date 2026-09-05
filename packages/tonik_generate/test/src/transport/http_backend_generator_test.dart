@@ -2,7 +2,9 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
+import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/http_backend_generator.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 void main() {
   const generator = HttpBackendGenerator();
@@ -10,6 +12,115 @@ void main() {
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
+
+  test('generates the shared HTTP operation base', () {
+    final specs = generator.operationBaseGenerator.generate().toList();
+
+    expect(specs, hasLength(4));
+
+    final base = specs.first as Class;
+    expect(base.name, 'HttpOperation');
+    expect(base.abstract, isTrue);
+    expect(base.modifier, ClassModifier.base);
+    expect(base.fields.map((field) => field.name), [
+      'baseUrl',
+      'clientAccessor',
+    ]);
+    expect(base.methods.map((method) => method.name), [
+      'execute',
+      'executeAsync',
+      'executeVoid',
+      'executeVoidAsync',
+      '_dispatch',
+      '_requestAbortErrorType',
+    ]);
+
+    final source = Library((builder) => builder.body.addAll(specs))
+        .accept(emitter)
+        .toString();
+    expect(source, contains('abstract base class HttpOperation<T>'));
+    expect(source, contains('final class HttpOperationRequest'));
+    expect(source, contains('class _HttpPreparedRequest'));
+    expect(source, contains('class _HttpDispatchResult<T>'));
+  });
+
+  test(
+    'selects the HTTP base execution entry point for each response form',
+    () {
+      final operationBase = generator.operationBaseGenerator;
+      final plan = OperationRequestPlan(
+        method: HttpMethod.get,
+        uri: refer('uri'),
+        pathParameters: const [],
+        queryParameters: const [],
+        headers: const [],
+        cookies: const [],
+        contentType: null,
+        cancellation: refer('cancellation'),
+        response: ResponseRequirements(
+          expectsBytes: true,
+          statuses: const [],
+          contentTypes: const [],
+        ),
+        body: const AbsentBodyPlan(),
+      );
+
+      expect(operationBase.className, 'HttpOperation');
+      expect(operationBase.filename, 'http_operation.dart');
+      expect(operationBase.clientConstructorParameterName, 'clientAccessor');
+      expect(
+        operationBase
+            .baseType(package: 'petstore', valueType: refer('Pet'))
+            .accept(emitter)
+            .toString(),
+        'HttpOperation<Pet>',
+      );
+
+      for (final entry in [
+        (
+          isVoid: false,
+          isAsync: false,
+          method: 'execute',
+          decode: refer('decode'),
+        ),
+        (
+          isVoid: false,
+          isAsync: true,
+          method: 'executeAsync',
+          decode: refer('decode'),
+        ),
+        (isVoid: true, isAsync: false, method: 'executeVoid', decode: null),
+        (isVoid: true, isAsync: true, method: 'executeVoidAsync', decode: null),
+      ]) {
+        final invocation = operationBase.executionInvocation(
+          package: 'petstore',
+          filename: operationBase.filename,
+          plan: plan,
+          path: refer('path'),
+          queryParameters: refer('query'),
+          data: refer('data'),
+          options: refer('options'),
+          decode: entry.decode,
+          isVoid: entry.isVoid,
+          isDataAsync: entry.isAsync,
+        );
+        final source = collapseWhitespace(
+          invocation.accept(emitter).toString(),
+        );
+
+        expect(source, startsWith('this.${entry.method}('));
+        expect(source, contains('prepare: '));
+        expect(source, contains('decode: '));
+        if (entry.isAsync) {
+          expect(source, contains('() async =>'));
+          expect(source, contains('data: await data'));
+        } else {
+          expect(source, contains('() =>'));
+          expect(source, contains('data: data'));
+        }
+      }
+    },
+  );
 
   group('response accessors', () {
     test('reads completed native response inputs', () {
