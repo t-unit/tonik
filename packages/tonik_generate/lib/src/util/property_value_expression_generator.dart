@@ -82,9 +82,7 @@ Expression buildRawStringListExpression(
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() => mapToRaw(
       nullGuard(
         refer('encodeAnyValueToString', _tonikUtilUrl).call(
-          [
-            refer('e').property('toJson').call([]),
-          ],
+          [refer('e').property('toJson').call([])],
           {'allowEmpty': refer('allowEmpty')},
         ),
       ),

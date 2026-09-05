@@ -92,13 +92,9 @@ void main() {
       });
 
       final address =
-          api.models.firstWhere(
-                (m) => m is ClassModel && m.name == 'Address',
-              )
+          api.models.firstWhere((m) => m is ClassModel && m.name == 'Address')
               as ClassModel;
-      final country = address.properties.firstWhere(
-        (p) => p.name == 'country',
-      );
+      final country = address.properties.firstWhere((p) => p.name == 'country');
 
       expect(country.model, isA<AliasModel>());
       final alias = country.model as AliasModel;
@@ -120,9 +116,7 @@ void main() {
       });
 
       final country =
-          api.models.firstWhere(
-                (m) => m is AliasModel && m.name == 'Country',
-              )
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'Country')
               as AliasModel;
       expect(country.defaultValue, 'US');
 
@@ -196,40 +190,33 @@ void main() {
       },
     );
 
-    test(
-      r'property $ref without sibling resolves to AliasModel carrying '
-      'the referenced default',
-      () {
-        final api = Importer().import({
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Country': {'type': 'string', 'default': 'US'},
-              'Address': {
-                'type': 'object',
-                'properties': {
-                  'country': {r'$ref': '#/components/schemas/Country'},
-                },
+    test(r'property $ref without sibling resolves to AliasModel carrying '
+        'the referenced default', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Country': {'type': 'string', 'default': 'US'},
+            'Address': {
+              'type': 'object',
+              'properties': {
+                'country': {r'$ref': '#/components/schemas/Country'},
               },
             },
           },
-        });
+        },
+      });
 
-        final address =
-            api.models.firstWhere(
-                  (m) => m is ClassModel && m.name == 'Address',
-                )
-                as ClassModel;
-        final country = address.properties.firstWhere(
-          (p) => p.name == 'country',
-        );
+      final address =
+          api.models.firstWhere((m) => m is ClassModel && m.name == 'Address')
+              as ClassModel;
+      final country = address.properties.firstWhere((p) => p.name == 'country');
 
-        expect(country.model, isA<AliasModel>());
-        expect((country.model as AliasModel).defaultValue, 'US');
-      },
-    );
+      expect(country.model, isA<AliasModel>());
+      expect((country.model as AliasModel).defaultValue, 'US');
+    });
 
     test('AliasModel for primitive named schema carries default', () {
       final api = Importer().import({
@@ -244,9 +231,7 @@ void main() {
       });
 
       final greeting =
-          api.models.firstWhere(
-                (m) => m is AliasModel && m.name == 'Greeting',
-              )
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'Greeting')
               as AliasModel;
       expect(greeting.defaultValue, 'hello');
     });
@@ -266,19 +251,13 @@ void main() {
       });
 
       final a =
-          api.models.firstWhere(
-                (m) => m is AliasModel && m.name == 'A',
-              )
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'A')
               as AliasModel;
       final b =
-          api.models.firstWhere(
-                (m) => m is AliasModel && m.name == 'B',
-              )
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'B')
               as AliasModel;
       final c =
-          api.models.firstWhere(
-                (m) => m is AliasModel && m.name == 'C',
-              )
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'C')
               as AliasModel;
 
       expect(c.defaultValue, 'X');
@@ -286,133 +265,108 @@ void main() {
       expect(a.defaultValue, 'X');
     });
 
-    test(
-      r'two-hop $ref chain with reversed declaration order also '
-      'surfaces the terminal default',
-      () {
-        final api = Importer().import({
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'C': {'type': 'string', 'default': 'X'},
-              'B': {r'$ref': '#/components/schemas/C'},
-              'A': {r'$ref': '#/components/schemas/B'},
-            },
+    test(r'two-hop $ref chain with reversed declaration order also '
+        'surfaces the terminal default', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'C': {'type': 'string', 'default': 'X'},
+            'B': {r'$ref': '#/components/schemas/C'},
+            'A': {r'$ref': '#/components/schemas/B'},
           },
-        });
+        },
+      });
 
-        final a =
-            api.models.firstWhere(
-                  (m) => m is AliasModel && m.name == 'A',
-                )
-                as AliasModel;
-        expect(a.defaultValue, 'X');
-      },
-    );
+      final a =
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'A')
+              as AliasModel;
+      expect(a.defaultValue, 'X');
+    });
 
-    test(
-      r'bare $ref cycle with sibling default terminates and surfaces '
-      'the local default',
-      () {
-        final api = Importer().import({
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'A': {
-                r'$ref': '#/components/schemas/B',
-                'default': 'x',
-              },
-              'B': {r'$ref': '#/components/schemas/A'},
-            },
+    test(r'bare $ref cycle with sibling default terminates and surfaces '
+        'the local default', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {r'$ref': '#/components/schemas/B', 'default': 'x'},
+            'B': {r'$ref': '#/components/schemas/A'},
           },
-        });
+        },
+      });
 
-        final a =
-            api.models.firstWhere(
-                  (m) => m is AliasModel && m.name == 'A',
-                )
-                as AliasModel;
-        expect(a.defaultValue, 'x');
-      },
-    );
+      final a =
+          api.models.firstWhere((m) => m is AliasModel && m.name == 'A')
+              as AliasModel;
+      expect(a.defaultValue, 'x');
+    });
 
-    test(
-      r'property $ref with non-string sibling default carries the list '
-      'value through Property and AliasModel',
-      () {
-        final api = Importer().import({
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Sizes': {
-                'type': 'array',
-                'items': {'type': 'integer'},
-              },
-              'Box': {
-                'type': 'object',
-                'properties': {
-                  'dims': {
-                    r'$ref': '#/components/schemas/Sizes',
-                    'default': [1, 2, 3],
-                  },
+    test(r'property $ref with non-string sibling default carries the list '
+        'value through Property and AliasModel', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Sizes': {
+              'type': 'array',
+              'items': {'type': 'integer'},
+            },
+            'Box': {
+              'type': 'object',
+              'properties': {
+                'dims': {
+                  r'$ref': '#/components/schemas/Sizes',
+                  'default': [1, 2, 3],
                 },
               },
             },
           },
-        });
+        },
+      });
 
-        final box =
-            api.models.firstWhere(
-                  (m) => m is ClassModel && m.name == 'Box',
-                )
-                as ClassModel;
-        final dims = box.properties.firstWhere((p) => p.name == 'dims');
+      final box =
+          api.models.firstWhere((m) => m is ClassModel && m.name == 'Box')
+              as ClassModel;
+      final dims = box.properties.firstWhere((p) => p.name == 'dims');
 
-        expect(dims.defaultValue, [1, 2, 3]);
-        expect(dims.model, isA<AliasModel>());
-        expect((dims.model as AliasModel).defaultValue, [1, 2, 3]);
-      },
-    );
+      expect(dims.defaultValue, [1, 2, 3]);
+      expect(dims.model, isA<AliasModel>());
+      expect((dims.model as AliasModel).defaultValue, [1, 2, 3]);
+    });
 
-    test(
-      r'$defs reference with default surfaces on AliasModel',
-      () {
-        final api = Importer().import({
-          'openapi': '3.0.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Outer': {
-                'type': 'object',
-                r'$defs': {
-                  'Sub': {'type': 'string', 'default': 'd'},
-                },
-                'properties': {
-                  'sub': {
-                    r'$ref': r'#/components/schemas/Outer/$defs/Sub',
-                  },
-                },
+    test(r'$defs reference with default surfaces on AliasModel', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Outer': {
+              'type': 'object',
+              r'$defs': {
+                'Sub': {'type': 'string', 'default': 'd'},
+              },
+              'properties': {
+                'sub': {r'$ref': r'#/components/schemas/Outer/$defs/Sub'},
               },
             },
           },
-        });
+        },
+      });
 
-        final outer =
-            api.models.firstWhere(
-                  (m) => m is ClassModel && m.name == 'Outer',
-                )
-                as ClassModel;
-        final sub = outer.properties.firstWhere((p) => p.name == 'sub');
-        expect(sub.model, isA<AliasModel>());
-        expect((sub.model as AliasModel).defaultValue, 'd');
-      },
-    );
+      final outer =
+          api.models.firstWhere((m) => m is ClassModel && m.name == 'Outer')
+              as ClassModel;
+      final sub = outer.properties.firstWhere((p) => p.name == 'sub');
+      expect(sub.model, isA<AliasModel>());
+      expect((sub.model as AliasModel).defaultValue, 'd');
+    });
   });
 }

@@ -53,9 +53,7 @@ String encodeAnyToMatrix(
   if (value is BigDecimal) {
     return value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
   }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to matrix style',
-  );
+  throw EncodingException('Cannot encode ${value.runtimeType} to matrix style');
 }
 
 /// Encodes any value to label-style. Used for AnyModel fields.
@@ -95,9 +93,7 @@ String encodeAnyToLabel(
   if (value is BigDecimal) {
     return value.toLabel(explode: explode, allowEmpty: allowEmpty);
   }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to label style',
-  );
+  throw EncodingException('Cannot encode ${value.runtimeType} to label style');
 }
 
 /// Encodes any value to simple-style. Used for AnyModel fields.
@@ -233,9 +229,7 @@ String encodeAnyToSimple(
       literal: literal,
     );
   }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to simple style',
-  );
+  throw EncodingException('Cannot encode ${value.runtimeType} to simple style');
 }
 
 /// Encodes any value to form-style. Used for AnyModel fields.
@@ -404,9 +398,7 @@ String encodeAnyToForm(
       textEncoding: textEncoding,
     );
   }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to form style',
-  );
+  throw EncodingException('Cannot encode ${value.runtimeType} to form style');
 }
 
 /// Encodes a top-level form query parameter whose runtime value has an unknown
@@ -700,16 +692,11 @@ String encodeAnyToUri(
       textEncoding: textEncoding,
     );
   }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to URI',
-  );
+  throw EncodingException('Cannot encode ${value.runtimeType} to URI');
 }
 
 /// Returns an empty string for an allowed null and rejects non-scalar values.
-String encodeAnyValueToString(
-  Object? value, {
-  required bool allowEmpty,
-}) {
+String encodeAnyValueToString(Object? value, {required bool allowEmpty}) {
   if (value == null) {
     if (!allowEmpty) {
       throw const EmptyValueException();

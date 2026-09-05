@@ -155,10 +155,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'class=name,test,age,1',
-      );
+      expect(recordedRequest.uri.query, 'class=name,test,age,1');
     });
 
     test(
@@ -224,10 +221,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'classAlias=name,test,age,1',
-      );
+      expect(recordedRequest.uri.query, 'classAlias=name,test,age,1');
     });
 
     test('anyOfPrimitive', () async {
@@ -251,10 +245,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'anyOfComplex=name,test,age,1',
-      );
+      expect(recordedRequest.uri.query, 'anyOfComplex=name,test,age,1');
     });
 
     test('oneOfPrimitive', () async {
@@ -280,10 +271,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'oneOfComplex=value,test,amount,1',
-      );
+      expect(recordedRequest.uri.query, 'oneOfComplex=value,test,amount,1');
     });
 
     test('allOfPrimitive', () async {
@@ -331,10 +319,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'simpleCompositeList=tags,a%2Cb,7',
-      );
+      expect(recordedRequest.uri.query, 'simpleCompositeList=tags,a%2Cb,7');
     });
   });
 
@@ -348,10 +333,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'name=test&age=1',
-      );
+      expect(recordedRequest.uri.query, 'name=test&age=1');
     });
 
     test('classNested', () async {
@@ -392,10 +374,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'name=test&age=1',
-      );
+      expect(recordedRequest.uri.query, 'name=test&age=1');
     });
 
     test('anyOfPrimitive', () async {
@@ -419,10 +398,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'name=test&age=1',
-      );
+      expect(recordedRequest.uri.query, 'name=test&age=1');
     });
 
     test('oneOfPrimitive', () async {
@@ -448,10 +424,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'value=test&amount=1',
-      );
+      expect(recordedRequest.uri.query, 'value=test&amount=1');
     });
 
     test('allOfPrimitive', () async {
@@ -478,10 +451,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'name=test&age=1&value=test&amount=1',
-      );
+      expect(recordedRequest.uri.query, 'name=test&age=1&value=test&amount=1');
     });
   });
 
@@ -508,10 +478,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listOneOfPrimitive=test',
-      );
+      expect(recordedRequest.uri.query, 'listOneOfPrimitive=test');
     });
 
     test('listOneOfComplex', () async {
@@ -550,10 +517,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listOneOfComplexMixed=1',
-      );
+      expect(recordedRequest.uri.query, 'listOneOfComplexMixed=1');
     });
 
     test(
@@ -581,10 +545,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listNullableInteger=1,,2',
-      );
+      expect(recordedRequest.uri.query, 'listNullableInteger=1,,2');
     });
 
     test('empty array is the only param and drops the whole query', () async {
@@ -605,10 +566,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listNullableInteger=1,2',
-      );
+      expect(recordedRequest.uri.query, 'listNullableInteger=1,2');
     });
   });
 
@@ -621,10 +579,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listString=test&listString=test2',
-      );
+      expect(recordedRequest.uri.query, 'listString=test&listString=test2');
     });
 
     test('oneOfPrimitive', () async {
@@ -802,10 +757,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'nullableClass=name,test,age,25',
-      );
+      expect(recordedRequest.uri.query, 'nullableClass=name,test,age,25');
     });
 
     test('nullableClass with null', () async {
@@ -863,10 +815,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'name=test',
-      );
+      expect(recordedRequest.uri.query, 'name=test');
     });
 
     test('all-optional empty object drops the whole query', () async {

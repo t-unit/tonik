@@ -82,10 +82,7 @@ void main() {
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
 
-      expect(
-        recordedRequest.uri.path,
-        '/admin/api/2020-10/products.json',
-      );
+      expect(recordedRequest.uri.path, '/admin/api/2020-10/products.json');
       expect(recordedRequest.method, 'POST');
     });
   });
@@ -104,10 +101,7 @@ void main() {
       final recordedRequest = await imposterServer.takeRequest();
 
       expect(recordedRequest.method, 'DELETE');
-      expect(
-        recordedRequest.uri.path,
-        '/admin/api/2020-10/products/123.json',
-      );
+      expect(recordedRequest.uri.path, '/admin/api/2020-10/products/123.json');
     });
   });
 }

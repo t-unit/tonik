@@ -35,10 +35,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'name=alice&sort=name,alice',
-        );
+        expect(recordedRequest.uri.query, 'name=alice&sort=name,alice');
       },
     );
 

@@ -48,16 +48,11 @@ void main() {
               'authorizationUrl': 'https://example.com/auth',
               'tokenUrl': 'https://example.com/token',
               'refreshUrl': 'https://example.com/refresh',
-              'scopes': {
-                'read': 'Read access',
-                'write': 'Write access',
-              },
+              'scopes': {'read': 'Read access', 'write': 'Write access'},
             },
             'implicit': {
               'authorizationUrl': 'https://example.com/auth',
-              'scopes': {
-                'read': 'Read access',
-              },
+              'scopes': {'read': 'Read access'},
             },
           },
         },
@@ -230,9 +225,7 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test', 'version': '1.0.0'},
         'paths': <String, dynamic>{},
-        'components': {
-          'securitySchemes': <String, dynamic>{},
-        },
+        'components': {'securitySchemes': <String, dynamic>{}},
       };
 
       final openApiObject = OpenApiObject.fromJson(emptyContent);

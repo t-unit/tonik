@@ -132,10 +132,7 @@ void main() {
     });
 
     test('scalar adds allowReserved when set', () {
-      final result = build(
-        StringModel(context: context),
-        allowReserved: true,
-      );
+      final result = build(StringModel(context: context), allowReserved: true);
 
       final expected = format('''
         test() {
@@ -152,10 +149,7 @@ void main() {
     });
 
     test('Base64Model adds allowReserved on the base64 string when set', () {
-      final result = build(
-        Base64Model(context: context),
-        allowReserved: true,
-      );
+      final result = build(Base64Model(context: context), allowReserved: true);
 
       final expected = format('''
         test() {

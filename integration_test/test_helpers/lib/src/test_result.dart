@@ -42,16 +42,14 @@ final class TestResponse {
 /// Case-insensitive response headers retaining each field value.
 final class TestHeaders {
   TestHeaders(Map<String, Object?> values)
-      : map = Map.unmodifiable({
-          for (final entry in values.entries)
-            entry.key: List<String>.unmodifiable(
-              switch (entry.value) {
-                Iterable<Object?> values => values.map((value) => '$value'),
-                final value? => ['$value'],
-                null => const <String>[],
-              },
-            ),
-        });
+    : map = Map.unmodifiable({
+        for (final entry in values.entries)
+          entry.key: List<String>.unmodifiable(switch (entry.value) {
+            Iterable<Object?> values => values.map((value) => '$value'),
+            final value? => ['$value'],
+            null => const <String>[],
+          }),
+      });
 
   final Map<String, List<String>> map;
 

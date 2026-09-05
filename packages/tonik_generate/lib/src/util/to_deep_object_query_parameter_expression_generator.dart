@@ -98,10 +98,7 @@ Expression _buildMapDeepObjectExpression(
             },
           ),
     UnsupportedMapPropertyValueConversion() =>
-      refer(
-        'EncodingException',
-        'package:tonik_util/tonik_util.dart',
-      ).call([
+      refer('EncodingException', 'package:tonik_util/tonik_util.dart').call([
         specLiteralString(
           'deepObject encoding is not supported for Map types with '
           'complex values. Parameter "$rawName" cannot be encoded.',

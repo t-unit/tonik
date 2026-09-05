@@ -89,149 +89,141 @@ class OneOfGenerator {
     String className,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    return Class(
-      (b) {
-        b
-          ..name = className
-          ..sealed = true
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          )
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-          ..implements.add(
-            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
-          )
-          ..implements.add(
-            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
-          );
+    return Class((b) {
+      b
+        ..name = className
+        ..sealed = true
+        ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..implements.add(
+          refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+        )
+        ..implements.add(
+          refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+        );
 
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer(
-              'Deprecated',
-              'dart:core',
-            ).call([literalString('This class is deprecated.')]),
-          );
-        }
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This class is deprecated.')]),
+        );
+      }
 
-        final encodingExceptionBody = generateEncodingExceptionExpression(
-          '$className is read-only and cannot be encoded.',
-          raw: true,
-        ).code;
+      final encodingExceptionBody = generateEncodingExceptionExpression(
+        '$className is read-only and cannot be encoded.',
+        raw: true,
+      ).code;
 
-        // Empty `oneOf: []` produces `switch (this) {}` which the analyzer
-        // infers as `Object?` — toJson's record-destructuring then fails
-        // `pattern_type_mismatch_in_irrefutable_context`. Route every
-        // encoder through a throwing body instead.
-        final useThrowBody = model.isReadOnly || model.models.isEmpty;
-        final throwBody = model.isReadOnly
-            ? encodingExceptionBody
-            : generateEncodingExceptionExpression(
-                '$className has no variants and cannot be encoded.',
-                raw: true,
-              ).code;
+      // Empty `oneOf: []` produces `switch (this) {}` which the analyzer
+      // infers as `Object?` — toJson's record-destructuring then fails
+      // `pattern_type_mismatch_in_irrefutable_context`. Route every
+      // encoder through a throwing body instead.
+      final useThrowBody = model.isReadOnly || model.models.isEmpty;
+      final throwBody = model.isReadOnly
+          ? encodingExceptionBody
+          : generateEncodingExceptionExpression(
+              '$className has no variants and cannot be encoded.',
+              raw: true,
+            ).code;
 
-        b
-          ..constructors.add(Constructor((b) => b..constant = true))
-          ..constructors.add(
-            model.isWriteOnly
-                ? buildWriteOnlyFromSimpleConstructor(className)
-                : _generateFromValueConstructor(
-                    isForm: false,
-                    className: className,
-                    model: model,
-                    variantNames: variantNames,
-                  ),
-          )
-          ..constructors.add(
-            model.isWriteOnly
-                ? buildWriteOnlyFromFormConstructor(className)
-                : _generateFromValueConstructor(
-                    isForm: true,
-                    className: className,
-                    model: model,
-                    variantNames: variantNames,
-                  ),
-          )
-          ..methods.addAll([
-            if (useThrowBody)
-              buildReadOnlyCurrentEncodingShapeGetter(throwBody)
-            else
-              _generateCurrentEncodingShapeGetter(model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyParameterPropertiesMethod(throwBody)
-            else
-              _generateParameterPropertiesMethod(
-                className,
-                model,
-                variantNames,
-              ),
-            if (useThrowBody)
-              buildReadOnlyToSimpleMethod(throwBody)
-            else
-              _generateToSimpleMethod(className, model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyToFormMethod(throwBody)
-            else
-              _generateToFormMethod(className, model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyToLabelMethod(throwBody)
-            else
-              _generateToLabelMethod(className, model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyToMatrixMethod(throwBody)
-            else
-              _generateToMatrixMethod(className, model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyToDeepObjectMethod(throwBody)
-            else
-              buildToDeepObjectMethod(),
-            if (useThrowBody)
-              buildReadOnlyToPipeDelimitedMethod(throwBody)
-            else
-              buildToPipeDelimitedMethod(),
-            if (useThrowBody)
-              buildReadOnlyToSpaceDelimitedMethod(throwBody)
-            else
-              buildToSpaceDelimitedMethod(),
-            if (useThrowBody)
-              buildReadOnlyUriEncodeMethod(throwBody)
-            else
-              _generateUriEncodeMethod(className, model, variantNames),
-            if (useThrowBody)
-              buildReadOnlyToJsonMethod(throwBody)
-            else
-              Method(
-                (b) => b
-                  ..annotations.add(refer('override', 'dart:core'))
-                  ..name = 'toJson'
-                  ..returns = refer('Object?', 'dart:core')
-                  ..body = _generateToJsonBody(className, model, variantNames),
-              ),
-          ])
-          ..constructors.add(
-            model.isWriteOnly
-                ? buildWriteOnlyFromJsonConstructor(className)
-                : Constructor(
-                    (b) => b
-                      ..factory = true
-                      ..name = 'fromJson'
-                      ..requiredParameters.add(
-                        Parameter(
-                          (p) => p
-                            ..name = 'json'
-                            ..type = refer('Object?', 'dart:core'),
-                        ),
-                      )
-                      ..body = _generateFromJsonBody(
-                        className,
-                        model,
-                        variantNames,
+      b
+        ..constructors.add(Constructor((b) => b..constant = true))
+        ..constructors.add(
+          model.isWriteOnly
+              ? buildWriteOnlyFromSimpleConstructor(className)
+              : _generateFromValueConstructor(
+                  isForm: false,
+                  className: className,
+                  model: model,
+                  variantNames: variantNames,
+                ),
+        )
+        ..constructors.add(
+          model.isWriteOnly
+              ? buildWriteOnlyFromFormConstructor(className)
+              : _generateFromValueConstructor(
+                  isForm: true,
+                  className: className,
+                  model: model,
+                  variantNames: variantNames,
+                ),
+        )
+        ..methods.addAll([
+          if (useThrowBody)
+            buildReadOnlyCurrentEncodingShapeGetter(throwBody)
+          else
+            _generateCurrentEncodingShapeGetter(model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyParameterPropertiesMethod(throwBody)
+          else
+            _generateParameterPropertiesMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToSimpleMethod(throwBody)
+          else
+            _generateToSimpleMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToFormMethod(throwBody)
+          else
+            _generateToFormMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToLabelMethod(throwBody)
+          else
+            _generateToLabelMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToMatrixMethod(throwBody)
+          else
+            _generateToMatrixMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToDeepObjectMethod(throwBody)
+          else
+            buildToDeepObjectMethod(),
+          if (useThrowBody)
+            buildReadOnlyToPipeDelimitedMethod(throwBody)
+          else
+            buildToPipeDelimitedMethod(),
+          if (useThrowBody)
+            buildReadOnlyToSpaceDelimitedMethod(throwBody)
+          else
+            buildToSpaceDelimitedMethod(),
+          if (useThrowBody)
+            buildReadOnlyUriEncodeMethod(throwBody)
+          else
+            _generateUriEncodeMethod(className, model, variantNames),
+          if (useThrowBody)
+            buildReadOnlyToJsonMethod(throwBody)
+          else
+            Method(
+              (b) => b
+                ..annotations.add(refer('override', 'dart:core'))
+                ..name = 'toJson'
+                ..returns = refer('Object?', 'dart:core')
+                ..body = _generateToJsonBody(className, model, variantNames),
+            ),
+        ])
+        ..constructors.add(
+          model.isWriteOnly
+              ? buildWriteOnlyFromJsonConstructor(className)
+              : Constructor(
+                  (b) => b
+                    ..factory = true
+                    ..name = 'fromJson'
+                    ..requiredParameters.add(
+                      Parameter(
+                        (p) => p
+                          ..name = 'json'
+                          ..type = refer('Object?', 'dart:core'),
                       ),
-                  ),
-          );
-      },
-    );
+                    )
+                    ..body = _generateFromJsonBody(
+                      className,
+                      model,
+                      variantNames,
+                    ),
+                ),
+        );
+    });
   }
 
   List<Class> _generateSubClasses(

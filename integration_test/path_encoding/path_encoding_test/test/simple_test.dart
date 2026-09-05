@@ -14,10 +14,7 @@ void main() {
 
   SimpleApi buildSimpleApi() {
     return SimpleApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(),
-      ),
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
     );
   }
 

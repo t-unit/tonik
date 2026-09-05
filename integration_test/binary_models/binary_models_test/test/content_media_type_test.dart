@@ -65,18 +65,21 @@ void main() {
     });
 
     test('ImageEncodedData deserializes base64 imageData from JSON', () {
-      final json = {
-        'name': 'test-image',
-        'imageData': 'iVBORw0KGgo=',
-      };
+      final json = {'name': 'test-image', 'imageData': 'iVBORw0KGgo='};
 
       final imageEncodedData = ImageEncodedData.fromJson(json);
 
       expect(imageEncodedData.imageData, isA<TonikFile>());
-      expect(
-        imageEncodedData.imageData.toBytes(),
-        [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-      );
+      expect(imageEncodedData.imageData.toBytes(), [
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+      ]);
     });
 
     test('201 - uploads image data', () async {
@@ -147,10 +150,7 @@ void main() {
     test('TextEncodedData deserializes string as String', () {
       const base64String = 'SGVsbG8gV29ybGQh';
 
-      final json = {
-        'name': 'test-text',
-        'textData': base64String,
-      };
+      final json = {'name': 'test-text', 'textData': base64String};
 
       final textEncodedData = TextEncodedData.fromJson(json);
 
@@ -219,20 +219,14 @@ void main() {
       expect(json['data'], 'ZMj/');
     });
 
-    test(
-      'UnconfiguredEncodedData deserializes base64 data from JSON',
-      () {
-        final json = {
-          'name': 'test-unconfigured',
-          'data': '3q2+7w==',
-        };
+    test('UnconfiguredEncodedData deserializes base64 data from JSON', () {
+      final json = {'name': 'test-unconfigured', 'data': '3q2+7w=='};
 
-        final unconfiguredData = UnconfiguredEncodedData.fromJson(json);
+      final unconfiguredData = UnconfiguredEncodedData.fromJson(json);
 
-        expect(unconfiguredData.data, isA<TonikFile>());
-        expect(unconfiguredData.data.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);
-      },
-    );
+      expect(unconfiguredData.data, isA<TonikFile>());
+      expect(unconfiguredData.data.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);
+    });
 
     test('201 - uploads unconfigured data', () async {
       final api = buildApi(responseStatus: '201');

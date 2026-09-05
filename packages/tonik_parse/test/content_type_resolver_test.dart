@@ -46,9 +46,7 @@ void main() {
     test('config override matches when input has parameters', () {
       final result = resolveContentType(
         'application/vnd.custom+json; charset=utf-8',
-        contentTypes: {
-          'application/vnd.custom+json': core.ContentType.json,
-        },
+        contentTypes: {'application/vnd.custom+json': core.ContentType.json},
         log: log,
       );
       expect(result, core.ContentType.json);
@@ -57,9 +55,7 @@ void main() {
     test('config override matches when input has no parameters', () {
       final result = resolveContentType(
         'application/vnd.custom+json',
-        contentTypes: {
-          'application/vnd.custom+json': core.ContentType.json,
-        },
+        contentTypes: {'application/vnd.custom+json': core.ContentType.json},
         log: log,
       );
       expect(result, core.ContentType.json);
@@ -157,10 +153,7 @@ void main() {
       final sub = log.onRecord.listen(records.add);
       addTearDown(sub.cancel);
 
-      for (final mediaType in [
-        'application/foo+xml',
-        'application/foo+cbor',
-      ]) {
+      for (final mediaType in ['application/foo+xml', 'application/foo+cbor']) {
         expect(
           resolveContentType(mediaType, contentTypes: {}, log: log),
           core.ContentType.bytes,

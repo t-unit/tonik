@@ -218,10 +218,7 @@ void main() {
 
       expect(response, isTonikSuccess);
       // Spaces should be percent-encoded in form style.
-      expect(
-        await getCookieHeader(),
-        'sessionId=hello%20world',
-      );
+      expect(await getCookieHeader(), 'sessionId=hello%20world');
     });
 
     test('cookie value with equals sign', () async {
@@ -248,10 +245,7 @@ void main() {
 
       expect(response, isTonikSuccess);
       // All special characters should be percent-encoded.
-      expect(
-        await getCookieHeader(),
-        'sessionId=a%3Db%26c%3Dd',
-      );
+      expect(await getCookieHeader(), 'sessionId=a%3Db%26c%3Dd');
     });
 
     test('cookie value with semicolon', () async {
@@ -278,10 +272,7 @@ void main() {
 
       expect(response, isTonikSuccess);
       // UTF-8 encoded: 👋 = F0 9F 91 8B = %F0%9F%91%8B.
-      expect(
-        await getCookieHeader(),
-        'sessionId=hi%F0%9F%91%8B',
-      );
+      expect(await getCookieHeader(), 'sessionId=hi%F0%9F%91%8B');
     });
 
     test('cookie value with percent sign', () async {
@@ -315,10 +306,7 @@ void main() {
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.headers['cookie'], 'sessionId=session123');
-      expect(
-        recordedRequest.uri.query,
-        contains('filter=active'),
-      );
+      expect(recordedRequest.uri.query, contains('filter=active'));
     });
 
     test('cookie with header parameter', () async {
@@ -332,10 +320,7 @@ void main() {
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.headers['cookie'], 'sessionId=session123');
-      expect(
-        recordedRequest.headers['x-request-id'],
-        'req-456',
-      );
+      expect(recordedRequest.headers['x-request-id'], 'req-456');
     });
 
     test('cookie with path parameter', () async {
@@ -409,10 +394,7 @@ void main() {
       final response = await api.testNullableCookie(optionalValue: 'present');
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'optionalValue=present',
-      );
+      expect(await getCookieHeader(), 'optionalValue=present');
     });
 
     test('nullable cookie without value', () async {
@@ -430,10 +412,7 @@ void main() {
       final response = await api.testRefCookie(session: 'ref-session-123');
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'session=ref-session-123',
-      );
+      expect(await getCookieHeader(), 'session=ref-session-123');
     });
   });
 
@@ -467,10 +446,7 @@ void main() {
       final response = await api.testArrayCookie(tags: ['a', 'b', 'c']);
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'tags=a; tags=b; tags=c',
-      );
+      expect(await getCookieHeader(), 'tags=a; tags=b; tags=c');
     });
 
     test('array of strings with special characters', () async {
@@ -500,10 +476,7 @@ void main() {
       final response = await api.testArrayIntegerCookie(ids: [1, 2, 3, 100]);
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'ids=1; ids=2; ids=3; ids=100',
-      );
+      expect(await getCookieHeader(), 'ids=1; ids=2; ids=3; ids=100');
     });
 
     test('single element array cookie', () async {
@@ -533,10 +506,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'id=42; name=John%20Doe',
-      );
+      expect(await getCookieHeader(), 'id=42; name=John%20Doe');
     });
   });
 
@@ -560,10 +530,7 @@ void main() {
         );
 
         expect(response, isTonikSuccess);
-        expect(
-          await getCookieHeader(),
-          'session=id,42,theme,',
-        );
+        expect(await getCookieHeader(), 'session=id,42,theme,');
       },
     );
   });
@@ -576,10 +543,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'identifier=test-value',
-      );
+      expect(await getCookieHeader(), 'identifier=test-value');
     });
 
     test('oneOf cookie with integer variant', () async {
@@ -635,10 +599,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'color=blue; size=large',
-      );
+      expect(await getCookieHeader(), 'color=blue; size=large');
     });
 
     test('map with integer values', () async {
@@ -648,10 +609,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'volume=80; brightness=50',
-      );
+      expect(await getCookieHeader(), 'volume=80; brightness=50');
     });
 
     test('map with single entry', () async {
@@ -693,9 +651,7 @@ void main() {
     test('nested object cookie returns encoding error', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testNestedObjectCookie(
-        profile: const NestedProfile(
-          user: UserObject(id: 1, name: 'John'),
-        ),
+        profile: const NestedProfile(user: UserObject(id: 1, name: 'John')),
       );
 
       // Nested objects are not supported in form encoding.
@@ -728,10 +684,7 @@ void main() {
       final response = await api.testArrayAnyCookie(items: ['a', 1, true]);
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'items=a; items=1; items=true',
-      );
+      expect(await getCookieHeader(), 'items=a; items=1; items=true');
     });
   });
 
@@ -743,10 +696,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'flags=true; flags=false; flags=true',
-      );
+      expect(await getCookieHeader(), 'flags=true; flags=false; flags=true');
     });
 
     test('nested alias to list of integers encodes as form list', () async {
@@ -754,10 +704,7 @@ void main() {
       final response = await api.testAliasIntListCookie(numbers: [1, 2, 3]);
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'numbers=1; numbers=2; numbers=3',
-      );
+      expect(await getCookieHeader(), 'numbers=1; numbers=2; numbers=3');
     });
 
     test('alias to list of strings', () async {
@@ -767,10 +714,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'names=alice; names=bob; names=carol',
-      );
+      expect(await getCookieHeader(), 'names=alice; names=bob; names=carol');
     });
 
     test('optional alias to list of integers when provided', () async {
@@ -780,10 +724,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'numbers=10; numbers=20',
-      );
+      expect(await getCookieHeader(), 'numbers=10; numbers=20');
     });
 
     test('optional alias to list of integers when not provided', () async {
@@ -801,10 +742,7 @@ void main() {
       );
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'volume=80; brightness=50',
-      );
+      expect(await getCookieHeader(), 'volume=80; brightness=50');
     });
 
     test('alias to AnyModel scalar', () async {
@@ -817,15 +755,10 @@ void main() {
 
     test('alias to list of AnyModel', () async {
       final api = buildCookiesApi(responseStatus: '204');
-      final response = await api.testAliasArrayAnyCookie(
-        items: ['a', 1, true],
-      );
+      final response = await api.testAliasArrayAnyCookie(items: ['a', 1, true]);
 
       expect(response, isTonikSuccess);
-      expect(
-        await getCookieHeader(),
-        'items=a; items=1; items=true',
-      );
+      expect(await getCookieHeader(), 'items=a; items=1; items=true');
     });
   });
 

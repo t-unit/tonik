@@ -182,9 +182,7 @@ int get hashCode => tags.hashCode;
 
       test('generates IMap field type', () {
         final result = generator.generateClass(model);
-        final field = result.fields.firstWhere(
-          (f) => f.name == 'settings',
-        );
+        final field = result.fields.firstWhere((f) => f.name == 'settings');
         final typeRef = field.type! as TypeReference;
         expect(typeRef.symbol, 'IMap');
         expect(

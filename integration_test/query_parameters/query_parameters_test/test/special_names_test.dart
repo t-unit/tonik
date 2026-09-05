@@ -54,14 +54,11 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'q%26a=hello&a%3Db=v',
-      );
-      expect(
-        Uri.splitQueryString(recordedRequest.uri.query),
-        {'q&a': 'hello', 'a=b': 'v'},
-      );
+      expect(recordedRequest.uri.query, 'q%26a=hello&a%3Db=v');
+      expect(Uri.splitQueryString(recordedRequest.uri.query), {
+        'q&a': 'hello',
+        'a=b': 'v',
+      });
     },
   );
 }

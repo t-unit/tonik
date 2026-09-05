@@ -41,9 +41,7 @@ void main() {
             'enum': ['443', '8443'],
             'default': '443',
           },
-          'basePath': {
-            'default': 'v2',
-          },
+          'basePath': {'default': 'v2'},
         },
       },
     ],
@@ -73,10 +71,7 @@ void main() {
       expect(api.servers, hasLength(1));
 
       final server = api.servers.first;
-      expect(
-        server.url,
-        'https://{username}.example.com:{port}/{basePath}',
-      );
+      expect(server.url, 'https://{username}.example.com:{port}/{basePath}');
       expect(server.variables, hasLength(3));
     });
 

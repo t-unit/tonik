@@ -35,10 +35,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/auth/login',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/auth/login');
       });
 
       test('request method is POST', () async {
@@ -62,10 +59,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes username as JSON property', () async {
@@ -134,10 +128,7 @@ void main() {
         final api = buildAuthApi(responseStatus: '200');
 
         final response = await api.postAuthLogin(
-          body: const AuthLogin(
-            username: 'user',
-            password: r'p@$$w0rd!#%&*',
-          ),
+          body: const AuthLogin(username: 'user', password: r'p@$$w0rd!#%&*'),
         );
 
         requireSuccess(response);
@@ -151,10 +142,7 @@ void main() {
         final api = buildAuthApi(responseStatus: '200');
 
         final response = await api.postAuthLogin(
-          body: const AuthLogin(
-            username: 'użytkownik',
-            password: '密码🔐',
-          ),
+          body: const AuthLogin(username: 'użytkownik', password: '密码🔐'),
         );
 
         requireSuccess(response);
@@ -174,10 +162,7 @@ void main() {
           body: const AuthLogin(username: 'testUser', password: 'testPass'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<PostAuthLoginResponse200>());
@@ -220,10 +205,7 @@ void main() {
           body: const AuthLogin(username: 'x', password: 'y'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<PostAuthLoginResponse400>());
@@ -271,10 +253,7 @@ void main() {
           body: const AuthLogin(username: 'wrong', password: 'wrong'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<PostAuthLoginResponse401>());
@@ -308,10 +287,7 @@ void main() {
           body: const AuthLogin(username: 'test', password: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PostAuthLoginResponse500>());
@@ -347,10 +323,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/auth/logout',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/auth/logout');
       });
 
       test('request method is POST', () async {
@@ -380,10 +353,7 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 204);
         expect(success.value, isA<PostAuthLogoutResponse204>());
@@ -407,10 +377,7 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<PostAuthLogoutResponse401>());
@@ -439,10 +406,7 @@ void main() {
 
         final response = await api.postAuthLogout(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PostAuthLogoutResponse500>());

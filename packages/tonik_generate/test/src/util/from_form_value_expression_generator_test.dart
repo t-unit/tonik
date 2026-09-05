@@ -261,9 +261,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals(
-            "values['date'].decodeFormDate(context: r'TestClass.date')",
-          ),
+          equals("values['date'].decodeFormDate(context: r'TestClass.date')"),
         );
       });
 
@@ -343,9 +341,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals(
-            "values['url'].decodeFormUri(context: r'TestClass.url')",
-          ),
+          equals("values['url'].decodeFormUri(context: r'TestClass.url')"),
         );
       });
 
@@ -424,10 +420,7 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "values['name'].decodeFormString(context: r'TestClass')",
-        );
+        expect(code, "values['name'].decodeFormString(context: r'TestClass')");
       });
 
       test('handles context with property only', () {
@@ -443,9 +436,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals(
-            "values['name'].decodeFormString(context: r'name')",
-          ),
+          equals("values['name'].decodeFormString(context: r'name')"),
         );
       });
 
@@ -459,10 +450,7 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "values['name'].decodeFormString()",
-        );
+        expect(code, "values['name'].decodeFormString()");
       });
     });
 
@@ -531,10 +519,7 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "NestedClass.fromForm(values['nested'], explode: true, )",
-        );
+        expect(code, "NestedClass.fromForm(values['nested'], explode: true, )");
       });
 
       test('generates expression for EnumModel', () {
@@ -557,10 +542,7 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "Status.fromForm(values['status'], explode: true, )",
-        );
+        expect(code, "Status.fromForm(values['status'], explode: true, )");
       });
     });
 
@@ -885,29 +867,26 @@ void main() {
         );
       });
 
-      test(
-        'decodes required nullable list before rejecting elements',
-        () {
-          final expression = buildFromFormValueExpression(
-            refer('formString'),
-            model: ListModel(
-              content: NeverModel(context: context, isNullable: false),
-              isNullable: true,
-              context: context,
-              examples: const [],
-            ),
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'test_package',
-          );
+      test('decodes required nullable list before rejecting elements', () {
+        final expression = buildFromFormValueExpression(
+          refer('formString'),
+          model: ListModel(
+            content: NeverModel(context: context, isNullable: false),
+            isNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
 
-          final code = expression.accept(DartEmitter()).toString();
-          expect(
-            code,
-            """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
-          );
-        },
-      );
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
+        );
+      });
 
       test('decodes optional non-nullable list before rejecting elements', () {
         final expression = buildFromFormValueExpression(
@@ -929,36 +908,33 @@ void main() {
         );
       });
 
-      test(
-        'preserves nullability when content is an AliasModel resolving to '
-        'NeverModel',
-        () {
-          final expression = buildFromFormValueExpression(
-            refer('formString'),
-            model: ListModel(
-              content: AliasModel(
-                name: 'ForbiddenAlias',
-                model: NeverModel(context: context, isNullable: false),
-                context: context,
-                examples: const [],
-                defaultValue: null,
-              ),
-              isNullable: true,
+      test('preserves nullability when content is an AliasModel resolving to '
+          'NeverModel', () {
+        final expression = buildFromFormValueExpression(
+          refer('formString'),
+          model: ListModel(
+            content: AliasModel(
+              name: 'ForbiddenAlias',
+              model: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'test_package',
-          );
+            isNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
 
-          final code = expression.accept(DartEmitter()).toString();
-          expect(
-            code,
-            """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
-          );
-        },
-      );
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
+        );
+      });
     });
 
     group('unsupported model types generate runtime throws', () {
@@ -1010,31 +986,28 @@ void main() {
         );
       });
 
-      test(
-        'generates runtime throw for List with MapModel content',
-        () {
-          final expression = buildFromFormValueExpression(
-            refer("values['field']"),
-            model: ListModel(
-              content: MapModel(
-                valueModel: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('generates runtime throw for List with MapModel content', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['field']"),
+          model: ListModel(
+            content: MapModel(
+              valueModel: StringModel(context: context),
               context: context,
               examples: const [],
             ),
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'test_package',
-          );
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
 
-          expect(
-            expression.accept(scopedEmitter).toString(),
-            '''throw  _i1.FormDecodingException('Unsupported model type for form decoding.')''',
-          );
-        },
-      );
+        expect(
+          expression.accept(scopedEmitter).toString(),
+          '''throw  _i1.FormDecodingException('Unsupported model type for form decoding.')''',
+        );
+      });
     });
   });
 

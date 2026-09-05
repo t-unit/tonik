@@ -220,10 +220,7 @@ void main() {
     final model = AllOfModel(
       isDeprecated: false,
       name: 'Combined',
-      models: [
-        classModel,
-        oneOfModel,
-      ],
+      models: [classModel, oneOfModel],
       context: context,
       examples: const [],
     );
@@ -438,39 +435,37 @@ void main() {
   });
 
   group('form encoding - mixed types', () {
-    test(
-      'generates fromForm for mixed types attempting decode',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'MixedModel',
-          models: [
-            StringModel(context: context),
-            ClassModel(
-              isDeprecated: false,
-              name: 'Complex',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              examples: const [],
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates fromForm for mixed types attempting decode', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'MixedModel',
+        models: [
+          StringModel(context: context),
+          ClassModel(
+            isDeprecated: false,
+            name: 'Complex',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        const expectedFromFormMethod = '''
+      const expectedFromFormMethod = '''
         factory MixedModel.fromForm(String? value, {required bool explode}) {
           return MixedModel(
             complex: Complex.fromForm(value, explode: explode),
@@ -479,36 +474,33 @@ void main() {
         }
       ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFromFormMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromFormMethod)),
+      );
+    });
 
-    test(
-      'throws exception for mixed types in toForm',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'MixedModel',
-          models: [
-            IntegerModel(context: context),
-            ClassModel(
-              isDeprecated: false,
-              name: 'Complex',
-              properties: const [],
-              context: context,
-              examples: const [],
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('throws exception for mixed types in toForm', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'MixedModel',
+        models: [
+          IntegerModel(context: context),
+          ClassModel(
+            isDeprecated: false,
+            name: 'Complex',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        const expectedToFormMethod = '''
+      const expectedToFormMethod = '''
           List<ParameterEntry> toForm(
             String paramName, {
             required bool explode,
@@ -524,12 +516,11 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToFormMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
   });
 
   test('allOf with mixed oneOf and primitive validates at runtime', () {

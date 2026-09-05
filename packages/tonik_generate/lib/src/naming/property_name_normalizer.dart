@@ -22,10 +22,7 @@ List<({String normalizedName, Property property})> normalizeProperties(
       .map(
         (prop) => (
           normalizedName: prop.nameOverride != null
-              ? normalizeSingle(
-                  prop.nameOverride!,
-                  preserveNumbers: true,
-                )
+              ? normalizeSingle(prop.nameOverride!, preserveNumbers: true)
               : normalizeSingle(prop.name, preserveNumbers: true),
           originalValue: prop,
         ),
@@ -39,10 +36,8 @@ List<({String normalizedName, Property property})> normalizeProperties(
 
   return unique
       .map(
-        (item) => (
-          normalizedName: item.normalizedName,
-          property: item.originalValue,
-        ),
+        (item) =>
+            (normalizedName: item.normalizedName, property: item.originalValue),
       )
       .toList();
 }

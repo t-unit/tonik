@@ -15,10 +15,7 @@ void main() {
 
     final result = await api.getResponseWithNormalizedBodyHeader();
 
-    expect(
-      result,
-      isTonikSuccess,
-    );
+    expect(result, isTonikSuccess);
     final value = requireSuccess(result).value;
     expect(value.body, 'header-value');
     expect(value.body2.id, 'body-value');

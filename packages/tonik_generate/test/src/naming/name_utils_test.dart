@@ -195,10 +195,7 @@ void main() {
 
     group('version strings with suffixes', () {
       test('spells out version part and normalizes suffix', () {
-        expect(
-          normalizeEnumValueName('1.0.2-beta'),
-          'oneDotZeroDotTwoBeta',
-        );
+        expect(normalizeEnumValueName('1.0.2-beta'), 'oneDotZeroDotTwoBeta');
       });
     });
 
@@ -252,10 +249,7 @@ void main() {
     });
 
     test('keeps numeric strings larger than Dart integers valid', () {
-      expect(
-        normalizeSingle('18446744073709551616'),
-        r'$18446744073709551616',
-      );
+      expect(normalizeSingle('18446744073709551616'), r'$18446744073709551616');
     });
   });
 

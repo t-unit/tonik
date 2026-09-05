@@ -39,11 +39,7 @@ void main() {
       });
 
       test('fromJson with discriminator dispatches correctly', () {
-        final json = {
-          'petType': 'cat',
-          'name': 'Fluffy',
-          'meow': 'meow meow',
-        };
+        final json = {'petType': 'cat', 'name': 'Fluffy', 'meow': 'meow meow'};
         final result = PetChoice.fromJson(json);
         expect(result, isA<PetChoiceCat>());
         final cat = (result as PetChoiceCat).value;
@@ -109,11 +105,7 @@ void main() {
       });
 
       test('fromJson with discriminator dispatches correctly', () {
-        final json = {
-          'petType': 'dog',
-          'name': 'Rex',
-          'bark': 'bark bark',
-        };
+        final json = {'petType': 'dog', 'name': 'Rex', 'bark': 'bark bark'};
         final result = PetChoice.fromJson(json);
         expect(result, isA<PetChoiceDog>());
         final dog = (result as PetChoiceDog).value;
@@ -170,10 +162,7 @@ void main() {
       test('missing required fields throws DecodingException', () {
         // When JSON is missing required fields for all variants, throws
         // Pet requires petType, so this JSON cannot be parsed by Cat or Dog
-        final json = {
-          'name': 'Anonymous',
-          'meow': 'soft meow',
-        };
+        final json = {'name': 'Anonymous', 'meow': 'soft meow'};
         expect(
           () => PetChoice.fromJson(json),
           throwsA(isA<DecodingException>()),
@@ -294,11 +283,7 @@ void main() {
       });
 
       test('fromJson with discriminator dispatches correctly', () {
-        final json = {
-          'vehicleType': 'Bike',
-          'brand': 'Giant',
-          'gears': 18,
-        };
+        final json = {'vehicleType': 'Bike', 'brand': 'Giant', 'gears': 18};
         final result = VehicleChoice.fromJson(json);
         expect(result, isA<VehicleChoiceBike>());
         final bike = (result as VehicleChoiceBike).value;
@@ -367,11 +352,7 @@ void main() {
     });
 
     test('fromJson constructs Cat correctly', () {
-      final json = {
-        'petType': 'cat',
-        'name': 'Cleo',
-        'meow': 'quiet',
-      };
+      final json = {'petType': 'cat', 'name': 'Cleo', 'meow': 'quiet'};
       final cat = Cat.fromJson(json);
       expect(cat.pet.petType, 'cat');
       expect(cat.pet.name, 'Cleo');
@@ -394,11 +375,7 @@ void main() {
     });
 
     test('fromJson constructs Dog correctly', () {
-      final json = {
-        'petType': 'dog',
-        'name': 'Duke',
-        'bark': 'growl',
-      };
+      final json = {'petType': 'dog', 'name': 'Duke', 'bark': 'growl'};
       final dog = Dog.fromJson(json);
       expect(dog.pet.petType, 'dog');
       expect(dog.pet.name, 'Duke');

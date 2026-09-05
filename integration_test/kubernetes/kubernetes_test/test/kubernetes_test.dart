@@ -32,10 +32,7 @@ void main() {
 
       final result = await api.listCoreV1Namespace();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<ListCoreV1NamespaceResponse200>());
@@ -50,10 +47,7 @@ void main() {
 
       final result = await api.listCoreV1Namespace();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<ListCoreV1NamespaceResponse401>());
@@ -68,10 +62,7 @@ void main() {
 
       final result = await api.listCoreV1ConfigMapForAllNamespaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -89,10 +80,7 @@ void main() {
 
       final result = await api.listCoreV1PodForAllNamespaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -110,10 +98,7 @@ void main() {
 
       final result = await api.listCoreV1ServiceForAllNamespaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -133,10 +118,7 @@ void main() {
         namespace: 'default',
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -152,10 +134,7 @@ void main() {
         namespace: 'default',
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
     });

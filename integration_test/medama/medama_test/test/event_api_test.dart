@@ -42,10 +42,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/event/hit',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/event/hit');
       });
 
       test('request method is POST', () async {
@@ -83,10 +80,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
     });
 
@@ -331,9 +325,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventUnload(
-            EventUnload(b: 'beacon-id', m: 5000),
-          ),
+          body: const EventHitEventUnload(EventUnload(b: 'beacon-id', m: 5000)),
         );
 
         requireSuccess(response);
@@ -363,9 +355,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventUnload(
-            EventUnload(b: 'beacon', m: 45000),
-          ),
+          body: const EventHitEventUnload(EventUnload(b: 'beacon', m: 45000)),
         );
 
         requireSuccess(response);
@@ -379,9 +369,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventUnload(
-            EventUnload(b: 'beacon', m: 1),
-          ),
+          body: const EventHitEventUnload(EventUnload(b: 'beacon', m: 1)),
         );
 
         requireSuccess(response);
@@ -396,9 +384,7 @@ void main() {
 
         // 1 hour in milliseconds
         final response = await api.postEventHit(
-          body: const EventHitEventUnload(
-            EventUnload(b: 'beacon', m: 3600000),
-          ),
+          body: const EventHitEventUnload(EventUnload(b: 'beacon', m: 3600000)),
         );
 
         requireSuccess(response);
@@ -414,9 +400,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: {}),
-          ),
+          body: const EventHitEventCustom(EventCustom(g: 'example.com', d: {})),
         );
 
         requireSuccess(response);
@@ -446,9 +430,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: {}),
-          ),
+          body: const EventHitEventCustom(EventCustom(g: 'example.com', d: {})),
         );
 
         requireSuccess(response);
@@ -466,11 +448,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: const EventHitEventCustom(
-            EventCustom(
-              b: 'optional-beacon-id',
-              g: 'example.com',
-              d: {},
-            ),
+            EventCustom(b: 'optional-beacon-id', g: 'example.com', d: {}),
           ),
         );
 
@@ -485,9 +463,7 @@ void main() {
         final api = buildEventApi(responseStatus: '204');
 
         final response = await api.postEventHit(
-          body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: {}),
-          ),
+          body: const EventHitEventCustom(EventCustom(g: 'example.com', d: {})),
         );
 
         requireSuccess(response);
@@ -564,14 +540,8 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['user-agent'],
-          'TestBrowser/1.0',
-        );
-        expect(
-          recordedRequest.headers['accept-language'],
-          'fr-FR',
-        );
+        expect(recordedRequest.headers['user-agent'], 'TestBrowser/1.0');
+        expect(recordedRequest.headers['accept-language'], 'fr-FR');
       });
 
       test('headers with special characters are preserved', () async {
@@ -613,10 +583,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 204);
         expect(success.value, isA<PostEventHitResponse204>());
@@ -649,19 +616,11 @@ void main() {
 
         final response = await api.postEventHit(
           body: EventHitEventLoad(
-            EventLoad(
-              b: '',
-              u: Uri.parse('invalid'),
-              p: true,
-              q: false,
-            ),
+            EventLoad(b: '', u: Uri.parse('invalid'), p: true, q: false),
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<PostEventHitResponse400>());
@@ -672,12 +631,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: EventHitEventLoad(
-            EventLoad(
-              b: '',
-              u: Uri.parse('invalid'),
-              p: true,
-              q: false,
-            ),
+            EventLoad(b: '', u: Uri.parse('invalid'), p: true, q: false),
           ),
         );
 
@@ -709,10 +663,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<PostEventHitResponse404>());
@@ -757,10 +708,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PostEventHitResponse500>());
@@ -824,9 +772,7 @@ void main() {
       test('u query parameter is encoded when provided', () async {
         final api = buildEventApi(responseStatus: '200');
 
-        final response = await api.getEventPing(
-          u: 'https://example.com/page',
-        );
+        final response = await api.getEventPing(u: 'https://example.com/page');
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
@@ -900,9 +846,7 @@ void main() {
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
         expect(
-          recordedRequest.headers.containsKey(
-            'If-Modified-Since',
-          ),
+          recordedRequest.headers.containsKey('If-Modified-Since'),
           isFalse,
         );
       });
@@ -914,10 +858,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetEventPingResponse200>());
@@ -960,10 +901,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetEventPingResponse400>());
@@ -993,10 +931,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetEventPingResponse500>());

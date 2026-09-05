@@ -83,9 +83,10 @@ class ClassGenerator {
           )
           ..annotations.addAll([
             if (alias.isDeprecated)
-              refer('Deprecated', 'dart:core').call([
-                literalString('This typedef is deprecated.'),
-              ]),
+              refer(
+                'Deprecated',
+                'dart:core',
+              ).call([literalString('This typedef is deprecated.')]),
           ])
           ..definition = targetType,
       ),
@@ -232,146 +233,134 @@ class ClassGenerator {
         )
         .toList();
     if (hasAP) {
-      equalityProps.add(
-        (
-          normalizedName: apFieldName,
-          hasCollectionValue: !useImmutableCollections,
-        ),
-      );
+      equalityProps.add((
+        normalizedName: apFieldName,
+        hasCollectionValue: !useImmutableCollections,
+      ));
     }
 
-    return Class(
-      (b) {
-        b
-          ..name = className
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          )
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-          ..implements.add(
-            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
-          )
-          ..implements.add(
-            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
-          );
-
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This class is deprecated.'),
-            ]),
-          );
-        }
-
-        b.constructors.addAll([
-          Constructor(
-            (b) {
-              b
-                ..constant = true
-                ..optionalParameters.addAll(
-                  sortedProperties.map(
-                    (prop) {
-                      final defaulted = defaultsByName[prop.normalizedName];
-                      return Parameter(
-                        (b) => b
-                          ..name = prop.normalizedName
-                          ..named = true
-                          ..required = isParamRequired(prop)
-                          ..defaultTo = defaulted is ConstDefaultBinding
-                              ? refer(defaulted.memberName).code
-                              : null
-                          ..toThis = true,
-                      );
-                    },
-                  ),
-                );
-              if (hasAP) {
-                b.optionalParameters.add(
-                  Parameter(
-                    (b) => b
-                      ..name = apFieldName
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = useImmutableCollections
-                          ? refer(
-                              'IMapConst',
-                              'package:fast_immutable_collections/'
-                                  'fast_immutable_collections.dart',
-                            ).constInstance([literalConstMap({})]).code
-                          : const Code('const {}')
-                      ..toThis = true,
-                  ),
-                );
-              }
-            },
-          ),
-          _buildFromSimpleConstructor(className, model, defaultsByName),
-          _buildFromJsonConstructor(className, model, defaultsByName),
-          _buildFromFormConstructor(className, model, defaultsByName),
-        ]);
-
-        b.methods.addAll([
-          _buildToJsonMethod(model),
-          ?effectiveCopyWithGetter,
-          generateEqualsMethod(
-            className: className,
-            properties: equalityProps,
-          ),
-          generateHashCodeMethod(properties: equalityProps),
-          _buildCurrentEncodingShapeGetter(),
-          _buildParameterPropertiesMethod(
-            model,
-            normalizedProperties.where((p) => !p.property.isReadOnly).toList(),
-          ),
-          _buildToSimpleMethod(),
-          _buildToFormMethod(),
-          _buildToLabelMethod(),
-          _buildToMatrixMethod(),
-          _buildToDeepObjectMethod(),
-          buildToPipeDelimitedMethod(),
-          buildToSpaceDelimitedMethod(),
-          _buildUriEncodeMethod(className),
-        ]);
-
-        for (final prop in normalizedProperties) {
-          final defaulted = defaultsByName[prop.normalizedName];
-          switch (defaulted) {
-            case null:
-              break;
-            case ConstDefaultBinding(:final resolved):
-              b.fields.add(defaultField(resolved));
-            case RuntimeDefaultBinding(:final resolved):
-              b.methods.add(resolved.getter);
-          }
-        }
-
-        b.fields.addAll(
-          normalizedProperties.map(
-            (prop) => _generateField(
-              prop.property,
-              prop.normalizedName,
-              classModel: model,
-            ),
-          ),
+    return Class((b) {
+      b
+        ..name = className
+        ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..implements.add(
+          refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+        )
+        ..implements.add(
+          refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
         );
 
-        if (hasAP) {
-          b.fields.add(
-            Field(
-              (b) => b
-                ..name = apFieldName
-                ..modifier = FieldModifier.final$
-                ..type = apMapTypeReference(
-                  activeApPolicy(model.additionalPropertiesPolicy)!.valueModel,
-                  nameManager,
-                  package,
-                  useImmutableCollections: useImmutableCollections,
-                ),
-            ),
-          );
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This class is deprecated.')]),
+        );
+      }
+
+      b.constructors.addAll([
+        Constructor((b) {
+          b
+            ..constant = true
+            ..optionalParameters.addAll(
+              sortedProperties.map((prop) {
+                final defaulted = defaultsByName[prop.normalizedName];
+                return Parameter(
+                  (b) => b
+                    ..name = prop.normalizedName
+                    ..named = true
+                    ..required = isParamRequired(prop)
+                    ..defaultTo = defaulted is ConstDefaultBinding
+                        ? refer(defaulted.memberName).code
+                        : null
+                    ..toThis = true,
+                );
+              }),
+            );
+          if (hasAP) {
+            b.optionalParameters.add(
+              Parameter(
+                (b) => b
+                  ..name = apFieldName
+                  ..named = true
+                  ..required = false
+                  ..defaultTo = useImmutableCollections
+                      ? refer(
+                          'IMapConst',
+                          'package:fast_immutable_collections/'
+                              'fast_immutable_collections.dart',
+                        ).constInstance([literalConstMap({})]).code
+                      : const Code('const {}')
+                  ..toThis = true,
+              ),
+            );
+          }
+        }),
+        _buildFromSimpleConstructor(className, model, defaultsByName),
+        _buildFromJsonConstructor(className, model, defaultsByName),
+        _buildFromFormConstructor(className, model, defaultsByName),
+      ]);
+
+      b.methods.addAll([
+        _buildToJsonMethod(model),
+        ?effectiveCopyWithGetter,
+        generateEqualsMethod(className: className, properties: equalityProps),
+        generateHashCodeMethod(properties: equalityProps),
+        _buildCurrentEncodingShapeGetter(),
+        _buildParameterPropertiesMethod(
+          model,
+          normalizedProperties.where((p) => !p.property.isReadOnly).toList(),
+        ),
+        _buildToSimpleMethod(),
+        _buildToFormMethod(),
+        _buildToLabelMethod(),
+        _buildToMatrixMethod(),
+        _buildToDeepObjectMethod(),
+        buildToPipeDelimitedMethod(),
+        buildToSpaceDelimitedMethod(),
+        _buildUriEncodeMethod(className),
+      ]);
+
+      for (final prop in normalizedProperties) {
+        final defaulted = defaultsByName[prop.normalizedName];
+        switch (defaulted) {
+          case null:
+            break;
+          case ConstDefaultBinding(:final resolved):
+            b.fields.add(defaultField(resolved));
+          case RuntimeDefaultBinding(:final resolved):
+            b.methods.add(resolved.getter);
         }
-      },
-    );
+      }
+
+      b.fields.addAll(
+        normalizedProperties.map(
+          (prop) => _generateField(
+            prop.property,
+            prop.normalizedName,
+            classModel: model,
+          ),
+        ),
+      );
+
+      if (hasAP) {
+        b.fields.add(
+          Field(
+            (b) => b
+              ..name = apFieldName
+              ..modifier = FieldModifier.final$
+              ..type = apMapTypeReference(
+                activeApPolicy(model.additionalPropertiesPolicy)!.valueModel,
+                nameManager,
+                package,
+                useImmutableCollections: useImmutableCollections,
+              ),
+          ),
+        );
+      }
+    });
   }
 
   Map<String, DefaultBinding> _resolveDefaults(
@@ -448,39 +437,32 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
     ObjectDeclaration model,
   ) {
-    final copyWithProps = properties.map(
-      (prop) {
-        final propModel = prop.property.model;
-        final resolvedModel = propModel.resolved;
-        return (
-          normalizedName: prop.normalizedName,
-          typeRef: _getSchemaAwareTypeReference(prop.property, model),
-          skipCast: resolvedModel is AnyModel,
-        );
-      },
-    ).toList();
+    final copyWithProps = properties.map((prop) {
+      final propModel = prop.property.model;
+      final resolvedModel = propModel.resolved;
+      return (
+        normalizedName: prop.normalizedName,
+        typeRef: _getSchemaAwareTypeReference(prop.property, model),
+        skipCast: resolvedModel is AnyModel,
+      );
+    }).toList();
 
     final copyWithApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
     if (copyWithApPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(properties);
-      copyWithProps.add(
-        (
-          normalizedName: apFieldName,
-          typeRef: apMapTypeReference(
-            copyWithApPolicy.valueModel,
-            nameManager,
-            package,
-            useImmutableCollections: useImmutableCollections,
-          ),
-          skipCast: false,
+      copyWithProps.add((
+        normalizedName: apFieldName,
+        typeRef: apMapTypeReference(
+          copyWithApPolicy.valueModel,
+          nameManager,
+          package,
+          useImmutableCollections: useImmutableCollections,
         ),
-      );
+        skipCast: false,
+      ));
     }
 
-    return generateCopyWith(
-      className: className,
-      properties: copyWithProps,
-    );
+    return generateCopyWith(className: className, properties: copyWithProps);
   }
 
   Constructor _buildFromSimpleConstructor(
@@ -547,9 +529,7 @@ class ClassGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = _buildFromSimpleBody(
           className,
           normalizedProperties,
@@ -699,9 +679,7 @@ class ClassGenerator {
       }
     }
 
-    codes.add(
-      refer(className).call([], constructorArgs).returned.statement,
-    );
+    codes.add(refer(className).call([], constructorArgs).returned.statement);
 
     return Block.of(codes);
   }
@@ -884,10 +862,7 @@ class ClassGenerator {
       ..addAll(propertyAssignments)
       ..add(const Code(');'));
 
-    return Block.of([
-      ...spliceInlineHelpers(inlineHelpers),
-      ...codes,
-    ]);
+    return Block.of([...spliceInlineHelpers(inlineHelpers), ...codes]);
   }
 
   Method _buildToJsonMethod(ObjectDeclaration model) {
@@ -1146,10 +1121,7 @@ class ClassGenerator {
       (b) => b
         ..name = 'currentEncodingShape'
         ..type = MethodType.getter
-        ..returns = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
-        )
+        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
         ..lambda = true
         ..body = shapeRef.code,
     );
@@ -1212,11 +1184,7 @@ class ClassGenerator {
       return _buildComplexParameterPropertiesMethod(className, properties);
     }
 
-    return _buildMixedParameterPropertiesMethod(
-      className,
-      properties,
-      model,
-    );
+    return _buildMixedParameterPropertiesMethod(className, properties, model);
   }
 
   List<Code> _buildAdditionalPropertiesParameterLoop(ObjectDeclaration model) {
@@ -1258,9 +1226,7 @@ class ClassGenerator {
           'package:tonik_util/tonik_util.dart',
         ).call(
           [receiver.property('toJson').call([])],
-          {
-            'allowEmpty': refer('allowEmpty'),
-          },
+          {'allowEmpty': refer('allowEmpty')},
         ),
       _ => buildRawStringExpression(receiver, model),
     };
@@ -1296,11 +1262,7 @@ class ClassGenerator {
       ];
     }
 
-    return [
-      Code('if ($name != null) {'),
-      assign(checked),
-      const Code('}'),
-    ];
+    return [Code('if ($name != null) {'), assign(checked), const Code('}')];
   }
 
   Method _buildSimpleParameterPropertiesMethod(
@@ -1543,9 +1505,7 @@ class ClassGenerator {
                 'package:tonik_util/tonik_util.dart',
               ).call(
                 [receiver.property('toJson').call([])],
-                {
-                  'allowEmpty': refer('allowEmpty'),
-                },
+                {'allowEmpty': refer('allowEmpty')},
               ),
             );
 
@@ -1683,9 +1643,7 @@ class ClassGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = _buildFromFormBody(
           className,
           normalizedProperties,
@@ -1830,9 +1788,7 @@ class ClassGenerator {
       }
     }
 
-    codes.add(
-      refer(className).call([], constructorArgs).returned.statement,
-    );
+    codes.add(refer(className).call([], constructorArgs).returned.statement);
 
     return Block.of(codes);
   }
@@ -1908,10 +1864,7 @@ class ClassGenerator {
             .property('toMatrix')
             .call(
               [refer('paramName')],
-              {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-              },
+              {'explode': refer('explode'), 'allowEmpty': refer('allowEmpty')},
             )
             .returned
             .statement,
@@ -1927,10 +1880,7 @@ class ClassGenerator {
           ..symbol = 'List'
           ..url = 'dart:core'
           ..types.add(
-            refer(
-              'ParameterEntry',
-              'package:tonik_util/tonik_util.dart',
-            ),
+            refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
           ),
       )
       ..requiredParameters.add(

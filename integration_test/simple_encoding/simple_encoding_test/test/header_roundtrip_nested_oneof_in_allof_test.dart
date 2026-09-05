@@ -41,10 +41,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
 
         expect(error.type, TonikErrorType.encoding);
@@ -59,10 +56,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
 
         expect(error.type, TonikErrorType.encoding);
@@ -77,10 +71,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
 
         expect(error.type, TonikErrorType.encoding);
@@ -93,16 +84,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripNestedOneOfInAllOf.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-nested-value'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-nested-value'], isNull);
           expect(success.value.xNestedValue, isNull);
         },
       );

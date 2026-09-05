@@ -58,9 +58,7 @@ void main() {
 
     test('Shape decode factories accept empty List<Never> properties', () {
       expect(
-        Shape.fromJson(
-          const <String, Object?>{'corner': <Object?>[]},
-        ).corner,
+        Shape.fromJson(const <String, Object?>{'corner': <Object?>[]}).corner,
         isEmpty,
       );
       expect(Shape.fromSimple('corner=', explode: true).corner, isEmpty);
@@ -69,11 +67,9 @@ void main() {
 
     test('Shape decode factories reject non-empty List<Never> properties', () {
       expect(
-        () => Shape.fromJson(
-          const <String, Object?>{
-            'corner': <Object?>['forbidden'],
-          },
-        ),
+        () => Shape.fromJson(const <String, Object?>{
+          'corner': <Object?>['forbidden'],
+        }),
         throwsA(isA<JsonDecodingException>()),
       );
       expect(

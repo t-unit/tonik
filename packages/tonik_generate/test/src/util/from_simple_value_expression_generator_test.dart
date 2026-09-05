@@ -159,9 +159,7 @@ void main() {
         name: 'UserRole',
         values: {
           const EnumEntry(value: 'admin'),
-          const EnumEntry(
-            value: 'user',
-          ),
+          const EnumEntry(value: 'user'),
         },
         isNullable: false,
         examples: const [],
@@ -774,67 +772,61 @@ void main() {
     });
 
     group('List<ClassModel>', () {
-      test(
-        'generates SimpleDecodingException throw for required '
-        'List<ClassModel>',
-        () {
-          final value = refer('value');
-          final classModel = ClassModel(
-            isDeprecated: false,
-            context: context,
-            name: 'User',
-            properties: const [],
-            examples: const [],
-          );
-          final listModel = ListModel(
-            content: classModel,
-            context: context,
-            examples: const [],
-          );
-          expect(
-            buildSimpleValueExpression(
-              value,
-              model: listModel,
-              isRequired: true,
-              nameManager: nameManager,
-              package: 'my_package',
-              explode: literalBool(false),
-            ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
-          );
-        },
-      );
+      test('generates SimpleDecodingException throw for required '
+          'List<ClassModel>', () {
+        final value = refer('value');
+        final classModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'User',
+          properties: const [],
+          examples: const [],
+        );
+        final listModel = ListModel(
+          content: classModel,
+          context: context,
+          examples: const [],
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: listModel,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'my_package',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
+        );
+      });
 
-      test(
-        'generates SimpleDecodingException throw for nullable '
-        'List<ClassModel>',
-        () {
-          final value = refer('value');
-          final classModel = ClassModel(
-            isDeprecated: false,
-            context: context,
-            name: 'User',
-            properties: const [],
-            examples: const [],
-          );
-          final listModel = ListModel(
-            content: classModel,
-            context: context,
-            examples: const [],
-          );
-          expect(
-            buildSimpleValueExpression(
-              value,
-              model: listModel,
-              isRequired: false,
-              nameManager: nameManager,
-              package: 'my_package',
-              explode: literalBool(false),
-            ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
-          );
-        },
-      );
+      test('generates SimpleDecodingException throw for nullable '
+          'List<ClassModel>', () {
+        final value = refer('value');
+        final classModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'User',
+          properties: const [],
+          examples: const [],
+        );
+        final listModel = ListModel(
+          content: classModel,
+          context: context,
+          examples: const [],
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: listModel,
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'my_package',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
+        );
+      });
     });
 
     group('NeverModel', () {
@@ -958,32 +950,29 @@ void main() {
         );
       });
 
-      test(
-        'MapModel in list generates runtime throw',
-        () {
-          final value = refer('value');
-          final model = ListModel(
-            content: MapModel(
-              valueModel: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
+      test('MapModel in list generates runtime throw', () {
+        final value = refer('value');
+        final model = ListModel(
+          content: MapModel(
+            valueModel: StringModel(context: context),
             context: context,
             examples: const [],
-          );
-          expect(
-            buildSimpleValueExpression(
-              value,
-              model: model,
-              isRequired: true,
-              nameManager: nameManager,
-              package: 'my_package',
-              explode: literalBool(false),
-            ).accept(scopedEmitter).toString(),
-            '''throw  _i1.SimpleDecodingException('Unsupported model type for simple decoding.')''',
-          );
-        },
-      );
+          ),
+          context: context,
+          examples: const [],
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'my_package',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          '''throw  _i1.SimpleDecodingException('Unsupported model type for simple decoding.')''',
+        );
+      });
     });
   });
 }

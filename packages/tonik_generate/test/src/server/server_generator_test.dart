@@ -67,9 +67,7 @@ void main() {
       );
       expect(serverConfigField.modifier, FieldModifier.final$);
 
-      final dioField = dioAdapter.fields.firstWhere(
-        (f) => f.name == r'_$dio',
-      );
+      final dioField = dioAdapter.fields.firstWhere((f) => f.name == r'_$dio');
       expect(dioField.type?.accept(emitter).toString(), 'Dio?');
     });
 
@@ -125,9 +123,7 @@ void main() {
       );
       expect(serverConfigField.modifier, FieldModifier.final$);
 
-      final adapterField = fields.firstWhere(
-        (f) => f.name == r'_$dioAdapter',
-      );
+      final adapterField = fields.firstWhere((f) => f.name == r'_$dioAdapter');
       expect(
         adapterField.type?.accept(emitter).toString(),
         '_DioClientAdapter',

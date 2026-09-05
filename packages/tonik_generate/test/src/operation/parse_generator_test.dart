@@ -3569,55 +3569,53 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
         },
       );
 
-      test(
-        'emits never-header check before pure throw without wrapper',
-        () {
-          final responseHeaders = {
-            'X-Never-Header': ResponseHeaderObject(
-              name: 'X-Never-Header',
-              context: context,
-              description: '',
-              isRequired: false,
-              isDeprecated: false,
-              model: NeverModel(context: context, isNullable: false),
-              explode: false,
-              encoding: ResponseHeaderEncoding.simple,
-              examples: const [],
-            ),
-          };
-          final operation = Operation(
-            operationId: 'neverBodyAndHeaderOp',
+      test('emits never-header check before pure throw without wrapper', () {
+        final responseHeaders = {
+          'X-Never-Header': ResponseHeaderObject(
+            name: 'X-Never-Header',
             context: context,
-            summary: '',
             description: '',
-            tags: const {},
+            isRequired: false,
             isDeprecated: false,
-            path: '/never-body-and-header',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: responseHeaders,
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: NeverModel(context: context, isNullable: false),
-                    rawContentType: 'application/json',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+            model: NeverModel(context: context, isNullable: false),
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
+          ),
+        };
+        final operation = Operation(
+          operationId: 'neverBodyAndHeaderOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/never-body-and-header',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: responseHeaders,
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: NeverModel(context: context, isNullable: false),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 AnonymousResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -3640,77 +3638,74 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'multi-status response emits pure throw with never-header check '
-        'without wrapper construction for Never body case',
-        () {
-          final responseHeaders = {
-            'X-Never-Header': ResponseHeaderObject(
-              name: 'X-Never-Header',
-              context: context,
-              description: '',
-              isRequired: false,
-              isDeprecated: false,
-              model: NeverModel(context: context, isNullable: false),
-              explode: false,
-              encoding: ResponseHeaderEncoding.simple,
-              examples: const [],
-            ),
-          };
-          final operation = Operation(
-            operationId: 'multiNeverBodyHeaderOp',
+      test('multi-status response emits pure throw with never-header check '
+          'without wrapper construction for Never body case', () {
+        final responseHeaders = {
+          'X-Never-Header': ResponseHeaderObject(
+            name: 'X-Never-Header',
             context: context,
-            summary: '',
             description: '',
-            tags: const {},
+            isRequired: false,
             isDeprecated: false,
-            path: '/multi-never-body-header',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: responseHeaders,
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: NeverModel(context: context, isNullable: false),
-                    rawContentType: 'application/json',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/json',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+            model: NeverModel(context: context, isNullable: false),
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
+          ),
+        };
+        final operation = Operation(
+          operationId: 'multiNeverBodyHeaderOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multi-never-body-header',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: responseHeaders,
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: NeverModel(context: context, isNullable: false),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -3737,56 +3732,53 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates pure throw for AliasModel resolving to NeverModel '
-        'form-urlencoded body',
-        () {
-          final operation = Operation(
-            operationId: 'formAliasNeverOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/form-alias-never',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: AliasModel(
-                      name: 'NeverFormAlias',
-                      model: NeverModel(context: context, isNullable: false),
-                      context: context,
-                      examples: const [],
-                      defaultValue: null,
-                    ),
-                    rawContentType: 'application/x-www-form-urlencoded',
-                    contentType: ContentType.form,
+      test('generates pure throw for AliasModel resolving to NeverModel '
+          'form-urlencoded body', () {
+        final operation = Operation(
+          operationId: 'formAliasNeverOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-alias-never',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: AliasModel(
+                    name: 'NeverFormAlias',
+                    model: NeverModel(context: context, isNullable: false),
+                    context: context,
                     examples: const [],
+                    defaultValue: null,
                   ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 NeverFormAlias _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -3804,12 +3796,11 @@ NeverFormAlias _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'generates pure throw for required NeverModel form-urlencoded body',
@@ -3871,47 +3862,45 @@ Never _parseResponse(Response<List<int>> response) {
         },
       );
 
-      test(
-        'decodes required ListModel<NeverModel> '
-        'form-urlencoded body',
-        () {
-          final operation = Operation(
-            operationId: 'formListNeverBodyOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/form-list-never-body',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: ListModel(
-                      content: NeverModel(context: context, isNullable: false),
-                      context: context,
-                      examples: const [],
-                    ),
-                    rawContentType: 'application/x-www-form-urlencoded',
-                    contentType: ContentType.form,
+      test('decodes required ListModel<NeverModel> '
+          'form-urlencoded body', () {
+        final operation = Operation(
+          operationId: 'formListNeverBodyOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-list-never-body',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: NeverModel(context: context, isNullable: false),
+                    context: context,
                     examples: const [],
                   ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 List<Never> _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -3936,55 +3925,52 @@ List<Never> _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'decodes nullable ListModel<NeverModel> form body before rejecting '
-        'items',
-        () {
-          final operation = Operation(
-            operationId: 'formNullableListNeverBodyOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/form-nullable-list-never-body',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: ListModel(
-                      content: NeverModel(context: context, isNullable: false),
-                      isNullable: true,
-                      context: context,
-                      examples: const [],
-                    ),
-                    rawContentType: 'application/x-www-form-urlencoded',
-                    contentType: ContentType.form,
+      test('decodes nullable ListModel<NeverModel> form body before rejecting '
+          'items', () {
+        final operation = Operation(
+          operationId: 'formNullableListNeverBodyOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-nullable-list-never-body',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: NeverModel(context: context, isNullable: false),
+                    isNullable: true,
+                    context: context,
                     examples: const [],
                   ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 List<Never>? _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -4009,108 +3995,102 @@ List<Never>? _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
     });
 
     group('multipart response', () {
-      test(
-        'generates code that throws ResponseDecodingException '
-        'instead of crashing the generator',
-        () {
-          final operation = Operation(
-            operationId: 'multipartOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/multipart',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'multipart/form-data',
-                    contentType: ContentType.multipart,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-
-          // Should not throw at generation time.
-          final method = generator.generateParseResponseMethod(operation);
-          final actual = format(method.accept(emitter).toString());
-
-          // Generated code should contain a throw of
-          // ResponseDecodingException with the correct message.
-          expect(
-            collapseWhitespace(actual),
-            contains(
-              collapseWhitespace(
-                'throw ResponseDecodingException(\n'
-                "'Multipart response body decoding is not supported.',\n"
-                ');',
-              ),
+      test('generates code that throws ResponseDecodingException '
+          'instead of crashing the generator', () {
+        final operation = Operation(
+          operationId: 'multipartOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multipart',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'multipart/form-data',
+                  contentType: ContentType.multipart,
+                  examples: const [],
+                ),
+              },
             ),
-          );
-        },
-      );
+          },
+          securitySchemes: const {},
+        );
 
-      test(
-        'generated multipart response method is well-formed '
-        'and matches expected output',
-        () {
-          final operation = Operation(
-            operationId: 'multipartOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/multipart',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'multipart/form-data',
-                    contentType: ContentType.multipart,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
+        // Should not throw at generation time.
+        final method = generator.generateParseResponseMethod(operation);
+        final actual = format(method.accept(emitter).toString());
 
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+        // Generated code should contain a throw of
+        // ResponseDecodingException with the correct message.
+        expect(
+          collapseWhitespace(actual),
+          contains(
+            collapseWhitespace(
+              'throw ResponseDecodingException(\n'
+              "'Multipart response body decoding is not supported.',\n"
+              ');',
+            ),
+          ),
+        );
+      });
+
+      test('generated multipart response method is well-formed '
+          'and matches expected output', () {
+        final operation = Operation(
+          operationId: 'multipartOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multipart',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'multipart/form-data',
+                  contentType: ContentType.multipart,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -4126,120 +4106,114 @@ String _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates multipart response in multi-response operation',
-        () {
-          final operation = Operation(
-            operationId: 'multipartMultiOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/multipart-multi',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'multipart/form-data',
-                    contentType: ContentType.multipart,
-                    examples: const [],
-                  ),
-                },
-              ),
-              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/json',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-
-          // Should not throw at generation time.
-          final method = generator.generateParseResponseMethod(operation);
-          final actual = format(method.accept(emitter).toString());
-
-          // The multipart case should throw ResponseDecodingException.
-          expect(
-            collapseWhitespace(actual),
-            contains(
-              collapseWhitespace(
-                'throw ResponseDecodingException(\n'
-                "'Multipart response body decoding is not supported.',\n"
-                ');',
-              ),
+      test('generates multipart response in multi-response operation', () {
+        final operation = Operation(
+          operationId: 'multipartMultiOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multipart-multi',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'multipart/form-data',
+                  contentType: ContentType.multipart,
+                  examples: const [],
+                ),
+              },
             ),
-          );
-        },
-      );
+            const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        // Should not throw at generation time.
+        final method = generator.generateParseResponseMethod(operation);
+        final actual = format(method.accept(emitter).toString());
+
+        // The multipart case should throw ResponseDecodingException.
+        expect(
+          collapseWhitespace(actual),
+          contains(
+            collapseWhitespace(
+              'throw ResponseDecodingException(\n'
+              "'Multipart response body decoding is not supported.',\n"
+              ');',
+            ),
+          ),
+        );
+      });
     });
 
     group('special characters in content type', () {
-      test(
-        'generates valid code when content type contains single quote',
-        () {
-          final operation = Operation(
-            operationId: 'specialContentTypeOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/test',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: "application/vnd.it's+json",
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
+      test('generates valid code when content type contains single quote', () {
+        final operation = Operation(
+          operationId: 'specialContentTypeOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: "application/vnd.it's+json",
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateParseResponseMethod(operation);
+        final method = generator.generateParseResponseMethod(operation);
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
@@ -4255,14 +4229,11 @@ String _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(
-              format(method.accept(emitter).toString()),
-            ),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
     });
 
     group('spec content type normalization', () {
@@ -4625,69 +4596,67 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
         },
       );
 
-      test(
-        'dedupes two independent collision groups and emits one warning per '
-        'group',
-        () {
-          final previousRootLevel = Logger.root.level;
-          Logger.root.level = Level.ALL;
-          addTearDown(() => Logger.root.level = previousRootLevel);
+      test('dedupes two independent collision groups and emits one warning per '
+          'group', () {
+        final previousRootLevel = Logger.root.level;
+        Logger.root.level = Level.ALL;
+        addTearDown(() => Logger.root.level = previousRootLevel);
 
-          final logs = <LogRecord>[];
-          final sub = Logger('ParseGenerator').onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
+        final logs = <LogRecord>[];
+        final sub = Logger('ParseGenerator').onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
 
-          final operation = Operation(
-            operationId: 'multiGroupDedupeOp',
-            context: context,
-            summary: '',
-            description: '',
-            tags: const {},
-            isDeprecated: false,
-            path: '/multi-group-dedupe',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: {
-              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-                name: null,
-                context: context,
-                headers: const {},
-                description: '',
-                bodies: {
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/json',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/json; charset=utf-8',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/xml',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                  ResponseBody(
-                    model: StringModel(context: context),
-                    rawContentType: 'application/xml; charset=utf-8',
-                    contentType: ContentType.json,
-                    examples: const [],
-                  ),
-                },
-              ),
-            },
-            securitySchemes: const {},
-          );
-          final method = generator.generateParseResponseMethod(operation);
-          const expectedMethod = r'''
+        final operation = Operation(
+          operationId: 'multiGroupDedupeOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multi-group-dedupe',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json; charset=utf-8',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/xml',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/xml; charset=utf-8',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
 AnonymousResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
@@ -4707,91 +4676,81 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-          expect(
-            collapseWhitespace(format(method.accept(emitter).toString())),
-            collapseWhitespace(format(expectedMethod)),
-          );
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
 
-          final warnings = logs
-              .where((r) => r.level == Level.WARNING)
-              .map((r) => r.message)
-              .toList();
-          expect(warnings, hasLength(2));
-          final jsonWarning = warnings.firstWhere(
-            (w) => w.contains('"application/json"'),
-          );
-          expect(
-            jsonWarning,
-            contains('application/json; charset=utf-8'),
-          );
-          expect(jsonWarning, isNot(contains('kept model:')));
-          expect(jsonWarning, isNot(contains('dropped models:')));
-          final xmlWarning = warnings.firstWhere(
-            (w) => w.contains('"application/xml"'),
-          );
-          expect(
-            xmlWarning,
-            contains('application/xml; charset=utf-8'),
-          );
-          expect(xmlWarning, isNot(contains('kept model:')));
-          expect(xmlWarning, isNot(contains('dropped models:')));
-        },
-      );
+        final warnings = logs
+            .where((r) => r.level == Level.WARNING)
+            .map((r) => r.message)
+            .toList();
+        expect(warnings, hasLength(2));
+        final jsonWarning = warnings.firstWhere(
+          (w) => w.contains('"application/json"'),
+        );
+        expect(jsonWarning, contains('application/json; charset=utf-8'));
+        expect(jsonWarning, isNot(contains('kept model:')));
+        expect(jsonWarning, isNot(contains('dropped models:')));
+        final xmlWarning = warnings.firstWhere(
+          (w) => w.contains('"application/xml"'),
+        );
+        expect(xmlWarning, contains('application/xml; charset=utf-8'));
+        expect(xmlWarning, isNot(contains('kept model:')));
+        expect(xmlWarning, isNot(contains('dropped models:')));
+      });
     });
 
-    test(
-      'generates runtime throw for multipart response body',
-      () {
-        final operation = Operation(
-          operationId: 'multipartResponseOp',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/multipart-response',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: ClassModel(
-                    name: 'TestModel',
-                    properties: const [],
-                    context: context,
-                    isDeprecated: false,
-                    examples: const [],
-                  ),
-                  rawContentType: 'multipart/form-data',
-                  contentType: ContentType.multipart,
+    test('generates runtime throw for multipart response body', () {
+      final operation = Operation(
+        operationId: 'multipartResponseOp',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/multipart-response',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: ClassModel(
+                  name: 'TestModel',
+                  properties: const [],
+                  context: context,
+                  isDeprecated: false,
                   examples: const [],
                 ),
-              },
-            ),
-          },
-          securitySchemes: const {},
-        );
-        final method = generator.generateParseResponseMethod(operation);
-        final generated = format(method.accept(emitter).toString());
-
-        expect(
-          collapseWhitespace(generated),
-          contains(
-            collapseWhitespace(
-              '''throw ResponseDecodingException( 'Multipart response body decoding is not supported.', );''',
-            ),
+                rawContentType: 'multipart/form-data',
+                contentType: ContentType.multipart,
+                examples: const [],
+              ),
+            },
           ),
-        );
-      },
-    );
+        },
+        securitySchemes: const {},
+      );
+      final method = generator.generateParseResponseMethod(operation);
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            '''throw ResponseDecodingException( 'Multipart response body decoding is not supported.', );''',
+          ),
+        ),
+      );
+    });
 
     group('immutable collections', () {
       late ParseGenerator immutableGenerator;

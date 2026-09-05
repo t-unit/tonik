@@ -36,31 +36,28 @@ void main() {
         expect(type.isNullable, isFalse);
       });
 
-      test(
-        'uses the immediate reference and local nullability '
-        'for an annotated alias',
-        () {
-          final content = MultipartRequestContent(
-            context: Context.initial().pushAll(['upload', 'body']),
-            sourceName: 'Upload',
-            sourceContext: context,
-            alias: MultipartContentAlias(
-              targetName: 'UploadAlias',
-              targetContext: context,
-              isNullable: true,
-            ),
-            parts: const [],
-            rawContentType: 'multipart/form-data',
-            examples: const [],
-          );
+      test('uses the immediate reference and local nullability '
+          'for an annotated alias', () {
+        final content = MultipartRequestContent(
+          context: Context.initial().pushAll(['upload', 'body']),
+          sourceName: 'Upload',
+          sourceContext: context,
+          alias: MultipartContentAlias(
+            targetName: 'UploadAlias',
+            targetContext: context,
+            isNullable: true,
+          ),
+          parts: const [],
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        );
 
-          final type = requestContentTypeReference(content, manager, 'example');
+        final type = requestContentTypeReference(content, manager, 'example');
 
-          expect(type.symbol, 'UploadAlias');
-          expect(type.url, 'package:example/src/model/upload_alias.dart');
-          expect(type.isNullable, isTrue);
-        },
-      );
+        expect(type.symbol, 'UploadAlias');
+        expect(type.url, 'package:example/src/model/upload_alias.dart');
+        expect(type.isNullable, isTrue);
+      });
 
       test(
         'does not add a nullable suffix already owned by an object typedef',
@@ -209,72 +206,63 @@ void main() {
         expect(result.isNullable, isFalse);
       });
 
-      test(
-        'returns nullable TonikFile TypeReference for BinaryModel '
-        'with isNullableOverride',
-        () {
-          final model = BinaryModel(context: context);
+      test('returns nullable TonikFile TypeReference for BinaryModel '
+          'with isNullableOverride', () {
+        final model = BinaryModel(context: context);
 
-          final result = typeReference(
-            model,
-            nameManager,
-            package,
-            isNullableOverride: true,
-          );
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          isNullableOverride: true,
+        );
 
-          expect(result.symbol, 'TonikFile');
-          expect(result.url, 'package:tonik_util/tonik_util.dart');
-          expect(result.isNullable, isTrue);
-        },
-      );
+        expect(result.symbol, 'TonikFile');
+        expect(result.url, 'package:tonik_util/tonik_util.dart');
+        expect(result.isNullable, isTrue);
+      });
 
-      test(
-        'returns List<TonikFile> TypeReference for ListModel '
-        'with BinaryModel content',
-        () {
-          final binaryModel = BinaryModel(context: context);
-          final model = ListModel(
-            content: binaryModel,
-            context: context,
-            examples: const [],
-          );
+      test('returns List<TonikFile> TypeReference for ListModel '
+          'with BinaryModel content', () {
+        final binaryModel = BinaryModel(context: context);
+        final model = ListModel(
+          content: binaryModel,
+          context: context,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isFalse);
-          expect(result.types, hasLength(1));
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
 
-          final innerType = result.types[0] as TypeReference;
-          expect(innerType.symbol, 'TonikFile');
-          expect(innerType.url, 'package:tonik_util/tonik_util.dart');
-        },
-      );
+        final innerType = result.types[0] as TypeReference;
+        expect(innerType.symbol, 'TonikFile');
+        expect(innerType.url, 'package:tonik_util/tonik_util.dart');
+      });
 
-      test(
-        'returns List<String?> for ListModel with isContentNullable',
-        () {
-          final model = ListModel(
-            content: StringModel(context: context),
-            isContentNullable: true,
-            context: context,
-            examples: const [],
-          );
+      test('returns List<String?> for ListModel with isContentNullable', () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          isContentNullable: true,
+          context: context,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isFalse);
-          expect(result.types, hasLength(1));
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
 
-          final innerType = result.types[0] as TypeReference;
-          expect(innerType.symbol, 'String');
-          expect(innerType.url, 'dart:core');
-          expect(innerType.isNullable, isTrue);
-        },
-      );
+        final innerType = result.types[0] as TypeReference;
+        expect(innerType.symbol, 'String');
+        expect(innerType.url, 'dart:core');
+        expect(innerType.isNullable, isTrue);
+      });
 
       test('returns Never TypeReference for NeverModel', () {
         final model = NeverModel(context: context, isNullable: false);
@@ -306,115 +294,100 @@ void main() {
         expect(result.isNullable, isFalse);
       });
 
-      test(
-        'returns nullable TonikFile TypeReference for Base64Model '
-        'with isNullableOverride',
-        () {
-          final model = Base64Model(context: context);
+      test('returns nullable TonikFile TypeReference for Base64Model '
+          'with isNullableOverride', () {
+        final model = Base64Model(context: context);
 
-          final result = typeReference(
-            model,
-            nameManager,
-            package,
-            isNullableOverride: true,
-          );
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          isNullableOverride: true,
+        );
 
-          expect(result.symbol, 'TonikFile');
-          expect(result.url, 'package:tonik_util/tonik_util.dart');
-          expect(result.isNullable, isTrue);
-        },
-      );
+        expect(result.symbol, 'TonikFile');
+        expect(result.url, 'package:tonik_util/tonik_util.dart');
+        expect(result.isNullable, isTrue);
+      });
 
-      test(
-        'returns List<TonikFile> TypeReference for ListModel '
-        'with Base64Model content',
-        () {
-          final base64Model = Base64Model(context: context);
-          final model = ListModel(
-            content: base64Model,
-            context: context,
-            examples: const [],
-          );
+      test('returns List<TonikFile> TypeReference for ListModel '
+          'with Base64Model content', () {
+        final base64Model = Base64Model(context: context);
+        final model = ListModel(
+          content: base64Model,
+          context: context,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isFalse);
-          expect(result.types, hasLength(1));
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
 
-          final innerType = result.types[0] as TypeReference;
-          expect(innerType.symbol, 'TonikFile');
-          expect(innerType.url, 'package:tonik_util/tonik_util.dart');
-        },
-      );
+        final innerType = result.types[0] as TypeReference;
+        expect(innerType.symbol, 'TonikFile');
+        expect(innerType.url, 'package:tonik_util/tonik_util.dart');
+      });
 
-      test(
-        'returns nullable List TypeReference when ListModel has '
-        'isNullable true',
-        () {
-          final model = ListModel(
-            content: StringModel(context: context),
-            context: context,
-            isNullable: true,
-            examples: const [],
-          );
+      test('returns nullable List TypeReference when ListModel has '
+          'isNullable true', () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isTrue);
-        },
-      );
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isTrue);
+      });
 
-      test(
-        'returns Map with nullable List value type when MapModel '
-        'valueModel is a nullable ListModel',
-        () {
-          final listModel = ListModel(
-            content: StringModel(context: context),
-            context: context,
-            isNullable: true,
-            examples: const [],
-          );
-          final model = MapModel(
-            valueModel: listModel,
-            context: context,
-            examples: const [],
-          );
+      test('returns Map with nullable List value type when MapModel '
+          'valueModel is a nullable ListModel', () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+        );
+        final model = MapModel(
+          valueModel: listModel,
+          context: context,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'Map');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isFalse);
-          expect(result.types, hasLength(2));
+        expect(result.symbol, 'Map');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(2));
 
-          final valueType = result.types[1] as TypeReference;
-          expect(valueType.symbol, 'List');
-          expect(valueType.isNullable, isTrue);
-        },
-      );
+        final valueType = result.types[1] as TypeReference;
+        expect(valueType.symbol, 'List');
+        expect(valueType.isNullable, isTrue);
+      });
 
-      test(
-        'returns nullable Map TypeReference when MapModel has '
-        'isNullable true',
-        () {
-          final model = MapModel(
-            valueModel: StringModel(context: context),
-            context: context,
-            isNullable: true,
-            examples: const [],
-          );
+      test('returns nullable Map TypeReference when MapModel has '
+          'isNullable true', () {
+        final model = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'Map');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isTrue);
-        },
-      );
+        expect(result.symbol, 'Map');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isTrue);
+      });
     });
 
     group('typeReference with useImmutableCollections', () {
@@ -575,11 +548,7 @@ void main() {
           examples: const [],
         );
 
-        final result = typeReference(
-          model,
-          nameManager,
-          package,
-        );
+        final result = typeReference(model, nameManager, package);
 
         expect(result.symbol, 'List');
         expect(result.url, 'dart:core');
@@ -609,22 +578,19 @@ void main() {
         expect(result.url, ficUrl);
       });
 
-      test(
-        'does not affect non-collection types when enabled',
-        () {
-          final stringModel = StringModel(context: context);
+      test('does not affect non-collection types when enabled', () {
+        final stringModel = StringModel(context: context);
 
-          final result = typeReference(
-            stringModel,
-            nameManager,
-            package,
-            useImmutableCollections: true,
-          );
+        final result = typeReference(
+          stringModel,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
 
-          expect(result.symbol, 'String');
-          expect(result.url, 'dart:core');
-        },
-      );
+        expect(result.symbol, 'String');
+        expect(result.url, 'dart:core');
+      });
     });
 
     group('AnyModel nullability', () {
@@ -668,29 +634,26 @@ void main() {
         },
       );
 
-      test(
-        'returns nullable Object for AnyModel in ListModel content',
-        () {
-          final anyModel = AnyModel(context: context);
-          final model = ListModel(
-            content: anyModel,
-            context: context,
-            examples: const [],
-          );
+      test('returns nullable Object for AnyModel in ListModel content', () {
+        final anyModel = AnyModel(context: context);
+        final model = ListModel(
+          content: anyModel,
+          context: context,
+          examples: const [],
+        );
 
-          final result = typeReference(model, nameManager, package);
+        final result = typeReference(model, nameManager, package);
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
-          expect(result.isNullable, isFalse);
-          expect(result.types, hasLength(1));
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
 
-          final innerType = result.types[0] as TypeReference;
-          expect(innerType.symbol, 'Object');
-          expect(innerType.url, 'dart:core');
-          expect(innerType.isNullable, isTrue);
-        },
-      );
+        final innerType = result.types[0] as TypeReference;
+        expect(innerType.symbol, 'Object');
+        expect(innerType.url, 'dart:core');
+        expect(innerType.isNullable, isTrue);
+      });
     });
   });
 }

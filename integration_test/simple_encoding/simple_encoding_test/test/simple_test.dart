@@ -34,10 +34,7 @@ void main() {
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
     final recordedRequest = await imposterServer.takeRequest();
-    expect(
-      recordedRequest.uri.path,
-      '/v1/anyof/string',
-    );
+    expect(recordedRequest.uri.path, '/v1/anyof/string');
   });
 
   test('testAnyOfInPath integer', () async {
@@ -50,10 +47,7 @@ void main() {
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
     final recordedRequest = await imposterServer.takeRequest();
-    expect(
-      recordedRequest.uri.path,
-      '/v1/anyof/1',
-    );
+    expect(recordedRequest.uri.path, '/v1/anyof/1');
   });
 
   test('testAnyOfInPath object', () async {
@@ -68,10 +62,7 @@ void main() {
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
     final recordedRequest = await imposterServer.takeRequest();
-    expect(
-      recordedRequest.uri.path,
-      '/v1/anyof/name,John%20Doe,value,-1',
-    );
+    expect(recordedRequest.uri.path, '/v1/anyof/name,John%20Doe,value,-1');
   });
 
   test('testAnyOfCompositeInPath with EntityType', () async {
@@ -112,10 +103,7 @@ void main() {
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
     final recordedRequest = await imposterServer.takeRequest();
-    expect(
-      recordedRequest.uri.path,
-      '/v1/anyof-composite/test-value',
-    );
+    expect(recordedRequest.uri.path, '/v1/anyof-composite/test-value');
   });
 
   test('testAnyOfCompositeInPath with FlexibleValue object', () async {
@@ -279,13 +267,7 @@ void main() {
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
     final recordedRequest = await imposterServer.takeRequest();
-    expect(
-      recordedRequest.uri.path,
-      '/v1/aliases/11/John%20Doe',
-    );
-    expect(
-      recordedRequest.headers['x-timestamp'],
-      '1970-01-01T14:30:00.000Z',
-    );
+    expect(recordedRequest.uri.path, '/v1/aliases/11/John%20Doe');
+    expect(recordedRequest.headers['x-timestamp'], '1970-01-01T14:30:00.000Z');
   });
 }

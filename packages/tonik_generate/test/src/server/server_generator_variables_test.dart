@@ -62,9 +62,7 @@ void main() {
     });
 
     test('generates enum with value field and const constructor', () {
-      final valueField = regionEnum.fields.firstWhere(
-        (f) => f.name == 'value',
-      );
+      final valueField = regionEnum.fields.firstWhere((f) => f.name == 'value');
       expect(valueField.type?.accept(emitter).toString(), 'String');
       expect(valueField.modifier, FieldModifier.final$);
 
@@ -265,10 +263,10 @@ void main() {
     test('generates enum with numeric values converted to words', () {
       final portEnum = enums.first;
       final valueNames = portEnum.values.map((v) => v.name).toList();
-      expect(
-        valueNames,
-        ['eightThousandEighty', 'eightThousandFourHundredFortyThree'],
-      );
+      expect(valueNames, [
+        'eightThousandEighty',
+        'eightThousandFourHundredFortyThree',
+      ]);
     });
 
     test('generates fields for both variables', () {
@@ -459,9 +457,7 @@ void main() {
         const Server(
           url: 'https://dynamic.example.com/{env}',
           description: 'Dynamic',
-          variables: [
-            ServerVariable(name: 'env', defaultValue: 'staging'),
-          ],
+          variables: [ServerVariable(name: 'env', defaultValue: 'staging')],
         ),
       ];
 
@@ -577,12 +573,7 @@ void main() {
         const Server(
           url: 'https://api.example.com/{default}',
           description: 'Default server',
-          variables: [
-            ServerVariable(
-              name: 'default',
-              defaultValue: 'v1',
-            ),
-          ],
+          variables: [ServerVariable(name: 'default', defaultValue: 'v1')],
         ),
       ];
 
@@ -662,9 +653,7 @@ void main() {
         const Server(
           url: '',
           description: 'Empty url',
-          variables: [
-            ServerVariable(name: 'env', defaultValue: 'prod'),
-          ],
+          variables: [ServerVariable(name: 'env', defaultValue: 'prod')],
         ),
       ];
 

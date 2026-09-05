@@ -5519,10 +5519,7 @@ void main() {
           ),
           'p',
         );
-        final reconstructed = AnyOfWithEnumList.fromForm(
-          form,
-          explode: false,
-        );
+        final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
         // Both list and string are set because any string can be
         // decoded to String.
         expect(
@@ -5680,10 +5677,7 @@ void main() {
           ),
           'p',
         );
-        final reconstructed = AnyOfWithEnumList.fromForm(
-          form,
-          explode: false,
-        );
+        final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
         // Both list2 and string are set because any string can be
         // decoded to String.
         expect(
@@ -6532,9 +6526,9 @@ void main() {
       });
 
       test('fromJson with Class1-shaped value populates class1 only', () {
-        final result = AnyOfBooleanSchema.fromJson(
-          const <String, Object?>{'name': 'test'},
-        );
+        final result = AnyOfBooleanSchema.fromJson(const <String, Object?>{
+          'name': 'test',
+        });
         expect(result.class1, const Class1(name: 'test'));
         expect(result.object, isNull);
       });
@@ -6625,9 +6619,7 @@ void main() {
       late AnyOfBooleanSchema classVariant;
 
       setUp(() {
-        classVariant = const AnyOfBooleanSchema(
-          class1: Class1(name: 'test'),
-        );
+        classVariant = const AnyOfBooleanSchema(class1: Class1(name: 'test'));
       });
 
       test('toJson', () {

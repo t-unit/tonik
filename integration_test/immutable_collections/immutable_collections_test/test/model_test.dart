@@ -254,10 +254,7 @@ void main() {
       final restored = TaggedItem.fromJson(json);
 
       expect(restored.name, 'item1');
-      expect(
-        restored.additionalProperties,
-        isA<IMap<String, IList<String>>>(),
-      );
+      expect(restored.additionalProperties, isA<IMap<String, IList<String>>>());
       expect(restored.additionalProperties['colors'], isA<IList<String>>());
       expect(
         restored.additionalProperties['colors'],

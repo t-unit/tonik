@@ -81,11 +81,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-        ListModel(
-          content: oneOfModel,
-          context: context,
-          examples: const [],
-        ),
+        ListModel(content: oneOfModel, context: context, examples: const []),
       ],
       context: context,
       examples: const [],
@@ -248,39 +244,37 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     },
   );
 
-  test(
-    'throws exception for mixed types in toSimple',
-    () {
-      final model = AllOfModel(
-        isDeprecated: false,
-        name: 'MixedModel',
-        models: <Model>[
-          StringModel(context: context),
-          ClassModel(
-            isDeprecated: false,
-            name: 'UserData',
-            properties: [
-              Property(
-                name: 'id',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          ),
-        ],
-        context: context,
-        examples: const [],
-      );
+  test('throws exception for mixed types in toSimple', () {
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'MixedModel',
+      models: <Model>[
+        StringModel(context: context),
+        ClassModel(
+          isDeprecated: false,
+          name: 'UserData',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
 
-      final combinedClass = generator.generateClass(model);
+    final combinedClass = generator.generateClass(model);
 
-      const expectedToSimpleMethod = '''
+    const expectedToSimpleMethod = '''
           String toSimple({
             required bool explode,
             required bool allowEmpty,
@@ -292,41 +286,38 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           }
         ''';
 
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedToSimpleMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+      contains(collapseWhitespace(expectedToSimpleMethod)),
+    );
+  });
 
-  test(
-    'generates toSimple returning primary model value for primitive-only '
-    'mixed types',
-    () {
-      final model = AllOfModel(
-        isDeprecated: false,
-        name: 'MixedModel',
-        models: [
-          StringModel(context: context),
-          EnumModel(
-            isDeprecated: false,
-            name: 'Status',
-            values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'inactive'),
-            },
-            isNullable: false,
-            context: context,
-            examples: const [],
-          ),
-        ],
-        context: context,
-        examples: const [],
-      );
+  test('generates toSimple returning primary model value for primitive-only '
+      'mixed types', () {
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'MixedModel',
+      models: [
+        StringModel(context: context),
+        EnumModel(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: context,
+          examples: const [],
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
 
-      final combinedClass = generator.generateClass(model);
+    final combinedClass = generator.generateClass(model);
 
-      const expectedToSimpleMethod = '''
+    const expectedToSimpleMethod = '''
           String toSimple({
             required bool explode,
             required bool allowEmpty,
@@ -340,12 +331,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           }
         ''';
 
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedToSimpleMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+      contains(collapseWhitespace(expectedToSimpleMethod)),
+    );
+  });
 
   test('allOf with mixed anyOf and primitive validates at runtime', () {
     final anyOfModel = AnyOfModel(
@@ -602,11 +592,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           context: context,
           examples: const [],
         ),
-        ListModel(
-          content: oneOfModel,
-          context: context,
-          examples: const [],
-        ),
+        ListModel(content: oneOfModel, context: context, examples: const []),
       ],
       context: context,
       examples: const [],
@@ -697,24 +683,22 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     );
   });
 
-  test(
-    'generates fromSimple validating single value against all primitive '
-    'types',
-    () {
-      final model = AllOfModel(
-        isDeprecated: false,
-        name: 'StringDecimalModel',
-        models: <Model>[
-          StringModel(context: context),
-          DecimalModel(context: context),
-        ],
-        context: context,
-        examples: const [],
-      );
+  test('generates fromSimple validating single value against all primitive '
+      'types', () {
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'StringDecimalModel',
+      models: <Model>[
+        StringModel(context: context),
+        DecimalModel(context: context),
+      ],
+      context: context,
+      examples: const [],
+    );
 
-      final combinedClass = generator.generateClass(model);
+    final combinedClass = generator.generateClass(model);
 
-      const expectedFromSimpleMethod = '''
+    const expectedFromSimpleMethod = '''
         factory StringDecimalModel.fromSimple(
           String? value, {
           required bool explode,
@@ -728,12 +712,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         }
       ''';
 
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedFromSimpleMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+      contains(collapseWhitespace(expectedFromSimpleMethod)),
+    );
+  });
 
   test(
     'generates fromSimple validating single value against enum and string',
@@ -777,50 +760,48 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     },
   );
 
-  test(
-    'generates fromSimple for mixed types attempting decode',
-    () {
-      final model = AllOfModel(
-        isDeprecated: false,
-        name: 'MixedModel',
-        models: [
-          StringModel(context: context),
-          EnumModel(
-            isDeprecated: false,
-            name: 'Status',
-            values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'inactive'),
-            },
-            isNullable: false,
-            context: context,
-            examples: const [],
-          ),
-          ClassModel(
-            isDeprecated: false,
-            name: 'UserData',
-            properties: [
-              Property(
-                name: 'id',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          ),
-        ],
-        context: context,
-        examples: const [],
-      );
+  test('generates fromSimple for mixed types attempting decode', () {
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'MixedModel',
+      models: [
+        StringModel(context: context),
+        EnumModel(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: context,
+          examples: const [],
+        ),
+        ClassModel(
+          isDeprecated: false,
+          name: 'UserData',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
 
-      final combinedClass = generator.generateClass(model);
+    final combinedClass = generator.generateClass(model);
 
-      const expectedFromSimpleMethod = '''
+    const expectedFromSimpleMethod = '''
         factory MixedModel.fromSimple(String? value, {required bool explode}) {
           return MixedModel(
             userData: UserData.fromSimple(value, explode: explode),
@@ -830,10 +811,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         }
       ''';
 
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedFromSimpleMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+      contains(collapseWhitespace(expectedFromSimpleMethod)),
+    );
+  });
 }

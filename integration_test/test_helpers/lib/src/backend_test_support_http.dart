@@ -5,10 +5,7 @@ import 'test_result.dart';
 
 ServerConfig<http.Client> httpTestServerConfig({
   required Map<String, String> headers,
-}) =>
-    ServerConfig.clientFactory(
-      () => _HeaderClient(headers),
-    );
+}) => ServerConfig.clientFactory(() => _HeaderClient(headers));
 
 final class _HeaderClient extends http.BaseClient {
   _HeaderClient(this._headers) : _inner = http.Client();
@@ -29,7 +26,7 @@ final class _HeaderClient extends http.BaseClient {
 }
 
 TestResponse httpTestResponse(http.Response response) => TestResponse(
-      statusCode: response.statusCode,
-      headers: TestHeaders(response.headersSplitValues),
-      data: response.bodyBytes,
-    );
+  statusCode: response.statusCode,
+  headers: TestHeaders(response.headersSplitValues),
+  data: response.bodyBytes,
+);

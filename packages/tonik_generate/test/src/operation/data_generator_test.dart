@@ -871,52 +871,49 @@ void main() {
       },
     );
 
-    test(
-      'handles application/octet-stream request body with BinaryModel',
-      () {
-        final operation = Operation(
-          operationId: 'testOp',
-          path: '/test',
-          method: HttpMethod.post,
-          requestBody: RequestBodyObject(
-            name: 'test',
-            context: testContext,
-            description: null,
-            isRequired: true,
-            content: {
-              ModelRequestContent(
-                model: BinaryModel(context: testContext),
-                contentType: ContentType.bytes,
-                rawContentType: 'application/octet-stream',
-                examples: const [],
-              ),
-            },
-          ),
-          responses: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          queryParameters: const {},
-          headers: const {},
+    test('handles application/octet-stream request body with BinaryModel', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
           context: testContext,
-          tags: const {},
-          isDeprecated: false,
-          securitySchemes: const {},
-        );
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: BinaryModel(context: testContext),
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
 
-        const expectedMethod = '''
+      const expectedMethod = '''
         Object? _data({required TonikFile body}) {
           return body.toBytes();
         }
       ''';
 
-        final method = generator.generateDataMethod(operation);
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test(
       'handles optional application/octet-stream request body with BinaryModel',
@@ -1398,80 +1395,78 @@ Object? _data({required String body}) {
         );
       });
 
-      test(
-        'applies per-property allowReserved to a flagged property while '
-        'leaving siblings fully percent-encoded',
-        () {
-          final formModel = ClassModel(
-            name: 'ReservedForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'reserved',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'notReserved',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'optional',
-                model: StringModel(context: testContext),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final operation = Operation(
-            operationId: 'postReserved',
-            path: '/reserved',
-            method: HttpMethod.post,
-            requestBody: RequestBodyObject(
+      test('applies per-property allowReserved to a flagged property while '
+          'leaving siblings fully percent-encoded', () {
+        final formModel = ClassModel(
+          name: 'ReservedForm',
+          isDeprecated: false,
+          properties: [
+            Property(
               name: 'reserved',
-              context: testContext,
-              description: null,
+              model: StringModel(context: testContext),
               isRequired: true,
-              content: {
-                ModelRequestContent(
-                  model: formModel,
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  examples: const [],
-                  formEncoding: _formEncodingByName(formModel, {
-                    'reserved': _reserved(true),
-                    'notReserved': _reserved(false),
-                  }),
-                ),
-              },
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
             ),
-            responses: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            queryParameters: const {},
-            headers: const {},
-            context: testContext,
-            tags: const {},
-            isDeprecated: false,
-            securitySchemes: const {},
-          );
+            Property(
+              name: 'notReserved',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'optional',
+              model: StringModel(context: testContext),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          const expectedMethod = r'''
+        final operation = Operation(
+          operationId: 'postReserved',
+          path: '/reserved',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'reserved',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              ModelRequestContent(
+                model: formModel,
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
+                formEncoding: _formEncodingByName(formModel, {
+                  'reserved': _reserved(true),
+                  'notReserved': _reserved(false),
+                }),
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
             Object? _data({required ReservedForm body}) {
               return body
                   .toForm(
@@ -1488,14 +1483,13 @@ Object? _data({required String body}) {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'threads fieldEncodings through the object path for an optional form '
@@ -1690,9 +1684,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postSecret',
             model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
+            encoding: {'reserved': _reserved(true)},
             context: testContext,
           );
 
@@ -1756,9 +1748,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postMeta',
             model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
+            encoding: {'reserved': _reserved(true)},
             context: testContext,
           );
 
@@ -1832,9 +1822,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postBad',
             model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
+            encoding: {'reserved': _reserved(true)},
             context: testContext,
           );
 
@@ -1864,83 +1852,81 @@ Object? _data({required String body}) {
         },
       );
 
-      test(
-        'threads allowReserved through enum and composition properties '
-        'alongside the flagged scalar',
-        () {
-          final formModel = ClassModel(
-            name: 'ComboForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'reserved',
-                model: StringModel(context: testContext),
-                isRequired: true,
+      test('threads allowReserved through enum and composition properties '
+          'alongside the flagged scalar', () {
+        final formModel = ClassModel(
+          name: 'ComboForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'reserved',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'status',
+              model: EnumModel<String>(
+                name: 'Status',
+                values: {
+                  const EnumEntry(value: 'active'),
+                  const EnumEntry(value: 'inactive'),
+                },
                 isNullable: false,
                 isDeprecated: false,
+                context: testContext,
                 examples: const [],
-                defaultValue: null,
               ),
-              Property(
-                name: 'status',
-                model: EnumModel<String>(
-                  name: 'Status',
-                  values: {
-                    const EnumEntry(value: 'active'),
-                    const EnumEntry(value: 'inactive'),
-                  },
-                  isNullable: false,
-                  isDeprecated: false,
-                  context: testContext,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'choice',
+              model: OneOfModel(
+                name: 'Choice',
+                models: [
+                  (
+                    discriminatorValue: null,
+                    model: StringModel(context: testContext),
+                  ),
+                  (
+                    discriminatorValue: null,
+                    model: IntegerModel(context: testContext),
+                  ),
+                ],
                 isDeprecated: false,
+                context: testContext,
                 examples: const [],
-                defaultValue: null,
               ),
-              Property(
-                name: 'choice',
-                model: OneOfModel(
-                  name: 'Choice',
-                  models: [
-                    (
-                      discriminatorValue: null,
-                      model: StringModel(context: testContext),
-                    ),
-                    (
-                      discriminatorValue: null,
-                      model: IntegerModel(context: testContext),
-                    ),
-                  ],
-                  isDeprecated: false,
-                  context: testContext,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          final operation = _formOperation(
-            operationId: 'postCombo',
-            model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-              'status': _reserved(true),
-              'choice': _reserved(true),
-            },
-            context: testContext,
-          );
+        final operation = _formOperation(
+          operationId: 'postCombo',
+          model: formModel,
+          encoding: {
+            'reserved': _reserved(true),
+            'status': _reserved(true),
+            'choice': _reserved(true),
+          },
+          context: testContext,
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Object? _data({required ComboForm body}) {
               return body
                   .toForm(
@@ -1959,14 +1945,13 @@ Object? _data({required String body}) {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'threads a sole flagged enum through the object-path fieldEncodings',
@@ -2011,9 +1996,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postEnumOnly',
             model: formModel,
-            encoding: {
-              'status': _reserved(true),
-            },
+            encoding: {'status': _reserved(true)},
             context: testContext,
           );
 
@@ -2043,62 +2026,58 @@ Object? _data({required String body}) {
         },
       );
 
-      test(
-        'threads a sole flagged composition through the object-path '
-        'fieldEncodings',
-        () {
-          final formModel = ClassModel(
-            name: 'CompositionOnlyForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
+      test('threads a sole flagged composition through the object-path '
+          'fieldEncodings', () {
+        final formModel = ClassModel(
+          name: 'CompositionOnlyForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'choice',
+              model: OneOfModel(
+                name: 'Choice',
+                models: [
+                  (
+                    discriminatorValue: null,
+                    model: StringModel(context: testContext),
+                  ),
+                  (
+                    discriminatorValue: null,
+                    model: IntegerModel(context: testContext),
+                  ),
+                ],
                 isDeprecated: false,
+                context: testContext,
                 examples: const [],
-                defaultValue: null,
               ),
-              Property(
-                name: 'choice',
-                model: OneOfModel(
-                  name: 'Choice',
-                  models: [
-                    (
-                      discriminatorValue: null,
-                      model: StringModel(context: testContext),
-                    ),
-                    (
-                      discriminatorValue: null,
-                      model: IntegerModel(context: testContext),
-                    ),
-                  ],
-                  isDeprecated: false,
-                  context: testContext,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          final operation = _formOperation(
-            operationId: 'postCompositionOnly',
-            model: formModel,
-            encoding: {
-              'choice': _reserved(true),
-            },
-            context: testContext,
-          );
+        final operation = _formOperation(
+          operationId: 'postCompositionOnly',
+          model: formModel,
+          encoding: {'choice': _reserved(true)},
+          context: testContext,
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Object? _data({required CompositionOnlyForm body}) {
               return body
                   .toForm(
@@ -2115,14 +2094,13 @@ Object? _data({required String body}) {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'routes a special-character property name through the object path',
@@ -2157,9 +2135,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postSpaced',
             model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
+            encoding: {'reserved': _reserved(true)},
             context: testContext,
           );
 
@@ -2189,51 +2165,47 @@ Object? _data({required String body}) {
         },
       );
 
-      test(
-        'routes a list-property sibling through the object path beside a '
-        'flagged scalar',
-        () {
-          final formModel = ClassModel(
-            name: 'ListForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'reserved',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
+      test('routes a list-property sibling through the object path beside a '
+          'flagged scalar', () {
+        final formModel = ClassModel(
+          name: 'ListForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'reserved',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
                 examples: const [],
-                defaultValue: null,
               ),
-              Property(
-                name: 'tags',
-                model: ListModel(
-                  content: StringModel(context: testContext),
-                  context: testContext,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          final operation = _formOperation(
-            operationId: 'postList',
-            model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
-            context: testContext,
-          );
+        final operation = _formOperation(
+          operationId: 'postList',
+          model: formModel,
+          encoding: {'reserved': _reserved(true)},
+          context: testContext,
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Object? _data({required ListForm body}) {
               return body
                   .toForm(
@@ -2251,14 +2223,13 @@ Object? _data({required String body}) {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'routes a map-property sibling through the object path, deferring its '
@@ -2298,9 +2269,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postMap',
             model: formModel,
-            encoding: {
-              'reserved': _reserved(true),
-            },
+            encoding: {'reserved': _reserved(true)},
             context: testContext,
           );
 
@@ -2364,9 +2333,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postAnyOnly',
             model: formModel,
-            encoding: {
-              'metadata': _reserved(true),
-            },
+            encoding: {'metadata': _reserved(true)},
             context: testContext,
           );
 
@@ -2396,48 +2363,44 @@ Object? _data({required String body}) {
         },
       );
 
-      test(
-        'stays on the object path when only a read-only property carries '
-        'allowReserved',
-        () {
-          final formModel = ClassModel(
-            name: 'ReadOnlyForm',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'visible',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'hidden',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isReadOnly: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
+      test('stays on the object path when only a read-only property carries '
+          'allowReserved', () {
+        final formModel = ClassModel(
+          name: 'ReadOnlyForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'visible',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'hidden',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isReadOnly: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          final operation = _formOperation(
-            operationId: 'postReadOnly',
-            model: formModel,
-            encoding: {
-              'hidden': _reserved(true),
-            },
-            context: testContext,
-          );
+        final operation = _formOperation(
+          operationId: 'postReadOnly',
+          model: formModel,
+          encoding: {'hidden': _reserved(true)},
+          context: testContext,
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Object? _data({required ReadOnlyForm body}) {
               return body
                   .toForm(
@@ -2452,14 +2415,13 @@ Object? _data({required String body}) {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'keys fieldEncodings by raw spec name for a write property colliding '
@@ -2496,9 +2458,7 @@ Object? _data({required String body}) {
           final operation = _formOperation(
             operationId: 'postCollision',
             model: formModel,
-            encoding: {
-              'user_name': _reserved(true),
-            },
+            encoding: {'user_name': _reserved(true)},
             context: testContext,
           );
 
@@ -2571,9 +2531,7 @@ Object? _data({required String body}) {
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
-                  formEncoding: {
-                    memberProperty: _reserved(true),
-                  },
+                  formEncoding: {memberProperty: _reserved(true)},
                 ),
               },
             ),
@@ -2628,38 +2586,34 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              multipartContentFixture(
-                testContext,
-                [
-                  multipartPartFixture(
-                    name: 'name',
-                    model: StringModel(context: testContext),
-                    encoding: const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
-                    ),
+              multipartContentFixture(testContext, [
+                multipartPartFixture(
+                  name: 'name',
+                  model: StringModel(context: testContext),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
                   ),
-                  multipartPartFixture(
-                    name: 'nickname',
-                    model: StringModel(context: testContext),
-                    isRequired: false,
-                    isNullable: true,
-                    encoding: const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
-                    ),
+                ),
+                multipartPartFixture(
+                  name: 'nickname',
+                  model: StringModel(context: testContext),
+                  isRequired: false,
+                  isNullable: true,
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
                   ),
-                ],
-                name: 'CreateUserForm',
-              ),
+                ),
+              ], name: 'CreateUserForm'),
             },
           ),
           responses: const {},
@@ -2705,36 +2659,32 @@ Object? _data({required String body}) {
               description: null,
               isRequired: true,
               content: {
-                multipartContentFixture(
-                  testContext,
-                  [
-                    multipartPartFixture(
-                      name: 'file',
-                      model: BinaryModel(context: testContext),
-                      encoding: PartEncoding(
-                        contentType: ContentType.bytes,
-                        rawContentType: 'application/octet-stream',
-                        style: null,
-                        explode: null,
-                        allowReserved: null,
-                        headers: {
-                          'X-Rate-Limit': ResponseHeaderObject(
-                            name: 'X-Rate-Limit',
-                            context: testContext,
-                            description: null,
-                            explode: false,
-                            model: IntegerModel(context: testContext),
-                            isRequired: true,
-                            isDeprecated: false,
-                            encoding: ResponseHeaderEncoding.simple,
-                            examples: const [],
-                          ),
-                        },
-                      ),
+                multipartContentFixture(testContext, [
+                  multipartPartFixture(
+                    name: 'file',
+                    model: BinaryModel(context: testContext),
+                    encoding: PartEncoding(
+                      contentType: ContentType.bytes,
+                      rawContentType: 'application/octet-stream',
+                      style: null,
+                      explode: null,
+                      allowReserved: null,
+                      headers: {
+                        'X-Rate-Limit': ResponseHeaderObject(
+                          name: 'X-Rate-Limit',
+                          context: testContext,
+                          description: null,
+                          explode: false,
+                          model: IntegerModel(context: testContext),
+                          isRequired: true,
+                          isDeprecated: false,
+                          encoding: ResponseHeaderEncoding.simple,
+                          examples: const [],
+                        ),
+                      },
                     ),
-                  ],
-                  name: 'UploadForm',
-                ),
+                  ),
+                ], name: 'UploadForm'),
               },
             ),
             responses: const {},
@@ -2789,36 +2739,32 @@ Object? _data({required String body}) {
             description: null,
             isRequired: true,
             content: {
-              multipartContentFixture(
-                testContext,
-                [
-                  multipartPartFixture(
-                    name: 'file',
-                    model: BinaryModel(context: testContext),
-                    encoding: PartEncoding(
-                      contentType: ContentType.bytes,
-                      rawContentType: 'application/octet-stream',
-                      style: null,
-                      explode: null,
-                      allowReserved: null,
-                      headers: {
-                        'X-Custom': ResponseHeaderObject(
-                          name: 'X-Custom',
-                          context: testContext,
-                          description: null,
-                          explode: false,
-                          model: StringModel(context: testContext),
-                          isRequired: true,
-                          isDeprecated: false,
-                          encoding: ResponseHeaderEncoding.simple,
-                          examples: const [],
-                        ),
-                      },
-                    ),
+              multipartContentFixture(testContext, [
+                multipartPartFixture(
+                  name: 'file',
+                  model: BinaryModel(context: testContext),
+                  encoding: PartEncoding(
+                    contentType: ContentType.bytes,
+                    rawContentType: 'application/octet-stream',
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
+                    headers: {
+                      'X-Custom': ResponseHeaderObject(
+                        name: 'X-Custom',
+                        context: testContext,
+                        description: null,
+                        explode: false,
+                        model: StringModel(context: testContext),
+                        isRequired: true,
+                        isDeprecated: false,
+                        encoding: ResponseHeaderEncoding.simple,
+                        examples: const [],
+                      ),
+                    },
                   ),
-                ],
-                name: 'UploadForm',
-              ),
+                ),
+              ], name: 'UploadForm'),
             },
           ),
           responses: const {},
@@ -2835,10 +2781,10 @@ Object? _data({required String body}) {
         final method = generator.generateDataMethod(operation);
         final methodString = format(method.accept(emitter).toString());
 
-        expect(
-          method.optionalParameters.map((parameter) => parameter.name),
-          ['body', 'fileCustomPartHeader'],
-        );
+        expect(method.optionalParameters.map((parameter) => parameter.name), [
+          'body',
+          'fileCustomPartHeader',
+        ]);
         expect(
           collapseWhitespace(methodString),
           contains(
@@ -2934,24 +2880,20 @@ Future<Object?> _data({Payload? body}) async {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              multipartContentFixture(
-                testContext,
-                [
-                  multipartPartFixture(
-                    name: 'name',
-                    model: StringModel(context: testContext),
-                    encoding: const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
-                    ),
+              multipartContentFixture(testContext, [
+                multipartPartFixture(
+                  name: 'name',
+                  model: StringModel(context: testContext),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
                   ),
-                ],
-                name: 'FormPayload',
-              ),
+                ),
+              ], name: 'FormPayload'),
             },
           ),
           responses: const {},
@@ -3157,85 +3099,83 @@ Future<Object?> _data({Payload? body}) async {
         },
       );
 
-      test(
-        'applies per-property allowReserved in the form arm of a '
-        'multi-content body',
-        () {
-          final jsonModel = ClassModel(
-            name: 'JsonPayload',
-            isDeprecated: false,
-            properties: const [],
-            context: testContext,
-            examples: const [],
-          );
+      test('applies per-property allowReserved in the form arm of a '
+          'multi-content body', () {
+        final jsonModel = ClassModel(
+          name: 'JsonPayload',
+          isDeprecated: false,
+          properties: const [],
+          context: testContext,
+          examples: const [],
+        );
 
-          final formModel = ClassModel(
-            name: 'FormPayload',
-            isDeprecated: false,
-            properties: [
-              Property(
-                name: 'reserved',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'plain',
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: testContext,
-            examples: const [],
-          );
-
-          final operation = Operation(
-            operationId: 'createUser',
-            path: '/users',
-            method: HttpMethod.post,
-            requestBody: RequestBodyObject(
-              name: 'createUser',
-              context: testContext,
-              description: null,
+        final formModel = ClassModel(
+          name: 'FormPayload',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'reserved',
+              model: StringModel(context: testContext),
               isRequired: true,
-              content: {
-                ModelRequestContent(
-                  model: jsonModel,
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
-                  examples: const [],
-                ),
-                ModelRequestContent(
-                  model: formModel,
-                  contentType: ContentType.form,
-                  rawContentType: 'application/x-www-form-urlencoded',
-                  examples: const [],
-                  formEncoding: _formEncodingByName(formModel, {
-                    'reserved': _reserved(true),
-                    'plain': _reserved(false),
-                  }),
-                ),
-              },
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
             ),
-            responses: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            queryParameters: const {},
-            headers: const {},
-            context: testContext,
-            tags: const {},
-            isDeprecated: false,
-            securitySchemes: const {},
-          );
+            Property(
+              name: 'plain',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
 
-          const expectedMethod = r'''
+        final operation = Operation(
+          operationId: 'createUser',
+          path: '/users',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'createUser',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              ModelRequestContent(
+                model: jsonModel,
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                examples: const [],
+              ),
+              ModelRequestContent(
+                model: formModel,
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
+                formEncoding: _formEncodingByName(formModel, {
+                  'reserved': _reserved(true),
+                  'plain': _reserved(false),
+                }),
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
             Object? _data({required CreateUser body}) {
               return switch (body) {
                 final CreateUserJson value => value.value.toJson(),
@@ -3255,14 +3195,13 @@ Future<Object?> _data({Payload? body}) async {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'generates _data method for optional single-content multipart body',
@@ -3277,24 +3216,20 @@ Future<Object?> _data({Payload? body}) async {
               description: null,
               isRequired: false,
               content: {
-                multipartContentFixture(
-                  testContext,
-                  [
-                    multipartPartFixture(
-                      name: 'name',
-                      model: StringModel(context: testContext),
-                      encoding: const PartEncoding(
-                        contentType: ContentType.text,
-                        rawContentType: 'text/plain',
-                        headers: null,
-                        style: EncodingStyle.form,
-                        explode: true,
-                        allowReserved: false,
-                      ),
+                multipartContentFixture(testContext, [
+                  multipartPartFixture(
+                    name: 'name',
+                    model: StringModel(context: testContext),
+                    encoding: const PartEncoding(
+                      contentType: ContentType.text,
+                      rawContentType: 'text/plain',
+                      headers: null,
+                      style: EncodingStyle.form,
+                      explode: true,
+                      allowReserved: false,
                     ),
-                  ],
-                  name: 'CreateUserForm',
-                ),
+                  ),
+                ], name: 'CreateUserForm'),
               },
             ),
             responses: const {},
@@ -3353,36 +3288,32 @@ Future<Object?> _data({Payload? body}) async {
                   rawContentType: 'application/json',
                   examples: const [],
                 ),
-                multipartContentFixture(
-                  testContext,
-                  [
-                    multipartPartFixture(
-                      name: 'file',
-                      model: BinaryModel(context: testContext),
-                      encoding: PartEncoding(
-                        contentType: ContentType.bytes,
-                        rawContentType: 'application/octet-stream',
-                        style: null,
-                        explode: null,
-                        allowReserved: null,
-                        headers: {
-                          'X-Checksum': ResponseHeaderObject(
-                            name: 'X-Checksum',
-                            context: testContext,
-                            description: null,
-                            explode: false,
-                            model: StringModel(context: testContext),
-                            isRequired: true,
-                            isDeprecated: false,
-                            encoding: ResponseHeaderEncoding.simple,
-                            examples: const [],
-                          ),
-                        },
-                      ),
+                multipartContentFixture(testContext, [
+                  multipartPartFixture(
+                    name: 'file',
+                    model: BinaryModel(context: testContext),
+                    encoding: PartEncoding(
+                      contentType: ContentType.bytes,
+                      rawContentType: 'application/octet-stream',
+                      style: null,
+                      explode: null,
+                      allowReserved: null,
+                      headers: {
+                        'X-Checksum': ResponseHeaderObject(
+                          name: 'X-Checksum',
+                          context: testContext,
+                          description: null,
+                          explode: false,
+                          model: StringModel(context: testContext),
+                          isRequired: true,
+                          isDeprecated: false,
+                          encoding: ResponseHeaderEncoding.simple,
+                          examples: const [],
+                        ),
+                      },
                     ),
-                  ],
-                  name: 'UploadPayload',
-                ),
+                  ),
+                ], name: 'UploadPayload'),
               },
             ),
             responses: const {},
@@ -3417,107 +3348,99 @@ Future<Object?> _data({Payload? body}) async {
     });
 
     group('unsupported bytes content type generates runtime throws', () {
-      test(
-        'generates runtime throw for EnumModel with bytes content type',
-        () {
-          final operation = Operation(
-            operationId: 'testOp',
-            path: '/test',
-            method: HttpMethod.post,
-            requestBody: RequestBodyObject(
-              name: 'test',
-              context: testContext,
-              description: null,
-              isRequired: true,
-              content: {
-                ModelRequestContent(
-                  model: EnumModel<String>(
-                    name: 'Status',
-                    values: const {},
-                    context: testContext,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                  ),
-                  contentType: ContentType.bytes,
-                  rawContentType: 'application/octet-stream',
-                  examples: const [],
-                ),
-              },
-            ),
-            responses: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            queryParameters: const {},
-            headers: const {},
+      test('generates runtime throw for EnumModel with bytes content type', () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
             context: testContext,
-            tags: const {},
-            isDeprecated: false,
-            securitySchemes: const {},
-          );
-
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            contains('EncodingException'),
-          );
-        },
-      );
-
-      test(
-        'generates runtime throw for EnumModel with bytes in '
-        'multi-content request body using wildcard pattern',
-        () {
-          final operation = Operation(
-            operationId: 'testOp',
-            path: '/test',
-            method: HttpMethod.post,
-            requestBody: RequestBodyObject(
-              name: 'test',
-              context: testContext,
-              description: null,
-              isRequired: true,
-              content: {
-                ModelRequestContent(
-                  model: ClassModel(
-                    isDeprecated: false,
-                    name: 'JsonModel',
-                    properties: const [],
-                    context: testContext,
-                    examples: const [],
-                  ),
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
+            description: null,
+            isRequired: true,
+            content: {
+              ModelRequestContent(
+                model: EnumModel<String>(
+                  name: 'Status',
+                  values: const {},
+                  context: testContext,
+                  isNullable: false,
+                  isDeprecated: false,
                   examples: const [],
                 ),
-                ModelRequestContent(
-                  model: EnumModel<String>(
-                    name: 'Status',
-                    values: const {},
-                    context: testContext,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                  ),
-                  contentType: ContentType.bytes,
-                  rawContentType: 'application/octet-stream',
-                  examples: const [],
-                ),
-              },
-            ),
-            responses: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            queryParameters: const {},
-            headers: const {},
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                examples: const [],
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(collapseWhitespace(methodString), contains('EncodingException'));
+      });
+
+      test('generates runtime throw for EnumModel with bytes in '
+          'multi-content request body using wildcard pattern', () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
             context: testContext,
-            tags: const {},
-            isDeprecated: false,
-            securitySchemes: const {},
-          );
+            description: null,
+            isRequired: true,
+            content: {
+              ModelRequestContent(
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'JsonModel',
+                  properties: const [],
+                  context: testContext,
+                  examples: const [],
+                ),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                examples: const [],
+              ),
+              ModelRequestContent(
+                model: EnumModel<String>(
+                  name: 'Status',
+                  values: const {},
+                  context: testContext,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                ),
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                examples: const [],
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = '''
+        const expectedMethod = '''
             Object? _data({required Test body}) {
               return switch (body) {
                 final TestJson value => value.value.toJson(),
@@ -3526,14 +3449,13 @@ Future<Object?> _data({Payload? body}) async {
             }
           ''';
 
-          final method = generator.generateDataMethod(operation);
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
     });
   });
 }

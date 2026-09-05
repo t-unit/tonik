@@ -32,21 +32,13 @@ void main() {
     group('AnyOfMixed variant', () {
       test('round-trips AnyOfMixed with integer', () async {
         final result = await api.testHeaderRoundtripNestedAnyOfInOneOf.call(
-          nestedValue: const NestedAnyOfInOneOfAnyOfMixed(
-            AnyOfMixed(int: 42),
-          ),
+          nestedValue: const NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 42)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          '42',
-        );
+        expect(recordedRequest.headers['x-nested-value'], '42');
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
         final decoded =
             success.value.xNestedValue! as NestedAnyOfInOneOfAnyOfMixed;
@@ -60,16 +52,10 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          'number,99',
-        );
+        expect(recordedRequest.headers['x-nested-value'], 'number,99');
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
         final decoded =
             success.value.xNestedValue! as NestedAnyOfInOneOfAnyOfMixed;
@@ -84,18 +70,12 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
         // PriorityEnum.three has raw value 3.
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          '3',
-        );
+        expect(recordedRequest.headers['x-nested-value'], '3');
 
         // Integer decoding may succeed first.
         expect(success.value.xNestedValue, isNotNull);
@@ -108,16 +88,10 @@ void main() {
           nestedValue: const NestedAnyOfInOneOfBool(true),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          'true',
-        );
+        expect(recordedRequest.headers['x-nested-value'], 'true');
 
         // AnyOfMixed is tried first.
         expect(success.value.xNestedValue, isNotNull);
@@ -128,16 +102,10 @@ void main() {
           nestedValue: const NestedAnyOfInOneOfBool(false),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          'false',
-        );
+        expect(recordedRequest.headers['x-nested-value'], 'false');
         expect(success.value.xNestedValue, isNotNull);
       });
     });
@@ -148,16 +116,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripNestedAnyOfInOneOf.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-nested-value'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-nested-value'], isNull);
           expect(success.value.xNestedValue, isNull);
         },
       );

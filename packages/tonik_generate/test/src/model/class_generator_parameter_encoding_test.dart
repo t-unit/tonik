@@ -23,10 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -67,50 +64,42 @@ void main() {
           .firstWhere((p) => p.name == 'allowEmpty');
       expect(allowEmptyParam.named, isTrue);
       expect(allowEmptyParam.required, isFalse);
-      expect(
-        allowEmptyParam.defaultTo?.accept(emitter).toString(),
-        'true',
-      );
-      expect(
-        allowEmptyParam.type?.accept(emitter).toString(),
-        'bool',
-      );
+      expect(allowEmptyParam.defaultTo?.accept(emitter).toString(), 'true');
+      expect(allowEmptyParam.type?.accept(emitter).toString(), 'bool');
     });
 
-    test(
-      'generates parameterProperties method body for simple properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties method body for simple properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'id'] = PropertyValue.scalar(id.toString());
@@ -121,12 +110,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test('generates parameterProperties method body for empty model', () {
       final model = ClassModel(
@@ -202,110 +190,105 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
     });
 
-    test(
-      'generates parameterProperties method that throws for '
-      'complex properties',
-      () {
-        final nestedClass = ClassModel(
-          isDeprecated: false,
-          name: 'Address',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties method that throws for '
+        'complex properties', () {
+      final nestedClass = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'address',
-              model: nestedClass,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'address',
+            model: nestedClass,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
   throw EncodingException(
     r'parameterProperties not supported for User: contains complex types',
   );
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group('composite model runtime checking for parameterProperties', () {
-    test(
-      'encodes oneOf property based on runtime encoding shape',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'StringOrClass',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'NestedClass',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Container',
-          properties: [
-            Property(
-              name: 'value',
-              model: oneOfModel,
-              isRequired: true,
-              isNullable: false,
+    test('encodes oneOf property based on runtime encoding shape', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrClass',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
               isDeprecated: false,
+              name: 'NestedClass',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Container',
+        properties: [
+          Property(
+            name: 'value',
+            model: oneOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
@@ -321,68 +304,65 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'encodes anyOf property based on runtime encoding shape',
-      () {
-        final anyOfModel = AnyOfModel(
-          isDeprecated: false,
-          name: 'StringOrInt',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'ComplexData',
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'FlexibleContainer',
-          properties: [
-            Property(
-              name: 'data',
-              model: anyOfModel,
-              isRequired: true,
-              isNullable: false,
+    test('encodes anyOf property based on runtime encoding shape', () {
+      final anyOfModel = AnyOfModel(
+        isDeprecated: false,
+        name: 'StringOrInt',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
               isDeprecated: false,
+              name: 'ComplexData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'FlexibleContainer',
+        properties: [
+          Property(
+            name: 'data',
+            model: anyOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
@@ -398,65 +378,62 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'encodes allOf property based on runtime encoding shape',
-      () {
-        final stringModel = StringModel(context: context);
-        final complexModel = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexData',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('encodes allOf property based on runtime encoding shape', () {
+      final stringModel = StringModel(context: context);
+      final complexModel = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexData',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final allOfModel = AllOfModel(
-          isDeprecated: false,
-          name: 'StringAndInt',
-          models: [stringModel, complexModel],
-          context: context,
-          examples: const [],
-        );
+      final allOfModel = AllOfModel(
+        isDeprecated: false,
+        name: 'StringAndInt',
+        models: [stringModel, complexModel],
+        context: context,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'CombinedContainer',
-          properties: [
-            Property(
-              name: 'combined',
-              model: allOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'CombinedContainer',
+        properties: [
+          Property(
+            name: 'combined',
+            model: allOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
@@ -472,12 +449,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'preserves optimized path for class with only static simple properties',
@@ -581,61 +557,59 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
       );
     });
 
-    test(
-      'encodes optional oneOf property based on runtime encoding shape',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'StringOrClass',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'NestedClass',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Container',
-          properties: [
-            Property(
-              name: 'value',
-              model: oneOfModel,
-              isRequired: false,
-              isNullable: false,
+    test('encodes optional oneOf property based on runtime encoding shape', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrClass',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
               isDeprecated: false,
+              name: 'NestedClass',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Container',
+        properties: [
+          Property(
+            name: 'value',
+            model: oneOfModel,
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (value != null) {
@@ -653,12 +627,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'handles class with multiple properties (mixed optimized/runtime checks)',
@@ -920,55 +893,53 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'generates parameterProperties for class with multiple lists of '
-      'simple types',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'MultiListContainer',
-          properties: [
-            Property(
-              name: 'ids',
-              model: ListModel(
-                content: IntegerModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
+    test('generates parameterProperties for class with multiple lists of '
+        'simple types', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'MultiListContainer',
+        properties: [
+          Property(
+            name: 'ids',
+            model: ListModel(
+              content: IntegerModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        final parameterPropertiesMethod = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final parameterPropertiesMethod = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        expect(parameterPropertiesMethod, isNotNull);
+      expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (ids != null) {
@@ -983,49 +954,46 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates parameterProperties for class with required list of '
-      'simple types',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'RequiredListContainer',
-          properties: [
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+    test('generates parameterProperties for class with required list of '
+        'simple types', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'RequiredListContainer',
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        final parameterPropertiesMethod = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final parameterPropertiesMethod = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        expect(parameterPropertiesMethod, isNotNull);
+      expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'tags'] = PropertyValue.array(tags);
@@ -1033,58 +1001,55 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates parameterProperties for class with mixed simple properties '
-      'and lists',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'MixedContainer',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+    test('generates parameterProperties for class with mixed simple properties '
+        'and lists', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'MixedContainer',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        final parameterPropertiesMethod = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final parameterPropertiesMethod = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        expect(parameterPropertiesMethod, isNotNull);
+      expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'id'] = PropertyValue.scalar(id.toString());
@@ -1095,126 +1060,120 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'throws exception for class with list of complex types',
-      () {
-        final complexModel = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexItem',
-          properties: [
-            Property(
-              name: 'value',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+    test('throws exception for class with list of complex types', () {
+      final complexModel = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexItem',
+        properties: [
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexListContainer',
+        properties: [
+          Property(
+            name: 'items',
+            model: ListModel(
+              content: complexModel,
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexListContainer',
-          properties: [
-            Property(
-              name: 'items',
-              model: ListModel(
-                content: complexModel,
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final parameterPropertiesMethod = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        final parameterPropertiesMethod = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      expect(parameterPropertiesMethod, isNotNull);
 
-        expect(parameterPropertiesMethod, isNotNull);
-
-        const expectedMethod = '''
+      const expectedMethod = '''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
     throw EncodingException(
       r'parameterProperties not supported for ComplexListContainer: contains complex types',
     );
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates parameterProperties for class with list of enums',
-      () {
-        final enumModel = EnumModel<String>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
-          },
-          isNullable: false,
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties for class with list of enums', () {
+      final enumModel = EnumModel<String>(
+        isDeprecated: false,
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        context: context,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'EnumListContainer',
-          properties: [
-            Property(
-              name: 'statuses',
-              model: ListModel(
-                content: enumModel,
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'EnumListContainer',
+        properties: [
+          Property(
+            name: 'statuses',
+            model: ListModel(
+              content: enumModel,
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        final parameterPropertiesMethod = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final parameterPropertiesMethod = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        expect(parameterPropertiesMethod, isNotNull);
+      expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (statuses != null) {
@@ -1226,54 +1185,51 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates parameterProperties for a list of composite content as raw '
-      'elements',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'StringOrInt',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (discriminatorValue: null, model: IntegerModel(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties for a list of composite content as raw '
+        'elements', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrInt',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'CompositeListContainer',
-          properties: [
-            Property(
-              name: 'items',
-              model: ListModel(
-                content: oneOfModel,
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'CompositeListContainer',
+        properties: [
+          Property(
+            name: 'items',
+            model: ListModel(
+              content: oneOfModel,
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final classCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final classCode = format(result.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (items != null) {
@@ -1289,12 +1245,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'generates parameterProperties with an array value for a required list '
@@ -1386,45 +1341,43 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'generates parameterProperties with scalar and array values for mixed '
-      'properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Filter',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+    test('generates parameterProperties with scalar and array values for mixed '
+        'properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Filter',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -1435,48 +1388,45 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates parameterProperties with scalar values for scalar-only '
-      'properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'age',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties with scalar values for scalar-only '
+        'properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'age',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -1485,124 +1435,121 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'emits the raw scalar form for every simple property type',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'AllScalarTypes',
-          properties: [
-            Property(
-              name: 'ratio',
-              model: DoubleModel(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('emits the raw scalar form for every simple property type', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'AllScalarTypes',
+        properties: [
+          Property(
+            name: 'ratio',
+            model: DoubleModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'quantity',
+            model: NumberModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'createdAt',
+            model: DateTimeModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'birthday',
+            model: DateModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'price',
+            model: DecimalModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'link',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'status',
+            model: EnumModel<String>(
               isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'quantity',
-              model: NumberModel(context: context),
-              isRequired: true,
+              name: 'Status',
+              values: {const EnumEntry(value: 'active')},
               isNullable: false,
-              isDeprecated: false,
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'createdAt',
-              model: DateTimeModel(context: context),
-              isRequired: true,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'level',
+            model: EnumModel<int>(
+              isDeprecated: false,
+              name: 'Level',
+              values: {const EnumEntry(value: 1)},
               isNullable: false,
-              isDeprecated: false,
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'birthday',
-              model: DateModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'price',
-              model: DecimalModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'link',
-              model: UriModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'status',
-              model: EnumModel<String>(
-                isDeprecated: false,
-                name: 'Status',
-                values: {const EnumEntry(value: 'active')},
-                isNullable: false,
-                context: context,
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'level',
-              model: EnumModel<int>(
-                isDeprecated: false,
-                name: 'Level',
-                values: {const EnumEntry(value: 1)},
-                isNullable: false,
-                context: context,
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'blob',
-              model: BinaryModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'blob',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'ratio'] = PropertyValue.scalar(ratio.toString());
@@ -1620,39 +1567,36 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'mixed model AnyModel property encodes through the unknown flat '
-      'scalar boundary',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'DynamicContainer',
-          properties: [
-            Property(
-              name: 'data',
-              model: AnyModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('mixed model AnyModel property encodes through the unknown flat '
+        'scalar boundary', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'DynamicContainer',
+        properties: [
+          Property(
+            name: 'data',
+            model: AnyModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data != null) {
@@ -1664,12 +1608,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'mixed model NeverModel property throws that no value is permitted',
@@ -1832,66 +1775,63 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'generates parameterProperties with null check for required property '
-      'referencing nullable AliasModel in mixed-shape model',
-      () {
-        // Same scenario in mixed-shape context
-        final nullableAlias = AliasModel(
-          name: 'NullableDescription',
-          model: StringModel(context: context),
-          isNullable: true,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates parameterProperties with null check for required property '
+        'referencing nullable AliasModel in mixed-shape model', () {
+      // Same scenario in mixed-shape context
+      final nullableAlias = AliasModel(
+        name: 'NullableDescription',
+        model: StringModel(context: context),
+        isNullable: true,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'MixedItem',
-          properties: [
-            Property(
-              name: 'description',
-              model: nullableAlias,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'MixedItem',
+        properties: [
+          Property(
+            name: 'description',
+            model: nullableAlias,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        // The simple property with nullable model should have null check
-        expect(
-          collapseWhitespace(classCode),
-          contains(
-            collapseWhitespace(r'''
+      // The simple property with nullable model should have null check
+      expect(
+        collapseWhitespace(classCode),
+        contains(
+          collapseWhitespace(r'''
 if (description != null) {
   _$result[r'description'] = PropertyValue.scalar(description!);
 }'''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'generates null-aware array value for a nullable ListModel property',
@@ -1939,40 +1879,38 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'toForm calls parameterProperties with useQueryComponent',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'FormData',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'value',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toForm calls parameterProperties with useQueryComponent', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'FormData',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
 List<ParameterEntry> toForm(
   String paramName, {
   required bool explode,
@@ -1991,86 +1929,82 @@ List<ParameterEntry> toForm(
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates null-safe toJson and fromJson for required property '
-      'referencing AliasModel that wraps nullable ClassModel',
-      () {
-        // AliasModel(isNullable: false) wrapping ClassModel(isNullable: true)
-        // simulates `typedef Outer = Inner; typedef Inner = $RawInner?;`
-        final innerClass = ClassModel(
-          isDeprecated: false,
-          name: 'Inner',
-          properties: [
-            Property(
-              name: 'value',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          isNullable: true,
-          examples: const [],
-        );
-
-        final outerAlias = AliasModel(
-          name: 'Outer',
-          model: innerClass,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Container',
-          properties: [
-            Property(
-              name: 'inner',
-              model: outerAlias,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
-
-        // toJson should use null-safe access because the underlying model
-        // is nullable via typedef chain
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace("r'inner': inner?.toJson()")),
-        );
-
-        // fromJson should use null-safe decoding
-        expect(
-          collapseWhitespace(classCode),
-          contains(
-            collapseWhitespace(
-              r"_$map[r'inner'] == null ? null "
-              r": Inner.fromJson(_$map[r'inner'])",
-            ),
+    test('generates null-safe toJson and fromJson for required property '
+        'referencing AliasModel that wraps nullable ClassModel', () {
+      // AliasModel(isNullable: false) wrapping ClassModel(isNullable: true)
+      // simulates `typedef Outer = Inner; typedef Inner = $RawInner?;`
+      final innerClass = ClassModel(
+        isDeprecated: false,
+        name: 'Inner',
+        properties: [
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
           ),
-        );
-      },
-    );
+        ],
+        context: context,
+        isNullable: true,
+        examples: const [],
+      );
+
+      final outerAlias = AliasModel(
+        name: 'Outer',
+        model: innerClass,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Container',
+        properties: [
+          Property(
+            name: 'inner',
+            model: outerAlias,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      // toJson should use null-safe access because the underlying model
+      // is nullable via typedef chain
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace("r'inner': inner?.toJson()")),
+      );
+
+      // fromJson should use null-safe decoding
+      expect(
+        collapseWhitespace(classCode),
+        contains(
+          collapseWhitespace(
+            r"_$map[r'inner'] == null ? null "
+            r": Inner.fromJson(_$map[r'inner'])",
+          ),
+        ),
+      );
+    });
 
     test(
       'generates parameterProperties with null check for property '
@@ -2218,31 +2152,29 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'base64-encodes optional byte property before percent-encoding',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Filter',
-          properties: [
-            Property(
-              name: 'signature',
-              model: Base64Model(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('base64-encodes optional byte property before percent-encoding', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Filter',
+        properties: [
+          Property(
+            name: 'signature',
+            model: Base64Model(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (signature != null) {
@@ -2254,12 +2186,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'emits the additionalProperties loop alongside a declared property whose '
@@ -2313,35 +2244,33 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test(
-      'base64-encodes byte additionalProperties values before '
-      'percent-encoding',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Filter',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: Base64Model(context: context),
+    test('base64-encodes byte additionalProperties values before '
+        'percent-encoding', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Filter',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
           ),
-          examples: const [],
-        );
+        ],
+        context: context,
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: Base64Model(context: context),
+        ),
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -2358,54 +2287,51 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'base64-encodes byte property in list-shaped parameterProperties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Filter',
-          properties: [
-            Property(
-              name: 'signature',
-              model: Base64Model(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+    test('base64-encodes byte property in list-shaped parameterProperties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Filter',
+        properties: [
+          Property(
+            name: 'signature',
+            model: Base64Model(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final method = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
-        final methodCode = format(method.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final method = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+      final methodCode = format(method.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
@@ -2416,80 +2342,77 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(methodCode),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(methodCode),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'base64-encodes byte property in mixed-shape parameterProperties',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'StringOrClass',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'NestedClass',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'ByteMixedContainer',
-          properties: [
-            Property(
-              name: 'signature',
-              model: Base64Model(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('base64-encodes byte property in mixed-shape parameterProperties', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrClass',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
               isDeprecated: false,
+              name: 'NestedClass',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'value',
-              model: oneOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final method = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
-        final methodCode = format(method.accept(emitter).toString());
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'ByteMixedContainer',
+        properties: [
+          Property(
+            name: 'signature',
+            model: Base64Model(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'value',
+            model: oneOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        const expectedMethod = r'''
+      final result = generator.generateClass(model);
+      final method = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+      final methodCode = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
@@ -2504,54 +2427,51 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(methodCode),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(methodCode),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'base64-encodes nullable byte additionalProperties values and omits '
-      'null entries',
-      () {
-        final nullableByte = AliasModel(
-          name: 'NullableSignature',
-          model: Base64Model(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('base64-encodes nullable byte additionalProperties values and omits '
+        'null entries', () {
+      final nullableByte = AliasModel(
+        name: 'NullableSignature',
+        model: Base64Model(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Filter',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: nullableByte,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Filter',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
           ),
-          examples: const [],
-        );
+        ],
+        context: context,
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: nullableByte,
+        ),
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final method = result.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
-        final methodCode = format(method.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final method = result.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+      final methodCode = format(method.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -2570,11 +2490,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-        expect(
-          collapseWhitespace(methodCode),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(methodCode),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
   });
 }

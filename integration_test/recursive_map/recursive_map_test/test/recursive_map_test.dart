@@ -13,9 +13,7 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}/v1';
   });
 
-  RecursiveApi buildApi() => RecursiveApi(
-    CustomServer(baseUrl: baseUrl),
-  );
+  RecursiveApi buildApi() => RecursiveApi(CustomServer(baseUrl: baseUrl));
 
   Object? decodeEchoBody(Object? echoHeader) {
     if (echoHeader is List) {
@@ -183,9 +181,7 @@ void main() {
     test('AMap round-trips through the POST helper', () async {
       final original = <String, Object?>{
         'b': <String, Object?>{
-          'a': <String, Object?>{
-            'b': <String, Object?>{},
-          },
+          'a': <String, Object?>{'b': <String, Object?>{}},
         },
       };
 
@@ -215,9 +211,7 @@ void main() {
     test('BMap round-trips through the POST helper', () async {
       final original = <String, Object?>{
         'a': <String, Object?>{
-          'b': <String, Object?>{
-            'a': <String, Object?>{},
-          },
+          'b': <String, Object?>{'a': <String, Object?>{}},
         },
       };
 

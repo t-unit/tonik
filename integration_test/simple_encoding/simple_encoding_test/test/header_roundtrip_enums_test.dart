@@ -30,10 +30,7 @@ void main() {
           status: StatusEnum.active,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -49,10 +46,7 @@ void main() {
           status: StatusEnum.inactive,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -66,10 +60,7 @@ void main() {
           status: StatusEnum.pending,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -83,10 +74,7 @@ void main() {
           status: StatusEnum.archived,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -102,10 +90,7 @@ void main() {
           priority: PriorityEnum.one,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -121,10 +106,7 @@ void main() {
           priority: PriorityEnum.two,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -138,10 +120,7 @@ void main() {
           priority: PriorityEnum.three,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -155,10 +134,7 @@ void main() {
           priority: PriorityEnum.four,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -172,10 +148,7 @@ void main() {
           priority: PriorityEnum.five,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -192,10 +165,7 @@ void main() {
           priority: PriorityEnum.three,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -213,10 +183,7 @@ void main() {
           priority: PriorityEnum.one,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatus, StatusEnum.inactive);
@@ -230,10 +197,7 @@ void main() {
           priority: PriorityEnum.five,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatus, StatusEnum.archived);
@@ -246,10 +210,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripEnums();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -264,10 +225,7 @@ void main() {
           status: StatusEnum.pending,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatus, StatusEnum.pending);
@@ -280,10 +238,7 @@ void main() {
           priority: PriorityEnum.two,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatus, isNull);

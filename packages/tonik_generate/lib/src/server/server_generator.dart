@@ -263,9 +263,7 @@ class ServerGenerator {
         ..name = className
         ..extend = refer(baseClassName)
         ..docs.addAll(
-          formatDocComment(
-            '${server.description ?? 'Server'} - ${server.url}',
-          ),
+          formatDocComment('${server.description ?? 'Server'} - ${server.url}'),
         )
         ..constructors.add(
           Constructor(
@@ -402,18 +400,14 @@ class ServerGenerator {
         ..name = className
         ..extend = refer(baseClassName)
         ..docs.addAll(
-          formatDocComment(
-            '${server.description ?? 'Server'} - ${server.url}',
-          ),
+          formatDocComment('${server.description ?? 'Server'} - ${server.url}'),
         )
         ..fields.addAll(variableFields)
         ..constructors.add(
           Constructor(
             (c) => c
               ..optionalParameters.addAll(variableParams)
-              ..initializers.add(
-                Code('super(baseUrl: $urlExpression)'),
-              ),
+              ..initializers.add(Code('super(baseUrl: $urlExpression)')),
           ),
         ),
     );
@@ -457,9 +451,7 @@ class ServerGenerator {
       final hasEnum =
           earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;
-      parts.add(
-        hasEnum ? "'\${$dartName.value}'" : "'\${$dartName}'",
-      );
+      parts.add(hasEnum ? "'\${$dartName.value}'" : "'\${$dartName}'");
 
       remaining = remaining.substring(earliestIndex + placeholder.length);
     }

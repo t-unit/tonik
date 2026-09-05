@@ -43,10 +43,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -71,10 +68,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });
@@ -99,10 +93,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });
@@ -128,10 +119,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });
@@ -148,10 +136,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -170,10 +155,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -190,10 +172,7 @@ void main() {
           multiLevel: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });

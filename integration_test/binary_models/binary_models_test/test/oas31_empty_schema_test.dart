@@ -43,10 +43,7 @@ void main() {
 
         final result = await filesApi.getRawBinary();
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
 
         expect(success.response.statusCode, 200);

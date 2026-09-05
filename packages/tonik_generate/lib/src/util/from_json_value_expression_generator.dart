@@ -381,11 +381,9 @@ BuiltExpression _buildListFromJsonBody(
       );
       inlineFunctions.addAll(inner.inlineFunctions);
       final mapFunction = elementClosure(inner.unsafeRawBody);
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [refer('Object?', 'dart:core')],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        refer('Object?', 'dart:core'),
+      ]);
       result = mapList(listExpr, mapFunction);
 
     case ClassModel() ||
@@ -401,11 +399,9 @@ BuiltExpression _buildListFromJsonBody(
       final mapFunction = isItemNullable
           ? elementClosure(fromJson.call([refer('e')]))
           : fromJson;
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [refer('Object?', 'dart:core')],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        refer('Object?', 'dart:core'),
+      ]);
       result = mapList(listExpr, mapFunction);
 
     case final MapModel mapModel:
@@ -440,11 +436,9 @@ BuiltExpression _buildListFromJsonBody(
       final typeArg = isItemNullable
           ? refer('Object?', 'dart:core')
           : refer(jsonType, 'dart:core');
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [typeArg],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        typeArg,
+      ]);
       result = mapList(listExpr, mapFunction);
 
     case BinaryModel():
@@ -456,11 +450,9 @@ BuiltExpression _buildListFromJsonBody(
       final typeArg = isItemNullable
           ? refer('Object?', 'dart:core')
           : refer('String', 'dart:core');
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [typeArg],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        typeArg,
+      ]);
       result = mapList(listExpr, mapFunction);
 
     case Base64Model():
@@ -472,11 +464,9 @@ BuiltExpression _buildListFromJsonBody(
       final typeArg = isItemNullable
           ? refer('Object?', 'dart:core')
           : refer('String', 'dart:core');
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [typeArg],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        typeArg,
+      ]);
       result = mapList(listExpr, mapFunction);
 
     case NeverModel():
@@ -492,11 +482,9 @@ BuiltExpression _buildListFromJsonBody(
           ..requiredParameters.add(Parameter((b) => b..name = 'e'))
           ..body = elementExpr.code,
       ).closure;
-      final listExpr = receiver.property(listDecoder).call(
-        [],
-        contextParam,
-        [refer('Object?', 'dart:core')],
-      );
+      final listExpr = receiver.property(listDecoder).call([], contextParam, [
+        refer('Object?', 'dart:core'),
+      ]);
       result = mapList(listExpr, mapFunction);
 
     default:
@@ -601,10 +589,9 @@ BuiltExpression _buildMapFromJsonBody(
       ? 'decodeJsonNullableMap'
       : 'decodeJsonMap';
 
-  var result = receiver.property(mapDecoder).call(
-    [decoderClosure],
-    contextParam,
-  );
+  var result = receiver.property(mapDecoder).call([
+    decoderClosure,
+  ], contextParam);
 
   if (useImmutableCollections) {
     result = _wrapImmutable(
@@ -741,10 +728,9 @@ BuiltExpression _buildTypedefHelperBody({
           ..requiredParameters.add(Parameter((p) => p..name = 'v'))
           ..body = innerBuilt.unsafeRawBody.code,
       ).closure;
-      var result = refer('v').property('decodeJsonMap').call(
-        [decoderClosure],
-        contextParam,
-      );
+      var result = refer(
+        'v',
+      ).property('decodeJsonMap').call([decoderClosure], contextParam);
       if (useImmutableCollections) {
         result = _wrapImmutable(
           'IMap',
@@ -777,11 +763,7 @@ BuiltExpression _buildTypedefHelperBody({
       ).closure;
       var result = refer('v')
           .property('decodeJsonList')
-          .call(
-            [],
-            contextParam,
-            [refer('Object?', 'dart:core')],
-          )
+          .call([], contextParam, [refer('Object?', 'dart:core')])
           .property('map')
           .call([mapFunction])
           .property('toList')
@@ -794,10 +776,7 @@ BuiltExpression _buildTypedefHelperBody({
           receiver: refer('v'),
         );
       }
-      return BuiltExpression(
-        body: result,
-        inlineFunctions: inlineFunctions,
-      );
+      return BuiltExpression(body: result, inlineFunctions: inlineFunctions);
     default:
       throw ArgumentError(
         'Decode helper only valid for named MapModel/ListModel; '

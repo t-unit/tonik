@@ -106,9 +106,7 @@ Expression _buildFromFormValueExpression(
 
     IntegerModel() =>
       value
-          .property(
-            isRequired ? 'decodeFormInt' : 'decodeFormNullableInt',
-          )
+          .property(isRequired ? 'decodeFormInt' : 'decodeFormNullableInt')
           .call([], contextParam),
 
     DoubleModel() =>
@@ -127,9 +125,7 @@ Expression _buildFromFormValueExpression(
 
     BooleanModel() =>
       value
-          .property(
-            isRequired ? 'decodeFormBool' : 'decodeFormNullableBool',
-          )
+          .property(isRequired ? 'decodeFormBool' : 'decodeFormNullableBool')
           .call([], contextParam),
 
     DateTimeModel() =>
@@ -141,9 +137,7 @@ Expression _buildFromFormValueExpression(
 
     DateModel() =>
       value
-          .property(
-            isRequired ? 'decodeFormDate' : 'decodeFormNullableDate',
-          )
+          .property(isRequired ? 'decodeFormDate' : 'decodeFormNullableDate')
           .call([], contextParam),
 
     DecimalModel() =>
@@ -157,9 +151,7 @@ Expression _buildFromFormValueExpression(
 
     UriModel() =>
       value
-          .property(
-            isRequired ? 'decodeFormUri' : 'decodeFormNullableUri',
-          )
+          .property(isRequired ? 'decodeFormUri' : 'decodeFormNullableUri')
           .call([], contextParam),
 
     BinaryModel() => _buildFromFormBinaryExpression(
@@ -272,10 +264,7 @@ Expression _buildFromFormExpression(
             .equalTo(literalNull)
             .conditional(
               literalNull,
-              refer(
-                name,
-                url,
-              ).property('fromForm').call([value], explodeParam),
+              refer(name, url).property('fromForm').call([value], explodeParam),
             );
 }
 
@@ -410,10 +399,7 @@ Expression _buildListFromFormExpression(
       explode: explode,
       useImmutableCollections: useImmutableCollections,
     ),
-    NeverModel() => _buildListNeverFormExpression(
-      listDecode,
-      isRequired,
-    ),
+    NeverModel() => _buildListNeverFormExpression(listDecode, isRequired),
     AnyModel() => listDecode,
     NamedModel() || CompositeModel() => generateFormDecodingExceptionExpression(
       _unsupportedFormDecodingMessage,
@@ -476,9 +462,10 @@ Expression _buildClassList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body = refer(name, url).property('fromForm').call([
-        refer('e'),
-      ], explodeParam).code,
+      ..body = refer(
+        name,
+        url,
+      ).property('fromForm').call([refer('e')], explodeParam).code,
   ).closure;
 
   if (isRequired) {
@@ -553,13 +540,11 @@ Expression _buildTonikFilePrimitiveList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body =
-          refer(
-            'TonikFileBytes',
-            'package:tonik_util/tonik_util.dart',
-          ).call([
+      ..body = refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart')
+          .call([
             refer('e').property(decodeFunctionName).call([], contextParam),
-          ]).code,
+          ])
+          .code,
   ).closure;
 
   if (isRequired) {

@@ -35,19 +35,14 @@ void main() {
 
   group('oneOf with quoted discriminator values', () {
     test('toJson includes quoted discriminator value', () {
-      const result = QuotedOneOfSuccessResult(
-        SuccessResult(value: 'ok'),
-      );
+      const result = QuotedOneOfSuccessResult(SuccessResult(value: 'ok'));
       final json = result.toJson()! as Map<String, Object?>;
       expect(json['type'], "it's-success");
       expect(json['value'], 'ok');
     });
 
     test('fromJson dispatches on quoted discriminator value', () {
-      final json = <String, Object?>{
-        'type': "it's-success",
-        'value': 'ok',
-      };
+      final json = <String, Object?>{'type': "it's-success", 'value': 'ok'};
       final result = QuotedOneOf.fromJson(json);
       expect(result, isA<QuotedOneOfSuccessResult>());
       final success = (result as QuotedOneOfSuccessResult).value;
@@ -55,9 +50,7 @@ void main() {
     });
 
     test('json round-trip preserves quoted discriminator', () {
-      const original = QuotedOneOfErrorResult(
-        ErrorResult(message: 'fail'),
-      );
+      const original = QuotedOneOfErrorResult(ErrorResult(message: 'fail'));
       final json = original.toJson();
       final reconstructed = QuotedOneOf.fromJson(json);
       expect(reconstructed, isA<QuotedOneOfErrorResult>());
@@ -107,9 +100,7 @@ void main() {
 
   group('oneOf with both single and double quotes in discriminator', () {
     test('toJson includes discriminator with both quote types', () {
-      const result = BothQuotesOneOfSuccessResult(
-        SuccessResult(value: 'ok'),
-      );
+      const result = BothQuotesOneOfSuccessResult(SuccessResult(value: 'ok'));
       final json = result.toJson()! as Map<String, Object?>;
       expect(json['type'], 'it\'s a "success"');
     });
@@ -124,9 +115,7 @@ void main() {
     });
 
     test('json round-trip with both quote types', () {
-      const original = BothQuotesOneOfErrorResult(
-        ErrorResult(message: 'fail'),
-      );
+      const original = BothQuotesOneOfErrorResult(ErrorResult(message: 'fail'));
       final json = original.toJson();
       final reconstructed = BothQuotesOneOf.fromJson(json);
       expect(reconstructed, isA<BothQuotesOneOfErrorResult>());
@@ -135,9 +124,7 @@ void main() {
 
   group('oneOf with triple-double-quotes in discriminator', () {
     test('toJson includes discriminator with triple quotes', () {
-      const result = TripleQuoteOneOfSuccessResult(
-        SuccessResult(value: 'ok'),
-      );
+      const result = TripleQuoteOneOfSuccessResult(SuccessResult(value: 'ok'));
       final json = result.toJson()! as Map<String, Object?>;
       expect(json['type'], 'it\'s a """success"""');
     });
@@ -168,10 +155,7 @@ void main() {
     });
 
     test('json round-trip with double-quoted property key', () {
-      const original = ObjectWithDoubleQuoteProp(
-        id: 'rt',
-        fieldname: 'test',
-      );
+      const original = ObjectWithDoubleQuoteProp(id: 'rt', fieldname: 'test');
       final json = original.toJson();
       final reconstructed = ObjectWithDoubleQuoteProp.fromJson(json);
       expect(reconstructed.id, 'rt');
@@ -181,27 +165,20 @@ void main() {
 
   group('oneOf with dollar sign in discriminator values', () {
     test('toJson includes dollar-sign discriminator value', () {
-      const result = DollarOneOfSuccessResult(
-        SuccessResult(value: 'ok'),
-      );
+      const result = DollarOneOfSuccessResult(SuccessResult(value: 'ok'));
       final json = result.toJson()! as Map<String, Object?>;
       expect(json['type'], r'$success');
       expect(json['value'], 'ok');
     });
 
     test('fromJson dispatches on dollar-sign discriminator value', () {
-      final json = <String, Object?>{
-        'type': r'$success',
-        'value': 'ok',
-      };
+      final json = <String, Object?>{'type': r'$success', 'value': 'ok'};
       final result = DollarOneOf.fromJson(json);
       expect(result, isA<DollarOneOfSuccessResult>());
     });
 
     test('json round-trip with dollar-sign discriminator', () {
-      const original = DollarOneOfErrorResult(
-        ErrorResult(message: 'fail'),
-      );
+      const original = DollarOneOfErrorResult(ErrorResult(message: 'fail'));
       final json = original.toJson();
       final reconstructed = DollarOneOf.fromJson(json);
       expect(reconstructed, isA<DollarOneOfErrorResult>());
@@ -296,9 +273,9 @@ void main() {
     });
 
     test('oneOf string variant is sent as a quoted JSON string', () async {
-      await _api(baseUrl).sendRootOneOf(
-        body: const RootStringOneOfString('one-of-body'),
-      );
+      await _api(
+        baseUrl,
+      ).sendRootOneOf(body: const RootStringOneOfString('one-of-body'));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, '"one-of-body"');
@@ -306,9 +283,7 @@ void main() {
     });
 
     test('oneOf integer variant is sent as a JSON number', () async {
-      await _api(baseUrl).sendRootOneOf(
-        body: const RootStringOneOfInt(7),
-      );
+      await _api(baseUrl).sendRootOneOf(body: const RootStringOneOfInt(7));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, '7');
@@ -316,9 +291,7 @@ void main() {
     });
 
     test('oneOf bool variant is sent as a JSON boolean', () async {
-      await _api(baseUrl).sendRootOneOf(
-        body: const RootStringOneOfBool(true),
-      );
+      await _api(baseUrl).sendRootOneOf(body: const RootStringOneOfBool(true));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, 'true');
@@ -326,9 +299,9 @@ void main() {
     });
 
     test('anyOf string variant is sent as a quoted JSON string', () async {
-      await _api(baseUrl).sendRootAnyOf(
-        body: const RootStringAnyOf(string: 'any-of-body'),
-      );
+      await _api(
+        baseUrl,
+      ).sendRootAnyOf(body: const RootStringAnyOf(string: 'any-of-body'));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, '"any-of-body"');
@@ -336,9 +309,9 @@ void main() {
     });
 
     test('anyOf bool variant is sent as a JSON boolean', () async {
-      await _api(baseUrl).sendRootAnyOf(
-        body: const RootStringAnyOf(bool: true),
-      );
+      await _api(
+        baseUrl,
+      ).sendRootAnyOf(body: const RootStringAnyOf(bool: true));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, 'true');
@@ -379,8 +352,5 @@ void main() {
 }
 
 AdversarialApi _api(String baseUrl) => AdversarialApi(
-  CustomServer(
-    baseUrl: baseUrl,
-    serverConfig: testServerConfig(),
-  ),
+  CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
 );

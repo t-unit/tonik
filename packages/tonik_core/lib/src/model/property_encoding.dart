@@ -4,12 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// Serialization styles for encoding properties.
 ///
 /// These match the query parameter styles allowed in the OAS encoding object.
-enum EncodingStyle {
-  form,
-  spaceDelimited,
-  pipeDelimited,
-  deepObject,
-}
+enum EncodingStyle { form, spaceDelimited, pipeDelimited, deepObject }
 
 /// Encoding metadata for a single property in an
 /// application/x-www-form-urlencoded request body.

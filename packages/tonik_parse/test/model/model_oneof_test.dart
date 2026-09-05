@@ -343,9 +343,7 @@ void main() {
     test('import oneOf with description', () {
       final api = Importer().import(oneOfWithDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Pet',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Pet')
               as OneOfModel;
 
       expect(model.description, 'A pet can be either a cat or a dog');
@@ -354,9 +352,7 @@ void main() {
     test('import oneOf without description', () {
       final api = Importer().import(oneOfWithoutDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Animal',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Animal')
               as OneOfModel;
 
       expect(model.description, isNull);
@@ -370,9 +366,7 @@ void main() {
       'paths': <String, dynamic>{},
       'components': {
         'schemas': {
-          'EmptyOneOf': {
-            'oneOf': <Map<String, dynamic>>[],
-          },
+          'EmptyOneOf': {'oneOf': <Map<String, dynamic>>[]},
         },
       },
     };

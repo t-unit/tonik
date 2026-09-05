@@ -15,13 +15,10 @@ void main() {
       const value = Filters();
       expect(value.tags!.unlock, <String>['new', 'featured']);
       expect(value.counts!.unlock, <String, int>{'x': 1, 'y': 2});
-      expect(
-        value.raw!.unlock,
-        <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(value.raw!.unlock, <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('public static const exposes default value', () {
@@ -49,13 +46,10 @@ void main() {
       final value = Filters.fromJson(const <String, Object?>{});
       expect(value.tags!.unlock, <String>['new', 'featured']);
       expect(value.counts!.unlock, <String, int>{'x': 1, 'y': 2});
-      expect(
-        value.raw!.unlock,
-        <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(value.raw!.unlock, <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('fromJson supplied keys override defaults', () {
@@ -75,37 +69,28 @@ void main() {
     });
   });
 
-  group(
-    'BucketHolder — ClassModel default with additionalProperties under '
-    'immutableCollections',
-    () {
-      test(
-        'the static-getter default decodes the named property and populates '
-        'the typed IMap<String,int> AP field correctly',
-        () {
-          final bucket = BucketHolder.bucketDefault;
-          expect(bucket.label, 'primary');
-          expect(bucket.additionalProperties, isA<IMap<String, int>>());
-          expect(
-            bucket.additionalProperties.unlock,
-            <String, int>{'x': 1, 'y': 2},
-          );
-        },
-      );
+  group('BucketHolder — ClassModel default with additionalProperties under '
+      'immutableCollections', () {
+    test('the static-getter default decodes the named property and populates '
+        'the typed IMap<String,int> AP field correctly', () {
+      final bucket = BucketHolder.bucketDefault;
+      expect(bucket.label, 'primary');
+      expect(bucket.additionalProperties, isA<IMap<String, int>>());
+      expect(bucket.additionalProperties.unlock, <String, int>{'x': 1, 'y': 2});
+    });
 
-      test('fromJson with missing key falls through to the bucket default', () {
-        final value = BucketHolder.fromJson(const <String, Object?>{});
-        expect(value.bucket!.label, 'primary');
-        expect(
-          value.bucket!.additionalProperties.unlock,
-          <String, int>{'x': 1, 'y': 2},
-        );
+    test('fromJson with missing key falls through to the bucket default', () {
+      final value = BucketHolder.fromJson(const <String, Object?>{});
+      expect(value.bucket!.label, 'primary');
+      expect(value.bucket!.additionalProperties.unlock, <String, int>{
+        'x': 1,
+        'y': 2,
       });
+    });
 
-      test('AP field type is IMap<String,int>, not Map<String,int>', () {
-        const value = BucketWithExtras();
-        expect(value.additionalProperties, isA<IMap<String, int>>());
-      });
-    },
-  );
+    test('AP field type is IMap<String,int>, not Map<String,int>', () {
+      const value = BucketWithExtras();
+      expect(value.additionalProperties, isA<IMap<String, int>>());
+    });
+  });
 }

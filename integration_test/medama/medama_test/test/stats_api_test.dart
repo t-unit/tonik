@@ -34,10 +34,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/summary',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/summary');
       });
 
       test('request method is GET', () async {
@@ -174,10 +171,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdSummaryResponse200>());
@@ -235,10 +229,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdSummaryResponse400>());
@@ -274,10 +265,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdSummaryResponse401>());
@@ -294,10 +282,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdSummaryResponse404>());
@@ -314,10 +299,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdSummaryResponse500>());
@@ -338,10 +320,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/pages',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/pages');
       });
 
       test('request method is GET', () async {
@@ -427,10 +406,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdPagesResponse200>());
@@ -472,10 +448,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdPagesResponse400>());
@@ -489,10 +462,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdPagesResponse401>());
@@ -506,10 +476,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdPagesResponse404>());
@@ -523,10 +490,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdPagesResponse500>());
@@ -546,10 +510,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/time',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/time');
       });
 
       test('request method is GET', () async {
@@ -588,10 +549,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdTimeResponse200>());
@@ -633,10 +591,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdTimeResponse400>());
@@ -650,10 +605,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdTimeResponse401>());
@@ -667,10 +619,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdTimeResponse404>());
@@ -684,10 +633,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdTimeResponse500>());
@@ -707,10 +653,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/referrers',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/referrers');
       });
 
       test('request method is GET', () async {
@@ -768,10 +711,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdReferrersResponse200>());
@@ -816,10 +756,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdReferrersResponse400>());
@@ -836,10 +773,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdReferrersResponse401>());
@@ -856,10 +790,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdReferrersResponse403>());
@@ -876,10 +807,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdReferrersResponse404>());
@@ -896,10 +824,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdReferrersResponse500>());
@@ -920,10 +845,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/sources',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/sources');
       });
 
       test('request method is GET', () async {
@@ -964,10 +886,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdSourcesResponse200>());
@@ -1012,10 +931,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdSourcesResponse400>());
@@ -1032,10 +948,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdSourcesResponse401>());
@@ -1052,10 +965,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdSourcesResponse403>());
@@ -1072,10 +982,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdSourcesResponse404>());
@@ -1092,10 +999,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdSourcesResponse500>());
@@ -1116,10 +1020,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/mediums',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/mediums');
       });
 
       test('request method is GET', () async {
@@ -1160,10 +1061,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdMediumsResponse200>());
@@ -1208,10 +1106,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdMediumsResponse400>());
@@ -1228,10 +1123,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdMediumsResponse401>());
@@ -1248,10 +1140,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdMediumsResponse403>());
@@ -1268,10 +1157,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdMediumsResponse404>());
@@ -1288,10 +1174,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdMediumsResponse500>());
@@ -1312,10 +1195,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/campaigns',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/campaigns');
       });
 
       test('request method is GET', () async {
@@ -1356,10 +1236,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse200>());
@@ -1404,10 +1281,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse400>());
@@ -1424,10 +1298,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse401>());
@@ -1444,10 +1315,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse403>());
@@ -1464,10 +1332,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse404>());
@@ -1484,10 +1349,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse500>());
@@ -1508,10 +1370,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/browsers',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/browsers');
       });
 
       test('request method is GET', () async {
@@ -1552,10 +1411,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse200>());
@@ -1600,10 +1456,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse400>());
@@ -1620,10 +1473,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse401>());
@@ -1640,10 +1490,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse403>());
@@ -1660,10 +1507,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse404>());
@@ -1680,10 +1524,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse500>());
@@ -1704,10 +1545,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/os',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/os');
       });
 
       test('request method is GET', () async {
@@ -1746,10 +1584,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdOsResponse200>());
@@ -1791,10 +1626,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdOsResponse400>());
@@ -1808,10 +1640,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdOsResponse401>());
@@ -1825,10 +1654,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 403);
         expect(success.value, isA<GetWebsiteIdOsResponse403>());
@@ -1842,10 +1668,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdOsResponse404>());
@@ -1859,10 +1682,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdOsResponse500>());
@@ -1882,10 +1702,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/devices',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/devices');
       });
 
       test('request method is GET', () async {
@@ -1926,10 +1743,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdDeviceResponse200>());
@@ -1974,10 +1788,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdDeviceResponse400>());
@@ -1994,10 +1805,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdDeviceResponse401>());
@@ -2014,10 +1822,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdDeviceResponse403>());
@@ -2034,10 +1839,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdDeviceResponse404>());
@@ -2054,10 +1856,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdDeviceResponse500>());
@@ -2078,10 +1877,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/countries',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/countries');
       });
 
       test('request method is GET', () async {
@@ -2122,10 +1918,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdCountryResponse200>());
@@ -2170,10 +1963,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdCountryResponse400>());
@@ -2190,10 +1980,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdCountryResponse401>());
@@ -2210,10 +1997,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdCountryResponse403>());
@@ -2230,10 +2014,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdCountryResponse404>());
@@ -2250,10 +2031,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdCountryResponse500>());
@@ -2274,10 +2052,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.path,
-          '/website/example.com/languages',
-        );
+        expect(recordedRequest.uri.path, '/website/example.com/languages');
       });
 
       test('request method is GET', () async {
@@ -2335,10 +2110,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdLanguageResponse200>());
@@ -2383,10 +2155,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdLanguageResponse400>());
@@ -2403,10 +2172,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdLanguageResponse401>());
@@ -2423,10 +2189,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdLanguageResponse403>());
@@ -2443,10 +2206,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdLanguageResponse404>());
@@ -2463,10 +2223,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdLanguageResponse500>());
@@ -2531,10 +2288,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse200>());
@@ -2579,10 +2333,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse400>());
@@ -2599,10 +2350,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse401>());
@@ -2619,10 +2367,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse403>());
@@ -2639,10 +2384,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse404>());
@@ -2659,10 +2401,7 @@ void main() {
             hostname: 'example.com',
           );
 
-          expect(
-            response,
-            isTonikSuccess,
-          );
+          expect(response, isTonikSuccess);
           final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse500>());

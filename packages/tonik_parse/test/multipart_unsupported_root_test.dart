@@ -9,51 +9,45 @@ import 'package:tonik_parse/src/response_header_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
-  test(
-    'unsupported multipart roots warn and produce an empty body',
-    () {
-      final records = <LogRecord>[];
-      final subscription = Logger.root.onRecord.listen(records.add);
-      addTearDown(subscription.cancel);
-      for (final version in ['3.0.3', '3.1.0']) {
-        for (final entry in _unsupportedRoots.entries) {
-          records.clear();
-          final api = Importer().import(_document(entry.value, version));
-          final content =
-              api.requestBodies.single.resolvedContent.single
-                  as MultipartRequestContent;
-          expect(content.parts, isEmpty, reason: '$version: ${entry.key}');
-          expect(content.contentType, ContentType.multipart);
-          expect(content.name, isNull);
-          expect(content.sourceName, isNull);
-          expect(content.alias, isNull);
-          expect(content.sourceContext, content.context);
-          expect(
-            content.context,
-            RequestBodyImporter.rootContext.pushAll(['Upload', 'body']),
-          );
-          expect(
-            content.additionalPropertiesPolicy,
-            isA<ForbiddenAdditionalProperties>(),
-          );
-          expect(
-            records
-                .singleWhere((record) => record.level == Level.WARNING)
-                .message,
-            'Multipart body at components/requestBodies/Upload has an unsupported or missing root schema. '
-            'Generating an empty multipart body.',
-          );
-        }
+  test('unsupported multipart roots warn and produce an empty body', () {
+    final records = <LogRecord>[];
+    final subscription = Logger.root.onRecord.listen(records.add);
+    addTearDown(subscription.cancel);
+    for (final version in ['3.0.3', '3.1.0']) {
+      for (final entry in _unsupportedRoots.entries) {
+        records.clear();
+        final api = Importer().import(_document(entry.value, version));
+        final content =
+            api.requestBodies.single.resolvedContent.single
+                as MultipartRequestContent;
+        expect(content.parts, isEmpty, reason: '$version: ${entry.key}');
+        expect(content.contentType, ContentType.multipart);
+        expect(content.name, isNull);
+        expect(content.sourceName, isNull);
+        expect(content.alias, isNull);
+        expect(content.sourceContext, content.context);
+        expect(
+          content.context,
+          RequestBodyImporter.rootContext.pushAll(['Upload', 'body']),
+        );
+        expect(
+          content.additionalPropertiesPolicy,
+          isA<ForbiddenAdditionalProperties>(),
+        );
+        expect(
+          records
+              .singleWhere((record) => record.level == Level.WARNING)
+              .message,
+          'Multipart body at components/requestBodies/Upload has an unsupported or missing root schema. '
+          'Generating an empty multipart body.',
+        );
       }
-    },
-  );
+    }
+  });
 
   test('unresolved multipart schema references remain errors', () {
     final document = OpenApiObject.fromJson(
-      _document(
-        {r'$ref': '#/components/schemas/Missing'},
-        '3.1.0',
-      ),
+      _document({r'$ref': '#/components/schemas/Missing'}, '3.1.0'),
     );
     final examples = ExampleImporter(openApiObject: document);
     final models = ModelImporter(document, exampleImporter: examples)..import();
@@ -153,9 +147,7 @@ Map<String, dynamic> _document(Object? schema, String version) => {
     'requestBodies': {
       'Upload': {
         'content': {
-          'multipart/form-data': {
-            'schema': ?schema,
-          },
+          'multipart/form-data': {'schema': ?schema},
         },
       },
     },

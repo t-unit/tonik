@@ -89,33 +89,28 @@ void main() {
         expect(mapModel.valueModel, isA<StringModel>());
       });
 
-      test(
-        'creates and populates MapModel with additionalProperties',
-        () {
-          const spec = {
-            'openapi': '3.0.0',
-            'info': {'title': 'Test API', 'version': '1.0.0'},
-            'paths': <String, dynamic>{},
-            'components': {
-              'schemas': {
-                'AnyMap': {
-                  'additionalProperties': true,
-                },
-              },
+      test('creates and populates MapModel with additionalProperties', () {
+        const spec = {
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'AnyMap': {'additionalProperties': true},
             },
-          };
+          },
+        };
 
-          final api = Importer().import(spec);
+        final api = Importer().import(spec);
 
-          final model = api.models.firstWhere(
-            (m) => m is NamedModel && m.name == 'AnyMap',
-          );
-          expect(model, isA<MapModel>());
+        final model = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'AnyMap',
+        );
+        expect(model, isA<MapModel>());
 
-          final mapModel = model as MapModel;
-          expect(mapModel.valueModel, isA<AnyModel>());
-        },
-      );
+        final mapModel = model as MapModel;
+        expect(mapModel.valueModel, isA<AnyModel>());
+      });
 
       test('creates MapModel with ref value', () {
         const spec = {
@@ -187,9 +182,7 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'OpenArray': {
-                'type': 'array',
-              },
+              'OpenArray': {'type': 'array'},
             },
           },
         };
@@ -263,10 +256,11 @@ void main() {
         expect(model, isA<EnumModel<String>>());
 
         final enumModel = model as EnumModel<String>;
-        expect(
-          enumModel.values.map((e) => e.value).toSet(),
-          {'red', 'green', 'blue'},
-        );
+        expect(enumModel.values.map((e) => e.value).toSet(), {
+          'red',
+          'green',
+          'blue',
+        });
       });
 
       test('integer enum is created during pass 2 fallback', () {
@@ -304,9 +298,7 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'Measurement': {
-                'type': 'number',
-              },
+              'Measurement': {'type': 'number'},
             },
           },
         };
@@ -324,35 +316,29 @@ void main() {
     });
 
     group('contentEncoding string in _createPrimitiveModel', () {
-      test(
-        'top-level string with contentEncoding: base64 creates '
-        'Base64Model alias',
-        () {
-          const spec = {
-            'openapi': '3.1.0',
-            'info': {'title': 'Test API', 'version': '1.0.0'},
-            'paths': <String, dynamic>{},
-            'components': {
-              'schemas': {
-                'FileData': {
-                  'type': 'string',
-                  'contentEncoding': 'base64',
-                },
-              },
+      test('top-level string with contentEncoding: base64 creates '
+          'Base64Model alias', () {
+        const spec = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'FileData': {'type': 'string', 'contentEncoding': 'base64'},
             },
-          };
+          },
+        };
 
-          final api = Importer().import(spec);
+        final api = Importer().import(spec);
 
-          final model = api.models.firstWhere(
-            (m) => m is NamedModel && m.name == 'FileData',
-          );
-          expect(model, isA<AliasModel>());
+        final model = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'FileData',
+        );
+        expect(model, isA<AliasModel>());
 
-          final alias = model as AliasModel;
-          expect(alias.model, isA<Base64Model>());
-        },
-      );
+        final alias = model as AliasModel;
+        expect(alias.model, isA<Base64Model>());
+      });
 
       test('contentEncoding: base64 overrides format: binary', () {
         const spec = {
@@ -496,9 +482,7 @@ void main() {
                   },
                 },
                 'properties': {
-                  'child': {
-                    r'$ref': r'#/components/schemas/Outer/$defs/Inner',
-                  },
+                  'child': {r'$ref': r'#/components/schemas/Outer/$defs/Inner'},
                 },
               },
               'InnerAlias': {
@@ -521,57 +505,54 @@ void main() {
     });
 
     group('_populateAliasShell — structural siblings', () {
-      test(
-        r'$ref with properties sibling creates AllOfModel',
-        () {
-          const spec = {
-            'openapi': '3.1.0',
-            'info': {'title': 'Test API', 'version': '1.0.0'},
-            'paths': <String, dynamic>{},
-            'components': {
-              'schemas': {
-                'Base': {
-                  'type': 'object',
-                  'properties': {
-                    'id': {'type': 'integer'},
-                  },
+      test(r'$ref with properties sibling creates AllOfModel', () {
+        const spec = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Base': {
+                'type': 'object',
+                'properties': {
+                  'id': {'type': 'integer'},
                 },
-                'Extended': {
-                  r'$ref': '#/components/schemas/Base',
-                  'properties': {
-                    'extra': {'type': 'string'},
-                  },
+              },
+              'Extended': {
+                r'$ref': '#/components/schemas/Base',
+                'properties': {
+                  'extra': {'type': 'string'},
                 },
               },
             },
-          };
+          },
+        };
 
-          final api = Importer().import(spec);
+        final api = Importer().import(spec);
 
-          final extended = api.models.firstWhere(
-            (m) => m is NamedModel && m.name == 'Extended',
-          );
+        final extended = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Extended',
+        );
 
-          // The shell is replaced by the AllOfModel from
-          // _mergeRefWithStructuralSiblings.
-          expect(extended, isA<AllOfModel>());
+        // The shell is replaced by the AllOfModel from
+        // _mergeRefWithStructuralSiblings.
+        expect(extended, isA<AllOfModel>());
 
-          final allOf = extended as AllOfModel;
-          expect(allOf.name, 'Extended');
-          expect(allOf.models.length, 2);
+        final allOf = extended as AllOfModel;
+        expect(allOf.name, 'Extended');
+        expect(allOf.models.length, 2);
 
-          // One model is the Base ClassModel, the other is the inline class.
-          final baseRef = allOf.models.whereType<ClassModel>().firstWhere(
-            (m) => m.name == 'Base',
-          );
-          expect(baseRef.properties.map((p) => p.name), contains('id'));
+        // One model is the Base ClassModel, the other is the inline class.
+        final baseRef = allOf.models.whereType<ClassModel>().firstWhere(
+          (m) => m.name == 'Base',
+        );
+        expect(baseRef.properties.map((p) => p.name), contains('id'));
 
-          final inlineClass = allOf.models.whereType<ClassModel>().firstWhere(
-            (m) => m.name != 'Base',
-          );
-          expect(inlineClass.properties.map((p) => p.name), contains('extra'));
-        },
-      );
+        final inlineClass = allOf.models.whereType<ClassModel>().firstWhere(
+          (m) => m.name != 'Base',
+        );
+        expect(inlineClass.properties.map((p) => p.name), contains('extra'));
+      });
     });
 
     group('_populateAliasShell — error paths', () {
@@ -582,9 +563,7 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'Remote': {
-                r'$ref': 'https://example.com/schemas/Foo',
-              },
+              'Remote': {r'$ref': 'https://example.com/schemas/Foo'},
             },
           },
         };
@@ -602,17 +581,12 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'Broken': {
-                r'$ref': '#/components/schemas/DoesNotExist',
-              },
+              'Broken': {r'$ref': '#/components/schemas/DoesNotExist'},
             },
           },
         };
 
-        expect(
-          () => Importer().import(spec),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => Importer().import(spec), throwsA(isA<ArgumentError>()));
       });
 
       test('throws ArgumentError for direct self-reference via pass 2', () {
@@ -630,17 +604,12 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'SelfRef': {
-                r'$ref': '#/components/schemas/SelfRef',
-              },
+              'SelfRef': {r'$ref': '#/components/schemas/SelfRef'},
             },
           },
         };
 
-        expect(
-          () => Importer().import(spec),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => Importer().import(spec), throwsA(isA<ArgumentError>()));
       });
     });
   });

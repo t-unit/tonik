@@ -82,135 +82,117 @@ void main() {
       expect(sorter.stableKeyOf(modelA), contains('<cycle>'));
     });
 
-    test(
-      'does not stack overflow for transitive cycle A → B → C → A',
-      () {
-        final modelA = ClassModel(
-          name: 'A',
-          properties: [],
-          context: context,
+    test('does not stack overflow for transitive cycle A → B → C → A', () {
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final modelB = ClassModel(
+        name: 'B',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final modelC = ClassModel(
+        name: 'C',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      modelA.properties = [
+        Property(
+          name: 'b',
+          model: modelB,
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-        );
-        final modelB = ClassModel(
-          name: 'B',
-          properties: [],
-          context: context,
+          defaultValue: null,
+        ),
+      ];
+      modelB.properties = [
+        Property(
+          name: 'c',
+          model: modelC,
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-        );
-        final modelC = ClassModel(
-          name: 'C',
-          properties: [],
-          context: context,
+          defaultValue: null,
+        ),
+      ];
+      modelC.properties = [
+        Property(
+          name: 'a',
+          model: modelA,
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-        );
-        modelA.properties = [
-          Property(
-            name: 'b',
-            model: modelB,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ];
-        modelB.properties = [
-          Property(
-            name: 'c',
-            model: modelC,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ];
-        modelC.properties = [
-          Property(
-            name: 'a',
-            model: modelA,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ];
+          defaultValue: null,
+        ),
+      ];
 
-        expect(() => sorter.stableKeyOf(modelA), returnsNormally);
-        expect(sorter.stableKeyOf(modelA), contains('<cycle>'));
-      },
-    );
+      expect(() => sorter.stableKeyOf(modelA), returnsNormally);
+      expect(sorter.stableKeyOf(modelA), contains('<cycle>'));
+    });
 
-    test(
-      'cycle keys are deterministic (same result on repeated calls)',
-      () {
-        final modelA = ClassModel(
-          name: 'A',
-          properties: [],
-          context: context,
+    test('cycle keys are deterministic (same result on repeated calls)', () {
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final modelB = ClassModel(
+        name: 'B',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      modelA.properties = [
+        Property(
+          name: 'b',
+          model: modelB,
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-        );
-        final modelB = ClassModel(
-          name: 'B',
-          properties: [],
-          context: context,
+          defaultValue: null,
+        ),
+      ];
+      modelB.properties = [
+        Property(
+          name: 'a',
+          model: modelA,
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-        );
-        modelA.properties = [
-          Property(
-            name: 'b',
-            model: modelB,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ];
-        modelB.properties = [
-          Property(
-            name: 'a',
-            model: modelA,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          ),
-        ];
+          defaultValue: null,
+        ),
+      ];
 
-        expect(
-          sorter.stableKeyOf(modelA),
-          sorter.stableKeyOf(modelA),
-        );
-        expect(
-          sorter.stableKeyOf(modelB),
-          sorter.stableKeyOf(modelB),
-        );
-      },
-    );
+      expect(sorter.stableKeyOf(modelA), sorter.stableKeyOf(modelA));
+      expect(sorter.stableKeyOf(modelB), sorter.stableKeyOf(modelB));
+    });
   });
 
   group('stableKeyOf', () {
-    test(
-      'generates same key for primitive models regardless of context',
-      () {
-        final model1 = StringModel(context: context.push('path1'));
-        final model2 = StringModel(context: context.push('path2'));
+    test('generates same key for primitive models regardless of context', () {
+      final model1 = StringModel(context: context.push('path1'));
+      final model2 = StringModel(context: context.push('path2'));
 
-        expect(
-          sorter.stableKeyOf(model1),
-          sorter.stableKeyOf(model2),
-        );
-        expect(sorter.stableKeyOf(model1), 'StringModel');
-      },
-    );
+      expect(sorter.stableKeyOf(model1), sorter.stableKeyOf(model2));
+      expect(sorter.stableKeyOf(model1), 'StringModel');
+    });
 
     test('generates different keys for different primitive types', () {
       final stringModel = StringModel(context: context);
@@ -222,42 +204,39 @@ void main() {
       expect(sorter.stableKeyOf(boolModel), 'BooleanModel');
     });
 
-    test(
-      'generates stable key for AllOfModel with ordered children',
-      () {
-        final sharedContext = context.push('Test').push('allOf');
+    test('generates stable key for AllOfModel with ordered children', () {
+      final sharedContext = context.push('Test').push('allOf');
 
-        final model1 = AllOfModel(
-          models: [
-            StringModel(context: sharedContext),
-            IntegerModel(context: sharedContext),
-            BooleanModel(context: sharedContext),
-          ],
-          context: sharedContext,
-          isDeprecated: false,
-          examples: const [],
-        );
+      final model1 = AllOfModel(
+        models: [
+          StringModel(context: sharedContext),
+          IntegerModel(context: sharedContext),
+          BooleanModel(context: sharedContext),
+        ],
+        context: sharedContext,
+        isDeprecated: false,
+        examples: const [],
+      );
 
-        final model2 = AllOfModel(
-          models: [
-            BooleanModel(context: sharedContext),
-            StringModel(context: sharedContext),
-            IntegerModel(context: sharedContext),
-          ],
-          context: sharedContext,
-          isDeprecated: false,
-          examples: const [],
-        );
+      final model2 = AllOfModel(
+        models: [
+          BooleanModel(context: sharedContext),
+          StringModel(context: sharedContext),
+          IntegerModel(context: sharedContext),
+        ],
+        context: sharedContext,
+        isDeprecated: false,
+        examples: const [],
+      );
 
-        final key1 = sorter.stableKeyOf(model1);
-        final key2 = sorter.stableKeyOf(model2);
+      final key1 = sorter.stableKeyOf(model1);
+      final key2 = sorter.stableKeyOf(model2);
 
-        expect(key1, isNot(key2));
-        expect(key1, contains('BooleanModel'));
-        expect(key1, contains('IntegerModel'));
-        expect(key1, contains('StringModel'));
-      },
-    );
+      expect(key1, isNot(key2));
+      expect(key1, contains('BooleanModel'));
+      expect(key1, contains('IntegerModel'));
+      expect(key1, contains('StringModel'));
+    });
 
     test(
       'generates different keys for AllOfModels with different children',
@@ -265,75 +244,62 @@ void main() {
         final sharedContext = context.push('Test').push('allOf');
 
         final model1 = AllOfModel(
-          models: [
-            StringModel(context: sharedContext),
-          ],
+          models: [StringModel(context: sharedContext)],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
         );
 
         final model2 = AllOfModel(
-          models: [
-            IntegerModel(context: sharedContext),
-          ],
+          models: [IntegerModel(context: sharedContext)],
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
         );
 
-        expect(
-          sorter.stableKeyOf(model1),
-          isNot(sorter.stableKeyOf(model2)),
-        );
+        expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
       },
     );
 
-    test(
-      'generates stable key for OneOfModel with discriminator',
-      () {
-        final sharedContext = context.push('Test').push('oneOf');
+    test('generates stable key for OneOfModel with discriminator', () {
+      final sharedContext = context.push('Test').push('oneOf');
 
-        final model1 = OneOfModel(
-          isDeprecated: false,
-          models: [
-            (
-              discriminatorValue: 'zebra',
-              model: StringModel(context: sharedContext),
-            ),
-            (
-              discriminatorValue: 'apple',
-              model: IntegerModel(context: sharedContext),
-            ),
-          ],
-          discriminator: 'type',
-          context: sharedContext,
-          examples: const [],
-        );
+      final model1 = OneOfModel(
+        isDeprecated: false,
+        models: [
+          (
+            discriminatorValue: 'zebra',
+            model: StringModel(context: sharedContext),
+          ),
+          (
+            discriminatorValue: 'apple',
+            model: IntegerModel(context: sharedContext),
+          ),
+        ],
+        discriminator: 'type',
+        context: sharedContext,
+        examples: const [],
+      );
 
-        final model2 = OneOfModel(
-          isDeprecated: false,
-          models: [
-            (
-              discriminatorValue: 'apple',
-              model: IntegerModel(context: sharedContext),
-            ),
-            (
-              discriminatorValue: 'zebra',
-              model: StringModel(context: sharedContext),
-            ),
-          ],
-          discriminator: 'type',
-          context: sharedContext,
-          examples: const [],
-        );
+      final model2 = OneOfModel(
+        isDeprecated: false,
+        models: [
+          (
+            discriminatorValue: 'apple',
+            model: IntegerModel(context: sharedContext),
+          ),
+          (
+            discriminatorValue: 'zebra',
+            model: StringModel(context: sharedContext),
+          ),
+        ],
+        discriminator: 'type',
+        context: sharedContext,
+        examples: const [],
+      );
 
-        expect(
-          sorter.stableKeyOf(model1),
-          isNot(sorter.stableKeyOf(model2)),
-        );
-      },
-    );
+      expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
+    });
 
     test('generates stable key for AnyOfModel', () {
       final sharedContext = context.push('Test').push('anyOf');
@@ -370,10 +336,7 @@ void main() {
         examples: const [],
       );
 
-      expect(
-        sorter.stableKeyOf(model1),
-        isNot(sorter.stableKeyOf(model2)),
-      );
+      expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
     });
 
     test('generates stable key for ListModel', () {
@@ -391,52 +354,43 @@ void main() {
         examples: const [],
       );
 
-      expect(
-        sorter.stableKeyOf(model1),
-        sorter.stableKeyOf(model2),
-      );
-      expect(
-        sorter.stableKeyOf(model1),
-        'ListModel{TestList,StringModel}',
-      );
+      expect(sorter.stableKeyOf(model1), sorter.stableKeyOf(model2));
+      expect(sorter.stableKeyOf(model1), 'ListModel{TestList,StringModel}');
     });
 
-    test(
-      'generates stable key for ClassModel with sorted properties',
-      () {
-        final model1 = ClassModel(
-          isDeprecated: false,
-          name: 'TestClass',
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'count',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates stable key for ClassModel with sorted properties', () {
+      final model1 = ClassModel(
+        isDeprecated: false,
+        name: 'TestClass',
+        properties: [
+          Property(
+            name: 'id',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'count',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final key = sorter.stableKeyOf(model1);
-        expect(key, contains('TestClass'));
-        expect(key, contains('id:StringModel'));
-        expect(key, contains('count:IntegerModel'));
-      },
-    );
+      final key = sorter.stableKeyOf(model1);
+      expect(key, contains('TestClass'));
+      expect(key, contains('id:StringModel'));
+      expect(key, contains('count:IntegerModel'));
+    });
 
     test('generates stable key for EnumModel with sorted values', () {
       final model1 = EnumModel<String>(
@@ -465,10 +419,7 @@ void main() {
         examples: const [],
       );
 
-      expect(
-        sorter.stableKeyOf(model1),
-        sorter.stableKeyOf(model2),
-      );
+      expect(sorter.stableKeyOf(model1), sorter.stableKeyOf(model2));
     });
 
     test('generates stable key for nested composite models', () {
@@ -499,59 +450,56 @@ void main() {
   });
 
   group('stableKeyOf performance with circular models', () {
-    test(
-      'repeated stableKeyOf calls on circular graph are efficient',
-      () {
-        const modelCount = 13;
-        final classModels = <ClassModel>[];
-        final sharedContext = context.push('schemas');
+    test('repeated stableKeyOf calls on circular graph are efficient', () {
+      const modelCount = 13;
+      final classModels = <ClassModel>[];
+      final sharedContext = context.push('schemas');
 
-        for (var i = 0; i < modelCount; i++) {
-          classModels.add(
-            ClassModel(
-              name: 'Model$i',
-              properties: [],
-              context: sharedContext,
+      for (var i = 0; i < modelCount; i++) {
+        classModels.add(
+          ClassModel(
+            name: 'Model$i',
+            properties: [],
+            context: sharedContext,
+            isDeprecated: false,
+            examples: const [],
+          ),
+        );
+      }
+
+      const offsets = [1, 3, 5, 7];
+      for (var i = 0; i < modelCount; i++) {
+        classModels[i].properties = [
+          for (final offset in offsets)
+            Property(
+              name: 'ref$offset',
+              model: classModels[(i + offset) % modelCount],
+              isRequired: false,
+              isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
-          );
-        }
+        ];
+      }
 
-        const offsets = [1, 3, 5, 7];
-        for (var i = 0; i < modelCount; i++) {
-          classModels[i].properties = [
-            for (final offset in offsets)
-              Property(
-                name: 'ref$offset',
-                model: classModels[(i + offset) % modelCount],
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-          ];
-        }
+      const iterations = 200;
+      final sw = Stopwatch()..start();
+      for (var i = 0; i < iterations; i++) {
+        classModels.forEach(sorter.stableKeyOf);
+      }
+      sw.stop();
 
-        const iterations = 200;
-        final sw = Stopwatch()..start();
-        for (var i = 0; i < iterations; i++) {
-          classModels.forEach(sorter.stableKeyOf);
-        }
-        sw.stop();
-
-        expect(
-          sw.elapsedMilliseconds,
-          lessThan(500),
-          reason:
-              '${iterations * modelCount} stableKeyOf calls took '
-              '${sw.elapsedMilliseconds}ms. '
-              'stableKeyOf is likely being recomputed on every '
-              'call instead of being cached.',
-        );
-      },
-    );
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(500),
+        reason:
+            '${iterations * modelCount} stableKeyOf calls took '
+            '${sw.elapsedMilliseconds}ms. '
+            'stableKeyOf is likely being recomputed on every '
+            'call instead of being cached.',
+      );
+    });
   });
 
   group('sortModels', () {
@@ -575,10 +523,7 @@ void main() {
 
       expect(list1.length, list2.length);
       for (var i = 0; i < list1.length; i++) {
-        expect(
-          sorter.stableKeyOf(list1[i]),
-          sorter.stableKeyOf(list2[i]),
-        );
+        expect(sorter.stableKeyOf(list1[i]), sorter.stableKeyOf(list2[i]));
       }
     });
 
@@ -662,115 +607,105 @@ void main() {
   });
 
   group('key size bounds', () {
-    test(
-      'keys do not grow quadratically for densely connected models',
-      () {
-        const modelCount = 30;
-        final classModels = <ClassModel>[];
-        final sharedContext = context.push('schemas');
+    test('keys do not grow quadratically for densely connected models', () {
+      const modelCount = 30;
+      final classModels = <ClassModel>[];
+      final sharedContext = context.push('schemas');
 
-        for (var i = 0; i < modelCount; i++) {
-          classModels.add(
-            ClassModel(
-              name: 'Model$i',
-              properties: [],
-              context: sharedContext.push('Model$i'),
+      for (var i = 0; i < modelCount; i++) {
+        classModels.add(
+          ClassModel(
+            name: 'Model$i',
+            properties: [],
+            context: sharedContext.push('Model$i'),
+            isDeprecated: false,
+            examples: const [],
+          ),
+        );
+      }
+
+      // Dense connectivity: each model references 5 others.
+      for (var i = 0; i < modelCount; i++) {
+        classModels[i].properties = [
+          for (var j = 1; j <= 5; j++)
+            Property(
+              name: 'ref$j',
+              model: classModels[(i + j) % modelCount],
+              isRequired: false,
+              isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
-          );
-        }
+        ];
+      }
 
-        // Dense connectivity: each model references 5 others.
-        for (var i = 0; i < modelCount; i++) {
-          classModels[i].properties = [
-            for (var j = 1; j <= 5; j++)
-              Property(
-                name: 'ref$j',
-                model: classModels[(i + j) % modelCount],
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-          ];
-        }
+      // Compute keys sequentially (same order a real sort would).
+      final keyLengths = <int>[];
+      for (final model in classModels) {
+        keyLengths.add(sorter.stableKeyOf(model).length);
+      }
 
-        // Compute keys sequentially (same order a real sort would).
-        final keyLengths = <int>[];
-        for (final model in classModels) {
-          keyLengths.add(sorter.stableKeyOf(model).length);
-        }
+      final maxLen = keyLengths.reduce((a, b) => a > b ? a : b);
+      final minLen = keyLengths.reduce((a, b) => a < b ? a : b);
 
-        final maxLen = keyLengths.reduce(
-          (a, b) => a > b ? a : b,
-        );
-        final minLen = keyLengths.reduce(
-          (a, b) => a < b ? a : b,
-        );
+      // No single key should exceed 10 KB.
+      expect(
+        maxLen,
+        lessThan(10 * 1024),
+        reason:
+            'Largest key is $maxLen chars, expected < 10240. '
+            'Keys are likely embedding full cached keys of '
+            'previously-computed models.',
+      );
 
-        // No single key should exceed 10 KB.
-        expect(
-          maxLen,
-          lessThan(10 * 1024),
-          reason:
-              'Largest key is $maxLen chars, expected < 10240. '
-              'Keys are likely embedding full cached keys of '
-              'previously-computed models.',
-        );
-
-        // No quadratic growth: max/min ratio should be bounded.
-        expect(
-          maxLen / minLen,
-          lessThan(10),
-          reason:
-              'Key size ratio (max/min) is ${maxLen / minLen}. '
-              'Expected < 10x, indicating quadratic growth.',
-        );
-      },
-    );
+      // No quadratic growth: max/min ratio should be bounded.
+      expect(
+        maxLen / minLen,
+        lessThan(10),
+        reason:
+            'Key size ratio (max/min) is ${maxLen / minLen}. '
+            'Expected < 10x, indicating quadratic growth.',
+      );
+    });
   });
 
   group('depth limit', () {
-    test(
-      'key truncates deep nesting instead of expanding all levels',
-      () {
-        // Create a 10-level AliasModel chain: A0 → A1 → … → A9 → StringModel
-        const depth = 10;
-        Model current = StringModel(context: context.push('leaf'));
-        final aliases = <AliasModel>[];
+    test('key truncates deep nesting instead of expanding all levels', () {
+      // Create a 10-level AliasModel chain: A0 → A1 → … → A9 → StringModel
+      const depth = 10;
+      Model current = StringModel(context: context.push('leaf'));
+      final aliases = <AliasModel>[];
 
-        for (var i = depth - 1; i >= 0; i--) {
-          final alias = AliasModel(
-            name: 'Alias$i',
-            model: current,
-            context: context.push('Alias$i'),
-            examples: const [],
-            defaultValue: null,
-          );
-          aliases.insert(0, alias);
-          current = alias;
-        }
-
-        final key = sorter.stableKeyOf(aliases.first);
-
-        // The key should NOT contain all 10 alias names — depth limit
-        // should truncate before reaching the leaf.
-        var aliasCount = 0;
-        for (var i = 0; i < depth; i++) {
-          if (key.contains('Alias$i')) aliasCount++;
-        }
-
-        expect(
-          aliasCount,
-          lessThan(depth),
-          reason:
-              'Key contains all $depth alias levels ($aliasCount found). '
-              'Expected depth limit to truncate before the leaf.',
+      for (var i = depth - 1; i >= 0; i--) {
+        final alias = AliasModel(
+          name: 'Alias$i',
+          model: current,
+          context: context.push('Alias$i'),
+          examples: const [],
+          defaultValue: null,
         );
-      },
-    );
+        aliases.insert(0, alias);
+        current = alias;
+      }
+
+      final key = sorter.stableKeyOf(aliases.first);
+
+      // The key should NOT contain all 10 alias names — depth limit
+      // should truncate before reaching the leaf.
+      var aliasCount = 0;
+      for (var i = 0; i < depth; i++) {
+        if (key.contains('Alias$i')) aliasCount++;
+      }
+
+      expect(
+        aliasCount,
+        lessThan(depth),
+        reason:
+            'Key contains all $depth alias levels ($aliasCount found). '
+            'Expected depth limit to truncate before the leaf.',
+      );
+    });
   });
 
   group('determinism across instances', () {
@@ -892,63 +827,48 @@ void main() {
       additionalPropertiesPolicy: additionalPropertiesPolicy,
     );
 
-    test(
-      'classes differing only in additional-properties presence get '
-      'different keys',
-      () {
-        final closed = unnamedClass();
-        final open = unnamedClass(
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
-        );
+    test('classes differing only in additional-properties presence get '
+        'different keys', () {
+      final closed = unnamedClass();
+      final open = unnamedClass(
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+        ),
+      );
 
-        expect(
-          sorter.stableKeyOf(closed),
-          isNot(sorter.stableKeyOf(open)),
-        );
-      },
-    );
+      expect(sorter.stableKeyOf(closed), isNot(sorter.stableKeyOf(open)));
+    });
 
-    test(
-      'classes differing only in additional-properties value model get '
-      'different keys',
-      () {
-        final stringValued = unnamedClass(
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: StringModel(context: context),
-          ),
-        );
-        final intValued = unnamedClass(
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: IntegerModel(context: context),
-          ),
-        );
+    test('classes differing only in additional-properties value model get '
+        'different keys', () {
+      final stringValued = unnamedClass(
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: StringModel(context: context),
+        ),
+      );
+      final intValued = unnamedClass(
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: IntegerModel(context: context),
+        ),
+      );
 
-        expect(
-          sorter.stableKeyOf(stringValued),
-          isNot(sorter.stableKeyOf(intValued)),
-        );
-      },
-    );
+      expect(
+        sorter.stableKeyOf(stringValued),
+        isNot(sorter.stableKeyOf(intValued)),
+      );
+    });
 
-    test(
-      'implicit and explicit unrestricted additional properties get '
-      'different keys',
-      () {
-        final implicit = unnamedClass();
-        final explicit = unnamedClass(
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
-        );
+    test('implicit and explicit unrestricted additional properties get '
+        'different keys', () {
+      final implicit = unnamedClass();
+      final explicit = unnamedClass(
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+        ),
+      );
 
-        expect(
-          sorter.stableKeyOf(implicit),
-          isNot(sorter.stableKeyOf(explicit)),
-        );
-      },
-    );
+      expect(sorter.stableKeyOf(implicit), isNot(sorter.stableKeyOf(explicit)));
+    });
 
     test(
       'unrestricted and forbidden additional properties get different keys',
@@ -969,33 +889,27 @@ void main() {
       },
     );
 
-    test(
-      'allOf models differing only in additional properties get '
-      'different keys',
-      () {
-        final sharedContext = context.push('Test').push('allOf');
-        final withoutAp = AllOfModel(
-          models: [StringModel(context: sharedContext)],
-          context: sharedContext,
-          isDeprecated: false,
-          examples: const [],
-        );
-        final withAp = AllOfModel(
-          models: [StringModel(context: sharedContext)],
-          context: sharedContext,
-          isDeprecated: false,
-          examples: const [],
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: StringModel(context: sharedContext),
-          ),
-        );
+    test('allOf models differing only in additional properties get '
+        'different keys', () {
+      final sharedContext = context.push('Test').push('allOf');
+      final withoutAp = AllOfModel(
+        models: [StringModel(context: sharedContext)],
+        context: sharedContext,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final withAp = AllOfModel(
+        models: [StringModel(context: sharedContext)],
+        context: sharedContext,
+        isDeprecated: false,
+        examples: const [],
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: StringModel(context: sharedContext),
+        ),
+      );
 
-        expect(
-          sorter.stableKeyOf(withoutAp),
-          isNot(sorter.stableKeyOf(withAp)),
-        );
-      },
-    );
+      expect(sorter.stableKeyOf(withoutAp), isNot(sorter.stableKeyOf(withAp)));
+    });
   });
 
   group('sortDiscriminatedModels', () {
@@ -1028,14 +942,8 @@ void main() {
       final list2 = sorter.sortDiscriminatedModels(set2);
 
       expect(list1.length, list2.length);
-      expect(
-        list1[0].discriminatorValue,
-        list2[0].discriminatorValue,
-      );
-      expect(
-        list1[1].discriminatorValue,
-        list2[1].discriminatorValue,
-      );
+      expect(list1[0].discriminatorValue, list2[0].discriminatorValue);
+      expect(list1[1].discriminatorValue, list2[1].discriminatorValue);
     });
 
     test('sorts by discriminator value first', () {

@@ -291,9 +291,7 @@ void main() {
             allowReserved: true,
             textEncoding: utf8,
           ),
-          const <ParameterEntry>[
-            (name: 'a:b', value: 'c:d'),
-          ],
+          const <ParameterEntry>[(name: 'a:b', value: 'c:d')],
         );
       },
     );
@@ -327,9 +325,7 @@ void main() {
           allowReserved: true,
           textEncoding: utf8,
         ),
-        const <ParameterEntry>[
-          (name: 'a%3Db%26c', value: 'd:e'),
-        ],
+        const <ParameterEntry>[(name: 'a%3Db%26c', value: 'd:e')],
       );
     });
 
@@ -441,9 +437,7 @@ void main() {
   group('useQueryComponent space rendering', () {
     test('renders a space as + when useQueryComponent is true', () {
       expect(
-        <String, PropertyValue>{
-          'q': const PropertyValue.scalar('a b'),
-        }.toForm(
+        <String, PropertyValue>{'q': const PropertyValue.scalar('a b')}.toForm(
           'p',
           explode: true,
           allowEmpty: true,
@@ -542,9 +536,7 @@ void main() {
 
     test('does not throw on an empty array when allowEmpty is true', () {
       expect(
-        <String, PropertyValue>{
-          'tags': const PropertyValue.array([]),
-        }.toForm(
+        <String, PropertyValue>{'tags': const PropertyValue.array([])}.toForm(
           'p',
           explode: true,
           allowEmpty: true,
@@ -558,10 +550,8 @@ void main() {
     test('throws on an empty exploded array descriptor when allowEmpty is '
         'false', () {
       expect(
-        () =>
-            <String, PropertyValue>{
-              'tags': const PropertyValue.array([]),
-            }.toForm(
+        () => <String, PropertyValue>{'tags': const PropertyValue.array([])}
+            .toForm(
               'p',
               explode: true,
               allowEmpty: false,
