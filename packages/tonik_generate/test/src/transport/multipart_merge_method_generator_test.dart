@@ -58,6 +58,62 @@ void main() {
       '_mergeMultipartMap',
     ]);
   });
+
+  test('emits nested object and iterable merge logic', () {
+    final method = generateMultipartMergeMethods(
+      _multipartPlan({MultipartMergeHelper.dynamicValues}),
+    ).singleWhere((method) => method.name == '_mergeMultipartMap');
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
+    const expected = r'''
+void _mergeMultipartMap(
+  Map<String, dynamic> target,
+  Map<dynamic, dynamic> incoming,
+  String propertyName,
+) {
+  for (final entry in incoming.entries) {
+    final key = entry.key;
+    if (key is! String) {
+      throw EncodingException(
+        'Conflicting values for multipart property "$propertyName": object keys must be strings.',
+      );
+    }
+    if (!target.containsKey(key) || target[key] == null) {
+      target[key] = entry.value;
+      continue;
+    }
+    if (entry.value == null) continue;
+    final current = target[key];
+    if (current is Map && entry.value is Map) {
+      final nested = <String, dynamic>{};
+      _mergeMultipartMap(nested, current, propertyName);
+      _mergeMultipartMap(
+        nested,
+        (entry.value as Map<dynamic, dynamic>),
+        propertyName,
+      );
+      target[key] = nested;
+      continue;
+    }
+    if (current is Iterable && entry.value is Iterable) {
+      target[key] = [...current, ...((entry.value as Iterable))];
+      continue;
+    }
+    if (current != entry.value) {
+      throw EncodingException(
+        'Conflicting values for multipart property "$propertyName" at "$key".',
+      );
+    }
+  }
+}
+''';
+
+    expect(
+      collapseWhitespace(formatter.format('${method.accept(DartEmitter())}')),
+      collapseWhitespace(formatter.format(expected)),
+    );
+  });
 }
 
 MultipartBodyPlan _multipartPlan(Set<MultipartMergeHelper> mergeHelpers) =>

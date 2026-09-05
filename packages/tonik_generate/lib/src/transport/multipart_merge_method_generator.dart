@@ -292,11 +292,9 @@ Method _mergeMapMethod() {
         declareFinal('nested')
             .assign(literalMap({}, _string, _dynamic))
             .statement,
-        refer('_mergeMultipartMap').call([
-          refer('nested'),
-          refer('current').asA(dynamicMap),
-          refer('propertyName'),
-        ]).statement,
+        refer('_mergeMultipartMap')
+            .call([refer('nested'), refer('current'), refer('propertyName')])
+            .statement,
         refer('_mergeMultipartMap').call([
           refer('nested'),
           refer('entry').property('value').asA(dynamicMap),
