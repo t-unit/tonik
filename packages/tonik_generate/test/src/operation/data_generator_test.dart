@@ -2573,6 +2573,56 @@ Object? _data({required String body}) {
     });
 
     group('multipart request bodies', () {
+      test('emits a runtime error for incompatible duplicate definitions', () {
+        final operation = Operation(
+          operationId: 'upload',
+          path: '/upload',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'upload',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              multipartContentFixture(testContext, [
+                multipartPartFixture(
+                  name: 'item',
+                  model: StringModel(context: testContext),
+                ),
+                multipartPartFixture(
+                  name: 'item',
+                  model: BinaryModel(context: testContext),
+                ),
+              ], name: 'Upload'),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+Future<Object?> _data({required Upload body}) async {
+  throw EncodingException(
+    r'Multipart property "item" has incompatible definitions (StringModel and BinaryModel).',
+  );
+}
+''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
       test('generates _data method for single-content multipart with string '
           'properties', () {
         final operation = Operation(

@@ -703,7 +703,7 @@ Future<Object?> _data({required Payload body}) async {
   });
 
   group('multipart bodies', () {
-    test('rejects incompatible duplicate multipart definitions', () {
+    test('emits a runtime error for incompatible duplicate definitions', () {
       final operation = _operation(
         context,
         requestBody: _multipartBody(context, [
@@ -718,15 +718,19 @@ Future<Object?> _data({required Payload body}) async {
         ], name: 'Upload'),
       );
 
+      final method = generator.generateBodyMethod(operation);
+
+      const expected = '''
+Future<Object?> _data({required Upload body}) async {
+  throw EncodingException(
+    r'Multipart property "item" has incompatible definitions (StringModel and BinaryModel).',
+  );
+}
+''';
+
       expect(
-        () => generator.generateBodyMethod(operation),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('Multipart property "item" has incompatible definitions'),
-          ),
-        ),
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
       );
     });
 
