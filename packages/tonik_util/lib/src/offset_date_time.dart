@@ -17,23 +17,20 @@ class OffsetDateTime implements DateTime {
   /// The [dateTime] is interpreted as being in the timezone specified
   /// by [offset]. The resulting [OffsetDateTime] will represent the same
   /// moment in time, but with the specified offset.
-  OffsetDateTime.from(
-    DateTime dateTime, {
-    required this.offset,
-    String? timeZoneName,
-  }) : timeZoneName = timeZoneName ?? _generateTimeZoneName(offset),
-       _utcDateTime = dateTime.isUtc
-           ? dateTime
-           : _toUtcDateTime(dateTime, offset);
+  new from(DateTime dateTime, {required this.offset, String? timeZoneName})
+    : timeZoneName = timeZoneName ?? _generateTimeZoneName(offset),
+      _utcDateTime = dateTime.isUtc
+          ? dateTime
+          : _toUtcDateTime(dateTime, offset);
 
-  const OffsetDateTime._fromUtc(
+  const new _fromUtc(
     this._utcDateTime, {
     required this.offset,
     required this.timeZoneName,
   });
 
   /// Parses a datetime string with timezone offset.
-  factory OffsetDateTime._parseWithTimezoneOffset(
+  factory _parseWithTimezoneOffset(
     String input,
     RegExpMatch timezoneMatch, {
     required String originalInput,

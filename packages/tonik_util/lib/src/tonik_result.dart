@@ -2,49 +2,44 @@
 ///
 /// This class is used to handle the result of an API call, whether it is a
 /// success or an error.
-sealed class TonikResult<T, Response extends Object> {
-  const TonikResult();
+sealed class const TonikResult<T, Response extends Object>() {
+  /// Creates an API result.
+  this;
 }
 
 /// A class representing a successful API call.
-class TonikSuccess<T, Response extends Object>
-    extends TonikResult<T, Response> {
-  /// Creates a new [TonikSuccess] instance.
-  const TonikSuccess(this.value, this.response);
-
+class const TonikSuccess<T, Response extends Object>(
   /// The value returned by the API call.
-  final T value;
+  final T value,
 
   /// The backend-native response from the API call.
-  final Response response;
+  final Response response,
+) extends TonikResult<T, Response> {
+  /// Creates a new [TonikSuccess] instance.
+  this;
 }
 
 /// A class representing an error that occurred during an API call.
-class TonikError<T, Response extends Object> extends TonikResult<T, Response> {
-  /// Creates a new [TonikError] instance.
-  const TonikError(
-    this.error, {
-    required this.stackTrace,
-    required this.type,
-    required this.response,
-  });
-
+class const TonikError<T, Response extends Object>(
   /// The error that occurred during the API call.
-  final Object error;
+  final Object error, {
 
   /// The stack trace of the error.
-  final StackTrace stackTrace;
+  required final StackTrace stackTrace,
 
   /// The type of error that occurred during the API call.
-  final TonikErrorType type;
+  required final TonikErrorType type,
 
   /// The backend-native response from the API call. Might be null if the error
   /// occurred before the response was received.
-  final Response? response;
+  required final Response? response,
+}) extends TonikResult<T, Response> {
+  /// Creates a new [TonikError] instance.
+  this;
 }
 
 /// The type of error that occurred during an API call.
-enum TonikErrorType {
+enum TonikErrorType() {
   /// An error occurred while encoding the request.
   encoding,
 

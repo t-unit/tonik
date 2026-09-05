@@ -117,6 +117,7 @@ void main() {
       ).readAsStringSync();
 
       expect(content, contains('version: 0.0.1-2026-02-25.clover'));
+      expect(content, contains("sdk: '>=3.13.0 <4.0.0'"));
     });
 
     test('keeps valid semver version in generated pubspec', () {

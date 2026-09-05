@@ -4,7 +4,7 @@
 /// - [simple]: Can be encoded as a single string value (primitives, enums).
 /// - [complex]: Can only be encoded as key-value pairs (objects, lists).
 /// - [mixed]: Contains both simple and complex types (some compositions).
-enum EncodingShape {
+enum EncodingShape() {
   /// Simple types that encode to a single string value.
   simple,
 

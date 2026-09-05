@@ -10,12 +10,10 @@ import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// A test class implementing ParameterEncodable.
-class TestEncodableModel implements ParameterEncodable {
-  const TestEncodableModel({required this.name, required this.value});
-
-  final String name;
-  final int value;
-
+class const TestEncodableModel({
+  required final String name,
+  required final int value,
+}) implements ParameterEncodable {
   @override
   String toMatrix(
     String paramName, {
@@ -104,14 +102,10 @@ class TestEncodableModel implements ParameterEncodable {
 }
 
 /// A test enum implementing UriEncodable (simulating a generated enum).
-enum TestUriEncodableEnum implements UriEncodable {
+enum TestUriEncodableEnum(final String rawValue) implements UriEncodable {
   value1('one'),
   value2('two'),
   valueWithSpace('has space');
-
-  const TestUriEncodableEnum(this.rawValue);
-
-  final String rawValue;
 
   @override
   String uriEncode({
@@ -132,11 +126,8 @@ enum TestUriEncodableEnum implements UriEncodable {
 /// A ParameterEncodable stub whose `toForm` actually branches on
 /// `useQueryComponent`. Used to verify the flag is forwarded by
 /// `encodeAnyToForm` instead of being silently dropped.
-class QueryComponentAwareEncodable implements ParameterEncodable {
-  const QueryComponentAwareEncodable(this.rawValue);
-
-  final String rawValue;
-
+class const QueryComponentAwareEncodable(final String rawValue)
+    implements ParameterEncodable {
   @override
   List<ParameterEntry> toForm(
     String paramName, {
@@ -367,12 +358,7 @@ void main() {
       test('encodes BigDecimal', () {
         final decimal = BigDecimal.parse('123.456');
         expect(
-          encodeAnyToMatrix(
-            decimal,
-            'amount',
-            explode: true,
-            allowEmpty: true,
-          ),
+          encodeAnyToMatrix(decimal, 'amount', explode: true, allowEmpty: true),
           ';amount=123.456',
         );
       });
@@ -779,22 +765,15 @@ void main() {
 
       test('encodes empty list with allowEmpty=true', () {
         expect(
-          encodeAnyToSimple(
-            <dynamic>[],
-            explode: false,
-            allowEmpty: true,
-          ),
+          encodeAnyToSimple(<dynamic>[], explode: false, allowEmpty: true),
           '',
         );
       });
 
       test('throws for empty list with allowEmpty=false', () {
         expect(
-          () => encodeAnyToSimple(
-            <dynamic>[],
-            explode: false,
-            allowEmpty: false,
-          ),
+          () =>
+              encodeAnyToSimple(<dynamic>[], explode: false, allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -1597,11 +1576,7 @@ void main() {
           'literal', () {
         expect(
           encodeAnyToForm(
-            <String, dynamic>{
-              'first name': 'Jane',
-              'a,b': 'v1',
-              'c&d': 'v2',
-            },
+            <String, dynamic>{'first name': 'Jane', 'a,b': 'v1', 'c&d': 'v2'},
             explode: false,
             allowEmpty: true,
             textEncoding: utf8,
@@ -2261,12 +2236,10 @@ void main() {
         );
         expect(
           result,
-          contains(
-            (
-              name: 'params[url]',
-              value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
-            ),
-          ),
+          contains((
+            name: 'params[url]',
+            value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+          )),
         );
       });
 
@@ -2318,9 +2291,7 @@ void main() {
           allowEmpty: true,
         );
 
-        expect(result, [
-          (name: 'params[key%5B0%5D]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%5B0%5D]', value: 'value')]);
       });
 
       test('handles keys with equals signs', () {
@@ -2331,9 +2302,7 @@ void main() {
           allowEmpty: true,
         );
 
-        expect(result, [
-          (name: 'params[key%3Dname]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%3Dname]', value: 'value')]);
       });
 
       test('handles keys with ampersands', () {
@@ -2344,9 +2313,7 @@ void main() {
           allowEmpty: true,
         );
 
-        expect(result, [
-          (name: 'params[key%26name]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%26name]', value: 'value')]);
       });
     });
 
@@ -2419,9 +2386,7 @@ void main() {
           allowReserved: true,
         );
 
-        expect(result, [
-          (name: 'p[a%26b]', value: 'c%26d:e'),
-        ]);
+        expect(result, [(name: 'p[a%26b]', value: 'c%26d:e')]);
       });
 
       test(
@@ -2525,11 +2490,7 @@ void main() {
 
       test('throws for an empty list when allowEmpty=false', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            <dynamic>[],
-            'p',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited(<dynamic>[], 'p', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2566,21 +2527,13 @@ void main() {
       });
 
       test('omits an all-null list when allowEmpty=true', () {
-        final result = encodeAnyToPipeDelimited(
-          [null],
-          'p',
-          allowEmpty: true,
-        );
+        final result = encodeAnyToPipeDelimited([null], 'p', allowEmpty: true);
         expect(result, isEmpty);
       });
 
       test('throws for an all-null list when allowEmpty=false', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            [null],
-            'p',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited([null], 'p', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2680,22 +2633,14 @@ void main() {
     group('null handling', () {
       test('encodes null as empty when allowEmpty=true', () {
         expect(
-          encodeAnyToPipeDelimited(
-            null,
-            'obj',
-            allowEmpty: true,
-          ),
+          encodeAnyToPipeDelimited(null, 'obj', allowEmpty: true),
           isEmpty,
         );
       });
 
       test('throws for null when allowEmpty=false', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            null,
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited(null, 'obj', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2704,33 +2649,21 @@ void main() {
     group('unsupported types', () {
       test('throws for a String value', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            'hello',
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited('hello', 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('throws for an int value', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            42,
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited(42, 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('throws for an unsupported object type', () {
         expect(
-          () => encodeAnyToPipeDelimited(
-            Object(),
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToPipeDelimited(Object(), 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
@@ -2802,11 +2735,7 @@ void main() {
 
       test('throws for an empty list when allowEmpty=false', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            <dynamic>[],
-            'p',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited(<dynamic>[], 'p', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2843,21 +2772,13 @@ void main() {
       });
 
       test('omits an all-null list when allowEmpty=true', () {
-        final result = encodeAnyToSpaceDelimited(
-          [null],
-          'p',
-          allowEmpty: true,
-        );
+        final result = encodeAnyToSpaceDelimited([null], 'p', allowEmpty: true);
         expect(result, isEmpty);
       });
 
       test('throws for an all-null list when allowEmpty=false', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            [null],
-            'p',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited([null], 'p', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2948,22 +2869,14 @@ void main() {
     group('null handling', () {
       test('encodes null as empty when allowEmpty=true', () {
         expect(
-          encodeAnyToSpaceDelimited(
-            null,
-            'obj',
-            allowEmpty: true,
-          ),
+          encodeAnyToSpaceDelimited(null, 'obj', allowEmpty: true),
           isEmpty,
         );
       });
 
       test('throws for null when allowEmpty=false', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            null,
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited(null, 'obj', allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -2972,33 +2885,21 @@ void main() {
     group('unsupported types', () {
       test('throws for a String value', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            'hello',
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited('hello', 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('throws for an int value', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            42,
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited(42, 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('throws for an unsupported object type', () {
         expect(
-          () => encodeAnyToSpaceDelimited(
-            Object(),
-            'obj',
-            allowEmpty: false,
-          ),
+          () => encodeAnyToSpaceDelimited(Object(), 'obj', allowEmpty: false),
           throwsA(isA<EncodingException>()),
         );
       });
@@ -3009,10 +2910,7 @@ void main() {
     group('JsonEncodable', () {
       test('encodes JsonEncodable instance', () {
         const model = TestEncodableModel(name: 'test', value: 42);
-        expect(
-          encodeAnyToJson(model),
-          {'name': 'test', 'value': 42},
-        );
+        expect(encodeAnyToJson(model), {'name': 'test', 'value': 42});
       });
     });
 
@@ -3050,14 +2948,11 @@ void main() {
       test('recursively encodes List', () {
         const model = TestEncodableModel(name: 'test', value: 42);
         final list = [1, 'hello', model];
-        expect(
-          encodeAnyToJson(list),
-          [
-            1,
-            'hello',
-            {'name': 'test', 'value': 42},
-          ],
-        );
+        expect(encodeAnyToJson(list), [
+          1,
+          'hello',
+          {'name': 'test', 'value': 42},
+        ]);
       });
 
       test('recursively encodes nested Lists', () {
@@ -3065,38 +2960,29 @@ void main() {
           [1, 2],
           [3, 4],
         ];
-        expect(
-          encodeAnyToJson(nested),
-          [
-            [1, 2],
-            [3, 4],
-          ],
-        );
+        expect(encodeAnyToJson(nested), [
+          [1, 2],
+          [3, 4],
+        ]);
       });
 
       test('recursively encodes Map', () {
         const model = TestEncodableModel(name: 'test', value: 42);
         final map = {'num': 1, 'str': 'hello', 'obj': model};
-        expect(
-          encodeAnyToJson(map),
-          {
-            'num': 1,
-            'str': 'hello',
-            'obj': {'name': 'test', 'value': 42},
-          },
-        );
+        expect(encodeAnyToJson(map), {
+          'num': 1,
+          'str': 'hello',
+          'obj': {'name': 'test', 'value': 42},
+        });
       });
 
       test('recursively encodes nested Maps', () {
         final nested = {
           'outer': {'inner': 'value'},
         };
-        expect(
-          encodeAnyToJson(nested),
-          {
-            'outer': {'inner': 'value'},
-          },
-        );
+        expect(encodeAnyToJson(nested), {
+          'outer': {'inner': 'value'},
+        });
       });
 
       test('recursively encodes mixed nested structures', () {
@@ -3108,16 +2994,13 @@ void main() {
           ],
           'metadata': {'count': 2},
         };
-        expect(
-          encodeAnyToJson(complex),
-          {
-            'items': [
-              {'id': 1},
-              {'name': 'nested', 'value': 99},
-            ],
-            'metadata': {'count': 2},
-          },
-        );
+        expect(encodeAnyToJson(complex), {
+          'items': [
+            {'id': 1},
+            {'name': 'nested', 'value': 99},
+          ],
+          'metadata': {'count': 2},
+        });
       });
 
       test('handles DateTime in nested structures', () {
@@ -3126,13 +3009,10 @@ void main() {
           'timestamp': dt,
           'items': [dt],
         };
-        expect(
-          encodeAnyToJson(map),
-          {
-            'timestamp': '2024-01-15T10:30:00.000Z',
-            'items': ['2024-01-15T10:30:00.000Z'],
-          },
-        );
+        expect(encodeAnyToJson(map), {
+          'timestamp': '2024-01-15T10:30:00.000Z',
+          'items': ['2024-01-15T10:30:00.000Z'],
+        });
       });
     });
 
@@ -3170,9 +3050,7 @@ void main() {
       test('throws EncodingException for nested map with non-string keys', () {
         expect(
           () => encodeAnyToJson({
-            'outer': {
-              2: 'b',
-            },
+            'outer': {2: 'b'},
           }),
           throwsA(isA<EncodingException>()),
         );
@@ -3264,10 +3142,7 @@ void main() {
       });
 
       test('encodes empty string with allowEmpty=true', () {
-        expect(
-          encodeAnyToUri('', allowEmpty: true, textEncoding: utf8),
-          '',
-        );
+        expect(encodeAnyToUri('', allowEmpty: true, textEncoding: utf8), '');
       });
 
       test('encodes empty string as empty with allowEmpty=false', () {
@@ -3302,17 +3177,11 @@ void main() {
 
     group('int', () {
       test('encodes positive int', () {
-        expect(
-          encodeAnyToUri(42, allowEmpty: true, textEncoding: utf8),
-          '42',
-        );
+        expect(encodeAnyToUri(42, allowEmpty: true, textEncoding: utf8), '42');
       });
 
       test('encodes zero', () {
-        expect(
-          encodeAnyToUri(0, allowEmpty: true, textEncoding: utf8),
-          '0',
-        );
+        expect(encodeAnyToUri(0, allowEmpty: true, textEncoding: utf8), '0');
       });
 
       test('encodes negative int', () {
@@ -3400,10 +3269,7 @@ void main() {
 
     group('null', () {
       test('returns empty string with allowEmpty=true', () {
-        expect(
-          encodeAnyToUri(null, allowEmpty: true, textEncoding: utf8),
-          '',
-        );
+        expect(encodeAnyToUri(null, allowEmpty: true, textEncoding: utf8), '');
       });
 
       test('throws with allowEmpty=false', () {
@@ -3435,58 +3301,37 @@ void main() {
   group('encodeAnyValueToString', () {
     group('String', () {
       test('returns string as-is', () {
-        expect(
-          encodeAnyValueToString('hello', allowEmpty: true),
-          'hello',
-        );
+        expect(encodeAnyValueToString('hello', allowEmpty: true), 'hello');
       });
 
       test('returns empty string', () {
-        expect(
-          encodeAnyValueToString('', allowEmpty: true),
-          '',
-        );
+        expect(encodeAnyValueToString('', allowEmpty: true), '');
       });
     });
 
     group('int', () {
       test('converts int to string', () {
-        expect(
-          encodeAnyValueToString(42, allowEmpty: true),
-          '42',
-        );
+        expect(encodeAnyValueToString(42, allowEmpty: true), '42');
       });
 
       test('converts negative int', () {
-        expect(
-          encodeAnyValueToString(-7, allowEmpty: true),
-          '-7',
-        );
+        expect(encodeAnyValueToString(-7, allowEmpty: true), '-7');
       });
     });
 
     group('double', () {
       test('converts double to string', () {
-        expect(
-          encodeAnyValueToString(3.14, allowEmpty: true),
-          '3.14',
-        );
+        expect(encodeAnyValueToString(3.14, allowEmpty: true), '3.14');
       });
     });
 
     group('bool', () {
       test('converts true', () {
-        expect(
-          encodeAnyValueToString(true, allowEmpty: true),
-          'true',
-        );
+        expect(encodeAnyValueToString(true, allowEmpty: true), 'true');
       });
 
       test('converts false', () {
-        expect(
-          encodeAnyValueToString(false, allowEmpty: true),
-          'false',
-        );
+        expect(encodeAnyValueToString(false, allowEmpty: true), 'false');
       });
     });
 
@@ -3503,10 +3348,7 @@ void main() {
     group('Date', () {
       test('converts Date to string', () {
         final date = Date(2024, 1, 15);
-        expect(
-          encodeAnyValueToString(date, allowEmpty: true),
-          '2024-01-15',
-        );
+        expect(encodeAnyValueToString(date, allowEmpty: true), '2024-01-15');
       });
     });
 
@@ -3523,19 +3365,13 @@ void main() {
     group('BigDecimal', () {
       test('converts BigDecimal to string', () {
         final bd = BigDecimal.parse('123.456');
-        expect(
-          encodeAnyValueToString(bd, allowEmpty: true),
-          '123.456',
-        );
+        expect(encodeAnyValueToString(bd, allowEmpty: true), '123.456');
       });
     });
 
     group('null handling', () {
       test('returns empty string for null with allowEmpty=true', () {
-        expect(
-          encodeAnyValueToString(null, allowEmpty: true),
-          '',
-        );
+        expect(encodeAnyValueToString(null, allowEmpty: true), '');
       });
 
       test('throws EmptyValueException for null with allowEmpty=false', () {

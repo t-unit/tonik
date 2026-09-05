@@ -5,7 +5,10 @@ import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// Marker interface for types that support matrix-style encoding
 /// (RFC 6570 Section 3.2.7).
-abstract interface class MatrixEncodable {
+abstract interface class MatrixEncodable() {
+  /// Creates a matrix-encodable value.
+  this;
+
   /// Encodes this value using matrix style parameter encoding.
   ///
   /// The [paramName] is the parameter name used in the path.
@@ -20,20 +23,23 @@ abstract interface class MatrixEncodable {
 
 /// Marker interface for types that support label-style encoding
 /// (RFC 6570 Section 3.2.5).
-abstract interface class LabelEncodable {
+abstract interface class LabelEncodable() {
+  /// Creates a label-encodable value.
+  this;
+
   /// Encodes this value using label style parameter encoding.
   ///
   /// When [explode] is true, object properties become key=value pairs.
   /// When [allowEmpty] is false, empty values throw an exception.
-  String toLabel({
-    required bool explode,
-    required bool allowEmpty,
-  });
+  String toLabel({required bool explode, required bool allowEmpty});
 }
 
 /// Marker interface for types that support simple-style encoding
 /// (RFC 6570 Section 3.2.2).
-abstract interface class SimpleEncodable {
+abstract interface class SimpleEncodable() {
+  /// Creates a simple-encodable value.
+  this;
+
   /// Encodes this value using simple style parameter encoding.
   ///
   /// When [explode] is true, object properties become key=value pairs.
@@ -49,7 +55,10 @@ abstract interface class SimpleEncodable {
 
 /// Marker interface for types that support form-style encoding
 /// (RFC 6570 Section 3.2.8).
-abstract interface class FormEncodable {
+abstract interface class FormEncodable() {
+  /// Creates a form-encodable value.
+  this;
+
   /// Encodes this value using form style parameter encoding, yielding a list
   /// of `name=value` entries named [paramName] that the caller joins.
   ///
@@ -76,7 +85,10 @@ abstract interface class FormEncodable {
 }
 
 /// Marker interface for types that support deep object encoding.
-abstract interface class DeepObjectEncodable {
+abstract interface class DeepObjectEncodable() {
+  /// Creates a deep-object-encodable value.
+  this;
+
   /// Encodes this value using deepObject style parameter encoding.
   ///
   /// The [paramName] is the base parameter name used for nested keys.
@@ -97,7 +109,10 @@ abstract interface class DeepObjectEncodable {
 }
 
 /// Marker interface for types that support pipe-delimited object encoding.
-abstract interface class PipeDelimitedEncodable {
+abstract interface class PipeDelimitedEncodable() {
+  /// Creates a pipe-delimited-encodable value.
+  this;
+
   /// Encodes this value using pipeDelimited style parameter encoding.
   ///
   /// When [allowEmpty] is false, empty values throw an exception.
@@ -111,7 +126,10 @@ abstract interface class PipeDelimitedEncodable {
 }
 
 /// Marker interface for types that support space-delimited object encoding.
-abstract interface class SpaceDelimitedEncodable {
+abstract interface class SpaceDelimitedEncodable() {
+  /// Creates a space-delimited-encodable value.
+  this;
+
   /// Encodes this value using spaceDelimited style parameter encoding.
   ///
   /// When [allowEmpty] is false, empty values throw an exception.
@@ -125,7 +143,10 @@ abstract interface class SpaceDelimitedEncodable {
 }
 
 /// Marker interface for types that support JSON encoding.
-abstract interface class JsonEncodable {
+abstract interface class JsonEncodable() {
+  /// Creates a JSON-encodable value.
+  this;
+
   /// Converts this value to a JSON-compatible representation.
   ///
   /// Returns a value that can be serialized to JSON:
@@ -139,7 +160,10 @@ abstract interface class JsonEncodable {
 ///
 /// `literal` is intentionally omitted here: it is only passed on
 /// statically-typed receivers, never through this marker type.
-abstract interface class UriEncodable {
+abstract interface class UriEncodable() {
+  /// Creates a URI-encodable value.
+  this;
+
   /// URI encodes this value.
   ///
   /// When [allowEmpty] is false, empty values throw an exception.
@@ -157,7 +181,7 @@ abstract interface class UriEncodable {
 
 /// Combined interface for types that support all standard parameter
 /// encoding styles.
-abstract interface class ParameterEncodable
+abstract interface class ParameterEncodable()
     implements
         MatrixEncodable,
         LabelEncodable,
@@ -166,4 +190,7 @@ abstract interface class ParameterEncodable
         DeepObjectEncodable,
         PipeDelimitedEncodable,
         SpaceDelimitedEncodable,
-        JsonEncodable {}
+        JsonEncodable {
+  /// Creates a parameter-encodable value.
+  this;
+}

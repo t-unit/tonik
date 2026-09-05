@@ -185,10 +185,9 @@ Set<String> initialOperationDefaultReservedNames({
 /// same instance from the parsed [ApiDocument].
 class OperationDefaultsCache {
   OperationDefaultsCache({
-    required NameManager nameManager,
-    required String package,
-  }) : _nameManager = nameManager,
-       _package = package;
+    required this._nameManager,
+    required this._package,
+  });
 
   final NameManager _nameManager;
   final String _package;

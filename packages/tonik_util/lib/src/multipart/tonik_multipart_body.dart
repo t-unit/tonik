@@ -6,42 +6,46 @@ import 'package:meta/meta.dart';
 
 /// One ordered part in a [TonikMultipartBody].
 @immutable
-final class TonikMultipartPart {
-  /// Creates a multipart part from its already-encoded body bytes.
-  TonikMultipartPart({
-    required this.name,
-    required List<int> bytes,
-    required this.contentType,
-    this.filename,
-    Map<String, String> headers = const {},
-  }) : bytes = List.unmodifiable(bytes),
-       headers = Map.unmodifiable(headers);
-
+final class const TonikMultipartPart._({
   /// The multipart form field name.
-  final String name;
+  required final String name,
 
   /// The encoded body bytes for this part.
-  final List<int> bytes;
+  required final List<int> bytes,
 
   /// The media type emitted for this part.
-  final String contentType;
-
-  /// The optional uploaded filename.
-  final String? filename;
+  required final String contentType,
 
   /// Additional headers emitted for this part.
-  final Map<String, String> headers;
+  required final Map<String, String> headers,
+
+  /// The optional uploaded filename.
+  final String? filename,
+}) {
+  /// Creates a multipart part from its already-encoded body bytes.
+  factory({
+    required String name,
+    required List<int> bytes,
+    required String contentType,
+    String? filename,
+    Map<String, String> headers = const {},
+  }) => TonikMultipartPart._(
+    name: name,
+    bytes: List.unmodifiable(bytes),
+    contentType: contentType,
+    filename: filename,
+    headers: Map.unmodifiable(headers),
+  );
 }
 
 /// A transport-neutral, fully encoded multipart request body.
 @immutable
-final class TonikMultipartBody {
+final class TonikMultipartBody(
+  List<TonikMultipartPart> parts, {
+  String? boundary,
+}) {
   /// Creates a multipart body while preserving part order and duplicate names.
-  TonikMultipartBody(
-    List<TonikMultipartPart> parts, {
-    String? boundary,
-  }) : parts = List.unmodifiable(parts),
-       boundary = boundary ?? _newBoundary() {
+  this {
     _validateBoundary(this.boundary);
   }
 
@@ -50,10 +54,10 @@ final class TonikMultipartBody {
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   /// The ordered multipart parts.
-  final List<TonikMultipartPart> parts;
+  final List<TonikMultipartPart> parts = List.unmodifiable(parts);
 
   /// The boundary separating the encoded parts.
-  final String boundary;
+  final String boundary = boundary ?? _newBoundary();
 
   /// The request Content-Type value, including [boundary].
   String get contentType => 'multipart/form-data; boundary=$boundary';
@@ -67,11 +71,7 @@ final class TonikMultipartBody {
       _validatePart(part);
       bytes
         ..add(ascii.encode('--$boundary\r\n'))
-        ..add(
-          latin1.encode(
-            _partHeaders(part),
-          ),
-        )
+        ..add(latin1.encode(_partHeaders(part)))
         ..add(part.bytes)
         ..add(const [13, 10]);
     }
@@ -115,9 +115,7 @@ final class TonikMultipartBody {
     }
   }
 
-  static final RegExp _headerName = RegExp(
-    r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
-  );
+  static final RegExp _headerName = RegExp(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$");
 
   static void _validateHeaderValue(String name, String value) {
     if (value.contains('\r') || value.contains('\n')) {

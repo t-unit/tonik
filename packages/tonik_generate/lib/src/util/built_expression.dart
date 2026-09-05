@@ -15,10 +15,9 @@ import 'package:meta/meta.dart';
 @immutable
 class BuiltExpression {
   BuiltExpression({
-    required Expression body,
+    required this._body,
     List<InlineHelper> inlineFunctions = const [],
-  }) : _body = body,
-       inlineFunctions = List.unmodifiable(inlineFunctions);
+  }) : inlineFunctions = List.unmodifiable(inlineFunctions);
 
   const BuiltExpression.simple(Expression body)
     : _body = body,

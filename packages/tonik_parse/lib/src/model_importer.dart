@@ -10,9 +10,8 @@ class ModelImporter {
   ModelImporter(
     OpenApiObject openApiObject, {
     required this.exampleImporter,
-    Map<String, SchemaContentType> contentMediaTypes = const {},
-  }) : _schemas = openApiObject.components?.schemas ?? {},
-       _contentMediaTypes = contentMediaTypes;
+    this._contentMediaTypes = const {},
+  }) : _schemas = openApiObject.components?.schemas ?? {};
 
   final Map<String, Schema> _schemas;
   final Map<String, SchemaContentType> _contentMediaTypes;

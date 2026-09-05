@@ -12,25 +12,34 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 /// This class follows the RFC3339 date format (YYYY-MM-DD) and is immutable.
 /// It provides methods for JSON serialization and simple string encoding/decoding.
 @immutable
-class Date {
+class Date(
+  /// The year component of the date.
+  final int year,
+
+  /// The month component of the date (1-12).
+  final int month,
+
+  /// The day component of the date (1-31).
+  final int day,
+) {
   /// Creates a new [Date] instance.
   ///
   /// Throws [FormatException] if any of the date components are invalid.
-  Date(this.year, this.month, this.day) {
+  this {
     _validate();
   }
 
   /// Creates a [Date] from a [DateTime] instance.
   ///
   /// The time components are ignored.
-  factory Date.fromDateTime(DateTime dateTime) =>
+  factory fromDateTime(DateTime dateTime) =>
       Date(dateTime.year, dateTime.month, dateTime.day);
 
   /// Creates a [Date] from an ISO 8601 formatted string (YYYY-MM-DD).
   ///
   /// Throws [FormatException] if the string is not in the correct format
   /// or if any of the date components are invalid.
-  factory Date.fromString(String dateString) {
+  factory fromString(String dateString) {
     final parts = dateString.split('-');
     if (parts.length != 3) {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
@@ -50,29 +59,18 @@ class Date {
   /// Creates a [Date] from a JSON string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  factory Date.fromJson(Object? json) =>
-      Date.fromString(json.decodeJsonString());
+  factory fromJson(Object? json) => Date.fromString(json.decodeJsonString());
 
   /// Creates a [Date] from a simple string format.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  factory Date.fromSimple(String? simple) =>
+  factory fromSimple(String? simple) =>
       Date.fromString(simple.decodeSimpleString());
 
   /// Creates a [Date] from a form-encoded string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD) and may be URL-encoded.
-  factory Date.fromForm(String? form) =>
-      Date.fromString(form.decodeFormString());
-
-  /// The year component of the date.
-  final int year;
-
-  /// The month component of the date (1-12).
-  final int month;
-
-  /// The day component of the date (1-31).
-  final int day;
+  factory fromForm(String? form) => Date.fromString(form.decodeFormString());
 
   /// Converts this [Date] to a [DateTime] instance.
   ///
