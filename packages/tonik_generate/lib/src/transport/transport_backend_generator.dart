@@ -6,15 +6,10 @@ import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 @immutable
-class DependencyDescriptor {
-  const DependencyDescriptor({
-    required this.name,
-    required this.versionConstraint,
-  });
-
-  final String name;
-  final String versionConstraint;
-
+class const DependencyDescriptor({
+  required final String name,
+  required final String versionConstraint,
+}) {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -27,9 +22,7 @@ class DependencyDescriptor {
 }
 
 /// Selected immutable generator-time transport implementation.
-abstract interface class TransportBackendGenerator {
-  const TransportBackendGenerator();
-
+abstract interface class const TransportBackendGenerator() {
   List<DependencyDescriptor> get dependencies;
 
   TransportBackend get backend;

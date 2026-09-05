@@ -230,12 +230,11 @@ void main() {
 
       final cancellation = TonikCancellation();
       final responseFuture =
-          _api(
-            'http://${server.address.address}:${server.port}',
-          ).getWithCancelTokenQuery(
-            cancelToken: 'myToken',
-            cancellation: cancellation,
-          );
+          _api('http://${server.address.address}:${server.port}')
+              .getWithCancelTokenQuery(
+                cancelToken: 'myToken',
+                cancellation: cancellation,
+              );
 
       await requestArrived.future.timeout(const Duration(seconds: 5));
       cancellation.cancel('cancel in flight');
@@ -499,22 +498,18 @@ void main() {
 
       late BdBe29Da4Efb88F7DServer server;
       try {
-        server =
-            Function.apply(constructor, const [], {
-                  ...commonArguments,
-                  const Symbol(r'$dio'): 'dio-value',
-                })
-                as BdBe29Da4Efb88F7DServer;
+        server = Function.apply(constructor, const [], {
+          ...commonArguments,
+          const Symbol(r'$dio'): 'dio-value',
+        }) as BdBe29Da4Efb88F7DServer;
         // The escaped name differs because it collides with Dio only in that
         // backend's generated server constructor.
         // ignore: avoid_catching_errors
       } on NoSuchMethodError {
-        server =
-            Function.apply(constructor, const [], {
-                  ...commonArguments,
-                  #dio: 'dio-value',
-                })
-                as BdBe29Da4Efb88F7DServer;
+        server = Function.apply(constructor, const [], {
+          ...commonArguments,
+          #dio: 'dio-value',
+        }) as BdBe29Da4Efb88F7DServer;
       }
 
       expect(

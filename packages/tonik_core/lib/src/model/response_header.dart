@@ -2,18 +2,16 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding style supported for response headers .
-enum ResponseHeaderEncoding {
+enum ResponseHeaderEncoding() {
   /// Comma-separated values. The only style for headers.
   /// Example: `X-MyHeader: 3,4,5`
   simple,
 }
 
-sealed class ResponseHeader {
-  const ResponseHeader({required this.context, required this.name});
-
-  final Context context;
-  final String? name;
-
+sealed class const ResponseHeader({
+  required final Context context,
+  required final String? name,
+}) {
   /// The description of the header.
   /// For aliases, this may override the referenced header's description.
   String? get description;
@@ -39,19 +37,12 @@ sealed class ResponseHeader {
 }
 
 @immutable
-class ResponseHeaderAlias extends ResponseHeader {
-  const ResponseHeaderAlias({
-    required super.name,
-    required this.header,
-    required super.context,
-    this.description,
-  });
-
-  final ResponseHeader header;
-
-  @override
-  final String? description;
-
+class const ResponseHeaderAlias({
+  required super.name,
+  required final ResponseHeader header,
+  required super.context,
+  @override final String? description,
+}) extends ResponseHeader {
   @override
   String toString() =>
       'HeaderAlias{name: $name, header: $header, description: $description}';
@@ -70,29 +61,17 @@ class ResponseHeaderAlias extends ResponseHeader {
   int get hashCode => Object.hash(name, header, description, context);
 }
 
-class ResponseHeaderObject extends ResponseHeader {
-  ResponseHeaderObject({
-    required super.name,
-    required super.context,
-    required this.description,
-    required this.explode,
-    required this.model,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.encoding,
-    required this.examples,
-  });
-
-  @override
-  final String? description;
-
-  bool explode;
-  Model model;
-  bool isRequired;
-  bool isDeprecated;
-  ResponseHeaderEncoding encoding;
-  List<Example> examples;
-
+class ResponseHeaderObject({
+  required super.name,
+  required super.context,
+  @override required final String? description,
+  required var bool explode,
+  required var Model model,
+  required var bool isRequired,
+  required var bool isDeprecated,
+  required var ResponseHeaderEncoding encoding,
+  required var List<Example> examples,
+}) extends ResponseHeader {
   @override
   String toString() =>
       'HeaderObject{name: $name, description: $description, '

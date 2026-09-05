@@ -2,12 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-sealed class Response {
-  const Response({required this.name, required this.context});
-
-  final String? name;
-  final Context context;
-
+sealed class const Response({
+  required final String? name,
+  required final Context context,
+}) {
   /// The description of the response.
   /// For aliases, this may override the referenced response's description.
   String? get description;
@@ -26,19 +24,12 @@ sealed class Response {
 }
 
 @immutable
-class ResponseAlias extends Response {
-  const ResponseAlias({
-    required super.name,
-    required this.response,
-    required super.context,
-    this.description,
-  });
-
-  final Response response;
-
-  @override
-  final String? description;
-
+class const ResponseAlias({
+  required super.name,
+  required final Response response,
+  required super.context,
+  @override final String? description,
+}) extends Response {
   @override
   bool get isEmpty => response.isEmpty;
 
@@ -71,21 +62,13 @@ class ResponseAlias extends Response {
 }
 
 @immutable
-class ResponseObject extends Response {
-  const ResponseObject({
-    required super.name,
-    required super.context,
-    required this.headers,
-    required this.description,
-    required this.bodies,
-  });
-
-  final Map<String, ResponseHeader> headers;
-  final Set<ResponseBody> bodies;
-
-  @override
-  final String description;
-
+class const ResponseObject({
+  required super.name,
+  required super.context,
+  required final Map<String, ResponseHeader> headers,
+  @override required final String description,
+  required final Set<ResponseBody> bodies,
+}) extends Response {
   @override
   bool get isEmpty => bodies.isEmpty && headers.isEmpty;
 
@@ -127,19 +110,12 @@ class ResponseObject extends Response {
       'description: $description, bodies: $bodies)';
 }
 
-class ResponseBody {
-  ResponseBody({
-    required this.model,
-    required this.rawContentType,
-    required this.contentType,
-    required this.examples,
-  });
-
-  Model model;
-  String rawContentType;
-  ContentType contentType;
-  List<Example> examples;
-
+class ResponseBody({
+  required var Model model,
+  required var String rawContentType,
+  required var ContentType contentType,
+  required var List<Example> examples,
+}) {
   @override
   String toString() =>
       'ResponseBody(model: $model, contentType: $contentType, '

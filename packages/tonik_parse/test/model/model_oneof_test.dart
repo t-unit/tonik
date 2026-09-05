@@ -342,18 +342,18 @@ void main() {
 
     test('import oneOf with description', () {
       final api = Importer().import(oneOfWithDescription);
-      final model =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Pet')
-              as OneOfModel;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Pet',
+      ) as OneOfModel;
 
       expect(model.description, 'A pet can be either a cat or a dog');
     });
 
     test('import oneOf without description', () {
       final api = Importer().import(oneOfWithoutDescription);
-      final model =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Animal')
-              as OneOfModel;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Animal',
+      ) as OneOfModel;
 
       expect(model.description, isNull);
     });
@@ -392,11 +392,9 @@ void main() {
 
     test('still produces a OneOfModel with empty models set', () {
       final api = Importer().import(emptyOneOfSpec);
-      final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'EmptyOneOf',
-              )
-              as OneOfModel;
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'EmptyOneOf',
+      ) as OneOfModel;
 
       expect(model.models, isEmpty);
     });

@@ -3,26 +3,19 @@ import 'package:meta/meta.dart';
 
 /// Configuration for filtering which parts of the spec to generate.
 @immutable
-class FilterConfig {
-  const FilterConfig({
-    this.includeTags = const [],
-    this.excludeTags = const [],
-    this.excludeOperations = const [],
-    this.excludeSchemas = const [],
-  });
-
+class const FilterConfig({
   /// Tags to include. If empty, all tags are included.
-  final List<String> includeTags;
+  final List<String> includeTags = const [],
 
   /// Tags to exclude from generation.
-  final List<String> excludeTags;
+  final List<String> excludeTags = const [],
 
   /// Operation IDs to exclude from generation.
-  final List<String> excludeOperations;
+  final List<String> excludeOperations = const [],
 
   /// Schema names to exclude from generation.
-  final List<String> excludeSchemas;
-
+  final List<String> excludeSchemas = const [],
+}) {
   static const _listEquality = ListEquality<String>();
 
   @override

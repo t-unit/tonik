@@ -1,13 +1,11 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class Contact {
-  const Contact({required this.name, required this.url, required this.email});
-
-  final String? name;
-  final String? url;
-  final String? email;
-
+class const Contact({
+  required final String? name,
+  required final String? url,
+  required final String? email,
+}) {
   @override
   String toString() => 'Contact{name: $name, url: $url, email: $email}';
 

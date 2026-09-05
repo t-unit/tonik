@@ -4,25 +4,27 @@ import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
-class Parameter {
-  Parameter({
-    required this.name,
-    required this.location,
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.allowEmptyValue,
-    required this.style,
-    required this.explode,
-    required this.allowReserved,
-    required this.schema,
-    required this.content,
-    required this.xDartName,
-    this.example,
-    this.examples,
-  });
+class Parameter({
+  required final String name,
+  required final ParameterLocation location,
+  required final String? description,
+  required final bool? isRequired,
+  required final bool? isDeprecated,
+  required final bool? allowEmptyValue,
+  required final SerializationStyle? style,
+  required final bool? explode,
+  required final bool? allowReserved,
+  required final Schema? schema,
+  required final Map<String, MediaType>? content,
+  required final String? xDartName,
 
-  factory Parameter.fromJson(Map<String, dynamic> json) => Parameter(
+  /// Single example inline value.
+  final Object? example,
+
+  /// Multiple named examples; each value may be inline or a `$ref`.
+  final Map<String, ReferenceWrapper<Example>>? examples,
+}) {
+  factory fromJson(Map<String, dynamic> json) => Parameter(
     name: json['name'] as String,
     location: ParameterLocation.fromJson(json['in']),
     description: json['description'] as String?,
@@ -45,25 +47,6 @@ class Parameter {
     ),
   );
 
-  final String name;
-  final ParameterLocation location;
-  final String? description;
-  final bool? isRequired;
-  final bool? isDeprecated;
-  final bool? allowEmptyValue;
-  final SerializationStyle? style;
-  final bool? explode;
-  final bool? allowReserved;
-  final Schema? schema;
-  final Map<String, MediaType>? content;
-  final String? xDartName;
-
-  /// Single example inline value.
-  final Object? example;
-
-  /// Multiple named examples; each value may be inline or a `$ref`.
-  final Map<String, ReferenceWrapper<Example>>? examples;
-
   @override
   String toString() =>
       'Parameter{name: $name, location: $location, description: $description, '
@@ -73,7 +56,7 @@ class Parameter {
       'xDartName: $xDartName, example: $example, examples: $examples}';
 }
 
-enum ParameterLocation {
+enum ParameterLocation() {
   query,
   header,
   path,

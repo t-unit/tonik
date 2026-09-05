@@ -8,19 +8,17 @@ import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/security_scheme.dart';
 
-class Components {
-  Components({
-    required this.schemas,
-    required this.responses,
-    required this.parameters,
-    required this.requestBodies,
-    required this.headers,
-    required this.securitySchemes,
-    required this.pathItems,
-    required this.examples,
-  });
-
-  factory Components.fromJson(Map<String, dynamic> json) => Components(
+class Components({
+  required final Map<String, Schema>? schemas,
+  required final Map<String, ReferenceWrapper<Response>>? responses,
+  required final Map<String, ReferenceWrapper<Parameter>>? parameters,
+  required final Map<String, ReferenceWrapper<RequestBody>>? requestBodies,
+  required final Map<String, ReferenceWrapper<Header>>? headers,
+  required final Map<String, ReferenceWrapper<SecurityScheme>>? securitySchemes,
+  required final Map<String, ReferenceWrapper<PathItem>>? pathItems,
+  required final Map<String, ReferenceWrapper<Example>>? examples,
+}) {
+  factory fromJson(Map<String, dynamic> json) => Components(
     schemas: const SchemaMapConverter().fromJson(
       json['schemas'] as Map<String, dynamic>?,
     ),
@@ -46,15 +44,6 @@ class Components {
       (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
     ),
   );
-
-  final Map<String, Schema>? schemas;
-  final Map<String, ReferenceWrapper<Response>>? responses;
-  final Map<String, ReferenceWrapper<Parameter>>? parameters;
-  final Map<String, ReferenceWrapper<RequestBody>>? requestBodies;
-  final Map<String, ReferenceWrapper<Header>>? headers;
-  final Map<String, ReferenceWrapper<SecurityScheme>>? securitySchemes;
-  final Map<String, ReferenceWrapper<PathItem>>? pathItems;
-  final Map<String, ReferenceWrapper<Example>>? examples;
 
   // We ignore the links and callbacks properties.
 

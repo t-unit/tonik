@@ -11,7 +11,7 @@ import 'package:tonik_core/src/model/model.dart';
 /// (O(n log n) comparator calls) don't recompute the key each time. This is
 /// critical for specs with deeply circular model graphs (e.g. Stripe's 90+
 /// cyclic schemas), where uncached computation effectively hangs.
-class StableModelSorter {
+class StableModelSorter() {
   static const _maxDepth = 5;
 
   final _cache = <Model, String>{};

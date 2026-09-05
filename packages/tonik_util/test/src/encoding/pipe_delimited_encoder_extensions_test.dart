@@ -47,9 +47,8 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = [
-          'single',
-        ].toPipeDelimited(explode: false, allowEmpty: true);
+        final result = ['single']
+            .toPipeDelimited(explode: false, allowEmpty: true);
         expect(result, ['single']);
       });
 
@@ -109,9 +108,8 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = [
-          'single',
-        ].toPipeDelimited(explode: true, allowEmpty: true);
+        final result = ['single']
+            .toPipeDelimited(explode: true, allowEmpty: true);
         expect(result, ['single']);
       });
 

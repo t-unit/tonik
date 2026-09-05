@@ -8,10 +8,7 @@ import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Resolves serialization before native multipart containers are constructed.
-class MultipartBodyPlanner {
-  const MultipartBodyPlanner({required this.backend});
-
-  final TransportBackend backend;
+class const MultipartBodyPlanner({required final TransportBackend backend}) {
   bool get _dio => backend == TransportBackend.dio;
 
   MultipartBodyPlan plan(
@@ -452,18 +449,18 @@ class MultipartBodyPlanner {
     final variable = '${part.normalizedName}Parts';
     return [
       MultipartCode(
-        declareFinal(
-          variable,
-        ).assign(literalList([], refer('String', 'dart:core'))).statement,
+        declareFinal(variable)
+            .assign(literalList([], refer('String', 'dart:core')))
+            .statement,
       ),
       MultipartCode(
         Block.of([
           const Code('for (final entry in ('),
           part.value.asA(refer('Map', 'dart:core')).code,
           const Code(').entries) {'),
-          declareFinal(
-            'value',
-          ).assign(refer('entry').property('value')).statement,
+          declareFinal('value')
+              .assign(refer('entry').property('value'))
+              .statement,
           const Code('if (value == null) continue; if (value is '),
           refer('Map', 'dart:core').code,
           const Code(' || value is '),

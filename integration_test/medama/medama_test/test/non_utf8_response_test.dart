@@ -77,9 +77,8 @@ Directory _writeFixtures() {
   directory.createSync();
 
   for (final entry in _fixtureBytes.entries) {
-    File(
-      '${directory.path}/${entry.key}',
-    ).writeAsBytesSync(entry.value, flush: true);
+    File('${directory.path}/${entry.key}')
+        .writeAsBytesSync(entry.value, flush: true);
   }
   return directory;
 }

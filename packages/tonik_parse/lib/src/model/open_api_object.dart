@@ -7,18 +7,16 @@ import 'package:tonik_parse/src/model/server.dart';
 import 'package:tonik_parse/src/model/tag.dart';
 
 /// Based on https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.4.md
-class OpenApiObject {
-  OpenApiObject({
-    required this.openapi,
-    required this.info,
-    required this.servers,
-    required this.paths,
-    required this.components,
-    required this.tags,
-    this.externalDocs,
-  });
-
-  factory OpenApiObject.fromJson(Map<String, dynamic> json) => OpenApiObject(
+class OpenApiObject({
+  required final String openapi,
+  required final Info info,
+  required final List<Server>? servers,
+  required final Map<String, ReferenceWrapper<PathItem>> paths,
+  required final Components? components,
+  required final List<Tag>? tags,
+  final ExternalDocumentation? externalDocs,
+}) {
+  factory fromJson(Map<String, dynamic> json) => OpenApiObject(
     openapi: json['openapi'] as String,
     info: Info.fromJson(json['info'] as Map<String, dynamic>),
     servers: (json['servers'] as List<dynamic>?)
@@ -39,14 +37,6 @@ class OpenApiObject {
             json['externalDocs'] as Map<String, dynamic>,
           ),
   );
-
-  final String openapi;
-  final Info info;
-  final List<Server>? servers;
-  final Map<String, ReferenceWrapper<PathItem>> paths;
-  final Components? components;
-  final List<Tag>? tags;
-  final ExternalDocumentation? externalDocs;
 
   // We ignore security properties.
 

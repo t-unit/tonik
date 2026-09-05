@@ -89,11 +89,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final petResponse =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'PetResponse',
-                )
-                as OneOfModel;
+        final petResponse = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'PetResponse',
+        ) as OneOfModel;
 
         expect(petResponse.models, hasLength(2));
         final discriminatorValues = petResponse.models
@@ -120,11 +118,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final petRequest =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'PetRequest',
-                )
-                as AnyOfModel;
+        final petRequest = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'PetRequest',
+        ) as AnyOfModel;
 
         expect(petRequest.models, hasLength(2));
         final discriminatorValues = petRequest.models
@@ -192,11 +188,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final animalChoice =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'AnimalChoice',
-                )
-                as OneOfModel;
+        final animalChoice = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'AnimalChoice',
+        ) as OneOfModel;
 
         expect(animalChoice.discriminator, 'animalType');
         expect(animalChoice.models, hasLength(2));
@@ -350,9 +344,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final wrapper =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Wrapper')
-                as OneOfModel;
+        final wrapper = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Wrapper',
+        ) as OneOfModel;
 
         expect(wrapper.models, hasLength(2));
 
@@ -423,11 +417,9 @@ void main() {
       () {
         final api = Importer().import(fileContent);
 
-        final container =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Container',
-                )
-                as OneOfModel;
+        final container = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Container',
+        ) as OneOfModel;
 
         expect(container.discriminator, 'shapeType');
         expect(container.models, hasLength(2));

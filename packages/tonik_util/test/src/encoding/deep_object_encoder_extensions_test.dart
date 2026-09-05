@@ -7,17 +7,16 @@ void main() {
     group('explode parameter validation', () {
       test('throws when explode is false', () {
         expect(
-          () => {
-            'color': 'red',
-          }.toDeepObject('filter', explode: false, allowEmpty: true),
+          () =>
+              {'color': 'red'}
+                  .toDeepObject('filter', explode: false, allowEmpty: true),
           throwsA(isA<EncodingException>()),
         );
       });
 
       test('works when explode is true', () {
-        final result = {
-          'color': 'red',
-        }.toDeepObject('filter', explode: true, allowEmpty: true);
+        final result = {'color': 'red'}
+            .toDeepObject('filter', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'filter[color]', value: 'red')]);
       });
@@ -36,9 +35,8 @@ void main() {
       });
 
       test('encodes a single entry map', () {
-        final result = {
-          'name': 'John',
-        }.toDeepObject('user', explode: true, allowEmpty: true);
+        final result = {'name': 'John'}
+            .toDeepObject('user', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'user[name]', value: 'John')]);
       });
@@ -112,9 +110,8 @@ void main() {
       });
 
       test('double-encodes values when alreadyEncoded=false', () {
-        final result = {
-          'email': 'test%40example.com',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'email': 'test%40example.com'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [
           (name: 'params[email]', value: 'test%2540example.com'),
@@ -136,9 +133,8 @@ void main() {
       });
 
       test('handles emoji in values', () {
-        final result = {
-          'message': 'Hello 😀',
-        }.toDeepObject('data', explode: true, allowEmpty: true);
+        final result = {'message': 'Hello 😀'}
+            .toDeepObject('data', explode: true, allowEmpty: true);
 
         expect(result, [
           (name: 'data[message]', value: 'Hello%20%F0%9F%98%80'),
@@ -199,33 +195,29 @@ void main() {
 
     group('parameter name handling', () {
       test('works with simple parameter names', () {
-        final result = {
-          'key': 'value',
-        }.toDeepObject('param', explode: true, allowEmpty: true);
+        final result = {'key': 'value'}
+            .toDeepObject('param', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'param[key]', value: 'value')]);
       });
 
       test('works with parameter names containing underscores', () {
-        final result = {
-          'key': 'value',
-        }.toDeepObject('my_param', explode: true, allowEmpty: true);
+        final result = {'key': 'value'}
+            .toDeepObject('my_param', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'my_param[key]', value: 'value')]);
       });
 
       test('works with parameter names containing numbers', () {
-        final result = {
-          'key': 'value',
-        }.toDeepObject('param123', explode: true, allowEmpty: true);
+        final result = {'key': 'value'}
+            .toDeepObject('param123', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'param123[key]', value: 'value')]);
       });
 
       test('works with camelCase parameter names', () {
-        final result = {
-          'key': 'value',
-        }.toDeepObject('myParam', explode: true, allowEmpty: true);
+        final result = {'key': 'value'}
+            .toDeepObject('myParam', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'myParam[key]', value: 'value')]);
       });
@@ -267,9 +259,8 @@ void main() {
 
       test('handles very long values', () {
         final longValue = 'a' * 1000;
-        final result = {
-          'data': longValue,
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'data': longValue}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[data]', value: 'a' * 1000)]);
       });
@@ -328,41 +319,36 @@ void main() {
 
     group('edge cases', () {
       test('handles keys with square brackets in them', () {
-        final result = {
-          'key[0]': 'value',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'key[0]': 'value'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[key%5B0%5D]', value: 'value')]);
       });
 
       test('handles keys with equals signs', () {
-        final result = {
-          'key=name': 'value',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'key=name': 'value'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[key%3Dname]', value: 'value')]);
       });
 
       test('handles keys with ampersands', () {
-        final result = {
-          'key&name': 'value',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'key&name': 'value'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[key%26name]', value: 'value')]);
       });
 
       test('handles values with equals signs', () {
-        final result = {
-          'equation': 'x=y',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'equation': 'x=y'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[equation]', value: 'x%3Dy')]);
       });
 
       test('handles values with ampersands', () {
-        final result = {
-          'query': 'a&b',
-        }.toDeepObject('params', explode: true, allowEmpty: true);
+        final result = {'query': 'a&b'}
+            .toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [(name: 'params[query]', value: 'a%26b')]);
       });

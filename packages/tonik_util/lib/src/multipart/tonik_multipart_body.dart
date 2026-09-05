@@ -6,52 +6,56 @@ import 'package:meta/meta.dart';
 
 /// One ordered part in a [TonikMultipartBody].
 @immutable
-final class TonikMultipartPart {
-  /// Creates a multipart part from its already-encoded body bytes.
-  TonikMultipartPart({
-    required this.name,
-    required List<int> bytes,
-    required this.contentType,
-    this.filename,
-    Map<String, String> headers = const {},
-  }) : bytes = List.unmodifiable(bytes),
-       headers = Map.unmodifiable(headers);
-
+final class const TonikMultipartPart._({
   /// The multipart form field name.
-  final String name;
+  required final String name,
 
   /// The encoded body bytes for this part.
-  final List<int> bytes;
+  required final List<int> bytes,
 
   /// The media type emitted for this part.
-  final String contentType;
-
-  /// The optional uploaded filename.
-  final String? filename;
+  required final String contentType,
 
   /// Additional headers emitted for this part.
-  final Map<String, String> headers;
+  required final Map<String, String> headers,
+
+  /// The optional uploaded filename.
+  final String? filename,
+}) {
+  factory({
+    required String name,
+    required List<int> bytes,
+    required String contentType,
+    String? filename,
+    Map<String, String> headers = const {},
+  }) => TonikMultipartPart._(
+    name: name,
+    bytes: List.unmodifiable(bytes),
+    contentType: contentType,
+    filename: filename,
+    headers: Map.unmodifiable(headers),
+  );
 }
 
 /// A transport-neutral, fully encoded multipart request body.
 @immutable
-final class TonikMultipartBody {
-  /// Creates a multipart body while preserving part order and duplicate names.
-  TonikMultipartBody(List<TonikMultipartPart> parts, {String? boundary})
-    : parts = List.unmodifiable(parts),
-      boundary = boundary ?? _newBoundary() {
-    _validateBoundary(this.boundary);
+final class TonikMultipartBody._(
+  /// The ordered multipart parts.
+  final List<TonikMultipartPart> parts, {
+
+  /// The boundary separating the encoded parts.
+  required final String boundary,
+}) {
+  new(List<TonikMultipartPart> parts, {String? boundary})
+    : this._(List.unmodifiable(parts), boundary: boundary ?? _newBoundary());
+
+  this {
+    _validateBoundary(boundary);
   }
 
   static final Random _random = Random();
   static const _boundaryCharacters =
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-  /// The ordered multipart parts.
-  final List<TonikMultipartPart> parts;
-
-  /// The boundary separating the encoded parts.
-  final String boundary;
 
   /// The request Content-Type value, including [boundary].
   String get contentType => 'multipart/form-data; boundary=$boundary';

@@ -2,18 +2,13 @@ import 'package:meta/meta.dart';
 
 /// Configuration for enum generation.
 @immutable
-class EnumConfig {
-  const EnumConfig({
-    this.generateUnknownCase = false,
-    this.unknownCaseName = 'unknown',
-  });
-
+class const EnumConfig({
   /// Whether to generate an unknown case for forward compatibility.
-  final bool generateUnknownCase;
+  final bool generateUnknownCase = false,
 
   /// Name for the unknown case.
-  final String unknownCaseName;
-
+  final String unknownCaseName = 'unknown',
+}) {
   @override
   String toString() =>
       'EnumConfig{generateUnknownCase: $generateUnknownCase, '

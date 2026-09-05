@@ -24,11 +24,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'SimpleModel',
-              )
-              as ClassModel?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'SimpleModel',
+      ) as ClassModel?;
 
       expect(model, isNotNull);
       expect(model!.nameOverride, 'CustomName');
@@ -52,11 +50,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'SimpleModel',
-              )
-              as ClassModel?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'SimpleModel',
+      ) as ClassModel?;
 
       expect(model, isNotNull);
       expect(model!.nameOverride, isNull);
@@ -80,11 +76,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'SimpleModel',
-              )
-              as ClassModel?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'SimpleModel',
+      ) as ClassModel?;
 
       expect(model, isNotNull);
 
@@ -113,11 +107,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'SimpleModel',
-              )
-              as ClassModel?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'SimpleModel',
+      ) as ClassModel?;
 
       expect(model, isNotNull);
 
@@ -147,11 +139,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'Status',
-              )
-              as EnumModel<String>?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Status',
+      ) as EnumModel<String>?;
 
       expect(model, isNotNull);
       expect(model!.values.length, 3);
@@ -191,11 +181,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'Status',
-              )
-              as EnumModel<String>?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Status',
+      ) as EnumModel<String>?;
 
       expect(model, isNotNull);
       expect(model!.values.length, 2);
@@ -222,11 +210,9 @@ void main() {
       };
 
       final document = Importer().import(spec);
-      final model =
-          document.models.firstWhereOrNull(
-                (m) => m is NamedModel && m.name == 'Status',
-              )
-              as EnumModel<String>?;
+      final model = document.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Status',
+      ) as EnumModel<String>?;
 
       expect(model, isNotNull);
       expect(model!.values.length, 3);

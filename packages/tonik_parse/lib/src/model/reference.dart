@@ -7,10 +7,8 @@ import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/security_scheme.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
-sealed class ReferenceWrapper<T> {
-  ReferenceWrapper();
-
-  factory ReferenceWrapper.fromJson(Object? json) {
+sealed class ReferenceWrapper<T>() {
+  factory fromJson(Object? json) {
     const referenceKey = r'$ref';
 
     final map = json! as Map<String, dynamic>;
@@ -44,23 +42,17 @@ sealed class ReferenceWrapper<T> {
   }
 }
 
-class Reference<T> extends ReferenceWrapper<T> {
-  Reference(this.ref, {this.description, this.summary});
-
-  final String ref;
-  final String? description;
-  final String? summary;
-
+class Reference<T>(
+  final String ref, {
+  final String? description,
+  final String? summary,
+}) extends ReferenceWrapper<T> {
   @override
   String toString() =>
       'Reference{ref: $ref, description: $description, summary: $summary}';
 }
 
-class InlinedObject<T> extends ReferenceWrapper<T> {
-  InlinedObject(this.object);
-
-  final T object;
-
+class InlinedObject<T>(final T object) extends ReferenceWrapper<T> {
   @override
   String toString() => 'InlinedObject{object: $object}';
 }

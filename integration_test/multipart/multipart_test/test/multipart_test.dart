@@ -148,9 +148,8 @@ void main() {
           ),
         );
 
-        final part = MultipartWire(
-          await server.takeRequest(),
-        ).single('categories');
+        final part = MultipartWire(await server.takeRequest())
+            .single('categories');
         expect(part.contentType, startsWith('application/json'));
         expect(jsonDecode(part.bodyText), ['science & tech', 'arts & crafts']);
         expect(part.bodyText, isNot(contains('%26')));
@@ -229,9 +228,8 @@ void main() {
         TonikFileBytes(Uint8List.fromList([7, 8, 9]), fileName: 'three.bin'),
       ];
 
-      await _rawApi(
-        server,
-      ).postMultipleFiles(body: MultipleFilesForm(files: files));
+      await _rawApi(server)
+          .postMultipleFiles(body: MultipleFilesForm(files: files));
 
       final parts = MultipartWire(await server.takeRequest()).named('files');
       expect(parts.map((part) => part.filename), [
@@ -521,9 +519,8 @@ void main() {
         await _rawApi(multipartServer).postLatin1Multipart(
           body: const Latin1MultipartForm(message: 'Grüße'),
         );
-        final part = MultipartWire(
-          await multipartServer.takeRequest(),
-        ).single('message');
+        final part = MultipartWire(await multipartServer.takeRequest())
+            .single('message');
 
         expect(part.bodyBytes, [0x47, 0x72, 0xFC, 0xDF, 0x65]);
         expect(part.contentType, 'text/plain; charset=iso-8859-1');

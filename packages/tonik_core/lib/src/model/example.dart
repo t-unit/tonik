@@ -2,19 +2,12 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class Example {
-  const Example({
-    required this.name,
-    required this.summary,
-    required this.description,
-    required this.value,
-  });
-
-  final String? name;
-  final String? summary;
-  final String? description;
-  final Object? value;
-
+class const Example({
+  required final String? name,
+  required final String? summary,
+  required final String? description,
+  required final Object? value,
+}) {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

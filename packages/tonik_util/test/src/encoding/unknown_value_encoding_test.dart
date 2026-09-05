@@ -2,11 +2,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-class _TestEncodable implements JsonEncodable {
-  const _TestEncodable(this.name);
-
-  final String name;
-
+class const _TestEncodable(final String name) implements JsonEncodable {
   @override
   Object? toJson() => {'name': name};
 }

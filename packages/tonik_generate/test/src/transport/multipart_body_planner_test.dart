@@ -21,9 +21,8 @@ void main() {
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
           buildHttpMultipartBodyStatements(
-            const MultipartBodyPlanner(
-              backend: TransportBackend.http,
-            ).plan(content, bodyAccessor: 'body', isRequired: true),
+            const MultipartBodyPlanner(backend: TransportBackend.http)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           ),
         ),
     );

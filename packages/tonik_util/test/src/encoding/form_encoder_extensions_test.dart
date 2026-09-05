@@ -246,9 +246,8 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: '0')],
       );
       expect(
-        BigDecimal.parse(
-          '-42.5',
-        ).toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
+        BigDecimal.parse('-42.5')
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: 'p', value: '-42.5')],
       );
     });
@@ -481,9 +480,8 @@ void main() {
 
     test('explode=true encodes an empty key to an empty name', () {
       expect(
-        {
-          '': 'v',
-        }.toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
+        {'': 'v'}
+            .toForm('p', explode: true, allowEmpty: true, textEncoding: utf8),
         const <ParameterEntry>[(name: '', value: 'v')],
       );
     });

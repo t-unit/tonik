@@ -119,9 +119,8 @@ void main() {
     test('runtime-fallback routing log fires exactly once across two '
         'forOperation calls — pre-cache behaviour would have logged twice', () {
       final logs = <LogRecord>[];
-      final sub = Logger(
-        'OperationParameterDefaults',
-      ).onRecord.listen(logs.add);
+      final sub = Logger('OperationParameterDefaults').onRecord
+          .listen(logs.add);
       addTearDown(sub.cancel);
 
       final op = makeOperation(id: 'listSince', path: '/list');

@@ -31,9 +31,7 @@ import 'package:tonik_generate/src/transport/transport_backend_generator_factory
 import 'package:tonik_generate/src/util/model_worker_pool.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
-class Generator {
-  const Generator();
-
+class const Generator() {
   /// Below this model count, isolate setup outweighs the parallel speedup.
   static const int parallelThreshold = 200;
 

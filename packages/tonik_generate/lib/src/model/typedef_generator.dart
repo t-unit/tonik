@@ -12,17 +12,11 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// A generator for creating Dart typedef files from
 /// alias and list model definitions.
 @immutable
-class TypedefGenerator {
-  const TypedefGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const TypedefGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generateAlias(AliasModel model) =>
       _generateFile(generateAliasTypedef(model));
 

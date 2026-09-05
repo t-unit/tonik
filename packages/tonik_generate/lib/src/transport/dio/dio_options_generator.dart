@@ -4,17 +4,11 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/request_headers_generator.dart';
 
 /// Generator for creating Dio options methods for operations.
-class DioOptionsGenerator {
-  const DioOptionsGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const DioOptionsGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   Method generateOptionsMethod(
     Operation operation,
     List<({String normalizedName, RequestHeaderObject parameter})> headers,

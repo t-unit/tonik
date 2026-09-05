@@ -11,20 +11,16 @@ import 'package:test/test.dart';
 const _fastStartJvmArgs = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
 
 /// A request observed by Imposter at the HTTP server boundary.
-final class RecordedRequest {
-  const RecordedRequest(this.uri, this.method, this.headers, this.body);
-
-  final Uri uri;
-  final String method;
-  final Map<String, String> headers;
-  final String? body;
-}
+final class const RecordedRequest(
+  final Uri uri,
+  final String method,
+  final Map<String, String> headers,
+  final String? body,
+);
 
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
-class ImposterServer {
-  ImposterServer();
-
+class ImposterServer() {
   Process? _process;
   int _port = 0;
   Completer<void> _readyCompleter = Completer<void>();

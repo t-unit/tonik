@@ -214,11 +214,9 @@ void main() {
           },
         });
 
-    RequestContent contentNamed(String name) =>
-        (api.requestBodies.singleWhere((body) => body.name == name)
-                as RequestBodyObject)
-            .content
-            .single;
+    RequestContent contentNamed(String name) => (api.requestBodies.singleWhere(
+      (body) => body.name == name,
+    ) as RequestBodyObject).content.single;
 
     final expectedBodies = <String, TextEncoding>{
       'DefaultUtf8': TextEncoding.utf8,
@@ -662,9 +660,8 @@ void main() {
         },
       };
 
-      final api = Importer(
-        contentTypes: {'application/pdf': ContentType.bytes},
-      ).import(fileContentWithCustom);
+      final api = Importer(contentTypes: {'application/pdf': ContentType.bytes})
+          .import(fileContentWithCustom);
       final customBody = api.requestBodies.firstWhereOrNull(
         (r) => r.name == 'CustomBody',
       );

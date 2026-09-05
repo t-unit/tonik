@@ -146,12 +146,9 @@ void main() {
 
     test('inline oneOf property with null member is folded', () {
       final api = Importer().import(fileContent);
-      final holder =
-          api.models.firstWhere(
-                (m) =>
-                    m is NamedModel && m.name == 'HolderWithInlineComposites',
-              )
-              as ClassModel;
+      final holder = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'HolderWithInlineComposites',
+      ) as ClassModel;
 
       final property = holder.properties.firstWhere(
         (p) => p.name == 'oneOfValue',
@@ -185,12 +182,9 @@ void main() {
 
     test('inline anyOf property with null member is folded', () {
       final api = Importer().import(fileContent);
-      final holder =
-          api.models.firstWhere(
-                (m) =>
-                    m is NamedModel && m.name == 'HolderWithInlineComposites',
-              )
-              as ClassModel;
+      final holder = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'HolderWithInlineComposites',
+      ) as ClassModel;
 
       final property = holder.properties.firstWhere(
         (p) => p.name == 'anyOfValue',

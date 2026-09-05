@@ -12,24 +12,16 @@ import 'package:tonik_parse/src/request_parameter_importer.dart';
 import 'package:tonik_parse/src/response_importer.dart';
 import 'package:tonik_parse/src/security_scheme_importer.dart';
 
-class OperationImporter {
-  OperationImporter({
-    required this.openApiObject,
-    required this.parameterImporter,
-    required this.responseImporter,
-    required this.requestBodyImporter,
-    required this.securitySchemeImporter,
-  });
-
-  final RequestParameterImporter parameterImporter;
-  final ResponseImporter responseImporter;
-  final RequestBodyImporter requestBodyImporter;
-  final SecuritySchemeImporter securitySchemeImporter;
-
+class OperationImporter({
+  required final OpenApiObject openApiObject,
+  required final RequestParameterImporter parameterImporter,
+  required final ResponseImporter responseImporter,
+  required final RequestBodyImporter requestBodyImporter,
+  required final SecuritySchemeImporter securitySchemeImporter,
+}) {
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['paths']);
 
-  final OpenApiObject openApiObject;
   final log = Logger('OperationImporter');
 
   late Set<core.Operation> operations;

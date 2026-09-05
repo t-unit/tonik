@@ -53,7 +53,7 @@ name: $package
 description: Generated API client for ${apiDocument.title}
 version: $version
 environment:
-  sdk: '>=3.10.0 <4.0.0'
+  sdk: '>=3.13.0 <4.0.0'
 
 dependencies:
   big_decimal: ^0.7.0

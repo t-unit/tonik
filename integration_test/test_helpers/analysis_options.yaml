@@ -2,3 +2,4 @@ linter:
   rules:
     # Allow print statements in test helper utilities for diagnostic output
     avoid_print: false
+    use_primary_constructors: true

@@ -3,17 +3,13 @@ import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding style supported for header parameters.
-enum HeaderParameterEncoding {
+enum HeaderParameterEncoding() {
   /// Comma-separated values. The only style for headers.
   /// Example: X-MyHeader: 3,4,5
   simple,
 }
 
-sealed class RequestHeader {
-  const RequestHeader({required this.context});
-
-  final Context context;
-
+sealed class const RequestHeader({required final Context context}) {
   /// The description of the header.
   /// For aliases, this may override the referenced header's description.
   String? get description;
@@ -46,20 +42,12 @@ sealed class RequestHeader {
 }
 
 @immutable
-class RequestHeaderAlias extends RequestHeader {
-  const RequestHeaderAlias({
-    required this.name,
-    required this.header,
-    required super.context,
-    this.description,
-  });
-
-  final String name;
-  final RequestHeader header;
-
-  @override
-  final String? description;
-
+class const RequestHeaderAlias({
+  required final String name,
+  required final RequestHeader header,
+  required super.context,
+  @override final String? description,
+}) extends RequestHeader {
   @override
   String toString() =>
       'RequestHeaderAlias{name: $name, header: $header, '
@@ -79,42 +67,23 @@ class RequestHeaderAlias extends RequestHeader {
   int get hashCode => Object.hash(name, header, description, context);
 }
 
-class RequestHeaderObject extends RequestHeader {
-  RequestHeaderObject({
-    required this.name,
-    required this.rawName,
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.allowEmptyValue,
-    required this.explode,
-    required this.model,
-    required this.encoding,
-    required super.context,
-    required this.examples,
-    required this.defaultValue,
-    this.nameOverride,
-  });
-
-  final String? name;
+class RequestHeaderObject({
+  required final String? name,
 
   /// The name used inside the HTTP request to identify the header.
-  final String rawName;
-
-  String? nameOverride;
-
-  @override
-  String? description;
-  bool isRequired;
-  bool isDeprecated;
-  bool allowEmptyValue;
-  bool explode;
-  Model model;
-  HeaderParameterEncoding encoding;
-  List<Example> examples;
-
-  Object? defaultValue;
-
+  required final String rawName,
+  @override required var String? description,
+  required var bool isRequired,
+  required var bool isDeprecated,
+  required var bool allowEmptyValue,
+  required var bool explode,
+  required var Model model,
+  required var HeaderParameterEncoding encoding,
+  required super.context,
+  required var List<Example> examples,
+  required var Object? defaultValue,
+  var String? nameOverride,
+}) extends RequestHeader {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override

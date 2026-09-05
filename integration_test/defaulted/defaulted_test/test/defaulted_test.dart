@@ -395,9 +395,8 @@ void main() {
 
   group('API client methods with explicit args override defaults', () {
     test('explicit query/header/cookie values replace the defaults', () async {
-      await _api(
-        baseUrl,
-      ).listThings(region: 'eu', page: 7, retries: 9, tracking: true);
+      await _api(baseUrl)
+          .listThings(region: 'eu', page: 7, retries: 9, tracking: true);
 
       final recordedRequest = await imposterServer.takeRequest();
       final uri = recordedRequest.uri;
@@ -500,9 +499,8 @@ void main() {
     test(
       'explicit enum header value replaces the default on the wire',
       () async {
-        await _api(
-          baseUrl,
-        ).listSubscriptions(mode: SubscriptionsParametersModel2.manual);
+        await _api(baseUrl)
+            .listSubscriptions(mode: SubscriptionsParametersModel2.manual);
 
         final recordedRequest = await imposterServer.takeRequest();
         expect(recordedRequest.headers['x-mode'], 'manual');

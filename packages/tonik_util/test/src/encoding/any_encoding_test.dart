@@ -10,12 +10,10 @@ import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// A test class implementing ParameterEncodable.
-class TestEncodableModel implements ParameterEncodable {
-  const TestEncodableModel({required this.name, required this.value});
-
-  final String name;
-  final int value;
-
+class const TestEncodableModel({
+  required final String name,
+  required final int value,
+}) implements ParameterEncodable {
   @override
   String toMatrix(
     String paramName, {
@@ -104,14 +102,10 @@ class TestEncodableModel implements ParameterEncodable {
 }
 
 /// A test enum implementing UriEncodable (simulating a generated enum).
-enum TestUriEncodableEnum implements UriEncodable {
+enum TestUriEncodableEnum(final String rawValue) implements UriEncodable {
   value1('one'),
   value2('two'),
   valueWithSpace('has space');
-
-  const TestUriEncodableEnum(this.rawValue);
-
-  final String rawValue;
 
   @override
   String uriEncode({
@@ -132,11 +126,8 @@ enum TestUriEncodableEnum implements UriEncodable {
 /// A ParameterEncodable stub whose `toForm` actually branches on
 /// `useQueryComponent`. Used to verify the flag is forwarded by
 /// `encodeAnyToForm` instead of being silently dropped.
-class QueryComponentAwareEncodable implements ParameterEncodable {
-  const QueryComponentAwareEncodable(this.rawValue);
-
-  final String rawValue;
-
+class const QueryComponentAwareEncodable(final String rawValue)
+    implements ParameterEncodable {
   @override
   List<ParameterEntry> toForm(
     String paramName, {

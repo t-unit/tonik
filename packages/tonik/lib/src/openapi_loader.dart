@@ -68,11 +68,7 @@ dynamic _convertYamlNode(dynamic yaml) {
   return yaml;
 }
 
-class OpenApiLoaderException implements Exception {
-  OpenApiLoaderException(this.message);
-
-  final String message;
-
+class OpenApiLoaderException(final String message) implements Exception {
   @override
   String toString() => message;
 }

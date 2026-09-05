@@ -322,9 +322,8 @@ void main() {
         ),
       );
 
-      final plan = const OperationRequestPlanner(
-        backend: TransportBackend.http,
-      ).plan(operation, parameters);
+      final plan = const OperationRequestPlanner(backend: TransportBackend.http)
+          .plan(operation, parameters);
       final body = plan.body as MultipartBodyPlan;
       final method = Method(
         (builder) => builder

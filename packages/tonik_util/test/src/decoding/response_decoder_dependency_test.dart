@@ -11,9 +11,8 @@ void main() {
     final decoderSource = File.fromUri(
       libraryUri!.resolve('src/decoding/response_decoder.dart'),
     ).readAsStringSync();
-    final pubspec = File.fromUri(
-      libraryUri.resolve('../pubspec.yaml'),
-    ).readAsStringSync();
+    final pubspec = File.fromUri(libraryUri.resolve('../pubspec.yaml'))
+        .readAsStringSync();
     final workspacePubspec = File.fromUri(
       libraryUri.resolve('../../../pubspec.yaml'),
     ).readAsStringSync();

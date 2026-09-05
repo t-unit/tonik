@@ -12,22 +12,14 @@ import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
 
-class RequestBodyImporter {
-  RequestBodyImporter({
-    required this.openApiObject,
-    required this.modelImporter,
-    required this.contentTypes,
-    required this.responseHeaderImporter,
-    required this.exampleImporter,
-  });
-
-  final OpenApiObject openApiObject;
-  final ModelImporter modelImporter;
-  final ResponseHeaderImporter responseHeaderImporter;
-  final ExampleImporter exampleImporter;
+class RequestBodyImporter({
+  required final OpenApiObject openApiObject,
+  required final ModelImporter modelImporter,
+  required final Map<String, core.ContentType> contentTypes,
+  required final ResponseHeaderImporter responseHeaderImporter,
+  required final ExampleImporter exampleImporter,
+}) {
   final log = Logger('RequestBodyImporter');
-
-  final Map<String, core.ContentType> contentTypes;
 
   late Set<core.RequestBody> requestBodies;
 
