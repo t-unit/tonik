@@ -11,20 +11,16 @@ import 'package:test/test.dart';
 const _fastStartJvmArgs = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
 
 /// A request observed by Imposter at the HTTP server boundary.
-final class RecordedRequest {
-  const RecordedRequest(this.uri, this.method, this.headers, this.body);
-
-  final Uri uri;
-  final String method;
-  final Map<String, String> headers;
-  final String? body;
-}
+final class const RecordedRequest(
+  final Uri uri,
+  final String method,
+  final Map<String, String> headers,
+  final String? body,
+);
 
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
-class ImposterServer {
-  ImposterServer();
-
+class ImposterServer() {
   Process? _process;
   int _port = 0;
   Completer<void> _readyCompleter = Completer<void>();
@@ -62,7 +58,9 @@ class ImposterServer {
       final decoded = jsonDecode(payload);
       if (decoded is! Map<String, dynamic>) {
         throw FormatException(
-            'Recorded request is not a JSON object.', payload);
+          'Recorded request is not a JSON object.',
+          payload,
+        );
       }
       final uri = decoded['uri'];
       final method = decoded['method'];
@@ -177,10 +175,7 @@ class ImposterServer {
         '--plugin',
         'rest',
       ],
-      environment: {
-        ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'INFO',
-      },
+      environment: {...Platform.environment, 'IMPOSTER_LOG_LEVEL': 'INFO'},
     );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {

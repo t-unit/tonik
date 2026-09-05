@@ -6,31 +6,22 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 /// The raw request body and transport metadata received by a local HTTP server.
-final class RawRequest {
-  const RawRequest({
-    required this.uri,
-    required this.method,
-    required this.headers,
-    required this.bodyBytes,
-  });
-
-  final Uri uri;
-  final String method;
-  final Map<String, List<String>> headers;
-  final Uint8List bodyBytes;
-
+final class const RawRequest({
+  required final Uri uri,
+  required final String method,
+  required final Map<String, List<String>> headers,
+  required final Uint8List bodyBytes,
+}) {
   String? header(String name) => headers[name.toLowerCase()]?.join(',');
 
   String get bodyText => latin1.decode(bodyBytes);
 }
 
 /// A one-request HTTP server for assertions that require raw body bytes.
-final class RawRequestServer {
-  RawRequestServer._(this._server, this._request);
-
-  final HttpServer _server;
-  final Future<RawRequest> _request;
-
+final class RawRequestServer._(
+  final HttpServer _server,
+  final Future<RawRequest> _request,
+) {
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
 
   static Future<RawRequestServer> start({
