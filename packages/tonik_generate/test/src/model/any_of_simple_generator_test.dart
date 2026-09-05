@@ -86,30 +86,33 @@ void main() {
 
         const expectedMethod = '''
           factory Flexible.fromSimple(String? value, {required bool explode}) {
-            String? string;
-            try {
-              string = value.decodeSimpleString(context: r'Flexible');
-            } on Object catch (_) {
-              string = null;
-            }
-            int? int;
-            try {
-              int = value.decodeSimpleInt(context: r'Flexible');
-            } on Object catch (_) {
-              int = null;
-            }
             User? user;
             try {
               user = User.fromSimple(value, explode: explode);
             } on Object catch (_) {
               user = null;
             }
-            if (string == null && int == null && user == null) {
+
+            int? int;
+            try {
+              int = value.decodeSimpleInt(context: r'Flexible');
+            } on Object catch (_) {
+              int = null;
+            }
+
+            String? string;
+            try {
+              string = value.decodeSimpleString(context: r'Flexible');
+            } on Object catch (_) {
+              string = null;
+            }
+
+            if (user == null && int == null && string == null) {
               throw SimpleDecodingException(
                 r'Invalid simple value for Flexible: all variants failed to decode',
               );
             }
-            return Flexible(string: string, int: int, user: user);
+            return Flexible(user: user, int: int, string: string);
           }
         ''';
 
@@ -377,13 +380,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           bool literal = false,
         }) {
           final _$values = <String>{};
-          if (string != null) {
-            final _$stringSimple = string!.toSimple(
-              explode: explode,
-              allowEmpty: allowEmpty,
-              literal: literal,
-            );
-            _$values.add(_$stringSimple);
+          if (bool != null) {
+            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+            _$values.add(_$boolSimple);
           }
           if (int != null) {
             final _$intSimple = int!.toSimple(
@@ -393,13 +392,9 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             );
             _$values.add(_$intSimple);
           }
-          if (bool != null) {
-            final _$boolSimple = bool!.toSimple(
-              explode: explode,
-              allowEmpty: allowEmpty,
-              literal: literal,
-            );
-            _$values.add(_$boolSimple);
+          if (string != null) {
+            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+            _$values.add(_$stringSimple);
           }
           if (_$values.isEmpty) return '';
           return _$values.first;
@@ -452,8 +447,54 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (user != null) { final _$userSimple = user!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$userSimple); _$discriminatorValue ??= r'user'; } if (string != null) { final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); _$values.add(_$stringSimple); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); } }
-''';
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, PropertyValue>>[];
+            String? _$discriminatorValue;
+            if (user != null) {
+              final _$userSimple =
+                  user!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$userSimple);
+              _$discriminatorValue ??= r'user';
+            }
+            if (string != null) {
+              final _$stringSimple = string!.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+              _$values.add(_$stringSimple);
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              return _$values.first;
+            } else {
+              final _$map = <String, PropertyValue>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              final _$discValue = _$discriminatorValue;
+              if (_$discValue != null) {
+                _$map.putIfAbsent(r'disc', () =>
+                    PropertyValue.scalar(_$discValue));
+              }
+              return _$map.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+            }
+          }
+        ''';
 
         expect(
           collapseWhitespace(generated),

@@ -45,20 +45,13 @@ jobs:
             ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
-      - name: Cache Imposter JAR
-        uses: actions/cache@v6
-        with:
-          path: integration_test/imposter.jar
-          key: imposter-4.6.8
-          restore-keys: imposter-
-
       - name: Install dependencies
         run: |
           dart pub global activate melos
           melos bootstrap
 
       - name: Generate integration test code (${{ matrix.backend }})
-        run: ./scripts/setup_integration_tests.sh --backend "${{ matrix.backend }}"
+        run: ./scripts/setup_integration_tests.sh --backend "${{ matrix.backend }}" --skip-imposter
         shell: bash
 
       - name: Archive generated code (${{ matrix.backend }})
@@ -73,23 +66,14 @@ jobs:
           compression-level: 0
           retention-days: 1
 
-      - name: Upload Imposter JAR (${{ matrix.backend }})
-        uses: actions/upload-artifact@v7
-        with:
-          name: imposter-jar-${{ matrix.backend }}-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test/imposter.jar
-          compression-level: 0
-          retention-days: 1
-
   analyze-generated:
-    name: Analyze (${{ matrix.backend }}, shard ${{ matrix.shard }})
+    name: Analyze (${{ matrix.backend }})
     needs: generate-integration
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         backend: [dio, http]
-        shard: [0, 1, 2]
 
     steps:
       - uses: actions/checkout@v7
@@ -107,12 +91,12 @@ jobs:
       - name: Extract generated code (${{ matrix.backend }})
         run: tar -xzf generated-integration-code.tar.gz
 
-      - name: Analyze packages (${{ matrix.backend }}, shard ${{ matrix.shard }})
+      - name: Analyze packages (${{ matrix.backend }})
         shell: bash
-        run: ./scripts/analyze_integration_packages.sh "${{ matrix.backend }}" "${{ matrix.shard }}"
+        run: ./scripts/analyze_integration_packages.sh "${{ matrix.backend }}"
 
   test:
-    name: Test (${{ matrix.backend }}, ${{ matrix.os }}, Dart ${{ matrix.sdk }}, shard ${{ matrix.shard }})
+    name: Test (${{ matrix.backend }}, ${{ matrix.os }}, Dart ${{ matrix.sdk }})
     needs: generate-integration
     runs-on: ${{ matrix.os }}
     strategy:
@@ -121,7 +105,6 @@ jobs:
         backend: [dio, http]
         os: [ubuntu-latest, macos-latest, windows-latest]
         sdk: [stable, beta]
-        shard: [0, 1, 2]
         exclude:
           - os: macos-latest
             sdk: beta
@@ -146,10 +129,8 @@ jobs:
         shell: bash
 
       - name: Download Imposter JAR (${{ matrix.backend }})
-        uses: actions/download-artifact@v8
-        with:
-          name: imposter-jar-${{ matrix.backend }}-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test
+        run: bash ./scripts/setup_imposter.sh
+        shell: bash
 
       - name: Cache Dart pub dependencies
         uses: actions/cache@v6
@@ -161,9 +142,9 @@ jobs:
             ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
-      - name: Run integration tests (${{ matrix.backend }}, shard ${{ matrix.shard }})
+      - name: Run integration tests (${{ matrix.backend }})
         shell: bash
-        run: ./scripts/test_integration_packages.sh "${{ matrix.backend }}" "${{ matrix.shard }}"
+        run: ./scripts/test_integration_packages.sh "${{ matrix.backend }}"
 
   dependencies:
     name: Dependencies (${{ matrix.backend }}, ubuntu-latest, Dart stable)

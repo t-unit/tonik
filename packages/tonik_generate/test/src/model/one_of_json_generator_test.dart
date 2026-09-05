@@ -219,10 +219,10 @@ void main() {
               return _$result;
             }
             try {
-              return ResultSuccess(Success.fromJson(json));
+              return ResultError(Error.fromJson(json));
             } on Object catch (_) {}
             try {
-              return ResultError(Error.fromJson(json));
+              return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
             throw JsonDecodingException(r'Invalid JSON for Result');
           }
@@ -350,15 +350,15 @@ void main() {
               return _$result;
             }
             try {
+              return ResultError(Error.fromJson(json));
+            } on Object catch (_) {}
+            try {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
             try {
               return ResultString(json.decodeJsonString(context: r'Result'));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
-            try {
-              return ResultError(Error.fromJson(json));
-            } on Object catch (_) {}
             throw JsonDecodingException(r'Invalid JSON for Result');
           }
 ''';

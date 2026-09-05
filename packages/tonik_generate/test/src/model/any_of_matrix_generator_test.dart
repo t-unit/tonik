@@ -88,13 +88,13 @@ void main() {
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (string != null) {
-            final _$stringMatrix = string!.toMatrix(
+          if (bool != null) {
+            final _$boolMatrix = bool!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            _$values.add(_$stringMatrix);
+            _$values.add(_$boolMatrix);
           }
           if (int != null) {
             final _$intMatrix = int!.toMatrix(
@@ -104,13 +104,13 @@ void main() {
             );
             _$values.add(_$intMatrix);
           }
-          if (bool != null) {
-            final _$boolMatrix = bool!.toMatrix(
+          if (string != null) {
+            final _$stringMatrix = string!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            _$values.add(_$boolMatrix);
+            _$values.add(_$stringMatrix);
           }
           if (_$values.isEmpty) return '';
           return _$values.first;
@@ -226,7 +226,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (data != null) { final _$dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataMatrix); _$discriminatorValue ??= r'data'; } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { final _$dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataMatrix); _$discriminatorValue ??= r'data'; } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
 ''';
 
         expect(
@@ -358,14 +358,6 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (oneOfType != null) {
-            final _$oneOfTypeMatrix = oneOfType!.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            _$values.add(_$oneOfTypeMatrix);
-          }
           if (bool != null) {
             final _$boolMatrix = bool!.toMatrix(
               paramName,
@@ -373,6 +365,14 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
               allowEmpty: allowEmpty,
             );
             _$values.add(_$boolMatrix);
+          }
+          if (oneOfType != null) {
+            final _$oneOfTypeMatrix = oneOfType!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$oneOfTypeMatrix);
           }
           if (_$values.isEmpty) return '';
           return _$values.first;
@@ -432,8 +432,65 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final generated = format(klass.accept(emitter).toString());
 
       const expected = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: _$values.add( innerChoice!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), ); break; case EncodingShape.complex: final _$innerChoiceMatrix = innerChoice!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerChoiceMatrix); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
-''';
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, PropertyValue>>[];
+          if (innerChoice != null) {
+            switch (innerChoice!.currentEncodingShape) {
+              case EncodingShape.simple:
+                _$values.add(
+                  innerChoice!.toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                );
+                break;
+              case EncodingShape.complex:
+                final _$innerChoiceMatrix = innerChoice!.parameterProperties(
+                  allowEmpty: allowEmpty,
+                );
+                _$mapValues.add(_$innerChoiceMatrix);
+                break;
+              case EncodingShape.mixed:
+                throw EncodingException(
+                  'Cannot encode field with mixed encoding shape',
+                );
+            }
+          }
+          if (string != null) {
+            final _$stringMatrix = string!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$stringMatrix);
+          }
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+            throw EncodingException(
+              r'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values',
+            );
+          }
+          if (_$values.isNotEmpty) {
+            return _$values.first;
+          } else {
+            final _$map = <String, PropertyValue>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
+            }
+            return _$map.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+          }
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
@@ -470,14 +527,6 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (string != null) {
-              final _$stringMatrix = string!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              _$values.add(_$stringMatrix);
-            }
             if (list != null) {
               final _$listMatrix = list!.toMatrix(
                 paramName,
@@ -485,6 +534,14 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                 allowEmpty: allowEmpty,
               );
               _$values.add(_$listMatrix);
+            }
+            if (string != null) {
+              final _$stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$stringMatrix);
             }
             if (_$values.isEmpty) return '';
             return _$values.first;
@@ -524,14 +581,6 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (string != null) {
-              final _$stringMatrix = string!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              _$values.add(_$stringMatrix);
-            }
             if (list != null) {
               final _$listMatrix = list!
                   .map<String>(
@@ -545,6 +594,14 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                     alreadyEncoded: true,
                   );
               _$values.add(_$listMatrix);
+            }
+            if (string != null) {
+              final _$stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$stringMatrix);
             }
             if (_$values.isEmpty) return '';
             return _$values.first;
@@ -589,14 +646,6 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              _$values.add(_$listMatrix);
-            }
             if (list2 != null) {
               final _$list2Matrix = list2!
                   .map<String>(
@@ -610,6 +659,14 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                     alreadyEncoded: true,
                   );
               _$values.add(_$list2Matrix);
+            }
+            if (list != null) {
+              final _$listMatrix = list!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$listMatrix);
             }
             if (_$values.isEmpty) return '';
             return _$values.first;

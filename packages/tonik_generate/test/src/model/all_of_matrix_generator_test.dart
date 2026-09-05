@@ -145,18 +145,18 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          final _$stringMatrix = string.toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-          );
-          _$values.add(_$stringMatrix);
           final _$intMatrix = int.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
           _$values.add(_$intMatrix);
+          final _$stringMatrix = string.toMatrix(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          _$values.add(_$stringMatrix);
           if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf matrix encoding for AllOfPrimitive: all values must encode to the same result',
@@ -666,12 +666,6 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            final _$listMatrix = list.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            _$values.add(_$listMatrix);
             final _$list2Matrix = list2
                 .map<String>(
                   (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
@@ -684,6 +678,12 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   alreadyEncoded: true,
                 );
             _$values.add(_$list2Matrix);
+            final _$listMatrix = list.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$listMatrix);
             if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',

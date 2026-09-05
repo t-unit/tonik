@@ -598,6 +598,67 @@ void main() {
       expect(keys[1], 'IntegerModel');
       expect(keys[2], 'StringModel');
     });
+
+    test(
+      'keeps semantic sort order independent of compound declaration order',
+      () {
+        final sharedContext = context.push('Test');
+        final stringThenInt = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: StringModel(context: sharedContext),
+            ),
+            (
+              discriminatorValue: null,
+              model: IntegerModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+        final intThenString = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: IntegerModel(context: sharedContext),
+            ),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+        final numberOnly = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: NumberModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+
+        expect(
+          sorter.stableKeyOf(stringThenInt),
+          isNot(sorter.stableKeyOf(intThenString)),
+        );
+        expect(
+          sorter.sortModels([stringThenInt, numberOnly]).first,
+          same(stringThenInt),
+        );
+        expect(
+          sorter.sortModels([intThenString, numberOnly]).first,
+          same(intThenString),
+        );
+      },
+    );
   });
 
   group('key size bounds', () {

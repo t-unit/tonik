@@ -15,8 +15,8 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}/api/v1';
   });
 
-  DefaultApi buildBase64Api({required String responseStatus}) {
-    return DefaultApi(
+  Base64Api buildBase64Api({required String responseStatus}) {
+    return Base64Api(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: testServerConfig(

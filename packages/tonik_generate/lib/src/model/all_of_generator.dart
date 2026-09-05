@@ -141,6 +141,7 @@ class AllOfGenerator {
     }).toList();
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+    final semanticProperties = _semanticProperties(normalizedProperties);
     final properties = _buildPropertiesFromNormalized(
       normalizedProperties,
       model,
@@ -189,7 +190,7 @@ class AllOfGenerator {
               _buildFromValueConstructor(
                 isForm: false,
                 className: actualClassName,
-                normalizedProperties: normalizedProperties,
+                normalizedProperties: semanticProperties,
                 model: model,
               ),
             if (model.isWriteOnly)
@@ -198,7 +199,7 @@ class AllOfGenerator {
               _buildFromValueConstructor(
                 isForm: true,
                 className: actualClassName,
-                normalizedProperties: normalizedProperties,
+                normalizedProperties: semanticProperties,
                 model: model,
               ),
             if (model.isWriteOnly)
@@ -206,7 +207,7 @@ class AllOfGenerator {
             else
               _buildFromJsonConstructor(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
           ])
@@ -214,24 +215,24 @@ class AllOfGenerator {
             if (model.isReadOnly)
               buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
             else
-              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
+              _buildCurrentEncodingShapeGetter(model, semanticProperties),
             if (model.isReadOnly)
               buildReadOnlyToJsonMethod(encodingExceptionBody)
             else
-              _buildToJsonMethod(actualClassName, model, normalizedProperties),
+              _buildToJsonMethod(actualClassName, model, semanticProperties),
             if (model.isReadOnly)
               buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
             else
               _buildParameterPropertiesMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
               buildReadOnlyToSimpleMethod(encodingExceptionBody)
             else
               _buildToSimpleMethod(
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -239,7 +240,7 @@ class AllOfGenerator {
             else
               _buildToFormMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -247,7 +248,7 @@ class AllOfGenerator {
             else
               _buildToLabelMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -255,7 +256,7 @@ class AllOfGenerator {
             else
               _buildToMatrixMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -275,7 +276,7 @@ class AllOfGenerator {
             else
               _buildUriEncodeMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             generateEqualsMethod(
@@ -323,13 +324,13 @@ class AllOfGenerator {
     final sortedModels = stableModelSorter.sortModels(
       properties.map((property) => property.property.model),
     );
-    return sortedModels
-        .map(
-          (model) => properties.firstWhere(
-            (property) => identical(property.property.model, model),
-          ),
-        )
-        .toList();
+    final remaining = properties.toList();
+    return sortedModels.map((model) {
+      final index = remaining.indexWhere(
+        (property) => identical(property.property.model, model),
+      );
+      return remaining.removeAt(index);
+    }).toList();
   }
 
   List<Field> _buildFields(

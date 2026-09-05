@@ -14,17 +14,6 @@ validate_integration_backend() {
   fi
 }
 
-validate_integration_shard() {
-  local shard="$1"
-  case "$shard" in
-    0 | 1 | 2) ;;
-    *)
-      echo "Error: shard must be 0, 1, or 2." >&2
-      exit 64
-      ;;
-  esac
-}
-
 discover_integration_packages() {
   local backend="$1"
 

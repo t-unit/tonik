@@ -305,11 +305,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       const expectedMethod = '''
         factory Entity.fromSimple(String? value, {required bool explode}) {
           try {
-            return EntityPerson(Person.fromSimple(value, explode: explode));
+            return EntityCompany(Company.fromSimple(value, explode: explode));
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           try {
-            return EntityCompany(Company.fromSimple(value, explode: explode));
+            return EntityPerson(Person.fromSimple(value, explode: explode));
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid simple value for Entity');
@@ -322,7 +322,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       );
     });
 
-    test('fromSimple tries variants in declaration order (primitive-only)', () {
+    test('fromSimple tries primitive variants in semantic order', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
@@ -360,6 +360,47 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test(
+      'fromSimple keeps date-time ahead of a declared plain string',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: [
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: DateTimeModel(context: context),
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final baseClass = generator
+            .generateClasses(model)
+            .firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          factory Value.fromSimple(String? value, {required bool explode}) {
+            try {
+              return ValueDateTime(value.decodeSimpleDateTime(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return ValueString(value.decodeSimpleString(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException(r'Invalid simple value for Value');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
 
     test(
       'fromSimple with discriminator checks discriminator when explode is true',
@@ -438,11 +479,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               }
             }
             try {
-              return EntityPerson(Person.fromSimple(value, explode: explode));
+              return EntityCompany(Company.fromSimple(value, explode: explode));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return EntityCompany(Company.fromSimple(value, explode: explode));
+              return EntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Entity');
@@ -512,11 +553,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               }
             }
             try {
-              return MixedEntityPerson(Person.fromSimple(value, explode: explode));
+              return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
+              return MixedEntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
@@ -586,11 +627,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         const expectedMethod = '''
           factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
             try {
-              return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
+              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
+              return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');

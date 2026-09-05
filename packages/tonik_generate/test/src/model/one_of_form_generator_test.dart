@@ -331,11 +331,11 @@ void main() {
       const expectedMethod = '''
         factory Response.fromForm(String? value, {required bool explode}) {
           try {
-            return ResponseUser(User.fromForm(value, explode: explode));
+            return ResponseMsg(value.decodeFormString(context: r'Response'));
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           try {
-            return ResponseMsg(value.decodeFormString(context: r'Response'));
+            return ResponseUser(User.fromForm(value, explode: explode));
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid form value for Response');

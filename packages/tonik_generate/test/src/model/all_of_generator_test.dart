@@ -449,8 +449,8 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          _$shapes.add(value.currentEncodingShape);
           _$shapes.add(int.currentEncodingShape);
+          _$shapes.add(value.currentEncodingShape);
           if (_$shapes.length > 1) return EncodingShape.mixed;
           return _$shapes.first;
         }
@@ -868,8 +868,8 @@ void main() {
       const expectedFromJson = '''
           factory StringDecimalModel.fromJson(Object? json) {
             return StringDecimalModel(
-              string: json.decodeJsonString(context: r'StringDecimalModel'),
               bigDecimal: json.decodeJsonBigDecimal(context: r'StringDecimalModel'),
+              string: json.decodeJsonString(context: r'StringDecimalModel'),
             );
           }
         ''';
@@ -1073,9 +1073,9 @@ void main() {
         const expectedFromJson = '''
           factory NumberModel.fromJson(Object? json) {
             return NumberModel(
-              num: json.decodeJsonNum(context: r'NumberModel'),
               double: json.decodeJsonDouble(context: r'NumberModel'),
               int: json.decodeJsonInt(context: r'NumberModel'),
+              num: json.decodeJsonNum(context: r'NumberModel'),
             );
           }
         ''';
@@ -2975,16 +2975,6 @@ String toLabel({required bool explode, required bool allowEmpty}) {
             }
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
-            final _$stringForm = string.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            );
-            _$entryLists.add(_$stringForm);
-            _$values.add(_$stringForm.map((e) => e.value).join(','));
             if (status != null) {
               final _$statusForm = status!.toForm(
                 paramName,
@@ -2997,6 +2987,16 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               _$entryLists.add(_$statusForm);
               _$values.add(_$statusForm.map((e) => e.value).join(','));
             }
+            final _$stringForm = string.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
+            );
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
             if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
@@ -4922,6 +4922,8 @@ factory ExtendedItem.fromJson(Object? json) {
               );
             }
             final _$map = <String, Object?>{};
+            final _$mapJson = map;
+            _$map.addAll(_$mapJson);
             final _$statusJson = status.toJson();
             if (_$statusJson is! Map<String, Object?>) {
               throw EncodingException(
@@ -4929,8 +4931,6 @@ factory ExtendedItem.fromJson(Object? json) {
               );
             }
             _$map.addAll(_$statusJson);
-            final _$mapJson = map;
-            _$map.addAll(_$mapJson);
             return _$map;
           }
         ''';

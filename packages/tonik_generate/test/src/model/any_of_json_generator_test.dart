@@ -80,30 +80,33 @@ void main() {
 
         const expectedMethod = '''
         factory Flexible.fromJson(Object? json) {
-          String? string;
-          try {
-            string = json.decodeJsonString(context: r'Flexible');
-          } on Object catch (_) {
-            string = null;
-          }
-          int? int;
-          try {
-            int = json.decodeJsonInt(context: r'Flexible');
-          } on Object catch (_) {
-            int = null;
-          }
           User? user;
           try {
             user = User.fromJson(json);
           } on Object catch (_) {
             user = null;
           }
-          if (string == null && int == null && user == null) {
+
+          int? int;
+          try {
+            int = json.decodeJsonInt(context: r'Flexible');
+          } on Object catch (_) {
+            int = null;
+          }
+
+          String? string;
+          try {
+            string = json.decodeJsonString(context: r'Flexible');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          if (user == null && int == null && string == null) {
             throw JsonDecodingException(
               r'Invalid JSON for Flexible: all variants failed to decode',
             );
           }
-          return Flexible(string: string, int: int, user: user);
+          return Flexible(user: user, int: int, string: string);
         }
       ''';
 
@@ -369,12 +372,12 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-        if (string != null) {
-          final Object? _$stringJson = string!;
-          if (_$stringJson is Map<String, Object?>) {
-            _$mapValues.add(_$stringJson);
+        if (bool != null) {
+          final Object? _$boolJson = bool!;
+          if (_$boolJson is Map<String, Object?>) {
+            _$mapValues.add(_$boolJson);
           } else {
-            _$values.add(_$stringJson);
+            _$values.add(_$boolJson);
           }
         }
         if (int != null) {
@@ -385,12 +388,12 @@ void main() {
             _$values.add(_$intJson);
           }
         }
-        if (bool != null) {
-          final Object? _$boolJson = bool!;
-          if (_$boolJson is Map<String, Object?>) {
-            _$mapValues.add(_$boolJson);
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
           } else {
-            _$values.add(_$boolJson);
+            _$values.add(_$stringJson);
           }
         }
         if (_$values.isEmpty && _$mapValues.isEmpty) return null;
@@ -516,4 +519,72 @@ void main() {
       );
     },
   );
+
+  test('keeps date-time encoding ahead of a declared plain string', () {
+    final model = AnyOfModel(
+      isDeprecated: false,
+      name: 'Value',
+      models: [
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (
+          discriminatorValue: null,
+          model: DateTimeModel(context: context),
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+
+    final klass = generator.generateClass(model);
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+    final generated = format(klass.accept(emitter).toString());
+
+    const expectedMethod = r'''
+      Object? toJson() {
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        if (dateTime != null) {
+          final Object? _$dateTimeJson =
+              dateTime!.toTimeZonedIso8601String();
+          if (_$dateTimeJson is Map<String, Object?>) {
+            _$mapValues.add(_$dateTimeJson);
+          } else {
+            _$values.add(_$dateTimeJson);
+          }
+        }
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+          } else {
+            _$values.add(_$stringJson);
+          }
+        }
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+          throw EncodingException(
+            r'Mixed encoding not supported for Value: cannot encode both simple and complex values',
+          );
+        }
+        if (_$values.isNotEmpty) {
+          return _$values.first;
+        }
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
+          return _$map;
+        }
+        return null;
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedMethod)),
+    );
+  });
 }

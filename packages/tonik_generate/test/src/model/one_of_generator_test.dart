@@ -4204,10 +4204,10 @@ bool operator ==(Object other) {
                 context: r"Tree (at 'TreeOrClassA')",
               );
               try {
-                return TreeOrClassATree(_$decodeTree(json));
+                return TreeOrClassAClassA(ClassA.fromJson(json));
               } on Object catch (_) {}
               try {
-                return TreeOrClassAClassA(ClassA.fromJson(json));
+                return TreeOrClassATree(_$decodeTree(json));
               } on Object catch (_) {}
               throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
             }

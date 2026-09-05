@@ -348,10 +348,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    simpleModel.parameterProperties(allowEmpty: allowEmpty),
+    stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
+    simpleModel.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }

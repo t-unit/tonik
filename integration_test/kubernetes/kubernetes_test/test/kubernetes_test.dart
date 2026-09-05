@@ -13,8 +13,8 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  DefaultApi buildDefaultApi({required String responseStatus}) {
-    return DefaultApi(
+  CoreV1Api buildCoreApi({required String responseStatus}) {
+    return CoreV1Api(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: testServerConfig(
@@ -28,7 +28,7 @@ void main() {
 
   group('ListCoreV1Namespace', () {
     test('listCoreV1Namespace 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = buildCoreApi(responseStatus: '200');
 
       final result = await api.listCoreV1Namespace();
 
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('listCoreV1Namespace 401', () async {
-      final api = buildDefaultApi(responseStatus: '401');
+      final api = buildCoreApi(responseStatus: '401');
 
       final result = await api.listCoreV1Namespace();
 
@@ -64,7 +64,7 @@ void main() {
 
   group('ListCoreV1ConfigMapForAllNamespaces', () {
     test('listCoreV1ConfigMapForAllNamespaces 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = buildCoreApi(responseStatus: '200');
 
       final result = await api.listCoreV1ConfigMapForAllNamespaces();
 
@@ -85,7 +85,7 @@ void main() {
 
   group('ListCoreV1PodForAllNamespaces', () {
     test('listCoreV1PodForAllNamespaces 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = buildCoreApi(responseStatus: '200');
 
       final result = await api.listCoreV1PodForAllNamespaces();
 
@@ -106,7 +106,7 @@ void main() {
 
   group('ListCoreV1ServiceForAllNamespaces', () {
     test('listCoreV1ServiceForAllNamespaces 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = buildCoreApi(responseStatus: '200');
 
       final result = await api.listCoreV1ServiceForAllNamespaces();
 
@@ -127,7 +127,7 @@ void main() {
 
   group('ListCoreV1NamespacedConfigMap', () {
     test('listCoreV1NamespacedConfigMap 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = buildCoreApi(responseStatus: '200');
 
       final result = await api.listCoreV1NamespacedConfigMap(
         namespace: 'default',
@@ -146,7 +146,7 @@ void main() {
     });
 
     test('listCoreV1NamespacedConfigMap 401', () async {
-      final api = buildDefaultApi(responseStatus: '401');
+      final api = buildCoreApi(responseStatus: '401');
 
       final result = await api.listCoreV1NamespacedConfigMap(
         namespace: 'default',
