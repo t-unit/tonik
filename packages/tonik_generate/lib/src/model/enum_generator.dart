@@ -14,11 +14,7 @@ const _rawValueFieldName = r'_$rawValue';
 
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
-class EnumGenerator {
-  const EnumGenerator({required this.nameManager});
-
-  final NameManager nameManager;
-
+class const EnumGenerator({required final NameManager nameManager}) {
   ({String code, String filename}) generate<T>(EnumModel<T> model) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(
@@ -82,121 +78,100 @@ class EnumGenerator {
           )
         : enumName;
 
-    final enumValue = Enum(
-      (b) {
-        b
-          ..name = actualEnumName
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          )
-          ..implements.addAll([
-            refer('MatrixEncodable', 'package:tonik_util/tonik_util.dart'),
-            refer('LabelEncodable', 'package:tonik_util/tonik_util.dart'),
-            refer('SimpleEncodable', 'package:tonik_util/tonik_util.dart'),
-            refer('FormEncodable', 'package:tonik_util/tonik_util.dart'),
-            refer('JsonEncodable', 'package:tonik_util/tonik_util.dart'),
-            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
-          ]);
+    final enumValue = Enum((b) {
+      b
+        ..name = actualEnumName
+        ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
+        ..implements.addAll([
+          refer('MatrixEncodable', 'package:tonik_util/tonik_util.dart'),
+          refer('LabelEncodable', 'package:tonik_util/tonik_util.dart'),
+          refer('SimpleEncodable', 'package:tonik_util/tonik_util.dart'),
+          refer('FormEncodable', 'package:tonik_util/tonik_util.dart'),
+          refer('JsonEncodable', 'package:tonik_util/tonik_util.dart'),
+          refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+        ]);
 
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This enum is deprecated.'),
-            ]),
-          );
-        }
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This enum is deprecated.')]),
+        );
+      }
 
-        b
-          ..constructors.add(
-            Constructor(
-              (b) => b
-                ..constant = true
-                ..requiredParameters.add(
-                  Parameter(
-                    (b) => b
-                      ..name = _rawValueFieldName
-                      ..toThis = true,
-                  ),
+      b
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..constant = true
+              ..requiredParameters.add(
+                Parameter(
+                  (b) => b
+                    ..name = _rawValueFieldName
+                    ..toThis = true,
                 ),
-            ),
-          )
-          ..constructors.add(
-            _generateFromJsonConstructor<T>(
-              enumName,
-              actualEnumName,
-              model,
-              fallbackNormalizedName,
-            ),
-          )
-          ..constructors.add(
-            _generateFromSimpleConstructor<T>(enumName, actualEnumName),
-          )
-          ..constructors.add(
-            _generateFromFormConstructor<T>(enumName, actualEnumName),
-          )
-          ..methods.add(
-            _generateToJsonMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..methods.add(
-            Method(
-              (b) => b
-                ..name = 'currentEncodingShape'
-                ..type = MethodType.getter
-                ..returns = refer(
-                  'EncodingShape',
-                  'package:tonik_util/tonik_util.dart',
-                )
-                ..lambda = true
-                ..body = refer(
-                  'EncodingShape',
-                  'package:tonik_util/tonik_util.dart',
-                ).property('simple').code,
-            ),
-          )
-          ..methods.add(
-            _generateToSimpleMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..methods.add(
-            _generateToFormMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..methods.add(
-            _generateToLabelMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..methods.add(
-            _generateUriEncodeMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..methods.add(
-            _generateToMatrixMethod<T>(
-              actualEnumName,
-              fallbackNormalizedName,
-            ),
-          )
-          ..fields.add(
-            Field(
-              (b) => b
-                ..name = _rawValueFieldName
-                ..modifier = FieldModifier.final$
-                ..type = refer(T.toString(), 'dart:core'),
-            ),
-          )
-          ..values.addAll(enumValues);
-      },
-    );
+              ),
+          ),
+        )
+        ..constructors.add(
+          _generateFromJsonConstructor<T>(
+            enumName,
+            actualEnumName,
+            model,
+            fallbackNormalizedName,
+          ),
+        )
+        ..constructors.add(
+          _generateFromSimpleConstructor<T>(enumName, actualEnumName),
+        )
+        ..constructors.add(
+          _generateFromFormConstructor<T>(enumName, actualEnumName),
+        )
+        ..methods.add(
+          _generateToJsonMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..methods.add(
+          Method(
+            (b) => b
+              ..name = 'currentEncodingShape'
+              ..type = MethodType.getter
+              ..returns = refer(
+                'EncodingShape',
+                'package:tonik_util/tonik_util.dart',
+              )
+              ..lambda = true
+              ..body = refer(
+                'EncodingShape',
+                'package:tonik_util/tonik_util.dart',
+              ).property('simple').code,
+          ),
+        )
+        ..methods.add(
+          _generateToSimpleMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..methods.add(
+          _generateToFormMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..methods.add(
+          _generateToLabelMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..methods.add(
+          _generateUriEncodeMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..methods.add(
+          _generateToMatrixMethod<T>(actualEnumName, fallbackNormalizedName),
+        )
+        ..fields.add(
+          Field(
+            (b) => b
+              ..name = _rawValueFieldName
+              ..modifier = FieldModifier.final$
+              ..type = refer(T.toString(), 'dart:core'),
+          ),
+        )
+        ..values.addAll(enumValues);
+    });
 
     final typedefValue = model.isNullable
         ? TypeDef(
@@ -248,9 +223,9 @@ class EnumGenerator {
           refer(actualEnumName)
               .property('fromJson')
               .call([
-                refer(valueParam).property(decodeMethod).call([], {
-                  contextParam: refer(contextParam),
-                }, []),
+                refer(valueParam)
+                    .property(decodeMethod)
+                    .call([], {contextParam: refer(contextParam)}, []),
               ])
               .returned
               .statement,
@@ -297,9 +272,9 @@ class EnumGenerator {
           refer(actualEnumName)
               .property('fromJson')
               .call([
-                refer(valueParam).property(decodeMethod).call([], {
-                  contextParam: refer(contextParam),
-                }, []),
+                refer(valueParam)
+                    .property(decodeMethod)
+                    .call([], {contextParam: refer(contextParam)}, []),
               ])
               .returned
               .statement,
@@ -347,10 +322,11 @@ class EnumGenerator {
 
     final orElse = fallbackNormalizedName != null
         ? Method(
-            (mb) => mb
-              ..body = refer(
-                actualEnumName,
-              ).property(fallbackNormalizedName).code,
+            (mb) =>
+                mb
+                  ..body = refer(actualEnumName)
+                      .property(fallbackNormalizedName)
+                      .code,
           ).closure
         : Method(
             (mb) => mb
@@ -382,13 +358,10 @@ class EnumGenerator {
                       ..requiredParameters.add(
                         Parameter((pb) => pb..name = 'e'),
                       )
-                      ..body =
-                          refer(
-                                'e',
-                              )
-                              .property(_rawValueFieldName)
-                              .equalTo(refer(matchVariable))
-                              .code,
+                      ..body = refer('e')
+                          .property(_rawValueFieldName)
+                          .equalTo(refer(matchVariable))
+                          .code,
                   ).closure,
                 ],
                 {'orElse': orElse},

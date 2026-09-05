@@ -11,40 +11,23 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-final class AdditionalPropertiesPlan {
-  const AdditionalPropertiesPlan({
-    required this.valueModel,
-    required this.knownWireKeys,
-  });
+final class const AdditionalPropertiesPlan({
+  required final Model valueModel,
+  required final Set<String> knownWireKeys,
+});
 
-  final Model valueModel;
+final class const ApBuilderResult({
+  required final List<Code> codes,
+  final List<InlineHelper> inlineHelpers = const [],
+});
 
-  final Set<String> knownWireKeys;
-}
+sealed class const ApFlatCaptureResult({required final List<Code> codes});
 
-final class ApBuilderResult {
-  const ApBuilderResult({
-    required this.codes,
-    this.inlineHelpers = const [],
-  });
+final class const CapturingApFlatCapture({required super.codes})
+    extends ApFlatCaptureResult;
 
-  final List<Code> codes;
-  final List<InlineHelper> inlineHelpers;
-}
-
-sealed class ApFlatCaptureResult {
-  const ApFlatCaptureResult({required this.codes});
-
-  final List<Code> codes;
-}
-
-final class CapturingApFlatCapture extends ApFlatCaptureResult {
-  const CapturingApFlatCapture({required super.codes});
-}
-
-final class RejectingApFlatCapture extends ApFlatCaptureResult {
-  const RejectingApFlatCapture({required super.codes});
-}
+final class const RejectingApFlatCapture({required super.codes})
+    extends ApFlatCaptureResult;
 
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
@@ -174,9 +157,10 @@ ApBuilderResult buildApJsonEncode(
   );
 
   codes.add(
-    refer(
-      targetMapVar,
-    ).property('addAll').call([encoded.unsafeRawBody]).statement,
+    refer(targetMapVar)
+        .property('addAll')
+        .call([encoded.unsafeRawBody])
+        .statement,
   );
   return ApBuilderResult(codes: codes, inlineHelpers: encoded.inlineFunctions);
 }
@@ -323,9 +307,10 @@ ApBuilderResult _propertyValueEntriesLoop(
       declareFinal(r'_$v').assign(refer(r'_$e').property('value')).statement,
       const Code(r'if (_$v == null) continue;'),
     ],
-    refer(
-      targetVar,
-    ).index(refer(r'_$e').property('key')).assign(entryValue).statement,
+    refer(targetVar)
+        .index(refer(r'_$e').property('key'))
+        .assign(entryValue)
+        .statement,
     const Code('}'),
   ],
 );

@@ -12,17 +12,11 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// A generator for creating Dart typedef files from
 /// alias and list model definitions.
 @immutable
-class TypedefGenerator {
-  const TypedefGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const TypedefGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generateAlias(AliasModel model) =>
       _generateFile(generateAliasTypedef(model));
 
@@ -44,24 +38,23 @@ class TypedefGenerator {
       useImmutableCollections: useImmutableCollections,
     );
 
-    return TypeDef(
-      (b) {
-        b
-          ..name = nameManager.modelName(model)
-          ..definition = baseType
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          );
+    return TypeDef((b) {
+      b
+        ..name = nameManager.modelName(model)
+        ..definition = baseType
+        ..docs.addAll(
+          formatDocsWithExamples(model.description, model.examples),
+        );
 
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This typedef is deprecated.'),
-            ]),
-          );
-        }
-      },
-    );
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This typedef is deprecated.')]),
+        );
+      }
+    });
   }
 
   @visibleForTesting
@@ -74,9 +67,7 @@ class TypedefGenerator {
       (b) => b
         ..symbol = useImmutableCollections ? 'IList' : 'List'
         ..url = useImmutableCollections ? ficUrl : 'dart:core'
-        ..types.add(
-          _safeContentTypeReference(model, model.content),
-        )
+        ..types.add(_safeContentTypeReference(model, model.content))
         ..isNullable = isNullable,
     );
 

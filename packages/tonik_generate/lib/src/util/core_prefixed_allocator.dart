@@ -4,8 +4,9 @@ import 'package:code_builder/code_builder.dart';
 ///
 /// This implementation is based on code_builder's _PrefixedAllocator but
 /// doesn't exclude any packages from prefixing.
-class CorePrefixedAllocator implements Allocator {
-  CorePrefixedAllocator({List<String> additionalImports = const []}) {
+class CorePrefixedAllocator({List<String> additionalImports = const []})
+    implements Allocator {
+  this {
     for (final import in additionalImports) {
       _imports.putIfAbsent(import, _nextKey);
     }

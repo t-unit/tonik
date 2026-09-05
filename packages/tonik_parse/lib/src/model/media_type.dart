@@ -3,15 +3,17 @@ import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
-class MediaType {
-  MediaType({
-    required this.schema,
-    required this.encoding,
-    this.example,
-    this.examples,
-  });
+class MediaType({
+  required final Schema? schema,
+  required final Map<String, Encoding>? encoding,
 
-  factory MediaType.fromJson(Map<String, dynamic> json) => MediaType(
+  /// Single example inline value.
+  final Object? example,
+
+  /// Multiple named examples; each value may be inline or a `$ref`.
+  final Map<String, ReferenceWrapper<Example>>? examples,
+}) {
+  factory fromJson(Map<String, dynamic> json) => MediaType(
     schema: const SchemaConverter().fromJson(json['schema']),
     encoding: (json['encoding'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
@@ -21,15 +23,6 @@ class MediaType {
       (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
     ),
   );
-
-  final Schema? schema;
-  final Map<String, Encoding>? encoding;
-
-  /// Single example inline value.
-  final Object? example;
-
-  /// Multiple named examples; each value may be inline or a `$ref`.
-  final Map<String, ReferenceWrapper<Example>>? examples;
 
   @override
   String toString() =>

@@ -13,17 +13,11 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Generates server classes for API client.
-class ServerGenerator {
-  /// Creates a new ServerGenerator.
-  const ServerGenerator({
-    required this.nameManager,
-    required this.backendGenerator,
-  });
-
+class const ServerGenerator({
   /// The name manager to use for name generation.
-  final NameManager nameManager;
-  final TransportBackendGenerator backendGenerator;
-
+  required final NameManager nameManager,
+  required final TransportBackendGenerator backendGenerator,
+}) {
   /// Generates server classes for the given servers.
   ({String code, String filename}) generate(List<Server> servers) {
     final classes = generateClasses(servers);
@@ -209,18 +203,19 @@ class ServerGenerator {
               ..type = MethodType.getter
               ..returns = clientType
               ..lambda = true
-              ..body = refer(
-                backendGenerator.clientAdapterFieldName,
-              ).property(backendGenerator.clientGetterName).code,
+              ..body = refer(backendGenerator.clientAdapterFieldName)
+                  .property(backendGenerator.clientGetterName)
+                  .code,
           ),
           Method(
             (m) => m
               ..name = 'close'
               ..returns = refer('void')
               ..lambda = true
-              ..body = refer(
-                backendGenerator.clientAdapterFieldName,
-              ).property('close').call([]).code,
+              ..body = refer(backendGenerator.clientAdapterFieldName)
+                  .property('close')
+                  .call([])
+                  .code,
           ),
         ]),
     );
@@ -263,9 +258,7 @@ class ServerGenerator {
         ..name = className
         ..extend = refer(baseClassName)
         ..docs.addAll(
-          formatDocComment(
-            '${server.description ?? 'Server'} - ${server.url}',
-          ),
+          formatDocComment('${server.description ?? 'Server'} - ${server.url}'),
         )
         ..constructors.add(
           Constructor(
@@ -402,18 +395,14 @@ class ServerGenerator {
         ..name = className
         ..extend = refer(baseClassName)
         ..docs.addAll(
-          formatDocComment(
-            '${server.description ?? 'Server'} - ${server.url}',
-          ),
+          formatDocComment('${server.description ?? 'Server'} - ${server.url}'),
         )
         ..fields.addAll(variableFields)
         ..constructors.add(
           Constructor(
             (c) => c
               ..optionalParameters.addAll(variableParams)
-              ..initializers.add(
-                Code('super(baseUrl: $urlExpression)'),
-              ),
+              ..initializers.add(Code('super(baseUrl: $urlExpression)')),
           ),
         ),
     );
@@ -457,9 +446,7 @@ class ServerGenerator {
       final hasEnum =
           earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;
-      parts.add(
-        hasEnum ? "'\${$dartName.value}'" : "'\${$dartName}'",
-      );
+      parts.add(hasEnum ? "'\${$dartName.value}'" : "'\${$dartName}'");
 
       remaining = remaining.substring(earliestIndex + placeholder.length);
     }

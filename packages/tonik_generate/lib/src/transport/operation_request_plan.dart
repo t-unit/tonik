@@ -7,33 +7,41 @@ import 'package:tonik_core/tonik_core.dart';
 /// This value is consumed by a selected transport generator. It is never
 /// emitted into a generated package.
 @immutable
-class OperationRequestPlan {
-  OperationRequestPlan({
-    required this.method,
-    required this.uri,
+class const OperationRequestPlan._({
+  required final HttpMethod method,
+  required final Expression uri,
+  required final List<RequestValuePlan> pathParameters,
+  required final List<RequestValuePlan> queryParameters,
+  required final List<RequestValuePlan> headers,
+  required final List<RequestValuePlan> cookies,
+  required final Expression? contentType,
+  required final Expression cancellation,
+  required final ResponseRequirements response,
+  required final RequestBodyPlan body,
+}) {
+  new({
+    required HttpMethod method,
+    required Expression uri,
     required List<RequestValuePlan> pathParameters,
     required List<RequestValuePlan> queryParameters,
     required List<RequestValuePlan> headers,
     required List<RequestValuePlan> cookies,
-    required this.contentType,
-    required this.cancellation,
-    required this.response,
-    required this.body,
-  }) : pathParameters = List.unmodifiable(pathParameters),
-       queryParameters = List.unmodifiable(queryParameters),
-       headers = List.unmodifiable(headers),
-       cookies = List.unmodifiable(cookies);
-
-  final HttpMethod method;
-  final Expression uri;
-  final List<RequestValuePlan> pathParameters;
-  final List<RequestValuePlan> queryParameters;
-  final List<RequestValuePlan> headers;
-  final List<RequestValuePlan> cookies;
-  final Expression? contentType;
-  final Expression cancellation;
-  final ResponseRequirements response;
-  final RequestBodyPlan body;
+    required Expression? contentType,
+    required Expression cancellation,
+    required ResponseRequirements response,
+    required RequestBodyPlan body,
+  }) : this._(
+         method: method,
+         uri: uri,
+         pathParameters: List.unmodifiable(pathParameters),
+         queryParameters: List.unmodifiable(queryParameters),
+         headers: List.unmodifiable(headers),
+         cookies: List.unmodifiable(cookies),
+         contentType: contentType,
+         cancellation: cancellation,
+         response: response,
+         body: body,
+       );
 
   String get methodName => switch (method) {
     HttpMethod.get => 'GET',
@@ -49,175 +57,156 @@ class OperationRequestPlan {
 
 /// One ordered query, header, or cookie input.
 @immutable
-class RequestValuePlan {
-  const RequestValuePlan({
-    required this.rawName,
-    required this.normalizedName,
-    required this.value,
-    required this.isRequired,
-    required this.allowEmpty,
-    required this.allowsMultiple,
-  });
-
-  final String rawName;
-  final String normalizedName;
-  final Expression value;
-  final bool isRequired;
-  final bool allowEmpty;
-  final bool allowsMultiple;
-}
+class const RequestValuePlan({
+  required final String rawName,
+  required final String normalizedName,
+  required final Expression value,
+  required final bool isRequired,
+  required final bool allowEmpty,
+  required final bool allowsMultiple,
+});
 
 /// Response details required by common response selection and decoding.
 @immutable
-class ResponseRequirements {
-  ResponseRequirements({
-    required this.expectsBytes,
+class const ResponseRequirements._({
+  required final bool expectsBytes,
+  required final List<ResponseStatus> statuses,
+  required final List<String> contentTypes,
+}) {
+  new({
+    required bool expectsBytes,
     required List<ResponseStatus> statuses,
     required List<String> contentTypes,
-  }) : statuses = List.unmodifiable(statuses),
-       contentTypes = List.unmodifiable(contentTypes);
-
-  final bool expectsBytes;
-  final List<ResponseStatus> statuses;
-  final List<String> contentTypes;
+  }) : this._(
+         expectsBytes: expectsBytes,
+         statuses: List.unmodifiable(statuses),
+         contentTypes: List.unmodifiable(contentTypes),
+       );
 }
 
 /// Backend-neutral request body meaning.
-sealed class RequestBodyPlan {
-  const RequestBodyPlan();
-}
+sealed class const RequestBodyPlan();
 
 @immutable
-final class AbsentBodyPlan extends RequestBodyPlan {
-  const AbsentBodyPlan();
-}
+final class const AbsentBodyPlan() extends RequestBodyPlan;
 
-sealed class PresentBodyPlan extends RequestBodyPlan {
-  const PresentBodyPlan({
-    required this.value,
-    required this.rawContentType,
-    required this.isRequired,
-  });
-
-  final Expression value;
-  final String rawContentType;
-  final bool isRequired;
-}
+sealed class const PresentBodyPlan({
+  required final Expression value,
+  required final String rawContentType,
+  required final bool isRequired,
+}) extends RequestBodyPlan;
 
 @immutable
-final class JsonBodyPlan extends PresentBodyPlan {
-  const JsonBodyPlan({
-    required super.value,
-    required super.rawContentType,
-    required super.isRequired,
-  });
-}
+final class const JsonBodyPlan({
+  required super.value,
+  required super.rawContentType,
+  required super.isRequired,
+}) extends PresentBodyPlan;
 
 @immutable
-final class TextBodyPlan extends PresentBodyPlan {
-  const TextBodyPlan({
-    required super.value,
-    required super.rawContentType,
-    required this.encoding,
-    required super.isRequired,
-  });
-
-  final TextEncoding encoding;
-}
+final class const TextBodyPlan({
+  required super.value,
+  required super.rawContentType,
+  required final TextEncoding encoding,
+  required super.isRequired,
+}) extends PresentBodyPlan;
 
 @immutable
-final class BytesBodyPlan extends PresentBodyPlan {
-  const BytesBodyPlan({
-    required super.value,
-    required super.rawContentType,
-    required super.isRequired,
-  });
-}
+final class const BytesBodyPlan({
+  required super.value,
+  required super.rawContentType,
+  required super.isRequired,
+}) extends PresentBodyPlan;
 
 @immutable
-class FormEntryPlan {
-  const FormEntryPlan({
-    required this.name,
-    required this.value,
-    required this.isNullable,
-    required this.allowsMultiple,
-  });
-
-  final String name;
-  final Expression value;
-  final bool isNullable;
-  final bool allowsMultiple;
-}
+class const FormEntryPlan({
+  required final String name,
+  required final Expression value,
+  required final bool isNullable,
+  required final bool allowsMultiple,
+});
 
 @immutable
-final class FormBodyPlan extends PresentBodyPlan {
-  FormBodyPlan({
-    required super.value,
-    required super.rawContentType,
+final class const FormBodyPlan._({
+  required super.value,
+  required super.rawContentType,
+  required final List<FormEntryPlan> entries,
+  required super.isRequired,
+}) extends PresentBodyPlan {
+  new({
+    required Expression value,
+    required String rawContentType,
     required List<FormEntryPlan> entries,
-    required super.isRequired,
-  }) : entries = List.unmodifiable(entries);
-
-  final List<FormEntryPlan> entries;
+    required bool isRequired,
+  }) : this._(
+         value: value,
+         rawContentType: rawContentType,
+         entries: List.unmodifiable(entries),
+         isRequired: isRequired,
+       );
 }
 
-enum MultipartValueSource { field, text, bytes, path, file }
-
-sealed class MultipartEmission {
-  const MultipartEmission();
+enum MultipartValueSource() {
+  field,
+  text,
+  bytes,
+  path,
+  file,
 }
 
-final class MultipartCode extends MultipartEmission {
-  const MultipartCode(this.code);
+sealed class const MultipartEmission();
 
-  final Code code;
-}
+final class const MultipartCode(final Code code) extends MultipartEmission;
 
-final class MultipartAppend extends MultipartEmission {
-  const MultipartAppend({
-    required this.name,
-    required this.value,
-    required this.source,
-    this.filename,
-    this.contentType,
-    this.headers,
-  });
-
-  final Expression name;
-  final Expression value;
-  final MultipartValueSource source;
-  final Expression? filename;
-  final String? contentType;
-  final Expression? headers;
-}
+final class const MultipartAppend({
+  required final Expression name,
+  required final Expression value,
+  required final MultipartValueSource source,
+  final Expression? filename,
+  final String? contentType,
+  final Expression? headers,
+}) extends MultipartEmission;
 
 @immutable
-final class MultipartBodyPlan extends PresentBodyPlan {
-  MultipartBodyPlan({
-    required super.value,
-    required super.rawContentType,
+final class const MultipartBodyPlan._({
+  required super.value,
+  required super.rawContentType,
+  required final List<MultipartEmission> emissions,
+  required super.isRequired,
+  required final bool usesCustomParts,
+}) extends PresentBodyPlan {
+  new({
+    required Expression value,
+    required String rawContentType,
     required List<MultipartEmission> emissions,
-    required super.isRequired,
-    this.usesCustomParts = false,
-  }) : emissions = List.unmodifiable(emissions);
-
-  final List<MultipartEmission> emissions;
-  final bool usesCustomParts;
+    required bool isRequired,
+    bool usesCustomParts = false,
+  }) : this._(
+         value: value,
+         rawContentType: rawContentType,
+         emissions: List.unmodifiable(emissions),
+         isRequired: isRequired,
+         usesCustomParts: usesCustomParts,
+       );
 }
 
 /// A runtime-selected body variant for OpenAPI operations with multiple media
 /// types. Each arm still has one of the concrete backend-neutral meanings.
 @immutable
-final class BodySelectionPlan extends RequestBodyPlan {
-  BodySelectionPlan({
-    required this.value,
+final class const BodySelectionPlan._({
+  required final Expression value,
+  required final List<PresentBodyPlan> variants,
+  required final bool isRequired,
+}) extends RequestBodyPlan {
+  new({
+    required Expression value,
     required List<PresentBodyPlan> variants,
-    required this.isRequired,
-  }) : variants = List.unmodifiable(variants);
-
-  final Expression value;
-  final List<PresentBodyPlan> variants;
-  final bool isRequired;
+    required bool isRequired,
+  }) : this._(
+         value: value,
+         variants: List.unmodifiable(variants),
+         isRequired: isRequired,
+       );
 }
 
 /// Whether content-type selection depends on the runtime request body value.

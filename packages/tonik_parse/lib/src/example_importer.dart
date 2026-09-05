@@ -8,10 +8,7 @@ import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
-class ExampleImporter {
-  ExampleImporter({required this.openApiObject});
-
-  final OpenApiObject openApiObject;
+class ExampleImporter({required final OpenApiObject openApiObject}) {
   final log = Logger('ExampleImporter');
 
   List<core.Example> fromSchema(Schema? schema) {

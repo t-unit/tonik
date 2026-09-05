@@ -73,10 +73,7 @@ void main() {
       final parallelNames = _prime(_makeNameManager(sorter), apiDoc);
       await runPool(names: parallelNames, outputDirectory: parallelDir.path);
 
-      expect(
-        _readModelTree(parallelDir.path),
-        _readModelTree(serialDir.path),
-      );
+      expect(_readModelTree(parallelDir.path), _readModelTree(serialDir.path));
     });
 
     test(
@@ -167,32 +164,29 @@ void main() {
       },
     );
 
-    test(
-      'forwards log.warning attached error as stringified type name '
-      'with reconstructable stack',
-      () async {
-        final hooked = _HookedNameManager(sorter)
-          ..onLookup = _oneShot(() {
-            try {
-              throw _AttachedException('synthetic warning payload');
-            } on _AttachedException catch (e, s) {
-              Logger('TestWorkerLogger').warning('attached error log', e, s);
-            }
-          });
-        _prime(hooked, apiDoc).armed = true;
+    test('forwards log.warning attached error as stringified type name '
+        'with reconstructable stack', () async {
+      final hooked = _HookedNameManager(sorter)
+        ..onLookup = _oneShot(() {
+          try {
+            throw _AttachedException('synthetic warning payload');
+          } on _AttachedException catch (e, s) {
+            Logger('TestWorkerLogger').warning('attached error log', e, s);
+          }
+        });
+      _prime(hooked, apiDoc).armed = true;
 
-        final records = await _captureRecords(
-          () => runPool(names: hooked, workerCount: 1),
-        );
-        final warning = records.firstWhere(
-          (r) => r.loggerName == 'TestWorkerLogger' && r.level == Level.WARNING,
-        );
+      final records = await _captureRecords(
+        () => runPool(names: hooked, workerCount: 1),
+      );
+      final warning = records.firstWhere(
+        (r) => r.loggerName == 'TestWorkerLogger' && r.level == Level.WARNING,
+      );
 
-        expect(warning.error, isA<String>());
-        expect(warning.error! as String, contains('_AttachedException'));
-        expect(warning.stackTrace.toString(), isNotEmpty);
-      },
-    );
+      expect(warning.error, isA<String>());
+      expect(warning.error! as String, contains('_AttachedException'));
+      expect(warning.stackTrace.toString(), isNotEmpty);
+    });
 
     test('removes pool listeners from Logger.root after run returns', () async {
       await runPool();
@@ -247,10 +241,7 @@ void main() {
     });
 
     test('throws ArgumentError when workerCount is below 1', () {
-      expect(
-        () => runPool(workerCount: 0),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => runPool(workerCount: 0), throwsA(isA<ArgumentError>()));
     });
 
     test('returns immediately when models set is empty', () async {
@@ -267,10 +258,8 @@ void main() {
   });
 }
 
-NameManager _makeNameManager(StableModelSorter sorter) => NameManager(
-  generator: NameGenerator(),
-  stableModelSorter: sorter,
-);
+NameManager _makeNameManager(StableModelSorter sorter) =>
+    NameManager(generator: NameGenerator(), stableModelSorter: sorter);
 
 T _prime<T extends NameManager>(T names, ApiDocument doc) {
   names.prime(
@@ -301,10 +290,7 @@ ModelFileGenerator _serialGenerator(
       package: _package,
       stableModelSorter: sorter,
     ),
-    typedefGenerator: TypedefGenerator(
-      nameManager: names,
-      package: _package,
-    ),
+    typedefGenerator: TypedefGenerator(nameManager: names, package: _package),
     allOfGenerator: AllOfGenerator(
       nameManager: names,
       package: _package,
@@ -472,9 +458,8 @@ ApiDocument _emptyDocument() => ApiDocument(
 /// NameManager that invokes [onLookup] on every `modelName` call once
 /// [armed] is true. Replaces the family of one-off subclasses used to
 /// exercise the worker pool's failure paths.
-class _HookedNameManager extends NameManager {
-  _HookedNameManager(StableModelSorter sorter)
-    : super(generator: NameGenerator(), stableModelSorter: sorter);
+class _HookedNameManager(StableModelSorter sorter) extends NameManager {
+  this : super(generator: NameGenerator(), stableModelSorter: sorter);
 
   void Function() onLookup = () {};
   bool armed = false;
@@ -486,16 +471,12 @@ class _HookedNameManager extends NameManager {
   }
 }
 
-class _PortBearingError implements Exception {
-  _PortBearingError(this.port);
-  final ReceivePort port;
+class _PortBearingError(final ReceivePort port) implements Exception {
   @override
   String toString() => 'PortBearingError carrying $port';
 }
 
-class _AttachedException implements Exception {
-  _AttachedException(this.message);
-  final String message;
+class _AttachedException(final String message) implements Exception {
   @override
   String toString() => '_AttachedException: $message';
 }

@@ -1,4 +1,4 @@
-enum SecuritySchemeType {
+enum SecuritySchemeType() {
   apiKey,
   http,
   mutualTLS,
@@ -15,7 +15,7 @@ enum SecuritySchemeType {
   };
 }
 
-enum ApiKeyLocation {
+enum ApiKeyLocation() {
   query,
   header,
   cookie;
@@ -28,19 +28,17 @@ enum ApiKeyLocation {
   };
 }
 
-class SecurityScheme {
-  SecurityScheme({
-    required this.type,
-    required this.description,
-    required this.name,
-    required this.$in,
-    required this.scheme,
-    required this.bearerFormat,
-    required this.flows,
-    required this.openIdConnectUrl,
-  });
-
-  factory SecurityScheme.fromJson(Map<String, dynamic> json) => SecurityScheme(
+class SecurityScheme({
+  required final SecuritySchemeType type,
+  required final String? description,
+  required final String? name,
+  required final ApiKeyLocation? $in,
+  required final String? scheme,
+  required final String? bearerFormat,
+  required final OAuth2Flows? flows,
+  required final String? openIdConnectUrl,
+}) {
+  factory fromJson(Map<String, dynamic> json) => SecurityScheme(
     type: SecuritySchemeType.fromJson(json['type']),
     description: json['description'] as String?,
     name: json['name'] as String?,
@@ -53,15 +51,6 @@ class SecurityScheme {
     openIdConnectUrl: json['openIdConnectUrl'] as String?,
   );
 
-  final SecuritySchemeType type;
-  final String? description;
-  final String? name;
-  final ApiKeyLocation? $in;
-  final String? scheme;
-  final String? bearerFormat;
-  final OAuth2Flows? flows;
-  final String? openIdConnectUrl;
-
   @override
   String toString() =>
       'SecurityScheme{type: $type, description: $description, '
@@ -69,15 +58,13 @@ class SecurityScheme {
       'flows: $flows, openIdConnectUrl: $openIdConnectUrl}';
 }
 
-class OAuth2Flows {
-  OAuth2Flows({
-    required this.implicit,
-    required this.password,
-    required this.clientCredentials,
-    required this.authorizationCode,
-  });
-
-  factory OAuth2Flows.fromJson(Map<String, dynamic> json) => OAuth2Flows(
+class OAuth2Flows({
+  required final OAuth2Flow? implicit,
+  required final OAuth2Flow? password,
+  required final OAuth2Flow? clientCredentials,
+  required final OAuth2Flow? authorizationCode,
+}) {
+  factory fromJson(Map<String, dynamic> json) => OAuth2Flows(
     implicit: json['implicit'] == null
         ? null
         : OAuth2Flow.fromJson(json['implicit'] as Map<String, dynamic>),
@@ -96,11 +83,6 @@ class OAuth2Flows {
           ),
   );
 
-  final OAuth2Flow? implicit;
-  final OAuth2Flow? password;
-  final OAuth2Flow? clientCredentials;
-  final OAuth2Flow? authorizationCode;
-
   @override
   String toString() =>
       'OAuth2Flows{implicit: $implicit, password: $password, '
@@ -108,25 +90,18 @@ class OAuth2Flows {
       'authorizationCode: $authorizationCode}';
 }
 
-class OAuth2Flow {
-  OAuth2Flow({
-    required this.scopes,
-    required this.authorizationUrl,
-    required this.tokenUrl,
-    required this.refreshUrl,
-  });
-
-  factory OAuth2Flow.fromJson(Map<String, dynamic> json) => OAuth2Flow(
+class OAuth2Flow({
+  required final Map<String, String> scopes,
+  required final String? authorizationUrl,
+  required final String? tokenUrl,
+  required final String? refreshUrl,
+}) {
+  factory fromJson(Map<String, dynamic> json) => OAuth2Flow(
     scopes: Map<String, String>.from(json['scopes'] as Map),
     authorizationUrl: json['authorizationUrl'] as String?,
     tokenUrl: json['tokenUrl'] as String?,
     refreshUrl: json['refreshUrl'] as String?,
   );
-
-  final String? authorizationUrl;
-  final String? tokenUrl;
-  final String? refreshUrl;
-  final Map<String, String> scopes;
 
   @override
   String toString() =>

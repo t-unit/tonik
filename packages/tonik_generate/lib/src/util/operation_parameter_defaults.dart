@@ -9,26 +9,23 @@ import 'package:tonik_generate/src/util/default_resolution.dart';
 final Logger _log = Logger('OperationParameterDefaults');
 
 @immutable
-class OperationParameterDefault {
-  const OperationParameterDefault.local({
-    required this.memberName,
-    this.isRuntime = false,
-  }) : _owner = null;
+class const OperationParameterDefault._(
+  final String memberName,
+  final ({String className, String url})? _owner,
+  final bool isRuntime,
+) {
+  const new local({required String memberName, bool isRuntime = false})
+    : this._(memberName, null, isRuntime);
 
-  const OperationParameterDefault.qualified({
-    required this.memberName,
+  const new qualified({
+    required String memberName,
     required String className,
     required String url,
-    this.isRuntime = false,
-  }) : _owner = (className: className, url: url);
-
-  final String memberName;
-  final ({String className, String url})? _owner;
+    bool isRuntime = false,
+  }) : this._(memberName, (className: className, url: url), isRuntime);
 
   /// `true` when the member is a `static get` — the `call()` parameter
   /// cannot wire `defaultTo` against a non-const expression.
-  final bool isRuntime;
-
   OperationParameterDefault withOwner({
     required String className,
     required String url,
@@ -183,14 +180,10 @@ Set<String> initialOperationDefaultReservedNames({
 /// logs and default-member name allocations fire exactly once per operation
 /// per generator run. Keys on [Operation] identity — callers must share the
 /// same instance from the parsed [ApiDocument].
-class OperationDefaultsCache {
-  OperationDefaultsCache({
-    required this._nameManager,
-    required this._package,
-  });
-
-  final NameManager _nameManager;
-  final String _package;
+class OperationDefaultsCache({
+  required final NameManager _nameManager,
+  required final String _package,
+}) {
   final Map<Operation, OperationDefaultsResult> _byOperation = {};
 
   OperationDefaultsResult forOperation(

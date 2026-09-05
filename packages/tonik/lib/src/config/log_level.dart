@@ -1,1 +1,6 @@
-enum LogLevel { verbose, info, warn, silent }
+enum LogLevel() {
+  verbose,
+  info,
+  warn,
+  silent,
+}

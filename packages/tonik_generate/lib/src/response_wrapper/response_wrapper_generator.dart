@@ -11,17 +11,11 @@ import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 @immutable
-class ResponseWrapperGenerator {
-  const ResponseWrapperGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const ResponseWrapperGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(Operation operation) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),

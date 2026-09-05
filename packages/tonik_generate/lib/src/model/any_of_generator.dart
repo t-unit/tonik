@@ -28,19 +28,12 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 @immutable
-class AnyOfGenerator {
-  const AnyOfGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.stableModelSorter,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final StableModelSorter stableModelSorter;
-  final bool useImmutableCollections;
-
+class const AnyOfGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final StableModelSorter stableModelSorter,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(AnyOfModel model) {
     return generateCompositeLibrary(
       model: model,
@@ -226,91 +219,87 @@ class AnyOfGenerator {
         )
         .toList();
 
-    return Class(
-      (b) {
-        b
-          ..name = actualClassName
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          )
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-          ..implements.add(
-            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
-          )
-          ..implements.add(
-            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
-          );
+    return Class((b) {
+      b
+        ..name = actualClassName
+        ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..implements.add(
+          refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+        )
+        ..implements.add(
+          refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+        );
 
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer(
-              'Deprecated',
-              'dart:core',
-            ).call([literalString('This class is deprecated.')]),
-          );
-        }
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This class is deprecated.')]),
+        );
+      }
 
-        final encodingExceptionBody = generateEncodingExceptionExpression(
-          '$actualClassName is read-only and cannot be encoded.',
-          raw: true,
-        ).code;
+      final encodingExceptionBody = generateEncodingExceptionExpression(
+        '$actualClassName is read-only and cannot be encoded.',
+        raw: true,
+      ).code;
 
-        b
-          ..constructors.add(defaultCtor)
-          ..constructors.add(fromJsonCtor)
-          ..constructors.add(fromSimpleCtor)
-          ..constructors.add(fromFormCtor)
-          ..methods.addAll([
-            if (model.isReadOnly)
-              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
-            else
-              _buildCurrentEncodingShapeGetter(
-                actualClassName,
-                semanticProperties,
-              ),
-            Method(
-              (b) => b
-                ..annotations.add(refer('override', 'dart:core'))
-                ..name = 'toJson'
-                ..returns = refer('Object?', 'dart:core')
-                ..body = model.isReadOnly
-                    ? encodingExceptionBody
-                    : _buildToJsonMethod(
-                        actualClassName,
-                        model,
-                        semanticProperties,
-                      ).body
-                ..lambda = model.isReadOnly,
+      b
+        ..constructors.add(defaultCtor)
+        ..constructors.add(fromJsonCtor)
+        ..constructors.add(fromSimpleCtor)
+        ..constructors.add(fromFormCtor)
+        ..methods.addAll([
+          if (model.isReadOnly)
+            buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+          else
+            _buildCurrentEncodingShapeGetter(
+              actualClassName,
+              semanticProperties,
             ),
-            if (model.isReadOnly)
-              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
-            else
-              _buildParameterPropertiesMethod(
-                actualClassName,
-                model,
-                semanticProperties,
-              ),
-            _buildToSimpleMethod(actualClassName, model, semanticProperties),
-            _buildToFormMethod(actualClassName, model, semanticProperties),
-            _buildToLabelMethod(actualClassName, model, semanticProperties),
-            _buildToMatrixMethod(actualClassName, model, semanticProperties),
-            buildToDeepObjectMethod(),
-            buildToPipeDelimitedMethod(),
-            buildToSpaceDelimitedMethod(),
-            if (model.isReadOnly)
-              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
-            else
-              _buildUriEncodeMethod(actualClassName, model, semanticProperties),
-            generateEqualsMethod(
-              className: actualClassName,
-              properties: propsForEquality,
+          Method(
+            (b) => b
+              ..annotations.add(refer('override', 'dart:core'))
+              ..name = 'toJson'
+              ..returns = refer('Object?', 'dart:core')
+              ..body = model.isReadOnly
+                  ? encodingExceptionBody
+                  : _buildToJsonMethod(
+                      actualClassName,
+                      model,
+                      semanticProperties,
+                    ).body
+              ..lambda = model.isReadOnly,
+          ),
+          if (model.isReadOnly)
+            buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+          else
+            _buildParameterPropertiesMethod(
+              actualClassName,
+              model,
+              semanticProperties,
             ),
-            generateHashCodeMethod(properties: propsForEquality),
-            ?effectiveCopyWithGetter,
-          ])
-          ..fields.addAll(fields);
-      },
-    );
+          _buildToSimpleMethod(actualClassName, model, semanticProperties),
+          _buildToFormMethod(actualClassName, model, semanticProperties),
+          _buildToLabelMethod(actualClassName, model, semanticProperties),
+          _buildToMatrixMethod(actualClassName, model, semanticProperties),
+          buildToDeepObjectMethod(),
+          buildToPipeDelimitedMethod(),
+          buildToSpaceDelimitedMethod(),
+          if (model.isReadOnly)
+            buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+          else
+            _buildUriEncodeMethod(actualClassName, model, semanticProperties),
+          generateEqualsMethod(
+            className: actualClassName,
+            properties: propsForEquality,
+          ),
+          generateHashCodeMethod(properties: propsForEquality),
+          ?effectiveCopyWithGetter,
+        ])
+        ..fields.addAll(fields);
+    });
   }
 
   Reference _nullableTypeReference(Model model) => typeReference(
@@ -792,12 +781,12 @@ class AnyOfGenerator {
     final inlineHelpers = <InlineHelper>[];
 
     final body = <Code>[
-      declareFinal(
-        r'_$values',
-      ).assign(literalSet([], refer('Object?', 'dart:core'))).statement,
-      declareFinal(
-        r'_$mapValues',
-      ).assign(literalList([], buildMapStringObjectType())).statement,
+      declareFinal(r'_$values')
+          .assign(literalSet([], refer('Object?', 'dart:core')))
+          .statement,
+      declareFinal(r'_$mapValues')
+          .assign(literalList([], buildMapStringObjectType()))
+          .statement,
     ];
 
     final hasDiscriminator = model.discriminator != null;
@@ -969,17 +958,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -1129,22 +1118,22 @@ class AnyOfGenerator {
     if (needsValues) {
       body
         ..add(
-          declareFinal(
-            r'_$entryLists',
-          ).assign(literalList([], buildParameterEntryListType())).statement,
+          declareFinal(r'_$entryLists')
+              .assign(literalList([], buildParameterEntryListType()))
+              .statement,
         )
         ..add(
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          declareFinal(r'_$values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
         );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -1952,17 +1941,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -2103,17 +2092,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 

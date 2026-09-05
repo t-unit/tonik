@@ -15,17 +15,11 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// A generator for creating Dart sealed classes and typedefs
 /// from Response definitions.
 @immutable
-class ResponseGenerator {
-  const ResponseGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const ResponseGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(Response response) {
     if (!response.hasHeaders && response.bodyCount <= 1) {
       throw ArgumentError(
@@ -98,24 +92,22 @@ class ResponseGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: properties.map(
-        (prop) {
-          final model = prop.property.model;
-          final resolvedModel = model.resolved;
-          return (
-            normalizedName: prop.normalizedName,
-            typeRef: typeReference(
-              prop.property.model,
-              nameManager,
-              package,
-              isNullableOverride:
-                  prop.property.isNullable || !prop.property.isRequired,
-              useImmutableCollections: useImmutableCollections,
-            ),
-            skipCast: resolvedModel is AnyModel,
-          );
-        },
-      ).toList(),
+      properties: properties.map((prop) {
+        final model = prop.property.model;
+        final resolvedModel = model.resolved;
+        return (
+          normalizedName: prop.normalizedName,
+          typeRef: typeReference(
+            prop.property.model,
+            nameManager,
+            package,
+            isNullableOverride:
+                prop.property.isNullable || !prop.property.isRequired,
+            useImmutableCollections: useImmutableCollections,
+          ),
+          skipCast: resolvedModel is AnyModel,
+        );
+      }).toList(),
     );
   }
 
@@ -184,28 +176,27 @@ class ResponseGenerator {
         ])
         ..fields.addAll(
           properties.map(
-            (prop) => Field(
-              (b) {
-                b
-                  ..name = prop.normalizedName
-                  ..modifier = FieldModifier.final$
-                  ..type = typeReference(
-                    prop.property.model,
-                    nameManager,
-                    package,
-                    isNullableOverride: !prop.property.isRequired,
-                    useImmutableCollections: useImmutableCollections,
-                  );
+            (prop) => Field((b) {
+              b
+                ..name = prop.normalizedName
+                ..modifier = FieldModifier.final$
+                ..type = typeReference(
+                  prop.property.model,
+                  nameManager,
+                  package,
+                  isNullableOverride: !prop.property.isRequired,
+                  useImmutableCollections: useImmutableCollections,
+                );
 
-                if (prop.property.isDeprecated) {
-                  b.annotations.add(
-                    refer('Deprecated', 'dart:core').call([
-                      literalString('This field is deprecated.'),
-                    ]),
-                  );
-                }
-              },
-            ),
+              if (prop.property.isDeprecated) {
+                b.annotations.add(
+                  refer(
+                    'Deprecated',
+                    'dart:core',
+                  ).call([literalString('This field is deprecated.')]),
+                );
+              }
+            }),
           ),
         ),
     );
@@ -240,28 +231,27 @@ class ResponseGenerator {
         )
         ..fields.addAll(
           normalizedBaseProperties.map(
-            (prop) => Field(
-              (b) {
-                b
-                  ..name = prop.normalizedName
-                  ..modifier = FieldModifier.final$
-                  ..type = typeReference(
-                    prop.property.model,
-                    nameManager,
-                    package,
-                    isNullableOverride: !prop.property.isRequired,
-                    useImmutableCollections: useImmutableCollections,
-                  );
+            (prop) => Field((b) {
+              b
+                ..name = prop.normalizedName
+                ..modifier = FieldModifier.final$
+                ..type = typeReference(
+                  prop.property.model,
+                  nameManager,
+                  package,
+                  isNullableOverride: !prop.property.isRequired,
+                  useImmutableCollections: useImmutableCollections,
+                );
 
-                if (prop.property.isDeprecated) {
-                  b.annotations.add(
-                    refer('Deprecated', 'dart:core').call([
-                      literalString('This field is deprecated.'),
-                    ]),
-                  );
-                }
-              },
-            ),
+              if (prop.property.isDeprecated) {
+                b.annotations.add(
+                  refer(
+                    'Deprecated',
+                    'dart:core',
+                  ).call([literalString('This field is deprecated.')]),
+                );
+              }
+            }),
           ),
         ),
     );
@@ -271,10 +261,7 @@ class ResponseGenerator {
           .responseNames(response)
           .implementationNames[body.rawContentType]!;
 
-      final allProperties = normalizeResponseProperties(
-        response,
-        body: body,
-      );
+      final allProperties = normalizeResponseProperties(response, body: body);
       final bodyProperty = allProperties.singleWhere(
         (property) => property.header == null,
       );
@@ -327,9 +314,7 @@ class ResponseGenerator {
           (b) => b
             ..name = implementationName
             ..extend = refer(className)
-            ..annotations.add(
-              refer('immutable', 'package:meta/meta.dart'),
-            )
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(
               Constructor(
                 (b) => b

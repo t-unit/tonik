@@ -10,32 +10,19 @@ import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dar
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-class GeneratedRequestHeaders {
-  const GeneratedRequestHeaders({
-    required this.statements,
-    required this.parameters,
-    required this.contentType,
-  });
-
-  final List<Code> statements;
-  final List<Parameter> parameters;
-  final Expression? contentType;
-}
+class const GeneratedRequestHeaders({
+  required final List<Code> statements,
+  required final List<Parameter> parameters,
+  required final Expression? contentType,
+});
 
 /// Builds backend-neutral generated header and cookie statements.
-class RequestHeadersGenerator {
-  const RequestHeadersGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.headerValueType,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final Reference headerValueType;
-  final bool useImmutableCollections;
-
+class const RequestHeadersGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final Reference headerValueType,
+  final bool useImmutableCollections = false,
+}) {
   GeneratedRequestHeaders generate(
     Operation operation,
     List<({String normalizedName, RequestHeaderObject parameter})> headers,
@@ -50,17 +37,8 @@ class RequestHeadersGenerator {
       bodyStatements,
       parameters,
     );
-    _generateHeaders(
-      headers,
-      bodyStatements,
-      parameters,
-      operation,
-    );
-    _generateCookieHeader(
-      cookieParameters,
-      bodyStatements,
-      parameters,
-    );
+    _generateHeaders(headers, bodyStatements, parameters, operation);
+    _generateCookieHeader(cookieParameters, bodyStatements, parameters);
 
     return GeneratedRequestHeaders(
       statements: bodyStatements,
@@ -211,13 +189,7 @@ class RequestHeadersGenerator {
 
     bodyStatements.add(
       declareFinal(r'_$headers')
-          .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              headerValueType,
-            ),
-          )
+          .assign(literalMap({}, refer('String', 'dart:core'), headerValueType))
           .statement,
     );
 
@@ -387,12 +359,7 @@ class RequestHeadersGenerator {
 
     bodyStatements.add(
       declareFinal(r'_$cookieParts')
-          .assign(
-            literalList(
-              [],
-              refer('String', 'dart:core'),
-            ),
-          )
+          .assign(literalList([], refer('String', 'dart:core')))
           .statement,
     );
 
@@ -412,9 +379,9 @@ class RequestHeadersGenerator {
         refer(r'_$headers')
             .index(specLiteralString('Cookie'))
             .assign(
-              refer(r'_$cookieParts').property('join').call([
-                literalString('; '),
-              ]),
+              refer(r'_$cookieParts')
+                  .property('join')
+                  .call([literalString('; ')]),
             )
             .statement,
       )
@@ -474,10 +441,7 @@ class RequestHeadersGenerator {
 
     if (isAnyModelFormValue(model)) {
       final encodedValue =
-          refer(
-            'encodeAnyToForm',
-            'package:tonik_util/tonik_util.dart',
-          ).call(
+          refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
             [refer(paramName)],
             {
               'explode': literalBool(explode),
@@ -487,10 +451,9 @@ class RequestHeadersGenerator {
           );
       bodyStatements.add(
         refer(r'_$cookieParts').property('add').call([
-          literalList([
-            specLiteralString('$rawName='),
-            encodedValue,
-          ]).property('join').call([]),
+          literalList([specLiteralString('$rawName='), encodedValue])
+              .property('join')
+              .call([]),
         ]).statement,
       );
       return;

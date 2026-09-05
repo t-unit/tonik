@@ -6,9 +6,7 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 ///
 /// Stateless: the claimed-file-name set passed as `usedFileNames` is owned
 /// by the caller (`NameManager` in production).
-class NameGenerator {
-  NameGenerator();
-
+class NameGenerator() {
   static const _modelSuffix = 'Model';
   static const _responseSuffix = 'Response';
   static const _operationSuffix = 'Operation';
@@ -212,10 +210,7 @@ class NameGenerator {
   String generateOperationName(Operation operation, Set<String> usedFileNames) {
     final name = operation.nameOverride ?? operation.operationId;
     final baseName = ensureValidClassName(
-      _generateBaseName(
-        name: name,
-        context: operation.context,
-      ),
+      _generateBaseName(name: name, context: operation.context),
     );
     return _makeUniqueWithTypeSuffix(baseName, _operationSuffix, usedFileNames);
   }
@@ -646,10 +641,7 @@ class NameGenerator {
 
     final resultMap = <Server, String>{};
     for (final server in servers) {
-      resultMap[server] = _makeUniqueWithNumericSuffix(
-        'Server',
-        usedFileNames,
-      );
+      resultMap[server] = _makeUniqueWithNumericSuffix('Server', usedFileNames);
     }
     return (
       baseName: baseName,

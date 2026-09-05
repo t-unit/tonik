@@ -390,11 +390,7 @@ extension ConfigLoader on CliConfig {
 }
 
 /// Exception thrown when configuration loading fails.
-class ConfigLoaderException implements Exception {
-  ConfigLoaderException(this.message);
-
-  final String message;
-
+class ConfigLoaderException(final String message) implements Exception {
   @override
   String toString() => message;
 }
