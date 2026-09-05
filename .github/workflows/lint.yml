@@ -29,5 +29,8 @@ jobs:
           dart pub global activate melos
           melos bootstrap
 
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
       - name: Analyze code
         run: melos exec -- dart analyze --fatal-infos
