@@ -12,52 +12,33 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 final Logger _log = Logger('DefaultResolution');
 
 @immutable
-class ResolvedDefault {
-  const ResolvedDefault({
-    required this.memberName,
-    required this.value,
-    required this.type,
-  });
-
-  final String memberName;
-  final Expression value;
-  final TypeReference type;
-}
+class const ResolvedDefault({
+  required final String memberName,
+  required final Expression value,
+  required final TypeReference type,
+});
 
 @immutable
-class RuntimeResolvedDefault {
-  const RuntimeResolvedDefault({
-    required this.memberName,
-    required this.getter,
-  });
-
-  final String memberName;
-  final Method getter;
-
+class const RuntimeResolvedDefault({
+  required final String memberName,
+  required final Method getter,
+}) {
   TypeReference get type => getter.returns! as TypeReference;
 }
 
 @immutable
-sealed class DefaultBinding {
-  const DefaultBinding();
-
+sealed class const DefaultBinding() {
   String get memberName;
 }
 
-final class ConstDefaultBinding extends DefaultBinding {
-  const ConstDefaultBinding(this.resolved);
-
-  final ResolvedDefault resolved;
-
+final class const ConstDefaultBinding(final ResolvedDefault resolved)
+    extends DefaultBinding {
   @override
   String get memberName => resolved.memberName;
 }
 
-final class RuntimeDefaultBinding extends DefaultBinding {
-  const RuntimeDefaultBinding(this.resolved);
-
-  final RuntimeResolvedDefault resolved;
-
+final class const RuntimeDefaultBinding(final RuntimeResolvedDefault resolved)
+    extends DefaultBinding {
   @override
   String get memberName => resolved.memberName;
 }

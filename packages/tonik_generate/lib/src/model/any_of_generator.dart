@@ -28,19 +28,12 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 @immutable
-class AnyOfGenerator {
-  const AnyOfGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.stableModelSorter,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final StableModelSorter stableModelSorter;
-  final bool useImmutableCollections;
-
+class const AnyOfGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final StableModelSorter stableModelSorter,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(AnyOfModel model) {
     return generateCompositeLibrary(
       model: model,
@@ -788,12 +781,12 @@ class AnyOfGenerator {
     final inlineHelpers = <InlineHelper>[];
 
     final body = <Code>[
-      declareFinal(
-        r'_$values',
-      ).assign(literalSet([], refer('Object?', 'dart:core'))).statement,
-      declareFinal(
-        r'_$mapValues',
-      ).assign(literalList([], buildMapStringObjectType())).statement,
+      declareFinal(r'_$values')
+          .assign(literalSet([], refer('Object?', 'dart:core')))
+          .statement,
+      declareFinal(r'_$mapValues')
+          .assign(literalList([], buildMapStringObjectType()))
+          .statement,
     ];
 
     final hasDiscriminator = model.discriminator != null;
@@ -965,17 +958,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -1125,22 +1118,22 @@ class AnyOfGenerator {
     if (needsValues) {
       body
         ..add(
-          declareFinal(
-            r'_$entryLists',
-          ).assign(literalList([], buildParameterEntryListType())).statement,
+          declareFinal(r'_$entryLists')
+              .assign(literalList([], buildParameterEntryListType()))
+              .statement,
         )
         ..add(
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          declareFinal(r'_$values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
         );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -1948,17 +1941,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 
@@ -2099,17 +2092,17 @@ class AnyOfGenerator {
 
     if (needsValues) {
       body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
       );
     }
 
     if (needsMapValues) {
       body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
+        declareFinal(r'_$mapValues')
+            .assign(literalList([], buildMapStringPropertyValueType()))
+            .statement,
       );
     }
 

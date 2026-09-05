@@ -127,8 +127,7 @@ List<Object?> responseInputs(Response response) {
         200,
         headers: {
           'x-values': 'first, second',
-          'set-cookie':
-              'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT,session=two; Path=/',
+          'set-cookie': 'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT,session=two; Path=/',
         },
       );
 

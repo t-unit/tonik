@@ -8,9 +8,8 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 
 String _formatClass(Class cls) {
   final emitter = DartEmitter(useNullSafetySyntax: true);
-  return DartFormatter(
-    languageVersion: DartFormatter.latestLanguageVersion,
-  ).format(cls.accept(emitter).toString());
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+      .format(cls.accept(emitter).toString());
 }
 
 void main() {

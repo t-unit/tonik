@@ -2,12 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class Context {
-  Context.initial() : path = List.unmodifiable([]);
-
-  const Context._(this.path);
-
-  final List<String> path;
+class const Context._(final List<String> path) {
+  new initial() : this._(List.unmodifiable([]));
 
   Context push(String name) {
     if (name.isEmpty) {

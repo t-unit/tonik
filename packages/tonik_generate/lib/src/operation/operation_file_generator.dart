@@ -4,11 +4,9 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
 
-class OperationFileGenerator {
-  OperationFileGenerator({required this.operationGenerator});
-
-  final OperationGenerator operationGenerator;
-
+class OperationFileGenerator({
+  required final OperationGenerator operationGenerator,
+}) {
   final log = Logger('OperationFileGenerator');
 
   void writeFiles({

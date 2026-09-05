@@ -18,10 +18,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 /// stringifies the original error before delivery, so the concrete type is
 /// only recoverable for sync throws (those arrive via the internal
 /// `_ModelError`).
-class ModelWorkerAsyncError implements Exception {
-  ModelWorkerAsyncError(this.message);
-  final String message;
-
+class ModelWorkerAsyncError(final String message) implements Exception {
   @override
   String toString() => 'tonik model worker async error: $message';
 }
@@ -29,11 +26,10 @@ class ModelWorkerAsyncError implements Exception {
 /// Worker error whose original runtime type could not cross the isolate
 /// boundary (e.g. held a live [ReceivePort]). [originalTypeName] preserves
 /// it for diagnostics.
-class NonSendableWorkerError implements Exception {
-  const NonSendableWorkerError(this.message, this.originalTypeName);
-  final String message;
-  final String originalTypeName;
-
+class const NonSendableWorkerError(
+  final String message,
+  final String originalTypeName,
+) implements Exception {
   @override
   String toString() =>
       'Worker error (original type $originalTypeName, non-sendable): $message';
@@ -42,14 +38,12 @@ class NonSendableWorkerError implements Exception {
 /// Bounded isolate pool that parallelises [ModelFileGenerator.writeOne]
 /// across [Model]s. Forwards `Logger.root` records from workers to main
 /// with their original [Level] and logger name preserved.
-class ModelWorkerPool {
-  ModelWorkerPool({this.maxInflight = _defaultMaxInflight});
-
-  static const int _defaultMaxInflight = 256;
-
+class ModelWorkerPool({
   /// Cap on outstanding jobs across all workers; bounds peak memory of
   /// queued `(filename, code)` pairs.
-  final int maxInflight;
+  final int maxInflight = _defaultMaxInflight,
+}) {
+  static const int _defaultMaxInflight = 256;
 
   int _exitedWorkers = 0;
   int _spawnedWorkers = 0;
@@ -439,83 +433,47 @@ Future<void> _workerEntry(_WorkerInit init) async {
   }
 }
 
-class _WorkerInit {
-  const _WorkerInit({
-    required this.mainInbox,
-    required this.workerId,
-    required this.models,
-    required this.nameManager,
-    required this.outputDirectory,
-    required this.package,
-    required this.useImmutableCollections,
-    required this.stableModelSorter,
-  });
+class const _WorkerInit({
+  required final SendPort mainInbox,
+  required final int workerId,
+  required final List<Model> models,
+  required final NameManager nameManager,
+  required final String outputDirectory,
+  required final String package,
+  required final bool useImmutableCollections,
+  required final StableModelSorter stableModelSorter,
+});
 
-  final SendPort mainInbox;
-  final int workerId;
-  final List<Model> models;
-  final NameManager nameManager;
-  final String outputDirectory;
-  final String package;
-  final bool useImmutableCollections;
-  final StableModelSorter stableModelSorter;
-}
+class const _ModelJob(final int modelIndex);
 
-class _ModelJob {
-  const _ModelJob(this.modelIndex);
-  final int modelIndex;
-}
+class const _Shutdown();
 
-class _Shutdown {
-  const _Shutdown();
-}
-
-class _ModelAck {
-  const _ModelAck(this.workerId, this.modelIndex, this.generatedFile);
-  final int workerId;
-  final int modelIndex;
-  final String? generatedFile;
-}
+class const _ModelAck(
+  final int workerId,
+  final int modelIndex,
+  final String? generatedFile,
+);
 
 /// [error]/[stack] are the originals when sendable, stringified otherwise.
 /// `modelIndex == null` flags a setup-time failure (no inflight to release).
-class _ModelError {
-  const _ModelError({
-    required this.workerId,
-    required this.modelIndex,
-    required this.error,
-    required this.stack,
-  });
-  final int workerId;
-  final int? modelIndex;
-  final Object error;
-  final StackTrace stack;
-
+class const _ModelError({
+  required final int workerId,
+  required final int? modelIndex,
+  required final Object error,
+  required final StackTrace stack,
+}) {
   bool get isSetupFailure => modelIndex == null;
 }
 
 /// `error`/`stackTrace` are stringified at the boundary; `record.error is
 /// SomeException` checks in main listeners will not match.
-class _WorkerLog {
-  const _WorkerLog({
-    required this.levelValue,
-    required this.levelName,
-    required this.loggerName,
-    required this.message,
-    required this.error,
-    required this.stackTrace,
-  });
+class const _WorkerLog({
+  required final int levelValue,
+  required final String levelName,
+  required final String loggerName,
+  required final String message,
+  required final String? error,
+  required final String? stackTrace,
+});
 
-  final int levelValue;
-  final String levelName;
-  final String loggerName;
-  final String message;
-  final String? error;
-  final String? stackTrace;
-}
-
-class _WorkerHandshake {
-  const _WorkerHandshake(this.workerId, this.sendPort);
-  final int workerId;
-  final SendPort sendPort;
-}
+class const _WorkerHandshake(final int workerId, final SendPort sendPort);

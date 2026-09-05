@@ -7,9 +7,7 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-final class HttpBackendGenerator implements TransportBackendGenerator {
-  const HttpBackendGenerator();
-
+final class const HttpBackendGenerator() implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.http;
 
@@ -329,9 +327,9 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       const Code(' $resolvedClient;'),
       Block.of([
         const Code('try {'),
-        refer(
-          resolvedClient,
-        ).assign(refer(clientAccessorFieldName).call([])).statement,
+        refer(resolvedClient)
+            .assign(refer(clientAccessorFieldName).call([]))
+            .statement,
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
@@ -379,9 +377,11 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
             request: request,
             cancellation: cancellation,
           ),
-        refer(request).property('headers').property('addAll').call([
-          refer(r'_$options'),
-        ]).statement,
+        refer(request)
+            .property('headers')
+            .property('addAll')
+            .call([refer(r'_$options')])
+            .statement,
         if (canBeMultipart)
           Block.of([
             const Code(r'if (_$data is '),
@@ -429,9 +429,10 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         const Code('try {'),
         refer(r'_$streamedResponse')
             .assign(
-              refer(
-                resolvedClient,
-              ).property('send').call([refer(request)]).awaited,
+              refer(resolvedClient)
+                  .property('send')
+                  .call([refer(request)])
+                  .awaited,
             )
             .statement,
         const Code('} on '),
@@ -584,9 +585,11 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
               ], abortTrigger),
             )
             .statement,
-        refer(multipartRequest).property('files').property('addAll').call([
-          refer(r'_$data').asA(multipartFilesType),
-        ]).statement,
+        refer(multipartRequest)
+            .property('files')
+            .property('addAll')
+            .call([refer(r'_$data').asA(multipartFilesType)])
+            .statement,
         refer(request).assign(refer(multipartRequest)).statement,
         const Code('}'),
       ]),
@@ -659,9 +662,11 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
               ),
             )
             .statement,
-        refer(multipartRequest).property('files').property('addAll').call([
-          refer(r'_$data'),
-        ]).statement,
+        refer(multipartRequest)
+            .property('files')
+            .property('addAll')
+            .call([refer(r'_$data')])
+            .statement,
         refer(request).assign(refer(multipartRequest)).statement,
         const Code('} else {'),
         declareFinal(ordinaryRequest)

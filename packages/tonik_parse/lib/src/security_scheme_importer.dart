@@ -4,10 +4,7 @@ import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/security_scheme.dart' as parse;
 
-class SecuritySchemeImporter {
-  SecuritySchemeImporter(this.openApiObject);
-
-  final OpenApiObject openApiObject;
+class SecuritySchemeImporter(final OpenApiObject openApiObject) {
   final log = Logger('SecuritySchemeImporter');
 
   late Map<String, core.SecurityScheme> securitySchemes;

@@ -7,11 +7,7 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
-class OperationRequestPlanner {
-  const OperationRequestPlanner({required this.backend});
-
-  final TransportBackend backend;
-
+class const OperationRequestPlanner({required final TransportBackend backend}) {
   OperationRequestPlan plan(
     Operation operation,
     NormalizedRequestParameters parameters,

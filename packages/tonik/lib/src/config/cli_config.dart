@@ -8,56 +8,35 @@ import 'package:tonik_core/tonik_core.dart';
 /// This class extends the core [TonikConfig] with CLI-specific settings
 /// like [logLevel] that don't belong in the core package.
 @immutable
-class CliConfig {
-  const CliConfig({
-    this.spec,
-    this.outputDir,
-    this.packageName,
-    this.logLevel,
-    this.nameOverrides = const NameOverridesConfig(),
-    this.contentTypes = const {},
-    this.contentMediaTypes = const {},
-    this.filter = const FilterConfig(),
-    this.deprecated = const DeprecatedConfig(),
-    this.enums = const EnumConfig(),
-    this.transport = const TransportConfig(),
-    this.useImmutableCollections = false,
-    this.workerCount = 0,
-  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
-
+class const CliConfig({
   /// Path to the OpenAPI specification file.
-  final String? spec;
+  final String? spec,
 
   /// Output directory for generated code.
-  final String? outputDir;
+  final String? outputDir,
 
   /// Name of the generated package.
-  final String? packageName;
-
-  final LogLevel? logLevel;
-
-  final NameOverridesConfig nameOverrides;
+  final String? packageName,
+  final LogLevel? logLevel,
+  final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
 
   /// Custom content type mappings: `contentType -> serializationFormat`.
-  final Map<String, ContentType> contentTypes;
+  final Map<String, ContentType> contentTypes = const {},
 
   /// Schema-level contentMediaType mappings for encoded content.
-  final Map<String, SchemaContentType> contentMediaTypes;
-
-  final FilterConfig filter;
-
-  final DeprecatedConfig deprecated;
-
-  final EnumConfig enums;
-
-  final TransportConfig transport;
+  final Map<String, SchemaContentType> contentMediaTypes = const {},
+  final FilterConfig filter = const FilterConfig(),
+  final DeprecatedConfig deprecated = const DeprecatedConfig(),
+  final EnumConfig enums = const EnumConfig(),
+  final TransportConfig transport = const TransportConfig(),
 
   /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
   /// `package:fast_immutable_collections` instead of `List<T>` and
   /// `Map<String, V>` for public-facing model types.
-  final bool useImmutableCollections;
-
-  final int workerCount;
+  final bool useImmutableCollections = false,
+  final int workerCount = 0,
+}) {
+  this : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,

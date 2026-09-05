@@ -5,17 +5,11 @@ import 'package:tonik_generate/src/transport/request_headers_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Generates the exact string header map applied to a `package:http` request.
-class HttpHeadersGenerator {
-  const HttpHeadersGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const HttpHeadersGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   Method generateHeadersMethod(
     Operation operation,
     List<({String normalizedName, RequestHeaderObject parameter})> headers,

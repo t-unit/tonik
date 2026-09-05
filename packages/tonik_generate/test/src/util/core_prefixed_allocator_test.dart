@@ -92,9 +92,10 @@ void main() {
       expect(code.contains('_i1.File') || code.contains('_i2.File'), isTrue);
 
       // Ensure they have different prefixes
-      final prefixes = RegExp(
-        r'_i(\d+)',
-      ).allMatches(imports).map((m) => m.group(1)).toList();
+      final prefixes = RegExp(r'_i(\d+)')
+          .allMatches(imports)
+          .map((m) => m.group(1))
+          .toList();
       expect(prefixes.toSet().length, 2);
     });
   });

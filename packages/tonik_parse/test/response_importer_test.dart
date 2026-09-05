@@ -578,9 +578,8 @@ void main() {
         },
       };
 
-      final api = Importer(
-        contentTypes: {'text/html': ContentType.text},
-      ).import(fileContentWithCustom);
+      final api = Importer(contentTypes: {'text/html': ContentType.text})
+          .import(fileContentWithCustom);
       final customResponse = api.responses.firstWhereOrNull(
         (r) => r.name == 'CustomResponse',
       );

@@ -224,9 +224,8 @@ transport:
           ),
         ]) {
           test('rejects ${invalidCase.name} with accepted values', () {
-            File(
-              '${tempDir.path}/tonik.yaml',
-            ).writeAsStringSync(invalidCase.yaml);
+            File('${tempDir.path}/tonik.yaml')
+                .writeAsStringSync(invalidCase.yaml);
 
             expect(
               () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),

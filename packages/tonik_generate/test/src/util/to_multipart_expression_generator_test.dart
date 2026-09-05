@@ -1399,149 +1399,140 @@ $expectedPartCode
       },
     );
 
-    test(
-      'serializes required EnumModel<int> with text/plain via toJson().toString()',
-      () {
-        final enumModel = EnumModel<int>(
-          name: 'Count',
-          values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+    test('serializes required EnumModel<int> with text/plain via toJson().toString()', () {
+      final enumModel = EnumModel<int>(
+        name: 'Count',
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
 
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'count',
-            model: enumModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'count',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        ]);
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
+        ),
+      );
+    });
+
+    test('serializes required EnumModel<String> with application/json via toJson()', () {
+      final enumModel = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'status',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'serializes required EnumModel<String> with application/json via toJson()',
-      () {
-        final enumModel = EnumModel<String>(
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
-          },
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'status',
-            model: enumModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ]);
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
+        ),
+      );
+    });
+
+    test('serializes required EnumModel<int> with application/json via toJson().toString()', () {
+      final enumModel = EnumModel<int>(
+        name: 'Count',
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+        examples: const [],
+      );
+
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'count',
+          model: enumModel,
+          encoding: const PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: EncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: null,
           ),
-        );
-      },
-    );
+        ),
+      ]);
 
-    test(
-      'serializes required EnumModel<int> with application/json via toJson().toString()',
-      () {
-        final enumModel = EnumModel<int>(
-          name: 'Count',
-          values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
-          isNullable: false,
-          isDeprecated: false,
-          context: testContext,
-          examples: const [],
-        );
+      final result = buildMultipartBodyStatements(
+        _planMultipartBody(content, 'body'),
+      );
 
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'count',
-            model: enumModel,
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
-          ),
-        ]);
-
-        final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
-        );
-
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('wraps optional enum with null-check', () {
       final enumModel = EnumModel<String>(
@@ -5223,37 +5214,35 @@ $expectedPartCode
         },
       );
 
-      test(
-        'list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields',
-        () {
-          final content = multipartContentFixture(testContext, [
-            multipartPartFixture(
-              name: 'dates',
-              model: ListModel(
-                content: DateTimeModel(context: testContext),
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+      test('list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields', () {
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'dates',
+            model: ListModel(
+              content: DateTimeModel(context: testContext),
+              context: testContext,
+              examples: const [],
             ),
-          ]);
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 final _$formData = FormData();
                 for (final item in body.dates) {
@@ -5262,54 +5251,51 @@ $expectedPartCode
                 return _$formData;
               }
             '''),
+          ),
+        );
+      });
+
+      test('list of enums, text/plain (parser default) → repeated uriEncode fields', () {
+        final enumModel = EnumModel<String>(
+          name: 'Priority',
+          isNullable: false,
+          isDeprecated: false,
+          values: {
+            const EnumEntry(value: 'high'),
+            const EnumEntry(value: 'low'),
+          },
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = multipartContentFixture(testContext, [
+          multipartPartFixture(
+            name: 'priorities',
+            model: ListModel(
+              content: enumModel,
+              context: testContext,
+              examples: const [],
             ),
-          );
-        },
-      );
-
-      test(
-        'list of enums, text/plain (parser default) → repeated uriEncode fields',
-        () {
-          final enumModel = EnumModel<String>(
-            name: 'Priority',
-            isNullable: false,
-            isDeprecated: false,
-            values: {
-              const EnumEntry(value: 'high'),
-              const EnumEntry(value: 'low'),
-            },
-            context: testContext,
-            examples: const [],
-          );
-
-          final content = multipartContentFixture(testContext, [
-            multipartPartFixture(
-              name: 'priorities',
-              model: ListModel(
-                content: enumModel,
-                context: testContext,
-                examples: const [],
-              ),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
+            encoding: const PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          ]);
+          ),
+        ]);
 
-          final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
-          );
+        final result = buildMultipartBodyStatements(
+          _planMultipartBody(content, 'body'),
+        );
 
-          final code = emitStatements(result);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
                 void test() {
                   final _$formData = FormData();
                   for (final item in body.priorities) {
@@ -5323,10 +5309,9 @@ $expectedPartCode
                   return _$formData;
                 }
               '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test('optional list, no encoding → repeated fields with null guard', () {
         final content = multipartContentFixture(testContext, [
@@ -7109,9 +7094,9 @@ $expectedPartCode
 MultipartBodyPlan _planMultipartBody(
   MultipartRequestContent content,
   String bodyAccessor,
-) => const MultipartBodyPlanner(
-  backend: TransportBackend.dio,
-).plan(content, bodyAccessor: bodyAccessor, isRequired: true);
+) =>
+    const MultipartBodyPlanner(backend: TransportBackend.dio)
+        .plan(content, bodyAccessor: bodyAccessor, isRequired: true);
 
 ClassModel _testClassModel(Context context) => ClassModel(
   name: 'NestedValue',

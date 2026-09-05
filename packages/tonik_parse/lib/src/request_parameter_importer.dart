@@ -7,16 +7,11 @@ import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 
-class RequestParameterImporter {
-  RequestParameterImporter({
-    required this.openApiObject,
-    required this.modelImporter,
-    required this.exampleImporter,
-  });
-
-  final OpenApiObject openApiObject;
-  final ModelImporter modelImporter;
-  final ExampleImporter exampleImporter;
+class RequestParameterImporter({
+  required final OpenApiObject openApiObject,
+  required final ModelImporter modelImporter,
+  required final ExampleImporter exampleImporter,
+}) {
   final log = Logger('RequestParameterImporter');
 
   late Set<core.RequestHeader> headers;
@@ -145,13 +140,11 @@ class RequestParameterImporter {
                 (h) =>
                     (h is core.RequestHeaderAlias && h.name == refName) ||
                     (h is core.RequestHeaderObject && h.name == refName),
-                orElse: () =>
-                    _importParameter(
-                          name: refName,
-                          wrapper: refParameter,
-                          context: context,
-                        )
-                        as core.RequestHeader,
+                orElse: () => _importParameter(
+                  name: refName,
+                  wrapper: refParameter,
+                  context: context,
+                ) as core.RequestHeader,
               );
 
               return core.RequestHeaderAlias(
@@ -166,13 +159,11 @@ class RequestParameterImporter {
                 (q) =>
                     (q is core.QueryParameterAlias && q.name == refName) ||
                     (q is core.QueryParameterObject && q.name == refName),
-                orElse: () =>
-                    _importParameter(
-                          name: refName,
-                          wrapper: refParameter,
-                          context: context,
-                        )
-                        as core.QueryParameter,
+                orElse: () => _importParameter(
+                  name: refName,
+                  wrapper: refParameter,
+                  context: context,
+                ) as core.QueryParameter,
               );
 
               return core.QueryParameterAlias(
@@ -187,13 +178,11 @@ class RequestParameterImporter {
                 (p) =>
                     (p is core.PathParameterAlias && p.name == refName) ||
                     (p is core.PathParameterObject && p.name == refName),
-                orElse: () =>
-                    _importParameter(
-                          name: refName,
-                          wrapper: refParameter,
-                          context: context,
-                        )
-                        as core.PathParameter,
+                orElse: () => _importParameter(
+                  name: refName,
+                  wrapper: refParameter,
+                  context: context,
+                ) as core.PathParameter,
               );
 
               return core.PathParameterAlias(
@@ -208,13 +197,11 @@ class RequestParameterImporter {
                 (c) =>
                     (c is core.CookieParameterAlias && c.name == refName) ||
                     (c is core.CookieParameterObject && c.name == refName),
-                orElse: () =>
-                    _importParameter(
-                          name: refName,
-                          wrapper: refParameter,
-                          context: context,
-                        )
-                        as core.CookieParameter,
+                orElse: () => _importParameter(
+                  name: refName,
+                  wrapper: refParameter,
+                  context: context,
+                ) as core.CookieParameter,
               );
 
               return core.CookieParameterAlias(

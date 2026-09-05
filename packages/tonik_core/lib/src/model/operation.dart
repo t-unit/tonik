@@ -1,48 +1,26 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-class Operation {
-  Operation({
-    required this.context,
-    required this.path,
-    required this.method,
-    required this.tags,
-    required this.isDeprecated,
-    required this.headers,
-    required this.queryParameters,
-    required this.pathParameters,
-    required this.cookieParameters,
-    required this.responses,
-    required this.securitySchemes,
-    this.operationId,
-    this.nameOverride,
-    this.summary,
-    this.description,
-    this.requestBody,
-  });
+class Operation({
+  required final Context context,
+  required final String path,
+  required final HttpMethod method,
+  required var Set<Tag> tags,
+  required var bool isDeprecated,
+  required var Set<RequestHeader> headers,
+  required var Set<QueryParameter> queryParameters,
+  required var Set<PathParameter> pathParameters,
+  required var Set<CookieParameter> cookieParameters,
+  required var Map<ResponseStatus, Response> responses,
+  required var Set<SecurityScheme> securitySchemes,
+  final String? operationId,
+  var String? nameOverride,
+  var String? summary,
+  var String? description,
+  var RequestBody? requestBody,
+});
 
-  final String? operationId;
-  final Context context;
-  final String path;
-  final HttpMethod method;
-
-  String? nameOverride;
-  String? summary;
-  String? description;
-  bool isDeprecated;
-  Set<Tag> tags;
-  Set<RequestHeader> headers;
-  Set<QueryParameter> queryParameters;
-  Set<PathParameter> pathParameters;
-  Set<CookieParameter> cookieParameters;
-  RequestBody? requestBody;
-  Map<ResponseStatus, Response> responses;
-  Set<SecurityScheme> securitySchemes;
-}
-
-sealed class ResponseStatus implements Comparable<ResponseStatus> {
-  const ResponseStatus();
-
+sealed class const ResponseStatus() implements Comparable<ResponseStatus> {
   int get _specificityRank => switch (this) {
     ExplicitResponseStatus() => 0,
     RangeResponseStatus() => 1,
@@ -73,9 +51,7 @@ sealed class ResponseStatus implements Comparable<ResponseStatus> {
 }
 
 @immutable
-class DefaultResponseStatus extends ResponseStatus {
-  const DefaultResponseStatus();
-
+class const DefaultResponseStatus() extends ResponseStatus {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -88,11 +64,8 @@ class DefaultResponseStatus extends ResponseStatus {
 }
 
 @immutable
-class ExplicitResponseStatus extends ResponseStatus {
-  const ExplicitResponseStatus({required this.statusCode});
-
-  final int statusCode;
-
+class const ExplicitResponseStatus({required final int statusCode})
+    extends ResponseStatus {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -108,12 +81,10 @@ class ExplicitResponseStatus extends ResponseStatus {
 }
 
 @immutable
-class RangeResponseStatus extends ResponseStatus {
-  const RangeResponseStatus({required this.min, required this.max});
-
-  final int min;
-  final int max;
-
+class const RangeResponseStatus({
+  required final int min,
+  required final int max,
+}) extends ResponseStatus {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -128,4 +99,13 @@ class RangeResponseStatus extends ResponseStatus {
   String toString() => 'RangeResponseStatus(min: $min, max: $max)';
 }
 
-enum HttpMethod { get, post, put, delete, patch, head, options, trace }
+enum HttpMethod() {
+  get,
+  post,
+  put,
+  delete,
+  patch,
+  head,
+  options,
+  trace,
+}

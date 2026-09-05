@@ -8,22 +8,14 @@ import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
 
-class ResponseImporter {
-  ResponseImporter({
-    required this.openApiObject,
-    required this.modelImporter,
-    required this.headerImporter,
-    required this.exampleImporter,
-    this.contentTypes = const {},
-  });
-
-  final OpenApiObject openApiObject;
-  final ModelImporter modelImporter;
-  final ResponseHeaderImporter headerImporter;
-  final ExampleImporter exampleImporter;
+class ResponseImporter({
+  required final OpenApiObject openApiObject,
+  required final ModelImporter modelImporter,
+  required final ResponseHeaderImporter headerImporter,
+  required final ExampleImporter exampleImporter,
+  final Map<String, core.ContentType> contentTypes = const {},
+}) {
   final log = Logger('ResponseImporter');
-
-  final Map<String, core.ContentType> contentTypes;
 
   late Set<core.Response> responses;
 

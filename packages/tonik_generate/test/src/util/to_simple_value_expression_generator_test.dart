@@ -800,9 +800,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
+              ..body = declareFinal('result')
+                  .assign(expression.expression)
+                  .statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -838,9 +838,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
+              ..body = declareFinal('result')
+                  .assign(expression.expression)
+                  .statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -884,9 +884,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -925,9 +925,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(scopedEmitter).toString());
@@ -988,9 +988,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1018,9 +1018,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1053,9 +1053,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1092,9 +1092,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1136,9 +1136,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1182,9 +1182,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1237,9 +1237,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(scopedEmitter).toString());
@@ -1338,9 +1338,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1374,9 +1374,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -1410,9 +1410,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
+            ..body = declareFinal('result')
+                .assign(expression.expression)
+                .statement,
         );
 
         final generated = format(method.accept(emitter).toString());

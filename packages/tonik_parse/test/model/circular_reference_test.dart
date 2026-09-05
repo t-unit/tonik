@@ -33,14 +33,14 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final schemaA =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaA')
-              as ClassModel;
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      ) as ClassModel;
       expect(schemaA.name, 'SchemaA');
 
-      final schemaB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaA.children is a list of SchemaB
@@ -95,9 +95,9 @@ void main() {
       );
       expect(schemaA, isA<AllOfModel>());
 
-      final schemaB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA (the AllOfModel)
@@ -137,15 +137,15 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final schemaA =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaA')
-              as ClassModel;
-      final schemaB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-              as ClassModel;
-      final schemaC =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaC')
-              as ClassModel;
+      final schemaA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaA',
+      ) as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
 
       expect(schemaA.name, 'SchemaA');
       expect(schemaB.name, 'SchemaB');
@@ -203,15 +203,15 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaA')
-                as ClassModel;
-        final schemaB =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-                as ClassModel;
-        final schemaC =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaC')
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
+        final schemaB = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaB',
+        ) as ClassModel;
+        final schemaC = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaC',
+        ) as ClassModel;
 
         // A.items is array of B
         final itemsProp = schemaA.properties.firstWhere(
@@ -266,9 +266,9 @@ void main() {
       );
       expect(schemaA, isA<OneOfModel>());
 
-      final schemaB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA
@@ -307,9 +307,9 @@ void main() {
       );
       expect(schemaA, isA<AnyOfModel>());
 
-      final schemaB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-              as ClassModel;
+      final schemaB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaB',
+      ) as ClassModel;
       expect(schemaB.name, 'SchemaB');
 
       // SchemaB.back should reference SchemaA
@@ -343,11 +343,9 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final treeNode =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'TreeNode',
-                )
-                as ClassModel;
+        final treeNode = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'TreeNode',
+        ) as ClassModel;
         expect(treeNode.name, 'TreeNode');
 
         final valueProp = treeNode.properties.firstWhere(
@@ -400,12 +398,12 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaA')
-                as ClassModel;
-        final schemaB =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaB')
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
+        final schemaB = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaB',
+        ) as ClassModel;
 
         // A.bList is array of B
         final bListProp = schemaA.properties.firstWhere(
@@ -512,14 +510,14 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final schemaA =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaA')
-                as ClassModel;
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        ) as ClassModel;
         expect(schemaA.name, 'SchemaA');
 
-        final schemaC =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaC')
-                as ClassModel;
+        final schemaC = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaC',
+        ) as ClassModel;
         expect(schemaC.name, 'SchemaC');
       },
     );
@@ -591,9 +589,9 @@ void main() {
       );
       expect(schemaB, isA<AllOfModel>());
 
-      final schemaC =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaC')
-              as ClassModel;
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
       expect(schemaC.name, 'SchemaC');
 
       // SchemaC.back should reference SchemaA
@@ -647,9 +645,9 @@ void main() {
       );
       expect(schemaA, isA<AllOfModel>());
 
-      final schemaC =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'SchemaC')
-              as ClassModel;
+      final schemaC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'SchemaC',
+      ) as ClassModel;
 
       // SchemaC.root should reference SchemaA
       final rootProp = schemaC.properties.firstWhere((p) => p.name == 'root');
@@ -782,12 +780,12 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final shape =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Shape')
-                as OneOfModel;
-        final circle =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Circle')
-                as AllOfModel;
+        final shape = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Shape',
+        ) as OneOfModel;
+        final circle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Circle',
+        ) as AllOfModel;
 
         // Shape's oneOf contains Circle.
         expect(shape.models.any((m) => identical(m.model, circle)), isTrue);
@@ -855,17 +853,15 @@ void main() {
 
         final api = Importer().import(spec);
 
-        final shape =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Shape')
-                as OneOfModel;
-        final circle =
-            api.models.firstWhere((m) => m is NamedModel && m.name == 'Circle')
-                as AllOfModel;
-        final rectangle =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'Rectangle',
-                )
-                as AllOfModel;
+        final shape = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Shape',
+        ) as OneOfModel;
+        final circle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Circle',
+        ) as AllOfModel;
+        final rectangle = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'Rectangle',
+        ) as AllOfModel;
 
         // Shape contains both Circle and Rectangle.
         expect(shape.models.length, 2);
@@ -935,9 +931,9 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final shape =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Shape')
-              as OneOfModel;
+      final shape = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Shape',
+      ) as OneOfModel;
 
       expect(shape.discriminator, 'shapeType');
 
@@ -983,12 +979,12 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final vehicle =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Vehicle')
-              as AnyOfModel;
-      final car =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Car')
-              as AllOfModel;
+      final vehicle = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Vehicle',
+      ) as AnyOfModel;
+      final car = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Car',
+      ) as AllOfModel;
 
       // Vehicle contains Car.
       expect(vehicle.models.any((m) => identical(m.model, car)), isTrue);
@@ -1042,15 +1038,15 @@ void main() {
       final api = Importer().import(spec);
 
       // All three schemas should be present.
-      final base =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Base')
-              as OneOfModel;
-      final mid =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Mid')
-              as AllOfModel;
-      final leaf =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Leaf')
-              as AllOfModel;
+      final base = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Base',
+      ) as OneOfModel;
+      final mid = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Mid',
+      ) as AllOfModel;
+      final leaf = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Leaf',
+      ) as AllOfModel;
 
       // No stack overflow on encodingShape.
       expect(base.encodingShape, isNotNull);
@@ -1095,12 +1091,12 @@ void main() {
 
       final api = Importer().import(spec);
 
-      final nodeA =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'NodeA')
-              as AllOfModel;
-      final nodeB =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'NodeB')
-              as AllOfModel;
+      final nodeA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NodeA',
+      ) as AllOfModel;
+      final nodeB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NodeB',
+      ) as AllOfModel;
 
       // One of the back-edges was skipped to break the cycle.
       // NodeA references NodeB (forward), NodeB's ref to NodeA

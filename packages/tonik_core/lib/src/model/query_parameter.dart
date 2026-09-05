@@ -3,7 +3,7 @@ import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding styles supported for query parameters.
-enum QueryParameterEncoding {
+enum QueryParameterEncoding() {
   /// Ampersand-separated values. Default style.
   /// Example: ?id=3&id=4&id=5 (with explode: true)
   /// Example: ?id=3,4,5 (with explode: false)
@@ -22,11 +22,7 @@ enum QueryParameterEncoding {
   deepObject,
 }
 
-sealed class QueryParameter {
-  const QueryParameter({required this.context});
-
-  final Context context;
-
+sealed class const QueryParameter({required final Context context}) {
   /// The description of the parameter.
   /// For aliases, this may override the referenced parameter's description.
   String? get description;
@@ -60,20 +56,12 @@ sealed class QueryParameter {
 }
 
 @immutable
-class QueryParameterAlias extends QueryParameter {
-  const QueryParameterAlias({
-    required this.name,
-    required this.parameter,
-    required super.context,
-    this.description,
-  });
-
-  final String name;
-  final QueryParameter parameter;
-
-  @override
-  final String? description;
-
+class const QueryParameterAlias({
+  required final String name,
+  required final QueryParameter parameter,
+  required super.context,
+  @override final String? description,
+}) extends QueryParameter {
   @override
   String toString() =>
       'QueryParameterAlias{name: $name, parameter: $parameter, '
@@ -93,42 +81,22 @@ class QueryParameterAlias extends QueryParameter {
   int get hashCode => Object.hash(name, parameter, description, context);
 }
 
-class QueryParameterObject extends QueryParameter {
-  QueryParameterObject({
-    required this.name,
-    required this.rawName,
-    required this.description,
-    required this.isRequired,
-    required this.isDeprecated,
-    required this.allowEmptyValue,
-    required this.allowReserved,
-    required this.explode,
-    required this.model,
-    required this.encoding,
-    required super.context,
-    required this.examples,
-    required this.defaultValue,
-    this.nameOverride,
-  });
-
-  final String? name;
-  final String rawName;
-
-  String? nameOverride;
-
-  @override
-  String? description;
-  bool isRequired;
-  bool isDeprecated;
-  bool allowEmptyValue;
-  bool allowReserved;
-  bool explode;
-  Model model;
-  QueryParameterEncoding encoding;
-  List<Example> examples;
-
-  Object? defaultValue;
-
+class QueryParameterObject({
+  required final String? name,
+  required final String rawName,
+  @override required var String? description,
+  required var bool isRequired,
+  required var bool isDeprecated,
+  required var bool allowEmptyValue,
+  required var bool allowReserved,
+  required var bool explode,
+  required var Model model,
+  required var QueryParameterEncoding encoding,
+  required super.context,
+  required var List<Example> examples,
+  required var Object? defaultValue,
+  var String? nameOverride,
+}) extends QueryParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override

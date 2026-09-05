@@ -3,17 +3,11 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/server_variable.dart';
 
 @immutable
-class Server {
-  const Server({
-    required this.url,
-    this.description,
-    this.variables = const [],
-  });
-
-  final String url;
-  final String? description;
-  final List<ServerVariable> variables;
-
+class const Server({
+  required final String url,
+  final String? description,
+  final List<ServerVariable> variables = const [],
+}) {
   @override
   String toString() =>
       'Server{url: $url, description: $description, '

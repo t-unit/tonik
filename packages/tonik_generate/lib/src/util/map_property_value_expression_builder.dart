@@ -3,23 +3,14 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/flat_value_codec_plan.dart';
 import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 
-sealed class MapPropertyValueConversion {
-  const MapPropertyValueConversion();
-}
+sealed class const MapPropertyValueConversion();
 
-final class SupportedMapPropertyValueConversion
-    extends MapPropertyValueConversion {
-  const SupportedMapPropertyValueConversion(this.expression);
+final class const SupportedMapPropertyValueConversion(
+  final Expression expression,
+) extends MapPropertyValueConversion;
 
-  final Expression expression;
-}
-
-final class UnsupportedMapPropertyValueConversion
-    extends MapPropertyValueConversion {
-  const UnsupportedMapPropertyValueConversion(this.reason);
-
-  final String reason;
-}
+final class const UnsupportedMapPropertyValueConversion(final String reason)
+    extends MapPropertyValueConversion;
 
 MapPropertyValueConversion buildMapPropertyValueConversion(
   Expression receiver,

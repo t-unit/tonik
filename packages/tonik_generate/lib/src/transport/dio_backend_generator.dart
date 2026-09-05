@@ -7,9 +7,7 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-final class DioBackendGenerator implements TransportBackendGenerator {
-  const DioBackendGenerator();
-
+final class const DioBackendGenerator() implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.dio;
 
@@ -186,20 +184,22 @@ final class DioBackendGenerator implements TransportBackendGenerator {
           const Code('if ('),
           cancellation.property('isCancelled').code,
           const Code(') {'),
-          refer(internalCancelToken).property('cancel').call([
-            cancellation.property('reason'),
-          ]).statement,
+          refer(internalCancelToken)
+              .property('cancel')
+              .call([cancellation.property('reason')])
+              .statement,
           _resultClass('TonikError', resultValueType)
               .call(
                 [
-                  refer(
-                    internalCancelToken,
-                  ).property('cancelError').nullChecked,
+                  refer(internalCancelToken)
+                      .property('cancelError')
+                      .nullChecked,
                 ],
                 {
-                  'stackTrace': refer(
-                    internalCancelToken,
-                  ).property('cancelError').nullChecked.property('stackTrace'),
+                  'stackTrace': refer(internalCancelToken)
+                      .property('cancelError')
+                      .nullChecked
+                      .property('stackTrace'),
                   'type': refer(
                     'TonikErrorType.cancelled',
                     'package:tonik_util/tonik_util.dart',
@@ -231,9 +231,9 @@ final class DioBackendGenerator implements TransportBackendGenerator {
       const Code(' $resolvedDio;'),
       Block.of([
         const Code('try {'),
-        refer(
-          resolvedDio,
-        ).assign(refer(clientAccessorFieldName).call([])).statement,
+        refer(resolvedDio)
+            .assign(refer(clientAccessorFieldName).call([]))
+            .statement,
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),

@@ -7,16 +7,11 @@ import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 
-class ResponseHeaderImporter {
-  ResponseHeaderImporter({
-    required this.openApiObject,
-    required this.modelImporter,
-    required this.exampleImporter,
-  });
-
-  final OpenApiObject openApiObject;
-  final ModelImporter modelImporter;
-  final ExampleImporter exampleImporter;
+class ResponseHeaderImporter({
+  required final OpenApiObject openApiObject,
+  required final ModelImporter modelImporter,
+  required final ExampleImporter exampleImporter,
+}) {
   final log = Logger('HeaderImporter');
 
   late Set<core.ResponseHeader> headers;

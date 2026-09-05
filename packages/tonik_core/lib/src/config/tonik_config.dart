@@ -10,39 +10,25 @@ import 'package:tonik_core/src/model/content_type.dart';
 
 /// Main configuration for Tonik code generation.
 @immutable
-class TonikConfig {
-  const TonikConfig({
-    this.nameOverrides = const NameOverridesConfig(),
-    this.contentTypes = const {},
-    this.contentMediaTypes = const {},
-    this.filter = const FilterConfig(),
-    this.deprecated = const DeprecatedConfig(),
-    this.enums = const EnumConfig(),
-    this.transport = const TransportConfig(),
-    this.useImmutableCollections = false,
-    this.workerCount = 0,
-  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
-
-  final NameOverridesConfig nameOverrides;
-  final Map<String, ContentType> contentTypes;
-  final Map<String, SchemaContentType> contentMediaTypes;
-
-  final FilterConfig filter;
-
-  final DeprecatedConfig deprecated;
-
-  final EnumConfig enums;
-
-  final TransportConfig transport;
+class const TonikConfig({
+  final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
+  final Map<String, ContentType> contentTypes = const {},
+  final Map<String, SchemaContentType> contentMediaTypes = const {},
+  final FilterConfig filter = const FilterConfig(),
+  final DeprecatedConfig deprecated = const DeprecatedConfig(),
+  final EnumConfig enums = const EnumConfig(),
+  final TransportConfig transport = const TransportConfig(),
 
   /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
   /// `package:fast_immutable_collections` instead of `List<T>` and
   /// `Map<String, V>` for public-facing model types.
-  final bool useImmutableCollections;
+  final bool useImmutableCollections = false,
 
   /// Worker isolates for parallel model file generation. `0` = auto, `1` =
   /// serial, `>= 2` = explicit count.
-  final int workerCount;
+  final int workerCount = 0,
+}) {
+  this : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   @override
   String toString() =>

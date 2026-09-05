@@ -5,10 +5,9 @@ import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/response/response_generator.dart';
 
 /// Generates and writes response files to disk.
-class ResponseFileGenerator {
-  ResponseFileGenerator({required this.responseGenerator});
-
-  final ResponseGenerator responseGenerator;
+class ResponseFileGenerator({
+  required final ResponseGenerator responseGenerator,
+}) {
   final log = Logger('ResponseFileGenerator');
 
   List<String> writeFiles({

@@ -2,57 +2,38 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// Backend-neutral view of a successful Tonik result.
-final class TestSuccess<T> {
-  const TestSuccess(this.value, this.response);
-
-  final T value;
-  final TestResponse response;
-}
+final class const TestSuccess<T>(final T value, final TestResponse response);
 
 /// Backend-neutral view of a failed Tonik result.
-final class TestError {
-  const TestError({
-    required this.error,
-    required this.stackTrace,
-    required this.type,
-    required this.response,
-  });
-
-  final Object error;
-  final StackTrace stackTrace;
-  final TonikErrorType type;
-  final TestResponse? response;
-}
+final class const TestError({
+  required final Object error,
+  required final StackTrace stackTrace,
+  required final TonikErrorType type,
+  required final TestResponse? response,
+});
 
 /// Backend-neutral response details retained for integration assertions.
-final class TestResponse {
-  const TestResponse({
-    required this.statusCode,
-    required this.headers,
-    required Object? data,
-  }) : _data = data;
-
-  final int? statusCode;
-  final TestHeaders headers;
-  final Object? _data;
-
+final class const TestResponse({
+  required final int? statusCode,
+  required final TestHeaders headers,
+  required final Object? _data,
+}) {
   dynamic get data => _data;
 }
 
 /// Case-insensitive response headers retaining each field value.
-final class TestHeaders {
-  TestHeaders(Map<String, Object?> values)
-    : map = Map.unmodifiable({
-        for (final entry in values.entries)
-          entry.key: List<String>.unmodifiable(switch (entry.value) {
-            Iterable<Object?> values => values.map((value) => '$value'),
-            final value? => ['$value'],
-            null => const <String>[],
-          }),
-      });
-
-  final Map<String, List<String>> map;
-
+final class const TestHeaders._(final Map<String, List<String>> map) {
+  new(Map<String, Object?> values)
+    : this._(
+        Map.unmodifiable({
+          for (final entry in values.entries)
+            entry.key: List<String>.unmodifiable(switch (entry.value) {
+              Iterable<Object?> values => values.map((value) => '$value'),
+              final value? => ['$value'],
+              null => const <String>[],
+            }),
+        }),
+      );
   List<String>? operator [](String name) {
     final normalized = name.toLowerCase();
     for (final entry in map.entries) {

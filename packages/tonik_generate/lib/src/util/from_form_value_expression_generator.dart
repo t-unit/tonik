@@ -425,9 +425,10 @@ Expression _buildPrimitiveList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body = refer(
-        'e',
-      ).property(decodeFunctionName).call([], contextParam).code,
+      ..body = refer('e')
+          .property(decodeFunctionName)
+          .call([], contextParam)
+          .code,
   ).closure;
 
   if (isRequired) {

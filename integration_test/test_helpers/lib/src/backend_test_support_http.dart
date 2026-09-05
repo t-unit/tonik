@@ -7,11 +7,9 @@ ServerConfig<http.Client> httpTestServerConfig({
   required Map<String, String> headers,
 }) => ServerConfig.clientFactory(() => _HeaderClient(headers));
 
-final class _HeaderClient extends http.BaseClient {
-  _HeaderClient(this._headers) : _inner = http.Client();
-
-  final Map<String, String> _headers;
-  final http.Client _inner;
+final class _HeaderClient(final Map<String, String> _headers)
+    extends http.BaseClient {
+  final http.Client _inner = http.Client();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {

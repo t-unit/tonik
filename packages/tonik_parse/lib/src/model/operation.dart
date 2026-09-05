@@ -4,22 +4,20 @@ import 'package:tonik_parse/src/model/request_body.dart';
 import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
-class Operation {
-  Operation({
-    required this.tags,
-    required this.summary,
-    required this.description,
-    required this.operationId,
-    required this.parameters,
-    required this.requestBody,
-    required this.responses,
-    required this.isDeprecated,
-    required this.servers,
-    required this.security,
-    required this.xDartName,
-  });
-
-  factory Operation.fromJson(Map<String, dynamic> json) => Operation(
+class Operation({
+  required final List<String>? tags,
+  required final String? summary,
+  required final String? description,
+  required final String? operationId,
+  required final List<ReferenceWrapper<Parameter>>? parameters,
+  required final ReferenceWrapper<RequestBody>? requestBody,
+  required final Map<String, ReferenceWrapper<Response>> responses,
+  required final bool? isDeprecated,
+  required final List<Server>? servers,
+  required final List<Map<String, List<String>>>? security,
+  required final String? xDartName,
+}) {
+  factory fromJson(Map<String, dynamic> json) => Operation(
     tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
     summary: json['summary'] as String?,
     description: json['description'] as String?,
@@ -49,18 +47,6 @@ class Operation {
         .toList(),
     xDartName: json['x-dart-name'] as String?,
   );
-
-  final List<String>? tags;
-  final String? summary;
-  final String? description;
-  final String? operationId;
-  final List<ReferenceWrapper<Parameter>>? parameters;
-  final ReferenceWrapper<RequestBody>? requestBody;
-  final Map<String, ReferenceWrapper<Response>> responses;
-  final bool? isDeprecated;
-  final List<Server>? servers;
-  final List<Map<String, List<String>>>? security;
-  final String? xDartName;
 
   // We ignore the externalDocs and callbacks properties.
 

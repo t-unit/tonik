@@ -1,12 +1,10 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class ExternalDocumentation {
-  const ExternalDocumentation({required this.url, required this.description});
-
-  final String? description;
-  final String url;
-
+class const ExternalDocumentation({
+  required final String url,
+  required final String? description,
+}) {
   @override
   String toString() =>
       'ExternalDocumentation{description: $description, url: $url}';

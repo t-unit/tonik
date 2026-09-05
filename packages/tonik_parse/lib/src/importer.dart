@@ -14,21 +14,19 @@ import 'package:tonik_parse/src/response_importer.dart';
 import 'package:tonik_parse/src/security_scheme_importer.dart';
 import 'package:tonik_parse/src/server_importer.dart';
 
-class Importer {
-  Importer({this.contentTypes = const {}, this.contentMediaTypes = const {}});
-
+class Importer({
   /// Maps media type strings to ContentType for parsing request/response bodies.
   /// Default includes 'application/json' only. Add custom JSON-like media types
   /// (e.g., 'application/hal+json': ContentType.json) via configuration.
-  final Map<String, core.ContentType> contentTypes;
+  final Map<String, core.ContentType> contentTypes = const {},
 
   /// Maps contentMediaType values to SchemaContentType for content-encoded
   /// string schemas. When a schema has contentEncoding set, this config
   /// determines whether it generates a StringModel or a binary-backed model.
   /// Binary mappings and unmatched media types generate a Base64Model for
   /// base64 content and a BinaryModel for other encodings.
-  final Map<String, core.SchemaContentType> contentMediaTypes;
-
+  final Map<String, core.SchemaContentType> contentMediaTypes = const {},
+}) {
   static final _log = Logger('Importer');
 
   core.ApiDocument import(Map<String, dynamic> fileContent) {
@@ -92,9 +90,8 @@ class Importer {
       contact: ContactImporter(openApiObject: openApiObject).import(),
       license: LicenseImporter(openApiObject: openApiObject).import(),
       termsOfService: openApiObject.info.termsOfService,
-      externalDocs: ExternalDocumentationImporter(
-        openApiObject: openApiObject,
-      ).import(),
+      externalDocs: ExternalDocumentationImporter(openApiObject: openApiObject)
+          .import(),
       models: modelImporter.models,
       responseHeaders: responseHeaderImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),
