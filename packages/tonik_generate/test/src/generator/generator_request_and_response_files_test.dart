@@ -59,9 +59,8 @@ void main() {
 
         final lib = path.join(tempDir.path, 'test_package', 'lib');
         expect(
-          File(
-            path.join(lib, 'src', 'model', 'upload_body_model.dart'),
-          ).existsSync(),
+          File(path.join(lib, 'src', 'model', 'upload_body_model.dart'))
+              .existsSync(),
           isTrue,
         );
         expect(

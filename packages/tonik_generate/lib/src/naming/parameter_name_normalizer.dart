@@ -17,22 +17,18 @@ Set<String> operationReservedParameterNames({required bool hasRequestBody}) => {
 };
 
 /// Result of normalizing request parameters.
-class NormalizedRequestParameters {
-  const NormalizedRequestParameters({
-    required this.pathParameters,
-    required this.queryParameters,
-    required this.headers,
-    required this.cookieParameters,
-  });
-
-  final List<({String normalizedName, PathParameterObject parameter})>
-  pathParameters;
-  final List<({String normalizedName, QueryParameterObject parameter})>
-  queryParameters;
-  final List<({String normalizedName, RequestHeaderObject parameter})> headers;
-  final List<({String normalizedName, CookieParameterObject parameter})>
-  cookieParameters;
-
+class const NormalizedRequestParameters({
+  required final List<({String normalizedName, PathParameterObject parameter})>
+  pathParameters,
+  required final List<({String normalizedName, QueryParameterObject parameter})>
+  queryParameters,
+  required final List<({String normalizedName, RequestHeaderObject parameter})>
+  headers,
+  required final List<
+    ({String normalizedName, CookieParameterObject parameter})
+  >
+  cookieParameters,
+}) {
   @override
   String toString() {
     return 'NormalizedRequestParameters(pathParameters: $pathParameters, '
@@ -288,22 +284,21 @@ String _normalizeName(String name) {
 
 /// Assigns final parameter names, unique (case-insensitively) across all
 /// locations and reserved names.
-class _NameAssigner {
-  _NameAssigner({
-    required int totalParameterCount,
-    required Set<String> reservedNames,
-  }) : _convergenceBound = totalParameterCount + reservedNames.length + 2 {
-    _usedNames.addAll(reservedNames.map((name) => name.toLowerCase()));
-  }
+class _NameAssigner._(
+  final Set<String> _usedNames,
+  final int _convergenceBound,
+) {
+  new({required int totalParameterCount, required Set<String> reservedNames})
+    : this._(
+        reservedNames.map((name) => name.toLowerCase()).toSet(),
+        totalParameterCount + reservedNames.length + 2,
+      );
 
-  final Set<String> _usedNames = <String>{};
   final Map<String, int> _nameCounters = <String, int>{};
 
   // Worst case: all names share the same base, so the maximum counter value
   // reached is the total name count. The +2 buffer gives headroom and matches
   // the initial counter value of 2.
-  final int _convergenceBound;
-
   void claimInto<T>(
     List<({String normalizedName, bool wasSuffixed, T parameter})> group,
     List<String?> names, {

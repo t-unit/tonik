@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:test_helpers/test_helpers.dart';
 
-final class MultipartWire {
-  MultipartWire(RawRequest request) {
+final class MultipartWire._(final List<MultipartWirePart> parts) {
+  factory(RawRequest request) {
     final contentType = request.header('content-type');
     final boundaryMatch = contentType == null
         ? null
@@ -14,14 +14,14 @@ final class MultipartWire {
       throw StateError('Request has no multipart boundary: $contentType');
     }
 
-    parts = request.bodyText
-        .split('--$boundary')
-        .where((segment) => segment.contains('\r\n\r\n'))
-        .map(MultipartWirePart.new)
-        .toList(growable: false);
+    return MultipartWire._(
+      request.bodyText
+          .split('--$boundary')
+          .where((segment) => segment.contains('\r\n\r\n'))
+          .map(MultipartWirePart.new)
+          .toList(growable: false),
+    );
   }
-
-  late final List<MultipartWirePart> parts;
 
   List<MultipartWirePart> named(String name) =>
       parts.where((part) => part.name == name).toList(growable: false);
@@ -29,35 +29,37 @@ final class MultipartWire {
   MultipartWirePart single(String name) => named(name).single;
 }
 
-final class MultipartWirePart {
-  MultipartWirePart(String segment) {
+final class MultipartWirePart._({
+  required final String headers,
+  required final String? name,
+  required final String? filename,
+  required final String? contentType,
+  required final Uint8List bodyBytes,
+}) {
+  factory(String segment) {
     final normalized = segment.startsWith('\r\n')
         ? segment.substring(2)
         : segment;
     final separator = normalized.indexOf('\r\n\r\n');
-    headers = normalized.substring(0, separator);
+    final headers = normalized.substring(0, separator);
     var payload = normalized.substring(separator + 4);
     if (payload.endsWith('\r\n')) {
       payload = payload.substring(0, payload.length - 2);
     }
-    bodyBytes = Uint8List.fromList(latin1.encode(payload));
-
-    name = RegExp(r'(?:^|;)\s*name="([^"]*)"').firstMatch(headers)?.group(1);
-    filename = RegExp(
-      r'(?:^|;)\s*filename="([^"]*)"',
-    ).firstMatch(headers)?.group(1);
-    contentType = RegExp(
-      r'^content-type:\s*([^\r\n]+)',
-      caseSensitive: false,
-      multiLine: true,
-    ).firstMatch(headers)?.group(1);
+    return MultipartWirePart._(
+      headers: headers,
+      name: RegExp(r'(?:^|;)\s*name="([^"]*)"').firstMatch(headers)?.group(1),
+      filename: RegExp(r'(?:^|;)\s*filename="([^"]*)"')
+          .firstMatch(headers)
+          ?.group(1),
+      contentType: RegExp(
+        r'^content-type:\s*([^\r\n]+)',
+        caseSensitive: false,
+        multiLine: true,
+      ).firstMatch(headers)?.group(1),
+      bodyBytes: Uint8List.fromList(latin1.encode(payload)),
+    );
   }
-
-  late final String headers;
-  late final String? name;
-  late final String? filename;
-  late final String? contentType;
-  late final Uint8List bodyBytes;
 
   String? header(String name) => RegExp(
     '^${RegExp.escape(name)}:\\s*([^\\r\\n]+)',

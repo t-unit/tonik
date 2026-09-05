@@ -8,45 +8,29 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 const _tonikUtilUrl = 'package:tonik_util/tonik_util.dart';
 
-enum FlatWireFormat { simple, form }
-
-sealed class FlatEncodePlan {
-  const FlatEncodePlan();
+enum FlatWireFormat() {
+  simple,
+  form,
 }
 
-final class FlatScalarEncodePlan extends FlatEncodePlan {
-  const FlatScalarEncodePlan({required this.value});
+sealed class const FlatEncodePlan();
 
-  final Expression value;
-}
+final class const FlatScalarEncodePlan({required final Expression value})
+    extends FlatEncodePlan;
 
-final class FlatArrayEncodePlan extends FlatEncodePlan {
-  const FlatArrayEncodePlan({required this.values});
+final class const FlatArrayEncodePlan({required final Expression values})
+    extends FlatEncodePlan;
 
-  final Expression values;
-}
+final class const UnsupportedFlatEncodePlan({required final String reason})
+    extends FlatEncodePlan;
 
-final class UnsupportedFlatEncodePlan extends FlatEncodePlan {
-  const UnsupportedFlatEncodePlan({required this.reason});
+sealed class const FlatDecodePlan();
 
-  final String reason;
-}
+final class const FlatScalarDecodePlan({required final Expression value})
+    extends FlatDecodePlan;
 
-sealed class FlatDecodePlan {
-  const FlatDecodePlan();
-}
-
-final class FlatScalarDecodePlan extends FlatDecodePlan {
-  const FlatScalarDecodePlan({required this.value});
-
-  final Expression value;
-}
-
-final class UnsupportedFlatDecodePlan extends FlatDecodePlan {
-  const UnsupportedFlatDecodePlan({required this.reason});
-
-  final String reason;
-}
+final class const UnsupportedFlatDecodePlan({required final String reason})
+    extends FlatDecodePlan;
 
 FlatEncodePlan buildFlatEncodePlan(
   Expression value,

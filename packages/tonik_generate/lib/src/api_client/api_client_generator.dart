@@ -16,21 +16,13 @@ import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 
 /// Generator for creating API client classes from Operation definitions.
-class ApiClientGenerator {
-  ApiClientGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.defaultsCache,
-    required this.backendGenerator,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final OperationDefaultsCache defaultsCache;
-  final TransportBackendGenerator backendGenerator;
-  final bool useImmutableCollections;
-
+class ApiClientGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final OperationDefaultsCache defaultsCache,
+  required final TransportBackendGenerator backendGenerator,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(
     Set<Operation> operations,
     Tag tag,
@@ -93,9 +85,9 @@ class ApiClientGenerator {
               Method(
                 (b) => b
                   ..lambda = true
-                  ..body = refer(
-                    'server',
-                  ).property(backendGenerator.clientGetterName).code,
+                  ..body = refer('server')
+                      .property(backendGenerator.clientGetterName)
+                      .code,
               ).closure,
             ]),
           )

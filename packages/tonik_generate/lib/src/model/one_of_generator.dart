@@ -27,19 +27,12 @@ import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating sealed Dart classes from OneOf model definitions.
 @immutable
-class OneOfGenerator {
-  const OneOfGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.stableModelSorter,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final StableModelSorter stableModelSorter;
-  final bool useImmutableCollections;
-
+class const OneOfGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final StableModelSorter stableModelSorter,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(OneOfModel model) {
     return generateCompositeLibrary(
       model: model,
@@ -479,9 +472,9 @@ class OneOfGenerator {
           const Code(') {'),
           refer(variantName)
               .call([
-                refer('json').property('decodeJsonInt').call([], {
-                  'context': specLiteralString(className),
-                }),
+                refer('json')
+                    .property('decodeJsonInt')
+                    .call([], {'context': specLiteralString(className)}),
               ])
               .returned
               .statement,
@@ -877,9 +870,10 @@ class OneOfGenerator {
                 .code,
             const Code('? {'),
             const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(','),
             Code('${specLiteralStringCode(model.discriminator!)}: '),
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -910,9 +904,10 @@ class OneOfGenerator {
           caseCodes.addAll([
             const Code('{'),
             const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(','),
             Code('${specLiteralStringCode(model.discriminator!)}: '),
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -964,13 +959,16 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer(
-            'value',
-          ).property('toBase64String').call([]).property('toSimple').call([], {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-            'literal': refer('literal'),
-          }).code,
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toSimple')
+              .call([], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'literal': refer('literal'),
+              })
+              .code,
           const Code(','),
         ]);
       } else if (m.model.resolved is BinaryModel) {
@@ -1106,9 +1104,10 @@ class OneOfGenerator {
         final discriminatedMap = <Code>[
           const Code('{'),
           const Code('...'),
-          refer('value').property('parameterProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
+          refer('value')
+              .property('parameterProperties')
+              .call([], {'allowEmpty': refer('allowEmpty')})
+              .code,
           const Code(','),
           Code('${specLiteralStringCode(model.discriminator!)}: '),
           propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -1131,9 +1130,10 @@ class OneOfGenerator {
             const Code('? '),
             ...discriminatedMap,
             const Code(' : '),
-            refer('value').property('toForm').call([
-              refer('paramName'),
-            ], memberFormArgs()).code,
+            refer('value')
+                .property('toForm')
+                .call([refer('paramName')], memberFormArgs())
+                .code,
           ]);
         } else {
           addValueArm(discriminatedMap);
@@ -1159,9 +1159,10 @@ class OneOfGenerator {
         addThrowArm('Map types cannot be form-encoded');
       } else {
         addValueArm([
-          refer('value').property('toForm').call([
-            refer('paramName'),
-          ], memberFormArgs()).code,
+          refer('value')
+              .property('toForm')
+              .call([refer('paramName')], memberFormArgs())
+              .code,
         ]);
       }
     }
@@ -1350,9 +1351,10 @@ class OneOfGenerator {
             ).property('complex').code,
             const Code('? {'),
             const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(','),
             Code('${specLiteralStringCode(model.discriminator!)}: '),
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -1372,9 +1374,10 @@ class OneOfGenerator {
               'package:tonik_util/tonik_util.dart',
             ).property('complex').code,
             const Code('? '),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(': '),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1417,9 +1420,10 @@ class OneOfGenerator {
             caseCodes.addAll([
               const Code('{'),
               const Code('...'),
-              refer('value').property('parameterProperties').call([], {
-                'allowEmpty': refer('allowEmpty'),
-              }).code,
+              refer('value')
+                  .property('parameterProperties')
+                  .call([], {'allowEmpty': refer('allowEmpty')})
+                  .code,
               const Code(','),
               Code('${specLiteralStringCode(model.discriminator!)}: '),
               propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -1428,9 +1432,10 @@ class OneOfGenerator {
             ]);
           } else {
             caseCodes.add(
-              refer('value').property('parameterProperties').call([], {
-                'allowEmpty': refer('allowEmpty'),
-              }).code,
+              refer('value')
+                  .property('parameterProperties')
+                  .call([], {'allowEmpty': refer('allowEmpty')})
+                  .code,
             );
           }
         }
@@ -1502,9 +1507,10 @@ class OneOfGenerator {
                 .code,
             const Code('? {'),
             const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(','),
             Code('${specLiteralStringCode(model.discriminator!)}: '),
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -1530,9 +1536,10 @@ class OneOfGenerator {
 
           caseCodes.addAll([
             const Code('{  ...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
+            refer('value')
+                .property('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .code,
             const Code(','),
             Code('${specLiteralStringCode(model.discriminator!)}: '),
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
@@ -1580,12 +1587,15 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer(
-            'value',
-          ).property('toBase64String').call([]).property('toLabel').call([], {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toLabel')
+              .call([], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+              })
+              .code,
           const Code(','),
         ]);
       } else if (m.model.resolved is BinaryModel) {

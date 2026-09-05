@@ -34,17 +34,11 @@ final Logger _classGeneratorLog = Logger('ClassGenerator');
 
 /// A generator for creating Dart class files from model definitions.
 @immutable
-class ClassGenerator {
-  const ClassGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const ClassGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
   ({String code, String filename}) generate(ClassModel model) => _generate(
@@ -427,10 +421,11 @@ class ClassGenerator {
     required Expression decoded,
     required String key,
     required DefaultBinding defaulted,
-  }) => refer(r'_$values')
-      .property('containsKey')
-      .call([specLiteralString(key)])
-      .conditional(decoded, refer(defaulted.memberName));
+  }) =>
+      refer(r'_$values')
+          .property('containsKey')
+          .call([specLiteralString(key)])
+          .conditional(decoded, refer(defaulted.memberName));
 
   CopyWithResult? _buildCopyWith(
     String className,

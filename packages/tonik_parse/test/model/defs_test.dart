@@ -110,9 +110,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final orderModel =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Order')
-              as ClassModel;
+      final orderModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Order',
+      ) as ClassModel;
 
       expect(orderModel, isNotNull);
       expect(orderModel.properties, hasLength(1));
@@ -160,9 +160,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final myModel =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'MyModel')
-              as ClassModel;
+      final myModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'MyModel',
+      ) as ClassModel;
 
       expect(myModel, isNotNull);
       expect(myModel.properties, hasLength(1));
@@ -213,9 +213,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final containerModel =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Container')
-              as ClassModel;
+      final containerModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Container',
+      ) as ClassModel;
 
       expect(containerModel, isNotNull);
       expect(containerModel.properties, hasLength(1));
@@ -264,9 +264,9 @@ void main() {
       // Should not throw and should not create a model for Unused.
       final api = Importer().import(fileContent);
 
-      final mySchema =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'MySchema')
-              as ClassModel;
+      final mySchema = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'MySchema',
+      ) as ClassModel;
 
       expect(mySchema, isNotNull);
       expect(mySchema.properties, hasLength(1));
@@ -437,9 +437,9 @@ void main() {
 
       final api = Importer().import(fileContent);
 
-      final invoiceModel =
-          api.models.firstWhere((m) => m is NamedModel && m.name == 'Invoice')
-              as ClassModel;
+      final invoiceModel = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Invoice',
+      ) as ClassModel;
 
       final orderProperty = invoiceModel.properties.first;
       expect(orderProperty.model, isA<ClassModel>());

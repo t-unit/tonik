@@ -19,39 +19,29 @@ import 'package:tonik_generate/src/util/response_type_generator.dart';
 
 /// Generator for creating callable operation classes
 /// from Operation definitions.
-class OperationGenerator {
-  OperationGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.defaultsCache,
-    required this.backendGenerator,
-    this.useImmutableCollections = false,
-  }) : _queryParametersGenerator = QueryGenerator(
-         nameManager: nameManager,
-         package: package,
-         useImmutableCollections: useImmutableCollections,
-       ),
-       _pathGenerator = PathGenerator(
-         nameManager: nameManager,
-         package: package,
-         useImmutableCollections: useImmutableCollections,
-       ),
-       _parseGenerator = ParseGenerator(
-         nameManager: nameManager,
-         package: package,
-         backendGenerator: backendGenerator,
-         useImmutableCollections: useImmutableCollections,
-       );
-
-  final NameManager nameManager;
-  final String package;
-  final OperationDefaultsCache defaultsCache;
-  final TransportBackendGenerator backendGenerator;
-  final bool useImmutableCollections;
-
-  final QueryGenerator _queryParametersGenerator;
-  final PathGenerator _pathGenerator;
-  final ParseGenerator _parseGenerator;
+class OperationGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final OperationDefaultsCache defaultsCache,
+  required final TransportBackendGenerator backendGenerator,
+  final bool useImmutableCollections = false,
+}) {
+  final QueryGenerator _queryParametersGenerator = QueryGenerator(
+    nameManager: nameManager,
+    package: package,
+    useImmutableCollections: useImmutableCollections,
+  );
+  final PathGenerator _pathGenerator = PathGenerator(
+    nameManager: nameManager,
+    package: package,
+    useImmutableCollections: useImmutableCollections,
+  );
+  final ParseGenerator _parseGenerator = ParseGenerator(
+    nameManager: nameManager,
+    package: package,
+    backendGenerator: backendGenerator,
+    useImmutableCollections: useImmutableCollections,
+  );
 
   ({String code, String filename}) generateCallableOperation(
     Operation operation,
@@ -222,9 +212,8 @@ class OperationGenerator {
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
     final cookieArgs = <String, Expression>{};
-    requestPlan ??= OperationRequestPlanner(
-      backend: backendGenerator.backend,
-    ).plan(operation, normalizedParams);
+    requestPlan ??= OperationRequestPlanner(backend: backendGenerator.backend)
+        .plan(operation, normalizedParams);
 
     for (final pathParam in requestPlan.pathParameters) {
       pathArgs[pathParam.normalizedName] = pathParam.value;
@@ -412,9 +401,9 @@ class OperationGenerator {
               ).property('parse').call([refer('_baseUrl')]),
             )
             .statement,
-        declareFinal(
-          r'_$pathResult',
-        ).assign(refer('_path').call([], pathArgs)).statement,
+        declareFinal(r'_$pathResult')
+            .assign(refer('_path').call([], pathArgs))
+            .statement,
         const Code(
           r"final _$newPath = _$baseUri.path.endsWith('/') "
           r"? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' "
@@ -529,9 +518,9 @@ class OperationGenerator {
       ]),
       Block.of([
         const Code('try {'),
-        refer(
-          parsedResponseVar,
-        ).assign(refer('_parseResponse').call([refer(responseVar)])).statement,
+        refer(parsedResponseVar)
+            .assign(refer('_parseResponse').call([refer(responseVar)]))
+            .statement,
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),

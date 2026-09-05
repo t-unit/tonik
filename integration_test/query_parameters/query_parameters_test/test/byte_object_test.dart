@@ -70,9 +70,8 @@ void main() {
         allowEmpty: true,
         textEncoding: utf8,
       );
-      final wire = [
-        for (final entry in encoded) '${entry.name}=${entry.value}',
-      ].join('&');
+      final wire = [for (final entry in encoded) '${entry.name}=${entry.value}']
+          .join('&');
 
       final decoded = Filter.fromForm(wire, explode: true);
       expect(decoded.signature.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);

@@ -20,9 +20,8 @@ void main() {
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
-    format = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    ).format;
+    format = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+        .format;
     generator = HttpBodyGenerator(
       nameManager: NameManager(
         generator: NameGenerator(),

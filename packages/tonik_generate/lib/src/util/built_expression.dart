@@ -13,19 +13,14 @@ import 'package:meta/meta.dart';
 /// would be dropped. [unsafeRawBody] skips that check for callers that
 /// propagate helpers up into a parent [BuiltExpression] themselves.
 @immutable
-class BuiltExpression {
-  BuiltExpression({
-    required Expression body,
-    List<InlineHelper> inlineFunctions = const [],
-  }) : _body = body,
-       inlineFunctions = List.unmodifiable(inlineFunctions);
+class const BuiltExpression._(
+  final Expression _body,
+  final List<InlineHelper> inlineFunctions,
+) {
+  new({required Expression body, List<InlineHelper> inlineFunctions = const []})
+    : this._(body, List.unmodifiable(inlineFunctions));
 
-  const BuiltExpression.simple(Expression body)
-    : _body = body,
-      inlineFunctions = const [];
-
-  final Expression _body;
-  final List<InlineHelper> inlineFunctions;
+  const new simple(Expression body) : this._(body, const []);
 
   Expression get expression {
     _assertNoHelpers('expression');
@@ -59,17 +54,11 @@ class BuiltExpression {
 /// mutually-recursive helpers (`_$encodeAMap` ↔ `_$encodeBMap`) can
 /// reference each other.
 @immutable
-class InlineHelper {
-  const InlineHelper({
-    required this.name,
-    required this.forwardDeclaration,
-    required this.assignment,
-  });
-
-  final String name;
-  final Code forwardDeclaration;
-  final Code assignment;
-}
+class const InlineHelper({
+  required final String name,
+  required final Code forwardDeclaration,
+  required final Code assignment,
+});
 
 /// Returns [helpers] with duplicates by [InlineHelper.name] removed,
 /// preserving first occurrence.
@@ -103,19 +92,19 @@ List<InlineHelper> collectInlineFunctions(
 /// sequence rather than a single expression (delimited / form-query
 /// parameter encoders).
 @immutable
-class BuiltStatements {
-  BuiltStatements({
+class const BuiltStatements._(
+  final List<Code> _statements,
+  final List<InlineHelper> inlineFunctions,
+) {
+  new({
     required List<Code> statements,
     List<InlineHelper> inlineFunctions = const [],
-  }) : _statements = List.unmodifiable(statements),
-       inlineFunctions = List.unmodifiable(inlineFunctions);
+  }) : this._(
+         List.unmodifiable(statements),
+         List.unmodifiable(inlineFunctions),
+       );
 
-  const BuiltStatements.simple(List<Code> statements)
-    : _statements = statements,
-      inlineFunctions = const [];
-
-  final List<Code> _statements;
-  final List<InlineHelper> inlineFunctions;
+  const new simple(List<Code> statements) : this._(statements, const []);
 
   List<Code> get statements {
     _assertNoHelpers('statements');

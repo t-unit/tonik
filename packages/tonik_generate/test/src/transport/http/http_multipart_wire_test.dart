@@ -47,9 +47,9 @@ void main() {
         request.headers['content-type']!,
       );
       final boundary = requestContentType.parameters['boundary']!;
-      final decoded = await Stream<List<int>>.value(
-        wireBytes,
-      ).transform(MimeMultipartTransformer(boundary)).toList();
+      final decoded = await Stream<List<int>>.value(wireBytes)
+          .transform(MimeMultipartTransformer(boundary))
+          .toList();
       final parts = <({Map<String, String> headers, List<int> bytes})>[];
       for (final part in decoded) {
         parts.add((

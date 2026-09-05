@@ -3,19 +3,12 @@ import 'package:meta/meta.dart';
 
 /// Represents a server variable for URL template substitution.
 @immutable
-class ServerVariable {
-  const ServerVariable({
-    required this.name,
-    required this.defaultValue,
-    this.enumValues,
-    this.description,
-  });
-
-  final String name;
-  final String defaultValue;
-  final List<String>? enumValues;
-  final String? description;
-
+class const ServerVariable({
+  required final String name,
+  required final String defaultValue,
+  final List<String>? enumValues,
+  final String? description,
+}) {
   @override
   String toString() =>
       'ServerVariable{'

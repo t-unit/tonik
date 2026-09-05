@@ -9,23 +9,14 @@ import 'package:tonik_generate/src/model/enum_generator.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
 import 'package:tonik_generate/src/model/typedef_generator.dart';
 
-class ModelFileGenerator {
-  ModelFileGenerator({
-    required this.classGenerator,
-    required this.enumGenerator,
-    required this.anyOfGenerator,
-    required this.oneOfGenerator,
-    required this.typedefGenerator,
-    required this.allOfGenerator,
-  });
-
-  final ClassGenerator classGenerator;
-  final EnumGenerator enumGenerator;
-  final AnyOfGenerator anyOfGenerator;
-  final OneOfGenerator oneOfGenerator;
-  final TypedefGenerator typedefGenerator;
-  final AllOfGenerator allOfGenerator;
-
+class ModelFileGenerator({
+  required final ClassGenerator classGenerator,
+  required final EnumGenerator enumGenerator,
+  required final AnyOfGenerator anyOfGenerator,
+  required final OneOfGenerator oneOfGenerator,
+  required final TypedefGenerator typedefGenerator,
+  required final AllOfGenerator allOfGenerator,
+}) {
   final log = Logger('ModelGenerator');
 
   List<String> writeFiles({

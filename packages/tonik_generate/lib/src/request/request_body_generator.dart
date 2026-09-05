@@ -13,17 +13,11 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// A generator for creating Dart sealed classes and typedefs
 /// from RequestBody definitions.
 @immutable
-class RequestBodyGenerator {
-  const RequestBodyGenerator({
-    required this.nameManager,
-    required this.package,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final bool useImmutableCollections;
-
+class const RequestBodyGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  final bool useImmutableCollections = false,
+}) {
   ({String code, String filename}) generate(RequestBody requestBody) {
     if (requestBody.contentCount <= 1) {
       throw ArgumentError(

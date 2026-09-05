@@ -6,14 +6,10 @@ import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/request/request_body_generator.dart';
 
 /// Generates and writes request body files to disk.
-class RequestBodyFileGenerator {
-  RequestBodyFileGenerator({
-    required this.requestBodyGenerator,
-    required this.classGenerator,
-  });
-
-  final RequestBodyGenerator requestBodyGenerator;
-  final ClassGenerator classGenerator;
+class RequestBodyFileGenerator({
+  required final RequestBodyGenerator requestBodyGenerator,
+  required final ClassGenerator classGenerator,
+}) {
   final log = Logger('RequestBodyFileGenerator');
 
   List<String> writeFiles({

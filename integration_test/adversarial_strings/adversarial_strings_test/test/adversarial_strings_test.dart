@@ -273,9 +273,8 @@ void main() {
     });
 
     test('oneOf string variant is sent as a quoted JSON string', () async {
-      await _api(
-        baseUrl,
-      ).sendRootOneOf(body: const RootStringOneOfString('one-of-body'));
+      await _api(baseUrl)
+          .sendRootOneOf(body: const RootStringOneOfString('one-of-body'));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, '"one-of-body"');
@@ -299,9 +298,8 @@ void main() {
     });
 
     test('anyOf string variant is sent as a quoted JSON string', () async {
-      await _api(
-        baseUrl,
-      ).sendRootAnyOf(body: const RootStringAnyOf(string: 'any-of-body'));
+      await _api(baseUrl)
+          .sendRootAnyOf(body: const RootStringAnyOf(string: 'any-of-body'));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, '"any-of-body"');
@@ -309,9 +307,8 @@ void main() {
     });
 
     test('anyOf bool variant is sent as a JSON boolean', () async {
-      await _api(
-        baseUrl,
-      ).sendRootAnyOf(body: const RootStringAnyOf(bool: true));
+      await _api(baseUrl)
+          .sendRootAnyOf(body: const RootStringAnyOf(bool: true));
 
       final recordedRequest = await imposterServer.takeRequest();
       expect(recordedRequest.body, 'true');

@@ -4,10 +4,9 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/generated_artifact_writer.dart';
 
-class ApiClientFileGenerator {
-  ApiClientFileGenerator({required this.apiClientGenerator});
-
-  final ApiClientGenerator apiClientGenerator;
+class ApiClientFileGenerator({
+  required final ApiClientGenerator apiClientGenerator,
+}) {
   final log = Logger('ApiClientFileGenerator');
 
   /// Tag used for operations without any tags.

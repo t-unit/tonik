@@ -1,39 +1,47 @@
 import 'package:tonik_parse/src/model/discriminator.dart';
 
-class Schema {
-  Schema({
-    required this.ref,
-    required this.type,
-    required this.format,
-    required this.required,
-    required this.enumerated,
-    required this.allOf,
-    required this.anyOf,
-    required this.oneOf,
-    required this.not,
-    required this.items,
-    required this.properties,
-    required this.description,
-    required this.isNullable,
-    required this.discriminator,
-    required this.isDeprecated,
-    required this.uniqueItems,
-    required this.xDartName,
-    required this.xDartEnum,
-    required this.defs,
-    required this.contentEncoding,
-    required this.contentMediaType,
-    required this.contentSchema,
-    required this.rawDefault,
-    this.additionalProperties,
-    this.isReadOnly,
-    this.isWriteOnly,
-    this.isBooleanSchema,
-    this.example,
-    this.examples,
-  });
+class Schema({
+  required final String? ref,
+  required final List<String?> type,
+  required final String? format,
+  required final List<String>? required,
+  required final List<dynamic>? enumerated,
+  required final List<Schema>? allOf,
+  required final List<Schema>? anyOf,
+  required final List<Schema>? oneOf,
+  required final Schema? not,
+  required final Schema? items,
+  required final Map<String, Schema>? properties,
+  required final String? description,
+  required final bool? isNullable,
+  required final Discriminator? discriminator,
+  required final bool? isDeprecated,
+  required final bool? uniqueItems,
+  required final String? xDartName,
+  required final List<String>? xDartEnum,
+  required final Map<String, Schema>? defs,
+  required final String? contentEncoding,
+  required final String? contentMediaType,
+  required final Schema? contentSchema,
+  required final Object? rawDefault,
+  final Object? additionalProperties,
+  final bool? isReadOnly,
+  final bool? isWriteOnly,
 
-  factory Schema.fromJson(Object? json) {
+  /// Indicates if this schema is a boolean schema (true/false).
+  ///
+  /// - `true`: Always validates (accepts any value)
+  /// - `false`: Never validates (rejects all values)
+  /// - `null`: Not a boolean schema (standard object schema)
+  final bool? isBooleanSchema,
+
+  /// OpenAPI 3.0 singular example value.
+  final Object? example,
+
+  /// OpenAPI 3.1 array of inline example values.
+  final List<Object?>? examples,
+}) {
+  factory fromJson(Object? json) {
     return switch (json) {
       final bool boolSchema => Schema(
         ref: null,
@@ -135,47 +143,7 @@ class Schema {
     };
   }
 
-  final String? ref;
-  final List<String?> type;
-  final String? format;
-  final List<String>? required;
-  final List<dynamic>? enumerated;
-  final List<Schema>? allOf;
-  final List<Schema>? anyOf;
-  final List<Schema>? oneOf;
-  final Schema? not;
-  final Schema? items;
-  final Map<String, Schema>? properties;
-  final String? description;
-  final bool? isNullable;
-  final Discriminator? discriminator;
-  final bool? isDeprecated;
-  final bool? uniqueItems;
-  final String? xDartName;
-  final List<String>? xDartEnum;
-  final Map<String, Schema>? defs;
-  final String? contentEncoding;
-  final String? contentMediaType;
-  final Schema? contentSchema;
-  final Object? additionalProperties; // bool | Schema | null
-
-  final bool? isReadOnly;
-  final bool? isWriteOnly;
-
-  final Object? rawDefault;
-
-  /// OpenAPI 3.0 singular example value.
-  final Object? example;
-
-  /// OpenAPI 3.1 array of inline example values.
-  final List<Object?>? examples;
-
-  /// Indicates if this schema is a boolean schema (true/false).
-  ///
-  /// - `true`: Always validates (accepts any value)
-  /// - `false`: Never validates (rejects all values)
-  /// - `null`: Not a boolean schema (standard object schema)
-  final bool? isBooleanSchema;
+  // bool | Schema | null
 
   bool get hasNullType => type.any((t) => t == null || t == 'null');
 
@@ -202,9 +170,7 @@ class Schema {
       'example: $example, examples: $examples}';
 }
 
-class _AdditionalPropertiesConverter {
-  const _AdditionalPropertiesConverter();
-
+class const _AdditionalPropertiesConverter() {
   Object? fromJson(Object? json) {
     if (json == null) return null;
     if (json is bool) return json;
@@ -213,9 +179,7 @@ class _AdditionalPropertiesConverter {
   }
 }
 
-class _SchemaTypeConverter {
-  const _SchemaTypeConverter();
-
+class const _SchemaTypeConverter() {
   List<String?> fromJson(dynamic json) {
     if (json == null) return [];
     if (json is String) return [json];
@@ -234,9 +198,7 @@ class _SchemaTypeConverter {
 }
 
 /// Converts a single schema from JSON, handling all schema representations.
-class SchemaConverter {
-  const SchemaConverter();
-
+class const SchemaConverter() {
   Schema? fromJson(Object? json) {
     if (json == null) return null;
     return Schema.fromJson(json);
@@ -244,9 +206,7 @@ class SchemaConverter {
 }
 
 /// Converts a list of schemas from JSON.
-class _SchemaListConverter {
-  const _SchemaListConverter();
-
+class const _SchemaListConverter() {
   List<Schema>? fromJson(List<dynamic>? json) {
     if (json == null) return null;
     return json.map(Schema.fromJson).toList();
@@ -254,9 +214,7 @@ class _SchemaListConverter {
 }
 
 /// Converts a map of schemas from JSON.
-class SchemaMapConverter {
-  const SchemaMapConverter();
-
+class const SchemaMapConverter() {
   Map<String, Schema>? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return json.map((k, e) => MapEntry(k, Schema.fromJson(e)));

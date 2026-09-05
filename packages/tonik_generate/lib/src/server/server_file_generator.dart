@@ -4,11 +4,9 @@ import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
 
 /// Generates server class files.
-class ServerFileGenerator {
-  const ServerFileGenerator({required this.serverGenerator});
-
-  final ServerGenerator serverGenerator;
-
+class const ServerFileGenerator({
+  required final ServerGenerator serverGenerator,
+}) {
   /// Writes server files to the specified output directory.
   String writeFiles({
     required ApiDocument apiDocument,

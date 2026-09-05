@@ -30,22 +30,18 @@ void main() {
 
       test('parses deprecated: true for class model', () {
         final api = Importer().import(deprecatedClass);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedModel',
-                )
-                as ClassModel;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedModel',
+        ) as ClassModel;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for class model', () {
         final api = Importer().import(deprecatedClass);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActiveModel',
-                )
-                as ClassModel;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActiveModel',
+        ) as ClassModel;
 
         expect(activeModel.isDeprecated, isFalse);
       });
@@ -73,22 +69,18 @@ void main() {
 
       test('parses deprecated: true for enum model', () {
         final api = Importer().import(deprecatedEnum);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedStatus',
-                )
-                as EnumModel;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedStatus',
+        ) as EnumModel;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for enum model', () {
         final api = Importer().import(deprecatedEnum);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActiveStatus',
-                )
-                as EnumModel;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActiveStatus',
+        ) as EnumModel;
 
         expect(activeModel.isDeprecated, isFalse);
       });
@@ -136,22 +128,18 @@ void main() {
 
       test('parses deprecated: true for allOf model', () {
         final api = Importer().import(deprecatedAllOf);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedComposite',
-                )
-                as AllOfModel;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedComposite',
+        ) as AllOfModel;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for allOf model', () {
         final api = Importer().import(deprecatedAllOf);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActiveComposite',
-                )
-                as AllOfModel;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActiveComposite',
+        ) as AllOfModel;
 
         expect(activeModel.isDeprecated, isFalse);
       });
@@ -183,22 +171,18 @@ void main() {
 
       test('parses deprecated: true for oneOf model', () {
         final api = Importer().import(deprecatedOneOf);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedUnion',
-                )
-                as OneOfModel;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedUnion',
+        ) as OneOfModel;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for oneOf model', () {
         final api = Importer().import(deprecatedOneOf);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActiveUnion',
-                )
-                as OneOfModel;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActiveUnion',
+        ) as OneOfModel;
 
         expect(activeModel.isDeprecated, isFalse);
       });
@@ -230,22 +214,18 @@ void main() {
 
       test('parses deprecated: true for anyOf model', () {
         final api = Importer().import(deprecatedAnyOf);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedMixed',
-                )
-                as AnyOfModel;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedMixed',
+        ) as AnyOfModel;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for anyOf model', () {
         final api = Importer().import(deprecatedAnyOf);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActiveMixed',
-                )
-                as AnyOfModel;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActiveMixed',
+        ) as AnyOfModel;
 
         expect(activeModel.isDeprecated, isFalse);
       });
@@ -273,22 +253,18 @@ void main() {
 
       test('parses deprecated: true for integer enum model', () {
         final api = Importer().import(deprecatedIntEnum);
-        final deprecatedModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'DeprecatedPriority',
-                )
-                as EnumModel<int>;
+        final deprecatedModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'DeprecatedPriority',
+        ) as EnumModel<int>;
 
         expect(deprecatedModel.isDeprecated, isTrue);
       });
 
       test('parses deprecated: false (default) for integer enum model', () {
         final api = Importer().import(deprecatedIntEnum);
-        final activeModel =
-            api.models.firstWhere(
-                  (m) => m is NamedModel && m.name == 'ActivePriority',
-                )
-                as EnumModel<int>;
+        final activeModel = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'ActivePriority',
+        ) as EnumModel<int>;
 
         expect(activeModel.isDeprecated, isFalse);
       });

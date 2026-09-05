@@ -5,9 +5,9 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 BuiltStatements buildMultipartBodyStatements(MultipartBodyPlan plan) =>
     BuiltStatements.simple([
-      declareFinal(
-        r'_$formData',
-      ).assign(refer('FormData', 'package:dio/dio.dart').call([])).statement,
+      declareFinal(r'_$formData')
+          .assign(refer('FormData', 'package:dio/dio.dart').call([]))
+          .statement,
       for (final emission in plan.emissions)
         switch (emission) {
           MultipartCode(:final code) => code,

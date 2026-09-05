@@ -791,9 +791,8 @@ void main() {
 
     test('BigDecimal uses plain string form', () {
       expect(
-        BigDecimal.parse(
-          '1.23E+10',
-        ).uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
+        BigDecimal.parse('1.23E+10')
+            .uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
         '1.23e+10',
       );
     });
@@ -889,9 +888,8 @@ void main() {
 
     test('map keeps percent sequences in keys and values verbatim', () {
       expect(
-        {
-          '50%': '%2F',
-        }.uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
+        {'50%': '%2F'}
+            .uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
         '50%,%2F',
       );
     });

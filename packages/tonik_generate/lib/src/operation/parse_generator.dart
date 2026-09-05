@@ -15,19 +15,12 @@ import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_util/tonik_util.dart' as tonik_util;
 
-class ParseGenerator {
-  const ParseGenerator({
-    required this.nameManager,
-    required this.package,
-    required this.backendGenerator,
-    this.useImmutableCollections = false,
-  });
-
-  final NameManager nameManager;
-  final String package;
-  final TransportBackendGenerator backendGenerator;
-  final bool useImmutableCollections;
-
+class const ParseGenerator({
+  required final NameManager nameManager,
+  required final String package,
+  required final TransportBackendGenerator backendGenerator,
+  final bool useImmutableCollections = false,
+}) {
   static final log = Logger('ParseGenerator');
 
   /// Generates the _parseResponse method for the operation.

@@ -1,16 +1,16 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/model.dart';
 
-enum AdditionalPropertiesOrigin { implicitDefault, explicit }
-
-sealed class AdditionalPropertiesPolicy {
-  const AdditionalPropertiesPolicy();
+enum AdditionalPropertiesOrigin() {
+  implicitDefault,
+  explicit,
 }
 
-@immutable
-final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
-  const ForbiddenAdditionalProperties();
+sealed class const AdditionalPropertiesPolicy();
 
+@immutable
+final class const ForbiddenAdditionalProperties()
+    extends AdditionalPropertiesPolicy {
   @override
   bool operator ==(Object other) => other is ForbiddenAdditionalProperties;
 
@@ -22,15 +22,10 @@ final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
 }
 
 @immutable
-final class AllowedAdditionalProperties extends AdditionalPropertiesPolicy {
-  const AllowedAdditionalProperties({
-    required this.valueModel,
-    this.origin = AdditionalPropertiesOrigin.explicit,
-  });
-
-  final Model valueModel;
-  final AdditionalPropertiesOrigin origin;
-
+final class const AllowedAdditionalProperties({
+  required final Model valueModel,
+  final AdditionalPropertiesOrigin origin = AdditionalPropertiesOrigin.explicit,
+}) extends AdditionalPropertiesPolicy {
   @override
   bool operator ==(Object other) =>
       other is AllowedAdditionalProperties &&
