@@ -7,7 +7,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'operation_execution_test_support.dart';
 
 void main() {
-  late Directory packageRoot;
+  Directory? packageRoot;
 
   setUpAll(() async {
     packageRoot = await prepareRuntimePackage(
@@ -19,7 +19,7 @@ void main() {
       ),
     );
   });
-  tearDownAll(() => packageRoot.parent.deleteSync(recursive: true));
+  tearDownAll(() => packageRoot?.parent.deleteSync(recursive: true));
 
   for (final scenario in const [
     'encoding',
@@ -44,7 +44,7 @@ void main() {
   ]) {
     test(
       'Dio runtime $scenario',
-      () => expectRuntimeProbe(packageRoot, scenario),
+      () => expectRuntimeProbe(packageRoot!, scenario),
     );
   }
 }

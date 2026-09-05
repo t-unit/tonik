@@ -21,7 +21,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
 
   @override
   List<DependencyDescriptor> get dependencies => const [
-    DependencyDescriptor(name: 'dio', versionConstraint: '^5.8.0+1'),
+    DependencyDescriptor(name: 'dio', versionConstraint: '^5.11.1'),
   ];
 
   @override
