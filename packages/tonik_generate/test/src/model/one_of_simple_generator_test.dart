@@ -383,9 +383,21 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             .firstWhere((c) => c.name == 'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
+        const expectedMethod = '''
+          factory Value.fromSimple(String? value, {required bool explode}) {
+            try {
+              return ValueDateTime(value.decodeSimpleDateTime(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return ValueString(value.decodeSimpleString(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException(r'Invalid simple value for Value');
+          }
+        ''';
+
         expect(
-          generated.indexOf('ValueDateTime('),
-          lessThan(generated.indexOf('ValueString(')),
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
         );
       },
     );

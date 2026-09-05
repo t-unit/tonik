@@ -536,14 +536,55 @@ void main() {
     );
 
     final klass = generator.generateClass(model);
-    final method = klass.methods.singleWhere(
-      (method) => method.name == 'toJson',
-    );
-    final generated = method.accept(emitter).toString();
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+    final generated = format(klass.accept(emitter).toString());
+
+    const expectedMethod = r'''
+      Object? toJson() {
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        if (dateTime != null) {
+          final Object? _$dateTimeJson =
+              dateTime!.toTimeZonedIso8601String();
+          if (_$dateTimeJson is Map<String, Object?>) {
+            _$mapValues.add(_$dateTimeJson);
+          } else {
+            _$values.add(_$dateTimeJson);
+          }
+        }
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+          } else {
+            _$values.add(_$stringJson);
+          }
+        }
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+          throw EncodingException(
+            r'Mixed encoding not supported for Value: cannot encode both simple and complex values',
+          );
+        }
+        if (_$values.isNotEmpty) {
+          return _$values.first;
+        }
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
+          return _$map;
+        }
+        return null;
+      }
+    ''';
 
     expect(
-      generated.indexOf('if (dateTime != null)'),
-      lessThan(generated.indexOf('if (string != null)')),
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedMethod)),
     );
   });
 }
