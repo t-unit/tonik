@@ -11,8 +11,8 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
-  DefaultApi buildAlbumsApi({required String responseStatus}) {
-    return DefaultApi(
+  ExampleApi buildExampleApi({required String responseStatus}) {
+    return ExampleApi(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: testServerConfig(
@@ -23,7 +23,7 @@ void main() {
   }
 
   test('exampleExamplePost exampleDtoInputDeletedAtAnyOf', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
+    final api = buildExampleApi(responseStatus: '200');
     final response = await api.exampleExamplePost(
       body: const ExampleDtoInput(
         email: 'john.doe@example.com',
@@ -44,7 +44,7 @@ void main() {
   });
 
   test('exampleExamplePost exampleDtoInputDeletedAtAnyOfModel', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
+    final api = buildExampleApi(responseStatus: '200');
     final response = await api.exampleExamplePost(
       body: const ExampleDtoInput(
         email: 'john.doe@example.com',

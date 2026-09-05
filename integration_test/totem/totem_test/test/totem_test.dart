@@ -14,13 +14,11 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  DefaultApi buildDefaultApi({required String responseStatus}) {
-    return DefaultApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(
-          headers: {'X-Response-Status': responseStatus},
-        ),
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -29,7 +27,7 @@ void main() {
 
   group('GetCurrentUser', () {
     test('getCurrentUser 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = UsersApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemUsersMobileApiGetCurrentUser();
 
@@ -43,7 +41,7 @@ void main() {
     });
 
     test('getCurrentUser error returns TonikError', () async {
-      final api = buildDefaultApi(responseStatus: '401');
+      final api = UsersApi(buildServer(responseStatus: '401'));
 
       final result = await api.totemUsersMobileApiGetCurrentUser();
 
@@ -57,7 +55,7 @@ void main() {
 
   group('GetUserProfile', () {
     test('getUserProfile 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = UsersApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemUsersMobileApiGetUserProfile(
         userSlug: 'test-user',
@@ -73,7 +71,7 @@ void main() {
     });
 
     test('getUserProfile error returns TonikError', () async {
-      final api = buildDefaultApi(responseStatus: '404');
+      final api = UsersApi(buildServer(responseStatus: '404'));
 
       final result = await api.totemUsersMobileApiGetUserProfile(
         userSlug: 'nonexistent',
@@ -89,7 +87,7 @@ void main() {
 
   group('ListSpaces', () {
     test('listSpaces 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = SpacesApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemSpacesMobileApiMobileApiListSpaces();
 
@@ -110,7 +108,7 @@ void main() {
 
   group('ListPosts', () {
     test('listPosts 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = BlogApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemBlogMobileApiListPosts();
 
@@ -127,7 +125,7 @@ void main() {
     });
 
     test('listPosts with pagination', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = BlogApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemBlogMobileApiListPosts(
         limit: 10,
@@ -151,7 +149,7 @@ void main() {
 
   group('DeleteCurrentUser', () {
     test('deleteCurrentUser 200', () async {
-      final api = buildDefaultApi(responseStatus: '200');
+      final api = UsersApi(buildServer(responseStatus: '200'));
 
       final result = await api.totemUsersMobileApiDeleteCurrentUser();
 

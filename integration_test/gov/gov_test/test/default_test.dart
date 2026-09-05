@@ -12,8 +12,8 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
-  DefaultApi buildAlbumsApi({required String responseStatus}) {
-    return DefaultApi(
+  FormsApi buildFormsApi({required String responseStatus}) {
+    return FormsApi(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: testServerConfig(
@@ -25,9 +25,9 @@ void main() {
 
   group('findForms', () {
     test('200', () async {
-      final defaultApi = buildAlbumsApi(responseStatus: '200');
+      final formsApi = buildFormsApi(responseStatus: '200');
 
-      final response = await defaultApi.findForms(query: '10-10EZ');
+      final response = await formsApi.findForms(query: '10-10EZ');
 
       expect(
         response,
@@ -77,9 +77,9 @@ void main() {
     });
 
     test('401', () async {
-      final defaultApi = buildAlbumsApi(responseStatus: '401');
+      final formsApi = buildFormsApi(responseStatus: '401');
 
-      final response = await defaultApi.findForms();
+      final response = await formsApi.findForms();
 
       expect(
         response,
@@ -98,9 +98,9 @@ void main() {
     });
 
     test('429', () async {
-      final defaultApi = buildAlbumsApi(responseStatus: '429');
+      final formsApi = buildFormsApi(responseStatus: '429');
 
-      final response = await defaultApi.findForms();
+      final response = await formsApi.findForms();
 
       expect(
         response,
@@ -116,9 +116,9 @@ void main() {
     });
 
     test('unexpected status code', () async {
-      final defaultApi = buildAlbumsApi(responseStatus: '500');
+      final formsApi = buildFormsApi(responseStatus: '500');
 
-      final response = await defaultApi.findForms();
+      final response = await formsApi.findForms();
 
       expect(response, isTonikError);
     });
