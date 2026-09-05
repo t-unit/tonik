@@ -13,7 +13,7 @@ void main() {
 
       expect(backend, isA<DioBackendGenerator>());
       expect(backend.dependencies, [
-        const DependencyDescriptor(name: 'dio', versionConstraint: '^5.8.0+1'),
+        const DependencyDescriptor(name: 'dio', versionConstraint: '^5.11.1'),
       ]);
       expect(backend.nativeClientType.symbol, 'Dio');
       expect(backend.nativeClientType.url, 'package:dio/dio.dart');

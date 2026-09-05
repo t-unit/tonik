@@ -15,7 +15,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
 
   @override
   List<DependencyDescriptor> get dependencies => const [
-    DependencyDescriptor(name: 'dio', versionConstraint: '^5.8.0+1'),
+    DependencyDescriptor(name: 'dio', versionConstraint: '^5.11.1'),
   ];
 
   @override
@@ -107,9 +107,8 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   String get clientAccessorFieldName => '_dio';
 
   @override
-  Reference get nativeClientAccessorType => FunctionType(
-    (b) => b..returnType = nativeClientType,
-  );
+  Reference get nativeClientAccessorType =>
+      FunctionType((b) => b..returnType = nativeClientType);
 
   @override
   String get clientAdapterName => '_DioClientAdapter';
@@ -216,9 +215,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
           cancellation.property('whenCancelled').property('then').call([
             Method(
               (m) => m
-                ..requiredParameters.add(
-                  Parameter((p) => p..name = '_'),
-                )
+                ..requiredParameters.add(Parameter((p) => p..name = '_'))
                 ..body = refer(internalCancelToken).nullChecked
                     .property('cancel')
                     .call([cancellation.property('reason')])
@@ -283,10 +280,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
         const Code(' catch (exception, stackTrace) {'),
         Block.of([
           const Code('if (exception.type == '),
-          refer(
-            'DioExceptionType.cancel',
-            'package:dio/dio.dart',
-          ).code,
+          refer('DioExceptionType.cancel', 'package:dio/dio.dart').code,
           const Code(') {'),
           _resultClass('TonikError', resultValueType)
               .call(
@@ -428,9 +422,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
                 const Code('}'),
                 const Code(''),
                 const Code('final client = serverConfig.client;'),
-                const Code(
-                  'final clientFactory = serverConfig.clientFactory;',
-                ),
+                const Code('final clientFactory = serverConfig.clientFactory;'),
                 const Code(
                   'final resolvedDio = '
                   'client ?? clientFactory?.call() ?? ',

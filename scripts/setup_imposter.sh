@@ -21,7 +21,7 @@ if [ ! -f "$IMPOSTER_JAR" ]; then
   echo "Downloading Imposter JAR..."
   trap 'rm -f "$IMPOSTER_JAR.part"' EXIT
   curl -fL --retry 3 \
-    https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.6.8/imposter-4.6.8.jar \
+    https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.9.3/imposter-4.9.3.jar \
     -o "$IMPOSTER_JAR.part"
   mv "$IMPOSTER_JAR.part" "$IMPOSTER_JAR"
 fi

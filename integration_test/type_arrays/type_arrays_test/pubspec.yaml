@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   path: ^1.9.1
-  test: ^1.24.0
+  test: ^1.32.0
   tonik_util:
     path: ../../../packages/tonik_util
   type_arrays_api:
@@ -17,7 +17,7 @@ dependencies:
 dev_dependencies:
   test_helpers:
     path: ../../test_helpers
-  very_good_analysis: ^10.2.0
+  very_good_analysis: ^11.0.0
 
 dependency_overrides:
   tonik_util:
