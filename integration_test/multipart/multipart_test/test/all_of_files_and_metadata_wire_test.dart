@@ -15,7 +15,11 @@ void main() {
     final first = Uint8List.fromList([1, 2, 3]);
     final second = Uint8List.fromList([4, 5, 6]);
 
-    await _rawApi(server).postAllOfUpload(
+    final api = MultipartApi(
+      CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
+    );
+
+    await api.postAllOfUpload(
       body: FilesAndMergedMetadataUpload(
         uploadFiles: UploadFiles(
           files: [
@@ -59,7 +63,3 @@ void main() {
     });
   });
 }
-
-MultipartApi _rawApi(RawRequestServer server) => MultipartApi(
-  CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
-);
