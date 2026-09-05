@@ -239,7 +239,7 @@ void main() {
     expect(unsupported.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupported.wireContentType, 'text/plain; charset=utf-8');
 
-    final multipart = contentNamed('Multipart');
+    final multipart = contentNamed('Multipart') as MultipartRequestContent;
     final expectedParts = <String, TextEncoding>{
       'latin': TextEncoding.latin1,
       'ascii': TextEncoding.ascii,
@@ -250,13 +250,13 @@ void main() {
     };
     for (final entry in expectedParts.entries) {
       expect(
-        partEncodingFor(multipart, entry.key)!.textEncoding,
+        multipart.encoding[entry.key]!.textEncoding,
         entry.value,
         reason: entry.key,
       );
     }
-    expect(partEncodingFor(multipart, 'defaulted'), isNull);
-    final unsupportedPart = partEncodingFor(multipart, 'unsupported')!;
+    expect(multipart.encoding['defaulted'], isNull);
+    final unsupportedPart = multipart.encoding['unsupported']!;
     expect(unsupportedPart.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupportedPart.wireContentType, 'text/plain; charset=utf-8');
   });
@@ -1426,9 +1426,6 @@ void main() {
     });
   });
 }
-
-PartEncoding? partEncodingFor(RequestContent content, String name) =>
-    (content as MultipartRequestContent).encoding[name];
 
 Property? _propertyNamed(ModelRequestContent content, String name) =>
     _propertyNamedIn(content.model, name);
