@@ -18,10 +18,7 @@ class OperationBaseFileGenerator {
   final OperationBaseGenerator operationBaseGenerator;
   final NameManager nameManager;
 
-  String writeFile({
-    required String outputDirectory,
-    required String package,
-  }) {
+  String writeFile({required String outputDirectory, required String package}) {
     final selectedFilename = _selectedFilename;
     final operationDirectory = Directory(
       path.join(outputDirectory, package, 'lib', 'src', 'operation'),

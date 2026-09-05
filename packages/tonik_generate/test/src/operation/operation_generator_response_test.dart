@@ -190,52 +190,47 @@ void main() {
       );
     });
 
-    test(
-      'pure-Never response body delegates its parser without a cast',
-      () {
-        final operation = Operation(
-          operationId: 'pureNeverBodyStatus',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/pure-never-body',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          securitySchemes: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: NeverModel(context: context, isNullable: false),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
-          },
-        );
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-          cookieParameters: [],
-        );
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
+    test('pure-Never response body delegates its parser without a cast', () {
+      final operation = Operation(
+        operationId: 'pureNeverBodyStatus',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/pure-never-body',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: NeverModel(context: context, isNullable: false),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+                examples: const [],
+              ),
+            },
+          ),
+        },
+      );
+      const normalizedParams = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+        cookieParameters: [],
+      );
+      final method = generator.generateCallMethod(operation, normalizedParams);
 
-        const expectedMethod = '''
+      const expectedMethod = '''
 Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellation}) {
   return this.execute(
     cancellation: cancellation,
@@ -249,69 +244,63 @@ Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellat
   );
 }
 ''';
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     // `Never?` is the shape an inline `{type: "null"}` response schema imports
     // as. The nullable type and parser must be preserved through delegation.
-    test(
-      'nullable Never response body delegates its nullable parser',
-      () {
-        final operation = Operation(
-          operationId: 'nullableNeverBodyOp',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/nullable-never-body',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          securitySchemes: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: NeverModel(context: context, isNullable: true),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
-          },
-        );
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-          cookieParameters: [],
-        );
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
+    test('nullable Never response body delegates its nullable parser', () {
+      final operation = Operation(
+        operationId: 'nullableNeverBodyOp',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/nullable-never-body',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: NeverModel(context: context, isNullable: true),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+                examples: const [],
+              ),
+            },
+          ),
+        },
+      );
+      const normalizedParams = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+        cookieParameters: [],
+      );
+      final method = generator.generateCallMethod(operation, normalizedParams);
 
-        expect(
-          method.returns?.accept(emitter).toString(),
-          'Future<TonikResult<Never?,Response<Object?>>>',
-        );
+      expect(
+        method.returns?.accept(emitter).toString(),
+        'Future<TonikResult<Never?,Response<Object?>>>',
+      );
 
-        const expectedMethod = '''
+      const expectedMethod = '''
 Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancellation}) {
   return this.execute(
     cancellation: cancellation,
@@ -325,15 +314,14 @@ Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancella
   );
 }
 ''';
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('returns result with model for single status code with body only', () {
       final operation = Operation(
@@ -373,10 +361,7 @@ Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancella
         headers: [],
         cookieParameters: [],
       );
-      final method = generator.generateCallMethod(
-        operation,
-        normalizedParams,
-      );
+      final method = generator.generateCallMethod(operation, normalizedParams);
       expect(
         method.returns?.accept(emitter).toString(),
         'Future<TonikResult<String,Response<Object?>>>',

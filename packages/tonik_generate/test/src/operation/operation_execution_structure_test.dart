@@ -81,9 +81,7 @@ void main() {
           .toList();
       expect(
         sources.where(
-          (source) => source.contains(
-            'abstract base class ${backendCase.$3}<',
-          ),
+          (source) => source.contains('abstract base class ${backendCase.$3}<'),
         ),
         hasLength(1),
       );
@@ -253,11 +251,7 @@ void main() {
         backend: TransportBackend.http,
       );
       final source = normalizeGeneratedSource(
-        operationSource(
-          output,
-          httpRuntimePackage,
-          'multipart_request.dart',
-        ),
+        operationSource(output, httpRuntimePackage, 'multipart_request.dart'),
       );
       expect(source, contains('executeVoidAsync('));
       expect(source, contains('prepare: () async => HttpOperationRequest('));
@@ -465,10 +459,7 @@ void main() {
           File(path.join(operationDirectory.path, collisionCase.$6)),
           exists,
         );
-        for (final operationFilename in [
-          collisionCase.$7,
-          collisionCase.$8,
-        ]) {
+        for (final operationFilename in [collisionCase.$7, collisionCase.$8]) {
           expect(
             operationSource(output, collisionCase.$2, operationFilename),
             contains(
@@ -596,10 +587,7 @@ void main() {
           .map((line) => RegExp('^  ([^ :]+):').firstMatch(line)?.group(1))
           .whereType<String>()
           .toSet();
-      expect(
-        dependencyNames.intersection({'dio', 'http'}),
-        isEmpty,
-      );
+      expect(dependencyNames.intersection({'dio', 'http'}), isEmpty);
     }
   });
 

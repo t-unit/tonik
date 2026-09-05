@@ -58,10 +58,7 @@ Object? test() {
     final parameter = generator.cancellationParameter;
 
     expect(parameter.name, 'cancellation');
-    expect(
-      parameter.type?.accept(emitter).toString(),
-      'TonikCancellation?',
-    );
+    expect(parameter.type?.accept(emitter).toString(), 'TonikCancellation?');
     expect(parameter.named, isTrue);
     expect(parameter.required, isFalse);
   });
@@ -74,25 +71,19 @@ Object? test() {
     });
 
     test('tracks cached ownership and one stable closed error', () {
-      expect(
-        adapter.fields.map((field) => field.name),
-        [
-          'baseUrl',
-          'serverConfig',
-          r'_$dio',
-          r'_$ownsDio',
-          r'_$isClosed',
-          r'_$closedError',
-        ],
-      );
+      expect(adapter.fields.map((field) => field.name), [
+        'baseUrl',
+        'serverConfig',
+        r'_$dio',
+        r'_$ownsDio',
+        r'_$isClosed',
+        r'_$closedError',
+      ]);
 
       final closedError = adapter.fields.singleWhere(
         (field) => field.name == r'_$closedError',
       );
-      expect(
-        closedError.type?.accept(emitter).toString(),
-        'StateError',
-      );
+      expect(closedError.type?.accept(emitter).toString(), 'StateError');
       expect(closedError.modifier, FieldModifier.final$);
     });
 
@@ -135,10 +126,7 @@ Dio dio() {
         (method) => method.name == 'close',
       );
 
-      expect(
-        close.returns?.accept(emitter).toString(),
-        'void',
-      );
+      expect(close.returns?.accept(emitter).toString(), 'void');
 
       const expectedMethod = r'''
 void close() {

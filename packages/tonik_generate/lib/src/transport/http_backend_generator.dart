@@ -102,9 +102,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   String get clientAccessorFieldName => '_client';
 
   @override
-  Reference get nativeClientAccessorType => FunctionType(
-    (builder) => builder..returnType = nativeClientType,
-  );
+  Reference get nativeClientAccessorType =>
+      FunctionType((builder) => builder..returnType = nativeClientType);
 
   @override
   String get clientAdapterName => '_HttpClientAdapter';

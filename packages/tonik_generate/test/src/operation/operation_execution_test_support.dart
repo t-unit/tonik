@@ -42,11 +42,11 @@ Future<Directory> prepareRuntimePackage({
   probe.parent.createSync(recursive: true);
   probe.writeAsStringSync(File(probeAsset).readAsStringSync());
 
-  final get = await Process.run(
-    Platform.resolvedExecutable,
-    const ['pub', 'get', '--offline'],
-    workingDirectory: packageRoot.path,
-  );
+  final get = await Process.run(Platform.resolvedExecutable, const [
+    'pub',
+    'get',
+    '--offline',
+  ], workingDirectory: packageRoot.path);
   expect(
     get.exitCode,
     0,
@@ -55,21 +55,19 @@ Future<Directory> prepareRuntimePackage({
   return packageRoot;
 }
 
-Future<ProcessResult> runDart(
-  Directory packageRoot,
-  List<String> arguments,
-) => Process.run(
-  Platform.resolvedExecutable,
-  arguments,
-  workingDirectory: packageRoot.path,
-);
+Future<ProcessResult> runDart(Directory packageRoot, List<String> arguments) =>
+    Process.run(
+      Platform.resolvedExecutable,
+      arguments,
+      workingDirectory: packageRoot.path,
+    );
 
 Future<void> expectRuntimeProbe(Directory packageRoot, String scenario) async {
-  final result = await Process.run(
-    Platform.resolvedExecutable,
-    ['run', 'bin/probe.dart', scenario],
-    workingDirectory: packageRoot.path,
-  );
+  final result = await Process.run(Platform.resolvedExecutable, [
+    'run',
+    'bin/probe.dart',
+    scenario,
+  ], workingDirectory: packageRoot.path);
   expect(
     result.exitCode,
     0,

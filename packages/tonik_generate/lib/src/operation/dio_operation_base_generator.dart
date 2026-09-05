@@ -140,10 +140,7 @@ final class DioOperationBaseGenerator implements OperationBaseGenerator {
       ]),
   );
 
-  Method _executionMethod({
-    required bool isVoid,
-    required bool isDataAsync,
-  }) {
+  Method _executionMethod({required bool isVoid, required bool isDataAsync}) {
     final valueType = isVoid ? refer('void') : refer('T');
     final methodName = switch ((isVoid, isDataAsync)) {
       (false, false) => 'execute',
@@ -196,17 +193,16 @@ final class DioOperationBaseGenerator implements OperationBaseGenerator {
           else
             const Code('prepare();'),
           const Code('  final baseUri = '),
-          refer('Uri', 'dart:core').property('parse').call([
-            refer('baseUrl'),
-          ]).code,
+          refer(
+            'Uri',
+            'dart:core',
+          ).property('parse').call([refer('baseUrl')]).code,
           const Code(';'),
           const Code('  final pathResult = request.path;'),
-          const Code(
-            r"""
+          const Code(r"""
   final newPath = baseUri.path.endsWith('/')
       ? '${baseUri.path.substring(0, baseUri.path.length - 1)}/${pathResult.join('/')}'
-      : '${baseUri.path}/${pathResult.join('/')}';""",
-          ),
+      : '${baseUri.path}/${pathResult.join('/')}';"""),
           const Code('  final uri = baseUri.replace('),
           const Code('    path: newPath,'),
           const Code('    query: request.query,'),
@@ -237,10 +233,8 @@ final class DioOperationBaseGenerator implements OperationBaseGenerator {
           const Code(''),
           const Code('return '),
           refer(isVoid ? '_completeVoid' : '_complete').call([], {
-            'dispatched':
-                refer(
-                  isDataAsync ? '_dispatch' : '_dispatchSync',
-                ).call(
+            'dispatched': refer(isDataAsync ? '_dispatch' : '_dispatchSync')
+                .call(
                   [],
                   {
                     'prepared': refer('prepared'),

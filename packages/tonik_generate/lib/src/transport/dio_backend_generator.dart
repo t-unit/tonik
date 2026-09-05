@@ -113,9 +113,8 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   String get clientAccessorFieldName => '_dio';
 
   @override
-  Reference get nativeClientAccessorType => FunctionType(
-    (b) => b..returnType = nativeClientType,
-  );
+  Reference get nativeClientAccessorType =>
+      FunctionType((b) => b..returnType = nativeClientType);
 
   @override
   String get clientAdapterName => '_DioClientAdapter';
@@ -246,9 +245,7 @@ final class DioBackendGenerator implements TransportBackendGenerator {
                 const Code('}'),
                 const Code(''),
                 const Code('final client = serverConfig.client;'),
-                const Code(
-                  'final clientFactory = serverConfig.clientFactory;',
-                ),
+                const Code('final clientFactory = serverConfig.clientFactory;'),
                 const Code(
                   'final resolvedDio = '
                   'client ?? clientFactory?.call() ?? ',

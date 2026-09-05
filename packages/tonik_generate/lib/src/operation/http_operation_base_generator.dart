@@ -125,10 +125,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
       ]),
   );
 
-  Method _executionMethod({
-    required bool isVoid,
-    required bool isDataAsync,
-  }) {
+  Method _executionMethod({required bool isVoid, required bool isDataAsync}) {
     final valueType = isVoid ? refer('void') : refer('T');
     final methodName = switch ((isVoid, isDataAsync)) {
       (false, false) => 'execute',
@@ -184,17 +181,16 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
           else
             const Code('prepare();'),
           const Code('  final baseUri = '),
-          refer('Uri', 'dart:core').property('parse').call([
-            refer('baseUrl'),
-          ]).code,
+          refer(
+            'Uri',
+            'dart:core',
+          ).property('parse').call([refer('baseUrl')]).code,
           const Code(';'),
           const Code('  final pathResult = request.path;'),
-          const Code(
-            r"""
+          const Code(r"""
   final newPath = baseUri.path.endsWith('/')
       ? '${baseUri.path.substring(0, baseUri.path.length - 1)}/${pathResult.join('/')}'
-      : '${baseUri.path}/${pathResult.join('/')}';""",
-          ),
+      : '${baseUri.path}/${pathResult.join('/')}';"""),
           const Code('  final uri = baseUri.replace('),
           const Code('    path: newPath,'),
           const Code('    query: request.query,'),
@@ -255,13 +251,9 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
                 .returned
                 .statement,
             const Code('}'),
-            _tonikSuccess(valueType)
-                .call([
-                  literalNull,
-                  refer('response'),
-                ])
-                .returned
-                .statement,
+            _tonikSuccess(
+              valueType,
+            ).call([literalNull, refer('response')]).returned.statement,
           ] else ...[
             const Code('final T value;'),
             const Code('try {'),
@@ -284,13 +276,9 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
                 .returned
                 .statement,
             const Code('}'),
-            _tonikSuccess(valueType)
-                .call([
-                  refer('value'),
-                  refer('response'),
-                ])
-                .returned
-                .statement,
+            _tonikSuccess(
+              valueType,
+            ).call([refer('value'), refer('response')]).returned.statement,
           ],
         ]),
     );
@@ -329,9 +317,10 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
       ..body = Block.of([
         const Code('if (cancellation != null && cancellation.isCancelled) {'),
         const Code('  final exception = '),
-        refer('RequestAbortedException', 'package:http/http.dart').newInstance([
-          refer('prepared.uri'),
-        ]).code,
+        refer(
+          'RequestAbortedException',
+          'package:http/http.dart',
+        ).newInstance([refer('prepared.uri')]).code,
         const Code(';'),
         const Code('  return _HttpDispatchResult<V>('),
         _tonikError(refer('V'))
@@ -402,10 +391,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         ).code,
         const Code(') {'),
         const Code('    final multipartRequest = '),
-        refer(
-              'AbortableMultipartRequest',
-              'package:http/http.dart',
-            )
+        refer('AbortableMultipartRequest', 'package:http/http.dart')
             .newInstance(
               [refer('method'), refer('prepared.uri')],
               {'abortTrigger': refer('cancellation?.whenCancelled')},
@@ -492,10 +478,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         const Code('  return _HttpDispatchResult<V>('),
         _transportError(
           refer('V'),
-          refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
+          refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
         ).code,
         const Code(', null);'),
         const Code('} on '),
@@ -504,10 +487,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         const Code('  return _HttpDispatchResult<V>('),
         _transportError(
           refer('V'),
-          refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
+          refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
         ).code,
         const Code(', null);'),
         const Code('} on '),
@@ -516,10 +496,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         const Code('  return _HttpDispatchResult<V>('),
         _transportError(
           refer('V'),
-          refer(
-            'TonikErrorType.other',
-            'package:tonik_util/tonik_util.dart',
-          ),
+          refer('TonikErrorType.other', 'package:tonik_util/tonik_util.dart'),
         ).code,
         const Code(', null);'),
         const Code('}'),
@@ -529,11 +506,10 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         const Code(' response;'),
         const Code('try {'),
         const Code('  response = await '),
-        refer('Response', 'package:http/http.dart').property('fromStream').call(
-          [
-            refer('streamedResponse'),
-          ],
-        ).code,
+        refer(
+          'Response',
+          'package:http/http.dart',
+        ).property('fromStream').call([refer('streamedResponse')]).code,
         const Code(';'),
         const Code('} on '),
         refer('RequestAbortedException', 'package:http/http.dart').code,
@@ -550,10 +526,7 @@ final class HttpOperationBaseGenerator implements OperationBaseGenerator {
         const Code('  return _HttpDispatchResult<V>('),
         _transportError(
           refer('V'),
-          refer(
-            'TonikErrorType.network',
-            'package:tonik_util/tonik_util.dart',
-          ),
+          refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
         ).code,
         const Code(', null);'),
         const Code('}'),

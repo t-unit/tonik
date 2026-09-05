@@ -125,83 +125,82 @@ class OperationGenerator {
       useImmutableCollections: useImmutableCollections,
     ).types.first;
 
-    return Class(
-      (b) {
-        b
-          ..name = className
-          ..modifier = ClassModifier.final$
-          ..extend = backendGenerator.operationBaseGenerator.baseType(
+    return Class((b) {
+      b
+        ..name = className
+        ..modifier = ClassModifier.final$
+        ..extend = backendGenerator.operationBaseGenerator.baseType(
+          package: package,
+          valueType: resultValueType,
+          filename: _operationBaseFilename,
+        )
+        ..fields.addAll(defaults.fields);
+
+      if (operation.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This operation is deprecated.')]),
+        );
+      }
+
+      b
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..requiredParameters.addAll([
+                Parameter(
+                  (b) => b
+                    ..name = 'baseUrl'
+                    ..toSuper = true,
+                ),
+                Parameter(
+                  (b) => b
+                    ..name = backendGenerator
+                        .operationBaseGenerator
+                        .clientConstructorParameterName
+                    ..toSuper = true,
+                ),
+              ]),
+          ),
+        )
+        ..methods.addAll([
+          ...defaults.getters,
+          generateCallMethod(
+            operation,
+            normalizedParams,
+            defaultsByName: defaults.byName,
+            requestPlan: requestPlan,
+          ),
+          _pathGenerator.generatePathMethod(
+            operation,
+            normalizedParams.pathParameters,
+          ),
+          backendGenerator.generateBodyMethod(
+            operation: operation,
+            requestPlan: requestPlan,
+            nameManager: nameManager,
             package: package,
-            valueType: resultValueType,
-            filename: _operationBaseFilename,
-          )
-          ..fields.addAll(defaults.fields);
-
-        if (operation.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This operation is deprecated.'),
-            ]),
-          );
-        }
-
-        b
-          ..constructors.add(
-            Constructor(
-              (b) => b
-                ..requiredParameters.addAll([
-                  Parameter(
-                    (b) => b
-                      ..name = 'baseUrl'
-                      ..toSuper = true,
-                  ),
-                  Parameter(
-                    (b) => b
-                      ..name = backendGenerator
-                          .operationBaseGenerator
-                          .clientConstructorParameterName
-                      ..toSuper = true,
-                  ),
-                ]),
-            ),
-          )
-          ..methods.addAll([
-            ...defaults.getters,
-            generateCallMethod(
+            useImmutableCollections: useImmutableCollections,
+          ),
+          if (operation.queryParameters.isNotEmpty)
+            _queryParametersGenerator.generateQueryParametersMethod(
               operation,
-              normalizedParams,
-              defaultsByName: defaults.byName,
-              requestPlan: requestPlan,
+              normalizedParams.queryParameters,
             ),
-            _pathGenerator.generatePathMethod(
-              operation,
-              normalizedParams.pathParameters,
-            ),
-            backendGenerator.generateBodyMethod(
-              operation: operation,
-              requestPlan: requestPlan,
-              nameManager: nameManager,
-              package: package,
-              useImmutableCollections: useImmutableCollections,
-            ),
-            if (operation.queryParameters.isNotEmpty)
-              _queryParametersGenerator.generateQueryParametersMethod(
-                operation,
-                normalizedParams.queryParameters,
-              ),
-            backendGenerator.generateOptionsMethod(
-              operation: operation,
-              nameManager: nameManager,
-              package: package,
-              useImmutableCollections: useImmutableCollections,
-              headers: normalizedParams.headers,
-              cookies: normalizedParams.cookieParameters,
-            ),
-            if (operation.responses.isNotEmpty)
-              _parseGenerator.generateParseResponseMethod(operation),
-          ]);
-      },
-    );
+          backendGenerator.generateOptionsMethod(
+            operation: operation,
+            nameManager: nameManager,
+            package: package,
+            useImmutableCollections: useImmutableCollections,
+            headers: normalizedParams.headers,
+            cookies: normalizedParams.cookieParameters,
+          ),
+          if (operation.responses.isNotEmpty)
+            _parseGenerator.generateParseResponseMethod(operation),
+        ]);
+    });
   }
 
   String get _operationBaseFilename {
