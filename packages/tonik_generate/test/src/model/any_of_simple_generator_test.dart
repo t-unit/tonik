@@ -447,8 +447,54 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (user != null) { final _$userSimple = user!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$userSimple); _$discriminatorValue ??= r'user'; } if (string != null) { final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); _$values.add(_$stringSimple); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); } }
-''';
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, PropertyValue>>[];
+            String? _$discriminatorValue;
+            if (user != null) {
+              final _$userSimple =
+                  user!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$userSimple);
+              _$discriminatorValue ??= r'user';
+            }
+            if (string != null) {
+              final _$stringSimple = string!.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+              _$values.add(_$stringSimple);
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              return _$values.first;
+            } else {
+              final _$map = <String, PropertyValue>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              final _$discValue = _$discriminatorValue;
+              if (_$discValue != null) {
+                _$map.putIfAbsent(r'disc', () =>
+                    PropertyValue.scalar(_$discValue));
+              }
+              return _$map.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+            }
+          }
+        ''';
 
         expect(
           collapseWhitespace(generated),

@@ -432,8 +432,65 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
       final generated = format(klass.accept(emitter).toString());
 
       const expected = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: _$values.add( innerChoice!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), ); break; case EncodingShape.complex: final _$innerChoiceMatrix = innerChoice!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$innerChoiceMatrix); break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
-''';
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, PropertyValue>>[];
+          if (innerChoice != null) {
+            switch (innerChoice!.currentEncodingShape) {
+              case EncodingShape.simple:
+                _$values.add(
+                  innerChoice!.toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                );
+                break;
+              case EncodingShape.complex:
+                final _$innerChoiceMatrix = innerChoice!.parameterProperties(
+                  allowEmpty: allowEmpty,
+                );
+                _$mapValues.add(_$innerChoiceMatrix);
+                break;
+              case EncodingShape.mixed:
+                throw EncodingException(
+                  'Cannot encode field with mixed encoding shape',
+                );
+            }
+          }
+          if (string != null) {
+            final _$stringMatrix = string!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$stringMatrix);
+          }
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+            throw EncodingException(
+              r'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values',
+            );
+          }
+          if (_$values.isNotEmpty) {
+            return _$values.first;
+          } else {
+            final _$map = <String, PropertyValue>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
+            }
+            return _$map.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+          }
+        }
+      ''';
 
       expect(
         collapseWhitespace(generated),
