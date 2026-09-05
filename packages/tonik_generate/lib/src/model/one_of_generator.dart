@@ -72,9 +72,7 @@ class OneOfGenerator {
   ) {
     final variantNames = <DiscriminatedModel, String>{};
 
-    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    )) {
+    for (final discriminatedModel in model.models) {
       final uniqueVariantName = nameManager.generateVariantName(
         parentClassName: parentClassName,
         model: discriminatedModel.model,
@@ -109,9 +107,10 @@ class OneOfGenerator {
 
         if (model.isDeprecated) {
           b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This class is deprecated.'),
-            ]),
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This class is deprecated.')]),
           );
         }
 
@@ -207,11 +206,7 @@ class OneOfGenerator {
                   ..annotations.add(refer('override', 'dart:core'))
                   ..name = 'toJson'
                   ..returns = refer('Object?', 'dart:core')
-                  ..body = _generateToJsonBody(
-                    className,
-                    model,
-                    variantNames,
-                  ),
+                  ..body = _generateToJsonBody(className, model, variantNames),
               ),
           ])
           ..constructors.add(
@@ -246,9 +241,7 @@ class OneOfGenerator {
   ) {
     final classes = <Class>[];
 
-    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    )) {
+    for (final discriminatedModel in model.models) {
       final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
@@ -314,11 +307,9 @@ class OneOfGenerator {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final caseCodes = <Code>[];
-    final sortedModels = stableModelSorter.sortDiscriminatedModels(
-      model.models,
-    );
-    for (var i = 0; i < sortedModels.length; i++) {
-      final discriminatedModel = sortedModels[i];
+    final members = model.models;
+    for (var i = 0; i < members.length; i++) {
+      final discriminatedModel = members[i];
       final variantName = variantNames[discriminatedModel]!;
       final resolvedType = discriminatedModel.model.resolved;
 
@@ -371,7 +362,7 @@ class OneOfGenerator {
           ..add(jsonValueBuilt.unsafeRawBody.code)
           ..add(Code(', $discriminatorValue)'));
       }
-      if (i < sortedModels.length - 1) {
+      if (i < members.length - 1) {
         caseCodes.add(const Code(',\n'));
       }
     }
@@ -402,10 +393,7 @@ class OneOfGenerator {
 
     blocks.add(const Code(r'return _$json;'));
 
-    return Block.of([
-      ...spliceInlineHelpers(inlineHelpers),
-      ...blocks,
-    ]);
+    return Block.of([...spliceInlineHelpers(inlineHelpers), ...blocks]);
   }
 
   Code _generateFromJsonBody(
@@ -435,18 +423,15 @@ class OneOfGenerator {
 
       final resultCases = <Code>[];
 
-      for (final m
-          in stableModelSorter
-              .sortDiscriminatedModels(model.models)
-              .where(
-                (m) =>
-                    m.discriminatorValue != null &&
-                    m.model.resolved is! PrimitiveModel &&
-                    m.model.resolved is! ListModel &&
-                    m.model.resolved is! MapModel &&
-                    m.model.resolved is! AnyModel &&
-                    m.model.resolved is! NeverModel,
-              )) {
+      for (final m in model.models.where(
+        (m) =>
+            m.discriminatorValue != null &&
+            m.model.resolved is! PrimitiveModel &&
+            m.model.resolved is! ListModel &&
+            m.model.resolved is! MapModel &&
+            m.model.resolved is! AnyModel &&
+            m.model.resolved is! NeverModel,
+      )) {
         final variantName = variantNames[m]!;
 
         resultCases.addAll([
@@ -454,11 +439,7 @@ class OneOfGenerator {
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
-              sourceFileUrl(
-                package,
-                'model',
-                nameManager.modelName(m.model),
-              ),
+              sourceFileUrl(package, 'model', nameManager.modelName(m.model)),
             ).property('fromJson').call([refer('json')]),
           ]).code,
           const Code(','),
@@ -478,22 +459,20 @@ class OneOfGenerator {
       ]);
     }
 
-    final hasAnyModel = model.models.any(
-      (m) => m.model.resolved is AnyModel,
-    );
+    final hasAnyModel = model.models.any((m) => m.model.resolved is AnyModel);
 
     final hasNumberMember = model.models.any(
       (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
     );
 
-    final sortedModels = stableModelSorter.sortDiscriminatedModels(
+    final semanticMembers = stableModelSorter.sortDiscriminatedModels(
       model.models,
     );
 
     // int and double arrive as distinct Dart runtime types and the numeric
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the ordered try-each below.
-    for (final m in sortedModels.where(
+    for (final m in semanticMembers.where(
       (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
       final variantName = variantNames[m]!;
@@ -529,9 +508,10 @@ class OneOfGenerator {
       ]);
     }
 
-    // Members are attempted in stable member order. A string-encoded variant is
-    // only reachable when the plain-string member sorts after it.
-    for (final m in sortedModels.where(
+    // Members are attempted in stable semantic order. This keeps narrower
+    // string-encoded and structured variants reachable before catch-all wire
+    // representations such as plain strings and maps.
+    for (final m in semanticMembers.where(
       (m) =>
           _scalarRuntimeType(m.model.resolved) == null &&
           m.model.resolved is! AnyModel &&
@@ -568,10 +548,6 @@ class OneOfGenerator {
         ..add(const Code('try {'))
         ..add(refer(variantName).call([decodeArg]).returned.statement);
 
-      // Only a string-encoded primitive can pass its raw String to a sibling
-      // plain-string variant, so its catch must fall through on the strict
-      // decoders' DecodingException/FormatException. Every other decoder can
-      // throw arbitrary types and stays on the broad Object catch.
       if (resolvedType is PrimitiveModel) {
         blocks.addAll([
           const Code('} on '),
@@ -592,13 +568,11 @@ class OneOfGenerator {
     // AnyModel is a catch-all: wraps the raw JSON value directly.
     // Must be tried last since it accepts any value.
     if (hasAnyModel) {
-      final anyModelVariant = stableModelSorter
-          .sortDiscriminatedModels(model.models)
-          .firstWhere((m) => m.model.resolved is AnyModel);
-      final variantName = variantNames[anyModelVariant]!;
-      blocks.add(
-        refer(variantName).call([refer('json')]).returned.statement,
+      final anyModelVariant = model.models.firstWhere(
+        (m) => m.model.resolved is AnyModel,
       );
+      final variantName = variantNames[anyModelVariant]!;
+      blocks.add(refer(variantName).call([refer('json')]).returned.statement);
     } else {
       blocks.add(
         generateJsonDecodingExceptionExpression(
@@ -608,10 +582,7 @@ class OneOfGenerator {
       );
     }
 
-    return Block.of([
-      ...spliceInlineHelpers(inlineHelpers),
-      ...blocks,
-    ]);
+    return Block.of([...spliceInlineHelpers(inlineHelpers), ...blocks]);
   }
 
   Reference? _scalarRuntimeType(Model resolved) => switch (resolved) {
@@ -695,18 +666,15 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        for (final m
-            in stableModelSorter
-                .sortDiscriminatedModels(model.models)
-                .where(
-                  (m) =>
-                      m.discriminatorValue != null &&
-                      m.model.resolved is! PrimitiveModel &&
-                      m.model.resolved is! ListModel &&
-                      m.model.resolved is! MapModel &&
-                      m.model.resolved is! AnyModel &&
-                      m.model.resolved is! NeverModel,
-                )) {
+        for (final m in model.models.where(
+          (m) =>
+              m.discriminatorValue != null &&
+              m.model.resolved is! PrimitiveModel &&
+              m.model.resolved is! ListModel &&
+              m.model.resolved is! MapModel &&
+              m.model.resolved is! AnyModel &&
+              m.model.resolved is! NeverModel,
+        )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
 
@@ -726,10 +694,7 @@ class OneOfGenerator {
                     ),
                   )
                   .property(constructorName)
-                  .call(
-                    [refer('value')],
-                    {'explode': refer('explode')},
-                  ),
+                  .call([refer('value')], {'explode': refer('explode')}),
             ]).statement,
             const Code('}'),
           ]);
@@ -835,9 +800,7 @@ class OneOfGenerator {
                 )
                 .property(constructorName)
                 .call([refer('value')], {'explode': refer('explode')});
-        tryBody.add(
-          refer(variantName).call([innerDecode]).returned.statement,
-        );
+        tryBody.add(refer(variantName).call([innerDecode]).returned.statement);
       }
 
       bodyBlocks.addAll([
@@ -869,9 +832,7 @@ class OneOfGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = Block.of(bodyBlocks),
     );
   }
@@ -883,7 +844,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
@@ -892,9 +853,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be simple-encoded',
@@ -916,9 +875,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -955,9 +912,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -996,9 +951,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is ListModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
                 literalString(
@@ -1015,9 +968,7 @@ class OneOfGenerator {
         caseCodes.add(Code('$variantName(:final value) => '));
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1032,9 +983,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Binary data cannot be simple-encoded',
           ).code,
@@ -1042,9 +991,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is MapModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Map types cannot be simple-encoded',
           ).code,
@@ -1060,9 +1007,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1125,7 +1070,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
@@ -1267,7 +1212,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
@@ -1335,10 +1280,7 @@ class OneOfGenerator {
       (b) => b
         ..name = 'currentEncodingShape'
         ..type = MethodType.getter
-        ..returns = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
-        )
+        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
         ..lambda = false
         ..body = body,
     );
@@ -1369,7 +1311,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
@@ -1527,7 +1469,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
@@ -1536,9 +1478,7 @@ class OneOfGenerator {
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be label-encoded',
@@ -1560,9 +1500,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -1580,9 +1518,7 @@ class OneOfGenerator {
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
             const Code(','),
             const Code('}'),
-            const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty) : ',
-            ),
+            const Code('.toLabel(explode: explode, allowEmpty: allowEmpty) : '),
             refer('value').property('toLabel').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
@@ -1597,9 +1533,7 @@ class OneOfGenerator {
           );
 
           if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
+            caseCodes.addAll([const Code("value == null ? '' : ")]);
           }
 
           caseCodes.addAll([
@@ -1612,9 +1546,7 @@ class OneOfGenerator {
             propertyValueScalar(specLiteralString(discriminatorValue)).code,
             const Code(','),
             const Code('}'),
-            const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty),',
-            ),
+            const Code('.toLabel(explode: explode, allowEmpty: allowEmpty),'),
           ]);
         }
       } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
@@ -1635,9 +1567,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is ListModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
                 literalString(
@@ -1654,9 +1584,7 @@ class OneOfGenerator {
         caseCodes.add(Code('$variantName(:final value) => '));
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1670,9 +1598,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Binary data cannot be label-encoded',
           ).code,
@@ -1680,9 +1606,7 @@ class OneOfGenerator {
         ]);
       } else if (m.model.resolved is MapModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Map types cannot be label-encoded',
           ).code,
@@ -1698,9 +1622,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1737,15 +1659,13 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be matrix-encoded',
@@ -1765,9 +1685,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([
@@ -1814,16 +1732,14 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
+    for (final m in model.models) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
       final resolvedType = modelType.resolved;
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
             ' variant cannot be URI encoded',
@@ -1833,9 +1749,7 @@ class OneOfGenerator {
       } else if (modelType.encodingShape == EncodingShape.complex) {
         // Avoid destructuring values that cannot be URI encoded.
         caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
+          Code.scope((allocate) => '${allocate(refer(variantName))}() => '),
           generateEncodingExceptionExpression(
             'Cannot uriEncode $className: variant contains complex type',
             raw: true,
@@ -1852,9 +1766,7 @@ class OneOfGenerator {
         );
 
         if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
+          caseCodes.addAll([const Code("value == null ? '' : ")]);
         }
 
         caseCodes.addAll([

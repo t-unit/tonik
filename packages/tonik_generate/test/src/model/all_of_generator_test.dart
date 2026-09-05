@@ -857,7 +857,7 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-          Object? toJson() => bigDecimal;
+          Object? toJson() => bigDecimal.toString();
         ''';
 
       expect(
@@ -1153,7 +1153,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToJson = '''
-          Object? toJson() => date;
+          Object? toJson() => date.toJson();
         ''';
 
         expect(
@@ -1299,7 +1299,7 @@ void main() {
       expect(combinedClass.fields, hasLength(3));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
-      expect(fieldNames, ['bigDecimal', 'int', 'string']);
+      expect(fieldNames, ['string', 'int', 'bigDecimal']);
     });
   });
 

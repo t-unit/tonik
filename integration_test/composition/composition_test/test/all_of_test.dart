@@ -3148,11 +3148,11 @@ void main() {
 
     setUp(() {
       allOf = AllOfDoubleList(
-        list2: [
+        list: [
           DateTime.utc(2021).toTimeZonedIso8601String(),
           DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
         ],
-        list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
+        list2: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
       );
     });
 
@@ -3281,8 +3281,7 @@ void main() {
 
       setUp(() {
         allOf = AllOfOneOfDoubleList(
-          list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
-          list2: [
+          list: [
             AllOfOneOfDoubleListArrayOneOfModelString(
               DateTime.utc(2021).toTimeZonedIso8601String(),
             ),
@@ -3290,6 +3289,7 @@ void main() {
               DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
             ),
           ],
+          list2: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
         );
       });
 
@@ -3431,11 +3431,11 @@ void main() {
 
       setUp(() {
         allOf = AllOfOneOfDoubleList(
-          list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
-          list2: const [
+          list: const [
             AllOfOneOfDoubleListArrayOneOfModelInt(1),
             AllOfOneOfDoubleListArrayOneOfModelInt(2),
           ],
+          list2: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
         );
       });
 

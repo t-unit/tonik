@@ -666,7 +666,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            final _$listMatrix = list
+            final _$list2Matrix = list2
                 .map<String>(
                   (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                 )
@@ -677,13 +677,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 );
-            _$values.add(_$listMatrix);
-            final _$list2Matrix = list2.toMatrix(
+            _$values.add(_$list2Matrix);
+            final _$listMatrix = list.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            _$values.add(_$list2Matrix);
+            _$values.add(_$listMatrix);
             if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',

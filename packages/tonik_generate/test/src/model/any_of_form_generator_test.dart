@@ -1515,6 +1515,9 @@ void main() {
               );
               _$values.add(_$stringSimple);
             }
+            if (_$values.isEmpty) return '';
+            return _$values.first;
+          }
         ''';
 
         expect(

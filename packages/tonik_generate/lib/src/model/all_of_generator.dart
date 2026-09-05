@@ -58,7 +58,7 @@ class AllOfGenerator {
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(
@@ -119,7 +119,7 @@ class AllOfGenerator {
               )
             : publicClassName);
 
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(
@@ -141,6 +141,7 @@ class AllOfGenerator {
     }).toList();
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+    final semanticProperties = _semanticProperties(normalizedProperties);
     final properties = _buildPropertiesFromNormalized(
       normalizedProperties,
       model,
@@ -189,7 +190,7 @@ class AllOfGenerator {
               _buildFromValueConstructor(
                 isForm: false,
                 className: actualClassName,
-                normalizedProperties: normalizedProperties,
+                normalizedProperties: semanticProperties,
                 model: model,
               ),
             if (model.isWriteOnly)
@@ -198,7 +199,7 @@ class AllOfGenerator {
               _buildFromValueConstructor(
                 isForm: true,
                 className: actualClassName,
-                normalizedProperties: normalizedProperties,
+                normalizedProperties: semanticProperties,
                 model: model,
               ),
             if (model.isWriteOnly)
@@ -206,7 +207,7 @@ class AllOfGenerator {
             else
               _buildFromJsonConstructor(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
           ])
@@ -214,24 +215,24 @@ class AllOfGenerator {
             if (model.isReadOnly)
               buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
             else
-              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
+              _buildCurrentEncodingShapeGetter(model, semanticProperties),
             if (model.isReadOnly)
               buildReadOnlyToJsonMethod(encodingExceptionBody)
             else
-              _buildToJsonMethod(actualClassName, model, normalizedProperties),
+              _buildToJsonMethod(actualClassName, model, semanticProperties),
             if (model.isReadOnly)
               buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
             else
               _buildParameterPropertiesMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
               buildReadOnlyToSimpleMethod(encodingExceptionBody)
             else
               _buildToSimpleMethod(
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -239,7 +240,7 @@ class AllOfGenerator {
             else
               _buildToFormMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -247,7 +248,7 @@ class AllOfGenerator {
             else
               _buildToLabelMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -255,7 +256,7 @@ class AllOfGenerator {
             else
               _buildToMatrixMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             if (model.isReadOnly)
@@ -275,7 +276,7 @@ class AllOfGenerator {
             else
               _buildUriEncodeMethod(
                 actualClassName,
-                normalizedProperties,
+                semanticProperties,
                 model,
               ),
             generateEqualsMethod(
@@ -315,6 +316,21 @@ class AllOfGenerator {
           ),
         )
         .toList();
+  }
+
+  List<({String normalizedName, Property property})> _semanticProperties(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final sortedModels = stableModelSorter.sortModels(
+      properties.map((property) => property.property.model),
+    );
+    final remaining = properties.toList();
+    return sortedModels.map((model) {
+      final index = remaining.indexWhere(
+        (property) => identical(property.property.model, model),
+      );
+      return remaining.removeAt(index);
+    }).toList();
   }
 
   List<Field> _buildFields(
@@ -894,8 +910,9 @@ class AllOfGenerator {
         );
 
       case EncodingShape.simple:
-        final firstModel = model.models.first;
-        final firstFieldName = normalizedProperties.first.normalizedName;
+        final primaryProperty = _semanticProperties(normalizedProperties).first;
+        final firstModel = primaryProperty.property.model;
+        final firstFieldName = primaryProperty.normalizedName;
         final simpleBuilt = buildToJsonPropertyExpression(
           firstFieldName,
           Property(
@@ -1528,7 +1545,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -1823,7 +1840,7 @@ class AllOfGenerator {
       return form(emptyEntries);
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final primaryReceiver = isNullableProp(primaryField)
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
@@ -1912,7 +1929,7 @@ class AllOfGenerator {
         ]);
       }
 
-      final primaryField = normalizedProperties.first;
+      final primaryField = _semanticProperties(normalizedProperties).first;
       final isPrimaryFieldNullable =
           primaryField.property.isNullable ||
           !primaryField.property.isRequired ||
@@ -2066,7 +2083,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -2440,11 +2457,12 @@ class AllOfGenerator {
       ];
 
       if (normalizedProperties.isNotEmpty) {
-        final simpleProp = normalizedProperties.firstWhere(
+        final semanticProperties = _semanticProperties(normalizedProperties);
+        final simpleProp = semanticProperties.firstWhere(
           (prop) =>
               prop.property.model.encodingShape == EncodingShape.simple ||
               prop.property.model.encodingShape == EncodingShape.mixed,
-          orElse: () => normalizedProperties.first,
+          orElse: () => semanticProperties.first,
         );
         final isSimplePropNullable =
             simpleProp.property.isNullable ||

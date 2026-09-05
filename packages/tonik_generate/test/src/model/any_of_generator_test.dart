@@ -435,15 +435,15 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is ValueChoice &&
-            other.int == this.int &&
-            other.string == this.string;
+              other.string == this.string &&
+              other.int == this.int;
         }
       ''';
 
       const expectedHash = '''
         @override
         int get hashCode {
-          return Object.hashAll([int, string]);
+          return Object.hashAll([string, int]);
         }
       ''';
 
@@ -2874,8 +2874,8 @@ Object? toJson() {
 bool operator ==(Object other) {
   if (identical(this, other)) return true;
   return other is FlexibleModel &&
-      other.int == this.int &&
-      other.iList == this.iList;
+      other.iList == this.iList &&
+      other.int == this.int;
 }
 ''';
       expect(
@@ -3138,10 +3138,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toLabel(
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toLabel(explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -3466,10 +3463,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toLabel(
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toLabel(explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -3515,11 +3509,7 @@ String toMatrix(
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
-    return _$map.toMatrix(
-      paramName,
-      explode: explode,
-      allowEmpty: allowEmpty,
-    );
+    return _$map.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
   }
 }
 ''';
@@ -4043,8 +4033,10 @@ Object? toJson() {
           class TreeAndClassA {
             factory TreeAndClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _$decodeTree;
-              _$decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
+              _$decodeTree = (Object? v) => v.decodeJsonMap(
+                (v) => _$decodeTree(v),
+                context: r"Tree (at 'TreeAndClassA')",
+              );
               ClassA? classA;
               try {
                 classA = ClassA.fromJson(json);

@@ -223,7 +223,7 @@ void main() {
     });
 
     test(
-      'generates stable key for AllOfModel with sorted children',
+      'generates stable key for AllOfModel with ordered children',
       () {
         final sharedContext = context.push('Test').push('allOf');
 
@@ -252,7 +252,7 @@ void main() {
         final key1 = sorter.stableKeyOf(model1);
         final key2 = sorter.stableKeyOf(model2);
 
-        expect(key1, key2);
+        expect(key1, isNot(key2));
         expect(key1, contains('BooleanModel'));
         expect(key1, contains('IntegerModel'));
         expect(key1, contains('StringModel'));
@@ -330,7 +330,7 @@ void main() {
 
         expect(
           sorter.stableKeyOf(model1),
-          sorter.stableKeyOf(model2),
+          isNot(sorter.stableKeyOf(model2)),
         );
       },
     );
@@ -372,7 +372,7 @@ void main() {
 
       expect(
         sorter.stableKeyOf(model1),
-        sorter.stableKeyOf(model2),
+        isNot(sorter.stableKeyOf(model2)),
       );
     });
 
@@ -598,6 +598,67 @@ void main() {
       expect(keys[1], 'IntegerModel');
       expect(keys[2], 'StringModel');
     });
+
+    test(
+      'keeps semantic sort order independent of compound declaration order',
+      () {
+        final sharedContext = context.push('Test');
+        final stringThenInt = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: StringModel(context: sharedContext),
+            ),
+            (
+              discriminatorValue: null,
+              model: IntegerModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+        final intThenString = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: IntegerModel(context: sharedContext),
+            ),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+        final numberOnly = AnyOfModel(
+          isDeprecated: false,
+          models: [
+            (
+              discriminatorValue: null,
+              model: NumberModel(context: sharedContext),
+            ),
+          ],
+          context: sharedContext,
+          examples: const [],
+        );
+
+        expect(
+          sorter.stableKeyOf(stringThenInt),
+          isNot(sorter.stableKeyOf(intThenString)),
+        );
+        expect(
+          sorter.sortModels([stringThenInt, numberOnly]).first,
+          same(stringThenInt),
+        );
+        expect(
+          sorter.sortModels([intThenString, numberOnly]).first,
+          same(intThenString),
+        );
+      },
+    );
   });
 
   group('key size bounds', () {

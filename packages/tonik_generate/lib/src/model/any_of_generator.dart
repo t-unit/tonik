@@ -56,8 +56,7 @@ class AnyOfGenerator {
     final actualClassName = className ?? nameManager.modelName(model);
 
     // NeverModel has no runtime value; emitting Never? is dead weight.
-    final pseudoProperties = stableModelSorter
-        .sortDiscriminatedModels(model.models)
+    final pseudoProperties = model.models
         .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
@@ -97,24 +96,21 @@ class AnyOfGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: normalized.map(
-        (n) {
-          final model = n.property.model;
-          final resolvedModel = model.resolved;
-          return (
-            normalizedName: n.normalizedName,
-            typeRef: typeReference(
-              n.property.model,
-              nameManager,
-              package,
-              isNullableOverride:
-                  n.property.isNullable || !n.property.isRequired,
-              useImmutableCollections: useImmutableCollections,
-            ),
-            skipCast: resolvedModel is AnyModel,
-          );
-        },
-      ).toList(),
+      properties: normalized.map((n) {
+        final model = n.property.model;
+        final resolvedModel = model.resolved;
+        return (
+          normalizedName: n.normalizedName,
+          typeRef: typeReference(
+            n.property.model,
+            nameManager,
+            package,
+            isNullableOverride: n.property.isNullable || !n.property.isRequired,
+            useImmutableCollections: useImmutableCollections,
+          ),
+          skipCast: resolvedModel is AnyModel,
+        );
+      }).toList(),
     );
   }
 
@@ -141,8 +137,7 @@ class AnyOfGenerator {
               )
             : publicClassName);
 
-    final pseudoProperties = stableModelSorter
-        .sortDiscriminatedModels(model.models)
+    final pseudoProperties = model.models
         .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
@@ -164,6 +159,7 @@ class AnyOfGenerator {
         .toList();
 
     final normalized = normalizeProperties(pseudoProperties);
+    final semanticProperties = _semanticProperties(normalized);
 
     final effectiveCopyWithGetter =
         copyWithGetter ?? _buildCopyWith(actualClassName, normalized)?.getter;
@@ -201,14 +197,14 @@ class AnyOfGenerator {
 
     final fromJsonCtor = model.isWriteOnly
         ? buildWriteOnlyFromJsonConstructor(actualClassName)
-        : _buildFromJsonConstructor(actualClassName, normalized);
+        : _buildFromJsonConstructor(actualClassName, semanticProperties);
 
     final fromSimpleCtor = model.isWriteOnly
         ? buildWriteOnlyFromSimpleConstructor(actualClassName)
         : _buildFromValueConstructor(
             isForm: false,
             className: actualClassName,
-            normalizedProperties: normalized,
+            normalizedProperties: semanticProperties,
           );
 
     final fromFormCtor = model.isWriteOnly
@@ -216,7 +212,7 @@ class AnyOfGenerator {
         : _buildFromValueConstructor(
             isForm: true,
             className: actualClassName,
-            normalizedProperties: normalized,
+            normalizedProperties: semanticProperties,
           );
 
     final propsForEquality = normalized
@@ -247,9 +243,10 @@ class AnyOfGenerator {
 
         if (model.isDeprecated) {
           b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This class is deprecated.'),
-            ]),
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This class is deprecated.')]),
           );
         }
 
@@ -267,7 +264,10 @@ class AnyOfGenerator {
             if (model.isReadOnly)
               buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
             else
-              _buildCurrentEncodingShapeGetter(actualClassName, normalized),
+              _buildCurrentEncodingShapeGetter(
+                actualClassName,
+                semanticProperties,
+              ),
             Method(
               (b) => b
                 ..annotations.add(refer('override', 'dart:core'))
@@ -278,7 +278,7 @@ class AnyOfGenerator {
                     : _buildToJsonMethod(
                         actualClassName,
                         model,
-                        normalized,
+                        semanticProperties,
                       ).body
                 ..lambda = model.isReadOnly,
             ),
@@ -288,19 +288,19 @@ class AnyOfGenerator {
               _buildParameterPropertiesMethod(
                 actualClassName,
                 model,
-                normalized,
+                semanticProperties,
               ),
-            _buildToSimpleMethod(actualClassName, model, normalized),
-            _buildToFormMethod(actualClassName, model, normalized),
-            _buildToLabelMethod(actualClassName, model, normalized),
-            _buildToMatrixMethod(actualClassName, model, normalized),
+            _buildToSimpleMethod(actualClassName, model, semanticProperties),
+            _buildToFormMethod(actualClassName, model, semanticProperties),
+            _buildToLabelMethod(actualClassName, model, semanticProperties),
+            _buildToMatrixMethod(actualClassName, model, semanticProperties),
             buildToDeepObjectMethod(),
             buildToPipeDelimitedMethod(),
             buildToSpaceDelimitedMethod(),
             if (model.isReadOnly)
               buildReadOnlyUriEncodeMethod(encodingExceptionBody)
             else
-              _buildUriEncodeMethod(actualClassName, model, normalized),
+              _buildUriEncodeMethod(actualClassName, model, semanticProperties),
             generateEqualsMethod(
               className: actualClassName,
               properties: propsForEquality,
@@ -320,6 +320,22 @@ class AnyOfGenerator {
     isNullableOverride: true,
     useImmutableCollections: useImmutableCollections,
   );
+
+  List<({String normalizedName, Property property})> _semanticProperties(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final sortedModels = stableModelSorter.sortModels(
+      properties.map((property) => property.property.model),
+    );
+    final remaining = properties.toList();
+    return sortedModels.map((model) {
+      final index = remaining.indexWhere(
+        (property) => identical(property.property.model, model),
+      );
+      return remaining.removeAt(index);
+    }).toList();
+  }
+
   List<Code> _generateFieldEncoding({
     required String fieldName,
     required Model fieldModel,
@@ -888,9 +904,7 @@ class AnyOfGenerator {
         refer('String', 'dart:core'),
         refer('Object?', 'dart:core'),
       ).statement,
-      const Code(
-        r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-      ),
+      const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
     ];
     if (hasDiscriminator) {
       mergeBlocks.add(
@@ -919,10 +933,7 @@ class AnyOfGenerator {
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = false
-        ..body = Block.of([
-          ...spliceInlineHelpers(inlineHelpers),
-          ...body,
-        ]),
+        ..body = Block.of([...spliceInlineHelpers(inlineHelpers), ...body]),
     );
   }
 
@@ -1022,9 +1033,7 @@ class AnyOfGenerator {
 
     if (needsMapValues) {
       mergeBlocks.add(
-        const Code(
-          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-        ),
+        const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
       );
     }
     if (hasDiscriminator) {
@@ -1051,9 +1060,7 @@ class AnyOfGenerator {
 
     if (needsValues && needsMapValues) {
       body.addAll([
-        const Code(
-          r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
-        ),
+        const Code(r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';"),
         const Code(r'if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {'),
         generateEncodingExceptionExpression(
           'Ambiguous anyOf simple encoding for $className: '
@@ -1122,11 +1129,9 @@ class AnyOfGenerator {
     if (needsValues) {
       body
         ..add(
-          declareFinal(r'_$entryLists')
-              .assign(
-                literalList([], buildParameterEntryListType()),
-              )
-              .statement,
+          declareFinal(
+            r'_$entryLists',
+          ).assign(literalList([], buildParameterEntryListType())).statement,
         )
         ..add(
           declareFinal(
@@ -1190,9 +1195,7 @@ class AnyOfGenerator {
 
     if (needsMapValues) {
       mergeBlocks.add(
-        const Code(
-          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-        ),
+        const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
       );
     }
     if (hasDiscriminator) {
@@ -1510,14 +1513,7 @@ class AnyOfGenerator {
                   ),
                 )
                 .property(constructorName)
-                .call(
-                  [
-                    refer('value'),
-                  ],
-                  {
-                    'explode': refer('explode'),
-                  },
-                ),
+                .call([refer('value')], {'explode': refer('explode')}),
           _ =>
             (isForm
                     ? buildFromFormValueExpression(
@@ -1579,9 +1575,7 @@ class AnyOfGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = Block.of([
           ...localDecls,
           validationCheck,
@@ -1848,9 +1842,7 @@ class AnyOfGenerator {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
-                literalString(
-                  'Lists are not supported in parameterProperties',
-                ),
+                literalString('Lists are not supported in parameterProperties'),
               ])
               .thrown
               .statement,
@@ -2016,9 +2008,7 @@ class AnyOfGenerator {
 
     if (needsMapValues) {
       mergeBlocks.add(
-        const Code(
-          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-        ),
+        const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
       );
     }
 
@@ -2045,9 +2035,7 @@ class AnyOfGenerator {
 
     if (needsValues && needsMapValues) {
       body.addAll([
-        const Code(
-          r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
-        ),
+        const Code(r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';"),
         const Code(r'if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {'),
         generateEncodingExceptionExpression(
           'Ambiguous anyOf label encoding for $className: '
@@ -2171,9 +2159,7 @@ class AnyOfGenerator {
 
     if (needsMapValues) {
       mergeBlocks.add(
-        const Code(
-          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-        ),
+        const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
       );
     }
 
@@ -2201,9 +2187,7 @@ class AnyOfGenerator {
 
     if (needsValues && needsMapValues) {
       body.addAll([
-        const Code(
-          r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
-        ),
+        const Code(r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';"),
         const Code(r'if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {'),
         generateEncodingExceptionExpression(
           'Ambiguous anyOf matrix encoding for $className: '

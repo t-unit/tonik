@@ -65,7 +65,7 @@ void main() {
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
-            ResultError(:final value) => value.toForm(
+            ResultSuccess(:final value) => value.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -73,7 +73,7 @@ void main() {
               allowReserved: allowReserved,
               textEncoding: textEncoding,
             ),
-            ResultSuccess(:final value) => value.toForm(
+            ResultError(:final value) => value.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -142,14 +142,6 @@ void main() {
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
-            ResponseMessage(:final value) => value.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            ),
             ResponseUser(:final value) =>
               {
                 ...value.parameterProperties(allowEmpty: allowEmpty),
@@ -163,6 +155,14 @@ void main() {
                 fieldEncodings: fieldEncodings,
                 textEncoding: textEncoding,
               ),
+            ResponseMessage(:final value) => value.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
+            ),
           };
         }
       ''';
@@ -332,10 +332,12 @@ void main() {
         factory Response.fromForm(String? value, {required bool explode}) {
           try {
             return ResponseMsg(value.decodeFormString(context: r'Response'));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           try {
             return ResponseUser(User.fromForm(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid form value for Response');
         }
       ''';

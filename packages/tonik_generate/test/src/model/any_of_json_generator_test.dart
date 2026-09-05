@@ -372,7 +372,6 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-
         if (bool != null) {
           final Object? _$boolJson = bool!;
           if (_$boolJson is Map<String, Object?>) {
@@ -397,19 +396,15 @@ void main() {
             _$values.add(_$stringJson);
           }
         }
-
         if (_$values.isEmpty && _$mapValues.isEmpty) return null;
-
         if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
           );
         }
-
         if (_$values.isNotEmpty) {
           return _$values.first;
         }
-
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
@@ -421,7 +416,6 @@ void main() {
           }
           return _$map;
         }
-
         return null;
       }
     ''';
@@ -477,38 +471,33 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-
-        if (string != null) {
-          final Object? _$stringJson = string!;
-          if (_$stringJson is Map<String, Object?>) {
-            _$mapValues.add(_$stringJson);
-              _$discriminatorValue ??= r'str';
-          } else {
-            _$values.add(_$stringJson);
-          }
-        }
         if (user != null) {
           final Object? _$userJson = user!.toJson();
           if (_$userJson is Map<String, Object?>) {
             _$mapValues.add(_$userJson);
-              _$discriminatorValue ??= r'user';
+            _$discriminatorValue ??= r'user';
           } else {
             _$values.add(_$userJson);
           }
         }
-
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+            _$discriminatorValue ??= r'str';
+          } else {
+            _$values.add(_$stringJson);
+          }
+        }
         if (_$values.isEmpty && _$mapValues.isEmpty) return null;
-
         if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
           );
         }
-
         if (_$values.isNotEmpty) {
           return _$values.first;
         }
-
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
@@ -520,7 +509,6 @@ void main() {
           }
           return _$map;
         }
-
         return null;
       }
     ''';
@@ -531,4 +519,72 @@ void main() {
       );
     },
   );
+
+  test('keeps date-time encoding ahead of a declared plain string', () {
+    final model = AnyOfModel(
+      isDeprecated: false,
+      name: 'Value',
+      models: [
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (
+          discriminatorValue: null,
+          model: DateTimeModel(context: context),
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+
+    final klass = generator.generateClass(model);
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+    final generated = format(klass.accept(emitter).toString());
+
+    const expectedMethod = r'''
+      Object? toJson() {
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        if (dateTime != null) {
+          final Object? _$dateTimeJson =
+              dateTime!.toTimeZonedIso8601String();
+          if (_$dateTimeJson is Map<String, Object?>) {
+            _$mapValues.add(_$dateTimeJson);
+          } else {
+            _$values.add(_$dateTimeJson);
+          }
+        }
+        if (string != null) {
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+          } else {
+            _$values.add(_$stringJson);
+          }
+        }
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+          throw EncodingException(
+            r'Mixed encoding not supported for Value: cannot encode both simple and complex values',
+          );
+        }
+        if (_$values.isNotEmpty) {
+          return _$values.first;
+        }
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
+          return _$map;
+        }
+        return null;
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedMethod)),
+    );
+  });
 }
