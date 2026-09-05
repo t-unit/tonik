@@ -45,20 +45,13 @@ jobs:
             ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
-      - name: Cache Imposter JAR
-        uses: actions/cache@v6
-        with:
-          path: integration_test/imposter.jar
-          key: imposter-4.6.8
-          restore-keys: imposter-
-
       - name: Install dependencies
         run: |
           dart pub global activate melos
           melos bootstrap
 
       - name: Generate integration test code (${{ matrix.backend }})
-        run: ./scripts/setup_integration_tests.sh --backend "${{ matrix.backend }}"
+        run: ./scripts/setup_integration_tests.sh --backend "${{ matrix.backend }}" --skip-imposter
         shell: bash
 
       - name: Archive generated code (${{ matrix.backend }})
@@ -70,14 +63,6 @@ jobs:
         with:
           name: generated-integration-code-${{ matrix.backend }}-${{ matrix.os }}-${{ matrix.sdk }}
           path: generated-integration-code.tar.gz
-          compression-level: 0
-          retention-days: 1
-
-      - name: Upload Imposter JAR (${{ matrix.backend }})
-        uses: actions/upload-artifact@v7
-        with:
-          name: imposter-jar-${{ matrix.backend }}-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test/imposter.jar
           compression-level: 0
           retention-days: 1
 
@@ -144,10 +129,8 @@ jobs:
         shell: bash
 
       - name: Download Imposter JAR (${{ matrix.backend }})
-        uses: actions/download-artifact@v8
-        with:
-          name: imposter-jar-${{ matrix.backend }}-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test
+        run: bash ./scripts/setup_imposter.sh
+        shell: bash
 
       - name: Cache Dart pub dependencies
         uses: actions/cache@v6
