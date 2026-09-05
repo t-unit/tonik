@@ -43,9 +43,7 @@ class NonSendableWorkerError implements Exception {
 /// across [Model]s. Forwards `Logger.root` records from workers to main
 /// with their original [Level] and logger name preserved.
 class ModelWorkerPool {
-  ModelWorkerPool({
-    this.maxInflight = _defaultMaxInflight,
-  });
+  ModelWorkerPool({this.maxInflight = _defaultMaxInflight});
 
   static const int _defaultMaxInflight = 256;
 
@@ -414,11 +412,7 @@ Future<void> _workerEntry(_WorkerInit init) async {
             package: init.package,
           );
           init.mainInbox.send(
-            _ModelAck(
-              init.workerId,
-              msg.modelIndex,
-              generatedFile,
-            ),
+            _ModelAck(init.workerId, msg.modelIndex, generatedFile),
           );
         } on Object catch (error, stack) {
           _sendModelError(

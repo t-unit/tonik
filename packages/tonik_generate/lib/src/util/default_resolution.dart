@@ -177,28 +177,26 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
     receiverOverride: rawLiteral,
   );
 
-  final getter = Method(
-    (b) {
-      b
-        ..static = true
-        ..name = memberName
-        ..type = MethodType.getter
-        ..returns = returnType;
+  final getter = Method((b) {
+    b
+      ..static = true
+      ..name = memberName
+      ..type = MethodType.getter
+      ..returns = returnType;
 
-      if (decoded.inlineFunctions.isEmpty) {
-        b
-          ..lambda = true
-          ..body = decoded.unsafeRawBody.code;
-      } else {
-        // Self-referential typedef helpers need to be declared as statements
-        // before the returned expression, which a lambda body cannot carry.
-        b.body = Block.of([
-          ...spliceInlineHelpers(decoded.inlineFunctions),
-          decoded.unsafeRawBody.returned.statement,
-        ]);
-      }
-    },
-  );
+    if (decoded.inlineFunctions.isEmpty) {
+      b
+        ..lambda = true
+        ..body = decoded.unsafeRawBody.code;
+    } else {
+      // Self-referential typedef helpers need to be declared as statements
+      // before the returned expression, which a lambda body cannot carry.
+      b.body = Block.of([
+        ...spliceInlineHelpers(decoded.inlineFunctions),
+        decoded.unsafeRawBody.returned.statement,
+      ]);
+    }
+  });
 
   return RuntimeResolvedDefault(memberName: memberName, getter: getter);
 }

@@ -80,10 +80,7 @@ void main() {
 
     test('reserved characters in keys are percent-encoded', () {
       const value = {'a/b': PropertyValue.scalar('v')};
-      expect(
-        value.toSimple(explode: false, allowEmpty: false),
-        'a%2Fb,v',
-      );
+      expect(value.toSimple(explode: false, allowEmpty: false), 'a%2Fb,v');
     });
 
     test('array beside a scalar comma-joins with explode=false', () {
@@ -102,10 +99,7 @@ void main() {
         'a': PropertyValue.scalar('x'),
         'tags': PropertyValue.array(['t1', 't2']),
       };
-      expect(
-        value.toSimple(explode: true, allowEmpty: true),
-        'a=x,tags=t1,t2',
-      );
+      expect(value.toSimple(explode: true, allowEmpty: true), 'a=x,tags=t1,t2');
     });
 
     test(
@@ -114,10 +108,7 @@ void main() {
         const value = {
           'k': PropertyValue.array(['a,b', 'c']),
         };
-        expect(
-          value.toSimple(explode: true, allowEmpty: true),
-          'k=a%2Cb,c',
-        );
+        expect(value.toSimple(explode: true, allowEmpty: true), 'k=a%2Cb,c');
       },
     );
 
@@ -265,10 +256,7 @@ void main() {
 
     test('reserved characters in keys are percent-encoded', () {
       const value = {'a/b': PropertyValue.scalar('v')};
-      expect(
-        value.toLabel(explode: false, allowEmpty: false),
-        '.a%2Fb,v',
-      );
+      expect(value.toLabel(explode: false, allowEmpty: false), '.a%2Fb,v');
     });
 
     test('array beside a scalar comma-joins with explode=false', () {
@@ -597,30 +585,25 @@ void main() {
         'x': PropertyValue.scalar('1'),
         'y': PropertyValue.scalar('2'),
       };
-      expect(
-        value.toDeepObject('point', explode: true, allowEmpty: true),
-        [
-          (name: 'point[x]', value: '1'),
-          (name: 'point[y]', value: '2'),
-        ],
-      );
+      expect(value.toDeepObject('point', explode: true, allowEmpty: true), [
+        (name: 'point[x]', value: '1'),
+        (name: 'point[y]', value: '2'),
+      ]);
     });
 
     test('keys are component-encoded, brackets stay literal', () {
       const value = {'a b': PropertyValue.scalar('v')};
-      expect(
-        value.toDeepObject('f', explode: true, allowEmpty: true),
-        [(name: 'f[a%20b]', value: 'v')],
-      );
+      expect(value.toDeepObject('f', explode: true, allowEmpty: true), [
+        (name: 'f[a%20b]', value: 'v'),
+      ]);
     });
 
     test('reserved characters in values are percent-encoded without '
         'allowReserved', () {
       const value = {'path': PropertyValue.scalar('a/b:c')};
-      expect(
-        value.toDeepObject('filter', explode: true, allowEmpty: true),
-        [(name: 'filter[path]', value: 'a%2Fb%3Ac')],
-      );
+      expect(value.toDeepObject('filter', explode: true, allowEmpty: true), [
+        (name: 'filter[path]', value: 'a%2Fb%3Ac'),
+      ]);
     });
 
     test('reserved characters in values stay literal with allowReserved', () {
@@ -716,18 +699,16 @@ void main() {
 
     test('empty scalar renders empty value with allowEmpty=true', () {
       const value = {'k': PropertyValue.scalar('')};
-      expect(
-        value.toDeepObject('p', explode: true, allowEmpty: true),
-        [(name: 'p[k]', value: '')],
-      );
+      expect(value.toDeepObject('p', explode: true, allowEmpty: true), [
+        (name: 'p[k]', value: ''),
+      ]);
     });
 
     test('empty scalar renders empty value with allowEmpty=false', () {
       const value = {'k': PropertyValue.scalar('')};
-      expect(
-        value.toDeepObject('p', explode: true, allowEmpty: false),
-        [(name: 'p[k]', value: '')],
-      );
+      expect(value.toDeepObject('p', explode: true, allowEmpty: false), [
+        (name: 'p[k]', value: ''),
+      ]);
     });
 
     test(
@@ -737,13 +718,10 @@ void main() {
           'empty': PropertyValue.scalar(''),
           'filled': PropertyValue.scalar('x'),
         };
-        expect(
-          value.toDeepObject('p', explode: true, allowEmpty: false),
-          [
-            (name: 'p[empty]', value: ''),
-            (name: 'p[filled]', value: 'x'),
-          ],
-        );
+        expect(value.toDeepObject('p', explode: true, allowEmpty: false), [
+          (name: 'p[empty]', value: ''),
+          (name: 'p[filled]', value: 'x'),
+        ]);
       },
     );
   });
@@ -755,10 +733,9 @@ void main() {
         'G': PropertyValue.scalar('200'),
         'B': PropertyValue.scalar('150'),
       };
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'R|100|G|200|B|150')],
-      );
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'R|100|G|200|B|150'),
+      ]);
     });
 
     test('uri-encodes values while keeping the pipe delimiter literal', () {
@@ -766,20 +743,18 @@ void main() {
         'note': PropertyValue.scalar('a b'),
         'op': PropertyValue.scalar('x=y'),
       };
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'note|a%20b|op|x%3Dy')],
-      );
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'note|a%20b|op|x%3Dy'),
+      ]);
     });
 
     test('joins array elements with the pipe delimiter', () {
       const value = {
         'tags': PropertyValue.array(['a', 'b']),
       };
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'tags|a|b')],
-      );
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'tags|a|b'),
+      ]);
     });
 
     test(
@@ -788,31 +763,26 @@ void main() {
         const value = {
           'tags': PropertyValue.array(['a|b', 'c']),
         };
-        expect(
-          value.toPipeDelimited('color', allowEmpty: true),
-          [(name: 'color', value: 'tags|a%7Cb|c')],
-        );
+        expect(value.toPipeDelimited('color', allowEmpty: true), [
+          (name: 'color', value: 'tags|a%7Cb|c'),
+        ]);
       },
     );
 
     test('empty array-valued property yields a trailing pipe token', () {
-      const value = {
-        'tags': PropertyValue.array(<String>[]),
-      };
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'tags|')],
-      );
+      const value = {'tags': PropertyValue.array(<String>[])};
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'tags|'),
+      ]);
     });
 
     test(
       'percent-encodes reserved key and value chars without allowReserved',
       () {
         const value = {'a/b': PropertyValue.scalar('a/b:c')};
-        expect(
-          value.toPipeDelimited('color', allowEmpty: true),
-          [(name: 'color', value: 'a%2Fb|a%2Fb%3Ac')],
-        );
+        expect(value.toPipeDelimited('color', allowEmpty: true), [
+          (name: 'color', value: 'a%2Fb|a%2Fb%3Ac'),
+        ]);
       },
     );
 
@@ -828,10 +798,9 @@ void main() {
       'percent-encodes a pipe inside a value, keeping the delimiter literal',
       () {
         const value = {'a': PropertyValue.scalar('x|y')};
-        expect(
-          value.toPipeDelimited('color', allowEmpty: true),
-          [(name: 'color', value: 'a|x%7Cy')],
-        );
+        expect(value.toPipeDelimited('color', allowEmpty: true), [
+          (name: 'color', value: 'a|x%7Cy'),
+        ]);
       },
     );
 
@@ -859,58 +828,50 @@ void main() {
         'G': PropertyValue.scalar('200'),
         'B': PropertyValue.scalar('150'),
       };
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'R%20100%20G%20200%20B%20150')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'R%20100%20G%20200%20B%20150'),
+      ]);
     });
 
     test('uri-encodes values while keeping the space delimiter as %20', () {
       const value = {'op': PropertyValue.scalar('x=y')};
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'op%20x%3Dy')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'op%20x%3Dy'),
+      ]);
     });
 
     test('joins array elements with the space delimiter', () {
       const value = {
         'tags': PropertyValue.array(['a', 'b']),
       };
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'tags%20a%20b')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'tags%20a%20b'),
+      ]);
     });
 
     test('percent-encodes a space inside an array element, join stays %20', () {
       const value = {
         'tags': PropertyValue.array(['a b', 'c']),
       };
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'tags%20a%20b%20c')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'tags%20a%20b%20c'),
+      ]);
     });
 
     test('empty array-valued property yields a trailing %20 token', () {
-      const value = {
-        'tags': PropertyValue.array(<String>[]),
-      };
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'tags%20')],
-      );
+      const value = {'tags': PropertyValue.array(<String>[])};
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'tags%20'),
+      ]);
     });
 
     test(
       'percent-encodes reserved key and value chars without allowReserved',
       () {
         const value = {'a/b': PropertyValue.scalar('a/b:c')};
-        expect(
-          value.toSpaceDelimited('coord', allowEmpty: true),
-          [(name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac')],
-        );
+        expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+          (name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac'),
+        ]);
       },
     );
 
@@ -924,10 +885,9 @@ void main() {
 
     test('a space inside a value becomes %20, matching the delimiter', () {
       const value = {'a': PropertyValue.scalar('x y')};
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'a%20x%20y')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'a%20x%20y'),
+      ]);
     });
 
     test('omits an empty object when allowEmpty=true', () {

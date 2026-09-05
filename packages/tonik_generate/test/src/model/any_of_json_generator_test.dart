@@ -526,10 +526,7 @@ void main() {
       name: 'Value',
       models: [
         (discriminatorValue: null, model: StringModel(context: context)),
-        (
-          discriminatorValue: null,
-          model: DateTimeModel(context: context),
-        ),
+        (discriminatorValue: null, model: DateTimeModel(context: context)),
       ],
       context: context,
       examples: const [],

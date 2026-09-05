@@ -88,10 +88,7 @@ void main() {
     });
 
     test('handles multiline strings in list', () {
-      final result = formatDocComments([
-        'First\nMultiline',
-        'Second',
-      ]);
+      final result = formatDocComments(['First\nMultiline', 'Second']);
 
       expect(result, isNotEmpty);
       expect(result.length, 3);
@@ -175,11 +172,7 @@ void main() {
         'First line\n\nThird line',
       );
 
-      expect(result, [
-        '/// [param] First line',
-        '/// ',
-        '/// Third line',
-      ]);
+      expect(result, ['/// [param] First line', '/// ', '/// Third line']);
     });
   });
 }

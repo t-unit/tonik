@@ -140,20 +140,17 @@ void main() {
       expect(result.context.path, ['components', 'schemas']);
     });
 
-    test(
-      'returns Base64Model for contentEncoding: base64 without config',
-      () {
-        final context = Context.initial().pushAll(['components', 'schemas']);
+    test('returns Base64Model for contentEncoding: base64 without config', () {
+      final context = Context.initial().pushAll(['components', 'schemas']);
 
-        final result = importer.importSchema(
-          inlineContentEncodingBase64,
-          context,
-        );
+      final result = importer.importSchema(
+        inlineContentEncodingBase64,
+        context,
+      );
 
-        expect(result, isA<Base64Model>());
-        expect(result.context.path, ['components', 'schemas']);
-      },
-    );
+      expect(result, isA<Base64Model>());
+      expect(result.context.path, ['components', 'schemas']);
+    });
 
     test('does not add inline binary schema to models', () {
       final context = Context.initial().pushAll(['components', 'schemas']);
@@ -310,18 +307,15 @@ void main() {
       expect((base64Data as AliasModel).model, isA<Base64Model>());
     });
 
-    test(
-      'creates AliasModel wrapping Base64Model for named '
-      'contentEncoding: base64 schema',
-      () {
-        final encodedData = importer.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'EncodedData',
-        );
+    test('creates AliasModel wrapping Base64Model for named '
+        'contentEncoding: base64 schema', () {
+      final encodedData = importer.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'EncodedData',
+      );
 
-        expect(encodedData, isA<AliasModel>());
-        expect((encodedData as AliasModel).model, isA<Base64Model>());
-      },
-    );
+      expect(encodedData, isA<AliasModel>());
+      expect((encodedData as AliasModel).model, isA<Base64Model>());
+    });
   });
 
   group('contentMediaType parsing', () {
@@ -429,24 +423,21 @@ void main() {
       rawDefault: null,
     );
 
-    test(
-      'returns Base64Model for contentEncoding: base64 with unconfigured '
-      'contentMediaType',
-      () {
-        final importer = ModelImporter(
-          openApiObject,
-          exampleImporter: ExampleImporter(openApiObject: openApiObject),
-        )..import();
-        final context = Context.initial().pushAll(['components', 'schemas']);
+    test('returns Base64Model for contentEncoding: base64 with unconfigured '
+        'contentMediaType', () {
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
+      final context = Context.initial().pushAll(['components', 'schemas']);
 
-        final result = importer.importSchema(
-          stringWithEncodingAndMediaType,
-          context,
-        );
+      final result = importer.importSchema(
+        stringWithEncodingAndMediaType,
+        context,
+      );
 
-        expect(result, isA<Base64Model>());
-      },
-    );
+      expect(result, isA<Base64Model>());
+    });
 
     test('returns Base64Model for contentEncoding: base64 without '
         'contentMediaType', () {
@@ -483,9 +474,7 @@ void main() {
         'contentMediaType to binary', () {
       final importer = ModelImporter(
         openApiObject,
-        contentMediaTypes: {
-          'image/png': SchemaContentType.binary,
-        },
+        contentMediaTypes: {'image/png': SchemaContentType.binary},
         exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 
@@ -609,9 +598,7 @@ void main() {
 
       final importer = ModelImporter(
         openApiObject,
-        contentMediaTypes: {
-          'text/plain': SchemaContentType.text,
-        },
+        contentMediaTypes: {'text/plain': SchemaContentType.text},
         exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 
@@ -624,9 +611,7 @@ void main() {
     test('config can override any media type to text', () {
       final importer = ModelImporter(
         openApiObject,
-        contentMediaTypes: {
-          'image/png': SchemaContentType.text,
-        },
+        contentMediaTypes: {'image/png': SchemaContentType.text},
         exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 

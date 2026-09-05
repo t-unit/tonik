@@ -12,9 +12,7 @@ void main() {
         'info': {'title': 'Test', 'version': '1.0.0'},
         'paths': <String, dynamic>{},
         'components': {
-          'schemas': {
-            'AnyValue': true,
-          },
+          'schemas': {'AnyValue': true},
         },
       };
 
@@ -39,9 +37,7 @@ void main() {
         'info': {'title': 'Test', 'version': '1.0.0'},
         'paths': <String, dynamic>{},
         'components': {
-          'schemas': {
-            'NeverValid': false,
-          },
+          'schemas': {'NeverValid': false},
         },
       };
 
@@ -106,10 +102,7 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'FlexibleArray': {
-              'type': 'array',
-              'items': true,
-            },
+            'FlexibleArray': {'type': 'array', 'items': true},
           },
         },
       };

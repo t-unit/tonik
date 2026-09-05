@@ -331,10 +331,11 @@ void main() {
         helperContext: ctx,
       );
 
-      expect(
-        built.inlineFunctions.map((h) => h.name).toList(),
-        [r'_$encodeC', r'_$encodeB', r'_$encodeA'],
-      );
+      expect(built.inlineFunctions.map((h) => h.name).toList(), [
+        r'_$encodeC',
+        r'_$encodeB',
+        r'_$encodeA',
+      ]);
 
       final actual = emitMethod(built);
       final expected = format(r'''

@@ -40,10 +40,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -70,10 +67,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(
           success.value.xNestedValue,
@@ -92,16 +86,10 @@ void main() {
           nestedValue: const NestedAllOfInOneOfString('simple-string'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          'simple-string',
-        );
+        expect(recordedRequest.headers['x-nested-value'], 'simple-string');
 
         // Note: The decoder tries AllOfComplex first, which may succeed
         // even for a simple string due to how decodeObject works.
@@ -114,16 +102,10 @@ void main() {
           nestedValue: const NestedAllOfInOneOfString('test-value'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nested-value'],
-          'test-value',
-        );
+        expect(recordedRequest.headers['x-nested-value'], 'test-value');
       });
     });
 
@@ -133,16 +115,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripNestedAllOfInOneOf.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-nested-value'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-nested-value'], isNull);
           expect(success.value.xNestedValue, isNull);
         },
       );

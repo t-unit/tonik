@@ -37,10 +37,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -67,10 +64,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.value.xEnumComposite, isNotNull);
@@ -88,10 +82,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.value.xEnumComposite, isNotNull);
@@ -111,10 +102,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
 
         expect(success.value.xEnumComposite, isNotNull);
@@ -135,17 +123,11 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAllOfEnums.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
 
-          expect(
-            recordedRequest.headers['x-enum-composite'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-enum-composite'], isNull);
 
           expect(success.value.xEnumComposite, isNull);
         },

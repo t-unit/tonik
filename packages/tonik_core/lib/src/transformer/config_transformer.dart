@@ -155,11 +155,7 @@ class ConfigTransformer {
                 opId,
                 overrides.parameters,
               )
-              ..applyHeaderOverrides(
-                op.headers,
-                opId,
-                overrides.parameters,
-              );
+              ..applyHeaderOverrides(op.headers, opId, overrides.parameters);
           }
         }
       }

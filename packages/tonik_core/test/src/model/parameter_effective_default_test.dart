@@ -55,10 +55,7 @@ void main() {
     });
 
     test('returns null when neither side carries a default', () {
-      final p = with$(
-        defaultValue: null,
-        model: StringModel(context: context),
-      );
+      final p = with$(defaultValue: null, model: StringModel(context: context));
       expect(p.effectiveDefaultValue, isNull);
     });
   });
@@ -121,10 +118,7 @@ void main() {
     );
 
     test('returns local default when set', () {
-      final p = with$(
-        defaultValue: 5,
-        model: IntegerModel(context: context),
-      );
+      final p = with$(defaultValue: 5, model: IntegerModel(context: context));
       expect(p.effectiveDefaultValue, 5);
     });
 

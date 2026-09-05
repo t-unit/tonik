@@ -139,10 +139,8 @@ List<({String normalizedName, MultipartPart part})> normalizeMultipartParts(
           defaultPrefix: defaultFieldPrefix,
         )
         .map(
-          (item) => (
-            normalizedName: item.normalizedName,
-            part: item.originalValue,
-          ),
+          (item) =>
+              (normalizedName: item.normalizedName, part: item.originalValue),
         )
         .toList();
 

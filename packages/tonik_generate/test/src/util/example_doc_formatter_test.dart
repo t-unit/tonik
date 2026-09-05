@@ -19,12 +19,7 @@ void main() {
           ),
         ]);
 
-        expect(result, [
-          '/// **Example**:',
-          '/// ```',
-          '/// hi',
-          '/// ```',
-        ]);
+        expect(result, ['/// **Example**:', '/// ```', '/// hi', '/// ```']);
       });
 
       test('includes name in heading when set', () {
@@ -200,20 +195,10 @@ void main() {
 
       test('treats empty description as absent', () {
         final result = formatExamplesAsDocs([
-          const Example(
-            name: null,
-            summary: null,
-            description: '',
-            value: 1,
-          ),
+          const Example(name: null, summary: null, description: '', value: 1),
         ]);
 
-        expect(result, [
-          '/// **Example**:',
-          '/// ```json',
-          '/// 1',
-          '/// ```',
-        ]);
+        expect(result, ['/// **Example**:', '/// ```json', '/// 1', '/// ```']);
       });
 
       test('escapes a description line that opens a markdown fence', () {
@@ -519,27 +504,24 @@ void main() {
         ]);
       });
 
-      test(
-        'returns empty list when every entry is skipped',
-        () {
-          final result = formatExamplesAsDocs([
-            const Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: null,
-            ),
-            const Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: null,
-            ),
-          ]);
+      test('returns empty list when every entry is skipped', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: null,
+          ),
+          const Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: null,
+          ),
+        ]);
 
-          expect(result, isEmpty);
-        },
-      );
+        expect(result, isEmpty);
+      });
     });
   });
 }

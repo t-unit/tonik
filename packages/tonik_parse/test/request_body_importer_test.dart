@@ -141,9 +141,7 @@ void main() {
 
     final api =
         Importer(
-          contentTypes: {
-            'application/vnd.custom-text': ContentType.text,
-          },
+          contentTypes: {'application/vnd.custom-text': ContentType.text},
         ).import({
           'openapi': '3.0.3',
           'info': {'title': 'Text encoding', 'version': '1.0.0'},
@@ -153,9 +151,7 @@ void main() {
               'DefaultUtf8': textBody('text/plain'),
               'Utf8Hyphen': textBody('text/plain; charset=UTF-8'),
               'Utf8Compact': textBody('text/plain; charset=utf8'),
-              'Latin1Iso': textBody(
-                'text/plain; charset = "ISO-8859-1"',
-              ),
+              'Latin1Iso': textBody('text/plain; charset = "ISO-8859-1"'),
               'Latin1Alias': textBody('text/plain; CHARSET=LaTiN1'),
               'AsciiUs': textBody('text/plain; charset = "US-ASCII"'),
               'AsciiAlias': textBody('text/plain; charset=ASCII'),
@@ -197,9 +193,7 @@ void main() {
                       'latin': {
                         'contentType': 'text/plain; charset=iso-8859-1',
                       },
-                      'ascii': {
-                        'contentType': 'text/plain; charset=us-ascii',
-                      },
+                      'ascii': {'contentType': 'text/plain; charset=us-ascii'},
                       'jsonText': {
                         'contentType': 'application/json; charset=latin1',
                       },
@@ -207,15 +201,11 @@ void main() {
                         'contentType':
                             'application/x-www-form-urlencoded; charset=ascii',
                       },
-                      'repeated': {
-                        'contentType': 'text/plain; charset=latin1',
-                      },
+                      'repeated': {'contentType': 'text/plain; charset=latin1'},
                       'unsupported': {
                         'contentType': 'text/plain; charset=utf-16',
                       },
-                      'binary': {
-                        'contentType': 'application/octet-stream',
-                      },
+                      'binary': {'contentType': 'application/octet-stream'},
                     },
                   },
                 },
@@ -272,14 +262,8 @@ void main() {
     expect(defaulted.rawContentType, 'text/plain');
     expect(defaulted.wireContentType, 'text/plain');
     final unsupportedPart = partEncodingFor(multipart, 'unsupported')!;
-    expect(
-      unsupportedPart.rawContentType,
-      'text/plain; charset=utf-16',
-    );
-    expect(
-      unsupportedPart.wireContentType,
-      'text/plain; charset=utf-8',
-    );
+    expect(unsupportedPart.rawContentType, 'text/plain; charset=utf-16');
+    expect(unsupportedPart.wireContentType, 'text/plain; charset=utf-8');
   });
 
   test('imports simple request body with JSON content', () {
@@ -326,10 +310,7 @@ void main() {
 
     final content = referenceBody?.content.first;
     expect((content as ModelRequestContent?)?.model, isA<ClassModel>());
-    expect(
-      (content?.model as ClassModel?)?.name,
-      'MySchema',
-    );
+    expect((content?.model as ClassModel?)?.name, 'MySchema');
     expect(content?.rawContentType, 'application/json');
     expect(content?.contentType, ContentType.json);
   });
@@ -607,10 +588,7 @@ void main() {
               'required': true,
               'content': {
                 'application/octet-stream': {
-                  'schema': {
-                    'type': 'string',
-                    'format': 'binary',
-                  },
+                  'schema': {'type': 'string', 'format': 'binary'},
                 },
               },
             },
@@ -643,10 +621,7 @@ void main() {
               'required': true,
               'content': {
                 'image/jpeg': {
-                  'schema': {
-                    'type': 'string',
-                    'format': 'binary',
-                  },
+                  'schema': {'type': 'string', 'format': 'binary'},
                 },
               },
             },
@@ -679,10 +654,7 @@ void main() {
               'required': true,
               'content': {
                 'application/pdf': {
-                  'schema': {
-                    'type': 'string',
-                    'format': 'binary',
-                  },
+                  'schema': {'type': 'string', 'format': 'binary'},
                 },
               },
             },
@@ -705,77 +677,71 @@ void main() {
       expect(content?.rawContentType, 'application/pdf');
     });
 
-    test(
-      'resolves application/json to ContentType.json',
-      () {
-        final fileContentWithJson = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'requestBodies': {
-              'JsonBody': {
-                'description': 'A JSON request body',
-                'required': true,
-                'content': {
-                  'application/json': {
-                    'schema': {'type': 'object'},
-                  },
+    test('resolves application/json to ContentType.json', () {
+      final fileContentWithJson = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'JsonBody': {
+              'description': 'A JSON request body',
+              'required': true,
+              'content': {
+                'application/json': {
+                  'schema': {'type': 'object'},
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContentWithJson);
-        final jsonBody = api.requestBodies.firstWhereOrNull(
-          (r) => r.name == 'JsonBody',
-        );
+      final api = Importer().import(fileContentWithJson);
+      final jsonBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'JsonBody',
+      );
 
-        expect(jsonBody, isNotNull);
-        expect(jsonBody, isA<RequestBodyObject>());
-        expect((jsonBody as RequestBodyObject?)?.content, hasLength(1));
-        final content = jsonBody?.content.first;
-        expect(content?.contentType, ContentType.json);
-        expect(content?.rawContentType, 'application/json');
-      },
-    );
+      expect(jsonBody, isNotNull);
+      expect(jsonBody, isA<RequestBodyObject>());
+      expect((jsonBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = jsonBody?.content.first;
+      expect(content?.contentType, ContentType.json);
+      expect(content?.rawContentType, 'application/json');
+    });
 
-    test(
-      'resolves application/x-www-form-urlencoded to ContentType.form',
-      () {
-        final fileContentWithForm = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'requestBodies': {
-              'FormBody': {
-                'description': 'A form-urlencoded request body',
-                'required': true,
-                'content': {
-                  'application/x-www-form-urlencoded': {
-                    'schema': {'type': 'object'},
-                  },
+    test('resolves application/x-www-form-urlencoded to ContentType.form', () {
+      final fileContentWithForm = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FormBody': {
+              'description': 'A form-urlencoded request body',
+              'required': true,
+              'content': {
+                'application/x-www-form-urlencoded': {
+                  'schema': {'type': 'object'},
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContentWithForm);
-        final formBody = api.requestBodies.firstWhereOrNull(
-          (r) => r.name == 'FormBody',
-        );
+      final api = Importer().import(fileContentWithForm);
+      final formBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'FormBody',
+      );
 
-        expect(formBody, isNotNull);
-        expect(formBody, isA<RequestBodyObject>());
-        expect((formBody as RequestBodyObject?)?.content, hasLength(1));
-        final content = formBody?.content.first;
-        expect(content?.contentType, ContentType.form);
-        expect(content?.rawContentType, 'application/x-www-form-urlencoded');
-      },
-    );
+      expect(formBody, isNotNull);
+      expect(formBody, isA<RequestBodyObject>());
+      expect((formBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = formBody?.content.first;
+      expect(content?.contentType, ContentType.form);
+      expect(content?.rawContentType, 'application/x-www-form-urlencoded');
+    });
 
     test('resolves form body charset into semantic and wire encoding', () {
       final api = Importer().import({
@@ -817,9 +783,7 @@ void main() {
             'BinaryBody': {
               'description': 'Binary content without explicit schema',
               'required': true,
-              'content': {
-                'application/octet-stream': <String, dynamic>{},
-              },
+              'content': {'application/octet-stream': <String, dynamic>{}},
             },
           },
         },
@@ -850,9 +814,7 @@ void main() {
             'ImageBody': {
               'description': 'Image content without explicit schema',
               'required': true,
-              'content': {
-                'image/png': <String, dynamic>{},
-              },
+              'content': {'image/png': <String, dynamic>{}},
             },
           },
         },
@@ -883,9 +845,7 @@ void main() {
             'JsonBody': {
               'description': 'JSON content without explicit schema',
               'required': true,
-              'content': {
-                'application/json': <String, dynamic>{},
-              },
+              'content': {'application/json': <String, dynamic>{}},
             },
           },
         },
@@ -916,9 +876,7 @@ void main() {
             'TextBody': {
               'description': 'Text content without explicit schema',
               'required': true,
-              'content': {
-                'text/plain': <String, dynamic>{},
-              },
+              'content': {'text/plain': <String, dynamic>{}},
             },
           },
         },
@@ -982,9 +940,7 @@ void main() {
             'UnknownBody': {
               'description': 'Unknown content type without explicit schema',
               'required': true,
-              'content': {
-                'application/x-custom-unknown': <String, dynamic>{},
-              },
+              'content': {'application/x-custom-unknown': <String, dynamic>{}},
             },
           },
         },
@@ -1129,9 +1085,7 @@ void main() {
 
         final api = Importer().import(fileContentWithBase64);
         final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'Base64Upload',
-                )!
+            api.requestBodies.firstWhereOrNull((r) => r.name == 'Base64Upload')!
                 as RequestBodyObject;
 
         final content = body.content.first as MultipartRequestContent;
@@ -1171,10 +1125,7 @@ void main() {
                           'street': {'type': 'string'},
                         },
                       },
-                      'profileImage': {
-                        'type': 'string',
-                        'format': 'binary',
-                      },
+                      'profileImage': {'type': 'string', 'format': 'binary'},
                     },
                   },
                   'encoding': {
@@ -1189,9 +1140,7 @@ void main() {
                       'style': 'deepObject',
                       'explode': true,
                     },
-                    'profileImage': {
-                      'contentType': 'image/png',
-                    },
+                    'profileImage': {'contentType': 'image/png'},
                   },
                 },
               },
@@ -1202,9 +1151,7 @@ void main() {
 
       final api = Importer().import(fileContentWithEncoding);
       final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'EncodedUpload',
-              )!
+          api.requestBodies.firstWhereOrNull((r) => r.name == 'EncodedUpload')!
               as RequestBodyObject;
 
       final content = body.content.first as MultipartRequestContent;
@@ -1260,9 +1207,7 @@ void main() {
                     'file': {
                       'contentType': 'application/octet-stream',
                       'headers': {
-                        'X-Custom': {
-                          r'$ref': '#/components/headers/X-Custom',
-                        },
+                        'X-Custom': {r'$ref': '#/components/headers/X-Custom'},
                       },
                     },
                   },
@@ -1275,9 +1220,7 @@ void main() {
 
       final api = Importer().import(fileContentWithHeaders);
       final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'HeaderUpload',
-              )!
+          api.requestBodies.firstWhereOrNull((r) => r.name == 'HeaderUpload')!
               as RequestBodyObject;
 
       final content = body.content.first as MultipartRequestContent;
@@ -1358,9 +1301,7 @@ void main() {
             'TestBody': {
               'description': 'Test',
               'required': true,
-              'content': {
-                'multipart/form-data': mediaType,
-              },
+              'content': {'multipart/form-data': mediaType},
             },
           },
         };
@@ -1380,9 +1321,7 @@ void main() {
       ) {
         final api = Importer().import(spec);
         final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'TestBody',
-                )!
+            api.requestBodies.firstWhereOrNull((r) => r.name == 'TestBody')!
                 as RequestBodyObject;
         return body.content.first as MultipartRequestContent;
       }
@@ -1699,9 +1638,7 @@ void main() {
             properties: {
               'data': {r'$ref': '#/components/schemas/AnyValue'},
             },
-            schemas: {
-              'AnyValue': true,
-            },
+            schemas: {'AnyValue': true},
           ),
         );
 
@@ -1838,9 +1775,7 @@ void main() {
                 'items': {r'$ref': '#/components/schemas/AnyValue'},
               },
             },
-            schemas: {
-              'AnyValue': true,
-            },
+            schemas: {'AnyValue': true},
           ),
         );
 
@@ -2114,10 +2049,7 @@ void main() {
 
         final part = content.parts.single;
         expect(part.model, isA<AliasModel>());
-        expect(
-          part.encoding.contentType,
-          ContentType.text,
-        );
+        expect(part.encoding.contentType, ContentType.text);
       });
 
       test('mixed map: style-based property and content-based property '
@@ -2158,10 +2090,7 @@ void main() {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
-              'id': {
-                'type': 'string',
-                'readOnly': true,
-              },
+              'id': {'type': 'string', 'readOnly': true},
               'name': {'type': 'string'},
             },
           ),
@@ -2176,10 +2105,7 @@ void main() {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
-              'password': {
-                'type': 'string',
-                'writeOnly': true,
-              },
+              'password': {'type': 'string', 'writeOnly': true},
             },
           ),
         );
@@ -2190,22 +2116,19 @@ void main() {
         expect(password.rawContentType, 'text/plain');
       });
 
-      test(
-        'format: byte string property gets application/octet-stream',
-        () {
-          final content = importMultipartContent(
-            multipartSpec(
-              properties: {
-                'encoded': {'type': 'string', 'format': 'byte'},
-              },
-            ),
-          );
+      test('format: byte string property gets application/octet-stream', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'encoded': {'type': 'string', 'format': 'byte'},
+            },
+          ),
+        );
 
-          final encoding = partEncodingFor(content, 'encoded')!;
-          expect(encoding.contentType, ContentType.bytes);
-          expect(encoding.rawContentType, 'application/octet-stream');
-        },
-      );
+        final encoding = partEncodingFor(content, 'encoded')!;
+        expect(encoding.contentType, ContentType.bytes);
+        expect(encoding.rawContentType, 'application/octet-stream');
+      });
 
       test('explicit contentType overrides format:byte text/plain default', () {
         final content = importMultipartContent(
@@ -2307,9 +2230,7 @@ void main() {
 
         final api = Importer().import(spec);
         final body =
-            api.requestBodies.firstWhereOrNull(
-                  (r) => r.name == 'FormBody',
-                )!
+            api.requestBodies.firstWhereOrNull((r) => r.name == 'FormBody')!
                 as RequestBodyObject;
 
         final content = body.content.first as ModelRequestContent;
@@ -2387,9 +2308,7 @@ void main() {
     ModelRequestContent importFormContent(Map<String, dynamic> spec) {
       final api = Importer().import(spec);
       final body =
-          api.requestBodies.firstWhereOrNull(
-                (r) => r.name == 'FormBody',
-              )!
+          api.requestBodies.firstWhereOrNull((r) => r.name == 'FormBody')!
               as RequestBodyObject;
       return body.content.first as ModelRequestContent;
     }
@@ -2401,10 +2320,7 @@ void main() {
       Map<String, dynamic>? headers,
     }) {
       final mediaType = <String, dynamic>{
-        'schema': {
-          'type': 'object',
-          'properties': properties,
-        },
+        'schema': {'type': 'object', 'properties': properties},
       };
       if (encoding != null) {
         mediaType['encoding'] = encoding;
@@ -2414,9 +2330,7 @@ void main() {
           'FormBody': {
             'description': 'Form body',
             'required': true,
-            'content': {
-              'application/x-www-form-urlencoded': mediaType,
-            },
+            'content': {'application/x-www-form-urlencoded': mediaType},
           },
         },
       };
@@ -2777,10 +2691,7 @@ void main() {
       expect(content.formEncoding, hasLength(1));
       expect(fieldEncodingFor(content, 'id'), isNull);
       expect(fieldEncodingFor(content, 'name'), isNotNull);
-      expect(
-        logs.any((r) => r.level == Level.WARNING),
-        isFalse,
-      );
+      expect(logs.any((r) => r.level == Level.WARNING), isFalse);
     });
 
     test('form encoding on an alias-chain property keys by declared '

@@ -19,9 +19,7 @@ void main() {
           'color': 'red',
         }.toDeepObject('filter', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'filter[color]', value: 'red'),
-        ]);
+        expect(result, [(name: 'filter[color]', value: 'red')]);
       });
     });
 
@@ -42,9 +40,7 @@ void main() {
           'name': 'John',
         }.toDeepObject('user', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'user[name]', value: 'John'),
-        ]);
+        expect(result, [(name: 'user[name]', value: 'John')]);
       });
 
       test('encodes map with multiple entries', () {
@@ -91,21 +87,16 @@ void main() {
         );
         expect(
           result,
-          contains(
-            (
-              name: 'params[url]',
-              value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
-            ),
-          ),
+          contains((
+            name: 'params[url]',
+            value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+          )),
         );
       });
 
       test('handles already encoded values when alreadyEncoded=true', () {
-        final result =
-            {
-              'email': 'test%40example.com',
-              'name': 'John%20Doe',
-            }.toDeepObject(
+        final result = {'email': 'test%40example.com', 'name': 'John%20Doe'}
+            .toDeepObject(
               'params',
               explode: true,
               allowEmpty: true,
@@ -121,14 +112,9 @@ void main() {
       });
 
       test('double-encodes values when alreadyEncoded=false', () {
-        final result =
-            {
-              'email': 'test%40example.com',
-            }.toDeepObject(
-              'params',
-              explode: true,
-              allowEmpty: true,
-            );
+        final result = {
+          'email': 'test%40example.com',
+        }.toDeepObject('params', explode: true, allowEmpty: true);
 
         expect(result, [
           (name: 'params[email]', value: 'test%2540example.com'),
@@ -217,9 +203,7 @@ void main() {
           'key': 'value',
         }.toDeepObject('param', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'param[key]', value: 'value'),
-        ]);
+        expect(result, [(name: 'param[key]', value: 'value')]);
       });
 
       test('works with parameter names containing underscores', () {
@@ -227,9 +211,7 @@ void main() {
           'key': 'value',
         }.toDeepObject('my_param', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'my_param[key]', value: 'value'),
-        ]);
+        expect(result, [(name: 'my_param[key]', value: 'value')]);
       });
 
       test('works with parameter names containing numbers', () {
@@ -237,9 +219,7 @@ void main() {
           'key': 'value',
         }.toDeepObject('param123', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'param123[key]', value: 'value'),
-        ]);
+        expect(result, [(name: 'param123[key]', value: 'value')]);
       });
 
       test('works with camelCase parameter names', () {
@@ -247,9 +227,7 @@ void main() {
           'key': 'value',
         }.toDeepObject('myParam', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'myParam[key]', value: 'value'),
-        ]);
+        expect(result, [(name: 'myParam[key]', value: 'value')]);
       });
     });
 
@@ -293,9 +271,7 @@ void main() {
           'data': longValue,
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[data]', value: 'a' * 1000),
-        ]);
+        expect(result, [(name: 'params[data]', value: 'a' * 1000)]);
       });
 
       test('handles map with many entries', () {
@@ -356,9 +332,7 @@ void main() {
           'key[0]': 'value',
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[key%5B0%5D]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%5B0%5D]', value: 'value')]);
       });
 
       test('handles keys with equals signs', () {
@@ -366,9 +340,7 @@ void main() {
           'key=name': 'value',
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[key%3Dname]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%3Dname]', value: 'value')]);
       });
 
       test('handles keys with ampersands', () {
@@ -376,9 +348,7 @@ void main() {
           'key&name': 'value',
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[key%26name]', value: 'value'),
-        ]);
+        expect(result, [(name: 'params[key%26name]', value: 'value')]);
       });
 
       test('handles values with equals signs', () {
@@ -386,9 +356,7 @@ void main() {
           'equation': 'x=y',
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[equation]', value: 'x%3Dy'),
-        ]);
+        expect(result, [(name: 'params[equation]', value: 'x%3Dy')]);
       });
 
       test('handles values with ampersands', () {
@@ -396,45 +364,33 @@ void main() {
           'query': 'a&b',
         }.toDeepObject('params', explode: true, allowEmpty: true);
 
-        expect(result, [
-          (name: 'params[query]', value: 'a%26b'),
-        ]);
+        expect(result, [(name: 'params[query]', value: 'a%26b')]);
       });
     });
 
     group('allowReserved', () {
       test('keeps reserved chars literal except & = + in VALUE', () {
-        final result =
-            {
-              'q': 'a&b=c+d:e',
-            }.toDeepObject(
-              'p',
-              explode: true,
-              allowEmpty: true,
-              allowReserved: true,
-            );
+        final result = {'q': 'a&b=c+d:e'}.toDeepObject(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+        );
 
-        expect(result, [
-          (name: 'p[q]', value: 'a%26b%3Dc%2Bd:e'),
-        ]);
+        expect(result, [(name: 'p[q]', value: 'a%26b%3Dc%2Bd:e')]);
       });
 
       test(
         'key stays Uri.encodeComponent-encoded even under allowReserved',
         () {
-          final result =
-              {
-                'a&b': 'c:d',
-              }.toDeepObject(
-                'p',
-                explode: true,
-                allowEmpty: true,
-                allowReserved: true,
-              );
+          final result = {'a&b': 'c:d'}.toDeepObject(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+          );
 
-          expect(result, [
-            (name: 'p[a%26b]', value: 'c:d'),
-          ]);
+          expect(result, [(name: 'p[a%26b]', value: 'c:d')]);
         },
       );
 

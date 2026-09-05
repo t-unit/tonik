@@ -129,9 +129,7 @@ List<Property> _collectFormProperties(Model model) {
     case final ClassModel m:
       return m.properties;
     case final AllOfModel m:
-      return [
-        for (final member in m.models) ..._collectFormProperties(member),
-      ];
+      return [for (final member in m.models) ..._collectFormProperties(member)];
     default:
       return const [];
   }

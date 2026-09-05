@@ -40,15 +40,9 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
-        expect(
-          success.value.xDynamicValue!.flexibleValue!.string,
-          'hello',
-        );
+        expect(success.value.xDynamicValue!.flexibleValue!.string, 'hello');
       });
 
       test('roundtrips FlexibleValue with integer', () async {
@@ -60,10 +54,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xDynamicValue!.flexibleValue!.int, 42);
       });
@@ -77,10 +68,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xDynamicValue!.flexibleValue!.bool, isTrue);
       });
@@ -98,10 +86,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final object = success.value.xDynamicValue!.flexibleValue!.simpleObject;
         expect(object?.name, 'test-object');
@@ -123,10 +108,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypeCompanyEntity>());
@@ -150,10 +132,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypePersonEntity>());
@@ -182,10 +161,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final composite = success.value.xDynamicValue!.compositeEntity;
         expect(composite?.baseEntity.name, 'entity-123');
@@ -210,10 +186,7 @@ void main() {
           dynamicValue: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });

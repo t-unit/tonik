@@ -23,10 +23,7 @@ void main() {
         generator: nameGenerator,
         stableModelSorter: StableModelSorter(),
       );
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -253,61 +250,59 @@ void main() {
       );
     });
 
-    test(
-      'generates fromForm for mixed OneOf that attempts decoding',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'DynamicValue',
-          models: [
-            (discriminatorValue: 'str', model: StringModel(context: context)),
-            (
-              discriminatorValue: 'class',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'ComplexData',
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Wrapper',
-          properties: [
-            Property(
-              name: 'data',
-              model: oneOfModel,
-              isRequired: true,
-              isNullable: false,
+    test('generates fromForm for mixed OneOf that attempts decoding', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'DynamicValue',
+        models: [
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+          (
+            discriminatorValue: 'class',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'ComplexData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Wrapper',
+        properties: [
+          Property(
+            name: 'data',
+            model: oneOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        final generatedCode = format(result.accept(emitter).toString());
+      final result = generator.generateClass(model);
+      final generatedCode = format(result.accept(emitter).toString());
 
-        const expectedFromFormMethod = r'''
+      const expectedFromFormMethod = r'''
           factory Wrapper.fromForm(String? value, {required bool explode}) {
             final _$values = value.decodeObject(
               explode: explode,
@@ -322,11 +317,10 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedFromFormMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromFormMethod)),
+      );
+    });
   });
 }

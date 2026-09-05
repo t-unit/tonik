@@ -10,9 +10,7 @@ void main() {
 
         const active = EnumEntry<String>(value: 'active');
 
-        const inactive = EnumEntry<String>(
-          value: 'inactive',
-        );
+        const inactive = EnumEntry<String>(value: 'inactive');
 
         final statusModel = EnumModel<String>(
           name: 'Status',

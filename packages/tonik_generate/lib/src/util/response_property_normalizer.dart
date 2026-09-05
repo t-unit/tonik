@@ -4,10 +4,7 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 /// Normalizes and sorts properties from a response object.
 /// Returns a list of normalized properties with their original names.
 List<({String normalizedName, Property property, ResponseHeader? header})>
-normalizeResponseProperties(
-  ResponseObject response, {
-  ResponseBody? body,
-}) {
+normalizeResponseProperties(ResponseObject response, {ResponseBody? body}) {
   final headerMap = <Property, ResponseHeader>{};
 
   final headerProperties = response.headers.entries.map((header) {

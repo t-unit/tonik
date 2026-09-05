@@ -115,21 +115,15 @@ void main() {
   });
 
   group('Query parameters - spaceDelimited style', () {
-    test(
-      'getQuerySpaceDelimitedAny with string returns TonikError',
-      () async {
-        final api = buildApi();
-        final result = await api.getQuerySpaceDelimitedAny(
-          anyValue: 'space-delimited',
-        );
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQuerySpaceDelimitedAny with string returns TonikError', () async {
+      final api = buildApi();
+      final result = await api.getQuerySpaceDelimitedAny(
+        anyValue: 'space-delimited',
+      );
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
 
     test(
       'getQuerySpaceDelimitedAny with list encodes as space-delimited',
@@ -138,16 +132,10 @@ void main() {
         final result = await api.getQuerySpaceDelimitedAny(
           anyValue: ['a', 'b', 'c'],
         );
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyValue=a%20b%20c',
-        );
+        expect(recordedRequest.uri.query, 'anyValue=a%20b%20c');
       },
     );
 
@@ -158,16 +146,10 @@ void main() {
         final result = await api.getQuerySpaceDelimitedAny(
           anyValue: <String, dynamic>{'a': 1, 'b': 2},
         );
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyValue=a%201%20b%202',
-        );
+        expect(recordedRequest.uri.query, 'anyValue=a%201%20b%202');
       },
     );
 
@@ -178,10 +160,7 @@ void main() {
         final result = await api.getQuerySpaceDelimitedAnyExplode(
           anyValue: 'space-explode',
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -194,10 +173,7 @@ void main() {
         final result = await api.getQuerySpaceDelimitedAnyExplode(
           anyValue: ['x', 'y', 'z'],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -205,21 +181,15 @@ void main() {
   });
 
   group('Query parameters - pipeDelimited style', () {
-    test(
-      'getQueryPipeDelimitedAny with string returns TonikError',
-      () async {
-        final api = buildApi();
-        final result = await api.getQueryPipeDelimitedAny(
-          anyValue: 'pipe-delimited',
-        );
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQueryPipeDelimitedAny with string returns TonikError', () async {
+      final api = buildApi();
+      final result = await api.getQueryPipeDelimitedAny(
+        anyValue: 'pipe-delimited',
+      );
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
 
     test(
       'getQueryPipeDelimitedAny with list encodes as pipe-delimited',
@@ -228,16 +198,10 @@ void main() {
         final result = await api.getQueryPipeDelimitedAny(
           anyValue: ['one', 'two', 'three'],
         );
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyValue=one%7Ctwo%7Cthree',
-        );
+        expect(recordedRequest.uri.query, 'anyValue=one%7Ctwo%7Cthree');
       },
     );
 
@@ -248,16 +212,10 @@ void main() {
         final result = await api.getQueryPipeDelimitedAny(
           anyValue: <String, dynamic>{'a': 1, 'b': 2},
         );
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyValue=a%7C1%7Cb%7C2',
-        );
+        expect(recordedRequest.uri.query, 'anyValue=a%7C1%7Cb%7C2');
       },
     );
 
@@ -268,10 +226,7 @@ void main() {
         final result = await api.getQueryPipeDelimitedAnyExplode(
           anyValue: 'pipe-explode',
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -284,10 +239,7 @@ void main() {
         final result = await api.getQueryPipeDelimitedAnyExplode(
           anyValue: ['foo', 'bar', 'baz'],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -304,18 +256,12 @@ void main() {
       expect(success.response.statusCode, 200);
     });
 
-    test(
-      'getQueryDeepObjectAny with string returns TonikError',
-      () async {
-        final api = buildApi();
-        final result = await api.getQueryDeepObjectAny(anyValue: 'deep-object');
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQueryDeepObjectAny with string returns TonikError', () async {
+      final api = buildApi();
+      final result = await api.getQueryDeepObjectAny(anyValue: 'deep-object');
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
   });
 }

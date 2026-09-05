@@ -54,15 +54,7 @@ void main() {
 
       test('encodes in IST (UTC+5:30)', () {
         final istLocation = tz.getLocation('Asia/Kolkata');
-        final istDateTime = tz.TZDateTime(
-          istLocation,
-          2023,
-          12,
-          25,
-          20,
-          0,
-          45,
-        );
+        final istDateTime = tz.TZDateTime(istLocation, 2023, 12, 25, 20, 0, 45);
 
         final result = istDateTime.toTimeZonedIso8601String();
 

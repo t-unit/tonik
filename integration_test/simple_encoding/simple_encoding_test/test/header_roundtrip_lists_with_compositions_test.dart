@@ -99,9 +99,7 @@ void main() {
 
       test('fails when AnyOfWithComplexList has Class2 list variant', () async {
         // The list2 variant with complex objects cannot be encoded
-        const anyOfList = AnyOfWithComplexList(
-          list2: [Class2(number: 42)],
-        );
+        const anyOfList = AnyOfWithComplexList(list2: [Class2(number: 42)]);
 
         final result = await api.testHeaderRoundtripListsWithCompositions(
           anyOfList: anyOfList,
@@ -130,22 +128,19 @@ void main() {
     });
 
     group('combined headers', () {
-      test(
-        'fails to decode anyOfList even when objectList is null',
-        () async {
-          // String variant encodes fine, but decoding anyOf from header fails
-          const anyOfList = AnyOfWithComplexList(string: 'only-anyof-string');
+      test('fails to decode anyOfList even when objectList is null', () async {
+        // String variant encodes fine, but decoding anyOf from header fails
+        const anyOfList = AnyOfWithComplexList(string: 'only-anyof-string');
 
-          final result = await api.testHeaderRoundtripListsWithCompositions(
-            anyOfList: anyOfList,
-            // objectList is null, so no encoding error from that
-          );
+        final result = await api.testHeaderRoundtripListsWithCompositions(
+          anyOfList: anyOfList,
+          // objectList is null, so no encoding error from that
+        );
 
-          expect(result, isTonikError);
-          final error = requireError(result);
-          expect(error.type, TonikErrorType.decoding);
-        },
-      );
+        expect(result, isTonikError);
+        final error = requireError(result);
+        expect(error.type, TonikErrorType.decoding);
+      });
     });
   });
 }

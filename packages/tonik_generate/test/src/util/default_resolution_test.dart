@@ -23,25 +23,22 @@ void main() {
       assignment == null ? '' : assignment.accept(emitter).toString();
 
   group('resolveSingleDefault', () {
-    test(
-      'absent raw default returns null without touching reserved names',
-      () {
-        final reserved = <String>{'region'};
-        final result = resolveSingleDefault(
-          normalizedName: 'region',
-          specName: 'region',
-          model: StringModel(context: context),
-          rawDefault: null,
-          containerName: 'Op',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: (_) {},
-        );
-        expect(result, isNull);
-        expect(reserved, {'region'});
-      },
-    );
+    test('absent raw default returns null without touching reserved names', () {
+      final reserved = <String>{'region'};
+      final result = resolveSingleDefault(
+        normalizedName: 'region',
+        specName: 'region',
+        model: StringModel(context: context),
+        rawDefault: null,
+        containerName: 'Op',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: (_) {},
+      );
+      expect(result, isNull);
+      expect(reserved, {'region'});
+    });
 
     test('primitive type mismatch warns with container.specName only', () {
       final messages = <String>[];
@@ -116,36 +113,33 @@ void main() {
       },
     );
 
-    test(
-      'success path returns memberName, materialised value, and type; '
-      'mutates reserved names',
-      () {
-        final reserved = <String>{'region'};
-        final result = resolveSingleDefault(
-          normalizedName: 'region',
-          specName: 'region',
-          model: StringModel(context: context),
-          rawDefault: 'us',
-          containerName: 'Op',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: (_) {},
-        );
+    test('success path returns memberName, materialised value, and type; '
+        'mutates reserved names', () {
+      final reserved = <String>{'region'};
+      final result = resolveSingleDefault(
+        normalizedName: 'region',
+        specName: 'region',
+        model: StringModel(context: context),
+        rawDefault: 'us',
+        containerName: 'Op',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: (_) {},
+      );
 
-        expect(result, isNotNull);
-        expect(result!.memberName, 'regionDefault');
-        expect(result.type.symbol, 'String');
-        expect(reserved, {'region', 'regionDefault'});
+      expect(result, isNotNull);
+      expect(result!.memberName, 'regionDefault');
+      expect(result.type.symbol, 'String');
+      expect(reserved, {'region', 'regionDefault'});
 
-        final field = defaultField(result);
-        expect(field.static, isTrue);
-        expect(field.modifier, FieldModifier.constant);
-        expect(field.name, 'regionDefault');
-        expect(field.type?.symbol, 'String');
-        expect(renderAssignment(field.assignment), "r'us'");
-      },
-    );
+      final field = defaultField(result);
+      expect(field.static, isTrue);
+      expect(field.modifier, FieldModifier.constant);
+      expect(field.name, 'regionDefault');
+      expect(field.type?.symbol, 'String');
+      expect(renderAssignment(field.assignment), "r'us'");
+    });
 
     test('name collision against existing reserved name appends suffix', () {
       final reserved = <String>{'region', 'regionDefault'};
@@ -334,36 +328,33 @@ void main() {
       expect(messages, ['Dropping default for Op.counts.']);
     });
 
-    test(
-      'MapModel<ClassModel> with valid-shape Map returns null silently — '
-      'the inner leaf bubbles up for runtime-fallback handling',
-      () {
-        final messages = <String>[];
-        resolveSingleDefault(
-          normalizedName: 'index',
-          specName: 'index',
-          model: MapModel(
-            valueModel: ClassModel(
-              name: 'Address',
-              isDeprecated: false,
-              properties: const [],
-              context: context,
-              examples: const [],
-            ),
+    test('MapModel<ClassModel> with valid-shape Map returns null silently — '
+        'the inner leaf bubbles up for runtime-fallback handling', () {
+      final messages = <String>[];
+      resolveSingleDefault(
+        normalizedName: 'index',
+        specName: 'index',
+        model: MapModel(
+          valueModel: ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: const [],
             context: context,
             examples: const [],
           ),
-          rawDefault: const <String, Object?>{'a': <String, Object?>{}},
-          containerName: 'Op',
-          reservedNames: <String>{'index'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+          context: context,
+          examples: const [],
+        ),
+        rawDefault: const <String, Object?>{'a': <String, Object?>{}},
+        containerName: 'Op',
+        reservedNames: <String>{'index'},
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(messages, isEmpty);
-      },
-    );
+      expect(messages, isEmpty);
+    });
 
     test('AnyModel with non-JSON outer value (DateTime) warns once', () {
       final messages = <String>[];
@@ -406,23 +397,65 @@ void main() {
       },
     );
 
-    test(
-      'ClassModel target with a non-empty default returns null silently — '
-      'the caller routes it to the runtime fallback',
-      () {
+    test('ClassModel target with a non-empty default returns null silently — '
+        'the caller routes it to the runtime fallback', () {
+      final messages = <String>[];
+      final reserved = <String>{'profile'};
+      final result = resolveSingleDefault(
+        normalizedName: 'profile',
+        specName: 'profile',
+        model: ClassModel(
+          isDeprecated: false,
+          name: 'Profile',
+          properties: const [],
+          context: context,
+          examples: const [],
+        ),
+        rawDefault: const <String, Object?>{'field': 'value'},
+        containerName: 'Op',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
+
+      expect(result, isNull);
+      expect(reserved, {'profile'});
+      expect(messages, isEmpty);
+    });
+
+    test('AllOf / OneOf / AnyOf composite targets drop silently — no warning, '
+        'no result, reserved names untouched', () {
+      for (final model in <Model>[
+        AllOfModel(
+          name: 'A',
+          isDeprecated: false,
+          models: const [],
+          context: context,
+          examples: const [],
+        ),
+        OneOfModel(
+          name: 'O',
+          isDeprecated: false,
+          models: const [],
+          context: context,
+          examples: const [],
+        ),
+        AnyOfModel(
+          name: 'N',
+          isDeprecated: false,
+          models: const [],
+          context: context,
+          examples: const [],
+        ),
+      ]) {
         final messages = <String>[];
-        final reserved = <String>{'profile'};
+        final reserved = <String>{'composite'};
         final result = resolveSingleDefault(
-          normalizedName: 'profile',
-          specName: 'profile',
-          model: ClassModel(
-            isDeprecated: false,
-            name: 'Profile',
-            properties: const [],
-            context: context,
-            examples: const [],
-          ),
-          rawDefault: const <String, Object?>{'field': 'value'},
+          normalizedName: 'composite',
+          specName: 'composite',
+          model: model,
+          rawDefault: const <String, Object?>{'anything': 1},
           containerName: 'Op',
           reservedNames: reserved,
           nameManager: nameManager,
@@ -431,57 +464,9 @@ void main() {
         );
 
         expect(result, isNull);
-        expect(reserved, {'profile'});
         expect(messages, isEmpty);
-      },
-    );
-
-    test(
-      'AllOf / OneOf / AnyOf composite targets drop silently — no warning, '
-      'no result, reserved names untouched',
-      () {
-        for (final model in <Model>[
-          AllOfModel(
-            name: 'A',
-            isDeprecated: false,
-            models: const [],
-            context: context,
-            examples: const [],
-          ),
-          OneOfModel(
-            name: 'O',
-            isDeprecated: false,
-            models: const [],
-            context: context,
-            examples: const [],
-          ),
-          AnyOfModel(
-            name: 'N',
-            isDeprecated: false,
-            models: const [],
-            context: context,
-            examples: const [],
-          ),
-        ]) {
-          final messages = <String>[];
-          final reserved = <String>{'composite'};
-          final result = resolveSingleDefault(
-            normalizedName: 'composite',
-            specName: 'composite',
-            model: model,
-            rawDefault: const <String, Object?>{'anything': 1},
-            containerName: 'Op',
-            reservedNames: reserved,
-            nameManager: nameManager,
-            package: 'api',
-            onDroppedDefault: messages.add,
-          );
-
-          expect(result, isNull);
-          expect(messages, isEmpty);
-          expect(reserved, {'composite'});
-        }
-      },
-    );
+        expect(reserved, {'composite'});
+      }
+    });
   });
 }

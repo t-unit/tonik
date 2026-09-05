@@ -28,10 +28,9 @@ void main() {
     test(
       'form allowReserved preserves map keys and values when collapsed',
       () async {
-        final result = await _api(baseUrl)
-            .encodePureMapFormAllowReservedCollapsed(
-              values: const {'a:b': 'c:d'},
-            );
+        final result = await _api(
+          baseUrl,
+        ).encodePureMapFormAllowReservedCollapsed(values: const {'a:b': 'c:d'});
 
         expect(result, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
@@ -42,10 +41,9 @@ void main() {
     test(
       'form allowReserved preserves map keys and values when exploded',
       () async {
-        final result = await _api(baseUrl)
-            .encodePureMapFormAllowReservedExploded(
-              values: const {'a:b': 'c:d'},
-            );
+        final result = await _api(
+          baseUrl,
+        ).encodePureMapFormAllowReservedExploded(values: const {'a:b': 'c:d'});
 
         expect(result, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
@@ -77,10 +75,7 @@ void main() {
       );
 
       expect(result, isTonikError);
-      expect(
-        requireError(result).type,
-        TonikErrorType.encoding,
-      );
+      expect(requireError(result).type, TonikErrorType.encoding);
       await expectLater(imposterServer.takeRequest(), throwsStateError);
     });
   });
@@ -244,10 +239,7 @@ void main() {
 
       expect(
         obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
-        [
-          (name: 'id', value: '1'),
-          (name: 'name', value: 'n'),
-        ],
+        [(name: 'id', value: '1'), (name: 'name', value: 'n')],
       );
     });
 
@@ -288,10 +280,7 @@ void main() {
 
       expect(
         obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
-        [
-          (name: 'name', value: 'n'),
-          (name: 'kept', value: 'v'),
-        ],
+        [(name: 'name', value: 'n'), (name: 'kept', value: 'v')],
       );
     });
 
@@ -549,9 +538,7 @@ void main() {
 
       expect(
         obj.toForm('body', explode: true, allowEmpty: true, textEncoding: utf8),
-        [
-          (name: 'theme', value: 'dark'),
-        ],
+        [(name: 'theme', value: 'dark')],
       );
     });
 
@@ -605,8 +592,5 @@ void main() {
 }
 
 AdditionalPropertiesApi _api(String baseUrl) => AdditionalPropertiesApi(
-  CustomServer(
-    baseUrl: baseUrl,
-    serverConfig: testServerConfig(),
-  ),
+  CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
 );

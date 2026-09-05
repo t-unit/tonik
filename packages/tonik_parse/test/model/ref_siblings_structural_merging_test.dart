@@ -52,9 +52,7 @@ void main() {
 
       final inlineClass = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name != 'Pet',
-          );
+          .firstWhereOrNull((m) => m.name != 'Pet');
       expect(inlineClass, isNotNull);
       expect(inlineClass!.properties.map((p) => p.name), contains('nickname'));
 
@@ -259,22 +257,15 @@ void main() {
 
       final namedEntity = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'NamedEntity',
-          );
+          .firstWhereOrNull((m) => m.name == 'NamedEntity');
       expect(namedEntity, isNotNull);
       expect(namedEntity!.properties.map((p) => p.name), contains('name'));
 
       final timestamped = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'TimestampedEntity',
-          );
+          .firstWhereOrNull((m) => m.name == 'TimestampedEntity');
       expect(timestamped, isNotNull);
-      expect(
-        timestamped!.properties.map((p) => p.name),
-        contains('createdAt'),
-      );
+      expect(timestamped!.properties.map((p) => p.name), contains('createdAt'));
     });
 
     test(r'handles $ref + allOf with inline schemas', () {
@@ -318,17 +309,13 @@ void main() {
 
       final baseEntity = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'BaseEntity',
-          );
+          .firstWhereOrNull((m) => m.name == 'BaseEntity');
       expect(baseEntity, isNotNull);
       expect(baseEntity!.properties.map((p) => p.name), contains('id'));
 
       final inlineClass = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name != 'BaseEntity',
-          );
+          .firstWhereOrNull((m) => m.name != 'BaseEntity');
       expect(inlineClass, isNotNull);
       expect(inlineClass!.properties.map((p) => p.name), contains('extra'));
 
@@ -442,9 +429,7 @@ void main() {
 
       final petModel = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'Pet',
-          );
+          .firstWhereOrNull((m) => m.name == 'Pet');
       expect(petModel, isNotNull);
 
       final oneOfModel = allOfModel.models.whereType<OneOfModel>().firstOrNull;
@@ -585,9 +570,7 @@ void main() {
 
       final baseRecord = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'BaseRecord',
-          );
+          .firstWhereOrNull((m) => m.name == 'BaseRecord');
       expect(baseRecord, isNotNull);
 
       final anyOfModel = allOfModel.models.whereType<AnyOfModel>().firstOrNull;
@@ -718,25 +701,19 @@ void main() {
 
       final baseModel = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'Base',
-          );
+          .firstWhereOrNull((m) => m.name == 'Base');
       expect(baseModel, isNotNull);
       expect(baseModel!.properties.map((p) => p.name), contains('baseField'));
 
       final mixinModel = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name == 'Mixin',
-          );
+          .firstWhereOrNull((m) => m.name == 'Mixin');
       expect(mixinModel, isNotNull);
       expect(mixinModel!.properties.map((p) => p.name), contains('mixinField'));
 
       final inlineClass = allOfModel.models
           .whereType<ClassModel>()
-          .firstWhereOrNull(
-            (m) => m.name != 'Base' && m.name != 'Mixin',
-          );
+          .firstWhereOrNull((m) => m.name != 'Base' && m.name != 'Mixin');
       expect(inlineClass, isNotNull);
       expect(inlineClass!.properties.map((p) => p.name), contains('ownField'));
 
@@ -806,93 +783,90 @@ void main() {
       },
     );
 
-    test(
-      r'nested $ref siblings (ref target also has $ref with siblings)',
-      () {
-        const fileContent = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Level0': {
-                'type': 'object',
-                'properties': {
-                  'level0Field': {'type': 'string'},
-                },
+    test(r'nested $ref siblings (ref target also has $ref with siblings)', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Level0': {
+              'type': 'object',
+              'properties': {
+                'level0Field': {'type': 'string'},
               },
-              'Level1': {
-                r'$ref': '#/components/schemas/Level0',
-                'properties': {
-                  'level1Field': {'type': 'string'},
-                },
+            },
+            'Level1': {
+              r'$ref': '#/components/schemas/Level0',
+              'properties': {
+                'level1Field': {'type': 'string'},
               },
-              'Level2': {
-                r'$ref': '#/components/schemas/Level1',
-                'properties': {
-                  'level2Field': {'type': 'string'},
-                },
+            },
+            'Level2': {
+              r'$ref': '#/components/schemas/Level1',
+              'properties': {
+                'level2Field': {'type': 'string'},
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContent);
+      final api = Importer().import(fileContent);
 
-        // Verify Level1 structure
-        final level1 = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'Level1',
-        );
-        expect(level1, isNotNull);
-        expect(level1, isA<AllOfModel>());
-        final level1AllOf = level1! as AllOfModel;
-        expect(level1AllOf.models, hasLength(2));
+      // Verify Level1 structure
+      final level1 = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Level1',
+      );
+      expect(level1, isNotNull);
+      expect(level1, isA<AllOfModel>());
+      final level1AllOf = level1! as AllOfModel;
+      expect(level1AllOf.models, hasLength(2));
 
-        final level0InLevel1 = level1AllOf.models
-            .whereType<ClassModel>()
-            .firstWhereOrNull((m) => m.name == 'Level0');
-        expect(level0InLevel1, isNotNull);
-        expect(
-          level0InLevel1!.properties.map((p) => p.name),
-          contains('level0Field'),
-        );
+      final level0InLevel1 = level1AllOf.models
+          .whereType<ClassModel>()
+          .firstWhereOrNull((m) => m.name == 'Level0');
+      expect(level0InLevel1, isNotNull);
+      expect(
+        level0InLevel1!.properties.map((p) => p.name),
+        contains('level0Field'),
+      );
 
-        final level1Inline = level1AllOf.models
-            .whereType<ClassModel>()
-            .firstWhereOrNull((m) => m.name != 'Level0');
-        expect(level1Inline, isNotNull);
-        expect(
-          level1Inline!.properties.map((p) => p.name),
-          contains('level1Field'),
-        );
-        expect(api.models, contains(level1Inline));
+      final level1Inline = level1AllOf.models
+          .whereType<ClassModel>()
+          .firstWhereOrNull((m) => m.name != 'Level0');
+      expect(level1Inline, isNotNull);
+      expect(
+        level1Inline!.properties.map((p) => p.name),
+        contains('level1Field'),
+      );
+      expect(api.models, contains(level1Inline));
 
-        // Verify Level2 structure
-        final level2 = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'Level2',
-        );
-        expect(level2, isNotNull);
-        expect(level2, isA<AllOfModel>());
-        final level2AllOf = level2! as AllOfModel;
-        expect(level2AllOf.models, hasLength(2));
+      // Verify Level2 structure
+      final level2 = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Level2',
+      );
+      expect(level2, isNotNull);
+      expect(level2, isA<AllOfModel>());
+      final level2AllOf = level2! as AllOfModel;
+      expect(level2AllOf.models, hasLength(2));
 
-        final level1InLevel2 = level2AllOf.models
-            .whereType<AllOfModel>()
-            .firstOrNull;
-        expect(level1InLevel2, isNotNull);
-        expect(level1InLevel2!.models, hasLength(2));
+      final level1InLevel2 = level2AllOf.models
+          .whereType<AllOfModel>()
+          .firstOrNull;
+      expect(level1InLevel2, isNotNull);
+      expect(level1InLevel2!.models, hasLength(2));
 
-        final level2Inline = level2AllOf.models
-            .whereType<ClassModel>()
-            .firstOrNull;
-        expect(level2Inline, isNotNull);
-        expect(
-          level2Inline!.properties.map((p) => p.name),
-          contains('level2Field'),
-        );
-        expect(api.models, contains(level2Inline));
-      },
-    );
+      final level2Inline = level2AllOf.models
+          .whereType<ClassModel>()
+          .firstOrNull;
+      expect(level2Inline, isNotNull);
+      expect(
+        level2Inline!.properties.map((p) => p.name),
+        contains('level2Field'),
+      );
+      expect(api.models, contains(level2Inline));
+    });
 
     test(r'$ref + only deprecated (no structural) creates AliasModel', () {
       const fileContent = {
@@ -944,9 +918,7 @@ void main() {
                 'name': {'type': 'string'},
               },
             },
-            'PetAlias': {
-              r'$ref': '#/components/schemas/OriginalPet',
-            },
+            'PetAlias': {r'$ref': '#/components/schemas/OriginalPet'},
           },
         },
       };
@@ -1028,70 +1000,64 @@ void main() {
           .whereType<ClassModel>()
           .firstWhereOrNull((m) => m.name != 'Address');
       expect(inlineClass, isNotNull);
-      expect(
-        inlineClass!.properties.map((p) => p.name),
-        contains('isPrimary'),
-      );
+      expect(inlineClass!.properties.map((p) => p.name), contains('isPrimary'));
       expect(api.models, contains(inlineClass));
     });
   });
 
   group(r'$ref + structural siblings with nullable', () {
-    test(
-      r'$ref + properties + type: [null] creates nullable AllOfModel',
-      () {
-        const fileContent = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Pet': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
+    test(r'$ref + properties + type: [null] creates nullable AllOfModel', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Pet': {
+              'type': 'object',
+              'properties': {
+                'name': {'type': 'string'},
               },
-              'NullableExtendedPet': {
-                r'$ref': '#/components/schemas/Pet',
-                'type': ['object', 'null'],
-                'properties': {
-                  'extraField': {'type': 'string'},
-                },
+            },
+            'NullableExtendedPet': {
+              r'$ref': '#/components/schemas/Pet',
+              'type': ['object', 'null'],
+              'properties': {
+                'extraField': {'type': 'string'},
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContent);
+      final api = Importer().import(fileContent);
 
-        final nullable = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'NullableExtendedPet',
-        );
-        expect(nullable, isNotNull);
+      final nullable = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'NullableExtendedPet',
+      );
+      expect(nullable, isNotNull);
 
-        expect(nullable, isA<AllOfModel>());
-        final allOfModel = nullable! as AllOfModel;
-        expect(allOfModel.isNullable, isTrue);
-        expect(allOfModel.models, hasLength(2));
+      expect(nullable, isA<AllOfModel>());
+      final allOfModel = nullable! as AllOfModel;
+      expect(allOfModel.isNullable, isTrue);
+      expect(allOfModel.models, hasLength(2));
 
-        final petRef = allOfModel.models
-            .whereType<ClassModel>()
-            .firstWhereOrNull((m) => m.name == 'Pet');
-        expect(petRef, isNotNull);
-        expect(petRef!.properties.map((p) => p.name), contains('name'));
+      final petRef = allOfModel.models.whereType<ClassModel>().firstWhereOrNull(
+        (m) => m.name == 'Pet',
+      );
+      expect(petRef, isNotNull);
+      expect(petRef!.properties.map((p) => p.name), contains('name'));
 
-        final inlineClass = allOfModel.models
-            .whereType<ClassModel>()
-            .firstWhereOrNull((m) => m.name != 'Pet');
-        expect(inlineClass, isNotNull);
-        expect(
-          inlineClass!.properties.map((p) => p.name),
-          contains('extraField'),
-        );
-        expect(api.models, contains(inlineClass));
-      },
-    );
+      final inlineClass = allOfModel.models
+          .whereType<ClassModel>()
+          .firstWhereOrNull((m) => m.name != 'Pet');
+      expect(inlineClass, isNotNull);
+      expect(
+        inlineClass!.properties.map((p) => p.name),
+        contains('extraField'),
+      );
+      expect(api.models, contains(inlineClass));
+    });
 
     test(r'$ref + oneOf + type: [null] creates nullable AllOfModel', () {
       const fileContent = {

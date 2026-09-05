@@ -935,55 +935,53 @@ Future<TonikResult<void, Response<Object?>>> call({
         },
       );
 
-      test(
-        'passes body to _options for optional single content type body',
-        () {
-          final requestBody = RequestBodyObject(
-            name: 'optionalBody',
-            context: context,
-            description: 'An optional single content type body',
-            isRequired: false,
-            content: {
-              ModelRequestContent(
-                model: StringModel(context: context),
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                examples: const [],
-              ),
-            },
-          );
+      test('passes body to _options for optional single content type body', () {
+        final requestBody = RequestBodyObject(
+          name: 'optionalBody',
+          context: context,
+          description: 'An optional single content type body',
+          isRequired: false,
+          content: {
+            ModelRequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+          },
+        );
 
-          final operation = Operation(
-            operationId: 'operationWithOptionalBody',
-            context: context,
-            summary: 'Operation with optional body',
-            description: 'An operation that has an optional single body',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-body',
-            method: HttpMethod.post,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            requestBody: requestBody,
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'operationWithOptionalBody',
+          context: context,
+          summary: 'Operation with optional body',
+          description: 'An operation that has an optional single body',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-body',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
 
-          const normalizedParams = NormalizedRequestParameters(
-            pathParameters: [],
-            cookieParameters: [],
-            queryParameters: [],
-            headers: [],
-          );
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          cookieParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
 
-          final method = generator.generateCallMethod(
-            operation,
-            normalizedParams,
-          );
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   String? body,
   TonikCancellation? cancellation,
@@ -1075,13 +1073,12 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'generates call method w/ multiple content type request body parameter',
@@ -1154,24 +1151,20 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: true,
             content: {
-              multipartContentFixture(
-                context,
-                [
-                  multipartPartFixture(
-                    name: 'name',
-                    model: StringModel(context: context),
-                    encoding: const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
-                    ),
+              multipartContentFixture(context, [
+                multipartPartFixture(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
                   ),
-                ],
-                name: 'UploadForm',
-              ),
+                ),
+              ], name: 'UploadForm'),
             },
           );
 
@@ -1314,24 +1307,20 @@ Future<TonikResult<void, Response<Object?>>> call({
             description: null,
             isRequired: false,
             content: {
-              multipartContentFixture(
-                context,
-                [
-                  multipartPartFixture(
-                    name: 'name',
-                    model: StringModel(context: context),
-                    encoding: const PartEncoding(
-                      contentType: ContentType.text,
-                      rawContentType: 'text/plain',
-                      headers: null,
-                      style: EncodingStyle.form,
-                      explode: true,
-                      allowReserved: false,
-                    ),
+              multipartContentFixture(context, [
+                multipartPartFixture(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  encoding: const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
                   ),
-                ],
-                name: 'UploadForm',
-              ),
+                ),
+              ], name: 'UploadForm'),
             },
           );
 
@@ -2251,9 +2240,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           );
 
           final normalizedParams = NormalizedRequestParameters(
-            pathParameters: [
-              (normalizedName: 'id', parameter: pathParam),
-            ],
+            pathParameters: [(normalizedName: 'id', parameter: pathParam)],
             queryParameters: const [],
             headers: const [],
             cookieParameters: const [],
@@ -2399,41 +2386,39 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
         },
       );
 
-      test(
-        'preserves an OpenAPI query parameter named cancelToken',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'cancelToken',
-            rawName: 'cancelToken',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('preserves an OpenAPI query parameter named cancelToken', () {
+        final queryParam = QueryParameterObject(
+          name: 'cancelToken',
+          rawName: 'cancelToken',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
@@ -2528,74 +2513,71 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'preserves an OpenAPI query parameter named cancelToken when '
-        'request body is also present',
-        () {
-          final requestBody = RequestBodyObject(
-            name: 'singleBody',
-            context: context,
-            description: null,
-            isRequired: true,
-            content: {
-              ModelRequestContent(
-                model: StringModel(context: context),
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                examples: const [],
-              ),
-            },
-          );
+      test('preserves an OpenAPI query parameter named cancelToken when '
+          'request body is also present', () {
+        final requestBody = RequestBodyObject(
+          name: 'singleBody',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+          },
+        );
 
-          final queryParam = QueryParameterObject(
-            name: 'cancelToken',
-            rawName: 'cancelToken',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+        final queryParam = QueryParameterObject(
+          name: 'cancelToken',
+          rawName: 'cancelToken',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'postA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.post,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            requestBody: requestBody,
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'postA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String body,
   required String cancelToken,
@@ -2691,56 +2673,53 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'PostA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'PostA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['body', 'cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['body', 'cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'preserves an OpenAPI path parameter named cancelToken',
-        () {
-          final pathParam = PathParameterObject(
-            name: 'cancelToken',
-            rawName: 'cancelToken',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            explode: false,
-            encoding: PathParameterEncoding.simple,
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('preserves an OpenAPI path parameter named cancelToken', () {
+        final pathParam = PathParameterObject(
+          name: 'cancelToken',
+          rawName: 'cancelToken',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: PathParameterEncoding.simple,
+          model: StringModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a/{cancelToken}',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: {pathParam},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a/{cancelToken}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {pathParam},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
@@ -2832,56 +2811,53 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'preserves an OpenAPI header parameter named cancelToken',
-        () {
-          final header = RequestHeaderObject(
-            name: 'cancelToken',
-            rawName: 'cancelToken',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: HeaderParameterEncoding.simple,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('preserves an OpenAPI header parameter named cancelToken', () {
+        final header = RequestHeaderObject(
+          name: 'cancelToken',
+          rawName: 'cancelToken',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.get,
-            headers: {header},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.get,
+          headers: {header},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
@@ -2973,55 +2949,52 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'preserves an OpenAPI cookie parameter named cancelToken',
-        () {
-          final cookie = CookieParameterObject(
-            name: 'cancelToken',
-            rawName: 'cancelToken',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: CookieParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('preserves an OpenAPI cookie parameter named cancelToken', () {
+        final cookie = CookieParameterObject(
+          name: 'cancelToken',
+          rawName: 'cancelToken',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookie},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookie},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
@@ -3113,57 +3086,54 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'preserves a query parameter that sanitizes to cancelToken',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'Cancel-Token',
-            rawName: 'Cancel-Token',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('preserves a query parameter that sanitizes to cancelToken', () {
+        final queryParam = QueryParameterObject(
+          name: 'Cancel-Token',
+          rawName: 'Cancel-Token',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
@@ -3258,65 +3228,61 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['cancelToken', 'cancellation']);
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['cancelToken', 'cancellation']);
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'leaves non-colliding parameter named token unchanged',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'token',
-            rawName: 'token',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('leaves non-colliding parameter named token unchanged', () {
+        final queryParam = QueryParameterObject(
+          name: 'token',
+          rawName: 'token',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'getA',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/a',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'getA',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/a',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final cls = generator.generateClass(operation, 'GetA');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'GetA');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames = method.optionalParameters
-              .map((p) => p.name)
-              .toList();
-          expect(paramNames, ['token', 'cancellation']);
-        },
-      );
+        final paramNames = method.optionalParameters
+            .map((p) => p.name)
+            .toList();
+        expect(paramNames, ['token', 'cancellation']);
+      });
     });
 
     group('generateCallableOperation', () {
@@ -3660,383 +3626,356 @@ Future<TonikResult<void, Response<Object?>>> call({
 
         final result = generator.generateClass(operation, 'GetPets');
 
-        expect(
-          result.methods.any((m) => m.name == '_queryParameters'),
-          isTrue,
-        );
+        expect(result.methods.any((m) => m.name == '_queryParameters'), isTrue);
       });
     });
 
     group('generateClass — parameter defaults', () {
-      test(
-        'mixed-location defaults emit static const fields ordered '
-        'path → query → header → cookie immediately after _dio',
-        () {
-          final pathParam = PathParameterObject(
-            name: 'id',
-            rawName: 'id',
-            description: null,
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: PathParameterEncoding.simple,
-            context: context,
-            examples: const [],
-            defaultValue: 'x',
-          );
-          final queryParam = QueryParameterObject(
-            name: 'region',
-            rawName: 'region',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: 'us',
-          );
-          final header = RequestHeaderObject(
-            name: 'retries',
-            rawName: 'X-Retries',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            explode: false,
-            model: IntegerModel(context: context),
-            encoding: HeaderParameterEncoding.simple,
-            context: context,
-            examples: const [],
-            defaultValue: 5,
-          );
-          final cookie = CookieParameterObject(
-            name: 'tracking',
-            rawName: 'tracking',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            explode: false,
-            model: BooleanModel(context: context),
-            encoding: CookieParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: false,
-          );
+      test('mixed-location defaults emit static const fields ordered '
+          'path → query → header → cookie immediately after _dio', () {
+        final pathParam = PathParameterObject(
+          name: 'id',
+          rawName: 'id',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 'x',
+        );
+        final queryParam = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'us',
+        );
+        final header = RequestHeaderObject(
+          name: 'retries',
+          rawName: 'X-Retries',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: IntegerModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 5,
+        );
+        final cookie = CookieParameterObject(
+          name: 'tracking',
+          rawName: 'tracking',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: BooleanModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: false,
+        );
 
-          final operation = Operation(
-            operationId: 'listThings',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/things/{id}',
-            method: HttpMethod.get,
-            headers: {header},
-            queryParameters: {queryParam},
-            pathParameters: {pathParam},
-            cookieParameters: {cookie},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'listThings',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/things/{id}',
+          method: HttpMethod.get,
+          headers: {header},
+          queryParameters: {queryParam},
+          pathParameters: {pathParam},
+          cookieParameters: {cookie},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final result = generator.generateClass(operation, 'ListThings');
+        final result = generator.generateClass(operation, 'ListThings');
 
-          final fieldNames = result.fields.map((f) => f.name).toList();
-          expect(fieldNames, [
-            '_baseUrl',
-            '_dio',
-            'idDefault',
-            'regionDefault',
-            'retriesDefault',
-            'trackingDefault',
-          ]);
+        final fieldNames = result.fields.map((f) => f.name).toList();
+        expect(fieldNames, [
+          '_baseUrl',
+          '_dio',
+          'idDefault',
+          'regionDefault',
+          'retriesDefault',
+          'trackingDefault',
+        ]);
 
-          final regionField = result.fields.firstWhere(
-            (f) => f.name == 'regionDefault',
-          );
-          expect(regionField.static, isTrue);
-          expect(regionField.modifier, FieldModifier.constant);
-          expect(regionField.type?.symbol, 'String');
+        final regionField = result.fields.firstWhere(
+          (f) => f.name == 'regionDefault',
+        );
+        expect(regionField.static, isTrue);
+        expect(regionField.modifier, FieldModifier.constant);
+        expect(regionField.type?.symbol, 'String');
 
-          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
-          final regionParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'region',
-          );
-          expect(regionParam.required, isFalse);
-          expect(
-            regionParam.defaultTo?.accept(emitter).toString(),
-            'regionDefault',
-          );
-          expect(regionParam.type?.accept(emitter).toString(), 'String');
+        final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+        final regionParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'region',
+        );
+        expect(regionParam.required, isFalse);
+        expect(
+          regionParam.defaultTo?.accept(emitter).toString(),
+          'regionDefault',
+        );
+        expect(regionParam.type?.accept(emitter).toString(), 'String');
 
-          final idParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'id',
-          );
-          expect(idParam.required, isFalse);
-          expect(
-            idParam.defaultTo?.accept(emitter).toString(),
-            'idDefault',
-          );
-          expect(idParam.type?.accept(emitter).toString(), 'String');
+        final idParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'id',
+        );
+        expect(idParam.required, isFalse);
+        expect(idParam.defaultTo?.accept(emitter).toString(), 'idDefault');
+        expect(idParam.type?.accept(emitter).toString(), 'String');
 
-          final retriesParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'retries',
-          );
-          expect(retriesParam.required, isFalse);
-          expect(
-            retriesParam.defaultTo?.accept(emitter).toString(),
-            'retriesDefault',
-          );
-          expect(retriesParam.type?.accept(emitter).toString(), 'int');
+        final retriesParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'retries',
+        );
+        expect(retriesParam.required, isFalse);
+        expect(
+          retriesParam.defaultTo?.accept(emitter).toString(),
+          'retriesDefault',
+        );
+        expect(retriesParam.type?.accept(emitter).toString(), 'int');
 
-          final trackingParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'tracking',
-          );
-          expect(trackingParam.required, isFalse);
-          expect(
-            trackingParam.defaultTo?.accept(emitter).toString(),
-            'trackingDefault',
-          );
-          expect(trackingParam.type?.accept(emitter).toString(), 'bool');
-        },
-      );
+        final trackingParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'tracking',
+        );
+        expect(trackingParam.required, isFalse);
+        expect(
+          trackingParam.defaultTo?.accept(emitter).toString(),
+          'trackingDefault',
+        );
+        expect(trackingParam.type?.accept(emitter).toString(), 'bool');
+      });
 
-      test(
-        'parameter with no default keeps required+nullable rules and gets '
-        'no static const field',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'filter',
-            rawName: 'filter',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('parameter with no default keeps required+nullable rules and gets '
+          'no static const field', () {
+        final queryParam = QueryParameterObject(
+          name: 'filter',
+          rawName: 'filter',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'noDefaults',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/pets',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'noDefaults',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/pets',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final result = generator.generateClass(operation, 'NoDefaults');
+        final result = generator.generateClass(operation, 'NoDefaults');
 
-          expect(
-            result.fields.where((f) => f.name == 'filterDefault'),
-            isEmpty,
-          );
+        expect(result.fields.where((f) => f.name == 'filterDefault'), isEmpty);
 
-          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
-          final filterParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'filter',
-          );
-          expect(filterParam.required, isFalse);
-          expect(filterParam.defaultTo, isNull);
-          expect(filterParam.type?.accept(emitter).toString(), 'String?');
-        },
-      );
+        final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+        final filterParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'filter',
+        );
+        expect(filterParam.required, isFalse);
+        expect(filterParam.defaultTo, isNull);
+        expect(filterParam.type?.accept(emitter).toString(), 'String?');
+      });
 
-      test(
-        'collision: query parameter named regionDefault forces suffix on '
-        'region default',
-        () {
-          final region = QueryParameterObject(
-            name: 'region',
-            rawName: 'region',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: 'us',
-          );
-          final preExisting = QueryParameterObject(
-            name: 'regionDefault',
-            rawName: 'regionDefault',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          );
+      test('collision: query parameter named regionDefault forces suffix on '
+          'region default', () {
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'us',
+        );
+        final preExisting = QueryParameterObject(
+          name: 'regionDefault',
+          rawName: 'regionDefault',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'collide',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/x',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {region, preExisting},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'collide',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/x',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {region, preExisting},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final result = generator.generateClass(operation, 'Collide');
+        final result = generator.generateClass(operation, 'Collide');
 
-          final defaultField = result.fields.firstWhere(
-            (f) => f.name == 'regionDefault2',
-            orElse: () => Field((b) => b..name = 'MISSING'),
-          );
-          expect(defaultField.name, 'regionDefault2');
+        final defaultField = result.fields.firstWhere(
+          (f) => f.name == 'regionDefault2',
+          orElse: () => Field((b) => b..name = 'MISSING'),
+        );
+        expect(defaultField.name, 'regionDefault2');
 
-          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
-          final regionParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'region',
-          );
-          expect(
-            regionParam.defaultTo?.accept(emitter).toString(),
-            'regionDefault2',
-          );
-        },
-      );
+        final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+        final regionParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'region',
+        );
+        expect(
+          regionParam.defaultTo?.accept(emitter).toString(),
+          'regionDefault2',
+        );
+      });
 
-      test(
-        'multipart per-part header with an aliased default does not emit a '
-        'static const field on the operation class',
-        () {
-          final aliasedModel = AliasModel(
-            name: 'TraceIdHeader',
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: 'static-trace-id',
-          );
+      test('multipart per-part header with an aliased default does not emit a '
+          'static const field on the operation class', () {
+        final aliasedModel = AliasModel(
+          name: 'TraceIdHeader',
+          model: StringModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: 'static-trace-id',
+        );
 
-          final requestBody = RequestBodyObject(
-            name: 'uploadBody',
-            context: context,
-            description: null,
-            isRequired: true,
-            content: {
-              multipartContentFixture(
-                context,
-                [
-                  multipartPartFixture(
-                    name: 'file',
-                    model: BinaryModel(context: context),
-                    encoding: PartEncoding(
-                      contentType: ContentType.bytes,
-                      rawContentType: 'application/octet-stream',
-                      style: null,
-                      explode: null,
-                      allowReserved: null,
-                      headers: {
-                        'X-Trace-Id': ResponseHeaderObject(
-                          name: 'X-Trace-Id',
-                          context: context,
-                          description: null,
-                          explode: false,
-                          model: aliasedModel,
-                          isRequired: true,
-                          isDeprecated: false,
-                          encoding: ResponseHeaderEncoding.simple,
-                          examples: const [],
-                        ),
-                      },
+        final requestBody = RequestBodyObject(
+          name: 'uploadBody',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            multipartContentFixture(context, [
+              multipartPartFixture(
+                name: 'file',
+                model: BinaryModel(context: context),
+                encoding: PartEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                  headers: {
+                    'X-Trace-Id': ResponseHeaderObject(
+                      name: 'X-Trace-Id',
+                      context: context,
+                      description: null,
+                      explode: false,
+                      model: aliasedModel,
+                      isRequired: true,
+                      isDeprecated: false,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
                     ),
-                  ),
-                ],
-                name: 'UploadForm',
+                  },
+                ),
               ),
-            },
-          );
+            ], name: 'UploadForm'),
+          },
+        );
 
-          final operation = Operation(
-            operationId: 'upload',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/upload',
-            method: HttpMethod.post,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            requestBody: requestBody,
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'upload',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/upload',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
 
-          final result = generator.generateClass(operation, 'Upload');
+        final result = generator.generateClass(operation, 'Upload');
 
-          final fieldNames = result.fields.map((f) => f.name).toList();
-          expect(fieldNames, ['_baseUrl', '_dio']);
-        },
-      );
+        final fieldNames = result.fields.map((f) => f.name).toList();
+        expect(fieldNames, ['_baseUrl', '_dio']);
+      });
 
-      test(
-        'call() body delegates to _path/_queryParameters with the parameter '
-        'name, not the qualified default reference',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'region',
-            rawName: 'region',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: 'us',
-          );
+      test('call() body delegates to _path/_queryParameters with the parameter '
+          'name, not the qualified default reference', () {
+        final queryParam = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'us',
+        );
 
-          final operation = Operation(
-            operationId: 'listThings',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'listThings',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/things',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   String region = regionDefault,
   TonikCancellation? cancellation,
@@ -4130,139 +4069,133 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final cls = generator.generateClass(operation, 'ListThings');
-          final method = cls.methods.firstWhere((m) => m.name == 'call');
+        final cls = generator.generateClass(operation, 'ListThings');
+        final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'emits exactly one warning when a primitive default value does not '
-        'match the expected type',
-        () {
-          final logs = <LogRecord>[];
-          final sub = Logger(
-            'OperationParameterDefaults',
-          ).onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
+      test('emits exactly one warning when a primitive default value does not '
+          'match the expected type', () {
+        final logs = <LogRecord>[];
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
 
-          final queryParam = QueryParameterObject(
-            name: 'enabled',
-            rawName: 'enabled',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: BooleanModel(context: context),
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: 'true',
-          );
+        final queryParam = QueryParameterObject(
+          name: 'enabled',
+          rawName: 'enabled',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: BooleanModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'true',
+        );
 
-          final operation = Operation(
-            operationId: 'listThings',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'listThings',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/things',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          generator.generateClass(operation, 'ListThings');
+        generator.generateClass(operation, 'ListThings');
 
-          final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-          expect(warnings, hasLength(1));
-          expect(warnings.single.message, contains('ListThings'));
-          expect(warnings.single.message, contains('enabled'));
-        },
-      );
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(warnings.single.message, contains('ListThings'));
+        expect(warnings.single.message, contains('enabled'));
+      });
 
-      test(
-        'enum-typed query parameter with valid default emits static const '
-        'and references it from call()',
-        () {
-          final statusEnum = EnumModel<String>(
-            name: 'Status',
-            values: {
-              const EnumEntry<String>(value: 'active'),
-              const EnumEntry<String>(value: 'inactive'),
-            },
-            isNullable: false,
-            context: context,
-            isDeprecated: false,
-            examples: const [],
-          );
+      test('enum-typed query parameter with valid default emits static const '
+          'and references it from call()', () {
+        final statusEnum = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          isNullable: false,
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
 
-          final queryParam = QueryParameterObject(
-            name: 'status',
-            rawName: 'status',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: statusEnum,
-            encoding: QueryParameterEncoding.form,
-            context: context,
-            examples: const [],
-            defaultValue: 'active',
-          );
+        final queryParam = QueryParameterObject(
+          name: 'status',
+          rawName: 'status',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: statusEnum,
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'active',
+        );
 
-          final operation = Operation(
-            operationId: 'listThings',
-            context: context,
-            tags: const {},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'listThings',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/things',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final result = generator.generateClass(operation, 'ListThings');
+        final result = generator.generateClass(operation, 'ListThings');
 
-          final defaultField = result.fields.firstWhere(
-            (f) => f.name == 'statusDefault',
-          );
-          expect(defaultField.static, isTrue);
-          expect(defaultField.modifier, FieldModifier.constant);
-          expect(defaultField.type?.symbol, 'Status');
-          expect(
-            defaultField.assignment?.accept(emitter).toString(),
-            'Status.active',
-          );
+        final defaultField = result.fields.firstWhere(
+          (f) => f.name == 'statusDefault',
+        );
+        expect(defaultField.static, isTrue);
+        expect(defaultField.modifier, FieldModifier.constant);
+        expect(defaultField.type?.symbol, 'Status');
+        expect(
+          defaultField.assignment?.accept(emitter).toString(),
+          'Status.active',
+        );
 
-          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
-          final statusParam = callMethod.optionalParameters.firstWhere(
-            (p) => p.name == 'status',
-          );
-          expect(statusParam.required, isFalse);
-          expect(
-            statusParam.defaultTo?.accept(emitter).toString(),
-            'statusDefault',
-          );
-          expect(statusParam.type?.accept(emitter).toString(), 'Status');
+        final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+        final statusParam = callMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'status',
+        );
+        expect(statusParam.required, isFalse);
+        expect(
+          statusParam.defaultTo?.accept(emitter).toString(),
+          'statusDefault',
+        );
+        expect(statusParam.type?.accept(emitter).toString(), 'Status');
 
-          const expectedCall = r'''
+        const expectedCall = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   Status status = statusDefault,
   TonikCancellation? cancellation,
@@ -4357,13 +4290,12 @@ Future<TonikResult<void, Response<Object?>>> call({
 }
 ''';
 
-          final actualCall = format(callMethod.accept(emitter).toString());
-          expect(
-            collapseWhitespace(actualCall),
-            collapseWhitespace(expectedCall),
-          );
-        },
-      );
+        final actualCall = format(callMethod.accept(emitter).toString());
+        expect(
+          collapseWhitespace(actualCall),
+          collapseWhitespace(expectedCall),
+        );
+      });
 
       test(
         'runtime-default query parameter (DateTime) emits a static getter on '
@@ -4402,10 +4334,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
           final result = generator.generateClass(operation, 'ListThings');
 
-          expect(
-            result.fields.where((f) => f.name == 'sinceDefault'),
-            isEmpty,
-          );
+          expect(result.fields.where((f) => f.name == 'sinceDefault'), isEmpty);
 
           final getter = result.methods.firstWhere(
             (m) => m.name == 'sinceDefault',

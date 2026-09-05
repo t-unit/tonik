@@ -385,10 +385,7 @@ void main() {
           () => (null as String?).decodeFormDate(),
           throwsA(isA<InvalidTypeException>()),
         );
-        expect(
-          () => ''.decodeFormDate(),
-          throwsA(isA<InvalidTypeException>()),
-        );
+        expect(() => ''.decodeFormDate(), throwsA(isA<InvalidTypeException>()));
       });
     });
 

@@ -25,10 +25,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = DioOptionsGenerator(
-      nameManager: nameManager,
-      package: 'api',
-    );
+    generator = DioOptionsGenerator(nameManager: nameManager, package: 'api');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -449,58 +446,56 @@ void main() {
       );
     });
 
-    test(
-      'optional header with nullable model uses non-null access '
-      'inside null-check block',
-      () {
-        final optionalNullableHeader = RequestHeaderObject(
-          name: 'X-Nullable-Object',
-          rawName: 'X-Nullable-Object',
-          description: 'An optional header with a nullable model',
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: ClassModel(
-            name: 'NullableObj',
-            properties: const [],
-            context: context,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-          ),
-          encoding: HeaderParameterEncoding.simple,
+    test('optional header with nullable model uses non-null access '
+        'inside null-check block', () {
+      final optionalNullableHeader = RequestHeaderObject(
+        name: 'X-Nullable-Object',
+        rawName: 'X-Nullable-Object',
+        description: 'An optional header with a nullable model',
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: ClassModel(
+          name: 'NullableObj',
+          properties: const [],
           context: context,
+          isNullable: true,
+          isDeprecated: false,
           examples: const [],
-          defaultValue: null,
-        );
+        ),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'operationWithNullableHeader',
-          context: context,
-          summary: 'Operation with nullable header',
-          description: 'An operation with an optional nullable header',
-          tags: const {},
-          isDeprecated: false,
-          path: '/with-nullable-header',
-          method: HttpMethod.get,
-          headers: {optionalNullableHeader},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'operationWithNullableHeader',
+        context: context,
+        summary: 'Operation with nullable header',
+        description: 'An operation with an optional nullable header',
+        tags: const {},
+        isDeprecated: false,
+        path: '/with-nullable-header',
+        method: HttpMethod.get,
+        headers: {optionalNullableHeader},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final headers =
-            <({String normalizedName, RequestHeaderObject parameter})>[
-              (
-                normalizedName: 'xNullableObject',
-                parameter: optionalNullableHeader,
-              ),
-            ];
+      final headers =
+          <({String normalizedName, RequestHeaderObject parameter})>[
+            (
+              normalizedName: 'xNullableObject',
+              parameter: optionalNullableHeader,
+            ),
+          ];
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
             Options _options({NullableObj? xNullableObject}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -520,15 +515,14 @@ void main() {
             }
           ''';
 
-        final method = generator.generateOptionsMethod(operation, headers, []);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
-        expect(method, isA<Method>());
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('encodes headers with allowEmpty and explode flags', () {
       final requestHeader = RequestHeaderObject(
@@ -1567,10 +1561,7 @@ void main() {
         (p) => p.name == 'labels',
       );
       expect(param.required, isTrue);
-      expect(
-        param.type?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
+      expect(param.type?.accept(emitter).toString(), 'Map<String,String>');
 
       final methodString = format(method.accept(emitter).toString());
       expect(
@@ -1647,10 +1638,7 @@ void main() {
         (p) => p.name == 'prefs',
       );
       expect(param.required, isTrue);
-      expect(
-        param.type?.accept(emitter).toString(),
-        'Map<String,int>',
-      );
+      expect(param.type?.accept(emitter).toString(), 'Map<String,int>');
 
       final methodString = format(method.accept(emitter).toString());
       expect(
@@ -1729,10 +1717,7 @@ void main() {
         (p) => p.name == 'settings',
       );
       expect(param.required, isFalse);
-      expect(
-        param.type?.accept(emitter).toString(),
-        'Map<String,int>?',
-      );
+      expect(param.type?.accept(emitter).toString(), 'Map<String,int>?');
 
       final methodString = format(method.accept(emitter).toString());
       expect(
@@ -1952,50 +1937,48 @@ void main() {
       );
     });
 
-    test(
-      'generates Cookie header for required AnyModel cookie parameter',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: 'data',
-          rawName: 'data',
-          description: 'Any data',
-          isRequired: true,
-          isDeprecated: false,
-          explode: false,
-          model: AnyModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates Cookie header for required AnyModel cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'data',
+        rawName: 'data',
+        description: 'Any data',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: AnyModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withAnyCookie',
-          context: context,
-          summary: 'With any cookie',
-          description: 'Operation with AnyModel cookie',
-          tags: const {},
-          isDeprecated: false,
-          path: '/any-cookie',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withAnyCookie',
+        context: context,
+        summary: 'With any cookie',
+        description: 'Operation with AnyModel cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/any-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'data', parameter: cookieParam),
-        ]);
-        final param = method.optionalParameters.firstWhere(
-          (p) => p.name == 'data',
-        );
-        expect(param.required, isTrue);
-        expect(param.type?.accept(emitter).toString(), 'Object?');
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'data', parameter: cookieParam),
+      ]);
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'data',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'Object?');
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({required Object? data}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2015,62 +1998,59 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates Cookie header for list of AnyModel cookie parameter',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: 'items',
-          rawName: 'items',
-          description: 'List of any items',
-          isRequired: true,
-          isDeprecated: false,
-          explode: false,
-          model: ListModel(
-            content: AnyModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          encoding: CookieParameterEncoding.form,
+    test('generates Cookie header for list of AnyModel cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'items',
+        rawName: 'items',
+        description: 'List of any items',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: ListModel(
+          content: AnyModel(context: context),
           context: context,
           examples: const [],
-          defaultValue: null,
-        );
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withArrayAnyCookie',
-          context: context,
-          summary: 'With array any cookie',
-          description: 'Operation with list of AnyModel cookie',
-          tags: const {},
-          isDeprecated: false,
-          path: '/array-any-cookie',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withArrayAnyCookie',
+        context: context,
+        summary: 'With array any cookie',
+        description: 'Operation with list of AnyModel cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/array-any-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'items', parameter: cookieParam),
-        ]);
-        final param = method.optionalParameters.firstWhere(
-          (p) => p.name == 'items',
-        );
-        expect(param.required, isTrue);
-        expect(param.type?.accept(emitter).toString(), 'List<Object?>');
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'items', parameter: cookieParam),
+      ]);
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'items',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'List<Object?>');
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({required List<Object?> items}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2101,58 +2081,55 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates Cookie header for optional AnyModel cookie parameter',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: 'metadata',
-          rawName: 'metadata',
-          description: 'Optional any data',
-          isRequired: false,
-          isDeprecated: false,
-          explode: false,
-          model: AnyModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates Cookie header for optional AnyModel cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'metadata',
+        rawName: 'metadata',
+        description: 'Optional any data',
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: AnyModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withOptionalAnyCookie',
-          context: context,
-          summary: 'With optional any cookie',
-          description: 'Operation with optional AnyModel cookie',
-          tags: const {},
-          isDeprecated: false,
-          path: '/optional-any-cookie',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withOptionalAnyCookie',
+        context: context,
+        summary: 'With optional any cookie',
+        description: 'Operation with optional AnyModel cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/optional-any-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'metadata', parameter: cookieParam),
-        ]);
-        final param = method.optionalParameters.firstWhere(
-          (p) => p.name == 'metadata',
-        );
-        expect(param.required, isFalse);
-        expect(param.type?.accept(emitter).toString(), 'Object?');
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'metadata', parameter: cookieParam),
+      ]);
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'metadata',
+      );
+      expect(param.required, isFalse);
+      expect(param.type?.accept(emitter).toString(), 'Object?');
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({Object? metadata}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2174,13 +2151,12 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('generates Cookie header for required Base64 cookie parameter', () {
       final cookieParam = CookieParameterObject(
@@ -2404,56 +2380,54 @@ void main() {
       },
     );
 
-    test(
-      'generates EncodingException for required list of '
-      'Binary cookie parameter',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: 'files',
-          rawName: 'files',
-          description: 'List of binary files',
-          isRequired: true,
-          isDeprecated: false,
-          explode: false,
-          model: ListModel(
-            content: BinaryModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          encoding: CookieParameterEncoding.form,
+    test('generates EncodingException for required list of '
+        'Binary cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'files',
+        rawName: 'files',
+        description: 'List of binary files',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: ListModel(
+          content: BinaryModel(context: context),
           context: context,
           examples: const [],
-          defaultValue: null,
-        );
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withListBinaryCookie',
-          context: context,
-          summary: 'With list binary cookie',
-          description: 'Operation with list of Binary cookies',
-          tags: const {},
-          isDeprecated: false,
-          path: '/list-binary-cookie',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withListBinaryCookie',
+        context: context,
+        summary: 'With list binary cookie',
+        description: 'Operation with list of Binary cookies',
+        tags: const {},
+        isDeprecated: false,
+        path: '/list-binary-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'files', parameter: cookieParam),
-        ]);
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'files', parameter: cookieParam),
+      ]);
 
-        final param = method.optionalParameters.firstWhere(
-          (p) => p.name == 'files',
-        );
-        expect(param.required, isTrue);
-        expect(param.type?.accept(emitter).toString(), 'List<TonikFile>');
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'files',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'List<TonikFile>');
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({required List<TonikFile> files}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2473,13 +2447,12 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('generates Cookie header for optional Base64 cookie parameter', () {
       final cookieParam = CookieParameterObject(
@@ -2709,56 +2682,54 @@ void main() {
       },
     );
 
-    test(
-      'generates EncodingException for optional list of '
-      'Binary cookie parameter',
-      () {
-        final cookieParam = CookieParameterObject(
-          name: 'files',
-          rawName: 'files',
-          description: 'Optional list of binary files',
-          isRequired: false,
-          isDeprecated: false,
-          explode: false,
-          model: ListModel(
-            content: BinaryModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          encoding: CookieParameterEncoding.form,
+    test('generates EncodingException for optional list of '
+        'Binary cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'files',
+        rawName: 'files',
+        description: 'Optional list of binary files',
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: ListModel(
+          content: BinaryModel(context: context),
           context: context,
           examples: const [],
-          defaultValue: null,
-        );
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withOptionalListBinaryCookie',
-          context: context,
-          summary: 'With optional list binary cookie',
-          description: 'Operation with optional list of Binary cookies',
-          tags: const {},
-          isDeprecated: false,
-          path: '/optional-list-binary-cookie',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {cookieParam},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withOptionalListBinaryCookie',
+        context: context,
+        summary: 'With optional list binary cookie',
+        description: 'Operation with optional list of Binary cookies',
+        tags: const {},
+        isDeprecated: false,
+        path: '/optional-list-binary-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'files', parameter: cookieParam),
-        ]);
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'files', parameter: cookieParam),
+      ]);
 
-        final param = method.optionalParameters.firstWhere(
-          (p) => p.name == 'files',
-        );
-        expect(param.required, isFalse);
-        expect(param.type?.accept(emitter).toString(), 'List<TonikFile>?');
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'files',
+      );
+      expect(param.required, isFalse);
+      expect(param.type?.accept(emitter).toString(), 'List<TonikFile>?');
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({List<TonikFile>? files}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -2780,69 +2751,66 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates throw plus adjacent cookie code for operation with '
-      'mixed Binary and String cookies',
-      () {
-        final binaryCookie = CookieParameterObject(
-          name: 'binaryData',
-          rawName: 'binaryData',
-          description: 'Binary cookie',
-          isRequired: true,
-          isDeprecated: false,
-          explode: true,
-          model: BinaryModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates throw plus adjacent cookie code for operation with '
+        'mixed Binary and String cookies', () {
+      final binaryCookie = CookieParameterObject(
+        name: 'binaryData',
+        rawName: 'binaryData',
+        description: 'Binary cookie',
+        isRequired: true,
+        isDeprecated: false,
+        explode: true,
+        model: BinaryModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final stringCookie = CookieParameterObject(
-          name: 'tracker',
-          rawName: 'tracker',
-          description: 'Tracker cookie',
-          isRequired: true,
-          isDeprecated: false,
-          explode: true,
-          model: StringModel(context: context),
-          encoding: CookieParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
+      final stringCookie = CookieParameterObject(
+        name: 'tracker',
+        rawName: 'tracker',
+        description: 'Tracker cookie',
+        isRequired: true,
+        isDeprecated: false,
+        explode: true,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final operation = Operation(
-          operationId: 'withMixedBinaryStringCookies',
-          context: context,
-          summary: 'With mixed binary and string cookies',
-          description: 'Operation with mixed Binary and String cookies',
-          tags: const {},
-          isDeprecated: false,
-          path: '/mixed-binary-string-cookies',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: {binaryCookie, stringCookie},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      final operation = Operation(
+        operationId: 'withMixedBinaryStringCookies',
+        context: context,
+        summary: 'With mixed binary and string cookies',
+        description: 'Operation with mixed Binary and String cookies',
+        tags: const {},
+        isDeprecated: false,
+        path: '/mixed-binary-string-cookies',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {binaryCookie, stringCookie},
+        responses: const {},
+        securitySchemes: const {},
+      );
 
-        final method = generator.generateOptionsMethod(operation, [], [
-          (normalizedName: 'binaryData', parameter: binaryCookie),
-          (normalizedName: 'tracker', parameter: stringCookie),
-        ]);
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'binaryData', parameter: binaryCookie),
+        (normalizedName: 'tracker', parameter: stringCookie),
+      ]);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Options _options({
             required TonikFile binaryData,
             required String tracker
@@ -2870,70 +2838,67 @@ void main() {
           }
         ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     group('alias-wrapped cookie parameters', () {
-      test(
-        'alias to list of strings routes through list path',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'tags',
-            rawName: 'tags',
-            description: 'Alias to list of strings',
-            isRequired: true,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'TagList',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('alias to list of strings routes through list path', () {
+        final cookieParam = CookieParameterObject(
+          name: 'tags',
+          rawName: 'tags',
+          description: 'Alias to list of strings',
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'TagList',
+            model: ListModel(
+              content: StringModel(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withAliasStringListCookie',
-            context: context,
-            summary: 'With alias string list cookie',
-            description: 'Operation with alias-to-list-of-string cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/alias-string-list-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withAliasStringListCookie',
+          context: context,
+          summary: 'With alias string list cookie',
+          description: 'Operation with alias-to-list-of-string cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/alias-string-list-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'tags', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'tags', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'tags',
-          );
-          expect(param.required, isTrue);
-          expect(param.type?.symbol, 'TagList');
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'tags',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.symbol, 'TagList');
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({required TagList tags}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -2955,13 +2920,12 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'alias to list of integers uses list-form encoding (not binary)',
@@ -3152,61 +3116,59 @@ void main() {
         },
       );
 
-      test(
-        'optional alias to list of integers routes through list path',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'numbers',
-            rawName: 'numbers',
-            description: 'Optional alias to list of integers',
-            isRequired: false,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'IntList',
-              model: ListModel(
-                content: IntegerModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('optional alias to list of integers routes through list path', () {
+        final cookieParam = CookieParameterObject(
+          name: 'numbers',
+          rawName: 'numbers',
+          description: 'Optional alias to list of integers',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'IntList',
+            model: ListModel(
+              content: IntegerModel(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withOptionalAliasIntListCookie',
-            context: context,
-            summary: 'With optional alias int list cookie',
-            description: 'Operation with optional alias-to-list-of-int cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-alias-int-list-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withOptionalAliasIntListCookie',
+          context: context,
+          summary: 'With optional alias int list cookie',
+          description: 'Operation with optional alias-to-list-of-int cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-int-list-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'numbers', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'numbers', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'numbers',
-          );
-          expect(param.required, isFalse);
-          expect(param.type?.accept(emitter).toString(), 'IntList?');
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'numbers',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'IntList?');
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({IntList? numbers}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -3236,13 +3198,12 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test('alias to map routes through map path', () {
         final cookieParam = CookieParameterObject(
@@ -3404,61 +3365,59 @@ void main() {
         );
       });
 
-      test(
-        'alias to list of AnyModel routes through list-of-any path',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'items',
-            rawName: 'items',
-            description: 'Alias to list of AnyModel',
-            isRequired: true,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'AnyList',
-              model: ListModel(
-                content: AnyModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('alias to list of AnyModel routes through list-of-any path', () {
+        final cookieParam = CookieParameterObject(
+          name: 'items',
+          rawName: 'items',
+          description: 'Alias to list of AnyModel',
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'AnyList',
+            model: ListModel(
+              content: AnyModel(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withAliasAnyListCookie',
-            context: context,
-            summary: 'With alias any list cookie',
-            description: 'Operation with alias-to-list-of-AnyModel cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/alias-any-list-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withAliasAnyListCookie',
+          context: context,
+          summary: 'With alias any list cookie',
+          description: 'Operation with alias-to-list-of-AnyModel cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/alias-any-list-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'items', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'items', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'items',
-          );
-          expect(param.required, isTrue);
-          expect(param.type?.symbol, 'AnyList');
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'items',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.symbol, 'AnyList');
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({required AnyList items}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -3489,13 +3448,12 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test(
         'alias to list of strings with explode true threads explode through',
@@ -3994,62 +3952,60 @@ void main() {
         },
       );
 
-      test(
-        'generates Cookie header for alias-wrapped list of '
-        'Base64 cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'tokens',
-            rawName: 'tokens',
-            description: 'Alias to list of Base64',
-            isRequired: true,
-            isDeprecated: false,
-            explode: true,
-            model: AliasModel(
-              name: 'TokenList',
-              model: ListModel(
-                content: Base64Model(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('generates Cookie header for alias-wrapped list of '
+          'Base64 cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'tokens',
+          rawName: 'tokens',
+          description: 'Alias to list of Base64',
+          isRequired: true,
+          isDeprecated: false,
+          explode: true,
+          model: AliasModel(
+            name: 'TokenList',
+            model: ListModel(
+              content: Base64Model(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withAliasListBase64Cookie',
-            context: context,
-            summary: 'With alias list base64 cookie',
-            description: 'Operation with alias-to-list-of-Base64 cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/alias-list-base64-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withAliasListBase64Cookie',
+          context: context,
+          summary: 'With alias list base64 cookie',
+          description: 'Operation with alias-to-list-of-Base64 cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/alias-list-base64-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'tokens', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'tokens', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'tokens',
-          );
-          expect(param.required, isTrue);
-          expect(param.type?.symbol, 'TokenList');
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'tokens',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.symbol, 'TokenList');
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({required TokenList tokens}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4073,70 +4029,67 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates EncodingException for alias-wrapped list of '
-        'Binary cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'blobs',
-            rawName: 'blobs',
-            description: 'Alias to list of Binary',
-            isRequired: true,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'BlobList',
-              model: ListModel(
-                content: BinaryModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('generates EncodingException for alias-wrapped list of '
+          'Binary cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'blobs',
+          rawName: 'blobs',
+          description: 'Alias to list of Binary',
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'BlobList',
+            model: ListModel(
+              content: BinaryModel(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withAliasListBinaryCookie',
-            context: context,
-            summary: 'With alias list binary cookie',
-            description: 'Operation with alias-to-list-of-Binary cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/alias-list-binary-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withAliasListBinaryCookie',
+          context: context,
+          summary: 'With alias list binary cookie',
+          description: 'Operation with alias-to-list-of-Binary cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/alias-list-binary-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'blobs', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'blobs', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'blobs',
-          );
-          expect(param.required, isTrue);
-          expect(param.type?.symbol, 'BlobList');
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'blobs',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.symbol, 'BlobList');
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({required BlobList blobs}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4156,67 +4109,64 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates Cookie header for optional alias-wrapped '
-        'Base64 cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'token',
-            rawName: 'token',
-            description: 'Optional alias to Base64',
-            isRequired: false,
-            isDeprecated: false,
-            explode: true,
-            model: AliasModel(
-              name: 'BinaryToken',
-              model: Base64Model(context: context),
-              context: context,
-              examples: const [],
-              defaultValue: null,
-            ),
-            encoding: CookieParameterEncoding.form,
+      test('generates Cookie header for optional alias-wrapped '
+          'Base64 cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'token',
+          rawName: 'token',
+          description: 'Optional alias to Base64',
+          isRequired: false,
+          isDeprecated: false,
+          explode: true,
+          model: AliasModel(
+            name: 'BinaryToken',
+            model: Base64Model(context: context),
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withOptionalAliasBase64Cookie',
-            context: context,
-            summary: 'With optional alias base64 cookie',
-            description: 'Operation with optional alias-to-Base64 cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-alias-base64-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withOptionalAliasBase64Cookie',
+          context: context,
+          summary: 'With optional alias base64 cookie',
+          description: 'Operation with optional alias-to-Base64 cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-base64-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'token', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'token', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'token',
-          );
-          expect(param.required, isFalse);
-          expect(param.type?.symbol, 'BinaryToken');
-          expect((param.type! as TypeReference).isNullable, isTrue);
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'token',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.symbol, 'BinaryToken');
+        expect((param.type! as TypeReference).isNullable, isTrue);
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({BinaryToken? token}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4239,67 +4189,64 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates EncodingException for optional alias-wrapped '
-        'Binary cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'blob',
-            rawName: 'blob',
-            description: 'Optional alias to Binary',
-            isRequired: false,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'BinaryBlob',
-              model: BinaryModel(context: context),
-              context: context,
-              examples: const [],
-              defaultValue: null,
-            ),
-            encoding: CookieParameterEncoding.form,
+      test('generates EncodingException for optional alias-wrapped '
+          'Binary cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'blob',
+          rawName: 'blob',
+          description: 'Optional alias to Binary',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'BinaryBlob',
+            model: BinaryModel(context: context),
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withOptionalAliasBinaryCookie',
-            context: context,
-            summary: 'With optional alias binary cookie',
-            description: 'Operation with optional alias-to-Binary cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-alias-binary-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withOptionalAliasBinaryCookie',
+          context: context,
+          summary: 'With optional alias binary cookie',
+          description: 'Operation with optional alias-to-Binary cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-binary-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'blob', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'blob', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'blob',
-          );
-          expect(param.required, isFalse);
-          expect(param.type?.symbol, 'BinaryBlob');
-          expect((param.type! as TypeReference).isNullable, isTrue);
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'blob',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.symbol, 'BinaryBlob');
+        expect((param.type! as TypeReference).isNullable, isTrue);
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({BinaryBlob? blob}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4321,72 +4268,68 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates Cookie header for optional alias-wrapped list of '
-        'Base64 cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'tokens',
-            rawName: 'tokens',
-            description: 'Optional alias to list of Base64',
-            isRequired: false,
-            isDeprecated: false,
-            explode: true,
-            model: AliasModel(
-              name: 'TokenList',
-              model: ListModel(
-                content: Base64Model(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('generates Cookie header for optional alias-wrapped list of '
+          'Base64 cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'tokens',
+          rawName: 'tokens',
+          description: 'Optional alias to list of Base64',
+          isRequired: false,
+          isDeprecated: false,
+          explode: true,
+          model: AliasModel(
+            name: 'TokenList',
+            model: ListModel(
+              content: Base64Model(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withOptionalAliasListBase64Cookie',
-            context: context,
-            summary: 'With optional alias list base64 cookie',
-            description:
-                'Operation with optional alias-to-list-of-Base64 cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-alias-list-base64-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withOptionalAliasListBase64Cookie',
+          context: context,
+          summary: 'With optional alias list base64 cookie',
+          description: 'Operation with optional alias-to-list-of-Base64 cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-list-base64-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'tokens', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'tokens', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'tokens',
-          );
-          expect(param.required, isFalse);
-          expect(param.type?.symbol, 'TokenList');
-          expect((param.type! as TypeReference).isNullable, isTrue);
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'tokens',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.symbol, 'TokenList');
+        expect((param.type! as TypeReference).isNullable, isTrue);
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({TokenList? tokens}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4412,72 +4355,68 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
-      test(
-        'generates EncodingException for optional alias-wrapped list of '
-        'Binary cookie parameter',
-        () {
-          final cookieParam = CookieParameterObject(
-            name: 'blobs',
-            rawName: 'blobs',
-            description: 'Optional alias to list of Binary',
-            isRequired: false,
-            isDeprecated: false,
-            explode: false,
-            model: AliasModel(
-              name: 'BlobList',
-              model: ListModel(
-                content: BinaryModel(context: context),
-                context: context,
-                examples: const [],
-              ),
+      test('generates EncodingException for optional alias-wrapped list of '
+          'Binary cookie parameter', () {
+        final cookieParam = CookieParameterObject(
+          name: 'blobs',
+          rawName: 'blobs',
+          description: 'Optional alias to list of Binary',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'BlobList',
+            model: ListModel(
+              content: BinaryModel(context: context),
               context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
-          );
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
 
-          final operation = Operation(
-            operationId: 'withOptionalAliasListBinaryCookie',
-            context: context,
-            summary: 'With optional alias list binary cookie',
-            description:
-                'Operation with optional alias-to-list-of-Binary cookie',
-            tags: const {},
-            isDeprecated: false,
-            path: '/optional-alias-list-binary-cookie',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: {cookieParam},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'withOptionalAliasListBinaryCookie',
+          context: context,
+          summary: 'With optional alias list binary cookie',
+          description: 'Operation with optional alias-to-list-of-Binary cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-list-binary-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final method = generator.generateOptionsMethod(operation, [], [
-            (normalizedName: 'blobs', parameter: cookieParam),
-          ]);
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'blobs', parameter: cookieParam),
+        ]);
 
-          final param = method.optionalParameters.firstWhere(
-            (p) => p.name == 'blobs',
-          );
-          expect(param.required, isFalse);
-          expect(param.type?.symbol, 'BlobList');
-          expect((param.type! as TypeReference).isNullable, isTrue);
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'blobs',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.symbol, 'BlobList');
+        expect((param.type! as TypeReference).isNullable, isTrue);
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
             Options _options({BlobList? blobs}) {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
@@ -4499,13 +4438,12 @@ void main() {
             }
           ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
     });
 
     group('multipart content type', () {
@@ -4515,13 +4453,7 @@ void main() {
           context: context,
           description: 'Multipart body',
           isRequired: true,
-          content: {
-            multipartContentFixture(
-              context,
-              [],
-              name: 'UploadForm',
-            ),
-          },
+          content: {multipartContentFixture(context, [], name: 'UploadForm')},
         );
 
         final operation = Operation(
@@ -4570,13 +4502,7 @@ void main() {
           context: context,
           description: 'Optional multipart body',
           isRequired: false,
-          content: {
-            multipartContentFixture(
-              context,
-              [],
-              name: 'UploadForm',
-            ),
-          },
+          content: {multipartContentFixture(context, [], name: 'UploadForm')},
         );
 
         final operation = Operation(
@@ -4634,11 +4560,7 @@ void main() {
                 rawContentType: 'application/json',
                 examples: const [],
               ),
-              multipartContentFixture(
-                context,
-                [],
-                name: 'FormModel',
-              ),
+              multipartContentFixture(context, [], name: 'FormModel'),
             },
           );
 

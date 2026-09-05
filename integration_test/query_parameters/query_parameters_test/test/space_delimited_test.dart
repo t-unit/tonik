@@ -146,10 +146,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'class=name%20test%20age%201',
-      );
+      expect(recordedRequest.uri.query, 'class=name%20test%20age%201');
     });
 
     test('classNested', () async {
@@ -193,10 +190,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'classAlias=name%20test%20age%201',
-      );
+      expect(recordedRequest.uri.query, 'classAlias=name%20test%20age%201');
     });
 
     test('anyOfPrimitive', () async {
@@ -223,10 +217,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'anyOfComplex=name%20test%20age%201',
-      );
+      expect(recordedRequest.uri.query, 'anyOfComplex=name%20test%20age%201');
     });
 
     test('oneOfPrimitive', () async {
@@ -479,10 +470,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listNullableString=a%20b%2Fc%20%20d',
-      );
+      expect(recordedRequest.uri.query, 'listNullableString=a%20b%2Fc%20%20d');
     });
 
     test('oneOfPrimitive', () async {
@@ -542,10 +530,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listOneOfComplexMixed=3%204%205',
-      );
+      expect(recordedRequest.uri.query, 'listOneOfComplexMixed=3%204%205');
     });
 
     test('enum', () async {
@@ -568,9 +553,7 @@ void main() {
 
     test('empty array is dropped from the query', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testSpaceDelimitedList(
-        listString: const [],
-      );
+      final response = await api.testSpaceDelimitedList(listString: const []);
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
@@ -586,10 +569,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listOneOfPrimitive=test',
-      );
+      expect(recordedRequest.uri.query, 'listOneOfPrimitive=test');
     });
   });
 
@@ -602,10 +582,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listString=test&listString=test2',
-      );
+      expect(recordedRequest.uri.query, 'listString=test&listString=test2');
     });
 
     test('oneOfPrimitive', () async {
@@ -616,10 +593,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'listOneOfPrimitive=white%20space',
-      );
+      expect(recordedRequest.uri.query, 'listOneOfPrimitive=white%20space');
     });
 
     test('listOneOfComplex', () async {
@@ -792,10 +766,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'freeFormMap=k1%20v1%20k2%20v2',
-      );
+      expect(recordedRequest.uri.query, 'freeFormMap=k1%20v1%20k2%20v2');
     });
 
     test('alias to array encodes identically to an inline array', () async {
@@ -807,10 +778,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'aliasList=a%20b%20c',
-      );
+      expect(recordedRequest.uri.query, 'aliasList=a%20b%20c');
     });
 
     test('mixed composite object variant flattens', () async {
@@ -822,10 +790,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'mixedComposite=name%20test%20age%201',
-      );
+      expect(recordedRequest.uri.query, 'mixedComposite=name%20test%20age%201');
     });
 
     test('mixed composite string variant has no object encoding', () async {

@@ -403,33 +403,31 @@ void main() {
     });
 
     group('special characters in rawName', () {
-      test(
-        'generates valid code when rawName contains single quote '
-        '(non-explode)',
-        () {
-          final parameter = createParameter(
-            name: 'filterParam',
-            rawName: "filter's",
-            model: ListModel(
-              content: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            explode: false,
-            allowEmpty: true,
-          );
+      test('generates valid code when rawName contains single quote '
+          '(non-explode)', () {
+        final parameter = createParameter(
+          name: 'filterParam',
+          rawName: "filter's",
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final codes = buildToDelimitedQueryParameterCode(
-            'filterParam',
-            parameter,
-            encoding: QueryParameterEncoding.spaceDelimited,
-          );
+        final codes = buildToDelimitedQueryParameterCode(
+          'filterParam',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
 
-          final code = emitStatements(codes);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 for (final value in filterParam.toSpaceDelimited(
                   explode: false,
@@ -439,39 +437,36 @@ void main() {
                 }
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
-      test(
-        'generates valid code when rawName contains single quote '
-        '(explode)',
-        () {
-          final parameter = createParameter(
-            name: 'filterParam',
-            rawName: "filter's",
-            model: ListModel(
-              content: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            explode: true,
-            allowEmpty: true,
-          );
+      test('generates valid code when rawName contains single quote '
+          '(explode)', () {
+        final parameter = createParameter(
+          name: 'filterParam',
+          rawName: "filter's",
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: true,
+        );
 
-          final codes = buildToDelimitedQueryParameterCode(
-            'filterParam',
-            parameter,
-            encoding: QueryParameterEncoding.spaceDelimited,
-            explode: true,
-          );
+        final codes = buildToDelimitedQueryParameterCode(
+          'filterParam',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          explode: true,
+        );
 
-          final code = emitStatements(codes);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
               void test() {
                 for (final value in filterParam.toSpaceDelimited(
                   explode: true,
@@ -481,10 +476,9 @@ void main() {
                 }
               }
             '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
     });
 
     group('allowReserved', () {
@@ -692,36 +686,34 @@ void main() {
         );
       });
 
-      test(
-        'spaceDelimited nullable string list threads allowReserved '
-        'through the null guard',
-        () {
-          final parameter = createParameter(
-            name: 'tags',
-            rawName: 'tags',
-            model: ListModel(
-              content: StringModel(context: context),
-              isContentNullable: true,
-              context: context,
-              examples: const [],
-            ),
-            explode: false,
-            allowEmpty: true,
-            allowReserved: true,
-          );
+      test('spaceDelimited nullable string list threads allowReserved '
+          'through the null guard', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            isContentNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
 
-          final codes = buildToDelimitedQueryParameterCode(
-            'tags',
-            parameter,
-            encoding: QueryParameterEncoding.spaceDelimited,
-            allowReserved: true,
-          );
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: true,
+        );
 
-          final code = emitStatements(codes);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
                 void test() {
                   for (final value
                       in tags
@@ -744,41 +736,38 @@ void main() {
                   }
                 }
               '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
-      test(
-        'pipeDelimited nullable string list threads allowReserved '
-        'through the null guard',
-        () {
-          final parameter = createParameter(
-            name: 'tags',
-            rawName: 'tags',
-            model: ListModel(
-              content: StringModel(context: context),
-              isContentNullable: true,
-              context: context,
-              examples: const [],
-            ),
-            explode: false,
-            allowEmpty: true,
-            allowReserved: true,
-          );
+      test('pipeDelimited nullable string list threads allowReserved '
+          'through the null guard', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            isContentNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
 
-          final codes = buildToDelimitedQueryParameterCode(
-            'tags',
-            parameter,
-            encoding: QueryParameterEncoding.pipeDelimited,
-            allowReserved: true,
-          );
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          allowReserved: true,
+        );
 
-          final code = emitStatements(codes);
-          expect(
-            collapseWhitespace(code),
-            collapseWhitespace(
-              format(r'''
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
                 void test() {
                   for (final value
                       in tags
@@ -801,10 +790,9 @@ void main() {
                   }
                 }
               '''),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test(
         'enum list threads allowReserved into each item uriEncode when set',

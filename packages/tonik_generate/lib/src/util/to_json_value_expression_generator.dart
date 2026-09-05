@@ -345,13 +345,9 @@ BuiltExpression _handleListExpressionBody(
   )) {
     if (useImmutableCollections) {
       if (forceNonNullReceiver) {
-        return BuiltExpression.simple(
-          receiver.nullChecked.property('unlock'),
-        );
+        return BuiltExpression.simple(receiver.nullChecked.property('unlock'));
       } else if (isNullable) {
-        return BuiltExpression.simple(
-          receiver.nullSafeProperty('unlock'),
-        );
+        return BuiltExpression.simple(receiver.nullSafeProperty('unlock'));
       } else {
         return BuiltExpression.simple(receiver.property('unlock'));
       }
@@ -492,13 +488,9 @@ BuiltExpression _handleMapExpressionBody(
   )) {
     if (useImmutableCollections) {
       if (forceNonNullReceiver) {
-        return BuiltExpression.simple(
-          receiver.nullChecked.property('unlock'),
-        );
+        return BuiltExpression.simple(receiver.nullChecked.property('unlock'));
       } else if (isNullable) {
-        return BuiltExpression.simple(
-          receiver.nullSafeProperty('unlock'),
-        );
+        return BuiltExpression.simple(receiver.nullSafeProperty('unlock'));
       } else {
         return BuiltExpression.simple(receiver.property('unlock'));
       }
@@ -729,10 +721,7 @@ Expression _callToBytesMethod(
   }
 }
 
-bool _needsTransformation(
-  Model model, {
-  bool useImmutableCollections = false,
-}) {
+bool _needsTransformation(Model model, {bool useImmutableCollections = false}) {
   return _needsTransformationImpl(
     model,
     useImmutableCollections: useImmutableCollections,

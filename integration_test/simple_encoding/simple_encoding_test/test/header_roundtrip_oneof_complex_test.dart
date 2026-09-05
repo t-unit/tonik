@@ -35,17 +35,11 @@ void main() {
           complexUnion: const OneOfComplexClass1(Class1(name: 'test')),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'name,test',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'name,test');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'test');
@@ -53,23 +47,15 @@ void main() {
 
       test('round-trips Class1 with spaces in name', () async {
         final result = await api.testHeaderRoundtripOneOfComplex.call(
-          complexUnion: const OneOfComplexClass1(
-            Class1(name: 'hello world'),
-          ),
+          complexUnion: const OneOfComplexClass1(Class1(name: 'hello world')),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
         // Header field-values are transmitted literally: the space survives.
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'name,hello world',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'name,hello world');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'hello world');
@@ -77,22 +63,14 @@ void main() {
 
       test('round-trips Class1 with special characters', () async {
         final result = await api.testHeaderRoundtripOneOfComplex.call(
-          complexUnion: const OneOfComplexClass1(
-            Class1(name: "O'Brien"),
-          ),
+          complexUnion: const OneOfComplexClass1(Class1(name: "O'Brien")),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          "name,O'Brien",
-        );
+        expect(recordedRequest.headers['x-complex-union'], "name,O'Brien");
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, "O'Brien");
@@ -103,17 +81,11 @@ void main() {
           complexUnion: const OneOfComplexClass1(Class1(name: '')),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'name,',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'name,');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, '');
@@ -126,17 +98,11 @@ void main() {
           complexUnion: const OneOfComplexClass2(Class2(number: 42)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'number,42',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'number,42');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 42);
@@ -147,16 +113,10 @@ void main() {
           complexUnion: const OneOfComplexClass2(Class2(number: 0)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'number,0',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'number,0');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 0);
@@ -167,16 +127,10 @@ void main() {
           complexUnion: const OneOfComplexClass2(Class2(number: -123)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'number,-123',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'number,-123');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, -123);
@@ -187,16 +141,10 @@ void main() {
           complexUnion: const OneOfComplexClass2(Class2(number: 9999999)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          'number,9999999',
-        );
+        expect(recordedRequest.headers['x-complex-union'], 'number,9999999');
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 9999999);
@@ -207,17 +155,11 @@ void main() {
       test('handles null complexUnion parameter', () async {
         final result = await api.testHeaderRoundtripOneOfComplex.call();
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-complex-union'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-complex-union'], isNull);
         expect(success.value.xComplexUnion, isNull);
       });
     });

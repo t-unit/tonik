@@ -194,10 +194,7 @@ class Generator {
       backendGenerator: backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
-    generateAnalysisOptions(
-      outputDirectory: outputDirectory,
-      package: package,
-    );
+    generateAnalysisOptions(outputDirectory: outputDirectory, package: package);
 
     final List<String> modelFiles;
     final resolvedWorkerCount = resolveWorkerCount(config.workerCount);

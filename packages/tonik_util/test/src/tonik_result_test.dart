@@ -5,10 +5,7 @@ void main() {
   group('TonikResult', () {
     test('success preserves the native response identity', () {
       final response = _NativeResponse();
-      final result = TonikSuccess<String, _NativeResponse>(
-        'value',
-        response,
-      );
+      final result = TonikSuccess<String, _NativeResponse>('value', response);
 
       expect(result.value, 'value');
       expect(result.response, same(response));

@@ -30,18 +30,12 @@ void main() {
           statusList: [StatusEnum.active],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-status-list'],
-          'active',
-        );
+        expect(recordedRequest.headers['x-status-list'], 'active');
         expect(success.value.xStatusList, [StatusEnum.active]);
       });
 
@@ -55,10 +49,7 @@ void main() {
           ],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -84,10 +75,7 @@ void main() {
           ],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -111,18 +99,12 @@ void main() {
           priorityList: [PriorityEnum.one],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-priority-list'],
-          '1',
-        );
+        expect(recordedRequest.headers['x-priority-list'], '1');
         expect(success.value.xPriorityList, [PriorityEnum.one]);
       });
 
@@ -136,17 +118,11 @@ void main() {
           ],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-priority-list'],
-          '1,3,5',
-        );
+        expect(recordedRequest.headers['x-priority-list'], '1,3,5');
         expect(success.value.xPriorityList, [
           PriorityEnum.one,
           PriorityEnum.three,
@@ -166,17 +142,11 @@ void main() {
           ],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-priority-list'],
-          '1,2,3,4,5',
-        );
+        expect(recordedRequest.headers['x-priority-list'], '1,2,3,4,5');
         expect(success.value.xPriorityList, [
           PriorityEnum.one,
           PriorityEnum.two,
@@ -195,30 +165,21 @@ void main() {
           priorityList: [PriorityEnum.two, PriorityEnum.four],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-status-list'],
-          'active,pending',
-        );
-        expect(
-          recordedRequest.headers['x-priority-list'],
-          '2,4',
-        );
+        expect(recordedRequest.headers['x-status-list'], 'active,pending');
+        expect(recordedRequest.headers['x-priority-list'], '2,4');
 
-        expect(
-          success.value.xStatusList,
-          [StatusEnum.active, StatusEnum.pending],
-        );
-        expect(
-          success.value.xPriorityList,
-          [PriorityEnum.two, PriorityEnum.four],
-        );
+        expect(success.value.xStatusList, [
+          StatusEnum.active,
+          StatusEnum.pending,
+        ]);
+        expect(success.value.xPriorityList, [
+          PriorityEnum.two,
+          PriorityEnum.four,
+        ]);
       });
     });
 
@@ -229,10 +190,7 @@ void main() {
           priorityList: [PriorityEnum.one],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatusList, isNull);
@@ -245,10 +203,7 @@ void main() {
           statusList: [StatusEnum.inactive],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatusList, [StatusEnum.inactive]);
@@ -259,10 +214,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripEnumLists();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStatusList, isNull);

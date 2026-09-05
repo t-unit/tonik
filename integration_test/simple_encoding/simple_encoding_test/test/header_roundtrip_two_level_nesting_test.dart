@@ -37,10 +37,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
@@ -54,10 +51,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
@@ -74,10 +68,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
@@ -94,10 +85,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
@@ -114,10 +102,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
@@ -136,10 +121,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
@@ -156,10 +138,7 @@ void main() {
           twoLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
@@ -184,10 +163,7 @@ void main() {
         twoLevelAllOf: input,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
@@ -215,10 +191,7 @@ void main() {
         twoLevelAllOf: input,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
@@ -246,10 +219,7 @@ void main() {
         twoLevelAllOf: input,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
@@ -281,23 +251,14 @@ void main() {
         twoLevelAllOf: allOfInput,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
-      expect(
-        (success.value.xTwoLevelOneOf! as TwoLevelOneOfBool).value,
-        true,
-      );
+      expect((success.value.xTwoLevelOneOf! as TwoLevelOneOfBool).value, true);
 
       expect(success.value.xTwoLevelAllOf, isNotNull);
-      expect(
-        success.value.xTwoLevelAllOf!.twoLevelAllOfModel.active,
-        false,
-      );
+      expect(success.value.xTwoLevelAllOf!.twoLevelAllOfModel.active, false);
       expect(
         success
             .value

@@ -35,17 +35,11 @@ void main() {
           flexibleObject: const AnyOfComplex(class1: Class1(name: 'test')),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-flexible-object'],
-          'name,test',
-        );
+        expect(recordedRequest.headers['x-flexible-object'], 'name,test');
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'test');
@@ -58,10 +52,7 @@ void main() {
           ),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -80,17 +71,11 @@ void main() {
           flexibleObject: const AnyOfComplex(class1: Class1(name: '')),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-flexible-object'],
-          'name,',
-        );
+        expect(recordedRequest.headers['x-flexible-object'], 'name,');
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, '');
@@ -103,17 +88,11 @@ void main() {
           flexibleObject: const AnyOfComplex(class2: Class2(number: 42)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-flexible-object'],
-          'number,42',
-        );
+        expect(recordedRequest.headers['x-flexible-object'], 'number,42');
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, 42);
@@ -124,16 +103,10 @@ void main() {
           flexibleObject: const AnyOfComplex(class2: Class2(number: 0)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-object'],
-          'number,0',
-        );
+        expect(recordedRequest.headers['x-flexible-object'], 'number,0');
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, 0);
@@ -144,16 +117,10 @@ void main() {
           flexibleObject: const AnyOfComplex(class2: Class2(number: -99)),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-object'],
-          'number,-99',
-        );
+        expect(recordedRequest.headers['x-flexible-object'], 'number,-99');
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, -99);
@@ -166,16 +133,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAnyOfComplex.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-flexible-object'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-flexible-object'], isNull);
           expect(success.value.xFlexibleObject, isNull);
         },
       );

@@ -35,23 +35,14 @@ void main() {
           primitiveUnion: const OneOfPrimitiveInt(42),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '42',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '42');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
-        expect(
-          (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
-          42,
-        );
+        expect((success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value, 42);
       });
 
       test('round-trips zero', () async {
@@ -59,23 +50,14 @@ void main() {
           primitiveUnion: const OneOfPrimitiveInt(0),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '0',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '0');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
-        expect(
-          (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
-          0,
-        );
+        expect((success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value, 0);
       });
 
       test('round-trips negative integer', () async {
@@ -83,17 +65,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveInt(-123),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '-123',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '-123');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
@@ -107,17 +83,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveInt(9999999),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '9999999',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '9999999');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
@@ -133,17 +103,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveString('hello'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          'hello',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], 'hello');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
@@ -157,17 +121,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveString('hello world'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          'hello world',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], 'hello world');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
@@ -181,17 +139,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveString(''),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '');
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
@@ -206,17 +158,11 @@ void main() {
           primitiveUnion: const OneOfPrimitiveString('12345'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          '12345',
-        );
+        expect(recordedRequest.headers['x-primitive-union'], '12345');
 
         // Numeric strings may be decoded as OneOfPrimitiveInt since
         // integer parsing is typically tried first in oneOf decoding
@@ -231,17 +177,11 @@ void main() {
       test('handles null primitiveUnion parameter', () async {
         final result = await api.testHeaderRoundtripOneOfPrimitive.call();
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-primitive-union'],
-          isNull,
-        );
+        expect(recordedRequest.headers['x-primitive-union'], isNull);
 
         expect(success.value.xPrimitiveUnion, isNull);
       });

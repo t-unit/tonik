@@ -225,10 +225,7 @@ void main() {
       final apiDoc = ApiDocument(
         title: 'API with SPDX License',
         version: '1.0.0',
-        license: const License(
-          name: 'Apache 2.0',
-          identifier: 'Apache-2.0',
-        ),
+        license: const License(name: 'Apache 2.0', identifier: 'Apache-2.0'),
         models: models,
         responseHeaders: const {},
         requestHeaders: const {},

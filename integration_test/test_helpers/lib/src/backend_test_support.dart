@@ -14,14 +14,12 @@ ServerConfig<Client> testServerConfig<Client extends Object>({
   Map<String, String> headers = const {},
 }) {
   if (Client == dio.Dio) {
-    return dio_backend.dioTestServerConfig(
-      headers: headers,
-    ) as ServerConfig<Client>;
+    return dio_backend.dioTestServerConfig(headers: headers)
+        as ServerConfig<Client>;
   }
   if (Client == http.Client) {
-    return http_backend.httpTestServerConfig(
-      headers: headers,
-    ) as ServerConfig<Client>;
+    return http_backend.httpTestServerConfig(headers: headers)
+        as ServerConfig<Client>;
   }
   throw UnsupportedError('Unsupported integration client type: $Client.');
 }
@@ -29,36 +27,29 @@ ServerConfig<Client> testServerConfig<Client extends Object>({
 /// Requires a successful result and retains portable response details.
 TestSuccess<T> requireSuccess<T, Response extends Object>(
   TonikResult<T, Response> result,
-) =>
-    switch (result) {
-      TonikSuccess(:final value, :final response) => TestSuccess(
-          value,
-          _testResponse(response),
-        ),
-      TonikError(:final error, :final type) => fail(
-          'Expected TonikSuccess, got TonikError($type, $error).',
-        ),
-    };
+) => switch (result) {
+  TonikSuccess(:final value, :final response) => TestSuccess(
+    value,
+    _testResponse(response),
+  ),
+  TonikError(:final error, :final type) => fail(
+    'Expected TonikSuccess, got TonikError($type, $error).',
+  ),
+};
 
 /// Requires an error result and retains portable response details.
 TestError requireError<T, Response extends Object>(
   TonikResult<T, Response> result,
-) =>
-    switch (result) {
-      TonikSuccess() => fail('Expected TonikError, got TonikSuccess.'),
-      TonikError(
-        :final error,
-        :final stackTrace,
-        :final type,
-        :final response,
-      ) =>
-        TestError(
-          error: error,
-          stackTrace: stackTrace,
-          type: type,
-          response: response == null ? null : _testResponse(response),
-        ),
-    };
+) => switch (result) {
+  TonikSuccess() => fail('Expected TonikError, got TonikSuccess.'),
+  TonikError(:final error, :final stackTrace, :final type, :final response) =>
+    TestError(
+      error: error,
+      stackTrace: stackTrace,
+      type: type,
+      response: response == null ? null : _testResponse(response),
+    ),
+};
 
 TestResponse _testResponse(Object response) {
   if (response is dio.Response<Object?>) {

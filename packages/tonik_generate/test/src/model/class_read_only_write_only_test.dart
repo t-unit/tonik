@@ -23,10 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -193,53 +190,50 @@ void main() {
       );
     });
 
-    test(
-      'fromJson returns empty model when all properties are writeOnly',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'WriteOnlyModel',
-          properties: [
-            Property(
-              name: 'password',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              isWriteOnly: true,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'secret',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: false,
-              isDeprecated: false,
-              isWriteOnly: true,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromJson returns empty model when all properties are writeOnly', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WriteOnlyModel',
+        properties: [
+          Property(
+            name: 'password',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            isWriteOnly: true,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'secret',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            isWriteOnly: true,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
         factory WriteOnlyModel.fromJson(Object? json) {
           return WriteOnlyModel(password: null, secret: null);
         }
       ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group('readOnly/writeOnly fromSimple', () {

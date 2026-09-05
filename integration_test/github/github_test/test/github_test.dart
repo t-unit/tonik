@@ -67,10 +67,7 @@ void main() {
 
       final result = await api.rateLimitget();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RateLimitgetResponse200>());
@@ -85,10 +82,7 @@ void main() {
 
       final result = await api.rateLimitget();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<RateLimitgetResponse404>());
@@ -103,10 +97,7 @@ void main() {
 
       final result = await api.usersgetByUsername(username: 'octocat');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UsersgetByUsernameResponse200>());
@@ -121,10 +112,7 @@ void main() {
 
       final result = await api.usersgetByUsername(username: 'nonexistent');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<UsersgetByUsernameResponse404>());
@@ -139,10 +127,7 @@ void main() {
     test('reposget 200', () async {
       final api = ReposApi(buildServer(responseStatus: '200'));
 
-      final result = await api.reposget(
-        owner: 'octocat',
-        repo: 'hello-world',
-      );
+      final result = await api.reposget(owner: 'octocat', repo: 'hello-world');
 
       expect(result, isTonikSuccess);
     });
@@ -174,10 +159,7 @@ void main() {
         repo: 'hello-world',
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
 
     test('issueslist_for_repo 404', () async {
@@ -188,10 +170,7 @@ void main() {
         repo: 'nonexistent',
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<IssueslistForRepoResponse404>());

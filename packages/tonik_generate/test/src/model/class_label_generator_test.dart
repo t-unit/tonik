@@ -22,10 +22,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -180,129 +177,123 @@ void main() {
       );
     });
 
-    test(
-      'generates toLabel for class with composite properties requiring '
-      'runtime checks',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'CompositeClass',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('generates toLabel for class with composite properties requiring '
+        'runtime checks', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'CompositeClass',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'value',
+            model: OneOfModel(
               isDeprecated: false,
+              context: context,
+              name: 'Value',
+              discriminator: 'type',
+              models: [
+                (
+                  discriminatorValue: 'string',
+                  model: StringModel(context: context),
+                ),
+                (
+                  discriminatorValue: 'integer',
+                  model: IntegerModel(context: context),
+                ),
+              ],
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'value',
-              model: OneOfModel(
-                isDeprecated: false,
-                context: context,
-                name: 'Value',
-                discriminator: 'type',
-                models: [
-                  (
-                    discriminatorValue: 'string',
-                    model: StringModel(context: context),
-                  ),
-                  (
-                    discriminatorValue: 'integer',
-                    model: IntegerModel(context: context),
-                  ),
-                ],
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(allowEmpty: allowEmpty)
             .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates toLabel for class with mixed properties including '
-      'nullable composites',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'MixedClass',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('generates toLabel for class with mixed properties including '
+        'nullable composites', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'MixedClass',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'optionalValue',
+            model: AnyOfModel(
               isDeprecated: false,
+              context: context,
+              name: 'OptionalValue',
+              discriminator: 'type',
+              models: [
+                (
+                  discriminatorValue: 'date',
+                  model: DateTimeModel(context: context),
+                ),
+                (
+                  discriminatorValue: 'decimal',
+                  model: DecimalModel(context: context),
+                ),
+              ],
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'optionalValue',
-              model: AnyOfModel(
-                isDeprecated: false,
-                context: context,
-                name: 'OptionalValue',
-                discriminator: 'type',
-                models: [
-                  (
-                    discriminatorValue: 'date',
-                    model: DateTimeModel(context: context),
-                  ),
-                  (
-                    discriminatorValue: 'decimal',
-                    model: DecimalModel(context: context),
-                  ),
-                ],
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(allowEmpty: allowEmpty)
             .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test('generates toLabel for empty class', () {
       final model = ClassModel(

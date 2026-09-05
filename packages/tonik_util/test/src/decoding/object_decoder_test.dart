@@ -57,10 +57,7 @@ void main() {
           listKeys: {},
         );
 
-        expect(
-          result,
-          {'name': 'John%20Doe', 'email': 'test%40example.com'},
-        );
+        expect(result, {'name': 'John%20Doe', 'email': 'test%40example.com'});
       });
 
       test('handles empty values', () {
@@ -146,10 +143,11 @@ void main() {
               listKeys: {'numbers', 'strings'},
             );
 
-        expect(
-          result,
-          {'numbers': '1,2,3,4,5', 'strings': 'a,b,c,d,e,f', 'blub': 'asdf'},
-        );
+        expect(result, {
+          'numbers': '1,2,3,4,5',
+          'strings': 'a,b,c,d,e,f',
+          'blub': 'asdf',
+        });
       });
 
       test('decodes list values with ampersand separator', () {
@@ -160,10 +158,11 @@ void main() {
           listKeys: {'ids', 'names'},
         );
 
-        expect(
-          result,
-          {'ids': '1,2,3', 'names': 'john,jane,joe', 'count': '42'},
-        );
+        expect(result, {
+          'ids': '1,2,3',
+          'names': 'john,jane,joe',
+          'count': '42',
+        });
       });
 
       test('decodes single list value', () {
@@ -197,15 +196,12 @@ void main() {
               listKeys: {'tags', 'codes'},
             );
 
-        expect(
-          result,
-          {
-            'id': '123',
-            'tags': 'foo,bar,baz',
-            'name': 'Test',
-            'codes': 'A,B,C',
-          },
-        );
+        expect(result, {
+          'id': '123',
+          'tags': 'foo,bar,baz',
+          'name': 'Test',
+          'codes': 'A,B,C',
+        });
       });
     });
 
@@ -262,10 +258,7 @@ void main() {
           listKeys: {},
         );
 
-        expect(
-          result,
-          {'name': 'John%20Doe', 'email': 'test%40example.com'},
-        );
+        expect(result, {'name': 'John%20Doe', 'email': 'test%40example.com'});
       });
 
       test('handles empty values', () {
@@ -327,10 +320,11 @@ void main() {
               listKeys: {'numbers', 'strings'},
             );
 
-        expect(
-          result,
-          {'numbers': '1,2,3,4,5', 'strings': 'a,b,c,d,e,f', 'blub': 'asdf'},
-        );
+        expect(result, {
+          'numbers': '1,2,3,4,5',
+          'strings': 'a,b,c,d,e,f',
+          'blub': 'asdf',
+        });
       });
 
       test('decodes single list property', () {
@@ -512,13 +506,10 @@ void main() {
                     listKeys: {},
                   );
 
-          expect(
-            result,
-            {
-              'text': 'a%26b%3Dc%2Bd',
-              'url': '50%25+off%21+Buy+now+%26+save+%24%24%24',
-            },
-          );
+          expect(result, {
+            'text': 'a%26b%3Dc%2Bd',
+            'url': '50%25+off%21+Buy+now+%26+save+%24%24%24',
+          });
         },
       );
     });
@@ -532,10 +523,11 @@ void main() {
           listKeys: {'ids', 'names'},
         );
 
-        expect(
-          result,
-          {'ids': '1,2,3', 'names': 'john,jane,joe', 'count': '42'},
-        );
+        expect(result, {
+          'ids': '1,2,3',
+          'names': 'john,jane,joe',
+          'count': '42',
+        });
       });
 
       test('simple style exploded with lists', () {
@@ -549,20 +541,17 @@ void main() {
         expect(result, {'ids': '1,2,3', 'names': 'a,b,c', 'count': '5'});
       });
 
-      test(
-        'simple style exploded skips unexpected list items for forward '
-        'compatibility',
-        () {
-          final result = 'ids=1,2,3,tags=tag1,tag2,tag3'.decodeObject(
-            explode: true,
-            explodeSeparator: ',',
-            expectedKeys: {'ids'},
-            listKeys: {'ids'},
-          );
+      test('simple style exploded skips unexpected list items for forward '
+          'compatibility', () {
+        final result = 'ids=1,2,3,tags=tag1,tag2,tag3'.decodeObject(
+          explode: true,
+          explodeSeparator: ',',
+          expectedKeys: {'ids'},
+          listKeys: {'ids'},
+        );
 
-          expect(result, {'ids': '1,2,3'});
-        },
-      );
+        expect(result, {'ids': '1,2,3'});
+      });
 
       test('form style non-exploded with lists', () {
         final result = 'id,123,tags,foo,bar,baz,name,Test'.decodeObject(
@@ -584,10 +573,11 @@ void main() {
               listKeys: {'numbers', 'strings'},
             );
 
-        expect(
-          result,
-          {'numbers': '1,2,3,4,5', 'strings': 'a,b,c,d,e,f', 'blub': 'asdf'},
-        );
+        expect(result, {
+          'numbers': '1,2,3,4,5',
+          'strings': 'a,b,c,d,e,f',
+          'blub': 'asdf',
+        });
       });
 
       test('complex scenario does not decode values with form style', () {
@@ -600,14 +590,11 @@ void main() {
                   listKeys: {'tags'},
                 );
 
-        expect(
-          result,
-          {
-            'first name': 'John%20Doe',
-            'tags': 'work,home',
-            'email': 'test%40example.com',
-          },
-        );
+        expect(result, {
+          'first name': 'John%20Doe',
+          'tags': 'work,home',
+          'email': 'test%40example.com',
+        });
       });
     });
 
@@ -672,10 +659,7 @@ void main() {
                   listKeys: {'colors', 'numbers'},
                 );
 
-        expect(
-          result,
-          {'colors': 'red,green,blue', 'numbers': '1,2,3'},
-        );
+        expect(result, {'colors': 'red,green,blue', 'numbers': '1,2,3'});
       });
 
       test('decodes repeated keys mixed with non-list properties', () {
@@ -687,10 +671,11 @@ void main() {
               listKeys: {'colors'},
             );
 
-        expect(
-          result,
-          {'name': 'John', 'colors': 'red,green,blue', 'age': '30'},
-        );
+        expect(result, {
+          'name': 'John',
+          'colors': 'red,green,blue',
+          'age': '30',
+        });
       });
 
       test('does not decode repeated keys with encoded values', () {
@@ -738,19 +723,16 @@ void main() {
         expect(result, {'colors': 'red,green,blue', 'name': 'John'});
       });
 
-      test(
-        'decodes repeated keys in non-contiguous positions',
-        () {
-          final result = 'a=1&b=2&a=3&c=4&a=5'.decodeObject(
-            explode: true,
-            explodeSeparator: '&',
-            expectedKeys: {'a', 'b', 'c'},
-            listKeys: {'a'},
-          );
+      test('decodes repeated keys in non-contiguous positions', () {
+        final result = 'a=1&b=2&a=3&c=4&a=5'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'a', 'b', 'c'},
+          listKeys: {'a'},
+        );
 
-          expect(result, {'a': '1,3,5', 'b': '2', 'c': '4'});
-        },
-      );
+        expect(result, {'a': '1,3,5', 'b': '2', 'c': '4'});
+      });
     });
 
     group('decodeObject with captureAdditionalKeys', () {

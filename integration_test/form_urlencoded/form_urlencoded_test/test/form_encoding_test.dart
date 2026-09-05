@@ -77,10 +77,7 @@ void main() {
 
       final response = await api.postSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -98,10 +95,7 @@ void main() {
 
       final response = await api.postSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -121,10 +115,7 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
 
       final data = requireSuccess(response).value;
       // True roundtrip - what we send must equal what we receive
@@ -137,10 +128,7 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
 
       final data = requireSuccess(response).value;
       // Percent signs should survive encoding/decoding
@@ -156,10 +144,7 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -180,10 +165,7 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -319,10 +301,7 @@ void main() {
 
       final response = await api.postArrayCommaElementForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -334,10 +313,7 @@ void main() {
 
       final response = await api.postArrayExplodeFalseForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -349,10 +325,7 @@ void main() {
 
       final response = await api.postArrayExplodeFalseForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -366,10 +339,7 @@ void main() {
 
         final response = await api.postArraySpaceDelimitedForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;
@@ -383,10 +353,7 @@ void main() {
 
       final response = await api.postArrayExplodeTrueForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -398,10 +365,7 @@ void main() {
 
       final response = await api.postArrayCommaElementForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -416,10 +380,7 @@ void main() {
 
       final response = await api.postArrayCompositeForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -432,10 +393,7 @@ void main() {
 
       final response = await api.postOptionalArrayForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -449,10 +407,7 @@ void main() {
 
         final response = await api.postArrayCommaElementForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;
@@ -470,10 +425,7 @@ void main() {
 
       final response = await api.postCompositeListForm(body: form);
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
@@ -524,10 +476,7 @@ void main() {
       final recordedRequest = await imposterServer.takeRequest();
 
       final requestData = recordedRequest.body;
-      expect(
-        requestData,
-        'stringValue=test&intValue=1&boolValue=false',
-      );
+      expect(requestData, 'stringValue=test&intValue=1&boolValue=false');
 
       final data = requireSuccess(response).value;
       expect(data.boolValue, true);
@@ -548,10 +497,7 @@ void main() {
     test('reports decoding error for form-urlencoded map response', () async {
       final response = await api.getMapResponse();
 
-      expect(
-        response,
-        isTonikError,
-      );
+      expect(response, isTonikError);
       final error = requireError(response);
       expect(error.type, TonikErrorType.decoding);
       expect(error.error, isA<FormDecodingException>());
@@ -560,10 +506,7 @@ void main() {
     test('percent-decodes untyped additional properties', () async {
       final response = await api.getUntypedExtrasResponse();
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final data = requireSuccess(response).value;
 
       expect(data.userName, 'café');
@@ -584,14 +527,8 @@ void main() {
         useQueryComponent: true,
       );
 
-      expect(
-        entries.firstWhere((e) => e.name == 'note').value,
-        'caf%C3%A9',
-      );
-      expect(
-        entries.firstWhere((e) => e.name == 'city').value,
-        'New+York',
-      );
+      expect(entries.firstWhere((e) => e.name == 'note').value, 'caf%C3%A9');
+      expect(entries.firstWhere((e) => e.name == 'city').value, 'New+York');
     });
   });
 
@@ -654,48 +591,36 @@ void main() {
   });
 
   group('Per-property allowReserved', () {
-    test(
-      'keeps reserved characters literal for the flagged property and fully '
-      'percent-encodes the sibling',
-      () async {
-        const value = 'a/b:c?d&e=f+g;h,i@j#k[l]m ';
-        const form = AllowReservedForm(reserved: value, notReserved: value);
+    test('keeps reserved characters literal for the flagged property and fully '
+        'percent-encodes the sibling', () async {
+      const value = 'a/b:c?d&e=f+g;h,i@j#k[l]m ';
+      const form = AllowReservedForm(reserved: value, notReserved: value);
 
-        final response = await api.postAllowReservedForm(body: form);
+      final response = await api.postAllowReservedForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = recordedRequest.body;
-        expect(
-          requestData,
-          'reserved=a/b:c?d%26e%3Df%2Bg;h,i@j#k[l]m+'
-          '&notReserved=a%2Fb%3Ac%3Fd%26e%3Df%2Bg%3Bh%2Ci%40j%23k%5Bl%5Dm+',
-        );
-      },
-    );
+      final requestData = recordedRequest.body;
+      expect(
+        requestData,
+        'reserved=a/b:c?d%26e%3Df%2Bg;h,i@j#k[l]m+'
+        '&notReserved=a%2Fb%3Ac%3Fd%26e%3Df%2Bg%3Bh%2Ci%40j%23k%5Bl%5Dm+',
+      );
+    });
 
-    test(
-      'null-guards a write-only sibling and keeps it fully percent-encoded '
-      'beside the flagged property',
-      () async {
-        const form = AllowReservedMixedForm(reserved: 'a/b:c', secret: 'a/b:c');
+    test('null-guards a write-only sibling and keeps it fully percent-encoded '
+        'beside the flagged property', () async {
+      const form = AllowReservedMixedForm(reserved: 'a/b:c', secret: 'a/b:c');
 
-        final response = await api.postAllowReservedMixedForm(body: form);
+      final response = await api.postAllowReservedMixedForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = recordedRequest.body;
-        expect(requestData, 'reserved=a/b:c&secret=a%2Fb%3Ac');
-      },
-    );
+      final requestData = recordedRequest.body;
+      expect(requestData, 'reserved=a/b:c&secret=a%2Fb%3Ac');
+    });
 
     test(
       'sends a write property that a read-only sibling forces onto a suffixed '
@@ -705,10 +630,7 @@ void main() {
 
         final response = await api.postAllowReservedCollisionForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;
@@ -726,10 +648,7 @@ void main() {
 
         final response = await api.postAllowReservedArrayForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;
@@ -737,26 +656,18 @@ void main() {
       },
     );
 
-    test(
-      'keeps reserved characters literal per exploded element of a flagged '
-      'array property',
-      () async {
-        const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
+    test('keeps reserved characters literal per exploded element of a flagged '
+        'array property', () async {
+      const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
 
-        final response = await api.postAllowReservedArrayFlaggedForm(
-          body: form,
-        );
+      final response = await api.postAllowReservedArrayFlaggedForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = recordedRequest.body;
-        expect(requestData, 'tags=a/b&tags=c:d');
-      },
-    );
+      final requestData = recordedRequest.body;
+      expect(requestData, 'tags=a/b&tags=c:d');
+    });
 
     test(
       'keeps reserved characters literal for a flagged enum property through '
@@ -768,10 +679,7 @@ void main() {
 
         final response = await api.postAllowReservedEnumForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;
@@ -779,27 +687,21 @@ void main() {
       },
     );
 
-    test(
-      'sends the flagged declared property literal alongside encoded '
-      'additionalProperties entries',
-      () async {
-        const form = AllowReservedAdditionalForm(
-          reserved: 'a/b:c',
-          additionalProperties: {'extra': 'x/y'},
-        );
+    test('sends the flagged declared property literal alongside encoded '
+        'additionalProperties entries', () async {
+      const form = AllowReservedAdditionalForm(
+        reserved: 'a/b:c',
+        additionalProperties: {'extra': 'x/y'},
+      );
 
-        final response = await api.postAllowReservedAdditionalForm(body: form);
+      final response = await api.postAllowReservedAdditionalForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(response, isTonikSuccess);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData = recordedRequest.body;
-        expect(requestData, 'reserved=a/b:c&extra=x%2Fy');
-      },
-    );
+      final requestData = recordedRequest.body;
+      expect(requestData, 'reserved=a/b:c&extra=x%2Fy');
+    });
 
     test(
       'keeps reserved characters literal for a flagged allOf property',
@@ -810,10 +712,7 @@ void main() {
 
         final response = await api.postAllowReservedCompositeForm(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final recordedRequest = await imposterServer.takeRequest();
 
         final requestData = recordedRequest.body;

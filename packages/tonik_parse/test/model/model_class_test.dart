@@ -246,10 +246,10 @@ void main() {
 
     final nested = model.properties.first.model;
     expect(nested, isA<EnumModel<String>>());
-    expect(
-      (nested as EnumModel<String>).values.map((e) => e.value).toSet(),
-      {'value1', 'value2'},
-    );
+    expect((nested as EnumModel<String>).values.map((e) => e.value).toSet(), {
+      'value1',
+      'value2',
+    });
     expect(api.models, contains(nested));
   });
 
@@ -280,14 +280,8 @@ void main() {
           'User': {
             'type': 'object',
             'properties': {
-              'name': {
-                'type': 'string',
-                'description': 'The name of the user',
-              },
-              'age': {
-                'type': 'integer',
-                'description': 'Age in years',
-              },
+              'name': {'type': 'string', 'description': 'The name of the user'},
+              'age': {'type': 'integer', 'description': 'Age in years'},
               'email': {'type': 'string'},
             },
           },
@@ -305,10 +299,7 @@ void main() {
             'type': 'object',
             'description': 'Represents a user account',
             'properties': {
-              'id': {
-                'type': 'integer',
-                'description': 'Unique identifier',
-              },
+              'id': {'type': 'integer', 'description': 'Unique identifier'},
             },
           },
         },

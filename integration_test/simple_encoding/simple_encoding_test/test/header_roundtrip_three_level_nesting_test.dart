@@ -38,10 +38,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
@@ -56,10 +53,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
@@ -74,10 +68,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
@@ -95,10 +86,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
@@ -115,10 +103,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
@@ -146,10 +131,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
 
         // Accept either decoding - both are valid interpretations
@@ -175,10 +157,7 @@ void main() {
             threeLevelOneOf: input,
           );
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
 
           // Accept either decoding - both are valid interpretations
@@ -205,10 +184,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
@@ -228,10 +204,7 @@ void main() {
           threeLevelOneOf: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
@@ -255,10 +228,7 @@ void main() {
           threeLevelMixed: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(
           success.value.xThreeLevelMixed,
@@ -279,10 +249,7 @@ void main() {
           threeLevelMixed: input,
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         expect(
           success.value.xThreeLevelMixed,
@@ -313,10 +280,7 @@ void main() {
           threeLevelMixed: input,
         );
 
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.type, TonikErrorType.encoding);
       });
@@ -335,10 +299,7 @@ void main() {
         threeLevelMixed: mixedInput,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
@@ -369,10 +330,7 @@ void main() {
         threeLevelMixed: mixedInput,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
 
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());

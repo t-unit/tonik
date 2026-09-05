@@ -24,10 +24,7 @@ void main() {
         generator: nameGenerator,
         stableModelSorter: StableModelSorter(),
       );
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -137,112 +134,103 @@ void main() {
       );
     });
 
-    test(
-      'toDeepObject method generates proper method body for single '
-      'property model',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'TestModel',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toDeepObject method generates proper method body for single '
+        'property model', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'TestModel',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        final toDeepObjectMethod = result.methods.firstWhere(
-          (m) => m.name == 'toDeepObject',
-        );
-        expect(toDeepObjectMethod.name, 'toDeepObject');
-        expect(
-          toDeepObjectMethod.returns?.accept(emitter).toString(),
-          'List<ParameterEntry>',
-        );
-        expect(
-          toDeepObjectMethod.lambda,
-          isNot(isTrue),
-        );
+      final toDeepObjectMethod = result.methods.firstWhere(
+        (m) => m.name == 'toDeepObject',
+      );
+      expect(toDeepObjectMethod.name, 'toDeepObject');
+      expect(
+        toDeepObjectMethod.returns?.accept(emitter).toString(),
+        'List<ParameterEntry>',
+      );
+      expect(toDeepObjectMethod.lambda, isNot(isTrue));
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
 
-    test(
-      'toDeepObject method generates proper method body for multiple '
-      'properties model',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexModel',
-          properties: [
-            Property(
-              name: 'firstName',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'age',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-            Property(
-              name: 'email',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toDeepObject method generates proper method body for multiple '
+        'properties model', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexModel',
+        properties: [
+          Property(
+            name: 'firstName',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'age',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'email',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
 
     test(
       'toDeepObject method delegates to the parameterProperties encoder',
@@ -285,177 +273,165 @@ void main() {
       },
     );
 
-    test(
-      'toDeepObject method works with nullable required properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'NullableModel',
-          properties: [
-            Property(
-              name: 'optionalName',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toDeepObject method works with nullable required properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'NullableModel',
+        properties: [
+          Property(
+            name: 'optionalName',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
 
-    test(
-      'toDeepObject method works with optional properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'OptionalModel',
-          properties: [
-            Property(
-              name: 'optionalField',
-              model: IntegerModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toDeepObject method works with optional properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'OptionalModel',
+        properties: [
+          Property(
+            name: 'optionalField',
+            model: IntegerModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
 
-    test(
-      'toDeepObject method works with mixed simple and complex types',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'MixedModel',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('toDeepObject method works with mixed simple and complex types', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'MixedModel',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'nested',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'NestedClass',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'nested',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'NestedClass',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
 
-    test(
-      'toDeepObject method forwards allowReserved to the encoder',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'EncodedModel',
-          properties: [
-            Property(
-              name: 'data',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toDeepObject method forwards allowReserved to the encoder', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'EncodedModel',
+        properties: [
+          Property(
+            name: 'data',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        const expectedToDeepObjectMethod = '''
+      const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
           return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
-        );
-      },
-    );
+      final generatedCode = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(format(generatedCode)),
+        contains(collapseWhitespace(format(expectedToDeepObjectMethod))),
+      );
+    });
   });
 }

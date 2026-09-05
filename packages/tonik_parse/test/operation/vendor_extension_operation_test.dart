@@ -14,9 +14,7 @@ void main() {
               'operationId': 'getUsers',
               'x-dart-name': 'fetchUsers',
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -41,9 +39,7 @@ void main() {
             'get': {
               'operationId': 'getUsers',
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },

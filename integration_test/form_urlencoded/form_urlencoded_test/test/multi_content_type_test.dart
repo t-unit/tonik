@@ -25,10 +25,7 @@ void main() {
             ),
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final contentType = recordedRequest.headers['content-type'];
@@ -54,10 +51,7 @@ void main() {
     test('receives response as form-urlencoded', () async {
       final response = await api.getMultiContentResponse();
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final data = requireSuccess(response).value;
       expect(
         data,
@@ -87,10 +81,7 @@ void main() {
         body: FormMultiContentBothPostBodyRequestBodyXWwwFormUrlencoded(form),
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final recordedRequest = await imposterServer.takeRequest();
 
       final contentType = recordedRequest.headers['content-type'];

@@ -23,10 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = PathGenerator(
-      nameManager: nameManager,
-      package: 'api',
-    );
+    generator = PathGenerator(nameManager: nameManager, package: 'api');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -658,10 +655,7 @@ void main() {
       context: context,
       models: [
         (discriminatorValue: 'string', model: StringModel(context: context)),
-        (
-          discriminatorValue: 'integer',
-          model: IntegerModel(context: context),
-        ),
+        (discriminatorValue: 'integer', model: IntegerModel(context: context)),
       ],
       name: 'OneOfValue',
       discriminator: 'type',
@@ -2776,9 +2770,7 @@ void main() {
         final allOfModel = AllOfModel(
           isDeprecated: false,
           name: 'StringOnly',
-          models: [
-            StringModel(context: context),
-          ],
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );

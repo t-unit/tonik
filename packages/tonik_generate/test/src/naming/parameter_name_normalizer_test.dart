@@ -93,52 +93,46 @@ void main() {
       },
     );
 
-    test(
-      'renames suffixed parameter with counter when a declared parameter '
-      'already has the suffixed name',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {createPathParameter('id')},
-          queryParameters: {
-            createQueryParameter('id'),
-            createQueryParameter('idPath'),
-          },
-          headers: {},
-        );
+    test('renames suffixed parameter with counter when a declared parameter '
+        'already has the suffixed name', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {createPathParameter('id')},
+        queryParameters: {
+          createQueryParameter('id'),
+          createQueryParameter('idPath'),
+        },
+        headers: {},
+      );
 
-        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
-          'idPath2',
-        ]);
-        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
-          'idQuery',
-          'idPath',
-        ]);
-      },
-    );
+      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+        'idPath2',
+      ]);
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'idQuery',
+        'idPath',
+      ]);
+    });
 
-    test(
-      'skips counter values already taken by declared parameter names',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {createPathParameter('id')},
-          queryParameters: {
-            createQueryParameter('id'),
-            createQueryParameter('idPath'),
-            createQueryParameter('idPath2'),
-          },
-          headers: {},
-        );
+    test('skips counter values already taken by declared parameter names', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {createPathParameter('id')},
+        queryParameters: {
+          createQueryParameter('id'),
+          createQueryParameter('idPath'),
+          createQueryParameter('idPath2'),
+        },
+        headers: {},
+      );
 
-        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
-          'idPath3',
-        ]);
-        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
-          'idQuery',
-          'idPath',
-          'idPath2',
-        ]);
-      },
-    );
+      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+        'idPath3',
+      ]);
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'idQuery',
+        'idPath',
+        'idPath2',
+      ]);
+    });
 
     test(
       'keeps declared header-suffixed name and renames the synthesized one',
@@ -480,9 +474,7 @@ void main() {
         pathParameters: {},
         queryParameters: {createQueryParameter('cancellation')},
         headers: {},
-        reservedNames: operationReservedParameterNames(
-          hasRequestBody: false,
-        ),
+        reservedNames: operationReservedParameterNames(hasRequestBody: false),
       );
 
       expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
@@ -500,10 +492,7 @@ void main() {
     });
 
     test('handles simple header name', () {
-      expect(
-        normalizeMultipartHeaderName('file', 'X-Custom'),
-        'fileCustom',
-      );
+      expect(normalizeMultipartHeaderName('file', 'X-Custom'), 'fileCustom');
     });
 
     test('handles header name without x- prefix', () {
@@ -529,17 +518,16 @@ void main() {
 
   group('operationReservedParameterNames', () {
     test('reserves cancellation without a request body', () {
-      expect(
-        operationReservedParameterNames(hasRequestBody: false),
-        {'cancellation'},
-      );
+      expect(operationReservedParameterNames(hasRequestBody: false), {
+        'cancellation',
+      });
     });
 
     test('also reserves body when there is a request body', () {
-      expect(
-        operationReservedParameterNames(hasRequestBody: true),
-        {'body', 'cancellation'},
-      );
+      expect(operationReservedParameterNames(hasRequestBody: true), {
+        'body',
+        'cancellation',
+      });
     });
   });
 }

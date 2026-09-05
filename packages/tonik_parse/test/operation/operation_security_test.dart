@@ -75,10 +75,7 @@ void main() {
           'operationId': 'postCombinedRequirements',
           'summary': 'Endpoint requiring multiple schemes (AND logic)',
           'security': [
-            {
-              'api_key': <String>[],
-              'bearer_auth': <String>[],
-            },
+            {'api_key': <String>[], 'bearer_auth': <String>[]},
           ],
           'responses': {
             '200': {'description': 'Success'},
@@ -284,10 +281,7 @@ void main() {
             ...(fileContent['components']!
                     as Map<String, dynamic>)['securitySchemes']!
                 as Map<String, dynamic>,
-            'unused_scheme': {
-              'type': 'http',
-              'scheme': 'basic',
-            },
+            'unused_scheme': {'type': 'http', 'scheme': 'basic'},
           },
         },
       };

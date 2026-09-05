@@ -25,9 +25,7 @@ void main() {
         nameManager: nameManager,
         backendGenerator: const DioBackendGenerator(),
       );
-      generator = ServerFileGenerator(
-        serverGenerator: serverGenerator,
-      );
+      generator = ServerFileGenerator(serverGenerator: serverGenerator);
     });
 
     tearDown(() {

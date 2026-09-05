@@ -326,10 +326,7 @@ void main() {
       },
     );
 
-    expect(
-      () => Importer().import(fileContent),
-      throwsA(isA<ArgumentError>()),
-    );
+    expect(() => Importer().import(fileContent), throwsA(isA<ArgumentError>()));
   });
 
   test(r'unresolvable parameter $ref is passed through to the importer '
@@ -344,9 +341,6 @@ void main() {
       },
     );
 
-    expect(
-      () => Importer().import(fileContent),
-      throwsA(isA<ArgumentError>()),
-    );
+    expect(() => Importer().import(fileContent), throwsA(isA<ArgumentError>()));
   });
 }

@@ -1443,9 +1443,7 @@ void main() {
         final usedNames = <String>{};
         final servers = [
           const Server(url: 'https://api.dev.example.com'),
-          const Server(
-            url: 'https://api.staging.example.com',
-          ),
+          const Server(url: 'https://api.staging.example.com'),
           const Server(url: 'https://api.prod.example.com'),
         ];
 
@@ -1523,35 +1521,30 @@ void main() {
         },
       );
 
-      test(
-        'uses numeric suffix when CustomServer is already taken',
-        () {
-          final generator = NameGenerator();
-          final usedNames = <String>{};
-          final servers = [
-            const Server(
-              url: 'https://custom.server.com',
-              description: 'Custom Server',
-            ),
-          ];
+      test('uses numeric suffix when CustomServer is already taken', () {
+        final generator = NameGenerator();
+        final usedNames = <String>{};
+        final servers = [
+          const Server(
+            url: 'https://custom.server.com',
+            description: 'Custom Server',
+          ),
+        ];
 
-          final result = generator.generateServerNames(servers, usedNames);
+        final result = generator.generateServerNames(servers, usedNames);
 
-          expect(result.serverMap.length, 1);
-          expect(result.serverMap[servers[0]], 'CustomServer');
-          expect(result.customName, 'CustomServer2');
-          expect(result.baseName, 'Server');
-        },
-      );
+        expect(result.serverMap.length, 1);
+        expect(result.serverMap[servers[0]], 'CustomServer');
+        expect(result.customName, 'CustomServer2');
+        expect(result.baseName, 'Server');
+      });
 
       test('uses default names on invalid URLs', () {
         final generator = NameGenerator();
         final usedNames = <String>{};
         final servers = [
           const Server(url: 'This is not a URI'),
-          const Server(
-            url: 'https://staging.example.com/v1',
-          ),
+          const Server(url: 'https://staging.example.com/v1'),
           const Server(url: 'https://api.acme.com/v1'),
           const Server(url: 'https://api.example.com/v2'),
         ];
@@ -1624,11 +1617,7 @@ void main() {
           name: 'User',
           isDeprecated: false,
           properties: const [],
-          context: Context.initial().pushAll([
-            'components',
-            'schemas',
-            'User',
-          ]),
+          context: Context.initial().pushAll(['components', 'schemas', 'User']),
           examples: const [],
         );
         expect(nameGenerator.generateModelName(model, usedNames), 'User');
@@ -1640,11 +1629,7 @@ void main() {
             name: name,
             isDeprecated: false,
             properties: const [],
-            context: Context.initial().pushAll([
-              'components',
-              'schemas',
-              name,
-            ]),
+            context: Context.initial().pushAll(['components', 'schemas', name]),
             examples: const [],
           );
           expect(
@@ -1730,10 +1715,7 @@ void main() {
     group('keyword tag names', () {
       test('escapes Function tag name with dollar prefix', () {
         final tag = Tag(name: 'Function');
-        expect(
-          nameGenerator.generateTagName(tag, usedNames),
-          r'$FunctionApi',
-        );
+        expect(nameGenerator.generateTagName(tag, usedNames), r'$FunctionApi');
       });
 
       test('does not escape PascalCase keyword tag names', () {

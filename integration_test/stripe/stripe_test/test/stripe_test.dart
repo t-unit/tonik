@@ -32,10 +32,7 @@ void main() {
 
       final result = await api.getBalance();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetBalanceResponse200>());
@@ -50,10 +47,7 @@ void main() {
 
       final result = await api.getBalance();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetBalanceResponseDefault>());
@@ -68,10 +62,7 @@ void main() {
 
       final result = await api.getCustomers(limit: 10);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersResponse200>());
@@ -87,10 +78,7 @@ void main() {
 
       final result = await api.getCustomers();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<GetCustomersResponseDefault>());
@@ -105,10 +93,7 @@ void main() {
 
       final result = await api.getCustomersCustomer(customer: 'cus_abc123');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersCustomerResponse200>());
@@ -123,10 +108,7 @@ void main() {
 
       final result = await api.getCustomersCustomer(customer: 'nonexistent');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetCustomersCustomerResponseDefault>());
@@ -141,10 +123,7 @@ void main() {
 
       final result = await api.postCustomers();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostCustomersResponse200>());
@@ -159,10 +138,7 @@ void main() {
 
       final result = await api.postCustomers();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostCustomersResponseDefault>());
@@ -179,10 +155,7 @@ void main() {
         customer: 'cus_delete_me',
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteCustomersCustomerResponse200>());
@@ -196,14 +169,9 @@ void main() {
     test('deleteCustomersCustomer default error', () async {
       final api = buildDefaultApi(responseStatus: '404');
 
-      final result = await api.deleteCustomersCustomer(
-        customer: 'nonexistent',
-      );
+      final result = await api.deleteCustomersCustomer(customer: 'nonexistent');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<DeleteCustomersCustomerResponseDefault>());
@@ -218,10 +186,7 @@ void main() {
 
       final result = await api.getCharges(limit: 5);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetChargesResponse200>());
@@ -237,10 +202,7 @@ void main() {
 
       final result = await api.getCharges();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetChargesResponseDefault>());
@@ -253,14 +215,9 @@ void main() {
     test('getPaymentIntentsIntent 200', () async {
       final api = buildDefaultApi(responseStatus: '200');
 
-      final result = await api.getPaymentIntentsIntent(
-        intent: 'pi_abc123',
-      );
+      final result = await api.getPaymentIntentsIntent(intent: 'pi_abc123');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPaymentIntentsIntentResponse200>());
@@ -273,14 +230,9 @@ void main() {
     test('getPaymentIntentsIntent default error', () async {
       final api = buildDefaultApi(responseStatus: '404');
 
-      final result = await api.getPaymentIntentsIntent(
-        intent: 'nonexistent',
-      );
+      final result = await api.getPaymentIntentsIntent(intent: 'nonexistent');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetPaymentIntentsIntentResponseDefault>());
@@ -295,10 +247,7 @@ void main() {
 
       final result = await api.postRefunds();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostRefundsResponse200>());
@@ -313,10 +262,7 @@ void main() {
 
       final result = await api.postRefunds();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostRefundsResponseDefault>());

@@ -9,7 +9,5 @@ Expression textEncodingExpression(TextEncoding encoding) => switch (encoding) {
 };
 
 /// Encodes request text with the semantic codec.
-Expression requestTextBytesExpression(
-  TextEncoding encoding,
-  Expression text,
-) => textEncodingExpression(encoding).property('encode').call([text]);
+Expression requestTextBytesExpression(TextEncoding encoding, Expression text) =>
+    textEncodingExpression(encoding).property('encode').call([text]);

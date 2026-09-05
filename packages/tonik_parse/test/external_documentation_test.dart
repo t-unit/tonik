@@ -6,9 +6,7 @@ void main() {
     'openapi': '3.0.0',
     'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
-    'externalDocs': {
-      'url': 'https://example.com/docs',
-    },
+    'externalDocs': {'url': 'https://example.com/docs'},
   };
 
   const apiWithExternalDocsAndDescription = {

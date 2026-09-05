@@ -419,10 +419,7 @@ void main() {
           isDeprecated: false,
           name: 'DateValue',
           models: [
-            (
-              discriminatorValue: 'date',
-              model: DateModel(context: context),
-            ),
+            (discriminatorValue: 'date', model: DateModel(context: context)),
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -499,10 +496,7 @@ void main() {
           isDeprecated: false,
           name: 'UriValue',
           models: [
-            (
-              discriminatorValue: 'uri',
-              model: UriModel(context: context),
-            ),
+            (discriminatorValue: 'uri', model: UriModel(context: context)),
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -551,10 +545,7 @@ void main() {
           isDeprecated: false,
           name: 'StatusValue',
           models: [
-            (
-              discriminatorValue: 'status',
-              model: enumModel,
-            ),
+            (discriminatorValue: 'status', model: enumModel),
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -609,10 +600,7 @@ void main() {
           isDeprecated: false,
           name: 'UserValue',
           models: [
-            (
-              discriminatorValue: 'user',
-              model: classModel,
-            ),
+            (discriminatorValue: 'user', model: classModel),
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -675,10 +663,7 @@ void main() {
           isDeprecated: false,
           name: 'CombinedValue',
           models: [
-            (
-              discriminatorValue: 'combined',
-              model: allOfModel,
-            ),
+            (discriminatorValue: 'combined', model: allOfModel),
             (
               discriminatorValue: 'string',
               model: StringModel(context: context),
@@ -723,10 +708,7 @@ void main() {
             isDeprecated: false,
             name: 'ListValue',
             models: [
-              (
-                discriminatorValue: 'list',
-                model: listModel,
-              ),
+              (discriminatorValue: 'list', model: listModel),
               (
                 discriminatorValue: 'string',
                 model: StringModel(context: context),
@@ -790,10 +772,7 @@ void main() {
             isDeprecated: false,
             name: 'ItemListValue',
             models: [
-              (
-                discriminatorValue: 'items',
-                model: listModel,
-              ),
+              (discriminatorValue: 'items', model: listModel),
               (
                 discriminatorValue: 'string',
                 model: StringModel(context: context),
@@ -835,10 +814,7 @@ void main() {
               discriminatorValue: 'string',
               model: StringModel(context: context),
             ),
-            (
-              discriminatorValue: 'int',
-              model: IntegerModel(context: context),
-            ),
+            (discriminatorValue: 'int', model: IntegerModel(context: context)),
           ],
           discriminator: 'type',
           context: context,
@@ -849,10 +825,7 @@ void main() {
           isDeprecated: false,
           name: 'FlexibleValue',
           models: [
-            (
-              discriminatorValue: 'flexible',
-              model: anyOfModel,
-            ),
+            (discriminatorValue: 'flexible', model: anyOfModel),
             (
               discriminatorValue: 'boolean',
               model: BooleanModel(context: context),
@@ -897,10 +870,7 @@ void main() {
           isDeprecated: false,
           name: 'IdentifierValue',
           models: [
-            (
-              discriminatorValue: 'userId',
-              model: aliasModel,
-            ),
+            (discriminatorValue: 'userId', model: aliasModel),
             (
               discriminatorValue: 'number',
               model: IntegerModel(context: context),
@@ -983,53 +953,48 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        expect(
-          generatedCode,
-          contains(r"r'Invalid JSON for $RawPet'"),
-        );
+        expect(generatedCode, contains(r"r'Invalid JSON for $RawPet'"));
       },
     );
   });
 
   group('special characters in discriminator', () {
-    test(
-      'toJson escapes discriminator value containing single quote',
-      () {
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'Result',
-          models: [
-            (
-              discriminatorValue: "it's-success",
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Success',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
+    test('toJson escapes discriminator value containing single quote', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Result',
+        models: [
+          (
+            discriminatorValue: "it's-success",
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Success',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
+              examples: const [],
             ),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Result');
-        final generatedCode = format(baseClass.accept(emitter).toString());
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), r"it's-success"),
@@ -1042,51 +1007,48 @@ void main() {
             return _$json;
           }''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'toJson escapes discriminator field name containing single quote',
-      () {
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'Result',
-          models: [
-            (
-              discriminatorValue: 'success',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Success',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
+    test('toJson escapes discriminator field name containing single quote', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Result',
+        models: [
+          (
+            discriminatorValue: 'success',
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Success',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
+              examples: const [],
             ),
-          ],
-          discriminator: "it's-type",
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        discriminator: "it's-type",
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Result');
-        final generatedCode = format(baseClass.accept(emitter).toString());
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), r'success'),
@@ -1099,12 +1061,11 @@ void main() {
             return _$json;
           }''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     group('with alias-to-primitive types', () {
       test(
@@ -1308,9 +1269,7 @@ void main() {
         );
 
         final generatedClasses = generator.generateClasses(model);
-        final baseClass = generatedClasses.firstWhere(
-          (c) => c.name == 'Empty',
-        );
+        final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
         generatedCode = format(baseClass.accept(emitter).toString());
       });
 

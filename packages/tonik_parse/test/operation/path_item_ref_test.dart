@@ -10,9 +10,7 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
         'paths': {
-          '/pets': {
-            r'$ref': '#/components/pathItems/PetOperations',
-          },
+          '/pets': {r'$ref': '#/components/pathItems/PetOperations'},
         },
         'components': {
           'pathItems': {
@@ -56,9 +54,7 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
         'paths': {
-          '/items': {
-            r'$ref': '#/components/pathItems/AliasPath',
-          },
+          '/items': {r'$ref': '#/components/pathItems/AliasPath'},
         },
         'components': {
           'pathItems': {
@@ -70,9 +66,7 @@ void main() {
                 },
               },
             },
-            'AliasPath': {
-              r'$ref': '#/components/pathItems/OriginalPath',
-            },
+            'AliasPath': {r'$ref': '#/components/pathItems/OriginalPath'},
           },
         },
       };
@@ -92,9 +86,7 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
         'paths': {
-          '/items/{id}': {
-            r'$ref': '#/components/pathItems/ItemById',
-          },
+          '/items/{id}': {r'$ref': '#/components/pathItems/ItemById'},
         },
         'components': {
           'pathItems': {
@@ -133,9 +125,7 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
         'paths': {
-          '/external': {
-            r'$ref': 'https://example.com/pathItems/External',
-          },
+          '/external': {r'$ref': 'https://example.com/pathItems/External'},
         },
       };
 
@@ -147,13 +137,9 @@ void main() {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
         'paths': {
-          '/missing': {
-            r'$ref': '#/components/pathItems/NonExistent',
-          },
+          '/missing': {r'$ref': '#/components/pathItems/NonExistent'},
         },
-        'components': {
-          'pathItems': <String, dynamic>{},
-        },
+        'components': {'pathItems': <String, dynamic>{}},
       };
 
       expect(() => Importer().import(spec), throwsA(isA<ArgumentError>()));

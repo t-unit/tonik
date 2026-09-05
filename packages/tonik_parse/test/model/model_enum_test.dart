@@ -74,10 +74,11 @@ void main() {
     final int32Property = model.properties.firstWhere((p) => p.name == 'int32');
 
     expect(int32Property.model, isA<EnumModel<int>>());
-    expect(
-      (int32Property.model as EnumModel<int>).values.map((e) => e.value),
-      [1, 2, 3],
-    );
+    expect((int32Property.model as EnumModel<int>).values.map((e) => e.value), [
+      1,
+      2,
+      3,
+    ]);
   });
 
   test('imports enum for string', () {
@@ -87,10 +88,11 @@ void main() {
     );
 
     expect(model, isA<EnumModel<String>>());
-    expect(
-      (model as EnumModel<String>).values.map((e) => e.value),
-      ['a', 'b', 'c'],
-    );
+    expect((model as EnumModel<String>).values.map((e) => e.value), [
+      'a',
+      'b',
+      'c',
+    ]);
   });
 
   test('parses nullability for enum', () {
@@ -254,9 +256,7 @@ void main() {
     test('import enum with description', () {
       final api = Importer().import(enumWithDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Status',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Status')
               as EnumModel<String>;
 
       expect(model.description, 'The status of the order');
@@ -265,9 +265,7 @@ void main() {
     test('import enum without description', () {
       final api = Importer().import(enumWithoutDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Priority',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Priority')
               as EnumModel<int>;
 
       expect(model.description, isNull);

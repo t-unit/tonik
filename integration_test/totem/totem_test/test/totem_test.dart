@@ -91,10 +91,7 @@ void main() {
 
       final result = await api.totemSpacesMobileApiMobileApiListSpaces();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -112,10 +109,7 @@ void main() {
 
       final result = await api.totemBlogMobileApiListPosts();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -132,10 +126,7 @@ void main() {
         offset: 20,
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
 
       requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();

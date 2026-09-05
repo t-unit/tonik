@@ -668,10 +668,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String and toLabel for Base64Model', () {
@@ -700,10 +697,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String list content for List<Base64Model>', () {
@@ -741,10 +735,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates list-of-map encoding for List<Map<String, int>>', () {
@@ -792,10 +783,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for List<Map<String, ClassModel>> '
@@ -839,10 +827,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 
@@ -857,9 +842,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toLabel(explode: explode, allowEmpty: allowEmpty);
@@ -887,9 +870,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toLabel(explode: explode, allowEmpty: allowEmpty);
@@ -915,9 +896,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toLabel(explode: explode, allowEmpty: allowEmpty);
@@ -946,9 +925,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toLabel(explode: explode, allowEmpty: allowEmpty);
@@ -969,9 +946,7 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value.toLabel(explode: explode, allowEmpty: allowEmpty);

@@ -699,10 +699,7 @@ void main() {
           isDeprecated: false,
           examples: const [],
         );
-        expect(
-          encode(enumModel),
-          'items.map((e) => e?.toJson()).toList()',
-        );
+        expect(encode(enumModel), 'items.map((e) => e?.toJson()).toList()');
       });
 
       test('base64 items null-safe encode each element', () {
@@ -720,10 +717,7 @@ void main() {
           context: context,
           examples: const [],
         );
-        expect(
-          encode(classModel),
-          'items.map((e) => e?.toJson()).toList()',
-        );
+        expect(encode(classModel), 'items.map((e) => e?.toJson()).toList()');
       });
     });
 
@@ -1447,10 +1441,7 @@ void main() {
           nameManager: nameManager,
         ),
       );
-      expect(
-        result,
-        'addresses.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-      );
+      expect(result, 'addresses.map((k, v, ) => MapEntry(k, v.toJson(), ))');
     });
 
     test('for nullable Map<String, ClassModel> uses null-safe map', () {
@@ -1482,10 +1473,7 @@ void main() {
           nameManager: nameManager,
         ),
       );
-      expect(
-        result,
-        'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-      );
+      expect(result, 'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))');
     });
 
     test('for nullable MapModel uses null-safe map', () {
@@ -1518,10 +1506,7 @@ void main() {
           nameManager: nameManager,
         ),
       );
-      expect(
-        result,
-        'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-      );
+      expect(result, 'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))');
     });
 
     test('for Map<String, DateTime> transforms values', () {
@@ -1586,50 +1571,41 @@ void main() {
           nameManager: nameManager,
         ),
       );
-      expect(
-        result,
-        'statuses.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-      );
+      expect(result, 'statuses.map((k, v, ) => MapEntry(k, v.toJson(), ))');
     });
 
-    test(
-      'for Map<String, ClassModel> with forceNonNullReceiver uses !',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Address',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
-        final mapModel = MapModel(
-          valueModel: classModel,
-          context: context,
-          examples: const [],
-        );
-        final property = Property(
-          name: 'addresses',
-          model: mapModel,
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-        final result = emit(
-          buildToJsonPropertyExpression(
-            'addresses',
-            property,
-            nameManager: nameManager,
-            forceNonNullReceiver: true,
-          ),
-        );
-        expect(
-          result,
-          'addresses!.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-        );
-      },
-    );
+    test('for Map<String, ClassModel> with forceNonNullReceiver uses !', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final mapModel = MapModel(
+        valueModel: classModel,
+        context: context,
+        examples: const [],
+      );
+      final property = Property(
+        name: 'addresses',
+        model: mapModel,
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression(
+          'addresses',
+          property,
+          nameManager: nameManager,
+          forceNonNullReceiver: true,
+        ),
+      );
+      expect(result, 'addresses!.map((k, v, ) => MapEntry(k, v.toJson(), ))');
+    });
   });
 
   group('buildToJsonPathParameterExpression', () {
@@ -1923,31 +1899,28 @@ void main() {
       );
     });
 
-    test(
-      'for NeverModel property with nullable model encodes null '
-      'before throwing',
-      () {
-        final property = Property(
-          name: 'forbidden',
-          model: NeverModel(context: context, isNullable: true),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-        expect(
-          scopedEmit(
-            buildToJsonPropertyExpression(
-              'forbidden',
-              property,
-              nameManager: nameManager,
-            ),
+    test('for NeverModel property with nullable model encodes null '
+        'before throwing', () {
+      final property = Property(
+        name: 'forbidden',
+        model: NeverModel(context: context, isNullable: true),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        scopedEmit(
+          buildToJsonPropertyExpression(
+            'forbidden',
+            property,
+            nameManager: nameManager,
           ),
-          '''forbidden == null ? null : throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
-        );
-      },
-    );
+        ),
+        '''forbidden == null ? null : throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
+      );
+    });
 
     test('for List of NeverModel property throws EncodingException', () {
       final listModel = ListModel(
@@ -2526,38 +2499,35 @@ void main() {
       );
     });
 
-    test(
-      'forceNonNullReceiver list with complex content '
-      'produces !.unlock.map(...).toList()',
-      () {
-        final property = Property(
-          name: 'times',
-          model: ListModel(
-            content: DateTimeModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          isWriteOnly: true,
+    test('forceNonNullReceiver list with complex content '
+        'produces !.unlock.map(...).toList()', () {
+      final property = Property(
+        name: 'times',
+        model: ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
           examples: const [],
-          defaultValue: null,
-        );
-        expect(
-          emit(
-            buildToJsonPropertyExpression(
-              'times',
-              property,
-              nameManager: nameManager,
-              forceNonNullReceiver: true,
-              useImmutableCollections: true,
-            ),
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        isWriteOnly: true,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'times',
+            property,
+            nameManager: nameManager,
+            forceNonNullReceiver: true,
+            useImmutableCollections: true,
           ),
-          'times!.unlock.map((e) => e.toTimeZonedIso8601String()).toList()',
-        );
-      },
-    );
+        ),
+        'times!.unlock.map((e) => e.toTimeZonedIso8601String()).toList()',
+      );
+    });
 
     test('nullable list with complex content produces ?.unlock.map', () {
       final property = Property(
@@ -2615,45 +2585,42 @@ void main() {
       );
     });
 
-    test(
-      'forceNonNullReceiver map with complex content '
-      'produces !.unlock.map(...)',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Addr',
-          properties: const [],
+    test('forceNonNullReceiver map with complex content '
+        'produces !.unlock.map(...)', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Addr',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final property = Property(
+        name: 'addrs',
+        model: MapModel(
+          valueModel: classModel,
           context: context,
           examples: const [],
-        );
-        final property = Property(
-          name: 'addrs',
-          model: MapModel(
-            valueModel: classModel,
-            context: context,
-            examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        isWriteOnly: true,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'addrs',
+            property,
+            nameManager: nameManager,
+            forceNonNullReceiver: true,
+            useImmutableCollections: true,
           ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          isWriteOnly: true,
-          examples: const [],
-          defaultValue: null,
-        );
-        expect(
-          emit(
-            buildToJsonPropertyExpression(
-              'addrs',
-              property,
-              nameManager: nameManager,
-              forceNonNullReceiver: true,
-              useImmutableCollections: true,
-            ),
-          ),
-          'addrs!.unlock.map((k, v, ) => MapEntry(k, v.toJson(), ))',
-        );
-      },
-    );
+        ),
+        'addrs!.unlock.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
+    });
 
     test('nullable map with complex content produces ?.unlock.map', () {
       final classModel = ClassModel(

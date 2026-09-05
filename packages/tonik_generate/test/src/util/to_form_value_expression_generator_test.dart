@@ -485,11 +485,7 @@ void main() {
       );
       final tags = Property(
         name: 'tags',
-        model: ListModel(
-          content: item,
-          context: context,
-          examples: const [],
-        ),
+        model: ListModel(content: item, context: context, examples: const []),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,

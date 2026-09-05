@@ -68,10 +68,7 @@ void main() {
               'properties': {
                 'lookup': {
                   'type': 'object',
-                  'additionalProperties': {
-                    'type': 'string',
-                    'nullable': true,
-                  },
+                  'additionalProperties': {'type': 'string', 'nullable': true},
                 },
               },
             },

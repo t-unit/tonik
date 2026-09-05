@@ -584,10 +584,7 @@ class RequestBodyImporter {
       match.end,
       '${match.group(1)}${quote}utf-8$quote',
     );
-    return (
-      encoding: core.TextEncoding.utf8,
-      wireContentType: wireContentType,
-    );
+    return (encoding: core.TextEncoding.utf8, wireContentType: wireContentType);
   }
 
   static final _charsetPattern = RegExp(
@@ -595,9 +592,7 @@ class RequestBodyImporter {
     caseSensitive: false,
   );
 
-  static core.EncodingStyle? _mapSerializationStyle(
-    SerializationStyle? style,
-  ) {
+  static core.EncodingStyle? _mapSerializationStyle(SerializationStyle? style) {
     if (style == null) return null;
     return switch (style) {
       SerializationStyle.form => core.EncodingStyle.form,

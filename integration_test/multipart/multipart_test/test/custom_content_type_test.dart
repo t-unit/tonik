@@ -39,24 +39,18 @@ void main() {
       expect(wire.single('field1').contentType, startsWith('text/plain'));
     });
 
-    test(
-      'the client adds the multipart/form-data boundary',
-      () async {
-        const form = CustomForm(field1: 'hello', field2: 42);
+    test('the client adds the multipart/form-data boundary', () async {
+      const form = CustomForm(field1: 'hello', field2: 42);
 
-        final response = await api.postCustomMultipart(body: form);
+      final response = await api.postCustomMultipart(body: form);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+      expect(response, isTonikSuccess);
 
-        final success = requireSuccess(response);
+      final success = requireSuccess(response);
 
-        final receivedContentType =
-            success.response.headers['x-received-content-type']?.first ?? '';
-        expect(receivedContentType, contains('multipart/form-data'));
-      },
-    );
+      final receivedContentType =
+          success.response.headers['x-received-content-type']?.first ?? '';
+      expect(receivedContentType, contains('multipart/form-data'));
+    });
   });
 }

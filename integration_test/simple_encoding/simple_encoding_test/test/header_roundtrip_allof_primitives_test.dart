@@ -37,19 +37,13 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
       expect(
         recordedRequest.headers['x-merged-object'],
-        anyOf(
-          'count,42,id,abc',
-          'id,abc,count,42',
-        ),
+        anyOf('count,42,id,abc', 'id,abc,count,42'),
       );
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 42);
@@ -64,10 +58,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'onlyId');
@@ -81,10 +72,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 99);
@@ -98,10 +86,7 @@ void main() {
         ),
       );
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, -5);
@@ -114,16 +99,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAllOfPrimitives.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-merged-object'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-merged-object'], isNull);
           expect(success.value.xMergedObject, isNull);
         },
       );

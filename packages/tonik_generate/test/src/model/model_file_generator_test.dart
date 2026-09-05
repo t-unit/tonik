@@ -24,10 +24,7 @@ ModelFileGenerator _buildGenerator() {
   );
 
   return ModelFileGenerator(
-    classGenerator: ClassGenerator(
-      nameManager: nameManager,
-      package: _package,
-    ),
+    classGenerator: ClassGenerator(nameManager: nameManager, package: _package),
     enumGenerator: EnumGenerator(nameManager: nameManager),
     anyOfGenerator: AnyOfGenerator(
       nameManager: nameManager,
@@ -94,10 +91,7 @@ void main() {
       final model = EnumModel<int>(
         isDeprecated: false,
         name: 'Priority',
-        values: {
-          const EnumEntry(value: 1),
-          const EnumEntry(value: 2),
-        },
+        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
         isNullable: false,
         context: ctx,
         examples: const [],

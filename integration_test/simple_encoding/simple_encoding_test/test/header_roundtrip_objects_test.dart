@@ -32,10 +32,7 @@ void main() {
           simpleObject: const SimpleObject(name: 'test', value: 42),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -51,10 +48,7 @@ void main() {
           simpleObject: const SimpleObject(name: 'onlyName'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xSimpleObject?.name, 'onlyName');
@@ -67,10 +61,7 @@ void main() {
           simpleObject: const SimpleObject(value: 123),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xSimpleObject?.name, isNull);
@@ -83,10 +74,7 @@ void main() {
           simpleObject: const SimpleObject(name: 'negative', value: -99),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(
@@ -110,10 +98,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -148,10 +133,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         final profile = success.value.xUserProfile;
@@ -186,10 +168,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         final profile = success.value.xUserProfile;
@@ -213,10 +192,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(
@@ -242,10 +218,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xSimpleObject, isNull);
@@ -258,10 +231,7 @@ void main() {
           simpleObject: const SimpleObject(name: 'solo', value: 1),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xSimpleObject, isNotNull);
@@ -272,10 +242,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripObjects();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xSimpleObject, isNull);

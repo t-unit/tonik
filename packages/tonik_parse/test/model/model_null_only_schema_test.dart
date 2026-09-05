@@ -87,9 +87,10 @@ void main() {
   group('null-only schema in properties', () {
     test('ref to a null-only component resolves to the named alias', () {
       final api = Importer().import(fileContent);
-      final property = holder(api, 'Holder').properties.firstWhere(
-        (p) => p.name == 'viaRef',
-      );
+      final property = holder(
+        api,
+        'Holder',
+      ).properties.firstWhere((p) => p.name == 'viaRef');
 
       final alias = property.model as AliasModel;
       expect(alias.name, 'Nothing');
@@ -98,9 +99,10 @@ void main() {
 
     test('inline null-only property imports as a nullable NeverModel', () {
       final api = Importer().import(fileContent);
-      final property = holder(api, 'Holder').properties.firstWhere(
-        (p) => p.name == 'inline',
-      );
+      final property = holder(
+        api,
+        'Holder',
+      ).properties.firstWhere((p) => p.name == 'inline');
 
       final never = property.model as NeverModel;
       expect(never.isNullable, isTrue);
@@ -111,9 +113,10 @@ void main() {
   group('null-only schema as list items', () {
     test('imports as nullable NeverModel content', () {
       final api = Importer().import(fileContent);
-      final property = holder(api, 'Holder').properties.firstWhere(
-        (p) => p.name == 'nullItems',
-      );
+      final property = holder(
+        api,
+        'Holder',
+      ).properties.firstWhere((p) => p.name == 'nullItems');
 
       final list = property.model as ListModel;
       expect(list.isContentNullable, isTrue);

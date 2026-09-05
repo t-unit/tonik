@@ -144,9 +144,7 @@ class ResponseImporter {
                     'No schema found for ${contentType.name} content type '
                     '$rawContentType. Treating as binary data.',
                   );
-                  return core.BinaryModel(
-                    context: context.push('body'),
-                  );
+                  return core.BinaryModel(context: context.push('body'));
                 }(),
               };
 

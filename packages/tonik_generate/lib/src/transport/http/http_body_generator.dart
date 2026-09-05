@@ -87,9 +87,7 @@ class HttpBodyGenerator {
                   ..modifier = MethodModifier.async
                   ..lambda = false
                   ..body = Block.of(
-                    buildHttpMultipartBodyStatements(
-                      multipartPlan!,
-                    ),
+                    buildHttpMultipartBodyStatements(multipartPlan!),
                   ),
               ).closure.call([]).awaited.code
             else
@@ -204,10 +202,7 @@ class HttpBodyGenerator {
         );
       case ContentType.text:
         return BuiltExpression.simple(
-          requestTextBytesExpression(
-            content.textEncoding,
-            value,
-          ),
+          requestTextBytesExpression(content.textEncoding, value),
         );
       case ContentType.bytes:
         final resolved = content.model.resolved;

@@ -307,10 +307,7 @@ void main() {
         createProperty('one'),
       ]);
 
-      expect(result.map((r) => r.normalizedName).toList(), [
-        'one',
-        'one2',
-      ]);
+      expect(result.map((r) => r.normalizedName).toList(), ['one', 'one2']);
     });
   });
 
@@ -351,24 +348,17 @@ void main() {
         createProperty('-1'),
       ]);
 
-      expect(result.map((r) => r.normalizedName).toList(), [
-        'plus1',
-        'minus1',
-      ]);
+      expect(result.map((r) => r.normalizedName).toList(), ['plus1', 'minus1']);
     });
 
     test('treats hyphen between words as a separator', () {
-      final result = normalizeProperties([
-        createProperty('my-name'),
-      ]);
+      final result = normalizeProperties([createProperty('my-name')]);
 
       expect(result.first.normalizedName, 'myName');
     });
 
     test('treats hyphen between word and digits as a separator', () {
-      final result = normalizeProperties([
-        createProperty('response-200'),
-      ]);
+      final result = normalizeProperties([createProperty('response-200')]);
 
       expect(result.first.normalizedName, 'response200');
     });
