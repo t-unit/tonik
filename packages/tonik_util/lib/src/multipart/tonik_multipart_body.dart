@@ -40,24 +40,25 @@ final class const TonikMultipartPart._({
 
 /// A transport-neutral, fully encoded multipart request body.
 @immutable
-final class TonikMultipartBody(
-  List<TonikMultipartPart> parts, {
-  String? boundary,
+final class TonikMultipartBody._(
+  /// The ordered multipart parts.
+  final List<TonikMultipartPart> parts, {
+
+  /// The boundary separating the encoded parts.
+  required final String boundary,
 }) {
   /// Creates a multipart body while preserving part order and duplicate names.
+  new(List<TonikMultipartPart> parts, {String? boundary})
+    : this._(List.unmodifiable(parts), boundary: boundary ?? _newBoundary());
+
+  /// Validates the resolved multipart boundary.
   this {
-    _validateBoundary(this.boundary);
+    _validateBoundary(boundary);
   }
 
   static final Random _random = Random();
   static const _boundaryCharacters =
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-  /// The ordered multipart parts.
-  final List<TonikMultipartPart> parts = List.unmodifiable(parts);
-
-  /// The boundary separating the encoded parts.
-  final String boundary = boundary ?? _newBoundary();
 
   /// The request Content-Type value, including [boundary].
   String get contentType => 'multipart/form-data; boundary=$boundary';

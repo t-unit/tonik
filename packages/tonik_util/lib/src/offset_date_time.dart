@@ -10,24 +10,36 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 /// It implements the DateTime interface by delegating to an internal UTC
 /// DateTime object and applying offset adjustments for local time operations.
 @immutable
-class OffsetDateTime implements DateTime {
+class const OffsetDateTime._fromUtc(
+  /// The canonical UTC representation of this datetime.
+  ///
+  /// This represents the same moment in time as this [OffsetDateTime],
+  /// but in UTC time zone.
+  final DateTime _utcDateTime, {
+
+  /// The timezone offset from UTC.
+  ///
+  /// Positive values are east of UTC, negative values are west of UTC.
+  /// For example, an offset of +5 hours would be Duration(hours: 5).
+  required final Duration offset,
+
+  @override required final String timeZoneName,
+}) implements DateTime {
   /// Creates an [OffsetDateTime] from an existing [DateTime] with the
   /// specified offset.
   ///
   /// The [dateTime] is interpreted as being in the timezone specified
   /// by [offset]. The resulting [OffsetDateTime] will represent the same
   /// moment in time, but with the specified offset.
-  new from(DateTime dateTime, {required this.offset, String? timeZoneName})
-    : timeZoneName = timeZoneName ?? _generateTimeZoneName(offset),
-      _utcDateTime = dateTime.isUtc
-          ? dateTime
-          : _toUtcDateTime(dateTime, offset);
-
-  const new _fromUtc(
-    this._utcDateTime, {
-    required this.offset,
-    required this.timeZoneName,
-  });
+  factory from(
+    DateTime dateTime, {
+    required Duration offset,
+    String? timeZoneName,
+  }) => OffsetDateTime._fromUtc(
+    dateTime.isUtc ? dateTime : _toUtcDateTime(dateTime, offset),
+    offset: offset,
+    timeZoneName: timeZoneName ?? _generateTimeZoneName(offset),
+  );
 
   /// Parses a datetime string with timezone offset.
   factory _parseWithTimezoneOffset(
@@ -145,21 +157,6 @@ class OffsetDateTime implements DateTime {
 
     return Duration(hours: sign * hours, minutes: sign * minutes);
   }
-
-  /// The canonical UTC representation of this datetime.
-  ///
-  /// This represents the same moment in time as this [OffsetDateTime],
-  /// but in UTC time zone.
-  final DateTime _utcDateTime;
-
-  /// The timezone offset from UTC.
-  ///
-  /// Positive values are east of UTC, negative values are west of UTC.
-  /// For example, an offset of +5 hours would be Duration(hours: 5).
-  final Duration offset;
-
-  @override
-  final String timeZoneName;
 
   /// Converts a local DateTime with an offset to UTC DateTime.
   static DateTime _toUtcDateTime(DateTime localDateTime, Duration offset) {
