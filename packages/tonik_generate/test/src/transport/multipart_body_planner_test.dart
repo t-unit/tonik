@@ -961,31 +961,65 @@ Object? test() {
       );
     });
 
-    test('uses effective model and root nullability in generated access', () {
-      final nullableValue = AliasModel(
-        name: 'NullableValue',
-        context: context,
-        model: StringModel(context: context),
-        isNullable: true,
-        defaultValue: null,
-        examples: const [],
-      );
+    test('null-checks the complete access through a nullable root', () {
       final nullableClass = _classWithProperties(context, 'Upload', [
-        _property(context, 'value', nullableValue),
+        _property(context, 'value', StringModel(context: context)),
       ], isNullable: true);
       final property = normalizeMultipartProperties(_content(nullableClass))
           .properties
           .single;
       expect(property.isNullable, isTrue);
-      expect(emit(_content(nullableClass)), contains('body?.value'));
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  if (body?.value == null) {
+    throw EncodingException(r'Required multipart property "value" is null.');
+  }
+  if (body?.value != null) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode((body?.value)!),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(_content(nullableClass))),
+        collapseWhitespace(format(expected)),
+      );
+    });
 
-      final member = _classWithProperties(context, 'Member', [
+    test('null-checks the complete access through a nullable allOf member', () {
+      final nullableMember = _classWithProperties(context, 'Member', [
         _property(context, 'value', StringModel(context: context)),
-      ]);
-      final nullableAllOf = _allOf(context, 'NullableAllOf', [
-        member,
       ], isNullable: true);
-      expect(emit(_content(nullableAllOf)), contains('body?.member?.value'));
+      final allOf = _allOf(context, 'Combined', [nullableMember]);
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  if (body.member?.value == null) {
+    throw EncodingException(r'Required multipart property "value" is null.');
+  }
+  if (body.member?.value != null) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode((body.member?.value)!),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(_content(allOf))),
+        collapseWhitespace(format(expected)),
+      );
     });
 
     test(

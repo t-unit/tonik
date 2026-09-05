@@ -186,10 +186,18 @@ class const MultipartBodyPlanner({
         nullable,
         emissions,
       );
+      final hasNullAwareAccess =
+          accesses.length == 1 &&
+          property.accessPaths.single.any(
+            (segment) => segment.receiverNullable,
+          );
       final input = (
         name: property.rawName,
         normalizedName: property.normalizedName,
-        value: nullable ? accessor.nullChecked : accessor,
+        value: nullable
+            ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
+                  .nullChecked
+            : accessor,
         encoding: resolvedEncoding,
         headers: headers,
         isMergedObject: mergedObjects,

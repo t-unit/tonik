@@ -22,6 +22,11 @@ void main() {
       '_mergeMultipartMap',
     ]);
     expect(methods.every((method) => method.body != null), isTrue);
+    final mergeMapReturn = methods
+        .singleWhere((method) => method.name == '_mergeMultipartMap')
+        .returns;
+    expect(mergeMapReturn?.symbol, 'void');
+    expect(mergeMapReturn?.url, isNull);
 
     final generatedClass = Class(
       (builder) => builder

@@ -256,7 +256,7 @@ Method _mergeMapMethod() {
   return Method(
     (builder) => builder
       ..name = '_mergeMultipartMap'
-      ..returns = refer('void', 'dart:core')
+      ..returns = refer('void')
       ..requiredParameters.addAll([
         _parameter('target', _mapOf(_string, _dynamic)),
         _parameter('incoming', dynamicMap),
