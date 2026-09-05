@@ -14,9 +14,6 @@ class const FormFieldEncoding({
   /// object is exploded; in collapse mode arrays are always comma-joined.
   final bool? explode,
 }) {
-  /// Creates a descriptor; [allowReserved] defaults to false.
-  this;
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

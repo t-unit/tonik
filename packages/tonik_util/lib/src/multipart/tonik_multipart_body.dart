@@ -22,7 +22,6 @@ final class const TonikMultipartPart._({
   /// The optional uploaded filename.
   final String? filename,
 }) {
-  /// Creates a multipart part from its already-encoded body bytes.
   factory({
     required String name,
     required List<int> bytes,
@@ -47,11 +46,9 @@ final class TonikMultipartBody._(
   /// The boundary separating the encoded parts.
   required final String boundary,
 }) {
-  /// Creates a multipart body while preserving part order and duplicate names.
   new(List<TonikMultipartPart> parts, {String? boundary})
     : this._(List.unmodifiable(parts), boundary: boundary ?? _newBoundary());
 
-  /// Validates the resolved multipart boundary.
   this {
     _validateBoundary(boundary);
   }

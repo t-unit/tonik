@@ -2,10 +2,7 @@
 ///
 /// This class is used to handle the result of an API call, whether it is a
 /// success or an error.
-sealed class const TonikResult<T, Response extends Object>() {
-  /// Creates an API result.
-  this;
-}
+sealed class const TonikResult<T, Response extends Object>();
 
 /// A class representing a successful API call.
 class const TonikSuccess<T, Response extends Object>(
@@ -14,10 +11,7 @@ class const TonikSuccess<T, Response extends Object>(
 
   /// The backend-native response from the API call.
   final Response response,
-) extends TonikResult<T, Response> {
-  /// Creates a new [TonikSuccess] instance.
-  this;
-}
+) extends TonikResult<T, Response>;
 
 /// A class representing an error that occurred during an API call.
 class const TonikError<T, Response extends Object>(
@@ -33,10 +27,7 @@ class const TonikError<T, Response extends Object>(
   /// The backend-native response from the API call. Might be null if the error
   /// occurred before the response was received.
   required final Response? response,
-}) extends TonikResult<T, Response> {
-  /// Creates a new [TonikError] instance.
-  this;
-}
+}) extends TonikResult<T, Response>;
 
 /// The type of error that occurred during an API call.
 enum TonikErrorType() {

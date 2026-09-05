@@ -19,14 +19,13 @@ class const ServerConfig<Client extends Object>._({
   /// close it when the server is closed.
   required final Client Function()? clientFactory,
 }) {
-  /// Creates configuration that lets the generated server create its default
-  /// client.
+  /// Uses the generated server's default client.
   const new() : this._(client: null, clientFactory: null);
 
-  /// Creates configuration that borrows [client].
+  /// Borrows [client]; generated servers never close it.
   const new client(Client client) : this._(client: client, clientFactory: null);
 
-  /// Creates configuration that lazily invokes [clientFactory].
+  /// Lazily creates an owned client with [clientFactory].
   const new clientFactory(Client Function() clientFactory)
     : this._(client: null, clientFactory: clientFactory);
 }

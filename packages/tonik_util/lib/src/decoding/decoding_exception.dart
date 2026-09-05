@@ -3,9 +3,6 @@ abstract class const DecodingException(
   /// The error message.
   final String message,
 ) implements Exception {
-  /// Creates a new [DecodingException] with the specified [message].
-  this;
-
   @override
   String toString() => 'DecodingException: $message';
 }
@@ -18,8 +15,6 @@ class const InvalidFormatException({
   /// The expected format description.
   required final String format,
 }) extends DecodingException {
-  /// Creates a new [InvalidFormatException] with the specified [value] and
-  /// expected [format].
   this : super('Invalid format for value "$value". Expected format: $format');
 
   @override
@@ -37,8 +32,6 @@ class const InvalidTypeException({
   /// The context of the conversion failure, if any.
   final String? context,
 }) extends DecodingException {
-  /// Creates a new [InvalidTypeException] with the specified [value],
-  /// [targetType] and optional [context].
   this
     : super(
         'Cannot convert "$value" to type '
@@ -50,26 +43,14 @@ class const InvalidTypeException({
 }
 
 /// Exception thrown when a value cannot be decoded using fromSimple.
-class const SimpleDecodingException(super.message) extends DecodingException {
-  /// Creates a new [SimpleDecodingException] with the specified [message].
-  this;
-}
+class const SimpleDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a value cannot be decoded using fromJson.
-class const JsonDecodingException(super.message) extends DecodingException {
-  /// Creates a new [JsonDecodingException] with the specified [message].
-  this;
-}
+class const JsonDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a value cannot be decoded using fromFormat.
-class const FormDecodingException(super.message) extends DecodingException {
-  /// Creates a new [FormDecodingException] with the specified [message].
-  this;
-}
+class const FormDecodingException(super.message) extends DecodingException;
 
 /// Exception thrown when a response body cannot be decoded due to
 /// content-type mismatch or decoding failure.
-class const ResponseDecodingException(super.message) extends DecodingException {
-  /// Creates a new [ResponseDecodingException] with the specified [message].
-  this;
-}
+class const ResponseDecodingException(super.message) extends DecodingException;

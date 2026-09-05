@@ -5,7 +5,6 @@ final class TonikCancellation._(
   final Completer<void> _completer,
   var Object? _reason,
 ) {
-  /// Creates a cancellation signal.
   factory() => TonikCancellation._(Completer<void>(), null);
 
   /// Whether cancellation has been requested.

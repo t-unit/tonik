@@ -20,9 +20,6 @@ sealed class const TonikFile({
   /// When null, the generator uses the OAS property name as a fallback.
   final String? fileName,
 }) {
-  /// Creates a transport-agnostic file reference.
-  this;
-
   /// Returns the raw binary content.
   ///
   /// For [TonikFileBytes], returns the in-memory bytes directly.
@@ -66,10 +63,6 @@ class const TonikFileBytes(
   final List<int> bytes, {
   super.fileName,
 }) extends TonikFile {
-  /// Creates a [TonikFileBytes] with the given [bytes] and optional
-  /// [fileName].
-  this;
-
   @override
   List<int> toBytes() => bytes;
 
@@ -101,10 +94,6 @@ class const TonikFilePath(
   final String path, {
   super.fileName,
 }) extends TonikFile {
-  /// Creates a [TonikFilePath] with the given [path] and optional
-  /// [fileName].
-  this;
-
   @override
   List<int> toBytes() => reader.readFileAsBytes(path);
 

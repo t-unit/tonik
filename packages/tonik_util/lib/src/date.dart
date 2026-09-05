@@ -22,20 +22,18 @@ class Date(
   /// The day component of the date (1-31).
   final int day,
 ) {
-  /// Creates a new [Date] instance.
-  ///
   /// Throws [FormatException] if any of the date components are invalid.
   this {
     _validate();
   }
 
-  /// Creates a [Date] from a [DateTime] instance.
+  /// Converts [dateTime] to a date without time components.
   ///
   /// The time components are ignored.
   factory fromDateTime(DateTime dateTime) =>
       Date(dateTime.year, dateTime.month, dateTime.day);
 
-  /// Creates a [Date] from an ISO 8601 formatted string (YYYY-MM-DD).
+  /// Parses an ISO 8601 formatted string (YYYY-MM-DD).
   ///
   /// Throws [FormatException] if the string is not in the correct format
   /// or if any of the date components are invalid.
@@ -56,18 +54,18 @@ class Date(
     }
   }
 
-  /// Creates a [Date] from a JSON string.
+  /// Decodes a date from a JSON string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
   factory fromJson(Object? json) => Date.fromString(json.decodeJsonString());
 
-  /// Creates a [Date] from a simple string format.
+  /// Decodes a date from a simple string value.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
   factory fromSimple(String? simple) =>
       Date.fromString(simple.decodeSimpleString());
 
-  /// Creates a [Date] from a form-encoded string.
+  /// Decodes a date from a form-encoded string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD) and may be URL-encoded.
   factory fromForm(String? form) => Date.fromString(form.decodeFormString());
@@ -153,8 +151,6 @@ class Date(
     textEncoding: textEncoding,
   );
 
-  /// Creates a copy of this [Date] with the given fields replaced
-  /// with new values.
   Date copyWith({int? year, int? month, int? day}) {
     return Date(year ?? this.year, month ?? this.month, day ?? this.day)
       .._validate();

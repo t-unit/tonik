@@ -25,9 +25,6 @@ class const OffsetDateTime._fromUtc(
 
   @override required final String timeZoneName,
 }) implements DateTime {
-  /// Creates an [OffsetDateTime] from an existing [DateTime] with the
-  /// specified offset.
-  ///
   /// The [dateTime] is interpreted as being in the timezone specified
   /// by [offset]. The resulting [OffsetDateTime] will represent the same
   /// moment in time, but with the specified offset.

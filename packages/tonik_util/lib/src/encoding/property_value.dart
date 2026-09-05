@@ -7,9 +7,6 @@ import 'package:meta/meta.dart';
 /// `array(['x'])`, and an array's element boundaries must be preserved so an
 /// encoder can choose between repeated keys and a comma-joined value.
 sealed class const PropertyValue() {
-  /// Creates a style-neutral property value.
-  this;
-
   /// A single raw (unescaped) value.
   const factory scalar(String value) = ScalarPropertyValue;
 
@@ -22,17 +19,11 @@ sealed class const PropertyValue() {
 final class const ScalarPropertyValue(
   /// The raw (unescaped) value.
   final String value,
-) extends PropertyValue {
-  /// Creates a scalar property value from a raw (unescaped) [value].
-  this;
-}
+) extends PropertyValue;
 
 /// A [PropertyValue] holding raw array elements.
 @immutable
 final class const ArrayPropertyValue(
   /// The raw (unescaped) elements.
   final List<String> values,
-) extends PropertyValue {
-  /// Creates an array property value from raw (unescaped) [values].
-  this;
-}
+) extends PropertyValue;
