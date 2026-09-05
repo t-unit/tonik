@@ -9,13 +9,14 @@ import 'package:tonik_util/tonik_util.dart';
 import 'multipart_wire.dart';
 
 void main() {
-  test('merges allOf members into ordered Cloudflare-shaped parts', () async {
+  test('preserves file order and merges duplicate metadata properties across '
+      'allOf members', () async {
     final server = await RawRequestServer.start();
     final first = Uint8List.fromList([1, 2, 3]);
     final second = Uint8List.fromList([4, 5, 6]);
 
     await _rawApi(server).postAllOfUpload(
-      body: CloudflareUpload(
+      body: FilesAndMergedMetadataUpload(
         uploadFiles: UploadFiles(
           files: [
             TonikFileBytes(first, fileName: 'first.bin'),

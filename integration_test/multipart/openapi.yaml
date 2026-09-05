@@ -28,7 +28,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CloudflareUpload'
+              $ref: '#/components/schemas/FilesAndMergedMetadataUpload'
             encoding:
               metadata:
                 contentType: application/json
@@ -984,7 +984,7 @@ components:
               items:
                 type: string
 
-    CloudflareUpload:
+    FilesAndMergedMetadataUpload:
       allOf:
         - $ref: '#/components/schemas/UploadFiles'
         - $ref: '#/components/schemas/UploadMetadataBase'

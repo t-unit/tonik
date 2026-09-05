@@ -898,7 +898,7 @@ Object? test() {
       );
     });
 
-    test('rejects Cloudflare-style dynamic parts before emitting parts', () {
+    test('rejects dynamic additional-property parts before emitting parts', () {
       final model = _classWithProperties(
         context,
         'Snippet',
