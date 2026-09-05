@@ -34,11 +34,21 @@ class const MultipartBodyPlanner({
             .toList();
     final emissions = <MultipartEmission>[];
     final mergeHelpers = <MultipartMergeHelper>{};
-    final properties = normalizeMultipartProperties(
+    final normalization = normalizeMultipartProperties(
       content,
       nameManager: nameManager,
       package: package,
     );
+    if (normalization.runtimeEncodingError case final runtimeEncodingError?) {
+      return MultipartBodyPlan(
+        value: refer(bodyAccessor),
+        rawContentType: content.rawContentType,
+        isRequired: isRequired,
+        emissions: const [],
+        runtimeEncodingError: runtimeEncodingError,
+      );
+    }
+    final properties = normalization.properties;
     for (final property in properties) {
       final runtimeEncodingError = _incompatibleDefinitionsError(property);
       if (runtimeEncodingError != null) {

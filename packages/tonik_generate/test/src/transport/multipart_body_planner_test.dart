@@ -875,7 +875,8 @@ Object? test() {
         examples: const [],
       );
 
-      final properties = normalizeMultipartProperties(_content(root));
+      final properties = normalizeMultipartProperties(_content(root))
+          .properties;
       expect(properties.map((property) => property.rawName), [
         'files',
         'metadata',
@@ -895,7 +896,7 @@ Object? test() {
       );
     });
 
-    test('rejects unsupported map roots clearly', () {
+    test('defers unsupported map roots to runtime', () {
       final content = _content(
         MapModel(
           valueModel: BinaryModel(context: context),
@@ -903,19 +904,15 @@ Object? test() {
           examples: const [],
         ),
       );
-      expect(
-        () => emit(content),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('Unsupported multipart body root/member MapModel'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        content,
+        'Unsupported multipart body root/member MapModel at '
+        '${content.model.context}. Multipart bodies require a class, an alias '
+        'to a supported model, or an allOf containing supported members.',
       );
     });
 
-    test('rejects dynamic additional-property parts before emitting parts', () {
+    test('defers dynamic additional-property parts to runtime', () {
       final model = _classWithProperties(
         context,
         'Snippet',
@@ -924,15 +921,11 @@ Object? test() {
           valueModel: BinaryModel(context: context),
         ),
       );
-      expect(
-        () => emit(_content(model)),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('Dynamic multipart part names are not supported'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(model),
+        'Multipart body model ClassModel at ${model.context} declares '
+        'additional properties. Dynamic multipart part names are not '
+        'supported.',
       );
     });
 
@@ -943,7 +936,7 @@ Object? test() {
       expect(emit(_content(model)), contains('body.label'));
     });
 
-    test('rejects cycles and unmatched raw encoding keys', () {
+    test('defers cycles and unmatched raw encoding keys to runtime', () {
       final alias = AliasModel(
         name: 'Cycle',
         context: context,
@@ -952,31 +945,19 @@ Object? test() {
         examples: const [],
       );
       alias.model = alias;
-      expect(
-        () => normalizeMultipartProperties(_content(alias)),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('cycle'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(alias),
+        'Multipart body model contains a cycle while resolving '
+        '${alias.context}.',
       );
 
       final model = _classWithProperties(context, 'Upload', [
         _property(context, 'raw-name', StringModel(context: context)),
       ]);
-      expect(
-        () => normalizeMultipartProperties(
-          _content(model, encoding: {'normalizedName': _encoding()}),
-        ),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('normalizedName'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(model, encoding: {'normalizedName': _encoding()}),
+        'Multipart encoding references properties that are not writable or do '
+        'not exist in the body model: normalizedName.',
       );
     });
 
@@ -993,6 +974,7 @@ Object? test() {
         _property(context, 'value', nullableValue),
       ], isNullable: true);
       final property = normalizeMultipartProperties(_content(nullableClass))
+          .properties
           .single;
       expect(property.isNullable, isTrue);
       expect(emit(_content(nullableClass)), contains('body?.value'));
@@ -1018,7 +1000,9 @@ Object? test() {
           ),
         ]);
 
-        final property = normalizeMultipartProperties(_content(model)).single;
+        final property = normalizeMultipartProperties(_content(model))
+            .properties
+            .single;
         expect(property.isRequired, isTrue);
         expect(property.isNullable, isTrue);
         final code = emit(_content(model));
@@ -1028,19 +1012,14 @@ Object? test() {
       },
     );
 
-    test('rejects read-only roots and excludes read-only members', () {
+    test('defers read-only roots and excludes read-only members', () {
       final readOnly = _classWithProperties(context, 'ReadOnly', [
         _property(context, 'server', StringModel(context: context)),
       ], isReadOnly: true);
-      expect(
-        () => emit(_content(readOnly)),
-        throwsA(
-          isA<ArgumentError>().having(
-            (error) => error.message,
-            'message',
-            contains('read-only'),
-          ),
-        ),
+      expectRuntimeEncodingError(
+        _content(readOnly),
+        'Multipart body root ClassModel at ${readOnly.context} is read-only '
+        'and cannot be used as a request body.',
       );
 
       final writable = _classWithProperties(context, 'Writable', [
@@ -1048,7 +1027,7 @@ Object? test() {
       ]);
       final properties = normalizeMultipartProperties(
         _content(_allOf(context, 'Combined', [readOnly, writable])),
-      );
+      ).properties;
       expect(properties.map((property) => property.rawName), ['client']);
     });
 

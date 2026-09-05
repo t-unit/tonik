@@ -44,16 +44,17 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   NameManager? nameManager,
   String? package,
 }) {
-  final normalizedProps = normalizeMultipartProperties(
+  final normalization = normalizeMultipartProperties(
     content,
     nameManager: nameManager,
     package: package,
   );
+  if (normalization.runtimeEncodingError != null) return const [];
 
   final result = <MultipartHeaderParamInfo>[];
   final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
 
-  for (final property in normalizedProps) {
+  for (final property in normalization.properties) {
     final headers = content.encoding[property.rawName]?.headers;
     if (headers == null || headers.isEmpty) continue;
 
@@ -144,14 +145,19 @@ class const MultipartPropertyPlan({
 
 typedef MultipartAccessSegment = ({String name, bool receiverNullable});
 
-List<MultipartPropertyPlan> normalizeMultipartProperties(
+final class const MultipartPropertyNormalizationResult({
+  required final List<MultipartPropertyPlan> properties,
+  final String? runtimeEncodingError,
+});
+
+MultipartPropertyNormalizationResult normalizeMultipartProperties(
   MultipartRequestContent content, {
   NameManager? nameManager,
   String? package,
 }) {
   final occurrences =
       <({Property property, List<MultipartAccessSegment> path})>[];
-  _collectMultipartProperties(
+  final collectionError = _collectMultipartProperties(
     content.model,
     const [],
     multipartModelIsNullable(content.model),
@@ -160,6 +166,12 @@ List<MultipartPropertyPlan> normalizeMultipartProperties(
     nameManager,
     package,
   );
+  if (collectionError != null) {
+    return MultipartPropertyNormalizationResult(
+      properties: const [],
+      runtimeEncodingError: collectionError,
+    );
+  }
 
   final grouped =
       <
@@ -177,9 +189,12 @@ List<MultipartPropertyPlan> normalizeMultipartProperties(
       .where((key) => !grouped.containsKey(key))
       .toList();
   if (unmatchedEncodingKeys.isNotEmpty) {
-    throw ArgumentError(
-      'Multipart encoding references properties that are not writable or do '
-      'not exist in the body model: ${unmatchedEncodingKeys.join(', ')}.',
+    return MultipartPropertyNormalizationResult(
+      properties: const [],
+      runtimeEncodingError:
+          'Multipart encoding references properties that are not writable or '
+          'do not exist in the body model: '
+          '${unmatchedEncodingKeys.join(', ')}.',
     );
   }
   final uniqueNames = ensureUniqueness([
@@ -192,34 +207,36 @@ List<MultipartPropertyPlan> normalizeMultipartProperties(
         originalValue: entry,
       ),
   ], defaultPrefix: defaultFieldPrefix);
-  return [
-    for (final item in uniqueNames)
-      MultipartPropertyPlan(
-        rawName: item.originalValue.key,
-        normalizedName: item.normalizedName,
-        properties: [
-          for (final occurrence in item.originalValue.value)
-            occurrence.property,
-        ],
-        accessPaths: [
-          for (final occurrence in item.originalValue.value) occurrence.path,
-        ],
-        isRequired: item.originalValue.value.any(
-          (occurrence) => occurrence.property.isRequired,
+  return MultipartPropertyNormalizationResult(
+    properties: [
+      for (final item in uniqueNames)
+        MultipartPropertyPlan(
+          rawName: item.originalValue.key,
+          normalizedName: item.normalizedName,
+          properties: [
+            for (final occurrence in item.originalValue.value)
+              occurrence.property,
+          ],
+          accessPaths: [
+            for (final occurrence in item.originalValue.value) occurrence.path,
+          ],
+          isRequired: item.originalValue.value.any(
+            (occurrence) => occurrence.property.isRequired,
+          ),
+          isNullable: item.originalValue.value.every(
+            (occurrence) =>
+                occurrence.property.isNullable ||
+                multipartModelIsNullable(occurrence.property.model) ||
+                !occurrence.property.isRequired ||
+                occurrence.property.isWriteOnly ||
+                occurrence.path.any((segment) => segment.receiverNullable),
+          ),
         ),
-        isNullable: item.originalValue.value.every(
-          (occurrence) =>
-              occurrence.property.isNullable ||
-              multipartModelIsNullable(occurrence.property.model) ||
-              !occurrence.property.isRequired ||
-              occurrence.property.isWriteOnly ||
-              occurrence.path.any((segment) => segment.receiverNullable),
-        ),
-      ),
-  ];
+    ],
+  );
 }
 
-void _collectMultipartProperties(
+String? _collectMultipartProperties(
   Model model,
   List<MultipartAccessSegment> path,
   bool receiverNullable,
@@ -230,22 +247,19 @@ void _collectMultipartProperties(
 ) {
   if (_modelIsReadOnly(model, <Model>{})) {
     if (path.isEmpty) {
-      throw ArgumentError(
-        'Multipart body root ${model.runtimeType} at ${model.context} is '
-        'read-only and cannot be used as a request body.',
-      );
+      return 'Multipart body root ${model.runtimeType} at ${model.context} is '
+          'read-only and cannot be used as a request body.';
     }
-    return;
+    return null;
   }
   if (!active.add(model)) {
-    throw ArgumentError(
-      'Multipart body model contains a cycle while resolving ${model.context}.',
-    );
+    return 'Multipart body model contains a cycle while resolving '
+        '${model.context}.';
   }
   try {
     switch (model) {
       case AliasModel():
-        _collectMultipartProperties(
+        return _collectMultipartProperties(
           model.model,
           path,
           receiverNullable || model.isNullable,
@@ -255,7 +269,10 @@ void _collectMultipartProperties(
           package,
         );
       case ClassModel():
-        _rejectExplicitAdditionalProperties(model);
+        final additionalPropertiesError = _additionalPropertiesError(model);
+        if (additionalPropertiesError != null) {
+          return additionalPropertiesError;
+        }
         for (final (:normalizedName, :property) in normalizeProperties(
           model.properties,
         )) {
@@ -267,8 +284,12 @@ void _collectMultipartProperties(
             ],
           ));
         }
+        return null;
       case AllOfModel():
-        _rejectExplicitAdditionalProperties(model);
+        final additionalPropertiesError = _additionalPropertiesError(model);
+        if (additionalPropertiesError != null) {
+          return additionalPropertiesError;
+        }
         final namedMembers = ensureUniqueness([
           for (final member in model.models)
             (
@@ -283,7 +304,7 @@ void _collectMultipartProperties(
           final memberNullable =
               receiverNullable ||
               multipartModelIsNullable(member.originalValue);
-          _collectMultipartProperties(
+          final memberError = _collectMultipartProperties(
             member.originalValue,
             [
               ...path,
@@ -295,13 +316,13 @@ void _collectMultipartProperties(
             nameManager,
             package,
           );
+          if (memberError != null) return memberError;
         }
+        return null;
       default:
-        throw ArgumentError(
-          'Unsupported multipart body root/member ${model.runtimeType} at '
-          '${model.context}. Multipart bodies require a class, an alias to a '
-          'supported model, or an allOf containing supported members.',
-        );
+        return 'Unsupported multipart body root/member ${model.runtimeType} at '
+            '${model.context}. Multipart bodies require a class, an alias to '
+            'a supported model, or an allOf containing supported members.';
     }
   } finally {
     active.remove(model);
@@ -322,7 +343,7 @@ bool multipartModelIsNullable(Model model, [Set<Model>? active]) {
   }
 }
 
-void _rejectExplicitAdditionalProperties(Model model) {
+String? _additionalPropertiesError(Model model) {
   final policy = switch (model) {
     ClassModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
     AllOfModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
@@ -331,11 +352,11 @@ void _rejectExplicitAdditionalProperties(Model model) {
   if (policy case AllowedAdditionalProperties(
     origin: AdditionalPropertiesOrigin.explicit,
   )) {
-    throw ArgumentError(
-      'Multipart body model ${model.runtimeType} at ${model.context} declares '
-      'additional properties. Dynamic multipart part names are not supported.',
-    );
+    return 'Multipart body model ${model.runtimeType} at ${model.context} '
+        'declares additional properties. Dynamic multipart part names are not '
+        'supported.';
   }
+  return null;
 }
 
 bool _modelIsReadOnly(Model model, Set<Model> active) {
