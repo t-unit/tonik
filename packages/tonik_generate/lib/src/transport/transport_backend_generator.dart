@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 @immutable
@@ -25,6 +26,8 @@ abstract interface class const TransportBackendGenerator() {
   List<DependencyDescriptor> get dependencies;
 
   TransportBackend get backend;
+
+  OperationBaseGenerator get operationBaseGenerator;
 
   Reference get nativeClientType;
 
@@ -88,11 +91,5 @@ abstract interface class const TransportBackendGenerator() {
     headers,
     required List<({String normalizedName, CookieParameterObject parameter})>
     cookies,
-  });
-
-  Code generateDispatchStatements({
-    required OperationRequestPlan plan,
-    required String responseVariable,
-    required Reference resultValueType,
   });
 }

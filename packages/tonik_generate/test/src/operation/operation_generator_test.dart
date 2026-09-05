@@ -62,92 +62,18 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
-Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+        const expectedMethod = '''
+Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -168,7 +94,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           method.returns?.accept(emitter).toString(),
           'Future<TonikResult<void,Response<Object?>>>',
         );
-        expect(method.modifier, MethodModifier.async);
+        expect(method.modifier, isNull);
         expect(method.name, 'call');
         expect(method.requiredParameters, isEmpty);
         expect(method.optionalParameters, hasLength(1));
@@ -221,95 +147,21 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String myHeader,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options(myHeader: myHeader);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(myHeader: myHeader),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -330,7 +182,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           method.returns?.accept(emitter).toString(),
           'Future<TonikResult<void,Response<Object?>>>',
         );
-        expect(method.modifier, MethodModifier.async);
+        expect(method.modifier, isNull);
         expect(method.name, 'call');
 
         expect(method.optionalParameters, hasLength(2));
@@ -347,7 +199,7 @@ Future<TonikResult<void, Response<Object?>>> call({
         );
       });
 
-      test('generates method with proper error handling and return type', () {
+      test('delegates path parameters while preserving the return type', () {
         final operation = Operation(
           operationId: 'deletePet',
           context: context,
@@ -380,92 +232,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required int petId,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path(petId: petId);
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(petId: petId),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -505,7 +286,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           'Future<TonikResult<void,Response<Object?>>>',
         );
         expect(method.name, 'call');
-        expect(method.modifier, MethodModifier.async);
+        expect(method.modifier, isNull);
         expect(method.optionalParameters, hasLength(2));
         final param = method.optionalParameters.first;
         expect(param.name, 'petId');
@@ -520,7 +301,7 @@ Future<TonikResult<void, Response<Object?>>> call({
         );
       });
 
-      test('handles errors and success for operation without parameters', () {
+      test('delegates an operation without parameters or responses', () {
         final operation = Operation(
           operationId: 'listPets',
           context: context,
@@ -538,92 +319,18 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
-Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+        const expectedMethod = '''
+Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -645,7 +352,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           'Future<TonikResult<void,Response<Object?>>>',
         );
         expect(method.name, 'call');
-        expect(method.modifier, MethodModifier.async);
+        expect(method.modifier, isNull);
         expect(method.requiredParameters, isEmpty);
         expect(method.optionalParameters, hasLength(1));
 
@@ -706,97 +413,22 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String filter,
   String? sort,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(filter: filter, sort: sort),
-    );
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -821,7 +453,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           'Future<TonikResult<void,Response<Object?>>>',
         );
         expect(method.name, 'call');
-        expect(method.modifier, MethodModifier.async);
+        expect(method.modifier, isNull);
         expect(method.optionalParameters, hasLength(3));
         final param1 = method.optionalParameters.first;
         final param2 = method.optionalParameters.toList()[1];
@@ -981,95 +613,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           normalizedParams,
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   String? body,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data(body: body);
-    _$options = _options(body: body);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(body: body),
+      options: _options(body: body),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -1198,95 +756,21 @@ Future<TonikResult<void, Response<Object?>>> call({
             normalizedParams,
           );
 
-          const expectedMethod = r'''
+          const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required UploadForm body,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = await _data(body: body);
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoidAsync(
+    cancellation: cancellation,
+    prepare: () async => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: await _data(body: body),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -1354,95 +838,21 @@ Future<TonikResult<void, Response<Object?>>> call({
             normalizedParams,
           );
 
-          const expectedMethod = r'''
+          const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   UploadForm? body,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = await _data(body: body);
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoidAsync(
+    cancellation: cancellation,
+    prepare: () async => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: await _data(body: body),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -1572,8 +982,7 @@ Future<TonikResult<void, Response<Object?>>> call({
         },
       );
 
-      test('generates call method with parsing and error handling for '
-          'non-void return', () {
+      test('delegates non-void response parsing to inherited execution', () {
         final operation = Operation(
           operationId: 'parseTest',
           context: context,
@@ -1618,104 +1027,18 @@ Future<TonikResult<void, Response<Object?>>> call({
           normalizedParams,
         );
 
-        const expectedMethod = r'''
-Future<TonikResult<String, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<String, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<String, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<String, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<String, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<String, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<String, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  final String _$parsedResponse;
-  try {
-    _$parsedResponse = _parseResponse(_$response);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<String, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.decoding,
-      response: _$response,
-    );
-  }
-
-  return TonikSuccess<String, Response<Object?>>(_$parsedResponse, _$response);
+        const expectedMethod = '''
+Future<TonikResult<String, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.execute(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: _parseResponse,
+  );
 }
 ''';
 
@@ -1761,103 +1084,18 @@ Future<TonikResult<String, Response<Object?>>> call({TonikCancellation? cancella
           operation,
           normalizedParams,
         );
-        const expectedMethod = r'''
-Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  try {
-    _parseResponse(_$response);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.decoding,
-      response: _$response,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+        const expectedMethod = '''
+Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: _parseResponse,
+  );
 }
 ''';
         final methodString = format(method.accept(emitter).toString());
@@ -1924,104 +1162,18 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
             normalizedParams,
           );
 
-          const expectedMethod = r'''
-Future<TonikResult<List<ActivePet>, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<List<ActivePet>, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<List<ActivePet>, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<List<ActivePet>, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<List<ActivePet>, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<List<ActivePet>, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<List<ActivePet>, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  final List<ActivePet> _$parsedResponse;
-  try {
-    _$parsedResponse = _parseResponse(_$response);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<List<ActivePet>, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.decoding,
-      response: _$response,
-    );
-  }
-
-  return TonikSuccess<List<ActivePet>, Response<Object?>>(_$parsedResponse, _$response);
+          const expectedMethod = '''
+Future<TonikResult<List<ActivePet>, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.execute(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: _parseResponse,
+  );
 }
 ''';
 
@@ -2033,8 +1185,7 @@ Future<TonikResult<List<ActivePet>, Response<Object?>>> call({TonikCancellation?
         },
       );
 
-      test('does not generate parsing code for operations with no '
-          'responses', () {
+      test('delegates a no-op parser for operations with no responses', () {
         final operation = Operation(
           operationId: 'noResponseOperation',
           context: context,
@@ -2065,92 +1216,18 @@ Future<TonikResult<List<ActivePet>, Response<Object?>>> call({TonikCancellation?
           normalizedParams,
         );
 
-        const expectedMethod = r'''
-Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+        const expectedMethod = '''
+Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -2257,134 +1334,57 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
         },
       );
 
-      test(
-        'generates cancel-specific error handling in network catch block',
-        () {
-          final operation = Operation(
-            operationId: 'cancelErrorHandling',
-            context: context,
-            summary: 'Cancel error handling',
-            description: 'Tests cancel error handling generation',
-            tags: const {},
-            isDeprecated: false,
-            path: '/cancel-error',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+      test('forwards portable cancellation to inherited execution', () {
+        final operation = Operation(
+          operationId: 'cancelErrorHandling',
+          context: context,
+          summary: 'Cancel error handling',
+          description: 'Tests cancel error handling generation',
+          tags: const {},
+          isDeprecated: false,
+          path: '/cancel-error',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          const normalizedParams = NormalizedRequestParameters(
-            pathParameters: [],
-            cookieParameters: [],
-            queryParameters: [],
-            headers: [],
-          );
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          cookieParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
 
-          final method = generator.generateCallMethod(
-            operation,
-            normalizedParams,
-          );
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
 
-          const expectedMethod = r'''
-Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+        const expectedMethod = '''
+Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
-          final methodString = format(method.accept(emitter).toString());
-          expect(
-            collapseWhitespace(methodString),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
 
       test('preserves an OpenAPI query parameter named cancelToken', () {
         final queryParam = QueryParameterObject(
@@ -2418,98 +1418,21 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(cancelToken: cancelToken),
-    );
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -2577,99 +1500,22 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String body,
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(cancelToken: cancelToken),
-    );
-    _$data = _data(body: body);
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(body: body),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -2719,95 +1565,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path(cancelToken: cancelToken);
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(cancelToken: cancelToken),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -2857,95 +1629,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options(cancelToken: cancelToken);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(cancelToken: cancelToken),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -2994,95 +1692,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options(cancelToken: cancelToken);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(cancelToken: cancelToken),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -3133,98 +1757,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   required String cancelToken,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(cancelToken: cancelToken),
-    );
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -3379,13 +1926,13 @@ Future<TonikResult<void, Response<Object?>>> call({
           collapseWhitespace(code),
           contains(
             collapseWhitespace(
-              ' _i1.Future<_i3.TonikResult<void, '
-              '_i2.Response<_i1.Object?>>> call({\n'
-              '    required _i1.String body,\n'
-              '    required _i1.String id,\n'
-              '    _i1.int? limit,\n'
+              ' _i2.Future<_i3.TonikResult<void, '
+              '_i4.Response<_i2.Object?>>> call({\n'
+              '    required _i2.String body,\n'
+              '    required _i2.String id,\n'
+              '    _i2.int? limit,\n'
               '    _i3.TonikCancellation? cancellation,\n'
-              '  }) async',
+              '  }) {',
             ),
           ),
         );
@@ -3473,13 +2020,13 @@ Future<TonikResult<void, Response<Object?>>> call({
           collapseWhitespace(code),
           contains(
             collapseWhitespace(
-              ' _i1.Future<_i3.TonikResult<void, '
-              '_i2.Response<_i1.Object?>>> call({\n'
-              '    required _i1.String userId,\n'
-              '    _i1.int? pageSize,\n'
-              '    required _i1.String authToken,\n'
+              ' _i2.Future<_i3.TonikResult<void, '
+              '_i4.Response<_i2.Object?>>> call({\n'
+              '    required _i2.String userId,\n'
+              '    _i2.int? pageSize,\n'
+              '    required _i2.String authToken,\n'
               '    _i3.TonikCancellation? cancellation,\n'
-              '  }) async',
+              '  }) {',
             ),
           ),
         );
@@ -3632,7 +2179,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
     group('generateClass — parameter defaults', () {
       test('mixed-location defaults emit static const fields ordered '
-          'path → query → header → cookie immediately after _dio', () {
+          'path → query → header → cookie on the concrete operation', () {
         final pathParam = PathParameterObject(
           name: 'id',
           rawName: 'id',
@@ -3709,8 +2256,6 @@ Future<TonikResult<void, Response<Object?>>> call({
 
         final fieldNames = result.fields.map((f) => f.name).toList();
         expect(fieldNames, [
-          '_baseUrl',
-          '_dio',
           'idDefault',
           'regionDefault',
           'retriesDefault',
@@ -3939,7 +2484,7 @@ Future<TonikResult<void, Response<Object?>>> call({
         final result = generator.generateClass(operation, 'Upload');
 
         final fieldNames = result.fields.map((f) => f.name).toList();
-        expect(fieldNames, ['_baseUrl', '_dio']);
+        expect(fieldNames, isEmpty);
       });
 
       test('call() body delegates to _path/_queryParameters with the parameter '
@@ -3975,97 +2520,21 @@ Future<TonikResult<void, Response<Object?>>> call({
           securitySchemes: const {},
         );
 
-        const expectedMethod = r'''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> call({
   String region = regionDefault,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(region: region),
-    );
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 
@@ -4194,98 +2663,21 @@ Future<TonikResult<void, Response<Object?>>> call({
         );
         expect(statusParam.type?.accept(emitter).toString(), 'Status');
 
-        const expectedCall = r'''
+        const expectedCall = '''
 Future<TonikResult<void, Response<Object?>>> call({
   Status status = statusDefault,
   TonikCancellation? cancellation,
-}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(
-      path: _$newPath,
+}) {
+  return this.executeVoid(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
       query: _queryParameters(status: status),
-    );
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<void, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<void, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<void, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-
-  return TonikSuccess<void, Response<Object?>>(null, _$response);
+      data: _data(),
+      options: _options(),
+    ),
+    decode: (_) {},
+  );
 }
 ''';
 

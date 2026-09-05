@@ -118,7 +118,7 @@ void main() {
         'operation',
       );
       expect(Directory(operationDir).existsSync(), isTrue);
-      expect(Directory(operationDir).listSync().length, 2);
+      expect(Directory(operationDir).listSync().length, 3);
 
       final wrapperDir = path.join(
         tempDir.path,

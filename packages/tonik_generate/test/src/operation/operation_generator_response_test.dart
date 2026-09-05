@@ -190,162 +190,72 @@ void main() {
       );
     });
 
-    test(
-      'pure-Never response body emits try/catch without final-var assignment',
-      () {
-        final operation = Operation(
-          operationId: 'pureNeverBodyStatus',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/pure-never-body',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          securitySchemes: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: NeverModel(context: context, isNullable: false),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
-          },
-        );
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-          cookieParameters: [],
-        );
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
-
-        const expectedMethod = r'''
-Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/')
-        ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}'
-        : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<Never, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
+    test('pure-Never response body delegates its parser without a cast', () {
+      final operation = Operation(
+        operationId: 'pureNeverBodyStatus',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/pure-never-body',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: NeverModel(context: context, isNullable: false),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+                examples: const [],
+              ),
+            },
+          ),
+        },
       );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<Never, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
+      const normalizedParams = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+        cookieParameters: [],
       );
-    }
-    return TonikError<Never, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-  try {
-    _parseResponse(_$response);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.decoding,
-      response: _$response,
-    );
-  }
+      final method = generator.generateCallMethod(operation, normalizedParams);
+
+      const expectedMethod = '''
+Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.execute(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: _parseResponse,
+  );
 }
 ''';
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
-    // `isNeverParseReturn` also guards against `Never?`, the shape an inline
-    // `{type: "null"}` response schema imports as. It can legitimately
-    // complete normally with `null`, so the unassigned try/catch branch must
-    // not be emitted.
-    test('nullable Never response body uses assigned-var shape', () {
+    // `Never?` is the shape an inline `{type: "null"}` response schema imports
+    // as. The nullable type and parser must be preserved through delegation.
+    test('nullable Never response body delegates its nullable parser', () {
       final operation = Operation(
         operationId: 'nullableNeverBodyOp',
         context: context,
@@ -390,102 +300,18 @@ Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellat
         'Future<TonikResult<Never?,Response<Object?>>>',
       );
 
-      const expectedMethod = r'''
-Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancellation}) async {
-  late final Uri _$uri;
-  late final Object? _$data;
-  late final Options _$options;
-  try {
-    final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path();
-    final _$newPath = _$baseUri.path.endsWith('/')
-        ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}'
-        : '${_$baseUri.path}/${_$pathResult.join('/')}';
-    _$uri = _$baseUri.replace(path: _$newPath);
-    _$data = _data();
-    _$options = _options();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never?, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.encoding,
-      response: null,
-    );
-  }
-  final Response<List<int>> _$response;
-  CancelToken? _$cancelToken;
-  if (cancellation != null) {
-    _$cancelToken = CancelToken();
-    if (cancellation.isCancelled) {
-      _$cancelToken.cancel(cancellation.reason);
-      return TonikError<Never?, Response<Object?>>(
-        _$cancelToken.cancelError!,
-        stackTrace: _$cancelToken.cancelError!.stackTrace,
-        type: TonikErrorType.cancelled,
-        response: null,
-      );
-    }
-    unawaited(
-      cancellation.whenCancelled.then((_) {
-        _$cancelToken!.cancel(cancellation.reason);
-      }),
-    );
-  }
-
-  final Dio _$dio;
-  try {
-    _$dio = _dio();
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never?, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.other,
-      response: null,
-    );
-  }
-
-  try {
-    _$response = await _$dio.requestUri<List<int>>(
-      _$uri,
-      data: _$data,
-      options: _$options,
-      cancelToken: _$cancelToken,
-    );
-  } on DioException catch (exception, stackTrace) {
-    if (exception.type == DioExceptionType.cancel) {
-      return TonikError<Never?, Response<Object?>>(
-        exception,
-        stackTrace: stackTrace,
-        type: TonikErrorType.cancelled,
-        response: exception.response,
-      );
-    }
-    return TonikError<Never?, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: exception.response,
-    );
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never?, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.network,
-      response: null,
-    );
-  }
-  final Never? _$parsedResponse;
-  try {
-    _$parsedResponse = _parseResponse(_$response);
-  } on Object catch (exception, stackTrace) {
-    return TonikError<Never?, Response<Object?>>(
-      exception,
-      stackTrace: stackTrace,
-      type: TonikErrorType.decoding,
-      response: _$response,
-    );
-  }
-  return TonikSuccess<Never?, Response<Object?>>(_$parsedResponse, _$response);
+      const expectedMethod = '''
+Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancellation}) {
+  return this.execute(
+    cancellation: cancellation,
+    prepare: () => DioOperationRequest(
+      path: _path(),
+      query: null,
+      data: _data(),
+      options: _options(),
+    ),
+    decode: _parseResponse,
+  );
 }
 ''';
       final format = DartFormatter(

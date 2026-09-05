@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/model/one_of_generator.dart';
 import 'package:tonik_generate/src/model/typedef_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/operation/operation_base_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
@@ -122,6 +123,10 @@ class const Generator() {
 
     final operationFileGenerator = OperationFileGenerator(
       operationGenerator: operationGenerator,
+    );
+    final operationBaseFileGenerator = OperationBaseFileGenerator(
+      operationBaseGenerator: backendGenerator.operationBaseGenerator,
+      nameManager: nameManager,
     );
 
     final requestBodyGenerator = RequestBodyGenerator(
@@ -239,6 +244,11 @@ class const Generator() {
       package: package,
     );
     publicArtifacts.addAll(responseWrapperFiles);
+
+    operationBaseFileGenerator.writeFile(
+      outputDirectory: outputDirectory,
+      package: package,
+    );
 
     operationFileGenerator.writeFiles(
       apiDocument: apiDocument,
