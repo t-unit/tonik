@@ -8,17 +8,11 @@ void main() {
   group('Multiple tags', () {
     test('isolated overrides', () {
       final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(
-        name: 'color',
-        description: 'Color tag',
-      );
+      final tagB = Tag(name: 'color', description: 'Color tag');
 
       applier.applyTagOverrides(
         {tagA, tagB},
-        {
-          'pet': 'animal',
-          'color': 'hue',
-        },
+        {'pet': 'animal', 'color': 'hue'},
       );
       expect(tagA.nameOverride, 'animal');
       expect(tagB.nameOverride, 'hue');
@@ -26,21 +20,12 @@ void main() {
 
     test('multiple tags', () {
       final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(
-        name: 'color',
-        description: 'Color tag',
-      );
-      final tagC = Tag(
-        name: 'size',
-        description: 'Size tag',
-      );
+      final tagB = Tag(name: 'color', description: 'Color tag');
+      final tagC = Tag(name: 'size', description: 'Size tag');
 
       applier.applyTagOverrides(
         {tagA, tagB, tagC},
-        {
-          'pet': 'animal',
-          'color': 'hue',
-        },
+        {'pet': 'animal', 'color': 'hue'},
       );
       expect(tagA.nameOverride, 'animal');
       expect(tagB.nameOverride, 'hue');
@@ -58,10 +43,7 @@ void main() {
 
     test('untouched tags remain unchanged', () {
       final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(
-        name: 'color',
-        description: 'Color tag',
-      );
+      final tagB = Tag(name: 'color', description: 'Color tag');
 
       applier.applyTagOverrides({tagA, tagB}, {'pet': 'animal'});
       expect(tagA.nameOverride, 'animal');
@@ -70,10 +52,7 @@ void main() {
 
     test('wrong data (nonexistent tag)', () {
       final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(
-        name: 'color',
-        description: 'Color tag',
-      );
+      final tagB = Tag(name: 'color', description: 'Color tag');
 
       applier.applyTagOverrides(
         {tagA, tagB},

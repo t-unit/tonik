@@ -144,10 +144,7 @@ void main() {
     test('toJson throws when required writeOnly is null', () {
       const user = User(name: 'NoPassword', password: null);
 
-      expect(
-        () => user.toJson(),
-        throwsA(isA<EncodingException>()),
-      );
+      expect(() => user.toJson(), throwsA(isA<EncodingException>()));
     });
 
     test('fromJson parses only readable properties', () {
@@ -279,11 +276,7 @@ void main() {
 
   group('User model - encoding methods exclude readOnly', () {
     test('toSimple excludes readOnly fields', () {
-      const user = User(
-        id: 1,
-        name: 'Test',
-        password: 'pass',
-      );
+      const user = User(id: 1, name: 'Test', password: 'pass');
       final simple = user.toSimple(explode: false, allowEmpty: true);
 
       expect(simple.contains('id'), isFalse);
@@ -293,11 +286,7 @@ void main() {
     });
 
     test('toForm excludes readOnly fields', () {
-      const user = User(
-        id: 1,
-        name: 'Test',
-        password: 'pass',
-      );
+      const user = User(id: 1, name: 'Test', password: 'pass');
       final form = user
           .toForm('user', explode: true, allowEmpty: true, textEncoding: utf8)
           .map((e) => '${e.name}=${e.value}')
@@ -310,11 +299,7 @@ void main() {
     });
 
     test('toLabel excludes readOnly fields', () {
-      const user = User(
-        id: 1,
-        name: 'Test',
-        password: 'pass',
-      );
+      const user = User(id: 1, name: 'Test', password: 'pass');
       final label = user.toLabel(explode: false, allowEmpty: true);
 
       expect(label, isNot(contains('id')));
@@ -411,10 +396,7 @@ void main() {
 
   group('PasswordChange model - schema-level writeOnly', () {
     test('constructor keeps required properties required', () {
-      const change = PasswordChange(
-        newPassword: 'abc',
-        confirmPassword: 'abc',
-      );
+      const change = PasswordChange(newPassword: 'abc', confirmPassword: 'abc');
       expect(change.newPassword, 'abc');
       expect(change.confirmPassword, 'abc');
       expect(change.hint, isNull);
@@ -457,10 +439,7 @@ void main() {
     });
 
     test('parameterProperties works normally', () {
-      const change = PasswordChange(
-        newPassword: 'abc',
-        confirmPassword: 'def',
-      );
+      const change = PasswordChange(newPassword: 'abc', confirmPassword: 'def');
       final params = change.parameterProperties();
       expect((params['newPassword']! as ScalarPropertyValue).value, 'abc');
       expect((params['confirmPassword']! as ScalarPropertyValue).value, 'def');
@@ -517,10 +496,7 @@ void main() {
         'subject': 'Test',
       });
 
-      expect(
-        notification.toJson,
-        throwsA(isA<EncodingException>()),
-      );
+      expect(notification.toJson, throwsA(isA<EncodingException>()));
     });
 
     test('parameterProperties throws EncodingException', () {
@@ -597,10 +573,7 @@ void main() {
 
     test('toJson encodes sms variant normally', () {
       const notification = WriteOnlyNotificationNotificationSms(
-        NotificationSms(
-          phoneNumber: '+1234567890',
-          message: 'Hello',
-        ),
+        NotificationSms(phoneNumber: '+1234567890', message: 'Hello'),
       );
       final json = notification.toJson()! as Map;
 
@@ -856,10 +829,7 @@ void main() {
         'sensorId': 'temp-001',
       });
 
-      expect(
-        reading.toJson,
-        throwsA(isA<EncodingException>()),
-      );
+      expect(reading.toJson, throwsA(isA<EncodingException>()));
     });
 
     test('parameterProperties throws EncodingException', () {
@@ -868,10 +838,7 @@ void main() {
         'sensorId': 'temp-001',
       });
 
-      expect(
-        reading.parameterProperties,
-        throwsA(isA<EncodingException>()),
-      );
+      expect(reading.parameterProperties, throwsA(isA<EncodingException>()));
     });
 
     test('currentEncodingShape throws EncodingException', () {
@@ -898,30 +865,24 @@ void main() {
       );
     });
 
-    test(
-      'GET /sensor-reading returns decoded readOnly anyOf',
-      () async {
-        final api = buildApi(responseStatus: '200');
+    test('GET /sensor-reading returns decoded readOnly anyOf', () async {
+      final api = buildApi(responseStatus: '200');
 
-        final response = await api.getSensorReading();
+      final response = await api.getSensorReading();
 
-        final success = requireSuccess(response);
-        final reading = success.value;
+      final success = requireSuccess(response);
+      final reading = success.value;
 
-        expect(reading.temperatureReading, isNotNull);
-        expect(reading.temperatureReading?.celsius, 23.5);
-        expect(reading.temperatureReading?.sensorId, 'temp-001');
-      },
-    );
+      expect(reading.temperatureReading, isNotNull);
+      expect(reading.temperatureReading?.celsius, 23.5);
+      expect(reading.temperatureReading?.sensorId, 'temp-001');
+    });
   });
 
   group('WriteOnlyDeviceCommand (anyOf) - schema-level writeOnly', () {
     test('toJson encodes reboot command fields normally', () {
       const command = WriteOnlyDeviceCommand(
-        rebootCommand: RebootCommand(
-          deviceId: 'dev-001',
-          force: true,
-        ),
+        rebootCommand: RebootCommand(deviceId: 'dev-001', force: true),
       );
       final json = command.toJson()! as Map;
 
@@ -974,10 +935,7 @@ void main() {
 
     test('parameterProperties works normally', () {
       const command = WriteOnlyDeviceCommand(
-        rebootCommand: RebootCommand(
-          deviceId: 'dev-001',
-          force: true,
-        ),
+        rebootCommand: RebootCommand(deviceId: 'dev-001', force: true),
       );
       final params = command.parameterProperties();
       expect((params['deviceId']! as ScalarPropertyValue).value, 'dev-001');
@@ -989,10 +947,7 @@ void main() {
 
       final response = await api.sendDeviceCommand(
         body: const WriteOnlyDeviceCommand(
-          rebootCommand: RebootCommand(
-            deviceId: 'dev-001',
-            force: true,
-          ),
+          rebootCommand: RebootCommand(deviceId: 'dev-001', force: true),
         ),
       );
 

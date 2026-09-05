@@ -60,10 +60,11 @@ void main() {
       final success = requireSuccess(result);
 
       expect(success.value.xListComposite, isNotNull);
-      expect(
-        success.value.xListComposite!.allOfWithSimpleListModel2.tags,
-        ['alpha', 'beta', 'gamma'],
-      );
+      expect(success.value.xListComposite!.allOfWithSimpleListModel2.tags, [
+        'alpha',
+        'beta',
+        'gamma',
+      ]);
     });
 
     test('round-trips with only ids set', () async {
@@ -78,10 +79,10 @@ void main() {
       final success = requireSuccess(result);
 
       expect(success.value.xListComposite, isNotNull);
-      expect(
-        success.value.xListComposite!.allOfWithSimpleListModel.ids,
-        [100, 200],
-      );
+      expect(success.value.xListComposite!.allOfWithSimpleListModel.ids, [
+        100,
+        200,
+      ]);
     });
 
     test('fails to decode with single element arrays', () async {
@@ -110,10 +111,7 @@ void main() {
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
 
-          expect(
-            recordedRequest.headers['x-list-composite'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-list-composite'], isNull);
           expect(success.value.xListComposite, isNull);
         },
       );

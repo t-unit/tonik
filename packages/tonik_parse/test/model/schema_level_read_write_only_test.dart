@@ -38,10 +38,7 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'ServerId': {
-              'type': 'integer',
-              'readOnly': true,
-            },
+            'ServerId': {'type': 'integer', 'readOnly': true},
           },
         },
       };
@@ -227,10 +224,7 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'SecretToken': {
-              'type': 'string',
-              'writeOnly': true,
-            },
+            'SecretToken': {'type': 'string', 'writeOnly': true},
           },
         },
       };
@@ -300,9 +294,7 @@ void main() {
         'paths': <String, dynamic>{},
         'components': {
           'schemas': {
-            'MyString': {
-              'type': 'string',
-            },
+            'MyString': {'type': 'string'},
           },
         },
       };
@@ -350,10 +342,7 @@ void main() {
               'readOnly': true,
               'properties': {
                 'id': {'type': 'integer'},
-                'secret': {
-                  'type': 'string',
-                  'writeOnly': true,
-                },
+                'secret': {'type': 'string', 'writeOnly': true},
               },
             },
           },
@@ -370,9 +359,7 @@ void main() {
       expect(idProp.isReadOnly, isFalse);
       expect(idProp.isWriteOnly, isFalse);
 
-      final secretProp = model.properties.firstWhere(
-        (p) => p.name == 'secret',
-      );
+      final secretProp = model.properties.firstWhere((p) => p.name == 'secret');
       expect(secretProp.isWriteOnly, isTrue);
       expect(secretProp.isReadOnly, isFalse);
     });

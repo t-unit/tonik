@@ -243,10 +243,7 @@ void main() {
 
         final success = requireSuccess(response);
         expect(success.value.pet.name, 'Rocky');
-        expect(
-          success.value.extendedWithRequiredModel.microchipId,
-          'CHIP-003',
-        );
+        expect(success.value.extendedWithRequiredModel.microchipId, 'CHIP-003');
       });
     });
   });
@@ -259,9 +256,7 @@ void main() {
         final response = await api.createMergedEntity(
           body: MergedEntity(
             namedEntity: const NamedEntity(name: 'Entity-1'),
-            timestampedEntity: TimestampedEntity(
-              createdAt: DateTime.utc(2025),
-            ),
+            timestampedEntity: TimestampedEntity(createdAt: DateTime.utc(2025)),
           ),
         );
 
@@ -311,9 +306,7 @@ void main() {
         final response = await api.createTripleMerge(
           body: TripleMerge(
             namedEntity: const NamedEntity(name: 'Triple'),
-            timestampedEntity: TimestampedEntity(
-              createdAt: DateTime.utc(2025),
-            ),
+            timestampedEntity: TimestampedEntity(createdAt: DateTime.utc(2025)),
             auditedEntity: const AuditedEntity(createdBy: 'admin'),
           ),
         );

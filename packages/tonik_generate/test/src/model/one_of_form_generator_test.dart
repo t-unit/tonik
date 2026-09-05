@@ -38,14 +38,8 @@ void main() {
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -65,7 +59,7 @@ void main() {
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
-            ResultError(:final value) => value.toForm(
+            ResultSuccess(:final value) => value.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -73,7 +67,7 @@ void main() {
               allowReserved: allowReserved,
               textEncoding: textEncoding,
             ),
-            ResultSuccess(:final value) => value.toForm(
+            ResultError(:final value) => value.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -114,14 +108,8 @@ void main() {
         isDeprecated: false,
         name: 'Response',
         models: [
-          (
-            discriminatorValue: 'user',
-            model: userModel,
-          ),
-          (
-            discriminatorValue: 'message',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'user', model: userModel),
+          (discriminatorValue: 'message', model: StringModel(context: context)),
         ],
         discriminator: 'type',
         context: context,
@@ -142,14 +130,6 @@ void main() {
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
-            ResponseMessage(:final value) => value.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            ),
             ResponseUser(:final value) =>
               {
                 ...value.parameterProperties(allowEmpty: allowEmpty),
@@ -163,6 +143,14 @@ void main() {
                 fieldEncodings: fieldEncodings,
                 textEncoding: textEncoding,
               ),
+            ResponseMessage(:final value) => value.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
+              textEncoding: textEncoding,
+            ),
           };
         }
       ''';
@@ -211,10 +199,7 @@ void main() {
         toFormMethod.optionalParameters.take(2).every((p) => p.required),
         isTrue,
       );
-      expect(
-        toFormMethod.optionalParameters.last.required,
-        isFalse,
-      );
+      expect(toFormMethod.optionalParameters.last.required, isFalse);
     });
   });
 
@@ -261,14 +246,8 @@ void main() {
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -332,10 +311,12 @@ void main() {
         factory Response.fromForm(String? value, {required bool explode}) {
           try {
             return ResponseMsg(value.decodeFormString(context: r'Response'));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           try {
             return ResponseUser(User.fromForm(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid form value for Response');
         }
       ''';
@@ -473,9 +454,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: null, model: innerOneOf),
-        ],
+        models: [(discriminatorValue: null, model: innerOneOf)],
         context: context,
         examples: const [],
       );
@@ -546,9 +525,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: 'inner', model: innerOneOf),
-        ],
+        models: [(discriminatorValue: 'inner', model: innerOneOf)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -755,10 +732,7 @@ void main() {
               discriminatorValue: 'binary',
               model: BinaryModel(context: context),
             ),
-            (
-              discriminatorValue: 'text',
-              model: StringModel(context: context),
-            ),
+            (discriminatorValue: 'text', model: StringModel(context: context)),
           ],
           context: context,
           examples: const [],

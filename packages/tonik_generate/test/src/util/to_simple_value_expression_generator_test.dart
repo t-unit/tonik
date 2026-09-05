@@ -474,9 +474,7 @@ void main() {
       );
       final built = buildToSimpleHeaderParameterExpression(
         'value',
-        header(
-          ListModel(content: model, context: context, examples: const []),
-        ),
+        header(ListModel(content: model, context: context, examples: const [])),
       );
       expect(
         collapseWhitespace(methodBody(built)),
@@ -818,10 +816,7 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
+          expect(collapseWhitespace(generated), collapseWhitespace(expected));
         },
       );
 
@@ -862,47 +857,40 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
+          expect(collapseWhitespace(generated), collapseWhitespace(expected));
         },
       );
 
-      test(
-        'generates map and toSimple for MapModel with EnumModel values',
-        () {
-          final model = MapModel(
-            valueModel: EnumModel<String>(
-              isDeprecated: false,
-              name: 'Status',
-              values: {
-                const EnumEntry(value: 'active'),
-              },
-              isNullable: false,
-              context: context,
-              examples: const [],
-            ),
+      test('generates map and toSimple for MapModel with EnumModel values', () {
+        final model = MapModel(
+          valueModel: EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {const EnumEntry(value: 'active')},
+            isNullable: false,
             context: context,
             examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   .map(
@@ -912,44 +900,38 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
-      test(
-        'generates runtime throw for MapModel with ClassModel values',
-        () {
-          final model = MapModel(
-            valueModel: ClassModel(
-              isDeprecated: false,
-              name: 'User',
-              properties: [],
-              context: context,
-              examples: const [],
-            ),
+      test('generates runtime throw for MapModel with ClassModel values', () {
+        final model = MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [],
             context: context,
             examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(scopedEmitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(scopedEmitter).toString());
+        final expected = format('''
             test() {
               final result = throw _i1.EncodingException(
                 'Map with complex value types cannot be simple-encoded.',
@@ -957,32 +939,26 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
-      test(
-        'generates null-safe toSimple for nullable MapModel '
-        'with StringModel values',
-        () {
-          final model = MapModel(
-            valueModel: StringModel(context: context),
-            context: context,
-            examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-            isNullable: true,
-          );
+      test('generates null-safe toSimple for nullable MapModel '
+          'with StringModel values', () {
+        final model = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+          isNullable: true,
+        );
 
-          final generated = methodBody(expression);
-          const expected = '''
+        final generated = methodBody(expression);
+        const expected = '''
             test() {
               final result = value == null
                   ? null
@@ -992,12 +968,11 @@ void main() {
             }
           ''';
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(format(expected)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      });
     });
 
     group('Base64Model', () {
@@ -1027,34 +1002,29 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
-      test(
-        'generates null-safe toBase64String for nullable Base64Model',
-        () {
-          final model = Base64Model(context: context);
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-            isNullable: true,
-          );
+      test('generates null-safe toBase64String for nullable Base64Model', () {
+        final model = Base64Model(context: context);
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+          isNullable: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   ?.toBase64String()
@@ -1062,40 +1032,34 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
     });
 
     group('List<Base64Model>', () {
-      test(
-        'generates toBase64String list content for List<Base64Model>',
-        () {
-          final model = ListModel(
-            content: Base64Model(context: context),
-            context: context,
-            examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+      test('generates toBase64String list content for List<Base64Model>', () {
+        final model = ListModel(
+          content: Base64Model(context: context),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   .map((e) => e.toBase64String())
@@ -1108,39 +1072,33 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
-      test(
-        'generates null-safe map for nullable List<Base64Model>',
-        () {
-          final model = ListModel(
-            content: Base64Model(context: context),
-            context: context,
-            examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-            isNullable: true,
-          );
+      test('generates null-safe map for nullable List<Base64Model>', () {
+        final model = ListModel(
+          content: Base64Model(context: context),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+          isNullable: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   ?.map((e) => e.toBase64String())
@@ -1153,44 +1111,38 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
     });
 
     group('List<MapModel>', () {
-      test(
-        'generates list-of-map encoding for List<Map<String, String>>',
-        () {
-          final model = ListModel(
-            content: MapModel(
-              valueModel: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
+      test('generates list-of-map encoding for List<Map<String, String>>', () {
+        final model = ListModel(
+          content: MapModel(
+            valueModel: StringModel(context: context),
             context: context,
             examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   .map(
@@ -1207,42 +1159,36 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
-      test(
-        'generates list-of-map encoding for List<Map<String, int>>',
-        () {
-          final model = ListModel(
-            content: MapModel(
-              valueModel: IntegerModel(context: context),
-              context: context,
-              examples: const [],
-            ),
+      test('generates list-of-map encoding for List<Map<String, int>>', () {
+        final model = ListModel(
+          content: MapModel(
+            valueModel: IntegerModel(context: context),
             context: context,
             examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(emitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
             test() {
               final result = value
                   .map(
@@ -1262,48 +1208,42 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
-      test(
-        'generates runtime throw for List<Map<String, ClassModel>>',
-        () {
-          final model = ListModel(
-            content: MapModel(
-              valueModel: ClassModel(
-                isDeprecated: false,
-                name: 'User',
-                properties: [],
-                context: context,
-                examples: const [],
-              ),
+      test('generates runtime throw for List<Map<String, ClassModel>>', () {
+        final model = ListModel(
+          content: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'User',
+              properties: [],
               context: context,
               examples: const [],
             ),
             context: context,
             examples: const [],
-          );
-          final expression = buildSimpleValueExpression(
-            refer('value'),
-            model,
-            explode: false,
-            allowEmpty: true,
-          );
+          ),
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final method = Method(
-            (b) => b
-              ..name = 'test'
-              ..body = declareFinal(
-                'result',
-              ).assign(expression.expression).statement,
-          );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-          final generated = format(method.accept(scopedEmitter).toString());
-          final expected = format('''
+        final generated = format(method.accept(scopedEmitter).toString());
+        final expected = format('''
             test() {
               final result = throw _i1.EncodingException(
                 'List of maps with complex value types cannot be simple-encoded.',
@@ -1311,12 +1251,8 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
+      });
 
       test(
         'header List<Map<String, int>> threads literal into element and list '
@@ -1417,10 +1353,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test('null-guards each element for List<int?>', () {
@@ -1456,10 +1389,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test('null-guards each element for List<Base64Model?>', () {
@@ -1495,48 +1425,40 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
     });
   });
 
   group('buildToSimplePathParameterExpression with nullable model', () {
-    test(
-      'uses null assertion for effectively nullable AliasModel '
-      'since path params are required',
-      () {
-        final parameter = PathParameterObject(
-          name: 'loaDocumentId',
-          rawName: 'loa_document_id',
-          description: 'LOA document ID',
-          model: AliasModel(
-            name: 'LoaDocumentIdentifier',
-            model: StringModel(context: context),
-            context: context,
-            isNullable: true,
-            examples: const [],
-            defaultValue: null,
-          ),
-          encoding: PathParameterEncoding.simple,
-          explode: false,
-          allowEmptyValue: false,
-          isRequired: true,
-          isDeprecated: false,
+    test('uses null assertion for effectively nullable AliasModel '
+        'since path params are required', () {
+      final parameter = PathParameterObject(
+        name: 'loaDocumentId',
+        rawName: 'loa_document_id',
+        description: 'LOA document ID',
+        model: AliasModel(
+          name: 'LoaDocumentIdentifier',
+          model: StringModel(context: context),
           context: context,
+          isNullable: true,
           examples: const [],
           defaultValue: null,
-        );
-        expect(
-          emit(
-            buildToSimplePathParameterExpression('loaDocumentId', parameter),
-          ),
-          'loaDocumentId!.toSimple(explode: false, allowEmpty: true, )',
-        );
-      },
-    );
+        ),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(buildToSimplePathParameterExpression('loaDocumentId', parameter)),
+        'loaDocumentId!.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
 
     test('uses non-null call for non-nullable model', () {
       final parameter = PathParameterObject(
@@ -1554,9 +1476,7 @@ void main() {
         defaultValue: null,
       );
       expect(
-        emit(
-          buildToSimplePathParameterExpression('userId', parameter),
-        ),
+        emit(buildToSimplePathParameterExpression('userId', parameter)),
         'userId.toSimple(explode: false, allowEmpty: true, )',
       );
     });
@@ -1594,83 +1514,77 @@ void main() {
       );
     });
 
-    test(
-      'uses non-null call for effectively nullable AliasModel '
-      'when isNullChecked is true',
-      () {
-        final parameter = RequestHeaderObject(
-          name: 'x-custom-header',
-          rawName: 'x-custom-header',
-          description: 'Custom header',
-          model: AliasModel(
-            name: 'HeaderAlias',
-            model: StringModel(context: context),
-            context: context,
-            isNullable: true,
-            examples: const [],
-            defaultValue: null,
-          ),
-          encoding: HeaderParameterEncoding.simple,
-          explode: false,
-          allowEmptyValue: false,
-          isRequired: false,
-          isDeprecated: false,
+    test('uses non-null call for effectively nullable AliasModel '
+        'when isNullChecked is true', () {
+      final parameter = RequestHeaderObject(
+        name: 'x-custom-header',
+        rawName: 'x-custom-header',
+        description: 'Custom header',
+        model: AliasModel(
+          name: 'HeaderAlias',
+          model: StringModel(context: context),
           context: context,
+          isNullable: true,
           examples: const [],
           defaultValue: null,
-        );
-        expect(
-          emit(
-            buildToSimpleHeaderParameterExpression(
-              'xCustomHeader',
-              parameter,
-              isNullChecked: true,
-            ),
+        ),
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: false,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToSimpleHeaderParameterExpression(
+            'xCustomHeader',
+            parameter,
+            isNullChecked: true,
           ),
-          'xCustomHeader.toSimple(explode: false, allowEmpty: true, '
-          'literal: true, )',
-        );
-      },
-    );
+        ),
+        'xCustomHeader.toSimple(explode: false, allowEmpty: true, '
+        'literal: true, )',
+      );
+    });
 
-    test(
-      'uses non-null call for nullable ClassModel '
-      'when isNullChecked is true',
-      () {
-        final parameter = RequestHeaderObject(
-          name: 'x-nullable-object',
-          rawName: 'X-Nullable-Object',
-          description: 'Nullable object header',
-          model: ClassModel(
-            name: 'NullableObj',
-            properties: const [],
-            context: context,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-          ),
-          encoding: HeaderParameterEncoding.simple,
-          explode: false,
-          allowEmptyValue: false,
-          isRequired: false,
-          isDeprecated: false,
+    test('uses non-null call for nullable ClassModel '
+        'when isNullChecked is true', () {
+      final parameter = RequestHeaderObject(
+        name: 'x-nullable-object',
+        rawName: 'X-Nullable-Object',
+        description: 'Nullable object header',
+        model: ClassModel(
+          name: 'NullableObj',
+          properties: const [],
           context: context,
+          isNullable: true,
+          isDeprecated: false,
           examples: const [],
-          defaultValue: null,
-        );
-        expect(
-          emit(
-            buildToSimpleHeaderParameterExpression(
-              'xNullableObject',
-              parameter,
-              isNullChecked: true,
-            ),
+        ),
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: false,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToSimpleHeaderParameterExpression(
+            'xNullableObject',
+            parameter,
+            isNullChecked: true,
           ),
-          'xNullableObject.toSimple(explode: false, allowEmpty: true, '
-          'literal: true, )',
-        );
-      },
-    );
+        ),
+        'xNullableObject.toSimple(explode: false, allowEmpty: true, '
+        'literal: true, )',
+      );
+    });
 
     test(
       'uses null-safe call for nullable model when isNullChecked is false',
@@ -1789,11 +1703,7 @@ void main() {
       required String containsText,
     }) {
       final reason = simpleEncodingThrowReason(model);
-      expect(
-        reason,
-        isNotNull,
-        reason: '$label should produce a throw reason',
-      );
+      expect(reason, isNotNull, reason: '$label should produce a throw reason');
       expect(
         reason!.contains(containsText),
         isTrue,

@@ -80,10 +80,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes chat_session_id as JSON property', () async {
@@ -419,9 +416,7 @@ void main() {
                 userId: 'user-456',
                 messageId: 'msg-789',
                 message: 'Hello',
-                endTime: SendMessageRequestEndTimeAnyOfModel(
-                  int: 1704153600,
-                ),
+                endTime: SendMessageRequestEndTimeAnyOfModel(int: 1704153600),
               ),
             );
 
@@ -580,33 +575,27 @@ void main() {
         expect((requestBody['connectors'] as List<dynamic>).isEmpty, isTrue);
       });
 
-      test(
-        'request body encodes the schema default empty list when connectors '
-        'is omitted',
-        () async {
-          final api = buildApi(responseStatus: '200');
+      test('request body encodes the schema default empty list when connectors '
+          'is omitted', () async {
+        final api = buildApi(responseStatus: '200');
 
-          final response = await api
-              .sendMessageProtoRouteApiV1InferSendMessagePost(
-                body: const SendMessageRequest(
-                  chatSessionId: 'session-123',
-                  userId: 'user-456',
-                  messageId: 'msg-789',
-                  message: 'Hello',
-                ),
-              );
+        final response = await api
+            .sendMessageProtoRouteApiV1InferSendMessagePost(
+              body: const SendMessageRequest(
+                chatSessionId: 'session-123',
+                userId: 'user-456',
+                messageId: 'msg-789',
+                message: 'Hello',
+              ),
+            );
 
-          requireSuccess(response);
-          final recordedRequest = await imposterServer.takeRequest();
-          final requestBody =
-              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
-          expect(requestBody['connectors'], isA<List<dynamic>>());
-          expect(
-            (requestBody['connectors'] as List<dynamic>).isEmpty,
-            isTrue,
-          );
-        },
-      );
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final requestBody =
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
+        expect(requestBody['connectors'], isA<List<dynamic>>());
+        expect((requestBody['connectors'] as List<dynamic>).isEmpty, isTrue);
+      });
 
       test('request body encodes interruption_reply as true', () async {
         final api = buildApi(responseStatus: '200');
@@ -785,29 +774,26 @@ void main() {
         expect(requestBody['reasoning_mode'], 'investigate');
       });
 
-      test(
-        'request body applies schema default for reasoning_mode when caller '
-        'omits it',
-        () async {
-          final api = buildApi(responseStatus: '200');
+      test('request body applies schema default for reasoning_mode when caller '
+          'omits it', () async {
+        final api = buildApi(responseStatus: '200');
 
-          final response = await api
-              .sendMessageProtoRouteApiV1InferSendMessagePost(
-                body: const SendMessageRequest(
-                  chatSessionId: 'session-123',
-                  userId: 'user-456',
-                  messageId: 'msg-789',
-                  message: 'Hello',
-                ),
-              );
+        final response = await api
+            .sendMessageProtoRouteApiV1InferSendMessagePost(
+              body: const SendMessageRequest(
+                chatSessionId: 'session-123',
+                userId: 'user-456',
+                messageId: 'msg-789',
+                message: 'Hello',
+              ),
+            );
 
-          requireSuccess(response);
-          final recordedRequest = await imposterServer.takeRequest();
-          final requestBody =
-              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
-          expect(requestBody['reasoning_mode'], 'copilot');
-        },
-      );
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final requestBody =
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
+        expect(requestBody['reasoning_mode'], 'copilot');
+      });
 
       test('request body encodes all optional fields together', () async {
         final api = buildApi(responseStatus: '200');
@@ -828,9 +814,7 @@ void main() {
                 startTime: SendMessageRequestStartTimeAnyOfModel(
                   int: 1704067200,
                 ),
-                endTime: SendMessageRequestEndTimeAnyOfModel(
-                  int: 1704153600,
-                ),
+                endTime: SendMessageRequestEndTimeAnyOfModel(int: 1704153600),
                 userIntent: SendMessageRequestUserIntentAnyOfModel(
                   userIntent: UserIntent.searchLogs,
                 ),
@@ -875,10 +859,7 @@ void main() {
               ),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -922,10 +903,7 @@ void main() {
               ),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(
@@ -1012,10 +990,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
     });
 
@@ -1033,10 +1008,7 @@ void main() {
               ),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -1060,10 +1032,7 @@ void main() {
               ),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(
@@ -1120,16 +1089,10 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
-        expect(
-          success.value,
-          isA<List<Map<String, Object?>>>(),
-        );
+        expect(success.value, isA<List<Map<String, Object?>>>());
       });
     });
   });
@@ -1193,9 +1156,7 @@ void main() {
       test('request path is /api/v1/github/repositories', () async {
         final api = buildApi(responseStatus: '200');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
@@ -1208,9 +1169,7 @@ void main() {
       test('request method is POST', () async {
         final api = buildApi(responseStatus: '200');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
@@ -1220,16 +1179,11 @@ void main() {
       test('content-type header is application/json', () async {
         final api = buildApi(responseStatus: '200');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
     });
 
@@ -1237,28 +1191,18 @@ void main() {
       test('200 response is decoded as Response200', () async {
         final api = buildApi(responseStatus: '200');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
-        expect(
-          success.value,
-          isA<GetGithubRepositoriesResponse200>(),
-        );
+        expect(success.value, isA<GetGithubRepositoriesResponse200>());
       });
 
       test('200 response body is list of strings', () async {
         final api = buildApi(responseStatus: '200');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
         final success = requireSuccess(response);
         final response200 = success.value as GetGithubRepositoriesResponse200;
@@ -1270,28 +1214,18 @@ void main() {
       test('422 response is decoded as Response422', () async {
         final api = buildApi(responseStatus: '422');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
-        expect(
-          success.value,
-          isA<GetGithubRepositoriesResponse422>(),
-        );
+        expect(success.value, isA<GetGithubRepositoriesResponse422>());
       });
 
       test('422 response body is HttpValidationError', () async {
         final api = buildApi(responseStatus: '422');
 
-        final response = await api.getGithubRepositories(
-          body: const {},
-        );
+        final response = await api.getGithubRepositories(body: const {});
 
         final success = requireSuccess(response);
         final response422 = success.value as GetGithubRepositoriesResponse422;
@@ -1341,10 +1275,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes repo as JSON property', () async {
@@ -1380,25 +1311,22 @@ void main() {
         expect(requestBody['latest_only'], true);
       });
 
-      test(
-        'sends the schema default when latestOnly is omitted',
-        () async {
-          const request = GithubReleaseRequest(repo: 'owner/repo');
+      test('sends the schema default when latestOnly is omitted', () async {
+        const request = GithubReleaseRequest(repo: 'owner/repo');
 
-          expect(request.latestOnly, isFalse);
+        expect(request.latestOnly, isFalse);
 
-          final api = buildApi(responseStatus: '200');
+        final api = buildApi(responseStatus: '200');
 
-          final response = await api
-              .getGithubReleaseProtoRouteApiV1GithubReleasePost(body: request);
+        final response = await api
+            .getGithubReleaseProtoRouteApiV1GithubReleasePost(body: request);
 
-          requireSuccess(response);
-          final recordedRequest = await imposterServer.takeRequest();
-          final requestBody =
-              jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
-          expect(requestBody['latest_only'], false);
-        },
-      );
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final requestBody =
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
+        expect(requestBody['latest_only'], false);
+      });
     });
 
     group('response decoding - 200', () {
@@ -1410,10 +1338,7 @@ void main() {
               body: const GithubReleaseRequest(repo: 'owner/repo'),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -1447,10 +1372,7 @@ void main() {
               body: const GithubReleaseRequest(repo: 'owner/repo'),
             );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(
@@ -1472,10 +1394,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/api/v1/github/pr',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/api/v1/github/pr');
       });
 
       test('request method is POST', () async {
@@ -1499,10 +1418,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes commit_sha as JSON property', () async {
@@ -1547,10 +1463,7 @@ void main() {
           body: const GithubPrRequest(commitSha: 'abc123def456'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetPrRouteApiV1GithubPrPostResponse200>());
@@ -1578,10 +1491,7 @@ void main() {
           body: const GithubPrRequest(commitSha: 'abc123def456'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(success.value, isA<GetPrRouteApiV1GithubPrPostResponse422>());
@@ -1627,10 +1537,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
     });
 
@@ -1642,10 +1549,7 @@ void main() {
           body: const GithubGetBranchesRequest(),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -1677,10 +1581,7 @@ void main() {
           body: const GithubGetBranchesRequest(),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(
@@ -1741,10 +1642,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes connector_name as JSON property', () async {
@@ -1835,10 +1733,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -1877,10 +1772,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(
@@ -1924,10 +1816,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/api/v1/datadog/alert',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/api/v1/datadog/alert');
       });
 
       test('request method is POST', () async {
@@ -1961,10 +1850,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
 
       test('request body encodes connector_name as JSON property', () async {
@@ -2079,10 +1965,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
@@ -2124,10 +2007,7 @@ void main() {
           ),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 422);
         expect(

@@ -28,10 +28,7 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: '123');
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetAnAlbumResponse200>());
@@ -128,10 +125,7 @@ void main() {
       expect(track?.pagingObject.previous, isA<String?>());
       expect(track?.pagingObject.total, isA<int>());
 
-      expect(
-        track?.pagingObject,
-        isA<PagingObject>(),
-      );
+      expect(track?.pagingObject, isA<PagingObject>());
       expect(
         track?.pagingSimplifiedTrackObjectModel.items,
         isA<List<SimplifiedTrackObject>>(),
@@ -200,10 +194,7 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetAnAlbumResponse401>());
@@ -220,10 +211,7 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetAnAlbumResponse403>());
@@ -240,10 +228,7 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 429);
       expect(success.value, isA<GetAnAlbumResponse429>());

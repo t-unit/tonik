@@ -450,7 +450,7 @@ This applies to all public model types: class properties, typedefs, response bod
 
 ```yaml
 dependencies:
-  fast_immutable_collections: ^11.0.0
+  fast_immutable_collections: ^11.2.0
 ```
 
 **Serialization** is handled automatically. `fromJson` converts decoded lists and maps to immutable at every nesting level (via `.lock`). `toJson` converts back to mutable (via `.unlock`).

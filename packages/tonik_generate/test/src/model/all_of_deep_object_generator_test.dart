@@ -210,9 +210,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'AllOfEncoded',
-        models: [
-          StringModel(context: context),
-        ],
+        models: [StringModel(context: context)],
         context: context,
         examples: const [],
       );

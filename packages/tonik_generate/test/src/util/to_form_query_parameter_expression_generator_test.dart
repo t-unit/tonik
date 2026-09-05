@@ -68,10 +68,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'filterParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('filterParam', parameter);
 
         final method = Method(
           (b) => b
@@ -93,10 +90,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'filterParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('filterParam', parameter);
 
         final method = Method(
           (b) => b
@@ -123,10 +117,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'mapParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('mapParam', parameter);
 
         final generated = emitCodes(codes);
         final expected = format(r'''
@@ -144,10 +135,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test('generates form encoding for MapModel with IntegerModel values', () {
@@ -163,10 +151,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'mapParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('mapParam', parameter);
 
         final generated = emitCodes(codes);
         final expected = format(r'''
@@ -184,10 +169,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test(
@@ -211,10 +193,7 @@ void main() {
             allowEmpty: true,
           );
 
-          final codes = buildToFormQueryParameterCode(
-            'mapParam',
-            parameter,
-          );
+          final codes = buildToFormQueryParameterCode('mapParam', parameter);
 
           final generated = emitCodes(codes);
           final expected = format('''
@@ -225,10 +204,7 @@ void main() {
           }
         ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
+          expect(collapseWhitespace(generated), collapseWhitespace(expected));
         },
       );
     });
@@ -243,10 +219,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'base64Param',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('base64Param', parameter);
 
         final generated = emitCodes(codes);
         final expected = format(r'''
@@ -261,10 +234,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test('AnyModel appends entries via encodeAnyToFormEntries', () {
@@ -276,10 +246,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'anyParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('anyParam', parameter);
 
         final generated = emitCodes(codes);
         final expected = format(r'''
@@ -295,10 +262,7 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       });
 
       test('BinaryModel generates encoding exception', () {
@@ -310,10 +274,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'binaryParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('binaryParam', parameter);
 
         final generated = emitCodes(codes);
 
@@ -336,10 +297,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final codes = buildToFormQueryParameterCode(
-          'neverParam',
-          parameter,
-        );
+        final codes = buildToFormQueryParameterCode('neverParam', parameter);
 
         final generated = emitCodes(codes);
 
@@ -353,38 +311,35 @@ void main() {
         );
       });
 
-      test(
-        'List with BinaryModel content generates encoding exception',
-        () {
-          final parameter = createParameter(
-            name: 'binaryListParam',
-            rawName: 'binaryListParam',
-            model: ListModel(
-              content: BinaryModel(context: context),
-              context: context,
-              examples: const [],
+      test('List with BinaryModel content generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'binaryListParam',
+          rawName: 'binaryListParam',
+          model: ListModel(
+            content: BinaryModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'binaryListParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
             ),
-            explode: false,
-            allowEmpty: true,
-          );
-
-          final codes = buildToFormQueryParameterCode(
-            'binaryListParam',
-            parameter,
-          );
-
-          final generated = emitCodes(codes);
-
-          expect(
-            collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
-              ),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
 
       test(
         'List with Base64Model content generates toBase64String encoding',
@@ -418,163 +373,146 @@ void main() {
             }
           ''');
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expected),
-          );
+          expect(collapseWhitespace(generated), collapseWhitespace(expected));
         },
       );
 
-      test(
-        'List with NeverModel content generates encoding exception',
-        () {
-          final parameter = createParameter(
-            name: 'neverListParam',
-            rawName: 'neverListParam',
+      test('List with NeverModel content generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'neverListParam',
+          rawName: 'neverListParam',
+          model: ListModel(
+            content: NeverModel(context: context, isNullable: false),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'neverListParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              '''throw _i1.EncodingException( 'Cannot encode List<NeverModel> - this type does not permit any value.', );''',
+            ),
+          ),
+        );
+      });
+
+      test('AliasModel wrapping BinaryModel generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'aliasParam',
+          rawName: 'aliasParam',
+          model: AliasModel(
+            name: 'MyAlias',
+            model: BinaryModel(context: context),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode('aliasParam', parameter);
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
+            ),
+          ),
+        );
+      });
+
+      test('AliasModel wrapping ListModel with BinaryModel content '
+          'generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'aliasListParam',
+          rawName: 'aliasListParam',
+          model: AliasModel(
+            name: 'MyAlias',
             model: ListModel(
-              content: NeverModel(context: context, isNullable: false),
+              content: BinaryModel(context: context),
               context: context,
               examples: const [],
             ),
-            explode: false,
-            allowEmpty: true,
-          );
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final codes = buildToFormQueryParameterCode(
-            'neverListParam',
-            parameter,
-          );
+        final codes = buildToFormQueryParameterCode(
+          'aliasListParam',
+          parameter,
+        );
 
-          final generated = emitCodes(codes);
+        final generated = emitCodes(codes);
 
-          expect(
-            collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                '''throw _i1.EncodingException( 'Cannot encode List<NeverModel> - this type does not permit any value.', );''',
-              ),
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
             ),
-          );
-        },
-      );
-
-      test(
-        'AliasModel wrapping BinaryModel generates encoding exception',
-        () {
-          final parameter = createParameter(
-            name: 'aliasParam',
-            rawName: 'aliasParam',
-            model: AliasModel(
-              name: 'MyAlias',
-              model: BinaryModel(context: context),
-              context: context,
-              examples: const [],
-              defaultValue: null,
-            ),
-            explode: false,
-            allowEmpty: true,
-          );
-
-          final codes = buildToFormQueryParameterCode(
-            'aliasParam',
-            parameter,
-          );
-
-          final generated = emitCodes(codes);
-
-          expect(
-            collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
-              ),
-            ),
-          );
-        },
-      );
-
-      test(
-        'AliasModel wrapping ListModel with BinaryModel content '
-        'generates encoding exception',
-        () {
-          final parameter = createParameter(
-            name: 'aliasListParam',
-            rawName: 'aliasListParam',
-            model: AliasModel(
-              name: 'MyAlias',
-              model: ListModel(
-                content: BinaryModel(context: context),
-                context: context,
-                examples: const [],
-              ),
-              context: context,
-              examples: const [],
-              defaultValue: null,
-            ),
-            explode: false,
-            allowEmpty: true,
-          );
-
-          final codes = buildToFormQueryParameterCode(
-            'aliasListParam',
-            parameter,
-          );
-
-          final generated = emitCodes(codes);
-
-          expect(
-            collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
-              ),
-            ),
-          );
-        },
-      );
+          ),
+        );
+      });
     });
 
     group('nullable list content', () {
-      test(
-        'generates e?.toForm for exploded list '
-        'with nullable content model',
-        () {
-          final parameter = createParameter(
-            name: 'queryType',
-            rawName: 'queryType',
-            model: ListModel(
-              content: AliasModel(
-                name: 'NullableType',
-                model: EnumModel<String>(
-                  name: 'MyEnum',
-                  values: {const EnumEntry(value: 'a')},
-                  isNullable: false,
-                  isDeprecated: false,
-                  context: context,
-                  examples: const [],
-                ),
+      test('generates e?.toForm for exploded list '
+          'with nullable content model', () {
+        final parameter = createParameter(
+          name: 'queryType',
+          rawName: 'queryType',
+          model: ListModel(
+            content: AliasModel(
+              name: 'NullableType',
+              model: EnumModel<String>(
+                name: 'MyEnum',
+                values: {const EnumEntry(value: 'a')},
+                isNullable: false,
+                isDeprecated: false,
                 context: context,
-                isNullable: true,
                 examples: const [],
-                defaultValue: null,
               ),
               context: context,
+              isNullable: true,
               examples: const [],
+              defaultValue: null,
             ),
-            explode: true,
-            allowEmpty: false,
-          );
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
 
-          final codes = buildToFormQueryParameterCode(
-            'queryType',
-            parameter,
-            explode: true,
-            allowEmpty: false,
-          );
+        final codes = buildToFormQueryParameterCode(
+          'queryType',
+          parameter,
+          explode: true,
+          allowEmpty: false,
+        );
 
-          final generated = emitCodes(codes);
+        final generated = emitCodes(codes);
 
-          const expectedBody = r'''
+        const expectedBody = r'''
             test() {
               _$entries.addAll(
                 queryType
@@ -590,39 +528,33 @@ void main() {
             }
           ''';
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expectedBody),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expectedBody));
+      });
 
-      test(
-        'generates e.toForm for exploded list '
-        'with non-nullable content model',
-        () {
-          final parameter = createParameter(
-            name: 'values',
-            rawName: 'values',
-            model: ListModel(
-              content: IntegerModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            explode: true,
-            allowEmpty: false,
-          );
+      test('generates e.toForm for exploded list '
+          'with non-nullable content model', () {
+        final parameter = createParameter(
+          name: 'values',
+          rawName: 'values',
+          model: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
 
-          final codes = buildToFormQueryParameterCode(
-            'values',
-            parameter,
-            explode: true,
-            allowEmpty: false,
-          );
+        final codes = buildToFormQueryParameterCode(
+          'values',
+          parameter,
+          explode: true,
+          allowEmpty: false,
+        );
 
-          final generated = emitCodes(codes);
+        final generated = emitCodes(codes);
 
-          const expectedBody = r'''
+        const expectedBody = r'''
             test() {
               _$entries.addAll(
                 values
@@ -638,46 +570,37 @@ void main() {
             }
           ''';
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expectedBody),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expectedBody));
+      });
     });
 
     group('non-exploded list with nullable alias content', () {
-      test(
-        'generates nullable map expression for list with nullable alias '
-        'wrapping IntegerModel',
-        () {
-          final parameter = createParameter(
-            name: 'ids',
-            rawName: 'ids',
-            model: ListModel(
-              content: AliasModel(
-                name: 'NullableInt',
-                model: IntegerModel(context: context),
-                context: context,
-                isNullable: true,
-                examples: const [],
-                defaultValue: null,
-              ),
+      test('generates nullable map expression for list with nullable alias '
+          'wrapping IntegerModel', () {
+        final parameter = createParameter(
+          name: 'ids',
+          rawName: 'ids',
+          model: ListModel(
+            content: AliasModel(
+              name: 'NullableInt',
+              model: IntegerModel(context: context),
               context: context,
+              isNullable: true,
               examples: const [],
+              defaultValue: null,
             ),
-            explode: false,
-            allowEmpty: true,
-          );
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
 
-          final codes = buildToFormQueryParameterCode(
-            'ids',
-            parameter,
-          );
+        final codes = buildToFormQueryParameterCode('ids', parameter);
 
-          final generated = emitCodes(codes);
+        final generated = emitCodes(codes);
 
-          const expectedBody = r'''
+        const expectedBody = r'''
             test() {
               _$entries.addAll(
                 ids
@@ -688,12 +611,8 @@ void main() {
             }
           ''';
 
-          expect(
-            collapseWhitespace(generated),
-            collapseWhitespace(expectedBody),
-          );
-        },
-      );
+        expect(collapseWhitespace(generated), collapseWhitespace(expectedBody));
+      });
     });
   });
 }

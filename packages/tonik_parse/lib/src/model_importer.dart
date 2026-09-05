@@ -339,11 +339,7 @@ class ModelImporter {
   }
 
   /// Creates a primitive model from the type string.
-  Model? _createPrimitiveModel(
-    String? type,
-    Schema schema,
-    Context context,
-  ) {
+  Model? _createPrimitiveModel(String? type, Schema schema, Context context) {
     return switch (type) {
       'string' when schema.format == 'date-time' => DateTimeModel(
         context: context,
@@ -431,34 +427,19 @@ class ModelImporter {
     }
 
     if (schema.allOf != null) {
-      _populateAllOfShell(
-        name,
-        schema,
-        context,
-        existingModel as AllOfModel,
-      );
+      _populateAllOfShell(name, schema, context, existingModel as AllOfModel);
       applyExamples(existingModel, examples);
       return;
     }
 
     if (schema.oneOf != null) {
-      _populateOneOfShell(
-        name,
-        schema,
-        context,
-        existingModel as OneOfModel,
-      );
+      _populateOneOfShell(name, schema, context, existingModel as OneOfModel);
       applyExamples(existingModel, examples);
       return;
     }
 
     if (schema.anyOf != null) {
-      _populateAnyOfShell(
-        name,
-        schema,
-        context,
-        existingModel as AnyOfModel,
-      );
+      _populateAnyOfShell(name, schema, context, existingModel as AnyOfModel);
       applyExamples(existingModel, examples);
       return;
     }
@@ -694,11 +675,7 @@ class ModelImporter {
 
     final resolvedModels = <Model>[];
     for (final allOfSchema in schema.allOf!) {
-      final model = _resolveCompositeSubModel(
-        allOfSchema,
-        modelContext,
-        shell,
-      );
+      final model = _resolveCompositeSubModel(allOfSchema, modelContext, shell);
       if (model != null) {
         resolvedModels.add(model);
       }
@@ -741,11 +718,7 @@ class ModelImporter {
         shell.isNullable = true;
         continue;
       }
-      final model = _resolveCompositeSubModel(
-        oneOfSchema,
-        modelContext,
-        shell,
-      );
+      final model = _resolveCompositeSubModel(oneOfSchema, modelContext, shell);
       if (model != null) {
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
@@ -791,11 +764,7 @@ class ModelImporter {
         shell.isNullable = true;
         continue;
       }
-      final model = _resolveCompositeSubModel(
-        anyOfSchema,
-        modelContext,
-        shell,
-      );
+      final model = _resolveCompositeSubModel(anyOfSchema, modelContext, shell);
       if (model != null) {
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
@@ -1141,11 +1110,7 @@ class ModelImporter {
     }
 
     final allOfModel = AllOfModel(
-      models: _deduplicateCompoundMembers(
-        modelsToMerge,
-        'allOf',
-        modelContext,
-      ),
+      models: _deduplicateCompoundMembers(modelsToMerge, 'allOf', modelContext),
       context: modelContext,
       isDeprecated: false,
       examples: const [],
@@ -1386,12 +1351,7 @@ class ModelImporter {
         _findNamedModel(refName) ?? _resolveWithCycleCheck(refName, refSchema);
 
     if (_hasStructuralSiblings(schema)) {
-      return _mergeRefWithStructuralSiblings(
-        name,
-        refModel,
-        schema,
-        context,
-      );
+      return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
     }
 
     if (name != null || hasAnnotationSiblings(schema)) {
@@ -1454,11 +1414,7 @@ class ModelImporter {
 
     final allOfModel = AllOfModel(
       name: name,
-      models: _deduplicateCompoundMembers(
-        modelsToMerge,
-        'allOf',
-        modelContext,
-      ),
+      models: _deduplicateCompoundMembers(modelsToMerge, 'allOf', modelContext),
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -2090,9 +2046,7 @@ class ModelImporter {
         name: propertyName,
         model: importPropertySchema(
           propertySchema,
-          context.pushAll(
-            [name, contextPropertyName].whereType<String>(),
-          ),
+          context.pushAll([name, contextPropertyName].whereType<String>()),
         ),
         isRequired: schema.required?.contains(propertyName) ?? false,
         isNullable: isNullable,

@@ -178,7 +178,7 @@ void main() {
         path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
       ).readAsStringSync();
 
-      expect(content, contains('fast_immutable_collections: ^11.0.0'));
+      expect(content, contains('fast_immutable_collections: ^11.2.0'));
     });
 
     test('does not include fast_immutable_collections when disabled', () {
@@ -248,7 +248,7 @@ void main() {
         path.join(tempDir.path, 'http_pkg', 'pubspec.yaml'),
       ).readAsStringSync();
 
-      expect(dio, contains('dio: ^5.8.0+1'));
+      expect(dio, contains('dio: ^5.11.1'));
       expect(dio, isNot(contains('http:')));
       expect(dio, isNot(contains('dio_web_adapter:')));
       expect(http, contains('http: ^1.6.0'));

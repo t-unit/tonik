@@ -141,14 +141,11 @@ void main() {
       },
     );
 
-    test(
-      'StoreApi should not have getLegacyInventory',
-      () {
-        final api = OrdersApi(CustomServer(baseUrl: 'http://localhost:8080'));
+    test('StoreApi should not have getLegacyInventory', () {
+      final api = OrdersApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
-        expect(api, isA<OrdersApi>());
-      },
-    );
+      expect(api, isA<OrdersApi>());
+    });
   });
 
   group('Deprecation Config - Excluded schemas', () {
@@ -164,14 +161,11 @@ void main() {
   });
 
   group('Deprecation Config - Excluded parameters', () {
-    test(
-      'searchPets should not have legacyFilter parameter',
-      () {
-        final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
+    test('searchPets should not have legacyFilter parameter', () {
+      final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
-        expect(api, isA<AnimalsApi>());
-      },
-    );
+      expect(api, isA<AnimalsApi>());
+    });
   });
 
   group('Deprecation Config - Excluded properties', () {
@@ -207,9 +201,7 @@ void main() {
 
   group('Deprecation Config - Non-deprecated elements still exist', () {
     test('PetApi should have non-deprecated operations', () {
-      final api = AnimalsApi(
-        CustomServer(baseUrl: 'http://localhost:8080'),
-      );
+      final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
       expect(api, isA<AnimalsApi>());
     });

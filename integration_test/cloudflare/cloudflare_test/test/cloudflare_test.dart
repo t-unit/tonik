@@ -30,10 +30,7 @@ void main() {
 
       final result = await api.accountsListAccounts();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AccountsListAccountsResponse200>());
@@ -48,10 +45,7 @@ void main() {
 
       final result = await api.accountsListAccounts();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<AccountsListAccountsResponse4XX>());

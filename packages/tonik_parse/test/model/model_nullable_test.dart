@@ -11,97 +11,55 @@ void main() {
       'components': {
         'schemas': {
           // String types
-          'NullableString': {
-            'type': 'string',
-            'nullable': true,
-          },
-          'RequiredString': {
-            'type': 'string',
-          },
+          'NullableString': {'type': 'string', 'nullable': true},
+          'RequiredString': {'type': 'string'},
           // DateTime types
           'NullableDateTime': {
             'type': 'string',
             'format': 'date-time',
             'nullable': true,
           },
-          'RequiredDateTime': {
-            'type': 'string',
-            'format': 'date-time',
-          },
+          'RequiredDateTime': {'type': 'string', 'format': 'date-time'},
           // Date types
           'NullableDate': {
             'type': 'string',
             'format': 'date',
             'nullable': true,
           },
-          'RequiredDate': {
-            'type': 'string',
-            'format': 'date',
-          },
+          'RequiredDate': {'type': 'string', 'format': 'date'},
           // URI types
-          'NullableUri': {
-            'type': 'string',
-            'format': 'uri',
-            'nullable': true,
-          },
-          'RequiredUri': {
-            'type': 'string',
-            'format': 'uri',
-          },
+          'NullableUri': {'type': 'string', 'format': 'uri', 'nullable': true},
+          'RequiredUri': {'type': 'string', 'format': 'uri'},
           // Binary types
           'NullableBinary': {
             'type': 'string',
             'format': 'binary',
             'nullable': true,
           },
-          'RequiredBinary': {
-            'type': 'string',
-            'format': 'binary',
-          },
+          'RequiredBinary': {'type': 'string', 'format': 'binary'},
           // Decimal types
           'NullableDecimal': {
             'type': 'string',
             'format': 'decimal',
             'nullable': true,
           },
-          'RequiredDecimal': {
-            'type': 'string',
-            'format': 'decimal',
-          },
+          'RequiredDecimal': {'type': 'string', 'format': 'decimal'},
           // Integer types
-          'NullableInteger': {
-            'type': 'integer',
-            'nullable': true,
-          },
-          'RequiredInteger': {
-            'type': 'integer',
-          },
+          'NullableInteger': {'type': 'integer', 'nullable': true},
+          'RequiredInteger': {'type': 'integer'},
           // Number types
-          'NullableNumber': {
-            'type': 'number',
-            'nullable': true,
-          },
-          'RequiredNumber': {
-            'type': 'number',
-          },
+          'NullableNumber': {'type': 'number', 'nullable': true},
+          'RequiredNumber': {'type': 'number'},
           // Double types
           'NullableDouble': {
             'type': 'number',
             'format': 'double',
             'nullable': true,
           },
-          'RequiredDouble': {
-            'type': 'number',
-            'format': 'double',
-          },
+          'RequiredDouble': {'type': 'number', 'format': 'double'},
           // Boolean types
-          'NullableBoolean': {
-            'type': 'boolean',
-            'nullable': true,
-          },
-          'RequiredBoolean': {
-            'type': 'boolean',
-          },
+          'NullableBoolean': {'type': 'boolean', 'nullable': true},
+          'RequiredBoolean': {'type': 'boolean'},
         },
       },
     };
@@ -678,13 +636,8 @@ void main() {
       'paths': <String, dynamic>{},
       'components': {
         'schemas': {
-          'RegularTimestamp': {
-            'type': 'string',
-            'format': 'date-time',
-          },
-          'RegularString': {
-            'type': 'string',
-          },
+          'RegularTimestamp': {'type': 'string', 'format': 'date-time'},
+          'RegularString': {'type': 'string'},
           'RegularList': {
             'type': 'array',
             'items': {'type': 'string'},

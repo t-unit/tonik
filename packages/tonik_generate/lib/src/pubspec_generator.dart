@@ -40,7 +40,7 @@ void generatePubspec({
 }) {
   final version = sanitizeVersion(apiDocument.version);
   final ficDependency = useImmutableCollections
-      ? '\n  fast_immutable_collections: ^11.0.0'
+      ? '\n  fast_immutable_collections: ^11.2.0'
       : '';
   final transportDependencies = backendGenerator.dependencies
       .map(
@@ -57,13 +57,13 @@ environment:
 
 dependencies:
   big_decimal: ^0.7.0
-  collection: ^1.17.0
+  collection: ^1.19.1
 $transportDependencies$ficDependency
-  meta: ^1.16.0
+  meta: ^1.19.0
   tonik_util: ^0.9.0
 
 dev_dependencies:
-  lints: ^6.0.0
+  lints: ^6.1.0
 ''';
 
   writeGeneratedArtifact(

@@ -4335,7 +4335,7 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = const AnyOfWithSimpleList(list2: ['test', 'test2']);
+        anyOf = const AnyOfWithSimpleList(list: ['test', 'test2']);
       });
 
       test('toJson', () {
@@ -4392,12 +4392,12 @@ void main() {
           form,
           explode: false,
         );
-        // Both list2 and string are set because any string can be
+        // Both list and string are set because any string can be
         // decoded to String.
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list2: ['test', 'test2'],
+            list: ['test', 'test2'],
             string: 'test,test2',
           ),
         );
@@ -4417,12 +4417,12 @@ void main() {
           simple,
           explode: true,
         );
-        // Both list2 and string are set because any string can be
+        // Both list and string are set because any string can be
         // decoded to String.
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list2: ['test', 'test2'],
+            list: ['test', 'test2'],
             string: 'test,test2',
           ),
         );
@@ -4442,12 +4442,12 @@ void main() {
           simple,
           explode: false,
         );
-        // Both list2 and string are set because any string can be
+        // Both list and string are set because any string can be
         // decoded to String.
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list2: ['test', 'test2'],
+            list: ['test', 'test2'],
             string: 'test,test2',
           ),
         );
@@ -4484,7 +4484,7 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = const AnyOfWithSimpleList(list: [1, 2, 3]);
+        anyOf = const AnyOfWithSimpleList(list2: [1, 2, 3]);
       });
 
       test('toJson', () {
@@ -4547,8 +4547,8 @@ void main() {
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list: [1, 2, 3],
-            list2: ['1', '2', '3'],
+            list: ['1', '2', '3'],
+            list2: [1, 2, 3],
             string: '1,2,3',
           ),
         );
@@ -4574,8 +4574,8 @@ void main() {
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list: [1, 2, 3],
-            list2: ['1', '2', '3'],
+            list: ['1', '2', '3'],
+            list2: [1, 2, 3],
             string: '1,2,3',
           ),
         );
@@ -4601,8 +4601,8 @@ void main() {
         expect(
           reconstructed,
           const AnyOfWithSimpleList(
-            list: [1, 2, 3],
-            list2: ['1', '2', '3'],
+            list: ['1', '2', '3'],
+            list2: [1, 2, 3],
             string: '1,2,3',
           ),
         );
@@ -4640,8 +4640,8 @@ void main() {
 
       setUp(() {
         anyOf = const AnyOfWithSimpleList(
-          list: [1, 2, 3],
-          list2: ['test', 'test2'],
+          list: ['test', 'test2'],
+          list2: [1, 2, 3],
         );
       });
 
@@ -5060,7 +5060,7 @@ void main() {
       late AnyOfWithMixedLists anyOf;
 
       setUp(() {
-        anyOf = const AnyOfWithMixedLists(list2: [1, 2, 3]);
+        anyOf = const AnyOfWithMixedLists(list: [1, 2, 3]);
       });
 
       test('toJson', () {
@@ -5186,7 +5186,7 @@ void main() {
 
       setUp(() {
         anyOf = const AnyOfWithMixedLists(
-          list: [
+          list2: [
             Class1(name: 'test'),
             Class1(name: 'test2'),
           ],
@@ -5405,8 +5405,8 @@ void main() {
 
       setUp(() {
         anyOf = const AnyOfWithMixedLists(
-          list: [Class1(name: 'test')],
-          list2: [1, 2, 3],
+          list: [1, 2, 3],
+          list2: [Class1(name: 'test')],
           bool: false,
         );
       });
@@ -5519,10 +5519,7 @@ void main() {
           ),
           'p',
         );
-        final reconstructed = AnyOfWithEnumList.fromForm(
-          form,
-          explode: false,
-        );
+        final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
         // Both list and string are set because any string can be
         // decoded to String.
         expect(
@@ -5680,10 +5677,7 @@ void main() {
           ),
           'p',
         );
-        final reconstructed = AnyOfWithEnumList.fromForm(
-          form,
-          explode: false,
-        );
+        final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
         // Both list2 and string are set because any string can be
         // decoded to String.
         expect(
@@ -6532,9 +6526,9 @@ void main() {
       });
 
       test('fromJson with Class1-shaped value populates class1 only', () {
-        final result = AnyOfBooleanSchema.fromJson(
-          const <String, Object?>{'name': 'test'},
-        );
+        final result = AnyOfBooleanSchema.fromJson(const <String, Object?>{
+          'name': 'test',
+        });
         expect(result.class1, const Class1(name: 'test'));
         expect(result.object, isNull);
       });
@@ -6625,9 +6619,7 @@ void main() {
       late AnyOfBooleanSchema classVariant;
 
       setUp(() {
-        classVariant = const AnyOfBooleanSchema(
-          class1: Class1(name: 'test'),
-        );
+        classVariant = const AnyOfBooleanSchema(class1: Class1(name: 'test'));
       });
 
       test('toJson', () {

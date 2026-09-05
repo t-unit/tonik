@@ -81,9 +81,7 @@ void main() {
       );
 
       final klass = generator.generateClass(model);
-      final toFormMethod = klass.methods.firstWhere(
-        (m) => m.name == 'toForm',
-      );
+      final toFormMethod = klass.methods.firstWhere((m) => m.name == 'toForm');
 
       expect(
         toFormMethod.returns?.accept(emitter).toString(),
@@ -106,10 +104,7 @@ void main() {
         toFormMethod.optionalParameters.take(2).every((p) => p.required),
         isTrue,
       );
-      expect(
-        toFormMethod.optionalParameters.last.required,
-        isFalse,
-      );
+      expect(toFormMethod.optionalParameters.last.required, isFalse);
     });
 
     test('currentEncodingShape getter has correct signature', () {
@@ -129,10 +124,7 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
     });
   });
 
@@ -657,9 +649,7 @@ void main() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'Wrapper',
-        models: [
-          (discriminatorValue: null, model: classA),
-        ],
+        models: [(discriminatorValue: null, model: classA)],
         context: context,
         examples: const [],
       );
@@ -967,10 +957,7 @@ void main() {
           isDeprecated: false,
           name: 'InnerChoice',
           models: [
-            (
-              discriminatorValue: 'str',
-              model: StringModel(context: context),
-            ),
+            (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'obj',
               model: ClassModel(
@@ -1374,9 +1361,7 @@ void main() {
         final model = AnyOfModel(
           isDeprecated: false,
           name: 'TestAnyOf',
-          models: [
-            (discriminatorValue: null, model: innerOneOf),
-          ],
+          models: [(discriminatorValue: null, model: innerOneOf)],
           context: context,
           examples: const [],
         );
@@ -1515,6 +1500,9 @@ void main() {
               );
               _$values.add(_$stringSimple);
             }
+            if (_$values.isEmpty) return '';
+            return _$values.first;
+          }
         ''';
 
         expect(

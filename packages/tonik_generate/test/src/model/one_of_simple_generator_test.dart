@@ -38,14 +38,8 @@ void main() {
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -61,8 +55,16 @@ void main() {
           bool literal = false,
         }) {
           return switch (this) {
-            ResultError(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
-            ResultSuccess(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
+            ResultSuccess(:final value) => value.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            ),
+            ResultError(:final value) => value.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            ),
           };
         }
       ''';
@@ -73,173 +75,158 @@ void main() {
       );
     });
 
-    test(
-      'toSimple includes discriminator for complex variant, delegates for '
-      'primitive',
-      () {
-        final userModel = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toSimple includes discriminator for complex variant, delegates for '
+        'primitive', () {
+      final userModel = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'Response',
-          models: [
-            (
-              discriminatorValue: 'user',
-              model: userModel,
-            ),
-            (
-              discriminatorValue: 'message',
-              model: StringModel(context: context),
-            ),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: [
+          (discriminatorValue: 'user', model: userModel),
+          (discriminatorValue: 'message', model: StringModel(context: context)),
+        ],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Response');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
-        const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+      const expectedMethod = '''
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), }; }
 ''';
 
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'toSimple includes discriminator for all complex variants when '
-      'discriminator is present',
-      () {
-        final person = ClassModel(
-          isDeprecated: false,
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'first_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toSimple includes discriminator for all complex variants when '
+        'discriminator is present', () {
+      final person = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'first_name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final company = ClassModel(
-          isDeprecated: false,
-          name: 'Company',
-          properties: [
-            Property(
-              name: 'company_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final company = ClassModel(
+        isDeprecated: false,
+        name: 'Company',
+        properties: [
+          Property(
+            name: 'company_name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'Entity',
-          models: [
-            (discriminatorValue: 'person', model: person),
-            (discriminatorValue: 'company', model: company),
-          ],
-          discriminator: 'entity_type',
-          context: context,
-          examples: const [],
-        );
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Entity',
+        models: [
+          (discriminatorValue: 'person', model: person),
+          (discriminatorValue: 'company', model: company),
+        ],
+        discriminator: 'entity_type',
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
-        const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+      const expectedMethod = '''
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
 ''';
 
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'toSimple mixes map+discriminator for complex and delegates for '
-      'primitive (mixed)',
-      () {
-        final person = ClassModel(
-          isDeprecated: false,
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toSimple mixes map+discriminator for complex and delegates for '
+        'primitive (mixed)', () {
+      final person = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = OneOfModel(
-          name: 'MixedEntity',
-          models: [
-            (discriminatorValue: 'person', model: person),
-            (discriminatorValue: 'id', model: StringModel(context: context)),
-          ],
-          discriminator: 'type',
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-        );
+      final model = OneOfModel(
+        name: 'MixedEntity',
+        models: [
+          (discriminatorValue: 'person', model: person),
+          (discriminatorValue: 'id', model: StringModel(context: context)),
+        ],
+        discriminator: 'type',
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
-        const expectedMethod = '''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
+      const expectedMethod = '''
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), }; }
 ''';
 
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group('fromSimple', () {
@@ -298,10 +285,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         factory Entity.fromSimple(String? value, {required bool explode}) {
           try {
             return EntityCompany(Company.fromSimple(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           try {
             return EntityPerson(Person.fromSimple(value, explode: explode));
-          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          } on DecodingException catch (_) {
+          } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid simple value for Entity');
         }
       ''';
@@ -312,19 +301,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       );
     });
 
-    test('fromSimple tries variants in declaration order (primitive-only)', () {
+    test('fromSimple tries primitive variants in semantic order', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -347,6 +330,41 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('fromSimple keeps date-time ahead of a declared plain string', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: DateTimeModel(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final baseClass = generator
+          .generateClasses(model)
+          .firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+          factory Value.fromSimple(String? value, {required bool explode}) {
+            try {
+              return ValueDateTime(value.decodeSimpleDateTime(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return ValueString(value.decodeSimpleString(context: r'Value'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException(r'Invalid simple value for Value');
+          }
+        ''';
+
+      expect(
+        collapseWhitespace(generated),
         contains(collapseWhitespace(expectedMethod)),
       );
     });
@@ -420,19 +438,21 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
-              if (_$discriminator == r'company') {
-                return EntityCompany(Company.fromSimple(value, explode: explode));
-              }
               if (_$discriminator == r'person') {
                 return EntityPerson(Person.fromSimple(value, explode: explode));
+              }
+              if (_$discriminator == r'company') {
+                return EntityCompany(Company.fromSimple(value, explode: explode));
               }
             }
             try {
               return EntityCompany(Company.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             try {
               return EntityPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Entity');
           }
         ''';
@@ -501,10 +521,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             }
             try {
               return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             try {
               return MixedEntityPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
           }
         ''';
@@ -516,77 +538,76 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       },
     );
 
-    test(
-      'fromSimple without discriminator uses only try-catch approach',
-      () {
-        final person = ClassModel(
-          isDeprecated: false,
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromSimple without discriminator uses only try-catch approach', () {
+      final person = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final company = ClassModel(
-          isDeprecated: false,
-          name: 'Company',
-          properties: [
-            Property(
-              name: 'company_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final company = ClassModel(
+        isDeprecated: false,
+        name: 'Company',
+        properties: [
+          Property(
+            name: 'company_name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'EntityNoDisc',
-          models: [
-            (discriminatorValue: null, model: person),
-            (discriminatorValue: null, model: company),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'EntityNoDisc',
+        models: [
+          (discriminatorValue: null, model: person),
+          (discriminatorValue: null, model: company),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
 
-        const expectedMethod = '''
+      const expectedMethod = '''
           factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
             try {
               return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             try {
               return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
-            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group(r'nullable oneOf with $Raw-prefixed class name', () {
@@ -649,14 +670,8 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         isDeprecated: false,
         name: 'WithBinary',
         models: [
-          (
-            discriminatorValue: 'binary',
-            model: BinaryModel(context: context),
-          ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'binary', model: BinaryModel(context: context)),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -812,44 +827,42 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
   });
 
   group('special characters in discriminator', () {
-    test(
-      'fromSimple escapes discriminator value containing single quote',
-      () {
-        final model = OneOfModel(
-          isDeprecated: false,
-          name: 'Result',
-          models: [
-            (
-              discriminatorValue: "it's-success",
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Success',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
+    test('fromSimple escapes discriminator value containing single quote', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Result',
+        models: [
+          (
+            discriminatorValue: "it's-success",
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Success',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
+              examples: const [],
             ),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Result');
-        final generated = format(baseClass.accept(emitter).toString());
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      final generated = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           factory Result.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
               final _$pairs = value.split(',');
@@ -874,12 +887,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             throw SimpleDecodingException(r'Invalid simple value for Result');
           }''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test(
       'fromSimple escapes discriminator field name containing single quote',

@@ -72,10 +72,7 @@ void main() {
             'SimpleModel': {
               'type': 'object',
               'properties': {
-                'name': {
-                  'type': 'string',
-                  'x-dart-name': 'customPropertyName',
-                },
+                'name': {'type': 'string', 'x-dart-name': 'customPropertyName'},
               },
             },
           },

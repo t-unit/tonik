@@ -144,11 +144,7 @@ void main() {
         expect(
           () => null.decodeJsonInt(),
           throwsA(
-            isA<InvalidTypeException>().having(
-              (e) => e.value,
-              'value',
-              'null',
-            ),
+            isA<InvalidTypeException>().having((e) => e.value, 'value', 'null'),
           ),
         );
       });
@@ -451,10 +447,7 @@ void main() {
           'mailto:user@example.com'.decodeJsonUri(),
           Uri.parse('mailto:user@example.com'),
         );
-        expect(
-          () => 123.decodeJsonUri(),
-          throwsA(isA<InvalidTypeException>()),
-        );
+        expect(() => 123.decodeJsonUri(), throwsA(isA<InvalidTypeException>()));
         expect(
           () => null.decodeJsonUri(),
           throwsA(isA<InvalidTypeException>()),
@@ -883,10 +876,7 @@ void main() {
 
   group('Map', () {
     test('decodes JSON map with string values', () {
-      final json = <String, dynamic>{
-        'a': 'hello',
-        'b': 'world',
-      };
+      final json = <String, dynamic>{'a': 'hello', 'b': 'world'};
       final result = (json as Object?).decodeJsonMap<String>(
         (v) => v! as String,
       );
@@ -896,9 +886,7 @@ void main() {
 
     test('decodes JSON map with int values', () {
       final json = <String, dynamic>{'x': 1, 'y': 2};
-      final result = (json as Object?).decodeJsonMap<int>(
-        (v) => v! as int,
-      );
+      final result = (json as Object?).decodeJsonMap<int>((v) => v! as int);
 
       expect(result, {'x': 1, 'y': 2});
     });
@@ -930,9 +918,7 @@ void main() {
 
     test('decodes nullable map returns null for null', () {
       const Object? value = null;
-      final result = value.decodeJsonNullableMap<String>(
-        (v) => v! as String,
-      );
+      final result = value.decodeJsonNullableMap<String>((v) => v! as String);
 
       expect(result, isNull);
     });

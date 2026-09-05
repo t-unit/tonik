@@ -39,20 +39,17 @@ void main() {
       ]);
     });
 
-    test(
-      'keeps API clients public while hiding callable operations',
-      () async {
-        await const Generator().generate(
-          apiDocument: _completeDocument(context),
-          outputDirectory: tempDir.path,
-          package: _packageName,
-        );
+    test('keeps API clients public while hiding callable operations', () async {
+      await const Generator().generate(
+        apiDocument: _completeDocument(context),
+        outputDirectory: tempDir.path,
+        package: _packageName,
+      );
 
-        final exports = _rootExports(tempDir);
-        expect(exports, contains('src/api_client/users_api.dart'));
-        expect(exports, isNot(contains('src/operation/get_user.dart')));
-      },
-    );
+      final exports = _rootExports(tempDir);
+      expect(exports, contains('src/api_client/users_api.dart'));
+      expect(exports, isNot(contains('src/operation/get_user.dart')));
+    });
 
     test('sorts and normalizes in-memory public artifact paths', () {
       generateLibraryFile(
@@ -81,11 +78,7 @@ void main() {
 
       expect(
         File(
-          path.join(
-            tempDir.path,
-            _packageName,
-            '.tonik-generated-files.json',
-          ),
+          path.join(tempDir.path, _packageName, '.tonik-generated-files.json'),
         ).existsSync(),
         isFalse,
       );
@@ -139,9 +132,8 @@ List<String> _rootExports(Directory tempDir) {
   ).allMatches(content).map((match) => match.group(1)!).toList();
 }
 
-File _libraryFile(Directory tempDir) => File(
-  path.join(tempDir.path, _packageName, 'lib', '$_packageName.dart'),
-);
+File _libraryFile(Directory tempDir) =>
+    File(path.join(tempDir.path, _packageName, 'lib', '$_packageName.dart'));
 
 ApiDocument _completeDocument(Context context) {
   final multiBodyResponse = ResponseObject(

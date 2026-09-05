@@ -38,19 +38,12 @@ void main() {
       expect(effectiveDefault(null, StringModel(context: context)), isNull);
     });
 
-    test(
-      'local default is preserved verbatim — booleans, numbers, maps',
-      () {
-        expect(
-          effectiveDefault(false, BooleanModel(context: context)),
-          isFalse,
-        );
-        expect(effectiveDefault(0, IntegerModel(context: context)), 0);
-        expect(
-          effectiveDefault(<String, Object?>{'k': 'v'}, aliasWith(null)),
-          {'k': 'v'},
-        );
-      },
-    );
+    test('local default is preserved verbatim — booleans, numbers, maps', () {
+      expect(effectiveDefault(false, BooleanModel(context: context)), isFalse);
+      expect(effectiveDefault(0, IntegerModel(context: context)), 0);
+      expect(effectiveDefault(<String, Object?>{'k': 'v'}, aliasWith(null)), {
+        'k': 'v',
+      });
+    });
   });
 }

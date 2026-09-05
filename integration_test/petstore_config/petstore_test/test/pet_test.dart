@@ -399,10 +399,7 @@ void main() {
     test('200', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
-      final pet = await petApi.uploadPetImage(
-        petId: 1,
-        imageMetadata: 'test',
-      );
+      final pet = await petApi.uploadPetImage(petId: 1, imageMetadata: 'test');
 
       // Note: request body `application/octet-stream` is currently not supported by Tonik.
 

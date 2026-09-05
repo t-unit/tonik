@@ -37,11 +37,9 @@ final class TonikMultipartPart {
 @immutable
 final class TonikMultipartBody {
   /// Creates a multipart body while preserving part order and duplicate names.
-  TonikMultipartBody(
-    List<TonikMultipartPart> parts, {
-    String? boundary,
-  }) : parts = List.unmodifiable(parts),
-       boundary = boundary ?? _newBoundary() {
+  TonikMultipartBody(List<TonikMultipartPart> parts, {String? boundary})
+    : parts = List.unmodifiable(parts),
+      boundary = boundary ?? _newBoundary() {
     _validateBoundary(this.boundary);
   }
 
@@ -67,11 +65,7 @@ final class TonikMultipartBody {
       _validatePart(part);
       bytes
         ..add(ascii.encode('--$boundary\r\n'))
-        ..add(
-          latin1.encode(
-            _partHeaders(part),
-          ),
-        )
+        ..add(latin1.encode(_partHeaders(part)))
         ..add(part.bytes)
         ..add(const [13, 10]);
     }
@@ -115,9 +109,7 @@ final class TonikMultipartBody {
     }
   }
 
-  static final RegExp _headerName = RegExp(
-    r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
-  );
+  static final RegExp _headerName = RegExp(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$");
 
   static void _validateHeaderValue(String name, String value) {
     if (value.contains('\r') || value.contains('\n')) {

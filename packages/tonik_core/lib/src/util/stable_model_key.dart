@@ -4,8 +4,8 @@ import 'package:tonik_core/src/model/model.dart';
 /// Computes and caches stable sort keys for models.
 ///
 /// Stable keys are string representations of model structure that are
-/// deterministic regardless of Set iteration order. They are used to sort
-/// models consistently across runs.
+/// deterministic for a given model declaration. Compound member order is part
+/// of the key, while unordered values such as enum entries are normalized.
 ///
 /// Keys are cached per-instance so that repeated comparisons during sorting
 /// (O(n log n) comparator calls) don't recompute the key each time. This is
@@ -15,32 +15,70 @@ class StableModelSorter {
   static const _maxDepth = 5;
 
   final _cache = <Model, String>{};
+  final _semanticCache = <Model, String>{};
 
   /// Returns the stable key for [model], computing and caching it if needed.
   String stableKeyOf(Model model) {
-    return _cache[model] ??= _computeStableKey(model, {}, 0);
+    return _cache[model] ??= _computeKey(
+      model,
+      {},
+      0,
+      preserveCompoundOrder: true,
+    );
   }
 
-  String stableAliasKey({required Model model}) =>
-      'AliasModel{null,${_computeStableKey(model, {}, 1)}}';
+  String _semanticKeyOf(Model model) => _semanticCache[model] ??= _computeKey(
+    model,
+    {},
+    0,
+    preserveCompoundOrder: false,
+  );
+
+  String stableAliasKey({required Model model}) {
+    final modelKey = _computeKey(model, {}, 1, preserveCompoundOrder: true);
+    return 'AliasModel{null,$modelKey}';
+  }
 
   String stableObjectKey({
     required String? name,
     required Iterable<(String, Model)> properties,
     required AdditionalPropertiesPolicy additionalPropertiesPolicy,
-  }) => _objectKey(name, properties, additionalPropertiesPolicy, {}, 0);
+  }) => _objectKey(
+    name,
+    properties,
+    additionalPropertiesPolicy,
+    {},
+    0,
+    preserveCompoundOrder: true,
+  );
 
   String _objectKey(
     String? name,
     Iterable<(String, Model)> properties,
     AdditionalPropertiesPolicy policy,
     Set<Model> visited,
-    int depth,
-  ) =>
-      'ClassModel{$name,'
-      '${properties.map((p) => '${p.$1}:'
-          '${_computeStableKey(p.$2, visited, depth + 1)}').join(',')},'
-      'ap:${_policyKey(policy, visited, depth)}}';
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final propertyKeys = properties
+        .map((property) {
+          final modelKey = _computeKey(
+            property.$2,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: preserveCompoundOrder,
+          );
+          return '${property.$1}:$modelKey';
+        })
+        .join(',');
+    final policyKey = _policyKey(
+      policy,
+      visited,
+      depth,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'ClassModel{$name,$propertyKeys,ap:$policyKey}';
+  }
 
   /// Returns a deterministically sorted list of [models].
   ///
@@ -71,7 +109,7 @@ class StableModelSorter {
     final contextComp = a.context.toString().compareTo(b.context.toString());
     if (contextComp != 0) return contextComp;
 
-    return stableKeyOf(a).compareTo(stableKeyOf(b));
+    return _semanticKeyOf(a).compareTo(_semanticKeyOf(b));
   }
 
   int _compareDiscriminatedModelsStably(
@@ -97,10 +135,13 @@ class StableModelSorter {
   /// densely connected graphs. Beyond [_maxDepth], only the runtime type
   /// is emitted instead of a full structural traversal.
   ///
-  /// For compound children (AllOf, OneOf, AnyOf), children are sorted by a
-  /// cheap deterministic key before traversal so the result is independent
-  /// of member iteration order.
-  String _computeStableKey(Model model, Set<Model> visited, int depth) {
+  /// Compound members are traversed in declaration order.
+  String _computeKey(
+    Model model,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
     if (depth > _maxDepth) {
       return switch (model) {
         ClassModel(:final name) => 'ClassModel{$name}',
@@ -115,17 +156,37 @@ class StableModelSorter {
     if (!visited.add(model)) return '<cycle>';
 
     return switch (model) {
-      AllOfModel(:final models, :final additionalPropertiesPolicy) =>
-        'AllOfModel{${_stableSortedModels(models, visited, depth)},'
-            'ap:${_policyKey(additionalPropertiesPolicy, visited, depth)}}',
-      OneOfModel(:final models, :final discriminator) =>
-        'OneOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
-      AnyOfModel(:final models, :final discriminator) =>
-        'AnyOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
-      ListModel(:final content, :final name) =>
-        'ListModel{$name,${_computeStableKey(content, visited, depth + 1)}}',
+      AllOfModel(:final models, :final additionalPropertiesPolicy) => _allOfKey(
+        models,
+        additionalPropertiesPolicy,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
+      OneOfModel(:final models, :final discriminator) => _discriminatedKey(
+        'OneOfModel',
+        discriminator,
+        models,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
+      AnyOfModel(:final models, :final discriminator) => _discriminatedKey(
+        'AnyOfModel',
+        discriminator,
+        models,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
+      ListModel(:final content, :final name) => _nestedModelKey(
+        'ListModel',
+        name,
+        content,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
       ClassModel(
         :final name,
         :final properties,
@@ -137,14 +198,26 @@ class StableModelSorter {
           additionalPropertiesPolicy,
           visited,
           depth,
+          preserveCompoundOrder: preserveCompoundOrder,
         ),
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
-      AliasModel(:final name, :final model) =>
-        'AliasModel{$name,${_computeStableKey(model, visited, depth + 1)}}',
-      MapModel(:final name, :final valueModel) =>
-        'MapModel{$name,'
-            '${_computeStableKey(valueModel, visited, depth + 1)}}',
+      AliasModel(:final name, :final model) => _nestedModelKey(
+        'AliasModel',
+        name,
+        model,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
+      MapModel(:final name, :final valueModel) => _nestedModelKey(
+        'MapModel',
+        name,
+        valueModel,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',
@@ -164,19 +237,118 @@ class StableModelSorter {
     };
   }
 
+  String _nestedModelKey(
+    String type,
+    String? name,
+    Model model,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelKey = _computeKey(
+      model,
+      visited,
+      depth + 1,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return '$type{$name,$modelKey}';
+  }
+
+  String _allOfKey(
+    List<Model> models,
+    AdditionalPropertiesPolicy policy,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelsKey = preserveCompoundOrder
+        ? _orderedModels(models, visited, depth)
+        : _stableSortedModels(models, visited, depth);
+    final policyKey = _policyKey(
+      policy,
+      visited,
+      depth,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'AllOfModel{$modelsKey,ap:$policyKey}';
+  }
+
+  String _discriminatedKey(
+    String type,
+    String? discriminator,
+    List<DiscriminatedModel> models,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelsKey = preserveCompoundOrder
+        ? _orderedDiscriminatedModels(models, visited, depth)
+        : _stableSortedDiscriminatedModels(models, visited, depth);
+    return '$type{$discriminator,$modelsKey}';
+  }
+
   String _policyKey(
     AdditionalPropertiesPolicy policy,
     Set<Model> visited,
-    int depth,
-  ) => switch (policy) {
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) => switch (policy) {
     ForbiddenAdditionalProperties() => 'forbidden',
     AllowedAdditionalProperties(:final valueModel, :final origin) =>
-      'allowed(${origin.name},'
-          '${_computeStableKey(valueModel, visited, depth + 1)})',
+      _allowedAdditionalPropertiesKey(
+        valueModel,
+        origin,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
   };
 
-  /// Sorts models by a cheap deterministic key, then computes full keys
-  /// in that fixed order.
+  String _allowedAdditionalPropertiesKey(
+    Model valueModel,
+    AdditionalPropertiesOrigin origin,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelKey = _computeKey(
+      valueModel,
+      visited,
+      depth + 1,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'allowed(${origin.name},$modelKey)';
+  }
+
+  /// Computes compound member keys in declaration order.
+  String _orderedModels(List<Model> models, Set<Model> visited, int depth) {
+    return models
+        .map(
+          (m) =>
+              _computeKey(m, visited, depth + 1, preserveCompoundOrder: true),
+        )
+        .join(',');
+  }
+
+  /// Computes discriminated member keys in declaration order.
+  String _orderedDiscriminatedModels(
+    List<DiscriminatedModel> models,
+    Set<Model> visited,
+    int depth,
+  ) {
+    return models
+        .map((dm) {
+          final modelKey = _computeKey(
+            dm.model,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: true,
+          );
+          return '${dm.discriminatorValue}:$modelKey';
+        })
+        .join(',');
+  }
+
   String _stableSortedModels(
     Iterable<Model> models,
     Set<Model> visited,
@@ -184,12 +356,17 @@ class StableModelSorter {
   ) {
     final sorted = models.toList()..sort(_cheapModelCompare);
     return sorted
-        .map((m) => _computeStableKey(m, visited, depth + 1))
+        .map(
+          (model) => _computeKey(
+            model,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: false,
+          ),
+        )
         .join(',');
   }
 
-  /// Sorts discriminated models by discriminator value first, then by a
-  /// cheap model key, before computing full keys in that fixed order.
   String _stableSortedDiscriminatedModels(
     Iterable<DiscriminatedModel> models,
     Set<Model> visited,
@@ -197,11 +374,15 @@ class StableModelSorter {
   ) {
     final sorted = models.toList()..sort(_cheapDiscriminatedModelCompare);
     return sorted
-        .map(
-          (dm) =>
-              '${dm.discriminatorValue}:'
-              '${_computeStableKey(dm.model, visited, depth + 1)}',
-        )
+        .map((model) {
+          final modelKey = _computeKey(
+            model.model,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: false,
+          );
+          return '${model.discriminatorValue}:$modelKey';
+        })
         .join(',');
   }
 
@@ -211,7 +392,6 @@ class StableModelSorter {
     return sorted.map((v) => v.value.toString()).join(',');
   }
 
-  /// Cheap, non-recursive comparator for pre-sorting Set children.
   static int _cheapModelCompare(Model a, Model b) {
     final typeComp = a.runtimeType.toString().compareTo(
       b.runtimeType.toString(),
@@ -220,7 +400,6 @@ class StableModelSorter {
     return a.context.toString().compareTo(b.context.toString());
   }
 
-  /// Cheap, non-recursive comparator for pre-sorting discriminated models.
   static int _cheapDiscriminatedModelCompare(
     DiscriminatedModel a,
     DiscriminatedModel b,

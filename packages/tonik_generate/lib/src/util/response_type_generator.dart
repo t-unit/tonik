@@ -43,10 +43,7 @@ TypeReference resultTypeForOperation(
       (b) => b
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.addAll([
-          refer('void'),
-          nativeResponseType,
-        ]),
+        ..types.addAll([refer('void'), nativeResponseType]),
     ),
 
     (false, 1, false) => TypeReference(

@@ -30,18 +30,12 @@ void main() {
           stringList: ['hello'],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-string-list'],
-          'hello',
-        );
+        expect(recordedRequest.headers['x-string-list'], 'hello');
         expect(success.value.xStringList, ['hello']);
       });
 
@@ -51,17 +45,11 @@ void main() {
           stringList: ['apple', 'banana', 'cherry'],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-string-list'],
-          'apple,banana,cherry',
-        );
+        expect(recordedRequest.headers['x-string-list'], 'apple,banana,cherry');
 
         expect(success.value.xStringList, ['apple', 'banana', 'cherry']);
       });
@@ -72,10 +60,7 @@ void main() {
           stringList: ['hello world', 'foo@bar'],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStringList, ['hello world', 'foo@bar']);
@@ -89,10 +74,7 @@ void main() {
           integerList: [42],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -107,17 +89,11 @@ void main() {
           integerList: [1, 2, 3, 4, 5],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-integer-list'],
-          '1,2,3,4,5',
-        );
+        expect(recordedRequest.headers['x-integer-list'], '1,2,3,4,5');
         expect(success.value.xIntegerList, [1, 2, 3, 4, 5]);
       });
 
@@ -127,17 +103,11 @@ void main() {
           integerList: [-10, 0, 10],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-integer-list'],
-          '-10,0,10',
-        );
+        expect(recordedRequest.headers['x-integer-list'], '-10,0,10');
         expect(success.value.xIntegerList, [-10, 0, 10]);
       });
     });
@@ -149,18 +119,12 @@ void main() {
           numberList: [3.14],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-number-list'],
-          '3.14',
-        );
+        expect(recordedRequest.headers['x-number-list'], '3.14');
         expect(success.value.xNumberList, [3.14]);
       });
 
@@ -170,17 +134,11 @@ void main() {
           numberList: [1.1, 2.2, 3.3],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-number-list'],
-          '1.1,2.2,3.3',
-        );
+        expect(recordedRequest.headers['x-number-list'], '1.1,2.2,3.3');
         expect(success.value.xNumberList, [1.1, 2.2, 3.3]);
       });
 
@@ -190,10 +148,7 @@ void main() {
           numberList: [1, 2.5, 3],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xNumberList, [1, 2.5, 3]);
@@ -207,18 +162,12 @@ void main() {
           booleanList: [true],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-boolean-list'],
-          'true',
-        );
+        expect(recordedRequest.headers['x-boolean-list'], 'true');
         expect(success.value.xBooleanList, [true]);
       });
 
@@ -228,17 +177,11 @@ void main() {
           booleanList: [true, false, true],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-boolean-list'],
-          'true,false,true',
-        );
+        expect(recordedRequest.headers['x-boolean-list'], 'true,false,true');
         expect(success.value.xBooleanList, [true, false, true]);
       });
 
@@ -248,17 +191,11 @@ void main() {
           booleanList: [false, false],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-boolean-list'],
-          'false,false',
-        );
+        expect(recordedRequest.headers['x-boolean-list'], 'false,false');
         expect(success.value.xBooleanList, [false, false]);
       });
     });
@@ -273,10 +210,7 @@ void main() {
           booleanList: [true, false],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -297,10 +231,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripSimpleLists();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
@@ -317,10 +248,7 @@ void main() {
           stringList: ['test'],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xStringList, ['test']);

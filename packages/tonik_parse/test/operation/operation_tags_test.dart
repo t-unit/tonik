@@ -138,10 +138,7 @@ void main() {
           },
         },
         '/missing': {
-          'get': {
-            'operationId': 'missing',
-            'responses': <String, dynamic>{},
-          },
+          'get': {'operationId': 'missing', 'responses': <String, dynamic>{}},
         },
       },
     };

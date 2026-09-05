@@ -33,10 +33,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/user',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/user');
       });
 
       test('request method is GET', () async {
@@ -66,10 +63,7 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetUserResponse200>());
@@ -142,10 +136,7 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetUserResponse400>());
@@ -172,10 +163,7 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetUserResponse401>());
@@ -197,10 +185,7 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetUserResponse404>());
@@ -211,10 +196,7 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetUserResponse500>());
@@ -250,10 +232,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/user',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/user');
       });
 
       test('request method is PATCH', () async {
@@ -279,10 +258,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['content-type'],
-          'application/json',
-        );
+        expect(recordedRequest.headers['content-type'], 'application/json');
       });
     });
 
@@ -372,9 +348,7 @@ void main() {
 
         final response = await api.patchUser(
           meSess: 'test_session',
-          body: const UserPatch(
-            settings: UserSettings(),
-          ),
+          body: const UserPatch(settings: UserSettings()),
         );
 
         requireSuccess(response);
@@ -390,9 +364,7 @@ void main() {
 
         final response = await api.patchUser(
           meSess: 'test_session',
-          body: const UserPatch(
-            settings: UserSettings(blockAbusiveIPs: true),
-          ),
+          body: const UserPatch(settings: UserSettings(blockAbusiveIPs: true)),
         );
 
         requireSuccess(response);
@@ -482,10 +454,7 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<PatchUserResponse200>());
@@ -527,10 +496,7 @@ void main() {
           body: const UserPatch(username: 'x'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<PatchUserResponse400>());
@@ -563,10 +529,7 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<PatchUserResponse401>());
@@ -580,10 +543,7 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 403);
         expect(success.value, isA<PatchUserResponse403>());
@@ -597,10 +557,7 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<PatchUserResponse404>());
@@ -614,10 +571,7 @@ void main() {
           body: const UserPatch(username: 'existingUser'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 409);
         expect(success.value, isA<PatchUserResponse409>());
@@ -631,10 +585,7 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PatchUserResponse500>());
@@ -651,10 +602,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/user',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/user');
       });
 
       test('request method is DELETE', () async {
@@ -684,10 +632,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 204);
         expect(success.value, isA<DeleteUserResponse204>());
@@ -710,10 +655,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<DeleteUserResponse400>());
@@ -724,10 +666,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<DeleteUserResponse401>());
@@ -738,10 +677,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 403);
         expect(success.value, isA<DeleteUserResponse403>());
@@ -752,10 +688,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<DeleteUserResponse404>());
@@ -766,10 +699,7 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<DeleteUserResponse500>());
@@ -786,10 +716,7 @@ void main() {
 
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.toString(),
-          '$baseUrl/user/usage',
-        );
+        expect(recordedRequest.uri.toString(), '$baseUrl/user/usage');
       });
 
       test('request method is GET', () async {
@@ -819,10 +746,7 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetUserUsageResponse200>());
@@ -885,10 +809,7 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetUserUsageResponse401>());
@@ -910,10 +831,7 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetUserUsageResponse500>());

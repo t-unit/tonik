@@ -234,10 +234,7 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
     case OpenIdConnectSecurityScheme():
       if (scheme.description != null && scheme.description!.isNotEmpty) {
         lines.addAll(
-          formatDocCommentWithPrefix(
-            '- OpenID Connect: ',
-            scheme.description,
-          ),
+          formatDocCommentWithPrefix('- OpenID Connect: ', scheme.description),
         );
       } else {
         lines.add('/// - OpenID Connect');

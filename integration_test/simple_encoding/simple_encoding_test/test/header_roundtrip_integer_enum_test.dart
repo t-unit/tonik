@@ -29,10 +29,7 @@ void main() {
         priority: PriorityEnum.one,
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -47,10 +44,7 @@ void main() {
         priority: PriorityEnum.two,
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
@@ -65,10 +59,7 @@ void main() {
         priority: PriorityEnum.three,
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
@@ -83,10 +74,7 @@ void main() {
         priority: PriorityEnum.four,
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
@@ -101,10 +89,7 @@ void main() {
         priority: PriorityEnum.five,
       );
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);

@@ -258,10 +258,7 @@ class AllOfNormalizer {
     }
   }
 
-  void _updatePathParameterModel(
-    PathParameter param,
-    Map<Model, Model> cache,
-  ) {
+  void _updatePathParameterModel(PathParameter param, Map<Model, Model> cache) {
     switch (param) {
       case PathParameterAlias():
         _updatePathParameterModel(param.parameter, cache);

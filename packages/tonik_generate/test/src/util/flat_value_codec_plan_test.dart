@@ -54,10 +54,7 @@ void main() {
     test('String encodes as the raw value', () {
       final plan = encodePlan(StringModel(context: context));
 
-      expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        'v',
-      );
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v');
     });
 
     test('Integer, Number, Double, Boolean, Decimal, Uri, and Date encode '
@@ -102,10 +99,7 @@ void main() {
         ),
       );
 
-      expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        'v.toJson()',
-      );
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v.toJson()');
     });
 
     test('integer enum encodes via toJson toString', () {
@@ -128,19 +122,14 @@ void main() {
     test('Base64 encodes via toBase64String', () {
       final plan = encodePlan(Base64Model(context: context));
 
-      expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        'v.toBase64String()',
-      );
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v.toBase64String()');
     });
 
     test('Any encodes through the unknown-flat-scalar runtime boundary', () {
       final plan = encodePlan(AnyModel(context: context));
 
       expect(
-        collapseWhitespace(
-          methodBody((plan as FlatScalarEncodePlan).value),
-        ),
+        collapseWhitespace(methodBody((plan as FlatScalarEncodePlan).value)),
         collapseWhitespace(
           format('''
             test() {
@@ -162,9 +151,7 @@ void main() {
       );
 
       expect(
-        collapseWhitespace(
-          methodBody((plan as FlatScalarEncodePlan).value),
-        ),
+        collapseWhitespace(methodBody((plan as FlatScalarEncodePlan).value)),
         collapseWhitespace(
           format(r'''
             test() {
@@ -189,10 +176,7 @@ void main() {
         ),
       );
 
-      expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        'v.toString()',
-      );
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v.toString()');
     });
 
     test('nullable alias delegates to the aliased model', () {
@@ -207,10 +191,7 @@ void main() {
         ),
       );
 
-      expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        'v.toString()',
-      );
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v.toString()');
     });
   });
 
@@ -224,10 +205,7 @@ void main() {
         ),
       );
 
-      expect(
-        emit((plan as FlatArrayEncodePlan).values),
-        'v',
-      );
+      expect(emit((plan as FlatArrayEncodePlan).values), 'v');
     });
 
     test('integer list maps elements to raw strings', () {
@@ -293,9 +271,7 @@ void main() {
       );
 
       expect(
-        collapseWhitespace(
-          methodBody((plan as FlatArrayEncodePlan).values),
-        ),
+        collapseWhitespace(methodBody((plan as FlatArrayEncodePlan).values)),
         collapseWhitespace(
           format('''
             test() {
@@ -415,10 +391,7 @@ void main() {
     });
 
     test('optional string decodes with the nullable simple decoder', () {
-      final plan = decodePlan(
-        StringModel(context: context),
-        isRequired: false,
-      );
+      final plan = decodePlan(StringModel(context: context), isRequired: false);
 
       expect(
         emit((plan as FlatScalarDecodePlan).value),
@@ -432,10 +405,7 @@ void main() {
         format: FlatWireFormat.form,
       );
 
-      expect(
-        emit((plan as FlatScalarDecodePlan).value),
-        'v.decodeFormInt()',
-      );
+      expect(emit((plan as FlatScalarDecodePlan).value), 'v.decodeFormInt()');
     });
 
     test('enum decodes through its fromSimple factory', () {
@@ -458,10 +428,7 @@ void main() {
     test('Any decoding retains the raw string', () {
       final plan = decodePlan(AnyModel(context: context));
 
-      expect(
-        emit((plan as FlatScalarDecodePlan).value),
-        'v',
-      );
+      expect(emit((plan as FlatScalarDecodePlan).value), 'v');
     });
 
     test('alias delegates to the aliased model', () {
@@ -475,10 +442,7 @@ void main() {
         ),
       );
 
-      expect(
-        emit((plan as FlatScalarDecodePlan).value),
-        'v.decodeSimpleInt()',
-      );
+      expect(emit((plan as FlatScalarDecodePlan).value), 'v.decodeSimpleInt()');
     });
 
     test('lists are unsupported because unknown-key element boundaries '

@@ -99,16 +99,13 @@ List<Object?> responseInputs(Response response) {
     });
 
     test('tracks cached ownership and one stable closed error', () {
-      expect(
-        adapter.fields.map((field) => field.name),
-        [
-          'serverConfig',
-          r'_$client',
-          r'_$ownsClient',
-          r'_$isClosed',
-          r'_$closedError',
-        ],
-      );
+      expect(adapter.fields.map((field) => field.name), [
+        'serverConfig',
+        r'_$client',
+        r'_$ownsClient',
+        r'_$isClosed',
+        r'_$closedError',
+      ]);
 
       final serverConfig = adapter.fields.first;
       expect(
@@ -118,10 +115,7 @@ List<Object?> responseInputs(Response response) {
       expect(serverConfig.modifier, FieldModifier.final$);
 
       final closedError = adapter.fields.last;
-      expect(
-        closedError.type?.accept(emitter).toString(),
-        'StateError',
-      );
+      expect(closedError.type?.accept(emitter).toString(), 'StateError');
       expect(closedError.modifier, FieldModifier.final$);
     });
 
@@ -170,10 +164,7 @@ Client client() {
           (method) => method.name == 'close',
         );
 
-        expect(
-          close.returns?.accept(emitter).toString(),
-          'void',
-        );
+        expect(close.returns?.accept(emitter).toString(), 'void');
 
         final generatedMethod = close.rebuild(
           (builder) => builder

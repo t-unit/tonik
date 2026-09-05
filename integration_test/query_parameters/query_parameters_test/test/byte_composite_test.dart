@@ -37,10 +37,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyOfByte=3q2%2B7w%3D%3D',
-        );
+        expect(recordedRequest.uri.query, 'anyOfByte=3q2%2B7w%3D%3D');
       },
     );
 
@@ -74,10 +71,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'oneOfByte=3q2%2B7w%3D%3D',
-        );
+        expect(recordedRequest.uri.query, 'oneOfByte=3q2%2B7w%3D%3D');
       },
     );
 
@@ -92,10 +86,12 @@ void main() {
       final decoded = OneOfByte.fromSimple(wire, explode: true);
 
       expect(decoded, isA<OneOfByteBase64>());
-      expect(
-        (decoded as OneOfByteBase64).value.toBytes(),
-        [0xDE, 0xAD, 0xBE, 0xEF],
-      );
+      expect((decoded as OneOfByteBase64).value.toBytes(), [
+        0xDE,
+        0xAD,
+        0xBE,
+        0xEF,
+      ]);
     });
   });
 
@@ -113,10 +109,7 @@ void main() {
         expect(response, isTonikSuccess);
         requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'allOfByte=3q2%2B7w%3D%3D',
-        );
+        expect(recordedRequest.uri.query, 'allOfByte=3q2%2B7w%3D%3D');
       },
     );
 

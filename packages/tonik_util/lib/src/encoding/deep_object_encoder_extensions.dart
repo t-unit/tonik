@@ -39,9 +39,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
     bool allowReserved = false,
   }) {
     if (!explode) {
-      throw const EncodingException(
-        'deepObject style requires explode=true',
-      );
+      throw const EncodingException('deepObject style requires explode=true');
     }
 
     if (isEmpty && !allowEmpty) {

@@ -207,12 +207,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {
-              Tag(
-                name: 'users',
-                description: 'User management API',
-              ),
-            },
+            tags: {Tag(name: 'users', description: 'User management API')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -226,10 +221,7 @@ void main() {
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(
-              name: 'users',
-              description: 'User management API',
-            ),
+            Tag(name: 'users', description: 'User management API'),
             testServers,
           );
           expect(generatedClass.docs, isNotEmpty);
@@ -351,9 +343,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {
-              Tag(name: 'users'),
-            },
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -529,9 +519,7 @@ void main() {
             context: testContext,
             summary: 'Create user',
             description: 'Create a new user',
-            tags: {
-              Tag(name: 'users'),
-            },
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users',
             method: HttpMethod.post,
@@ -937,10 +925,7 @@ void main() {
             '/// [includeDetails] Whether to include additional details',
           ),
         );
-        expect(
-          method.docs,
-          contains('/// [sessionId] Session ID cookie'),
-        );
+        expect(method.docs, contains('/// [sessionId] Session ID cookie'));
       });
 
       test('handles multi-line parameter descriptions with quotes', () {
@@ -1722,14 +1707,8 @@ void main() {
         );
         final method = klass.methods.first;
 
-        expect(
-          method.docs.any((d) => d.contains('Request body')),
-          isFalse,
-        );
-        expect(
-          method.docs.any((d) => d.contains('Response ')),
-          isFalse,
-        );
+        expect(method.docs.any((d) => d.contains('Request body')), isFalse);
+        expect(method.docs.any((d) => d.contains('Response ')), isFalse);
       });
     });
 
@@ -2121,64 +2100,59 @@ getUser({
         },
       );
 
-      test(
-        'forwarder body invokes the operation with the parameter name, not '
-        'the qualified default reference',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'region',
-            rawName: 'region',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: StringModel(context: testContext),
-            encoding: QueryParameterEncoding.form,
-            context: testContext,
-            examples: const [],
-            defaultValue: 'us',
-          );
+      test('forwarder body invokes the operation with the parameter name, not '
+          'the qualified default reference', () {
+        final queryParam = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: testContext),
+          encoding: QueryParameterEncoding.form,
+          context: testContext,
+          examples: const [],
+          defaultValue: 'us',
+        );
 
-          final operation = Operation(
-            operationId: 'listThings',
-            context: testContext,
-            tags: {Tag(name: 'things')},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
+        final operation = Operation(
+          operationId: 'listThings',
+          context: testContext,
+          tags: {Tag(name: 'things')},
+          isDeprecated: false,
+          path: '/things',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
 
-          final generatedClass = generator.generateClass(
-            {operation},
-            Tag(name: 'things'),
-            testServers,
-          );
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'things'),
+          testServers,
+        );
 
-          final generatedCode = format(
-            generatedClass.accept(emitter).toString(),
-          );
+        final generatedCode = format(generatedClass.accept(emitter).toString());
 
-          const expectedMethod = '''
+        const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> listThings({
   String region = ListThings.regionDefault,
   TonikCancellation? cancellation,
 }) async => _listThings(region: region, cancellation: cancellation);
 ''';
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(format(expectedMethod))),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(format(expectedMethod))),
+        );
+      });
 
       test(
         'runtime-default query parameter (DateTime) forwards a class-qualified '
@@ -2231,10 +2205,7 @@ Future<TonikResult<void, Response<Object?>>> listThings({
           );
           expect(sinceParam.required, isFalse);
           expect(sinceParam.defaultTo, isNull);
-          expect(
-            sinceParam.type?.accept(emitter).toString(),
-            'DateTime?',
-          );
+          expect(sinceParam.type?.accept(emitter).toString(), 'DateTime?');
 
           final generatedCode = format(
             generatedClass.accept(emitter).toString(),

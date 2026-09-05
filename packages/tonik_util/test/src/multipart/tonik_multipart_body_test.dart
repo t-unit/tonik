@@ -5,24 +5,21 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test('encodes ordered duplicate multipart parts with custom headers', () {
-    final body = TonikMultipartBody(
-      [
-        TonikMultipartPart(
-          name: 'item',
-          bytes: utf8.encode('first'),
-          contentType: 'text/plain',
-          headers: const {'X-Part-Meta': 'alpha'},
-        ),
-        TonikMultipartPart(
-          name: 'item',
-          bytes: const [0, 1, 2],
-          contentType: 'application/octet-stream',
-          filename: 'item.bin',
-          headers: const {'X-File-Hash': 'abc123'},
-        ),
-      ],
-      boundary: 'tonik-test-boundary',
-    );
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: 'item',
+        bytes: utf8.encode('first'),
+        contentType: 'text/plain',
+        headers: const {'X-Part-Meta': 'alpha'},
+      ),
+      TonikMultipartPart(
+        name: 'item',
+        bytes: const [0, 1, 2],
+        contentType: 'application/octet-stream',
+        filename: 'item.bin',
+        headers: const {'X-File-Hash': 'abc123'},
+      ),
+    ], boundary: 'tonik-test-boundary');
 
     expect(
       body.contentType,
@@ -47,17 +44,14 @@ void main() {
   });
 
   test('rejects line breaks in custom header values', () {
-    final body = TonikMultipartBody(
-      [
-        TonikMultipartPart(
-          name: 'item',
-          bytes: const [],
-          contentType: 'text/plain',
-          headers: const {'X-Part-Meta': 'safe\r\ninjected: value'},
-        ),
-      ],
-      boundary: 'tonik-test-boundary',
-    );
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: 'item',
+        bytes: const [],
+        contentType: 'text/plain',
+        headers: const {'X-Part-Meta': 'safe\r\ninjected: value'},
+      ),
+    ], boundary: 'tonik-test-boundary');
 
     expect(() => body.bodyBytes, throwsFormatException);
   });

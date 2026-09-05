@@ -58,7 +58,7 @@ class AllOfGenerator {
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(
@@ -119,7 +119,7 @@ class AllOfGenerator {
               )
             : publicClassName);
 
-    final models = stableModelSorter.sortModels(model.models);
+    final models = model.models;
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(
@@ -141,6 +141,7 @@ class AllOfGenerator {
     }).toList();
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+    final semanticProperties = _semanticProperties(normalizedProperties);
     final properties = _buildPropertiesFromNormalized(
       normalizedProperties,
       model,
@@ -150,144 +151,122 @@ class AllOfGenerator {
         copyWithGetter ??
         _buildCopyWith(actualClassName, normalizedProperties, model)?.getter;
 
-    return Class(
-      (b) {
-        b
-          ..name = actualClassName
-          ..docs.addAll(
-            formatDocsWithExamples(model.description, model.examples),
-          )
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-          ..implements.add(
-            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
-          )
-          ..implements.add(
-            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
-          );
+    return Class((b) {
+      b
+        ..name = actualClassName
+        ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..implements.add(
+          refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+        )
+        ..implements.add(
+          refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+        );
 
-        if (model.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This class is deprecated.'),
-            ]),
-          );
-        }
+      if (model.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This class is deprecated.')]),
+        );
+      }
 
-        final encodingExceptionBody = generateEncodingExceptionExpression(
-          '$actualClassName is read-only and cannot be encoded.',
-          raw: true,
-        ).code;
+      final encodingExceptionBody = generateEncodingExceptionExpression(
+        '$actualClassName is read-only and cannot be encoded.',
+        raw: true,
+      ).code;
 
-        b
-          ..constructors.add(
-            _buildDefaultConstructor(normalizedProperties, model),
-          )
-          ..constructors.addAll([
-            if (model.isWriteOnly)
-              buildWriteOnlyFromSimpleConstructor(actualClassName)
-            else
-              _buildFromValueConstructor(
-                isForm: false,
-                className: actualClassName,
-                normalizedProperties: normalizedProperties,
-                model: model,
-              ),
-            if (model.isWriteOnly)
-              buildWriteOnlyFromFormConstructor(actualClassName)
-            else
-              _buildFromValueConstructor(
-                isForm: true,
-                className: actualClassName,
-                normalizedProperties: normalizedProperties,
-                model: model,
-              ),
-            if (model.isWriteOnly)
-              buildWriteOnlyFromJsonConstructor(actualClassName)
-            else
-              _buildFromJsonConstructor(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-          ])
-          ..methods.addAll([
-            if (model.isReadOnly)
-              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
-            else
-              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
-            if (model.isReadOnly)
-              buildReadOnlyToJsonMethod(encodingExceptionBody)
-            else
-              _buildToJsonMethod(actualClassName, model, normalizedProperties),
-            if (model.isReadOnly)
-              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
-            else
-              _buildParameterPropertiesMethod(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-            if (model.isReadOnly)
-              buildReadOnlyToSimpleMethod(encodingExceptionBody)
-            else
-              _buildToSimpleMethod(
-                normalizedProperties,
-                model,
-              ),
-            if (model.isReadOnly)
-              buildReadOnlyToFormMethod(encodingExceptionBody)
-            else
-              _buildToFormMethod(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-            if (model.isReadOnly)
-              buildReadOnlyToLabelMethod(encodingExceptionBody)
-            else
-              _buildToLabelMethod(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-            if (model.isReadOnly)
-              buildReadOnlyToMatrixMethod(encodingExceptionBody)
-            else
-              _buildToMatrixMethod(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-            if (model.isReadOnly)
-              buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
-            else
-              buildToDeepObjectMethod(),
-            if (model.isReadOnly)
-              buildReadOnlyToPipeDelimitedMethod(encodingExceptionBody)
-            else
-              buildToPipeDelimitedMethod(),
-            if (model.isReadOnly)
-              buildReadOnlyToSpaceDelimitedMethod(encodingExceptionBody)
-            else
-              buildToSpaceDelimitedMethod(),
-            if (model.isReadOnly)
-              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
-            else
-              _buildUriEncodeMethod(
-                actualClassName,
-                normalizedProperties,
-                model,
-              ),
-            generateEqualsMethod(
+      b
+        ..constructors.add(
+          _buildDefaultConstructor(normalizedProperties, model),
+        )
+        ..constructors.addAll([
+          if (model.isWriteOnly)
+            buildWriteOnlyFromSimpleConstructor(actualClassName)
+          else
+            _buildFromValueConstructor(
+              isForm: false,
               className: actualClassName,
-              properties: properties,
+              normalizedProperties: semanticProperties,
+              model: model,
             ),
-            generateHashCodeMethod(properties: properties),
-            ?effectiveCopyWithGetter,
-          ])
-          ..fields.addAll(_buildFields(normalizedProperties, model));
-      },
-    );
+          if (model.isWriteOnly)
+            buildWriteOnlyFromFormConstructor(actualClassName)
+          else
+            _buildFromValueConstructor(
+              isForm: true,
+              className: actualClassName,
+              normalizedProperties: semanticProperties,
+              model: model,
+            ),
+          if (model.isWriteOnly)
+            buildWriteOnlyFromJsonConstructor(actualClassName)
+          else
+            _buildFromJsonConstructor(
+              actualClassName,
+              semanticProperties,
+              model,
+            ),
+        ])
+        ..methods.addAll([
+          if (model.isReadOnly)
+            buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+          else
+            _buildCurrentEncodingShapeGetter(model, semanticProperties),
+          if (model.isReadOnly)
+            buildReadOnlyToJsonMethod(encodingExceptionBody)
+          else
+            _buildToJsonMethod(actualClassName, model, semanticProperties),
+          if (model.isReadOnly)
+            buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+          else
+            _buildParameterPropertiesMethod(
+              actualClassName,
+              semanticProperties,
+              model,
+            ),
+          if (model.isReadOnly)
+            buildReadOnlyToSimpleMethod(encodingExceptionBody)
+          else
+            _buildToSimpleMethod(semanticProperties, model),
+          if (model.isReadOnly)
+            buildReadOnlyToFormMethod(encodingExceptionBody)
+          else
+            _buildToFormMethod(actualClassName, semanticProperties, model),
+          if (model.isReadOnly)
+            buildReadOnlyToLabelMethod(encodingExceptionBody)
+          else
+            _buildToLabelMethod(actualClassName, semanticProperties, model),
+          if (model.isReadOnly)
+            buildReadOnlyToMatrixMethod(encodingExceptionBody)
+          else
+            _buildToMatrixMethod(actualClassName, semanticProperties, model),
+          if (model.isReadOnly)
+            buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
+          else
+            buildToDeepObjectMethod(),
+          if (model.isReadOnly)
+            buildReadOnlyToPipeDelimitedMethod(encodingExceptionBody)
+          else
+            buildToPipeDelimitedMethod(),
+          if (model.isReadOnly)
+            buildReadOnlyToSpaceDelimitedMethod(encodingExceptionBody)
+          else
+            buildToSpaceDelimitedMethod(),
+          if (model.isReadOnly)
+            buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+          else
+            _buildUriEncodeMethod(actualClassName, semanticProperties, model),
+          generateEqualsMethod(
+            className: actualClassName,
+            properties: properties,
+          ),
+          generateHashCodeMethod(properties: properties),
+          ?effectiveCopyWithGetter,
+        ])
+        ..fields.addAll(_buildFields(normalizedProperties, model));
+    });
   }
 
   List<({String normalizedName, Property property})> _normalizeModelProperties(
@@ -296,10 +275,7 @@ class AllOfGenerator {
     final normalized = properties
         .map(
           (prop) => (
-            normalizedName: normalizeSingle(
-              prop.name,
-              preserveNumbers: true,
-            ),
+            normalizedName: normalizeSingle(prop.name, preserveNumbers: true),
             originalValue: prop,
           ),
         )
@@ -315,6 +291,21 @@ class AllOfGenerator {
           ),
         )
         .toList();
+  }
+
+  List<({String normalizedName, Property property})> _semanticProperties(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final sortedModels = stableModelSorter.sortModels(
+      properties.map((property) => property.property.model),
+    );
+    final remaining = properties.toList();
+    return sortedModels.map((model) {
+      final index = remaining.indexWhere(
+        (property) => identical(property.property.model, model),
+      );
+      return remaining.removeAt(index);
+    }).toList();
   }
 
   List<Field> _buildFields(
@@ -379,12 +370,10 @@ class AllOfGenerator {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
-      props.add(
-        (
-          normalizedName: apFieldName,
-          hasCollectionValue: !useImmutableCollections,
-        ),
-      );
+      props.add((
+        normalizedName: apFieldName,
+        hasCollectionValue: !useImmutableCollections,
+      ));
     }
 
     return props;
@@ -394,44 +383,42 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    return Constructor(
-      (b) {
-        b
-          ..constant = true
-          ..optionalParameters.addAll(
-            normalizedProperties.map((normalized) {
-              return Parameter(
-                (b) => b
-                  ..name = normalized.normalizedName
-                  ..named = true
-                  ..required = !model.isReadOnly
-                  ..toThis = true,
-              );
-            }),
-          );
-        if (activeApPolicy(model.additionalPropertiesPolicy) != null) {
-          final apFieldName = nameManager.additionalPropertiesFieldName(
-            normalizedProperties,
-          );
-          b.optionalParameters.add(
-            Parameter(
+    return Constructor((b) {
+      b
+        ..constant = true
+        ..optionalParameters.addAll(
+          normalizedProperties.map((normalized) {
+            return Parameter(
               (b) => b
-                ..name = apFieldName
+                ..name = normalized.normalizedName
                 ..named = true
-                ..required = false
-                ..defaultTo = useImmutableCollections
-                    ? refer(
-                        'IMapConst',
-                        'package:fast_immutable_collections/'
-                            'fast_immutable_collections.dart',
-                      ).constInstance([literalConstMap({})]).code
-                    : const Code('const {}')
+                ..required = !model.isReadOnly
                 ..toThis = true,
-            ),
-          );
-        }
-      },
-    );
+            );
+          }),
+        );
+      if (activeApPolicy(model.additionalPropertiesPolicy) != null) {
+        final apFieldName = nameManager.additionalPropertiesFieldName(
+          normalizedProperties,
+        );
+        b.optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = apFieldName
+              ..named = true
+              ..required = false
+              ..defaultTo = useImmutableCollections
+                  ? refer(
+                      'IMapConst',
+                      'package:fast_immutable_collections/'
+                          'fast_immutable_collections.dart',
+                    ).constInstance([literalConstMap({})]).code
+                  : const Code('const {}')
+              ..toThis = true,
+          ),
+        );
+      }
+    });
   }
 
   Constructor _buildFromJsonConstructor(
@@ -533,9 +520,7 @@ class AllOfGenerator {
           ).call([refer(r'_$additional')])
         : refer(r'_$additional');
 
-    codes.add(
-      refer(className).call([], constructorArgs).returned.statement,
-    );
+    codes.add(refer(className).call([], constructorArgs).returned.statement);
 
     return Constructor(
       (b) => b
@@ -548,10 +533,7 @@ class AllOfGenerator {
               ..type = refer('Object?', 'dart:core'),
           ),
         )
-        ..body = Block.of([
-          ...spliceInlineHelpers(inlineHelpers),
-          ...codes,
-        ]),
+        ..body = Block.of([...spliceInlineHelpers(inlineHelpers), ...codes]),
     );
   }
 
@@ -591,9 +573,7 @@ class AllOfGenerator {
           ]);
         } else {
           bodyCode.add(
-            Code(
-              '_\$shapes.add(${prop.normalizedName}.currentEncodingShape);',
-            ),
+            Code('_\$shapes.add(${prop.normalizedName}.currentEncodingShape);'),
           );
         }
       }
@@ -681,14 +661,9 @@ class AllOfGenerator {
     // If all properties are lists, handle like simple encoding
     if (allListProperties) {
       final jsonParts = <Code>[
-        declareFinal(r'_$values')
-            .assign(
-              literalList(
-                [],
-                refer('Object?', 'dart:core'),
-              ),
-            )
-            .statement,
+        declareFinal(
+          r'_$values',
+        ).assign(literalList([], refer('Object?', 'dart:core'))).statement,
       ];
 
       for (final normalized in normalizedProperties) {
@@ -894,8 +869,9 @@ class AllOfGenerator {
         );
 
       case EncodingShape.simple:
-        final firstModel = model.models.first;
-        final firstFieldName = normalizedProperties.first.normalizedName;
+        final primaryProperty = _semanticProperties(normalizedProperties).first;
+        final firstModel = primaryProperty.property.model;
+        final firstFieldName = primaryProperty.normalizedName;
         final simpleBuilt = buildToJsonPropertyExpression(
           firstFieldName,
           Property(
@@ -1184,9 +1160,7 @@ class AllOfGenerator {
         break;
     }
 
-    codes.add(
-      refer(className).call([], constructorArgs).returned.statement,
-    );
+    codes.add(refer(className).call([], constructorArgs).returned.statement);
 
     return Constructor(
       (b) => b
@@ -1199,9 +1173,7 @@ class AllOfGenerator {
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
+        ..optionalParameters.add(buildBoolParameter('explode', required: true))
         ..body = Block.of(codes),
     );
   }
@@ -1296,9 +1268,7 @@ class AllOfGenerator {
           Code('if (${normalized.normalizedName} != null) {'),
           refer(r'_$mergedProperties').property('addAll').call([
             refer(normalized.normalizedName).nullChecked
-                .property(
-                  'parameterProperties',
-                )
+                .property('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
           const Code('}'),
@@ -1307,9 +1277,7 @@ class AllOfGenerator {
         propertyMergingLines.add(
           refer(r'_$mergedProperties').property('addAll').call([
             refer(normalized.normalizedName)
-                .property(
-                  'parameterProperties',
-                )
+                .property('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
         );
@@ -1320,9 +1288,7 @@ class AllOfGenerator {
       ..addAll(
         _buildAdditionalPropertiesParameterLoop(model, normalizedProperties),
       )
-      ..add(
-        refer(r'_$mergedProperties').returned.statement,
-      );
+      ..add(refer(r'_$mergedProperties').returned.statement);
 
     return Method(
       (b) => b
@@ -1528,7 +1494,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -1713,9 +1679,7 @@ class AllOfGenerator {
                 .call([
                   Method(
                     (b) => b
-                      ..requiredParameters.add(
-                        Parameter((p) => p..name = 'e'),
-                      )
+                      ..requiredParameters.add(Parameter((p) => p..name = 'e'))
                       ..body = refer('e').property('value').code,
                   ).closure,
                 ])
@@ -1823,7 +1787,7 @@ class AllOfGenerator {
       return form(emptyEntries);
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final primaryReceiver = isNullableProp(primaryField)
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
@@ -1912,7 +1876,7 @@ class AllOfGenerator {
         ]);
       }
 
-      final primaryField = normalizedProperties.first;
+      final primaryField = _semanticProperties(normalizedProperties).first;
       final isPrimaryFieldNullable =
           primaryField.property.isNullable ||
           !primaryField.property.isRequired ||
@@ -2066,7 +2030,7 @@ class AllOfGenerator {
       );
     }
 
-    final primaryField = normalizedProperties.first;
+    final primaryField = _semanticProperties(normalizedProperties).first;
     final isPrimaryFieldNullable =
         primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
@@ -2142,10 +2106,7 @@ class AllOfGenerator {
             .property('toMatrix')
             .call(
               [refer('paramName')],
-              {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-              },
+              {'explode': refer('explode'), 'allowEmpty': refer('allowEmpty')},
             )
             .returned
             .statement,
@@ -2440,11 +2401,12 @@ class AllOfGenerator {
       ];
 
       if (normalizedProperties.isNotEmpty) {
-        final simpleProp = normalizedProperties.firstWhere(
+        final semanticProperties = _semanticProperties(normalizedProperties);
+        final simpleProp = semanticProperties.firstWhere(
           (prop) =>
               prop.property.model.encodingShape == EncodingShape.simple ||
               prop.property.model.encodingShape == EncodingShape.mixed,
-          orElse: () => normalizedProperties.first,
+          orElse: () => semanticProperties.first,
         );
         final isSimplePropNullable =
             simpleProp.property.isNullable ||
@@ -2617,23 +2579,18 @@ class AllOfGenerator {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
-      copyWithProps.add(
-        (
-          normalizedName: apFieldName,
-          typeRef: apMapTypeReference(
-            copyWithApPolicy.valueModel,
-            nameManager,
-            package,
-            useImmutableCollections: useImmutableCollections,
-          ),
-          skipCast: false,
+      copyWithProps.add((
+        normalizedName: apFieldName,
+        typeRef: apMapTypeReference(
+          copyWithApPolicy.valueModel,
+          nameManager,
+          package,
+          useImmutableCollections: useImmutableCollections,
         ),
-      );
+        skipCast: false,
+      ));
     }
 
-    return generateCopyWith(
-      className: className,
-      properties: copyWithProps,
-    );
+    return generateCopyWith(className: className, properties: copyWithProps);
   }
 }

@@ -35,16 +35,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(string: 'hello'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          'hello',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], 'hello');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, 'hello');
       });
@@ -54,18 +48,12 @@ void main() {
           flexibleValue: const AnyOfPrimitive(string: 'hello world'),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
         // Header field-values are transmitted literally: the space survives.
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          'hello world',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], 'hello world');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, 'hello world');
       });
@@ -75,17 +63,11 @@ void main() {
           flexibleValue: const AnyOfPrimitive(string: ''),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          '',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], '');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, '');
       });
@@ -97,16 +79,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(int: 42),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          '42',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], '42');
 
         // anyOf may decode multiple variants.
         expect(success.value.xFlexibleValue, isNotNull);
@@ -118,16 +94,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(int: 0),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          '0',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], '0');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.int, 0);
       });
@@ -137,16 +107,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(int: -123),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          '-123',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], '-123');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.int, -123);
       });
@@ -158,16 +122,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(bool: true),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          'true',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], 'true');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.bool, true);
       });
@@ -177,16 +135,10 @@ void main() {
           flexibleValue: const AnyOfPrimitive(bool: false),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-flexible-value'],
-          'false',
-        );
+        expect(recordedRequest.headers['x-flexible-value'], 'false');
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.bool, false);
       });
@@ -198,16 +150,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAnyOfPrimitive.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-flexible-value'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-flexible-value'], isNull);
           expect(success.value.xFlexibleValue, isNull);
         },
       );

@@ -31,10 +31,10 @@ Expression _buildToLabelPathParameterExpression(
   final model = parameter.model;
 
   if (model is AnyModel) {
-    return refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
-      [valueRef],
-      {'explode': explode, 'allowEmpty': allowEmpty},
-    );
+    return refer(
+      'encodeAnyToLabel',
+      'package:tonik_util/tonik_util.dart',
+    ).call([valueRef], {'explode': explode, 'allowEmpty': allowEmpty});
   }
 
   if (model is ListModel) {
@@ -56,9 +56,7 @@ Expression _buildToLabelPathParameterExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = refer('e')
                     .equalTo(literalNull)
                     .conditional(
@@ -74,14 +72,11 @@ Expression _buildToLabelPathParameterExpression(
           .property('toList')
           .call([])
           .property('toLabel')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalTrue,
-            },
-          );
+          .call([], {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          });
     }
 
     if (contentModel is Base64Model) {
@@ -90,9 +85,7 @@ Expression _buildToLabelPathParameterExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = isContentNullable
                     ? refer('e')
                           .nullSafeProperty('toBase64String')
@@ -105,14 +98,11 @@ Expression _buildToLabelPathParameterExpression(
           .property('toList')
           .call([])
           .property('toLabel')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalTrue,
-            },
-          );
+          .call([], {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          });
     }
 
     if (contentModel is BinaryModel) {
@@ -141,26 +131,21 @@ Expression _buildToLabelPathParameterExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = converted.property('toLabel').call(
-                  [],
-                  {'explode': explode, 'allowEmpty': allowEmpty},
-                ).code,
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                ..body = converted.property('toLabel').call([], {
+                  'explode': explode,
+                  'allowEmpty': allowEmpty,
+                }).code,
             ).closure,
           ])
           .property('toList')
           .call([])
           .property('toLabel')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalTrue,
-            },
-          );
+          .call([], {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          });
     }
 
     if (contentModel is ClassModel) {
@@ -180,9 +165,7 @@ Expression _buildToLabelPathParameterExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body =
                     refer(
                           'encodeAnyToUri',
@@ -201,14 +184,11 @@ Expression _buildToLabelPathParameterExpression(
           .property('toList')
           .call([])
           .property('toLabel')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalTrue,
-            },
-          );
+          .call([], {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          });
     }
 
     return valueRef
@@ -216,29 +196,21 @@ Expression _buildToLabelPathParameterExpression(
         .call([
           Method(
             (b) => b
-              ..requiredParameters.add(
-                Parameter((b) => b..name = 'e'),
-              )
-              ..body =
-                  refer(
-                    'e',
-                  ).property('uriEncode').call([], {
-                    'allowEmpty': allowEmpty,
-                    'textEncoding': refer('utf8', 'dart:convert'),
-                  }).code,
+              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+              ..body = refer('e').property('uriEncode').call([], {
+                'allowEmpty': allowEmpty,
+                'textEncoding': refer('utf8', 'dart:convert'),
+              }).code,
           ).closure,
         ])
         .property('toList')
         .call([])
         .property('toLabel')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalTrue,
-          },
-        );
+        .call([], {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+          'alreadyEncoded': literalTrue,
+        });
   }
 
   if (model is Base64Model) {
@@ -246,10 +218,7 @@ Expression _buildToLabelPathParameterExpression(
         .property('toBase64String')
         .call([])
         .property('toLabel')
-        .call([], {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-        });
+        .call([], {'explode': explode, 'allowEmpty': allowEmpty});
   }
 
   if (model is BinaryModel) {

@@ -85,21 +85,17 @@ Expression _buildSimpleParameterExpression(
       isNullable: isNullable,
       literal: literal,
     ),
-    AnyModel() =>
-      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
-        [valueExpression],
-        _simpleArgs(explode, allowEmpty, literal),
-      ),
+    AnyModel() => refer(
+      'encodeAnyToSimple',
+      'package:tonik_util/tonik_util.dart',
+    ).call([valueExpression], _simpleArgs(explode, allowEmpty, literal)),
     Base64Model() =>
       (isNullable
               ? valueExpression.nullSafeProperty('toBase64String')
               : valueExpression.property('toBase64String'))
           .call([])
           .property('toSimple')
-          .call(
-            [],
-            _simpleArgs(explode, allowEmpty, literal),
-          ),
+          .call([], _simpleArgs(explode, allowEmpty, literal)),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
     ),
@@ -150,19 +146,14 @@ Expression _buildListSimpleExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = refer('e').ifNullThen(literalString('')).code,
             ).closure,
           ])
           .property('toList')
           .call([])
           .property('toSimple')
-          .call(
-            [],
-            _simpleArgs(explode, allowEmpty, literal),
-          ),
+          .call([], _simpleArgs(explode, allowEmpty, literal)),
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -176,9 +167,7 @@ Expression _buildListSimpleExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = nullGuard(
                   _buildSimpleParameterExpression(
                     refer('e'),
@@ -211,21 +200,14 @@ Expression _buildListSimpleExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body =
                     refer(
                       'encodeAnyToSimple',
                       'package:tonik_util/tonik_util.dart',
-                    ).call(
-                      [refer('e')],
-                      _simpleArgs(
-                        explode,
-                        allowEmpty,
-                        literal,
-                      ),
-                    ).code,
+                    ).call([
+                      refer('e'),
+                    ], _simpleArgs(explode, allowEmpty, literal)).code,
             ).closure,
           ])
           .property('toList')
@@ -240,9 +222,7 @@ Expression _buildListSimpleExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = isContentNullable
                     ? refer('e')
                           .nullSafeProperty('toBase64String')
@@ -337,15 +317,10 @@ Expression _buildListMapContentSimpleExpression(
       .call([
         Method(
           (b) => b
-            ..requiredParameters.add(
-              Parameter((b) => b..name = 'e'),
-            )
+            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
             ..body = converted
                 .property('toSimple')
-                .call(
-                  [],
-                  _simpleArgs(explode, allowEmpty, literal),
-                )
+                .call([], _simpleArgs(explode, allowEmpty, literal))
                 .code,
         ).closure,
       ])

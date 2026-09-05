@@ -333,10 +333,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'class%5Bname%5D=&class%5Bage%5D=1',
-      );
+      expect(recordedRequest.uri.query, 'class%5Bname%5D=&class%5Bage%5D=1');
     });
 
     test('classNested', () async {
@@ -788,10 +785,7 @@ void main() {
       expect(response, isTonikSuccess);
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'nullableClass%5Bname%5D=test',
-      );
+      expect(recordedRequest.uri.query, 'nullableClass%5Bname%5D=test');
     });
 
     test('deeplyNestedClass', () async {

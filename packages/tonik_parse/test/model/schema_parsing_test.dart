@@ -4,10 +4,7 @@ import 'package:tonik_parse/src/model/schema.dart';
 void main() {
   group('Schema contentEncoding parsing', () {
     test('parses contentEncoding field from JSON', () {
-      final json = {
-        'type': 'string',
-        'contentEncoding': 'base64',
-      };
+      final json = {'type': 'string', 'contentEncoding': 'base64'};
 
       final schema = Schema.fromJson(json);
 
@@ -16,9 +13,7 @@ void main() {
     });
 
     test('parses null contentEncoding when not present', () {
-      final json = {
-        'type': 'string',
-      };
+      final json = {'type': 'string'};
 
       final schema = Schema.fromJson(json);
 
@@ -26,10 +21,7 @@ void main() {
     });
 
     test('parses contentEncoding with base64url', () {
-      final json = {
-        'type': 'string',
-        'contentEncoding': 'base64url',
-      };
+      final json = {'type': 'string', 'contentEncoding': 'base64url'};
 
       final schema = Schema.fromJson(json);
 
@@ -37,10 +29,7 @@ void main() {
     });
 
     test('parses contentEncoding with quoted-printable', () {
-      final json = {
-        'type': 'string',
-        'contentEncoding': 'quoted-printable',
-      };
+      final json = {'type': 'string', 'contentEncoding': 'quoted-printable'};
 
       final schema = Schema.fromJson(json);
 
@@ -62,9 +51,7 @@ void main() {
     });
 
     test('parses null contentMediaType when not present', () {
-      final json = {
-        'type': 'string',
-      };
+      final json = {'type': 'string'};
 
       final schema = Schema.fromJson(json);
 
@@ -72,10 +59,7 @@ void main() {
     });
 
     test('parses contentMediaType with image type', () {
-      final json = {
-        'type': 'string',
-        'contentMediaType': 'image/png',
-      };
+      final json = {'type': 'string', 'contentMediaType': 'image/png'};
 
       final schema = Schema.fromJson(json);
 
@@ -99,10 +83,7 @@ void main() {
     });
 
     test('parses contentEncoding without contentMediaType', () {
-      final json = {
-        'type': 'string',
-        'contentEncoding': 'base64',
-      };
+      final json = {'type': 'string', 'contentEncoding': 'base64'};
 
       final schema = Schema.fromJson(json);
 
@@ -111,10 +92,7 @@ void main() {
     });
 
     test('parses contentMediaType without contentEncoding', () {
-      final json = {
-        'type': 'string',
-        'contentMediaType': 'application/json',
-      };
+      final json = {'type': 'string', 'contentMediaType': 'application/json'};
 
       final schema = Schema.fromJson(json);
 
@@ -125,10 +103,7 @@ void main() {
 
   group('Schema readOnly parsing', () {
     test('parses readOnly: true from JSON', () {
-      final json = {
-        'type': 'string',
-        'readOnly': true,
-      };
+      final json = {'type': 'string', 'readOnly': true};
 
       final schema = Schema.fromJson(json);
 
@@ -136,10 +111,7 @@ void main() {
     });
 
     test('parses readOnly: false from JSON', () {
-      final json = {
-        'type': 'string',
-        'readOnly': false,
-      };
+      final json = {'type': 'string', 'readOnly': false};
 
       final schema = Schema.fromJson(json);
 
@@ -147,9 +119,7 @@ void main() {
     });
 
     test('defaults to null when readOnly is not present', () {
-      final json = {
-        'type': 'string',
-      };
+      final json = {'type': 'string'};
 
       final schema = Schema.fromJson(json);
 
@@ -171,10 +141,7 @@ void main() {
 
   group('Schema writeOnly parsing', () {
     test('parses writeOnly: true from JSON', () {
-      final json = {
-        'type': 'string',
-        'writeOnly': true,
-      };
+      final json = {'type': 'string', 'writeOnly': true};
 
       final schema = Schema.fromJson(json);
 
@@ -182,10 +149,7 @@ void main() {
     });
 
     test('parses writeOnly: false from JSON', () {
-      final json = {
-        'type': 'string',
-        'writeOnly': false,
-      };
+      final json = {'type': 'string', 'writeOnly': false};
 
       final schema = Schema.fromJson(json);
 
@@ -193,9 +157,7 @@ void main() {
     });
 
     test('defaults to null when writeOnly is not present', () {
-      final json = {
-        'type': 'string',
-      };
+      final json = {'type': 'string'};
 
       final schema = Schema.fromJson(json);
 
@@ -217,11 +179,7 @@ void main() {
 
   group('Schema readOnly and writeOnly together', () {
     test('parses both readOnly and writeOnly from JSON', () {
-      final json = {
-        'type': 'string',
-        'readOnly': true,
-        'writeOnly': true,
-      };
+      final json = {'type': 'string', 'readOnly': true, 'writeOnly': true};
 
       final schema = Schema.fromJson(json);
 
@@ -230,10 +188,7 @@ void main() {
     });
 
     test('parses readOnly without writeOnly', () {
-      final json = {
-        'type': 'integer',
-        'readOnly': true,
-      };
+      final json = {'type': 'integer', 'readOnly': true};
 
       final schema = Schema.fromJson(json);
 
@@ -242,10 +197,7 @@ void main() {
     });
 
     test('parses writeOnly without readOnly', () {
-      final json = {
-        'type': 'string',
-        'writeOnly': true,
-      };
+      final json = {'type': 'string', 'writeOnly': true};
 
       final schema = Schema.fromJson(json);
 
@@ -257,13 +209,8 @@ void main() {
       final json = {
         'type': 'object',
         'properties': {
-          'id': {
-            'type': 'integer',
-            'readOnly': true,
-          },
-          'name': {
-            'type': 'string',
-          },
+          'id': {'type': 'integer', 'readOnly': true},
+          'name': {'type': 'string'},
         },
       };
 

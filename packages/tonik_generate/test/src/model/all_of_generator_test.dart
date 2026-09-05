@@ -37,9 +37,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: [
-          StringModel(context: context),
-        ],
+        models: [StringModel(context: context)],
         context: context,
         examples: const [],
       );
@@ -50,15 +48,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.simple',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.simple');
     });
 
     test('generates complex encoding shape getter for complex allOf', () {
@@ -84,15 +76,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.complex',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.complex');
     });
 
     test('generates class implementing ParameterEncodable & UriEncodable', () {
@@ -129,19 +115,14 @@ void main() {
           isDeprecated: false,
           description: 'Combines multiple schemas into one',
           name: 'Combined',
-          models: [
-            StringModel(context: context),
-          ],
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
 
-        expect(
-          combinedClass.docs,
-          ['/// Combines multiple schemas into one'],
-        );
+        expect(combinedClass.docs, ['/// Combines multiple schemas into one']);
       });
 
       test('generates class with multiline doc comment', () {
@@ -149,9 +130,7 @@ void main() {
           isDeprecated: false,
           description: 'A combined model.\nInherits from multiple schemas.',
           name: 'Combined',
-          models: [
-            StringModel(context: context),
-          ],
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );
@@ -168,9 +147,7 @@ void main() {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
-          models: [
-            StringModel(context: context),
-          ],
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );
@@ -185,9 +162,7 @@ void main() {
           isDeprecated: false,
           description: '',
           name: 'Combined',
-          models: [
-            StringModel(context: context),
-          ],
+          models: [StringModel(context: context)],
           context: context,
           examples: const [],
         );
@@ -204,12 +179,7 @@ void main() {
           models: [StringModel(context: context)],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 1,
-            ),
+            Example(name: null, summary: null, description: null, value: 1),
           ],
         );
 
@@ -231,12 +201,7 @@ void main() {
           models: [StringModel(context: context)],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 1,
-            ),
+            Example(name: null, summary: null, description: null, value: 1),
           ],
         );
 
@@ -277,15 +242,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.mixed',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.mixed');
     });
 
     test('generates encoding shape getter with full implementation', () {
@@ -515,10 +474,7 @@ void main() {
       expect(combinedClass.constructors.first.constant, isTrue);
 
       expect(combinedClass.fields, hasLength(2));
-      expect(
-        combinedClass.fields.map((f) => f.name),
-        [r'$base', r'$mixin'],
-      );
+      expect(combinedClass.fields.map((f) => f.name), [r'$base', r'$mixin']);
 
       final baseField = combinedClass.fields.firstWhere(
         (f) => f.name == r'$base',
@@ -732,10 +688,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       expect(combinedClass.fields, hasLength(2));
-      expect(
-        combinedClass.fields.map((f) => f.name),
-        [r'$base', r'$mixin'],
-      );
+      expect(combinedClass.fields.map((f) => f.name), [r'$base', r'$mixin']);
 
       final baseField = combinedClass.fields.firstWhere(
         (f) => f.name == r'$base',
@@ -857,7 +810,7 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-          Object? toJson() => bigDecimal;
+          Object? toJson() => bigDecimal.toString();
         ''';
 
       expect(
@@ -1153,7 +1106,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToJson = '''
-          Object? toJson() => date;
+          Object? toJson() => date.toJson();
         ''';
 
         expect(
@@ -1299,7 +1252,7 @@ void main() {
       expect(combinedClass.fields, hasLength(3));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
-      expect(fieldNames, ['bigDecimal', 'int', 'string']);
+      expect(fieldNames, ['string', 'int', 'bigDecimal']);
     });
   });
 
@@ -1670,11 +1623,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             context: context,
             examples: const [],
           ),
-          ListModel(
-            content: oneOfModel,
-            context: context,
-            examples: const [],
-          ),
+          ListModel(content: oneOfModel, context: context, examples: const []),
         ],
         context: context,
         examples: const [],
@@ -1889,60 +1838,55 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       );
     });
 
-    test(
-      'generates parameterProperties merging members for complex allOf',
-      () {
-        final classModel1 = ClassModel(
-          isDeprecated: false,
-          name: 'TestClass1',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties merging members for complex allOf', () {
+      final classModel1 = ClassModel(
+        isDeprecated: false,
+        name: 'TestClass1',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final classModel2 = ClassModel(
-          isDeprecated: false,
-          name: 'TestClass2',
-          properties: [
-            Property(
-              name: 'age',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final classModel2 = ClassModel(
+        isDeprecated: false,
+        name: 'TestClass2',
+        properties: [
+          Property(
+            name: 'age',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfComplex',
-          models: [
-            classModel1,
-            classModel2,
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfComplex',
+        models: [classModel1, classModel2],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedParameterProperties = r'''
+      const expectedParameterProperties = r'''
           Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             final _$mergedProperties = <String, PropertyValue>{};
             _$mergedProperties.addAll(
@@ -1955,125 +1899,115 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedParameterProperties)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
 
-    test(
-      'generates parameterProperties that throws when contains lists',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfWithList',
-          models: [
-            ListModel(
-              content: IntegerModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties that throws when contains lists', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfWithList',
+        models: [
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedParameterProperties = '''
+      const expectedParameterProperties = '''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfWithList: contains array types', );
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedParameterProperties)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
 
-    test(
-      'generates parameterProperties that throws when contains maps',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfWithMap',
-          models: [
-            MapModel(
-              valueModel: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties that throws when contains maps', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfWithMap',
+        models: [
+          MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedParameterProperties = '''
+      const expectedParameterProperties = '''
 Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfWithMap: contains map types', );
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedParameterProperties)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
 
-    test(
-      'generates parameterProperties that throws for allOf '
-      'mixing map and class',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'TestClass',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates parameterProperties that throws for allOf '
+        'mixing map and class', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'TestClass',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfMixedMapClass',
-          models: [
-            MapModel(
-              valueModel: IntegerModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            classModel,
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfMixedMapClass',
+        models: [
+          MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          classModel,
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedParameterProperties = '''
+      const expectedParameterProperties = '''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedMapClass: contains map types', );
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedParameterProperties)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
   });
 
   group('allOf with nullable primitive via alias', () {
@@ -2390,39 +2324,37 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       );
     });
 
-    test(
-      'generates uriEncode with null guard for nullable property',
-      () {
-        final nullableAlias = AliasModel(
-          name: 'NullableInt',
-          model: IntegerModel(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('generates uriEncode with null guard for nullable property', () {
+      final nullableAlias = AliasModel(
+        name: 'NullableInt',
+        model: IntegerModel(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfNullablePrimitive',
-          models: [nullableAlias],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullablePrimitive',
+        models: [nullableAlias],
+        context: context,
+        examples: const [],
+      );
 
-        nameManager.prime(
-          models: {model, nullableAlias},
-          requestBodies: const <RequestBody>[],
-          responses: const <Response>[],
-          operations: const <Operation>[],
-          tags: const <Tag>[],
-          servers: const <Server>[],
-        );
+      nameManager.prime(
+        models: {model, nullableAlias},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedUriEncode = r'''
+      const expectedUriEncode = r'''
           @override
           String uriEncode({
             required bool allowEmpty,
@@ -2454,46 +2386,43 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedUriEncode)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedUriEncode)),
+      );
+    });
 
-    test(
-      'base64-encodes byte property before uriEncode',
-      () {
-        final byteAlias = AliasModel(
-          name: 'Signature',
-          model: Base64Model(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('base64-encodes byte property before uriEncode', () {
+      final byteAlias = AliasModel(
+        name: 'Signature',
+        model: Base64Model(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'AllOfNullableByte',
-          models: [byteAlias],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullableByte',
+        models: [byteAlias],
+        context: context,
+        examples: const [],
+      );
 
-        nameManager.prime(
-          models: {model, byteAlias},
-          requestBodies: const <RequestBody>[],
-          responses: const <Response>[],
-          operations: const <Operation>[],
-          tags: const <Tag>[],
-          servers: const <Server>[],
-        );
+      nameManager.prime(
+        models: {model, byteAlias},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedUriEncode = r'''
+      const expectedUriEncode = r'''
           @override
           String uriEncode({
             required bool allowEmpty,
@@ -2525,69 +2454,66 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedUriEncode)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedUriEncode)),
+      );
+    });
 
-    test(
-      'base64-encodes byte property in dynamic-shape uriEncode',
-      () {
-        final byteAlias = AliasModel(
-          name: 'Signature',
-          model: Base64Model(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('base64-encodes byte property in dynamic-shape uriEncode', () {
+      final byteAlias = AliasModel(
+        name: 'Signature',
+        model: Base64Model(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+        defaultValue: null,
+      );
 
-        final statusOneOf = OneOfModel(
-          isDeprecated: false,
-          name: 'Status',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'State',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
+      final statusOneOf = OneOfModel(
+        isDeprecated: false,
+        name: 'Status',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'State',
+              properties: const [],
+              context: context,
+              examples: const [],
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'DynamicByte',
-          models: [byteAlias, statusOneOf],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'DynamicByte',
+        models: [byteAlias, statusOneOf],
+        context: context,
+        examples: const [],
+      );
 
-        nameManager.prime(
-          models: {model, byteAlias, statusOneOf},
-          requestBodies: const <RequestBody>[],
-          responses: const <Response>[],
-          operations: const <Operation>[],
-          tags: const <Tag>[],
-          servers: const <Server>[],
-        );
+      nameManager.prime(
+        models: {model, byteAlias, statusOneOf},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final method = combinedClass.methods.firstWhere(
-          (m) => m.name == 'uriEncode',
-        );
-        final methodCode = format(method.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final method = combinedClass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+      final methodCode = format(method.accept(emitter).toString());
 
-        const expectedUriEncode = '''
+      const expectedUriEncode = '''
           @override
           String uriEncode({
             required bool allowEmpty,
@@ -2609,12 +2535,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           }
         ''';
 
-        expect(
-          collapseWhitespace(methodCode),
-          collapseWhitespace(format(expectedUriEncode)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(methodCode),
+        collapseWhitespace(format(expectedUriEncode)),
+      );
+    });
   });
 
   group('byte member parameter styles', () {
@@ -2868,9 +2793,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
       final klass = generator.generateClass(model);
 
-      final toFormMethod = klass.methods.firstWhere(
-        (m) => m.name == 'toForm',
-      );
+      final toFormMethod = klass.methods.firstWhere((m) => m.name == 'toForm');
 
       expect(toFormMethod.optionalParameters.length, 6);
 
@@ -2909,55 +2832,53 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       );
     });
 
-    test(
-      'generates toForm with null guard for nullable property in '
-      'direct primitives with dynamic models path',
-      () {
-        final statusOneOf = OneOfModel(
-          isDeprecated: false,
-          name: 'Status',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'State',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
+    test('generates toForm with null guard for nullable property in '
+        'direct primitives with dynamic models path', () {
+      final statusOneOf = OneOfModel(
+        isDeprecated: false,
+        name: 'Status',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'State',
+              properties: const [],
+              context: context,
+              examples: const [],
             ),
-          ],
-          context: context,
-          isNullable: true,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        isNullable: true,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'Combined',
-          models: [
-            StringModel(context: context),
-            statusOneOf,
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: [
+          StringModel(context: context),
+          statusOneOf,
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        nameManager.prime(
-          models: {model, statusOneOf},
-          requestBodies: const <RequestBody>[],
-          responses: const <Response>[],
-          operations: const <Operation>[],
-          tags: const <Tag>[],
-          servers: const <Server>[],
-        );
+      nameManager.prime(
+        models: {model, statusOneOf},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedToForm = r'''
+      const expectedToForm = r'''
           @override
           List<ParameterEntry> toForm(
             String paramName, {
@@ -3006,109 +2927,99 @@ String toLabel({required bool explode, required bool allowEmpty}) {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToForm)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToForm)),
+      );
+    });
   });
 
   group('allOf with nullable component models', () {
-    test(
-      'fromSimple generates value without null assertion for nullable '
-      'component',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'Combined',
-          models: [
-            ClassModel(
+    test('fromSimple generates value without null assertion for nullable '
+        'component', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: [
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          ClassModel(
+            isDeprecated: false,
+            name: 'NullableClass',
+            properties: const [],
+            context: context,
+            isNullable: true,
+            examples: const [],
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      expect(
+        generated,
+        contains('NullableClass.fromSimple(value, explode: explode)'),
+      );
+      expect(generated, isNot(contains('value!')));
+    });
+
+    test('currentEncodingShape uses braces around if statement for nullable '
+        'component', () {
+      // OneOfModel with mixed content (simple + complex) has mixed
+      // encodingShape, which triggers the dynamic currentEncodingShape
+      // getter. The nullable ClassModel triggers the if-branch with braces.
+      final nullableClass = ClassModel(
+        isDeprecated: false,
+        name: 'NullableClass',
+        properties: const [],
+        context: context,
+        isNullable: true,
+        examples: const [],
+      );
+      final statusOneOf = OneOfModel(
+        isDeprecated: false,
+        name: 'Status',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
               isDeprecated: false,
-              name: 'Base',
+              name: 'State',
               properties: const [],
               context: context,
               examples: const [],
             ),
-            ClassModel(
-              isDeprecated: false,
-              name: 'NullableClass',
-              properties: const [],
-              context: context,
-              isNullable: true,
-              examples: const [],
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: [statusOneOf, nullableClass],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        expect(
-          generated,
-          contains('NullableClass.fromSimple(value, explode: explode)'),
-        );
-        expect(generated, isNot(contains('value!')));
-      },
-    );
-
-    test(
-      'currentEncodingShape uses braces around if statement for nullable '
-      'component',
-      () {
-        // OneOfModel with mixed content (simple + complex) has mixed
-        // encodingShape, which triggers the dynamic currentEncodingShape
-        // getter. The nullable ClassModel triggers the if-branch with braces.
-        final nullableClass = ClassModel(
-          isDeprecated: false,
-          name: 'NullableClass',
-          properties: const [],
-          context: context,
-          isNullable: true,
-          examples: const [],
-        );
-        final statusOneOf = OneOfModel(
-          isDeprecated: false,
-          name: 'Status',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'State',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'Combined',
-          models: [statusOneOf, nullableClass],
-          context: context,
-          examples: const [],
-        );
-
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
-
-        expect(
-          generated,
-          contains('if (nullableClass != null) {'),
-        );
-        expect(
-          generated,
-          contains('shapes.add(nullableClass!.currentEncodingShape);'),
-        );
-      },
-    );
+      expect(generated, contains('if (nullableClass != null) {'));
+      expect(
+        generated,
+        contains('shapes.add(nullableClass!.currentEncodingShape);'),
+      );
+    });
 
     test(
       'fromForm generates value without null assertion for nullable component',
@@ -3203,9 +3114,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3244,9 +3153,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3307,9 +3214,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3374,9 +3279,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3407,9 +3310,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3529,10 +3430,7 @@ class Holder {
           final mixedOneOf = OneOfModel(
             name: 'IdOrUser',
             models: [
-              (
-                discriminatorValue: null,
-                model: StringModel(context: context),
-              ),
+              (discriminatorValue: null, model: StringModel(context: context)),
               (
                 discriminatorValue: null,
                 model: ClassModel(
@@ -3663,61 +3561,59 @@ class Holder {
         );
       });
 
-      test(
-        'indirect cycle A <-> B in AP splices two mutually recursive '
-        'decode helpers into fromJson',
-        () {
-          final a = MapModel(
-            name: 'A',
-            valueModel: AnyModel(context: context),
-            context: context,
-            examples: const [],
-          );
-          final b = MapModel(
-            name: 'B',
-            valueModel: AnyModel(context: context),
-            context: context,
-            examples: const [],
-          );
-          a.valueModel = b;
-          b.valueModel = a;
+      test('indirect cycle A <-> B in AP splices two mutually recursive '
+          'decode helpers into fromJson', () {
+        final a = MapModel(
+          name: 'A',
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        final b = MapModel(
+          name: 'B',
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        a.valueModel = b;
+        b.valueModel = a;
 
-          final model = AllOfModel(
-            isDeprecated: false,
-            name: 'AAndBBag',
-            models: [
-              ClassModel(
-                isDeprecated: false,
-                name: 'Base',
-                context: context,
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                examples: const [],
-              ),
-            ],
-            context: context,
-            additionalPropertiesPolicy: AllowedAdditionalProperties(
-              valueModel: a,
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AAndBBag',
+          models: [
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              examples: const [],
             ),
-            examples: const [],
-          );
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: a,
+          ),
+          examples: const [],
+        );
 
-          final clazz = generator.generateClass(model);
-          final fromJson = clazz.constructors.firstWhere(
-            (c) => c.name == 'fromJson',
-          );
-          final emittedClass = emitConstructorMember(fromJson);
+        final clazz = generator.generateClass(model);
+        final fromJson = clazz.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final emittedClass = emitConstructorMember(fromJson);
 
-          const expected = r'''
+        const expected = r'''
 class Holder {
   factory Holder.fromJson(Object? json) {
     late final B Function(Object?) _$decodeB;
@@ -3743,12 +3639,11 @@ class Holder {
   }
 }''';
 
-          expect(
-            collapseWhitespace(emittedClass),
-            collapseWhitespace(format(expected)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(emittedClass),
+          collapseWhitespace(format(expected)),
+        );
+      });
     });
 
     group('forbidden additionalProperties', () {
@@ -3787,9 +3682,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3862,9 +3755,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3926,9 +3817,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -3990,9 +3879,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -4057,9 +3944,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -4206,9 +4091,7 @@ class Holder {
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -4251,9 +4134,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         final combinedClass = generator.generateClass(model);
         expect(
-          collapseWhitespace(
-            format(combinedClass.accept(emitter).toString()),
-          ),
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
         );
       });
@@ -4304,52 +4185,47 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         },
       );
 
-      test(
-        'base64-encodes typed byte additionalProperties values before '
-        'uriEncode',
-        () {
-          final model = AllOfModel(
-            isDeprecated: false,
-            name: 'TypedByteExtended',
-            models: [
-              ClassModel(
-                isDeprecated: false,
-                name: 'Base',
-                context: context,
-                properties: [
-                  Property(
-                    name: 'name',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                examples: const [],
-              ),
-            ],
-            context: context,
-            additionalPropertiesPolicy: AllowedAdditionalProperties(
-              valueModel: Base64Model(context: context),
+      test('base64-encodes typed byte additionalProperties values before '
+          'uriEncode', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'TypedByteExtended',
+          models: [
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              examples: const [],
             ),
-            examples: const [],
-          );
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: Base64Model(context: context),
+          ),
+          examples: const [],
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedByteExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
 ''';
 
-          final combinedClass = generator.generateClass(model);
-          expect(
-            collapseWhitespace(
-              format(combinedClass.accept(emitter).toString()),
-            ),
-            contains(collapseWhitespace(expectedMethod)),
-          );
-        },
-      );
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
 
       test(
         'base64-encodes nullable typed byte additionalProperties values',
@@ -4415,45 +4291,43 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         },
       );
 
-      test(
-        'generates parameterProperties with typed complex AP throwing',
-        () {
-          final model = AllOfModel(
-            isDeprecated: false,
-            name: 'ComplexExtended',
-            models: [
-              ClassModel(
-                isDeprecated: false,
-                name: 'Base',
-                context: context,
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                examples: const [],
-              ),
-            ],
-            context: context,
-            additionalPropertiesPolicy: AllowedAdditionalProperties(
-              valueModel: ClassModel(
-                isDeprecated: false,
-                name: 'Widget',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
+      test('generates parameterProperties with typed complex AP throwing', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ComplexExtended',
+          models: [
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              examples: const [],
             ),
-            examples: const [],
-          );
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'Widget',
+              properties: const [],
+              context: context,
+              examples: const [],
+            ),
+          ),
+          examples: const [],
+        );
 
-          const expectedMethod = r'''
+        const expectedMethod = r'''
   Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     final _$mergedProperties = <String, PropertyValue>{};
     _$mergedProperties.addAll(
@@ -4467,15 +4341,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     return _$mergedProperties;
   }''';
 
-          final combinedClass = generator.generateClass(model);
-          expect(
-            collapseWhitespace(
-              format(combinedClass.accept(emitter).toString()),
-            ),
-            contains(collapseWhitespace(expectedMethod)),
-          );
-        },
-      );
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
     });
   });
 
@@ -4517,15 +4388,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         'fast_immutable_collections.dart',
       );
       expect(typeRef.types.length, 1);
-      expect(
-        (typeRef.types.first as TypeReference).symbol,
-        'String',
-      );
+      expect((typeRef.types.first as TypeReference).symbol, 'String');
 
       // Equality should use direct == (IList has built-in value equality)
-      final generated = format(
-        combinedClass.accept(emitter).toString(),
-      );
+      final generated = format(combinedClass.accept(emitter).toString());
       const expectedEquals = '''
 bool operator ==(Object other) {
   if (identical(this, other)) return true;
@@ -4538,71 +4404,67 @@ bool operator ==(Object other) {
       );
     });
 
-    test(
-      'allOf with additional properties and useImmutableCollections',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'ExtendedImmutable',
-          models: [
-            ClassModel(
-              isDeprecated: false,
-              name: 'Base',
-              context: context,
-              properties: [
-                Property(
-                  name: 'id',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              examples: const [],
-            ),
-          ],
-          context: context,
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
+    test('allOf with additional properties and useImmutableCollections', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'ExtendedImmutable',
+        models: [
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            context: context,
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            examples: const [],
           ),
-          examples: const [],
-        );
+        ],
+        context: context,
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+        ),
+        examples: const [],
+      );
 
-        final combinedClass = immutableGenerator.generateClass(model);
-        final generated = format(
-          combinedClass.accept(emitter).toString(),
-        );
+      final combinedClass = immutableGenerator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        // AP field type should be IMap
-        final apField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'additionalProperties',
-        );
-        final apTypeRef = apField.type! as TypeReference;
-        expect(apTypeRef.symbol, 'IMap');
-        expect(
-          apTypeRef.url,
-          'package:fast_immutable_collections/'
-          'fast_immutable_collections.dart',
-        );
-        expect(apTypeRef.types.length, 2);
-        expect(apTypeRef.types.first.symbol, 'String');
+      // AP field type should be IMap
+      final apField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'additionalProperties',
+      );
+      final apTypeRef = apField.type! as TypeReference;
+      expect(apTypeRef.symbol, 'IMap');
+      expect(
+        apTypeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(apTypeRef.types.length, 2);
+      expect(apTypeRef.types.first.symbol, 'String');
 
-        // Constructor default should be IMapConst
-        final defaultCtor = combinedClass.constructors.firstWhere(
-          (c) => c.name == null,
-        );
-        final apParam = defaultCtor.optionalParameters.firstWhere(
-          (p) => p.name == 'additionalProperties',
-        );
-        expect(
-          apParam.defaultTo?.accept(emitter).toString(),
-          'const IMapConst({})',
-        );
+      // Constructor default should be IMapConst
+      final defaultCtor = combinedClass.constructors.firstWhere(
+        (c) => c.name == null,
+      );
+      final apParam = defaultCtor.optionalParameters.firstWhere(
+        (p) => p.name == 'additionalProperties',
+      );
+      expect(
+        apParam.defaultTo?.accept(emitter).toString(),
+        'const IMapConst({})',
+      );
 
-        // fromJson should wrap _$additional in IMap constructor
-        const expectedFromJson = r'''
+      // fromJson should wrap _$additional in IMap constructor
+      const expectedFromJson = r'''
 factory ExtendedImmutable.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'ExtendedImmutable');
   const _$knownKeys = {r'id'};
@@ -4618,13 +4480,13 @@ factory ExtendedImmutable.fromJson(Object? json) {
   );
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
 
-        // toJson should use .unlock on AP
-        const expectedToJson = r'''
+      // toJson should use .unlock on AP
+      const expectedToJson = r'''
 Object? toJson() {
   final _$map = <String, Object?>{};
   final _$$baseJson = $base.toJson();
@@ -4656,57 +4518,52 @@ Object? toJson() {
   return _$map;
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
 
-    test(
-      'allOf with typed additionalProperties (list values) and '
-      'useImmutableCollections',
-      () {
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'ExtendedItem',
-          models: [
-            ClassModel(
-              isDeprecated: false,
-              name: 'Base',
-              context: context,
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              examples: const [],
-            ),
-          ],
-          context: context,
-          additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: ListModel(
-              content: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
+    test('allOf with typed additionalProperties (list values) and '
+        'useImmutableCollections', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'ExtendedItem',
+        models: [
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            context: context,
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            examples: const [],
           ),
-          examples: const [],
-        );
+        ],
+        context: context,
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        examples: const [],
+      );
 
-        final combinedClass = immutableGenerator.generateClass(model);
-        final generated = format(
-          combinedClass.accept(emitter).toString(),
-        );
+      final combinedClass = immutableGenerator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        // fromJson scratch map should use IList<String> as value type
-        const expectedFromJson = r'''
+      // fromJson scratch map should use IList<String> as value type
+      const expectedFromJson = r'''
 factory ExtendedItem.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'ExtendedItem');
   const _$knownKeys = {r'id'};
@@ -4726,55 +4583,52 @@ factory ExtendedItem.fromJson(Object? json) {
   );
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
   });
 
   group('allOf with MapModel components', () {
-    test(
-      'generates toJson without calling .toJson() on MapModel '
-      'in complex encoding shape',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Base',
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates toJson without calling .toJson() on MapModel '
+        'in complex encoding shape', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Base',
+        properties: [
+          Property(
+            name: 'id',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final mapModel = MapModel(
-          valueModel: NumberModel(context: context),
-          context: context,
-          examples: const [],
-        );
+      final mapModel = MapModel(
+        valueModel: NumberModel(context: context),
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'CombinedWithMap',
-          models: [classModel, mapModel],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'CombinedWithMap',
+        models: [classModel, mapModel],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedToJson = r'''
+      const expectedToJson = r'''
           Object? toJson() {
             final _$map = <String, Object?>{};
             final _$$baseJson = $base.toJson();
@@ -4790,54 +4644,51 @@ factory ExtendedItem.fromJson(Object? json) {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
 
-    test(
-      'generates toJson with null guard for nullable MapModel '
-      'in complex encoding shape',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Base',
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates toJson with null guard for nullable MapModel '
+        'in complex encoding shape', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Base',
+        properties: [
+          Property(
+            name: 'id',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final mapModel = MapModel(
-          valueModel: StringModel(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-        );
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'CombinedWithNullableMap',
-          models: [classModel, mapModel],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'CombinedWithNullableMap',
+        models: [classModel, mapModel],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedToJson = r'''
+      const expectedToJson = r'''
           Object? toJson() {
             final _$map = <String, Object?>{};
             final _$$baseJson = $base.toJson();
@@ -4855,66 +4706,63 @@ factory ExtendedItem.fromJson(Object? json) {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
 
-    test(
-      'generates toJson without calling .toJson() on MapModel '
-      'in dynamic encoding shape path',
-      () {
-        // A OneOfModel with mixed encoding shapes (simple + complex)
-        // triggers the dynamic path in _buildToJsonMethod.
-        final statusOneOf = OneOfModel(
-          isDeprecated: false,
-          name: 'Status',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'State',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
+    test('generates toJson without calling .toJson() on MapModel '
+        'in dynamic encoding shape path', () {
+      // A OneOfModel with mixed encoding shapes (simple + complex)
+      // triggers the dynamic path in _buildToJsonMethod.
+      final statusOneOf = OneOfModel(
+        isDeprecated: false,
+        name: 'Status',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'State',
+              properties: const [],
+              context: context,
+              examples: const [],
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final mapModel = MapModel(
-          valueModel: NumberModel(context: context),
-          context: context,
-          examples: const [],
-        );
+      final mapModel = MapModel(
+        valueModel: NumberModel(context: context),
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'DynamicWithMap',
-          models: [statusOneOf, mapModel],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'DynamicWithMap',
+        models: [statusOneOf, mapModel],
+        context: context,
+        examples: const [],
+      );
 
-        nameManager.prime(
-          models: {model, statusOneOf},
-          requestBodies: const <RequestBody>[],
-          responses: const <Response>[],
-          operations: const <Operation>[],
-          tags: const <Tag>[],
-          servers: const <Server>[],
-        );
+      nameManager.prime(
+        models: {model, statusOneOf},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
 
-        final combinedClass = generator.generateClass(model);
-        final generated = format(combinedClass.accept(emitter).toString());
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedToJson = r'''
+      const expectedToJson = r'''
           Object? toJson() {
             if (currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
@@ -4935,12 +4783,11 @@ factory ExtendedItem.fromJson(Object? json) {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
   });
 
   group('allOf with MapModel component and useImmutableCollections', () {
@@ -4955,48 +4802,44 @@ factory ExtendedItem.fromJson(Object? json) {
       );
     });
 
-    test(
-      'fromJson wraps MapModel component in IMap constructor',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Details',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('fromJson wraps MapModel component in IMap constructor', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Details',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final mapModel = MapModel(
-          name: 'ExtraData',
-          valueModel: StringModel(context: context),
-          context: context,
-          examples: const [],
-        );
+      final mapModel = MapModel(
+        name: 'ExtraData',
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
 
-        final model = AllOfModel(
-          isDeprecated: false,
-          name: 'Combined',
-          models: [classModel, mapModel],
-          context: context,
-          examples: const [],
-        );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: [classModel, mapModel],
+        context: context,
+        examples: const [],
+      );
 
-        final combinedClass = immutableGenerator.generateClass(model);
-        final generated = format(
-          combinedClass.accept(emitter).toString(),
-        );
+      final combinedClass = immutableGenerator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedFromJson = '''
+      const expectedFromJson = '''
 factory Combined.fromJson(Object? json) {
   return Combined(
     details: Details.fromJson(json),
@@ -5009,11 +4852,10 @@ factory Combined.fromJson(Object? json) {
   );
 }
 ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
   });
 }

@@ -283,10 +283,11 @@ void main() {
         helperContext: ctx,
       );
 
-      expect(
-        built.inlineFunctions.map((h) => h.name).toList(),
-        [r'_$decodeC', r'_$decodeB', r'_$decodeA'],
-      );
+      expect(built.inlineFunctions.map((h) => h.name).toList(), [
+        r'_$decodeC',
+        r'_$decodeB',
+        r'_$decodeA',
+      ]);
 
       final actual = emitMethod(built);
       final expected = format(r'''

@@ -22,9 +22,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -56,9 +54,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -94,9 +90,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -106,9 +100,7 @@ void main() {
       final document = Importer().import(spec);
       final pathParam = document.pathParameters
           .whereType<PathParameterObject>()
-          .firstWhereOrNull(
-            (p) => p.rawName == 'user_id',
-          );
+          .firstWhereOrNull((p) => p.rawName == 'user_id');
 
       expect(pathParam, isNotNull);
       expect(pathParam!.nameOverride, 'userId');
@@ -131,9 +123,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -168,9 +158,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },
@@ -202,9 +190,7 @@ void main() {
                 },
               ],
               'responses': {
-                '200': {
-                  'description': 'Success',
-                },
+                '200': {'description': 'Success'},
               },
             },
           },

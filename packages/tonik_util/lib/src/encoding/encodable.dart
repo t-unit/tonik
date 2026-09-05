@@ -25,10 +25,7 @@ abstract interface class LabelEncodable {
   ///
   /// When [explode] is true, object properties become key=value pairs.
   /// When [allowEmpty] is false, empty values throw an exception.
-  String toLabel({
-    required bool explode,
-    required bool allowEmpty,
-  });
+  String toLabel({required bool explode, required bool allowEmpty});
 }
 
 /// Marker interface for types that support simple-style encoding

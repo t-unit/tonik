@@ -5,28 +5,25 @@ void main() {
   group('StringMapDelimitedEncoder.toPipeDelimited', () {
     test('flattens alternating key/value tokens joined by literal pipe', () {
       const value = {'R': '100', 'G': '200', 'B': '150'};
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'R|100|G|200|B|150')],
-      );
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'R|100|G|200|B|150'),
+      ]);
     });
 
     test('uri-encodes keys and values while keeping the pipe literal', () {
       const value = {'note': 'a b', 'op': 'x=y'};
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'note|a%20b|op|x%3Dy')],
-      );
+      expect(value.toPipeDelimited('color', allowEmpty: true), [
+        (name: 'color', value: 'note|a%20b|op|x%3Dy'),
+      ]);
     });
 
     test(
       'percent-encodes a pipe inside a value, keeping the delimiter literal',
       () {
         const value = {'a': 'x|y'};
-        expect(
-          value.toPipeDelimited('color', allowEmpty: true),
-          [(name: 'color', value: 'a|x%7Cy')],
-        );
+        expect(value.toPipeDelimited('color', allowEmpty: true), [
+          (name: 'color', value: 'a|x%7Cy'),
+        ]);
       },
     );
 
@@ -34,10 +31,9 @@ void main() {
       'percent-encodes reserved key and value chars without allowReserved',
       () {
         const value = {'a/b': 'a/b:c'};
-        expect(
-          value.toPipeDelimited('color', allowEmpty: true),
-          [(name: 'color', value: 'a%2Fb|a%2Fb%3Ac')],
-        );
+        expect(value.toPipeDelimited('color', allowEmpty: true), [
+          (name: 'color', value: 'a%2Fb|a%2Fb%3Ac'),
+        ]);
       },
     );
 
@@ -69,28 +65,25 @@ void main() {
   group('StringMapDelimitedEncoder.toSpaceDelimited', () {
     test('flattens alternating key/value tokens joined by %20', () {
       const value = {'R': '100', 'G': '200', 'B': '150'};
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'R%20100%20G%20200%20B%20150')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'R%20100%20G%20200%20B%20150'),
+      ]);
     });
 
     test('a space inside a value becomes %20, matching the delimiter', () {
       const value = {'a': 'x y'};
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'a%20x%20y')],
-      );
+      expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+        (name: 'coord', value: 'a%20x%20y'),
+      ]);
     });
 
     test(
       'percent-encodes reserved key and value chars without allowReserved',
       () {
         const value = {'a/b': 'a/b:c'};
-        expect(
-          value.toSpaceDelimited('coord', allowEmpty: true),
-          [(name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac')],
-        );
+        expect(value.toSpaceDelimited('coord', allowEmpty: true), [
+          (name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac'),
+        ]);
       },
     );
 

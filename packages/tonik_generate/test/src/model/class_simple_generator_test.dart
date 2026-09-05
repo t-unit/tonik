@@ -22,10 +22,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -496,60 +493,58 @@ void main() {
       },
     );
 
-    test(
-      'generates fromSimple for mixed OneOf that attempts decoding',
-      () {
-        final oneOfModel = OneOfModel(
-          isDeprecated: false,
-          name: 'DynamicValue',
-          models: [
-            (discriminatorValue: 'str', model: StringModel(context: context)),
-            (
-              discriminatorValue: 'class',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'ComplexData',
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'Wrapper',
-          properties: [
-            Property(
-              name: 'data',
-              model: oneOfModel,
-              isRequired: true,
-              isNullable: false,
+    test('generates fromSimple for mixed OneOf that attempts decoding', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'DynamicValue',
+        models: [
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+          (
+            discriminatorValue: 'class',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'ComplexData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Wrapper',
+        properties: [
+          Property(
+            name: 'data',
+            model: oneOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
+      final generatedClass = generator.generateClass(model);
 
-        const expectedFromSimpleMethod = r'''
+      const expectedFromSimpleMethod = r'''
           factory Wrapper.fromSimple(String? value, {required bool explode}) {
             final _$values = value.decodeObject(
               explode: explode,
@@ -564,14 +559,11 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(
-            format(generatedClass.accept(emitter).toString()),
-          ),
-          contains(collapseWhitespace(expectedFromSimpleMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromSimpleMethod)),
+      );
+    });
 
     test('generates fromSimple for Alias targeting primitive type', () {
       final aliasModel = AliasModel(
@@ -724,61 +716,59 @@ void main() {
       );
     });
 
-    test(
-      'generates fromSimple that throws for Alias targeting class',
-      () {
-        final aliasModel = AliasModel(
-          name: 'UserAlias',
-          model: ClassModel(
+    test('generates fromSimple that throws for Alias targeting class', () {
+      final aliasModel = AliasModel(
+        name: 'UserAlias',
+        model: ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'AliasHolder',
+        properties: [
+          Property(
+            name: 'user',
+            model: aliasModel,
+            isRequired: true,
+            isNullable: false,
             isDeprecated: false,
-            name: 'User',
-            properties: [
-              Property(
-                name: 'id',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
             examples: const [],
+            defaultValue: null,
           ),
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'AliasHolder',
-          properties: [
-            Property(
-              name: 'user',
-              model: aliasModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-        final generatedClass = generator.generateClass(model);
-        final fromSimpleConstructor = generatedClass.constructors.firstWhere(
-          (c) => c.name == 'fromSimple',
-        );
+        ],
+        context: context,
+        examples: const [],
+      );
+      final generatedClass = generator.generateClass(model);
+      final fromSimpleConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'fromSimple',
+      );
 
-        expect(fromSimpleConstructor.factory, isTrue);
-        expect(fromSimpleConstructor.requiredParameters.length, 1);
-        expect(fromSimpleConstructor.optionalParameters.length, 1);
-        expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
+      expect(fromSimpleConstructor.factory, isTrue);
+      expect(fromSimpleConstructor.requiredParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
           factory AliasHolder.fromSimple(String? value, {required bool explode}) {
             throw SimpleDecodingException(
               r'Simple encoding not supported for AliasHolder: contains complex types',
@@ -786,56 +776,53 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'generates fromSimple that throws for Alias targeting list',
-      () {
-        final aliasModel = AliasModel(
-          name: 'StringListAlias',
-          model: ListModel(
-            content: StringModel(context: context),
-            context: context,
+    test('generates fromSimple that throws for Alias targeting list', () {
+      final aliasModel = AliasModel(
+        name: 'StringListAlias',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'AliasHolder',
+        properties: [
+          Property(
+            name: 'list',
+            model: aliasModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'AliasHolder',
-          properties: [
-            Property(
-              name: 'list',
-              model: aliasModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-        final generatedClass = generator.generateClass(model);
-        final fromSimpleConstructor = generatedClass.constructors.firstWhere(
-          (c) => c.name == 'fromSimple',
-        );
+        ],
+        context: context,
+        examples: const [],
+      );
+      final generatedClass = generator.generateClass(model);
+      final fromSimpleConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'fromSimple',
+      );
 
-        expect(fromSimpleConstructor.factory, isTrue);
-        expect(fromSimpleConstructor.requiredParameters.length, 1);
-        expect(fromSimpleConstructor.optionalParameters.length, 1);
-        expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
+      expect(fromSimpleConstructor.factory, isTrue);
+      expect(fromSimpleConstructor.requiredParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
           factory AliasHolder.fromSimple(String? value, {required bool explode}) {
             throw SimpleDecodingException(
               r'Simple encoding not supported for AliasHolder: contains complex types',
@@ -843,12 +830,11 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test('fromSimple throws for mixed simple and complex properties', () {
       final complexModel = ClassModel(
@@ -1209,51 +1195,49 @@ void main() {
       );
     });
 
-    test(
-      'generates toSimple for class with complex properties',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexClass',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
+    test('generates toSimple for class with complex properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexClass',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'address',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'Address',
+              properties: const [],
+              context: context,
               examples: const [],
-              defaultValue: null,
             ),
-            Property(
-              name: 'address',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Address',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final generatedClass = generator.generateClass(model);
-        final toSimpleMethod = generatedClass.methods.firstWhere(
-          (m) => m.name == 'toSimple',
-        );
+      final generatedClass = generator.generateClass(model);
+      final toSimpleMethod = generatedClass.methods.firstWhere(
+        (m) => m.name == 'toSimple',
+      );
 
-        expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
+      expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
 
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
         String toSimple({
           required bool explode,
           required bool allowEmpty,
@@ -1264,12 +1248,11 @@ void main() {
         }
       ''';
 
-        expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
     test('generates toSimple for empty class', () {
       final model = ClassModel(

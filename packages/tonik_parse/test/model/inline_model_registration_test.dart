@@ -6,68 +6,65 @@ import 'package:tonik_parse/tonik_parse.dart';
 void main() {
   group('inline unnamed models are registered in api.models', () {
     group(r'array items with $ref + annotation siblings', () {
-      test(
-        r'array items with $ref + nullable type array '
-        'registers unnamed AliasModel',
-        () {
-          const fileContent = {
-            'openapi': '3.1.0',
-            'info': {'title': 'Test API', 'version': '1.0.0'},
-            'paths': <String, dynamic>{},
-            'components': {
-              'schemas': {
-                'Pet': {
-                  'type': 'object',
-                  'properties': {
-                    'name': {'type': 'string'},
-                  },
+      test(r'array items with $ref + nullable type array '
+          'registers unnamed AliasModel', () {
+        const fileContent = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Pet': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
                 },
-                'Container': {
-                  'type': 'object',
-                  'properties': {
-                    'nullablePets': {
-                      'type': 'array',
-                      'items': {
-                        r'$ref': '#/components/schemas/Pet',
-                        'type': ['object', 'null'],
-                      },
+              },
+              'Container': {
+                'type': 'object',
+                'properties': {
+                  'nullablePets': {
+                    'type': 'array',
+                    'items': {
+                      r'$ref': '#/components/schemas/Pet',
+                      'type': ['object', 'null'],
                     },
                   },
                 },
               },
             },
-          };
+          },
+        };
 
-          final api = Importer().import(fileContent);
+        final api = Importer().import(fileContent);
 
-          final pet = api.models.firstWhereOrNull(
-            (m) => m is NamedModel && m.name == 'Pet',
-          );
-          expect(pet, isA<ClassModel>());
+        final pet = api.models.firstWhereOrNull(
+          (m) => m is NamedModel && m.name == 'Pet',
+        );
+        expect(pet, isA<ClassModel>());
 
-          final container = api.models.firstWhereOrNull(
-            (m) => m is NamedModel && m.name == 'Container',
-          );
-          expect(container, isA<ClassModel>());
+        final container = api.models.firstWhereOrNull(
+          (m) => m is NamedModel && m.name == 'Container',
+        );
+        expect(container, isA<ClassModel>());
 
-          final containerClass = container! as ClassModel;
-          final nullablePetsProp = containerClass.properties.firstWhereOrNull(
-            (p) => p.name == 'nullablePets',
-          );
-          expect(nullablePetsProp, isNotNull);
-          expect(nullablePetsProp!.model, isA<ListModel>());
+        final containerClass = container! as ClassModel;
+        final nullablePetsProp = containerClass.properties.firstWhereOrNull(
+          (p) => p.name == 'nullablePets',
+        );
+        expect(nullablePetsProp, isNotNull);
+        expect(nullablePetsProp!.model, isA<ListModel>());
 
-          final listModel = nullablePetsProp.model as ListModel;
-          expect(listModel.content, isA<AliasModel>());
+        final listModel = nullablePetsProp.model as ListModel;
+        expect(listModel.content, isA<AliasModel>());
 
-          final aliasContent = listModel.content as AliasModel;
-          expect(aliasContent.isNullable, isTrue);
-          expect(aliasContent.model, pet);
+        final aliasContent = listModel.content as AliasModel;
+        expect(aliasContent.isNullable, isTrue);
+        expect(aliasContent.model, pet);
 
-          // All models must be registered
-          expect(api.models, containsAll([pet, container, aliasContent]));
-        },
-      );
+        // All models must be registered
+        expect(api.models, containsAll([pet, container, aliasContent]));
+      });
 
       test(
         r'array items with $ref + description registers unnamed AliasModel',

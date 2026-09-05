@@ -140,10 +140,7 @@ void main() {
       final second = sampleHelper('_decodeForest');
       final third = sampleHelper('_decodeTree');
 
-      final a = BuiltExpression(
-        body: refer('x'),
-        inlineFunctions: [first],
-      );
+      final a = BuiltExpression(body: refer('x'), inlineFunctions: [first]);
       final b = BuiltExpression(
         body: refer('y'),
         inlineFunctions: [second, third],

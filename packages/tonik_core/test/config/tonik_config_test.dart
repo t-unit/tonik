@@ -47,9 +47,7 @@ void main() {
 
       expect(
         config.toString(),
-        contains(
-          'transport: TransportConfig{backend: TransportBackend.http}',
-        ),
+        contains('transport: TransportConfig{backend: TransportBackend.http}'),
       );
     });
 
@@ -62,14 +60,8 @@ void main() {
       );
 
       expect(config.contentMediaTypes, hasLength(2));
-      expect(
-        config.contentMediaTypes['image/png'],
-        SchemaContentType.binary,
-      );
-      expect(
-        config.contentMediaTypes['text/csv'],
-        SchemaContentType.text,
-      );
+      expect(config.contentMediaTypes['image/png'], SchemaContentType.binary);
+      expect(config.contentMediaTypes['text/csv'], SchemaContentType.text);
     });
 
     test('equality includes contentMediaTypes', () {

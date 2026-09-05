@@ -80,10 +80,7 @@ class ParseGenerator {
     final switchCases = <Code>[
       Block.of([
         const Code(r'final _$mediaType = '),
-        refer(
-          'extractMediaType',
-          'package:tonik_util/tonik_util.dart',
-        ).code,
+        refer('extractMediaType', 'package:tonik_util/tonik_util.dart').code,
         const Code('('),
         contentTypeExpression.code,
         const Code(');'),
@@ -165,18 +162,14 @@ class ParseGenerator {
           [?mediaTypeGuard],
         );
       case RangeResponseStatus():
-        return _caseWithGuards(
-          'case (var status, $contentTypePattern)',
-          [
-            backendGenerator.responseStatusCodeRangeGuard(status),
-            ?mediaTypeGuard,
-          ],
-        );
+        return _caseWithGuards('case (var status, $contentTypePattern)', [
+          backendGenerator.responseStatusCodeRangeGuard(status),
+          ?mediaTypeGuard,
+        ]);
       case DefaultResponseStatus():
-        return _caseWithGuards(
-          'case (_, $contentTypePattern)',
-          [?mediaTypeGuard],
-        );
+        return _caseWithGuards('case (_, $contentTypePattern)', [
+          ?mediaTypeGuard,
+        ]);
     }
   }
 
@@ -195,10 +188,7 @@ class ParseGenerator {
 
   Code _mediaTypeRangeGuard(String mediaTypeRange) {
     return Block.of([
-      refer(
-        'matchesMediaTypeRange',
-        'package:tonik_util/tonik_util.dart',
-      ).code,
+      refer('matchesMediaTypeRange', 'package:tonik_util/tonik_util.dart').code,
       const Code(r'(_$mediaType, '),
       Code(specLiteralStringCode(mediaTypeRange)),
       const Code(')'),
@@ -230,10 +220,7 @@ class ParseGenerator {
     }
   }
 
-  bool _isMultipartResponseBody(
-    ResponseObject response,
-    String? contentType,
-  ) {
+  bool _isMultipartResponseBody(ResponseObject response, String? contentType) {
     final responseBody = contentType != null
         ? response.bodies.firstWhere(
             (body) => body.rawContentType == contentType,
@@ -364,9 +351,7 @@ class ParseGenerator {
                 refer(
                   'decodeResponseBytes',
                   'package:tonik_util/tonik_util.dart',
-                ).call([
-                  backendGenerator.responseBodyBytes(refer('response')),
-                ]),
+                ).call([backendGenerator.responseBodyBytes(refer('response'))]),
               ]),
             )
             .statement,
@@ -792,12 +777,7 @@ class ParseGenerator {
       }
     }
 
-    return {
-      ...exact,
-      ...typeRanges,
-      ...catchAllRanges,
-      ...catchAllPatterns,
-    };
+    return {...exact, ...typeRanges, ...catchAllRanges, ...catchAllPatterns};
   }
 
   int _contentTypeSpecificity(String? contentType) {

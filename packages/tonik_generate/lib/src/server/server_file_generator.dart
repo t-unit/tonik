@@ -22,12 +22,7 @@ class ServerFileGenerator {
     return writeGeneratedArtifact(
       outputDirectory: outputDirectory,
       package: package,
-      relativePath: path.posix.join(
-        'lib',
-        'src',
-        'server',
-        result.filename,
-      ),
+      relativePath: path.posix.join('lib', 'src', 'server', result.filename),
       content: result.code,
     );
   }

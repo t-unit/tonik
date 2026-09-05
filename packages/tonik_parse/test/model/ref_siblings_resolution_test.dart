@@ -189,9 +189,7 @@ void main() {
           'paths': <String, dynamic>{},
           'components': {
             'schemas': {
-              'UserId': {
-                'type': 'string',
-              },
+              'UserId': {'type': 'string'},
               'NullableUserId': {
                 r'$ref': '#/components/schemas/UserId',
                 'type': ['string', 'null'],
@@ -213,83 +211,77 @@ void main() {
       },
     );
 
-    test(
-      r'$ref + type: [object, null] + description creates nullable '
-      'AliasModel with description',
-      () {
-        const fileContent = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Pet': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-              'OptionalPet': {
-                r'$ref': '#/components/schemas/Pet',
-                'type': ['object', 'null'],
-                'description': 'An optional pet that may be null',
+    test(r'$ref + type: [object, null] + description creates nullable '
+        'AliasModel with description', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Pet': {
+              'type': 'object',
+              'properties': {
+                'name': {'type': 'string'},
               },
             },
-          },
-        };
-
-        final api = Importer().import(fileContent);
-
-        final optional = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'OptionalPet',
-        );
-        expect(optional, isNotNull);
-        expect(optional, isA<AliasModel>());
-
-        final aliasModel = optional! as AliasModel;
-        expect(aliasModel.isNullable, isTrue);
-        expect(aliasModel.description, 'An optional pet that may be null');
-      },
-    );
-
-    test(
-      r'$ref + type: [object, null] + deprecated creates nullable '
-      'deprecated AliasModel',
-      () {
-        const fileContent = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Pet': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                },
-              },
-              'DeprecatedNullablePet': {
-                r'$ref': '#/components/schemas/Pet',
-                'type': ['object', 'null'],
-                'deprecated': true,
-              },
+            'OptionalPet': {
+              r'$ref': '#/components/schemas/Pet',
+              'type': ['object', 'null'],
+              'description': 'An optional pet that may be null',
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContent);
+      final api = Importer().import(fileContent);
 
-        final deprecated = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'DeprecatedNullablePet',
-        );
-        expect(deprecated, isNotNull);
-        expect(deprecated, isA<AliasModel>());
+      final optional = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'OptionalPet',
+      );
+      expect(optional, isNotNull);
+      expect(optional, isA<AliasModel>());
 
-        final aliasModel = deprecated! as AliasModel;
-        expect(aliasModel.isNullable, isTrue);
-        expect(aliasModel.isDeprecated, isTrue);
-      },
-    );
+      final aliasModel = optional! as AliasModel;
+      expect(aliasModel.isNullable, isTrue);
+      expect(aliasModel.description, 'An optional pet that may be null');
+    });
+
+    test(r'$ref + type: [object, null] + deprecated creates nullable '
+        'deprecated AliasModel', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Pet': {
+              'type': 'object',
+              'properties': {
+                'name': {'type': 'string'},
+              },
+            },
+            'DeprecatedNullablePet': {
+              r'$ref': '#/components/schemas/Pet',
+              'type': ['object', 'null'],
+              'deprecated': true,
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+
+      final deprecated = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'DeprecatedNullablePet',
+      );
+      expect(deprecated, isNotNull);
+      expect(deprecated, isA<AliasModel>());
+
+      final aliasModel = deprecated! as AliasModel;
+      expect(aliasModel.isNullable, isTrue);
+      expect(aliasModel.isDeprecated, isTrue);
+    });
   });
 
   group(r'$ref in composite types without siblings', () {
@@ -542,10 +534,7 @@ void main() {
               },
               'Pet': {
                 'oneOf': [
-                  {
-                    r'$ref': '#/components/schemas/Dog',
-                    'deprecated': true,
-                  },
+                  {r'$ref': '#/components/schemas/Dog', 'deprecated': true},
                   {r'$ref': '#/components/schemas/Cat'},
                 ],
               },
@@ -718,9 +707,7 @@ void main() {
               'type': 'object',
               'properties': {
                 'name': {'type': 'string'},
-                'address': {
-                  r'$ref': '#/components/schemas/Address',
-                },
+                'address': {r'$ref': '#/components/schemas/Address'},
               },
             },
           },
@@ -759,9 +746,7 @@ void main() {
               'type': 'object',
               'properties': {
                 'name': {'type': 'string'},
-                'status': {
-                  r'$ref': '#/components/schemas/Status',
-                },
+                'status': {r'$ref': '#/components/schemas/Status'},
               },
             },
           },
@@ -965,57 +950,54 @@ void main() {
       expect(addressProp.isNullable, isTrue);
     });
 
-    test(
-      r'$ref + description + deprecated + nullable in property '
-      'sets all annotations on property',
-      () {
-        const fileContent = {
-          'openapi': '3.1.0',
-          'info': {'title': 'Test API', 'version': '1.0.0'},
-          'paths': <String, dynamic>{},
-          'components': {
-            'schemas': {
-              'Address': {
-                'type': 'object',
-                'properties': {
-                  'street': {'type': 'string'},
-                },
+    test(r'$ref + description + deprecated + nullable in property '
+        'sets all annotations on property', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Address': {
+              'type': 'object',
+              'properties': {
+                'street': {'type': 'string'},
               },
-              'Person': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
-                  'address': {
-                    r'$ref': '#/components/schemas/Address',
-                    'type': ['object', 'null'],
-                    'deprecated': true,
-                    'description': 'Old nullable address field',
-                  },
+            },
+            'Person': {
+              'type': 'object',
+              'properties': {
+                'name': {'type': 'string'},
+                'address': {
+                  r'$ref': '#/components/schemas/Address',
+                  'type': ['object', 'null'],
+                  'deprecated': true,
+                  'description': 'Old nullable address field',
                 },
               },
             },
           },
-        };
+        },
+      };
 
-        final api = Importer().import(fileContent);
+      final api = Importer().import(fileContent);
 
-        final person = api.models.firstWhereOrNull(
-          (m) => m is NamedModel && m.name == 'Person',
-        );
-        expect(person, isNotNull);
-        expect(person, isA<ClassModel>());
+      final person = api.models.firstWhereOrNull(
+        (m) => m is NamedModel && m.name == 'Person',
+      );
+      expect(person, isNotNull);
+      expect(person, isA<ClassModel>());
 
-        final personClass = person! as ClassModel;
-        final addressProp = personClass.properties.firstWhereOrNull(
-          (p) => p.name == 'address',
-        );
-        expect(addressProp, isNotNull);
-        expect(addressProp!.model, isA<ClassModel>());
-        expect(addressProp.isNullable, isTrue);
-        expect(addressProp.isDeprecated, isTrue);
-        expect(addressProp.description, 'Old nullable address field');
-      },
-    );
+      final personClass = person! as ClassModel;
+      final addressProp = personClass.properties.firstWhereOrNull(
+        (p) => p.name == 'address',
+      );
+      expect(addressProp, isNotNull);
+      expect(addressProp!.model, isA<ClassModel>());
+      expect(addressProp.isNullable, isTrue);
+      expect(addressProp.isDeprecated, isTrue);
+      expect(addressProp.description, 'Old nullable address field');
+    });
   });
 
   group(r'recursive $ref with annotation siblings', () {
@@ -1226,10 +1208,7 @@ void main() {
       };
 
       // Direct self-reference is not valid and should throw
-      expect(
-        () => Importer().import(fileContent),
-        throwsArgumentError,
-      );
+      expect(() => Importer().import(fileContent), throwsArgumentError);
     });
 
     test('indirect circular reference (A -> B -> C -> A) produces models', () {

@@ -18,8 +18,9 @@ void main() {
     return TypeArraysApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig:
-            testServerConfig(headers: {'X-Response-Status': responseStatus}),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
+        ),
       ),
     );
   }
@@ -29,10 +30,7 @@ void main() {
       final api = buildApi();
       final result = await api.health();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value.status, 'ok');
@@ -380,8 +378,8 @@ void main() {
         nullableBoolean: true,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-          'mixed-string',
-        ),
+              'mixed-string',
+            ),
         nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
           777,
         ),
@@ -390,10 +388,7 @@ void main() {
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -438,16 +433,11 @@ void main() {
     test('all fields null', () async {
       final api = buildApi();
 
-      const input = NullableTypeArrays(
-        requiredNullable: null,
-      );
+      const input = NullableTypeArrays(requiredNullable: null);
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -478,16 +468,13 @@ void main() {
         requiredNullable: null,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-          'test-string',
-        ),
+              'test-string',
+            ),
       );
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -519,10 +506,7 @@ void main() {
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -555,10 +539,7 @@ void main() {
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -591,10 +572,7 @@ void main() {
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -627,10 +605,7 @@ void main() {
 
       final result = await api.testNullableTypes(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -677,18 +652,15 @@ void main() {
       const input = CompositionWithTypeArrays(
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelString(
-          'simple-string',
-        ),
+              'simple-string',
+            ),
         nullableTypeArray:
             CompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
       );
 
       final result = await api.testComposition(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -733,10 +705,7 @@ void main() {
 
       final result = await api.testComposition(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -778,10 +747,7 @@ void main() {
 
       final result = await api.testComposition(body: input);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -1168,35 +1134,32 @@ void main() {
       expect(output.arrayOfNullableStrings, ['Ada', null, 'Grace']);
     });
 
-    test(
-      'arrayWithNullableItemsViaFlag round-trips a null element',
-      () async {
-        final api = buildApi();
+    test('arrayWithNullableItemsViaFlag round-trips a null element', () async {
+      final api = buildApi();
 
-        const input = EdgeCases(
-          allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-          integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
-          arrayWithNullableItemsViaFlag: ['Ada', null, 'Grace'],
-        );
+      const input = EdgeCases(
+        allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
+        integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
+        arrayWithNullableItemsViaFlag: ['Ada', null, 'Grace'],
+      );
 
-        final result = await api.testEdgeCases(body: input);
+      final result = await api.testEdgeCases(body: input);
 
-        expect(result, isTonikSuccess);
-        final success = requireSuccess(result);
-        final recordedRequest = await imposterServer.takeRequest();
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-        final requestData =
-            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
-        expect(requestData['arrayWithNullableItemsViaFlag'], [
-          'Ada',
-          null,
-          'Grace',
-        ]);
+      final requestData =
+          jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
+      expect(requestData['arrayWithNullableItemsViaFlag'], [
+        'Ada',
+        null,
+        'Grace',
+      ]);
 
-        final output = success.value;
-        expect(output.arrayWithNullableItemsViaFlag, ['Ada', null, 'Grace']);
-      },
-    );
+      final output = success.value;
+      expect(output.arrayWithNullableItemsViaFlag, ['Ada', null, 'Grace']);
+    });
 
     test('arrayOfNullableInts round-trips a null element', () async {
       final api = buildApi();

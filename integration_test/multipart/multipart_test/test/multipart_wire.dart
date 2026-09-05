@@ -8,9 +8,7 @@ final class MultipartWire {
     final contentType = request.header('content-type');
     final boundaryMatch = contentType == null
         ? null
-        : RegExp(
-            'boundary=(?:"([^"]+)"|([^;]+))',
-          ).firstMatch(contentType);
+        : RegExp('boundary=(?:"([^"]+)"|([^;]+))').firstMatch(contentType);
     final boundary = boundaryMatch?.group(1) ?? boundaryMatch?.group(2);
     if (boundary == null) {
       throw StateError('Request has no multipart boundary: $contentType');

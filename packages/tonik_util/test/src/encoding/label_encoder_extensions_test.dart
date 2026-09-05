@@ -120,18 +120,12 @@ void main() {
   group('LabelBigDecimalEncoder', () {
     test('encodes BigDecimal value', () {
       final decimal = BigDecimal.parse('123.456');
-      expect(
-        decimal.toLabel(explode: false, allowEmpty: true),
-        '.123.456',
-      );
+      expect(decimal.toLabel(explode: false, allowEmpty: true), '.123.456');
     });
 
     test('explode parameter has no effect on primitives', () {
       final decimal = BigDecimal.parse('123.456');
-      expect(
-        decimal.toLabel(explode: true, allowEmpty: true),
-        '.123.456',
-      );
+      expect(decimal.toLabel(explode: true, allowEmpty: true), '.123.456');
     });
   });
 
@@ -165,35 +159,20 @@ void main() {
     });
 
     test('encodes empty List when allowEmpty is true', () {
-      expect(
-        <String>[].toLabel(explode: false, allowEmpty: true),
-        '.',
-      );
+      expect(<String>[].toLabel(explode: false, allowEmpty: true), '.');
     });
 
     test('encodes empty List with explode=true when allowEmpty is true', () {
-      expect(
-        <String>[].toLabel(explode: true, allowEmpty: true),
-        '.',
-      );
+      expect(<String>[].toLabel(explode: true, allowEmpty: true), '.');
     });
 
     test('encodes empty List when allowEmpty is false', () {
-      expect(
-        <String>[].toLabel(explode: false, allowEmpty: false),
-        '.',
-      );
+      expect(<String>[].toLabel(explode: false, allowEmpty: false), '.');
     });
 
-    test(
-      'encodes empty List with explode=true when allowEmpty is false',
-      () {
-        expect(
-          <String>[].toLabel(explode: true, allowEmpty: false),
-          '.',
-        );
-      },
-    );
+    test('encodes empty List with explode=true when allowEmpty is false', () {
+      expect(<String>[].toLabel(explode: true, allowEmpty: false), '.');
+    });
   });
 
   group('LabelStringMapEncoder', () {
@@ -206,20 +185,20 @@ void main() {
 
     test('encodes object with string values and explode=false', () {
       expect(
-        {'name': 'John', 'role': 'admin'}.toLabel(
-          explode: false,
-          allowEmpty: true,
-        ),
+        {
+          'name': 'John',
+          'role': 'admin',
+        }.toLabel(explode: false, allowEmpty: true),
         '.name,John,role,admin',
       );
     });
 
     test('encodes object with special characters and explode=false', () {
       expect(
-        {'street': '123 Main St', 'city': 'New York'}.toLabel(
-          explode: false,
-          allowEmpty: true,
-        ),
+        {
+          'street': '123 Main St',
+          'city': 'New York',
+        }.toLabel(explode: false, allowEmpty: true),
         '.street,123%20Main%20St,city,New%20York',
       );
     });
@@ -233,29 +212,23 @@ void main() {
 
     test('encodes object with special characters and explode=true', () {
       expect(
-        {'street': '123 Main St', 'city': 'New York'}.toLabel(
-          explode: true,
-          allowEmpty: true,
-        ),
+        {
+          'street': '123 Main St',
+          'city': 'New York',
+        }.toLabel(explode: true, allowEmpty: true),
         '.street=123%20Main%20St.city=New%20York',
       );
     });
 
     test('encodes special characters in map keys with explode=true', () {
       expect(
-        {'a=b': '1', 'c&d': '2'}.toLabel(
-          explode: true,
-          allowEmpty: true,
-        ),
+        {'a=b': '1', 'c&d': '2'}.toLabel(explode: true, allowEmpty: true),
         '.a%3Db=1.c%26d=2',
       );
     });
 
     test('empty value renders name-only when exploded', () {
-      expect(
-        {'k': ''}.toLabel(explode: true, allowEmpty: true),
-        '.k',
-      );
+      expect({'k': ''}.toLabel(explode: true, allowEmpty: true), '.k');
     });
 
     test(
@@ -269,17 +242,11 @@ void main() {
     );
 
     test('encodes empty object when allowEmpty is true', () {
-      expect(
-        <String, String>{}.toLabel(explode: false, allowEmpty: true),
-        '.',
-      );
+      expect(<String, String>{}.toLabel(explode: false, allowEmpty: true), '.');
     });
 
     test('encodes empty object with explode=true when allowEmpty is true', () {
-      expect(
-        <String, String>{}.toLabel(explode: true, allowEmpty: true),
-        '.',
-      );
+      expect(<String, String>{}.toLabel(explode: true, allowEmpty: true), '.');
     });
 
     test('throws exception for empty object when allowEmpty is false', () {
@@ -289,16 +256,13 @@ void main() {
       );
     });
 
-    test(
-      'throws exception for empty object with explode=true '
-      'when allowEmpty is false',
-      () {
-        expect(
-          () => <String, String>{}.toLabel(explode: true, allowEmpty: false),
-          throwsA(isA<EmptyValueException>()),
-        );
-      },
-    );
+    test('throws exception for empty object with explode=true '
+        'when allowEmpty is false', () {
+      expect(
+        () => <String, String>{}.toLabel(explode: true, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
   });
 
   group('RFC 3986 reserved character encoding', () {
@@ -348,10 +312,7 @@ void main() {
 
     group('sub-delims characters', () {
       test('encodes exclamation mark (!) properly', () {
-        expect(
-          'Hello!'.toLabel(explode: false, allowEmpty: true),
-          '.Hello!',
-        );
+        expect('Hello!'.toLabel(explode: false, allowEmpty: true), '.Hello!');
       });
 
       test(r'encodes dollar sign ($) properly', () {
@@ -390,10 +351,7 @@ void main() {
       });
 
       test('encodes plus (+) properly', () {
-        expect(
-          '2+2=4'.toLabel(explode: false, allowEmpty: true),
-          '.2%2B2%3D4',
-        );
+        expect('2+2=4'.toLabel(explode: false, allowEmpty: true), '.2%2B2%3D4');
       });
 
       test('encodes comma (,) properly', () {
@@ -411,26 +369,17 @@ void main() {
       });
 
       test('encodes equals (=) properly', () {
-        expect(
-          'x=y'.toLabel(explode: false, allowEmpty: true),
-          '.x%3Dy',
-        );
+        expect('x=y'.toLabel(explode: false, allowEmpty: true), '.x%3Dy');
       });
     });
 
     group('percent-encoding normalization', () {
       test('properly encodes non-ASCII characters', () {
-        expect(
-          'café'.toLabel(explode: false, allowEmpty: true),
-          '.caf%C3%A9',
-        );
+        expect('café'.toLabel(explode: false, allowEmpty: true), '.caf%C3%A9');
       });
 
       test('properly encodes emoji', () {
-        expect(
-          '👍'.toLabel(explode: false, allowEmpty: true),
-          '.%F0%9F%91%8D',
-        );
+        expect('👍'.toLabel(explode: false, allowEmpty: true), '.%F0%9F%91%8D');
       });
 
       test('properly encodes Chinese characters', () {
@@ -519,18 +468,12 @@ void main() {
   group('LabelBinaryEncoder', () {
     test('encodes List<int> with dot prefix', () {
       const value = [72, 101, 108, 108, 111]; // "Hello"
-      expect(
-        value.toLabel(explode: false, allowEmpty: true),
-        '.Hello',
-      );
+      expect(value.toLabel(explode: false, allowEmpty: true), '.Hello');
     });
 
     test('encodes empty List<int> when allowEmpty=true', () {
       const value = <int>[];
-      expect(
-        value.toLabel(explode: false, allowEmpty: true),
-        '.',
-      );
+      expect(value.toLabel(explode: false, allowEmpty: true), '.');
     });
 
     test('throws EmptyValueException when empty and allowEmpty=false', () {

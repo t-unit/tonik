@@ -339,9 +339,7 @@ void main() {
       );
 
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(
-          schemas: DeprecatedHandling.exclude,
-        ),
+        deprecated: DeprecatedConfig(schemas: DeprecatedHandling.exclude),
       );
 
       final result = transformer.apply(docWithComposite, config);

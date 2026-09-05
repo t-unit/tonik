@@ -646,8 +646,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!
+            if (list2 != null) {
+              final _$list2Matrix = list2!
                   .map<String>(
                     (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                   )
@@ -658,15 +658,15 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                     allowEmpty: allowEmpty,
                     alreadyEncoded: true,
                   );
-              _$values.add(_$listMatrix);
+              _$values.add(_$list2Matrix);
             }
-            if (list2 != null) {
-              final _$list2Matrix = list2!.toMatrix(
+            if (list != null) {
+              final _$listMatrix = list!.toMatrix(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
               );
-              _$values.add(_$list2Matrix);
+              _$values.add(_$listMatrix);
             }
             if (_$values.isEmpty) return '';
             return _$values.first;
