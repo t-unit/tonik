@@ -91,28 +91,27 @@ class MultipartBodyPlanner {
               [
                 literalList([
                   for (var i = 0; i < accesses.length; i++)
-                    mergedObjects
-                        ? _objectMergeValue(
-                            accesses[i],
-                            nullable: _occurrenceIsNullable(
-                              property.accessPaths[i],
-                              property.properties[i],
-                            ),
-                            asProperties: mergedObjectProperties,
-                          )
-                        : useImmutableCollections &&
-                              (property.properties[i].model.resolved
-                                      is ListModel ||
-                                  property.properties[i].model.resolved
-                                      is MapModel)
-                        ? _immutableMergeValue(
-                            accesses[i],
-                            nullable: _occurrenceIsNullable(
-                              property.accessPaths[i],
-                              property.properties[i],
-                            ),
-                          )
-                        : accesses[i],
+                    if (mergedObjects)
+                      _objectMergeValue(
+                        accesses[i],
+                        nullable: _occurrenceIsNullable(
+                          property.accessPaths[i],
+                          property.properties[i],
+                        ),
+                        asProperties: mergedObjectProperties,
+                      )
+                    else if (useImmutableCollections &&
+                        (property.properties[i].model.resolved is ListModel ||
+                            property.properties[i].model.resolved is MapModel))
+                      _immutableMergeValue(
+                        accesses[i],
+                        nullable: _occurrenceIsNullable(
+                          property.accessPaths[i],
+                          property.properties[i],
+                        ),
+                      )
+                    else
+                      accesses[i],
                 ]),
               ],
               {
