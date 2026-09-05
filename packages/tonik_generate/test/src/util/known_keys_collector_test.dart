@@ -257,10 +257,11 @@ void main() {
           examples: const [],
         );
 
-        expect(
-          collectKnownKeys(model),
-          {'petType', 'whiskerLength', 'barkVolume'},
-        );
+        expect(collectKnownKeys(model), {
+          'petType',
+          'whiskerLength',
+          'barkVolume',
+        });
       });
 
       test('returns variant keys even without discriminator', () {
@@ -286,9 +287,7 @@ void main() {
           isDeprecated: false,
           name: 'Pet',
           context: context,
-          models: [
-            (discriminatorValue: null, model: cat),
-          ],
+          models: [(discriminatorValue: null, model: cat)],
           examples: const [],
         );
 
@@ -397,9 +396,7 @@ void main() {
           isDeprecated: false,
           name: 'Content',
           context: context,
-          models: [
-            (discriminatorValue: null, model: text),
-          ],
+          models: [(discriminatorValue: null, model: text)],
           examples: const [],
         );
 
@@ -479,17 +476,11 @@ void main() {
 
     group('other model types', () {
       test('returns empty set for StringModel', () {
-        expect(
-          collectKnownKeys(StringModel(context: context)),
-          <String>{},
-        );
+        expect(collectKnownKeys(StringModel(context: context)), <String>{});
       });
 
       test('returns empty set for IntegerModel', () {
-        expect(
-          collectKnownKeys(IntegerModel(context: context)),
-          <String>{},
-        );
+        expect(collectKnownKeys(IntegerModel(context: context)), <String>{});
       });
 
       test('returns empty set for ListModel', () {
@@ -602,88 +593,86 @@ void main() {
         expect(collectKnownKeys(allOf), {'name', 'kind'});
       });
 
-      test(
-        'includes variant property keys from oneOf member',
-        () {
-          final cat = ClassModel(
-            isDeprecated: false,
-            name: 'Cat',
-            context: context,
-            properties: [
-              Property(
-                name: 'whiskerLength',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            examples: const [],
-          );
+      test('includes variant property keys from oneOf member', () {
+        final cat = ClassModel(
+          isDeprecated: false,
+          name: 'Cat',
+          context: context,
+          properties: [
+            Property(
+              name: 'whiskerLength',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          examples: const [],
+        );
 
-          final dog = ClassModel(
-            isDeprecated: false,
-            name: 'Dog',
-            context: context,
-            properties: [
-              Property(
-                name: 'barkVolume',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            examples: const [],
-          );
+        final dog = ClassModel(
+          isDeprecated: false,
+          name: 'Dog',
+          context: context,
+          properties: [
+            Property(
+              name: 'barkVolume',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          examples: const [],
+        );
 
-          final oneOfModel = OneOfModel(
-            isDeprecated: false,
-            name: 'PetVariant',
-            context: context,
-            models: [
-              (discriminatorValue: 'cat', model: cat),
-              (discriminatorValue: 'dog', model: dog),
-            ],
-            examples: const [],
-          );
+        final oneOfModel = OneOfModel(
+          isDeprecated: false,
+          name: 'PetVariant',
+          context: context,
+          models: [
+            (discriminatorValue: 'cat', model: cat),
+            (discriminatorValue: 'dog', model: dog),
+          ],
+          examples: const [],
+        );
 
-          final baseModel = ClassModel(
-            isDeprecated: false,
-            name: 'Base',
-            context: context,
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            examples: const [],
-          );
+        final baseModel = ClassModel(
+          isDeprecated: false,
+          name: 'Base',
+          context: context,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          examples: const [],
+        );
 
-          final allOf = AllOfModel(
-            isDeprecated: false,
-            name: 'MyModel',
-            context: context,
-            models: [oneOfModel, baseModel],
-            examples: const [],
-          );
+        final allOf = AllOfModel(
+          isDeprecated: false,
+          name: 'MyModel',
+          context: context,
+          models: [oneOfModel, baseModel],
+          examples: const [],
+        );
 
-          expect(
-            collectKnownKeys(allOf),
-            {'name', 'whiskerLength', 'barkVolume'},
-          );
-        },
-      );
+        expect(collectKnownKeys(allOf), {
+          'name',
+          'whiskerLength',
+          'barkVolume',
+        });
+      });
     });
   });
 }

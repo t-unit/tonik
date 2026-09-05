@@ -66,10 +66,7 @@ void main() {
 
       final result = await api.listAccount();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -83,10 +80,7 @@ void main() {
 
       final result = await api.listAccount(pageSize: 10);
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
 
@@ -100,10 +94,7 @@ void main() {
 
       final result = await api.listAccount();
 
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
@@ -117,10 +108,7 @@ void main() {
 
       final result = await api.fetchAccount(sid: 'AC_test123');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -134,10 +122,7 @@ void main() {
 
       final result = await api.fetchAccount(sid: 'nonexistent');
 
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
     });
   });
 
@@ -149,10 +134,7 @@ void main() {
 
       final result = await api.createAccount();
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
       final recordedRequest = await imposterServer.takeRequest();
@@ -171,10 +153,7 @@ void main() {
 
       final result = await api.listMessage(accountSid: 'AC_mock');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -192,10 +171,7 @@ void main() {
 
       final result = await api.createMessage(accountSid: 'AC_mock');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
       final recordedRequest = await imposterServer.takeRequest();
@@ -216,10 +192,7 @@ void main() {
 
       final result = await api.listCall(accountSid: 'AC_mock');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -237,10 +210,7 @@ void main() {
 
       final result = await api.fetchBalance(accountSid: 'AC_mock');
 
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();

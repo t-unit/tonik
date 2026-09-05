@@ -62,7 +62,9 @@ class ImposterServer {
       final decoded = jsonDecode(payload);
       if (decoded is! Map<String, dynamic>) {
         throw FormatException(
-            'Recorded request is not a JSON object.', payload);
+          'Recorded request is not a JSON object.',
+          payload,
+        );
       }
       final uri = decoded['uri'];
       final method = decoded['method'];
@@ -177,10 +179,7 @@ class ImposterServer {
         '--plugin',
         'rest',
       ],
-      environment: {
-        ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'INFO',
-      },
+      environment: {...Platform.environment, 'IMPOSTER_LOG_LEVEL': 'INFO'},
     );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {

@@ -14,10 +14,7 @@ void main() {
 
   MatrixApi buildMatrixApi() {
     return MatrixApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: testServerConfig(),
-      ),
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
     );
   }
 
@@ -404,9 +401,7 @@ void main() {
 
     test('integerEnum encodes as ;param=value', () async {
       final api = buildMatrixApi();
-      final response = await api.testMatrixIntegerEnum(
-        value: PriorityEnum.two,
-      );
+      final response = await api.testMatrixIntegerEnum(value: PriorityEnum.two);
 
       expect(response, isTonikSuccess);
       final success = requireSuccess(response);

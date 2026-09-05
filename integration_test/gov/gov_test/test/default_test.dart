@@ -29,10 +29,7 @@ void main() {
 
       final response = await formsApi.findForms(query: '10-10EZ');
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindFormsResponse200>());
@@ -81,10 +78,7 @@ void main() {
 
       final response = await formsApi.findForms();
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 401);
@@ -102,10 +96,7 @@ void main() {
 
       final response = await formsApi.findForms();
 
-      expect(
-        response,
-        isTonikSuccess,
-      );
+      expect(response, isTonikSuccess);
       final success = requireSuccess(response);
 
       expect(success.response.statusCode, 429);

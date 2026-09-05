@@ -34,11 +34,7 @@ MapPropertyValueConversion buildMapPropertyValueConversion(
   final value = omitsNull
       ? refer('e').property('value').nullChecked
       : refer('v');
-  final plan = buildFlatEncodePlan(
-    value,
-    model.valueModel,
-    context: context,
-  );
+  final plan = buildFlatEncodePlan(value, model.valueModel, context: context);
 
   final propertyValue = switch (plan) {
     FlatScalarEncodePlan(:final value) => propertyValueScalar(value),
@@ -66,22 +62,20 @@ MapPropertyValueConversion buildMapPropertyValueConversion(
   );
 }
 
-Expression _buildMappedEntries(
-  Expression receiver,
-  Expression propertyValue,
-) => receiver.property('map').call([
-  Method(
-    (b) => b
-      ..requiredParameters.addAll([
-        Parameter((p) => p..name = 'k'),
-        Parameter((p) => p..name = 'v'),
-      ])
-      ..body = refer('MapEntry', 'dart:core').newInstance([
-        refer('k'),
-        propertyValue,
-      ]).code,
-  ).closure,
-]);
+Expression _buildMappedEntries(Expression receiver, Expression propertyValue) =>
+    receiver.property('map').call([
+      Method(
+        (b) => b
+          ..requiredParameters.addAll([
+            Parameter((p) => p..name = 'k'),
+            Parameter((p) => p..name = 'v'),
+          ])
+          ..body = refer(
+            'MapEntry',
+            'dart:core',
+          ).newInstance([refer('k'), propertyValue]).code,
+      ).closure,
+    ]);
 
 Expression _buildOmittingNullEntries(
   Expression receiver,
@@ -94,9 +88,7 @@ Expression _buildOmittingNullEntries(
         Method(
           (b) => b
             ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-            ..body = refer(
-              'e',
-            ).property('value').notEqualTo(literalNull).code,
+            ..body = refer('e').property('value').notEqualTo(literalNull).code,
         ).closure,
       ])
       .property('map')
@@ -104,13 +96,14 @@ Expression _buildOmittingNullEntries(
         Method(
           (b) => b
             ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-            ..body = refer('MapEntry', 'dart:core').newInstance([
-              refer('e').property('key'),
-              propertyValue,
-            ]).code,
+            ..body = refer(
+              'MapEntry',
+              'dart:core',
+            ).newInstance([refer('e').property('key'), propertyValue]).code,
         ).closure,
       ]);
-  return refer('Map', 'dart:core').property('fromEntries').call([
-    definedEntries,
-  ]);
+  return refer(
+    'Map',
+    'dart:core',
+  ).property('fromEntries').call([definedEntries]);
 }

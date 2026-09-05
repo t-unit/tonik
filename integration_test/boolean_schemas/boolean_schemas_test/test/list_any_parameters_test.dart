@@ -30,10 +30,7 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'anyValues=a&anyValues=b&anyValues=c',
-      );
+      expect(recordedRequest.uri.query, 'anyValues=a&anyValues=b&anyValues=c');
     });
 
     test('getQueryListAny with numeric values', () async {
@@ -42,17 +39,12 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.query,
-        'anyValues=1&anyValues=2&anyValues=3',
-      );
+      expect(recordedRequest.uri.query, 'anyValues=1&anyValues=2&anyValues=3');
     });
 
     test('getQueryListAny with mixed primitive types', () async {
       final api = buildApi();
-      final result = await api.getQueryListAny(
-        anyValues: ['string', 42, true],
-      );
+      final result = await api.getQueryListAny(anyValues: ['string', 42, true]);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
@@ -72,10 +64,7 @@ void main() {
         final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.uri.query,
-          'anyValues=x,y,z',
-        );
+        expect(recordedRequest.uri.query, 'anyValues=x,y,z');
       },
     );
 
@@ -89,10 +78,7 @@ void main() {
             ['nested', 'list'],
           ],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
         expect(error.type, TonikErrorType.encoding);
@@ -108,10 +94,7 @@ void main() {
             {'key': 'value'},
           ],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -119,51 +102,36 @@ void main() {
   });
 
   group('Query parameters - list of any values (spaceDelimited style)', () {
-    test(
-      'getQuerySpaceDelimitedListAny returns EncodingException',
-      () async {
-        final api = buildApi();
-        final result = await api.getQuerySpaceDelimitedListAny(
-          anyValues: ['a', 'b'],
-        );
-        // spaceDelimited style is not supported for arrays of AnyModel
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQuerySpaceDelimitedListAny returns EncodingException', () async {
+      final api = buildApi();
+      final result = await api.getQuerySpaceDelimitedListAny(
+        anyValues: ['a', 'b'],
+      );
+      // spaceDelimited style is not supported for arrays of AnyModel
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
   });
 
   group('Query parameters - list of any values (pipeDelimited style)', () {
-    test(
-      'getQueryPipeDelimitedListAny returns EncodingException',
-      () async {
-        final api = buildApi();
-        final result = await api.getQueryPipeDelimitedListAny(
-          anyValues: ['one', 'two'],
-        );
-        // pipeDelimited style is not supported for arrays of AnyModel
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQueryPipeDelimitedListAny returns EncodingException', () async {
+      final api = buildApi();
+      final result = await api.getQueryPipeDelimitedListAny(
+        anyValues: ['one', 'two'],
+      );
+      // pipeDelimited style is not supported for arrays of AnyModel
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
   });
 
   group('Path parameters - list of any values (simple style)', () {
     test('getPathListAny returns EncodingException', () async {
       final api = buildApi();
       final result = await api.getPathListAny(anyValues: ['a', 'b', 'c']);
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
@@ -172,10 +140,7 @@ void main() {
     test('getPathListAnyExplode returns EncodingException', () async {
       final api = buildApi();
       final result = await api.getPathListAnyExplode(anyValues: ['x', 'y']);
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
@@ -189,10 +154,7 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.path,
-        '/path/label/list-any/.a,b,c',
-      );
+      expect(recordedRequest.uri.path, '/path/label/list-any/.a,b,c');
     });
 
     test('getPathLabelListAny with numeric values', () async {
@@ -201,10 +163,7 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.path,
-        '/path/label/list-any/.10,20',
-      );
+      expect(recordedRequest.uri.path, '/path/label/list-any/.10,20');
     });
 
     test('getPathLabelListAnyExplode with values', () async {
@@ -215,10 +174,7 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.path,
-        '/path/label/list-any-explode/.foo.bar',
-      );
+      expect(recordedRequest.uri.path, '/path/label/list-any-explode/.foo.bar');
     });
 
     test(
@@ -230,10 +186,7 @@ void main() {
             ['nested'],
           ],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -247,10 +200,7 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.uri.path,
-        '/path/matrix/list-any/;anyValues=a,b',
-      );
+      expect(recordedRequest.uri.path, '/path/matrix/list-any/;anyValues=a,b');
     });
 
     test('getPathMatrixListAny with numeric values', () async {
@@ -288,10 +238,7 @@ void main() {
             ['nested'],
           ],
         );
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
@@ -302,10 +249,7 @@ void main() {
     test('getHeaderListAny returns EncodingException', () async {
       final api = buildApi();
       final result = await api.getHeaderListAny(anyValues: ['a', 'b', 'c']);
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
@@ -316,10 +260,7 @@ void main() {
       final result = await api.getHeaderListAnyExplode(
         anyValues: ['foo', 'bar'],
       );
-      expect(
-        result,
-        isTonikError,
-      );
+      expect(result, isTonikError);
       final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
@@ -336,52 +277,34 @@ void main() {
           anyItems: ['item1', 'item2'],
         );
         final result = await api.getQueryObjectWithListAny(filter: filter);
-        expect(
-          result,
-          isTonikError,
-        );
+        expect(result, isTonikError);
         final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
 
-    test(
-      'getQueryDeepObjectWithListAny returns EncodingException',
-      () async {
-        final api = buildApi();
-        const filter = ObjectWithListAny(
-          name: 'deep-test',
-          anyItems: ['a', 'b'],
-        );
-        final result = await api.getQueryDeepObjectWithListAny(filter: filter);
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('getQueryDeepObjectWithListAny returns EncodingException', () async {
+      final api = buildApi();
+      const filter = ObjectWithListAny(name: 'deep-test', anyItems: ['a', 'b']);
+      final result = await api.getQueryDeepObjectWithListAny(filter: filter);
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
   });
 
   group('Form body - list of any values', () {
-    test(
-      'postFormListAny returns EncodingException (complex type)',
-      () async {
-        final api = buildApi();
-        const body = FormWithListAny(
-          name: 'form-test',
-          anyItems: ['a', 'b', 'c'],
-          count: 3,
-        );
-        final result = await api.postFormListAny(body: body);
-        expect(
-          result,
-          isTonikError,
-        );
-        final error = requireError(result);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+    test('postFormListAny returns EncodingException (complex type)', () async {
+      final api = buildApi();
+      const body = FormWithListAny(
+        name: 'form-test',
+        anyItems: ['a', 'b', 'c'],
+        count: 3,
+      );
+      final result = await api.postFormListAny(body: body);
+      expect(result, isTonikError);
+      final error = requireError(result);
+      expect(error.error, isA<EncodingException>());
+    });
   });
 }

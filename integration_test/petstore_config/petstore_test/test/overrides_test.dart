@@ -30,11 +30,7 @@ void main() {
         body: const PetPostBodyRequestBodyJson(
           // we expect Animal to be deprecated
           // ignore: deprecated_member_use
-          Animal(
-            id: 1,
-            displayName: 'Fido',
-            pictures: <String>[],
-          ),
+          Animal(id: 1, displayName: 'Fido', pictures: <String>[]),
         ),
       );
       final success = requireSuccess(result);
@@ -132,17 +128,10 @@ void main() {
         body: const PetPostBodyRequestBodyJson(
           // we expect Animal to be deprecated
           // ignore: deprecated_member_use
-          Animal(
-            id: 1,
-            displayName: 'Rex',
-            pictures: <String>[],
-          ),
+          Animal(id: 1, displayName: 'Rex', pictures: <String>[]),
         ),
       );
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
 
     test('getPetById renamed to fetchAnimalById', () async {
@@ -150,20 +139,14 @@ void main() {
 
       // Parameter also renamed: petId -> animalIdentifier
       final result = await petApi.fetchAnimalById(animalId: 1);
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
 
     test('deletePet renamed to removeAnimal', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removeAnimal(petId: 1);
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
 
     test('findPetsByStatus renamed to queryAnimalsByStatus', () async {
@@ -171,10 +154,7 @@ void main() {
 
       // Parameter name override not working - still uses petStatus
       final result = await petApi.queryAnimalsByStatus();
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
   });
 
@@ -191,9 +171,7 @@ void main() {
         id: 1,
         displayName: 'Buddy',
         pictures: <String>['https://example.com/buddy.jpg'],
-        labels: <Label>[
-          Label(id: 1, name: 'friendly'),
-        ],
+        labels: <Label>[Label(id: 1, name: 'friendly')],
         category: Group(id: 1, name: 'Dogs'),
         status: PetStatusModel.inStock,
       );
@@ -235,18 +213,9 @@ void main() {
       // placed -> orderPlaced
       // approved -> orderApproved
       // delivered -> orderDelivered
-      expect(
-        OrderStatusModel.orderPlaced,
-        isA<OrderStatusModel>(),
-      );
-      expect(
-        OrderStatusModel.orderApproved,
-        isA<OrderStatusModel>(),
-      );
-      expect(
-        OrderStatusModel.orderDelivered,
-        isA<OrderStatusModel>(),
-      );
+      expect(OrderStatusModel.orderPlaced, isA<OrderStatusModel>());
+      expect(OrderStatusModel.orderApproved, isA<OrderStatusModel>());
+      expect(OrderStatusModel.orderDelivered, isA<OrderStatusModel>());
     });
 
     test('Pet status enum values renamed', () {
@@ -255,10 +224,7 @@ void main() {
       // pending -> reserved
       // sold -> soldOut
       expect(PetStatusModel.inStock, isA<PetStatusModel>());
-      expect(
-        PetStatusModel.reserved,
-        isA<PetStatusModel>(),
-      );
+      expect(PetStatusModel.reserved, isA<PetStatusModel>());
       expect(PetStatusModel.soldOut, isA<PetStatusModel>());
     });
 
@@ -305,10 +271,7 @@ void main() {
         petId: 1,
         imageMetadata: 'test metadata',
       );
-      expect(
-        result,
-        isTonikSuccess,
-      );
+      expect(result, isTonikSuccess);
     });
   });
 }

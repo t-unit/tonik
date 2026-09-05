@@ -23,10 +23,7 @@ void main() {
         generator: nameGenerator,
         stableModelSorter: StableModelSorter(),
       );
-      generator = ClassGenerator(
-        nameManager: nameManager,
-        package: 'example',
-      );
+      generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
@@ -431,13 +428,8 @@ void main() {
         expect(allowEmptyParam.required, isTrue);
 
         final useQueryComponentParam = uriEncodeMethod.optionalParameters
-            .firstWhere(
-              (p) => p.name == 'useQueryComponent',
-            );
-        expect(
-          useQueryComponentParam.type?.accept(emitter).toString(),
-          'bool',
-        );
+            .firstWhere((p) => p.name == 'useQueryComponent');
+        expect(useQueryComponentParam.type?.accept(emitter).toString(), 'bool');
         expect(useQueryComponentParam.named, isTrue);
         expect(useQueryComponentParam.required, isFalse);
         expect(
@@ -657,12 +649,7 @@ void main() {
           properties: const [],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 1,
-            ),
+            Example(name: null, summary: null, description: null, value: 1),
           ],
         );
 
@@ -763,12 +750,7 @@ void main() {
           properties: const [],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: null,
-            ),
+            Example(name: null, summary: null, description: null, value: null),
           ],
         );
 
@@ -1458,36 +1440,34 @@ void main() {
         expect(fromFormConstructor.optionalParameters.first.named, isTrue);
       });
 
-      test(
-        'generates working fromForm constructor for list properties with '
-        'simple content',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'ModelWithSimpleList',
-            properties: [
-              Property(
-                name: 'items',
-                model: ListModel(
-                  content: StringModel(context: context),
-                  context: context,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
+      test('generates working fromForm constructor for list properties with '
+          'simple content', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'ModelWithSimpleList',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
                 examples: const [],
-                defaultValue: null,
               ),
-            ],
-            context: context,
-            examples: const [],
-          );
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final result = generator.generateClass(model);
-          final generatedCode = format(result.accept(emitter).toString());
+        final result = generator.generateClass(model);
+        final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormConstructor = r'''
+        const expectedFromFormConstructor = r'''
 factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
   final _$values = value.decodeObject(
     explode: explode,
@@ -1504,12 +1484,11 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
 }
         ''';
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedFromFormConstructor)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedFromFormConstructor)),
+        );
+      });
 
       test(
         'generates fromForm constructor that throws for list properties with '
@@ -1563,35 +1542,33 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
         },
       );
 
-      test(
-        'form encoding roundtrip works for list with simple content',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'ModelWithSimpleListRoundtrip',
-            properties: [
-              Property(
-                name: 'tags',
-                model: ListModel(
-                  content: StringModel(context: context),
-                  context: context,
-                  examples: const [],
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
+      test('form encoding roundtrip works for list with simple content', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'ModelWithSimpleListRoundtrip',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
                 examples: const [],
-                defaultValue: null,
               ),
-            ],
-            context: context,
-            examples: const [],
-          );
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final result = generator.generateClass(model);
-          final generatedCode = format(result.accept(emitter).toString());
+        final result = generator.generateClass(model);
+        final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormConstructor = r'''
+        const expectedFromFormConstructor = r'''
 factory ModelWithSimpleListRoundtrip.fromForm(
   String? value, {
   required bool explode,
@@ -1611,7 +1588,7 @@ factory ModelWithSimpleListRoundtrip.fromForm(
   }
           ''';
 
-          const expectedToFormMethod = '''
+        const expectedToFormMethod = '''
             List<ParameterEntry> toForm(
               String paramName, {
               required bool explode,
@@ -1633,7 +1610,7 @@ factory ModelWithSimpleListRoundtrip.fromForm(
             }
           ''';
 
-          const expectedParameterPropertiesMethod = r'''
+        const expectedParameterPropertiesMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'tags'] = PropertyValue.array(tags);
@@ -1641,22 +1618,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
           ''';
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedFromFormConstructor)),
-          );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedFromFormConstructor)),
+        );
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedToFormMethod)),
-          );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedParameterPropertiesMethod)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedParameterPropertiesMethod)),
+        );
+      });
 
       test('generates fromForm constructor for empty model', () {
         final model = ClassModel(
@@ -1909,133 +1885,127 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
       });
 
-      test(
-        'generates fromForm constructor with mixed property types',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'UserForm',
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'age',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'email',
-                model: StringModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          );
+      test('generates fromForm constructor with mixed property types', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'UserForm',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'email',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final result = generator.generateClass(model);
+        final result = generator.generateClass(model);
 
-          final fromFormConstructor = result.constructors.firstWhere(
-            (c) => c.name == 'fromForm',
-          );
-          expect(fromFormConstructor.factory, isTrue);
-          expect(fromFormConstructor.requiredParameters.length, 1);
-          expect(fromFormConstructor.optionalParameters.length, 1);
+        final fromFormConstructor = result.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+        expect(fromFormConstructor.factory, isTrue);
+        expect(fromFormConstructor.requiredParameters.length, 1);
+        expect(fromFormConstructor.optionalParameters.length, 1);
 
-          expect(
-            fromFormConstructor.requiredParameters.first.type
-                ?.accept(emitter)
-                .toString(),
-            'String?',
-          );
-          expect(
-            fromFormConstructor.optionalParameters.first.type
-                ?.accept(emitter)
-                .toString(),
-            'bool',
-          );
-          final generatedCode = result.accept(emitter).toString();
-          const expectedReturnStatement = r'''
+        expect(
+          fromFormConstructor.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'String?',
+        );
+        expect(
+          fromFormConstructor.optionalParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'bool',
+        );
+        final generatedCode = result.accept(emitter).toString();
+        const expectedReturnStatement = r'''
             return UserForm(name: _$values[r'name'].decodeFormString(context: r'UserForm.name'), age: _$values[r'age'].decodeFormInt(context: r'UserForm.age'), email: _$values[r'email'].decodeFormNullableString(context: r'UserForm.email'), );
           ''';
 
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedReturnStatement)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedReturnStatement)),
+        );
+      });
 
-      test(
-        'generates fromForm with nullable decoder for optional '
-        'non-nullable properties',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'OptionalForm',
-            properties: [
-              Property(
-                name: 'required',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'optional',
-                model: StringModel(context: context),
-                isRequired: false,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          );
-
-          final result = generator.generateClass(model);
-          final generatedCode = result.accept(emitter).toString();
-
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(
-              collapseWhitespace(
-                r"_$values[r'optional'].decodeFormNullableString(context: "
-                "r'OptionalForm.optional')",
-              ),
+      test('generates fromForm with nullable decoder for optional '
+          'non-nullable properties', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'OptionalForm',
+          properties: [
+            Property(
+              name: 'required',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
             ),
-          );
-
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(
-              collapseWhitespace(
-                r"_$values[r'required'].decodeFormString(context: "
-                "r'OptionalForm.required')",
-              ),
+            Property(
+              name: 'optional',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
             ),
-          );
-        },
-      );
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final generatedCode = result.accept(emitter).toString();
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(
+            collapseWhitespace(
+              r"_$values[r'optional'].decodeFormNullableString(context: "
+              "r'OptionalForm.optional')",
+            ),
+          ),
+        );
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(
+            collapseWhitespace(
+              r"_$values[r'required'].decodeFormString(context: "
+              "r'OptionalForm.required')",
+            ),
+          ),
+        );
+      });
 
       test(
         'generates fromForm with null-safe list operations for optional lists',
@@ -2104,48 +2074,46 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         },
       );
 
-      test(
-        'generates toForm method with mixed property types',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'UserForm',
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'age',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: 'email',
-                model: StringModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          );
+      test('generates toForm method with mixed property types', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'UserForm',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'email',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final result = generator.generateClass(model);
+        final result = generator.generateClass(model);
 
-          const expectedToFormMethod = '''
+        const expectedToFormMethod = '''
             @override
             List<ParameterEntry> toForm(
               String paramName, {
@@ -2168,17 +2136,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             }
           ''';
 
-          final toFormMethod = result.methods.singleWhere(
-            (method) => method.name == 'toForm',
-          );
-          expect(
-            collapseWhitespace(
-              format(toFormMethod.accept(emitter).toString()),
-            ),
-            collapseWhitespace(format(expectedToFormMethod)),
-          );
-        },
-      );
+        final toFormMethod = result.methods.singleWhere(
+          (method) => method.name == 'toForm',
+        );
+        expect(
+          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
+          collapseWhitespace(format(expectedToFormMethod)),
+        );
+      });
 
       test('generates fromForm constructor with all primitive types', () {
         final model = ClassModel(
@@ -2511,53 +2476,47 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
       });
 
-      test(
-        'toMatrix method generates proper method body for single '
-        'property model',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'TestModel',
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          );
+      test('toMatrix method generates proper method body for single '
+          'property model', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'TestModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final result = generator.generateClass(model);
+        final result = generator.generateClass(model);
 
-          final toMatrixMethod = result.methods.firstWhere(
-            (m) => m.name == 'toMatrix',
-          );
-          expect(toMatrixMethod.name, 'toMatrix');
-          expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
-          expect(
-            toMatrixMethod.lambda,
-            isNot(isTrue),
-          );
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.name, 'toMatrix');
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.lambda, isNot(isTrue));
 
-          const expectedToMatrixMethod = '''
+        const expectedToMatrixMethod = '''
           String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
             return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, );
           }
         ''';
 
-          final generatedCode = result.accept(emitter).toString();
-          expect(
-            collapseWhitespace(format(generatedCode)),
-            contains(collapseWhitespace(format(expectedToMatrixMethod))),
-          );
-        },
-      );
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(format(generatedCode)),
+          contains(collapseWhitespace(format(expectedToMatrixMethod))),
+        );
+      });
 
       test('encoding methods have @override annotation', () {
         final model = ClassModel(
@@ -2667,10 +2626,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final typedef = classes[1] as TypeDef;
         expect(typedef.name, 'Product');
-        expect(
-          typedef.definition.accept(emitter).toString(),
-          r'$RawProduct?',
-        );
+        expect(typedef.definition.accept(emitter).toString(), r'$RawProduct?');
       });
 
       test('non-nullable class generates only class without typedef', () {
@@ -2737,10 +2693,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         // Typedef should be the last element.
         final typedef = classes.last as TypeDef;
         expect(typedef.name, 'Account');
-        expect(
-          typedef.definition.accept(emitter).toString(),
-          r'$RawAccount?',
-        );
+        expect(typedef.definition.accept(emitter).toString(), r'$RawAccount?');
       });
     });
 
@@ -2779,10 +2732,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             expect(apParam.named, isTrue);
             expect(apParam.required, isFalse);
             expect(apParam.toThis, isTrue);
-            expect(
-              apParam.defaultTo?.accept(emitter).toString(),
-              'const {}',
-            );
+            expect(apParam.defaultTo?.accept(emitter).toString(), 'const {}');
           },
         );
 
@@ -2817,10 +2767,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           expect(apParam.named, isTrue);
           expect(apParam.required, isFalse);
           expect(apParam.toThis, isTrue);
-          expect(
-            apParam.defaultTo?.accept(emitter).toString(),
-            'const {}',
-          );
+          expect(apParam.defaultTo?.accept(emitter).toString(), 'const {}');
         });
 
         test('omits AP parameter for forbidden additional properties', () {
@@ -3047,10 +2994,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             final regularField = result.fields.firstWhere(
               (f) => f.name == 'additionalProperties',
             );
-            expect(
-              regularField.type?.accept(emitter).toString(),
-              'String',
-            );
+            expect(regularField.type?.accept(emitter).toString(), 'String');
 
             // AP field is renamed to additionalProperties2
             final apField = result.fields.firstWhere(
@@ -3638,42 +3582,38 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     });
 
     group('special characters in property names', () {
-      test(
-        'toJson escapes property name containing single quote',
-        () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'FlexibleData',
-            properties: [
-              Property(
-                name: 'id',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-              Property(
-                name: "it's-field",
-                model: AnyModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-                examples: const [],
-                defaultValue: null,
-              ),
-            ],
-            context: context,
-            examples: const [],
-          );
+      test('toJson escapes property name containing single quote', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'FlexibleData',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: "it's-field",
+              model: AnyModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
 
-          final generatedClass = generator.generateClass(model);
-          final generated = format(
-            generatedClass.accept(emitter).toString(),
-          );
+        final generatedClass = generator.generateClass(model);
+        final generated = format(generatedClass.accept(emitter).toString());
 
-          const expectedToJson = '''
+        const expectedToJson = '''
             Object? toJson() => {
               r'id': id,
               r"it's-field": encodeUnknownJson(
@@ -3682,60 +3622,55 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             };''';
 
-          expect(
-            collapseWhitespace(generated),
-            contains(collapseWhitespace(expectedToJson)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      });
     });
 
-    group(
-      'immutable collections — typed AP with list values in fromJson',
-      () {
-        late ClassGenerator immutableGenerator;
+    group('immutable collections — typed AP with list values in fromJson', () {
+      late ClassGenerator immutableGenerator;
 
-        setUp(() {
-          immutableGenerator = ClassGenerator(
-            nameManager: nameManager,
-            package: 'example',
-            useImmutableCollections: true,
-          );
-        });
+      setUp(() {
+        immutableGenerator = ClassGenerator(
+          nameManager: nameManager,
+          package: 'example',
+          useImmutableCollections: true,
+        );
+      });
 
-        test(
-          'fromJson scratch map uses IList value type for typed AP with '
-          'list values',
-          () {
-            final model = ClassModel(
+      test('fromJson scratch map uses IList value type for typed AP with '
+          'list values', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'TaggedItem',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
               isDeprecated: false,
-              name: 'TaggedItem',
-              properties: [
-                Property(
-                  name: 'name',
-                  model: StringModel(context: context),
-                  isRequired: false,
-                  isNullable: true,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              additionalPropertiesPolicy: AllowedAdditionalProperties(
-                valueModel: ListModel(
-                  content: StringModel(context: context),
-                  context: context,
-                  examples: const [],
-                ),
-              ),
               examples: const [],
-            );
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+          ),
+          examples: const [],
+        );
 
-            final result = immutableGenerator.generateClass(model);
-            final generatedCode = format(result.accept(emitter).toString());
+        final result = immutableGenerator.generateClass(model);
+        final generatedCode = format(result.accept(emitter).toString());
 
-            const expectedFromJson = r'''
+        const expectedFromJson = r'''
 factory TaggedItem.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'TaggedItem');
   const _$knownKeys = {r'name'};
@@ -3758,14 +3693,12 @@ factory TaggedItem.fromJson(Object? json) {
 }
             ''';
 
-            expect(
-              collapseWhitespace(generatedCode),
-              contains(collapseWhitespace(expectedFromJson)),
-            );
-          },
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedFromJson)),
         );
-      },
-    );
+      });
+    });
 
     group('recursion helper dedup across multiple properties', () {
       ClassModel buildTwoTrees() {
@@ -3804,23 +3737,21 @@ factory TaggedItem.fromJson(Object? json) {
         );
       }
 
-      test(
-        r'two Tree-typed properties splice exactly one _$decodeTree helper '
-        'into fromJson',
-        () {
-          final result = generator.generateClass(buildTwoTrees());
-          final fromJsonCtor = result.constructors.firstWhere(
-            (c) => c.name == 'fromJson',
-          );
-          final actual = format(
-            Class(
-              (b) => b
-                ..name = 'TwoTrees'
-                ..constructors.add(fromJsonCtor),
-            ).accept(emitter).toString(),
-          );
+      test(r'two Tree-typed properties splice exactly one _$decodeTree helper '
+          'into fromJson', () {
+        final result = generator.generateClass(buildTwoTrees());
+        final fromJsonCtor = result.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class(
+            (b) => b
+              ..name = 'TwoTrees'
+              ..constructors.add(fromJsonCtor),
+          ).accept(emitter).toString(),
+        );
 
-          const expected = r'''
+        const expected = r'''
             class TwoTrees {
               factory TwoTrees.fromJson(Object? json) {
                 late final Tree Function(Object?) _$decodeTree;
@@ -3837,22 +3768,19 @@ factory TaggedItem.fromJson(Object? json) {
             }
           ''';
 
-          expect(
-            collapseWhitespace(actual),
-            collapseWhitespace(format(expected)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      });
 
-      test(
-        r'two Tree-typed properties splice exactly one _$encodeTree helper '
-        'into toJson',
-        () {
-          final result = generator.generateClass(buildTwoTrees());
-          final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
-          final actual = format(toJson.accept(emitter).toString());
+      test(r'two Tree-typed properties splice exactly one _$encodeTree helper '
+          'into toJson', () {
+        final result = generator.generateClass(buildTwoTrees());
+        final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
+        final actual = format(toJson.accept(emitter).toString());
 
-          const expected = r'''
+        const expected = r'''
             @override
             Object? toJson() {
               late final Object? Function(Object?) _$encodeTree;
@@ -3870,12 +3798,11 @@ factory TaggedItem.fromJson(Object? json) {
             }
           ''';
 
-          expect(
-            collapseWhitespace(actual),
-            collapseWhitespace(format(expected)),
-          );
-        },
-      );
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      });
     });
   });
 }

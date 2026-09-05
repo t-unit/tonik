@@ -229,32 +229,17 @@ void main() {
       });
 
       test('fromForm throws on null input', () {
-        expect(
-          () => Date.fromForm(null),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => Date.fromForm(null), throwsA(isA<Exception>()));
       });
 
       test('fromForm throws on empty string', () {
-        expect(
-          () => Date.fromForm(''),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => Date.fromForm(''), throwsA(isA<Exception>()));
       });
 
       test('fromForm throws on invalid date format', () {
-        expect(
-          () => Date.fromForm('invalid-date'),
-          throwsA(isA<Exception>()),
-        );
-        expect(
-          () => Date.fromForm('2024/03/15'),
-          throwsA(isA<Exception>()),
-        );
-        expect(
-          () => Date.fromForm('15-03-2024'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => Date.fromForm('invalid-date'), throwsA(isA<Exception>()));
+        expect(() => Date.fromForm('2024/03/15'), throwsA(isA<Exception>()));
+        expect(() => Date.fromForm('15-03-2024'), throwsA(isA<Exception>()));
       });
 
       test('fromForm throws on invalid date values', () {
@@ -342,37 +327,31 @@ void main() {
         }
       });
 
-      test(
-        'toForm uses encodeComponent by default '
-        'when useQueryComponent is false',
-        () {
-          final date = Date(2024, 3, 15);
-          final encoded = date
-              .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
-              .single
-              .value;
-          expect(encoded, Uri.encodeComponent('2024-03-15'));
-        },
-      );
+      test('toForm uses encodeComponent by default '
+          'when useQueryComponent is false', () {
+        final date = Date(2024, 3, 15);
+        final encoded = date
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
+            .single
+            .value;
+        expect(encoded, Uri.encodeComponent('2024-03-15'));
+      });
 
-      test(
-        'toForm uses encodeQueryComponent '
-        'when useQueryComponent is true',
-        () {
-          final date = Date(2024, 3, 15);
-          final encoded = date
-              .toForm(
-                'p',
-                explode: false,
-                allowEmpty: true,
-                useQueryComponent: true,
-                textEncoding: utf8,
-              )
-              .single
-              .value;
-          expect(encoded, Uri.encodeQueryComponent('2024-03-15'));
-        },
-      );
+      test('toForm uses encodeQueryComponent '
+          'when useQueryComponent is true', () {
+        final date = Date(2024, 3, 15);
+        final encoded = date
+            .toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              useQueryComponent: true,
+              textEncoding: utf8,
+            )
+            .single
+            .value;
+        expect(encoded, Uri.encodeQueryComponent('2024-03-15'));
+      });
     });
   });
 

@@ -245,10 +245,7 @@ void main() {
       // "café" in UTF-8.
       const file = TonikFileBytes([99, 97, 102, 195, 169]);
 
-      expect(
-        file.uriEncode(allowEmpty: false, textEncoding: latin1),
-        'caf%E9',
-      );
+      expect(file.uriEncode(allowEmpty: false, textEncoding: latin1), 'caf%E9');
     });
   });
 

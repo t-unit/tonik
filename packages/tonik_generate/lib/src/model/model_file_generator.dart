@@ -79,12 +79,7 @@ class ModelFileGenerator {
     return writeGeneratedArtifact(
       outputDirectory: outputDirectory,
       package: package,
-      relativePath: path.posix.join(
-        'lib',
-        'src',
-        'model',
-        result.filename,
-      ),
+      relativePath: path.posix.join('lib', 'src', 'model', result.filename),
       content: result.code,
     );
   }

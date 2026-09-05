@@ -65,20 +65,14 @@ Expression _buildUriEncodeExpression(
       uriEncodeReceiverExpression(
         model,
         valueExpression,
-      ).property('uriEncode').call(
-        [],
-        {
-          'allowEmpty': allowEmpty,
-          'textEncoding': textEncoding,
-          'useQueryComponent': ?useQueryComponent,
-          'allowReserved': ?allowReserved,
-        },
-      ),
+      ).property('uriEncode').call([], {
+        'allowEmpty': allowEmpty,
+        'textEncoding': textEncoding,
+        'useQueryComponent': ?useQueryComponent,
+        'allowReserved': ?allowReserved,
+      }),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
-      refer(
-        'encodeAnyToUri',
-        'package:tonik_util/tonik_util.dart',
-      ).call(
+      refer('encodeAnyToUri', 'package:tonik_util/tonik_util.dart').call(
         [valueExpression],
         {
           'allowEmpty': allowEmpty,
@@ -181,9 +175,7 @@ Expression _buildListUriEncodeExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body = nullGuard(
                   _buildUriEncodeExpression(
                     refer('e'),
@@ -206,9 +198,7 @@ Expression _buildListUriEncodeExpression(
           .call([
             Method(
               (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
                 ..body =
                     refer(
                           'encodeAnyToUri',
@@ -270,15 +260,12 @@ Expression _buildMapUriEncodeExpression(
   );
   return switch (conversion) {
     SupportedMapPropertyValueConversion(:final expression) =>
-      expression.property('toUri').call(
-        [],
-        {
-          'allowEmpty': allowEmpty,
-          'textEncoding': textEncoding,
-          'useQueryComponent': ?useQueryComponent,
-          'allowReserved': ?allowReserved,
-        },
-      ),
+      expression.property('toUri').call([], {
+        'allowEmpty': allowEmpty,
+        'textEncoding': textEncoding,
+        'useQueryComponent': ?useQueryComponent,
+        'allowReserved': ?allowReserved,
+      }),
     UnsupportedMapPropertyValueConversion() =>
       generateEncodingExceptionExpression(
         'Map with complex value types cannot be URI-encoded.',
@@ -313,30 +300,22 @@ Expression _buildListMapContentUriEncodeExpression(
       .call([
         Method(
           (b) => b
-            ..requiredParameters.add(
-              Parameter((b) => b..name = 'e'),
-            )
-            ..body = converted.property('toUri').call(
-              [],
-              {
-                'allowEmpty': allowEmpty,
-                'textEncoding': textEncoding,
-                'useQueryComponent': ?useQueryComponent,
-                'allowReserved': ?allowReserved,
-              },
-            ).code,
+            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+            ..body = converted.property('toUri').call([], {
+              'allowEmpty': allowEmpty,
+              'textEncoding': textEncoding,
+              'useQueryComponent': ?useQueryComponent,
+              'allowReserved': ?allowReserved,
+            }).code,
         ).closure,
       ])
       .property('toList')
       .call([])
       .property('uriEncode')
-      .call(
-        [],
-        {
-          'allowEmpty': allowEmpty,
-          'textEncoding': textEncoding,
-          'useQueryComponent': ?useQueryComponent,
-          'allowReserved': ?allowReserved,
-        },
-      );
+      .call([], {
+        'allowEmpty': allowEmpty,
+        'textEncoding': textEncoding,
+        'useQueryComponent': ?useQueryComponent,
+        'allowReserved': ?allowReserved,
+      });
 }

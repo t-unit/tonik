@@ -31,9 +31,7 @@ void main() {
       final base64Api = buildBase64Api(responseStatus: '201');
 
       // format:byte auto-encodes to base64 in JSON.
-      final binaryData = Uint8List.fromList(
-        List.generate(256, (i) => i),
-      );
+      final binaryData = Uint8List.fromList(List.generate(256, (i) => i));
 
       final base64Data = Base64Data(
         name: 'test-data',
@@ -75,10 +73,7 @@ void main() {
     test('400 - bad request', () async {
       final base64Api = buildBase64Api(responseStatus: '400');
 
-      const base64Data = Base64Data(
-        name: '',
-        encodedData: TonikFileBytes([]),
-      );
+      const base64Data = Base64Data(name: '', encodedData: TonikFileBytes([]));
 
       final result = await base64Api.uploadBase64Data(body: base64Data);
       final success = requireSuccess(result);

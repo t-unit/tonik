@@ -283,38 +283,34 @@ void main() {
     test('retains multipart property order, duplicates, and file metadata', () {
       final context = Context.initial();
 
-      final content = multipartContentFixture(
-        context,
-        [
-          multipartPartFixture(
-            name: 'item',
-            model: StringModel(context: context),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'item',
+          model: StringModel(context: context),
+          encoding: const PartEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-          multipartPartFixture(
-            name: 'item',
-            model: BinaryModel(context: context),
-            isRequired: false,
-            isNullable: true,
-            encoding: const PartEncoding(
-              contentType: ContentType.bytes,
-              rawContentType: 'application/octet-stream',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
+        ),
+        multipartPartFixture(
+          name: 'item',
+          model: BinaryModel(context: context),
+          isRequired: false,
+          isNullable: true,
+          encoding: const PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        ],
-        name: 'Upload',
-      );
+        ),
+      ], name: 'Upload');
       final operation = _operation(
         context,
         requestBody: RequestBodyObject(

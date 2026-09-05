@@ -452,13 +452,10 @@ Expression _buildClassList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body =
-          refer(
-            className,
-            url,
-          ).property('fromSimple').call([
-            refer('e'),
-          ], explodeParam).code,
+      ..body = refer(
+        className,
+        url,
+      ).property('fromSimple').call([refer('e')], explodeParam).code,
   ).closure;
 
   if (isRequired) {
@@ -533,13 +530,11 @@ Expression _buildTonikFilePrimitiveList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body =
-          refer(
-            'TonikFileBytes',
-            'package:tonik_util/tonik_util.dart',
-          ).call([
+      ..body = refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart')
+          .call([
             refer('e').property(decodeFunctionName).call([], contextParam),
-          ]).code,
+          ])
+          .code,
   ).closure;
 
   if (isRequired) {

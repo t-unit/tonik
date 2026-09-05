@@ -28,14 +28,9 @@ void main() {
     group('integer', () {
       test('positive integer roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          integer: 42,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(integer: 42);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -47,14 +42,9 @@ void main() {
 
       test('negative integer roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          integer: -123,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(integer: -123);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -65,14 +55,9 @@ void main() {
 
       test('zero integer roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          integer: 0,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(integer: 0);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -89,10 +74,7 @@ void main() {
           double: 3.14159,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -107,10 +89,7 @@ void main() {
           double: -99.99,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -121,14 +100,9 @@ void main() {
 
       test('whole number double roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          double: 42,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(double: 42);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -145,10 +119,7 @@ void main() {
           number: 123.456,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -159,14 +130,9 @@ void main() {
 
       test('integer as number roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          number: 100,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(number: 100);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xNumber, 100);
@@ -180,10 +146,7 @@ void main() {
           string: 'hello',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -198,10 +161,7 @@ void main() {
           string: 'hello world',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         // Note: spaces may be encoded
@@ -214,10 +174,7 @@ void main() {
           string: 'test@example.com',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xString, 'test@example.com');
@@ -229,10 +186,7 @@ void main() {
           string: '50% discount',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         // Percent sign should survive roundtrip
@@ -245,10 +199,7 @@ void main() {
           string: '100% free, 50% off',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(
@@ -263,10 +214,7 @@ void main() {
           string: 'foo & bar',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xString, 'foo & bar');
@@ -278,10 +226,7 @@ void main() {
           string: 'key=value',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xString, 'key=value');
@@ -293,10 +238,7 @@ void main() {
           string: 'foo%bar&baz=qux',
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         // All special characters should survive roundtrip
@@ -307,14 +249,9 @@ void main() {
     group('boolean', () {
       test('true boolean roundtrip', () async {
         final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripPrimitives(
-          boolean: true,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(boolean: true);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -329,10 +266,7 @@ void main() {
           boolean: false,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
@@ -350,18 +284,12 @@ void main() {
           dateTime: dateTime,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
         // DateTime should be ISO 8601 encoded
-        expect(
-          recordedRequest.headers['x-datetime'],
-          contains('2023-12-25'),
-        );
+        expect(recordedRequest.headers['x-datetime'], contains('2023-12-25'));
 
         expect(success.value.xDateTime, dateTime);
       });
@@ -373,10 +301,7 @@ void main() {
           dateTime: dateTime,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xDateTime, dateTime);
@@ -387,21 +312,13 @@ void main() {
       test('date roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final date = Date(2023, 12, 25);
-        final response = await api.testHeaderRoundtripPrimitives(
-          date: date,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(date: date);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-date'],
-          '2023-12-25',
-        );
+        expect(recordedRequest.headers['x-date'], '2023-12-25');
 
         expect(success.value.xDate, date);
       });
@@ -409,21 +326,13 @@ void main() {
       test('leap year date roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final date = Date(2024, 2, 29);
-        final response = await api.testHeaderRoundtripPrimitives(
-          date: date,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(date: date);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-date'],
-          '2024-02-29',
-        );
+        expect(recordedRequest.headers['x-date'], '2024-02-29');
 
         expect(success.value.xDate, date);
       });
@@ -437,17 +346,11 @@ void main() {
           decimal: decimal,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         final recordedRequest = await imposterServer.takeRequest();
 
-        expect(
-          recordedRequest.headers['x-decimal'],
-          '123.456789',
-        );
+        expect(recordedRequest.headers['x-decimal'], '123.456789');
 
         expect(success.value.xDecimal, decimal);
       });
@@ -459,10 +362,7 @@ void main() {
           decimal: decimal,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xDecimal, decimal);
@@ -475,10 +375,7 @@ void main() {
           decimal: decimal,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xDecimal, decimal);
@@ -489,14 +386,9 @@ void main() {
       test('simple URI roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final uri = Uri.parse('https://example.com');
-        final response = await api.testHeaderRoundtripPrimitives(
-          uri: uri,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(uri: uri);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
@@ -505,14 +397,9 @@ void main() {
       test('URI with path roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final uri = Uri.parse('https://example.com/path/to/resource');
-        final response = await api.testHeaderRoundtripPrimitives(
-          uri: uri,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(uri: uri);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
@@ -521,14 +408,9 @@ void main() {
       test('URI with query parameters roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final uri = Uri.parse('https://example.com/search?q=test&page=1');
-        final response = await api.testHeaderRoundtripPrimitives(
-          uri: uri,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(uri: uri);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
@@ -539,14 +421,9 @@ void main() {
         final uri = Uri.parse(
           'https://example.com/search?q=50%25+off&filter=a%26b',
         );
-        final response = await api.testHeaderRoundtripPrimitives(
-          uri: uri,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(uri: uri);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         // URI with encoded special characters should roundtrip correctly
@@ -556,14 +433,9 @@ void main() {
       test('URI with fragment roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final uri = Uri.parse('https://example.com/page#section');
-        final response = await api.testHeaderRoundtripPrimitives(
-          uri: uri,
-        );
+        final response = await api.testHeaderRoundtripPrimitives(uri: uri);
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
@@ -590,10 +462,7 @@ void main() {
           uri: uri,
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -621,10 +490,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripPrimitives();
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 

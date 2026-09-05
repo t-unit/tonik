@@ -179,9 +179,7 @@ void main() {
 
       expect(parameters.length, 2);
 
-      final requiredParam = parameters.firstWhere(
-        (p) => p.name == 'sessionId',
-      );
+      final requiredParam = parameters.firstWhere((p) => p.name == 'sessionId');
       expect(requiredParam.required, isTrue);
       expect(requiredParam.named, isTrue);
 

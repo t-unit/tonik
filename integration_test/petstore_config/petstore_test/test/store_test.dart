@@ -92,10 +92,7 @@ void main() {
       final storeApi = buildStoreApi(responseStatus: '422');
 
       final body = StoreOrderPostBodyRequestBodyJson(
-        PurchaseOrder(
-          id: -484848,
-          deliveryDate: DateTime(10299, 12, 12, 1),
-        ),
+        PurchaseOrder(id: -484848, deliveryDate: DateTime(10299, 12, 12, 1)),
       );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use

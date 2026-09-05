@@ -496,10 +496,7 @@ void main() {
         }
       ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       },
     );
 
@@ -540,10 +537,7 @@ void main() {
         }
       ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
+        expect(collapseWhitespace(generated), collapseWhitespace(expected));
       },
     );
 
@@ -552,9 +546,7 @@ void main() {
         valueModel: EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {
-            const EnumEntry(value: 'active'),
-          },
+          values: {const EnumEntry(value: 'active')},
           isNullable: false,
           context: context,
           examples: const [],
@@ -586,10 +578,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for MapModel with ClassModel values', () {
@@ -628,10 +617,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String and toSimple for Base64Model', () {
@@ -660,10 +646,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates toBase64String list content for List<Base64Model>', () {
@@ -701,10 +684,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates list-of-map encoding for List<Map<String, int>>', () {
@@ -752,10 +732,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for List<Map<String, ClassModel>> '
@@ -799,10 +776,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for NeverModel', () {
@@ -851,9 +825,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toSimple(explode: explode, allowEmpty: allowEmpty);
@@ -881,9 +853,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toSimple(explode: explode, allowEmpty: allowEmpty);
@@ -909,9 +879,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toSimple(explode: explode, allowEmpty: allowEmpty);
@@ -923,33 +891,31 @@ void main() {
       );
     });
 
-    test(
-      'generates null-safe map for ListModel with IntegerModel content '
-      'when isNullable',
-      () {
-        final model = ListModel(
-          content: IntegerModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        final expression = buildSimpleParameterExpression(
-          refer('value'),
-          model,
-          explode: refer('explode'),
-          allowEmpty: refer('allowEmpty'),
-          isNullable: true,
-        );
+    test('generates null-safe map for ListModel with IntegerModel content '
+        'when isNullable', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
 
-        final method = Method(
-          (b) => b
-            ..name = 'test'
-            ..body = declareFinal(
-              'result',
-            ).assign(expression.expression).statement,
-        );
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
 
-        final generated = format(method.accept(emitter).toString());
-        const expected = '''
+      final generated = format(method.accept(emitter).toString());
+      const expected = '''
           test() {
             final result = value
                 ?.map(
@@ -965,12 +931,11 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(format(expected)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
 
     test('uses null-safe access for AliasModel when isNullable', () {
       final model = AliasModel(
@@ -989,9 +954,7 @@ void main() {
         isNullable: true,
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value?.toSimple(explode: explode, allowEmpty: allowEmpty);
@@ -1012,9 +975,7 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format(
-        'final result = ${expression.accept(emitter)};',
-      );
+      final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result =
             value.toSimple(explode: explode, allowEmpty: allowEmpty);

@@ -37,10 +37,9 @@ void main() {
     });
 
     test('invokes toJson on JsonEncodable values', () {
-      expect(
-        encodeUnknownJson(const _TestEncodable('a'), context: 'v'),
-        {'name': 'a'},
-      );
+      expect(encodeUnknownJson(const _TestEncodable('a'), context: 'v'), {
+        'name': 'a',
+      });
     });
 
     test('converts Date, Uri, and BigDecimal to their canonical strings', () {
@@ -49,10 +48,7 @@ void main() {
         encodeUnknownJson(Uri.parse('https://example.com/a%20b'), context: 'v'),
         'https://example.com/a%20b',
       );
-      expect(
-        encodeUnknownJson(BigDecimal.parse('1.50'), context: 'v'),
-        '1.50',
-      );
+      expect(encodeUnknownJson(BigDecimal.parse('1.50'), context: 'v'), '1.50');
     });
 
     test('recursively encodes maps and lists', () {

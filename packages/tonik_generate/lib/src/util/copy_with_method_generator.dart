@@ -222,10 +222,7 @@ Class _generateCopyWithImpl(
   );
 }
 
-Code _buildCallMethodBody(
-  String className,
-  List<CopyWithProperty> properties,
-) {
+Code _buildCallMethodBody(String className, List<CopyWithProperty> properties) {
   if (properties.isEmpty) {
     return refer(className).call([]).asA(refer(r'$Res')).returned.statement;
   }
@@ -249,10 +246,7 @@ Code _buildCallMethodBody(
 
     namedArgs[name] = refer('identical', 'dart:core')
         .call([refer(name), refer('_sentinel')])
-        .conditional(
-          refer('this').property(name),
-          valueExpression,
-        );
+        .conditional(refer('this').property(name), valueExpression);
   }
 
   return refer(

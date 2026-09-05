@@ -25,11 +25,7 @@ NamedModel? _asNamedTypedef(Model model) {
   return null;
 }
 
-bool _reachesAny(
-  Model model,
-  List<NamedModel> stack,
-  Set<Model> visited,
-) {
+bool _reachesAny(Model model, List<NamedModel> stack, Set<Model> visited) {
   final unwrapped = model.resolved;
 
   final named = _asNamedTypedef(unwrapped);

@@ -36,10 +36,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'test-name', 'anyData': 'string value'},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'test-name',
+        'anyData': 'string value',
+      });
 
       final body = success.value;
       expect(body.name, 'test-name');
@@ -54,10 +54,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'number-test', 'anyData': 123.45},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'number-test',
+        'anyData': 123.45,
+      });
 
       final body = success.value;
       expect(body.name, 'number-test');
@@ -75,13 +75,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {
-          'name': 'nested-test',
-          'anyData': {'nested': 'value', 'count': 42},
-        },
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'nested-test',
+        'anyData': {'nested': 'value', 'count': 42},
+      });
 
       final body = success.value;
       expect(body.name, 'nested-test');
@@ -99,13 +96,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {
-          'name': 'array-test',
-          'anyData': [1, 'two', true, null],
-        },
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'array-test',
+        'anyData': [1, 'two', true, null],
+      });
 
       final body = success.value;
       expect(body.name, 'array-test');
@@ -114,19 +108,16 @@ void main() {
 
     test('echoJsonAny roundtrip with boolean anyData', () async {
       final api = buildApi();
-      const original = ObjectWithAny(
-        name: 'bool-test',
-        anyData: true,
-      );
+      const original = ObjectWithAny(name: 'bool-test', anyData: true);
 
       final result = await api.echoJsonAny(body: original);
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'bool-test', 'anyData': true},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'bool-test',
+        'anyData': true,
+      });
 
       final body = success.value;
       expect(body.name, 'bool-test');
@@ -141,10 +132,10 @@ void main() {
       final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        jsonDecode(recordedRequest.body!),
-        {'name': 'null-test', 'anyData': null},
-      );
+      expect(jsonDecode(recordedRequest.body!), {
+        'name': 'null-test',
+        'anyData': null,
+      });
 
       final body = success.value;
       expect(body.name, 'null-test');

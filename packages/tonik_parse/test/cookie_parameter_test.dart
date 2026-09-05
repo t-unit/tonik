@@ -169,10 +169,7 @@ void main() {
         },
       };
 
-      expect(
-        () => Importer().import(fileContent),
-        throwsArgumentError,
-      );
+      expect(() => Importer().import(fileContent), throwsArgumentError);
     });
 
     test('accepts form style cookie parameter explicitly', () {

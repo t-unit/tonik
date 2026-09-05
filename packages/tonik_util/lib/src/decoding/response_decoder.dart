@@ -137,9 +137,7 @@ String? _extractCharset(String? contentType) {
 /// Returns the raw bytes as `List<int>`.
 List<int> decodeResponseBytes(List<int>? bytes) {
   if (bytes == null) {
-    throw const ResponseDecodingException(
-      'Response bytes are null.',
-    );
+    throw const ResponseDecodingException('Response bytes are null.');
   }
   return bytes;
 }

@@ -50,17 +50,8 @@ class RequestHeadersGenerator {
       bodyStatements,
       parameters,
     );
-    _generateHeaders(
-      headers,
-      bodyStatements,
-      parameters,
-      operation,
-    );
-    _generateCookieHeader(
-      cookieParameters,
-      bodyStatements,
-      parameters,
-    );
+    _generateHeaders(headers, bodyStatements, parameters, operation);
+    _generateCookieHeader(cookieParameters, bodyStatements, parameters);
 
     return GeneratedRequestHeaders(
       statements: bodyStatements,
@@ -211,13 +202,7 @@ class RequestHeadersGenerator {
 
     bodyStatements.add(
       declareFinal(r'_$headers')
-          .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              headerValueType,
-            ),
-          )
+          .assign(literalMap({}, refer('String', 'dart:core'), headerValueType))
           .statement,
     );
 
@@ -386,14 +371,9 @@ class RequestHeadersGenerator {
         .toList();
 
     bodyStatements.add(
-      declareFinal(r'_$cookieParts')
-          .assign(
-            literalList(
-              [],
-              refer('String', 'dart:core'),
-            ),
-          )
-          .statement,
+      declareFinal(
+        r'_$cookieParts',
+      ).assign(literalList([], refer('String', 'dart:core'))).statement,
     );
 
     for (final cookie in requiredCookies) {
@@ -412,9 +392,9 @@ class RequestHeadersGenerator {
         refer(r'_$headers')
             .index(specLiteralString('Cookie'))
             .assign(
-              refer(r'_$cookieParts').property('join').call([
-                literalString('; '),
-              ]),
+              refer(
+                r'_$cookieParts',
+              ).property('join').call([literalString('; ')]),
             )
             .statement,
       )
@@ -474,10 +454,7 @@ class RequestHeadersGenerator {
 
     if (isAnyModelFormValue(model)) {
       final encodedValue =
-          refer(
-            'encodeAnyToForm',
-            'package:tonik_util/tonik_util.dart',
-          ).call(
+          refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
             [refer(paramName)],
             {
               'explode': literalBool(explode),

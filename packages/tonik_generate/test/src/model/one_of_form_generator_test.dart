@@ -38,14 +38,8 @@ void main() {
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -114,14 +108,8 @@ void main() {
         isDeprecated: false,
         name: 'Response',
         models: [
-          (
-            discriminatorValue: 'user',
-            model: userModel,
-          ),
-          (
-            discriminatorValue: 'message',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'user', model: userModel),
+          (discriminatorValue: 'message', model: StringModel(context: context)),
         ],
         discriminator: 'type',
         context: context,
@@ -211,10 +199,7 @@ void main() {
         toFormMethod.optionalParameters.take(2).every((p) => p.required),
         isTrue,
       );
-      expect(
-        toFormMethod.optionalParameters.last.required,
-        isFalse,
-      );
+      expect(toFormMethod.optionalParameters.last.required, isFalse);
     });
   });
 
@@ -261,14 +246,8 @@ void main() {
         isDeprecated: false,
         name: 'Result',
         models: [
-          (
-            discriminatorValue: 'error',
-            model: IntegerModel(context: context),
-          ),
-          (
-            discriminatorValue: 'success',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'error', model: IntegerModel(context: context)),
+          (discriminatorValue: 'success', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -475,9 +454,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: null, model: innerOneOf),
-        ],
+        models: [(discriminatorValue: null, model: innerOneOf)],
         context: context,
         examples: const [],
       );
@@ -548,9 +525,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: 'inner', model: innerOneOf),
-        ],
+        models: [(discriminatorValue: 'inner', model: innerOneOf)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -757,10 +732,7 @@ void main() {
               discriminatorValue: 'binary',
               model: BinaryModel(context: context),
             ),
-            (
-              discriminatorValue: 'text',
-              model: StringModel(context: context),
-            ),
+            (discriminatorValue: 'text', model: StringModel(context: context)),
           ],
           context: context,
           examples: const [],

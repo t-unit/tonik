@@ -76,24 +76,23 @@ List<Parameter> generateParameters({
     );
 
     parameters.add(
-      Parameter(
-        (b) {
-          b
-            ..name = pathParam.normalizedName
-            ..type = parameterType
-            ..named = true
-            ..required = !wiresDefaultTo && pathParam.parameter.isRequired
-            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
+      Parameter((b) {
+        b
+          ..name = pathParam.normalizedName
+          ..type = parameterType
+          ..named = true
+          ..required = !wiresDefaultTo && pathParam.parameter.isRequired
+          ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
-          if (pathParam.parameter.isDeprecated) {
-            b.annotations.add(
-              refer('Deprecated', 'dart:core').call([
-                literalString('This parameter is deprecated.'),
-              ]),
-            );
-          }
-        },
-      ),
+        if (pathParam.parameter.isDeprecated) {
+          b.annotations.add(
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This parameter is deprecated.')]),
+          );
+        }
+      }),
     );
   }
 
@@ -108,24 +107,23 @@ List<Parameter> generateParameters({
     );
 
     parameters.add(
-      Parameter(
-        (b) {
-          b
-            ..name = queryParam.normalizedName
-            ..type = parameterType
-            ..named = true
-            ..required = !wiresDefaultTo && queryParam.parameter.isRequired
-            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
+      Parameter((b) {
+        b
+          ..name = queryParam.normalizedName
+          ..type = parameterType
+          ..named = true
+          ..required = !wiresDefaultTo && queryParam.parameter.isRequired
+          ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
-          if (queryParam.parameter.isDeprecated) {
-            b.annotations.add(
-              refer('Deprecated', 'dart:core').call([
-                literalString('This parameter is deprecated.'),
-              ]),
-            );
-          }
-        },
-      ),
+        if (queryParam.parameter.isDeprecated) {
+          b.annotations.add(
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This parameter is deprecated.')]),
+          );
+        }
+      }),
     );
   }
 
@@ -140,24 +138,23 @@ List<Parameter> generateParameters({
     );
 
     parameters.add(
-      Parameter(
-        (b) {
-          b
-            ..name = headerParam.normalizedName
-            ..type = parameterType
-            ..named = true
-            ..required = !wiresDefaultTo && headerParam.parameter.isRequired
-            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
+      Parameter((b) {
+        b
+          ..name = headerParam.normalizedName
+          ..type = parameterType
+          ..named = true
+          ..required = !wiresDefaultTo && headerParam.parameter.isRequired
+          ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
-          if (headerParam.parameter.isDeprecated) {
-            b.annotations.add(
-              refer('Deprecated', 'dart:core').call([
-                literalString('This parameter is deprecated.'),
-              ]),
-            );
-          }
-        },
-      ),
+        if (headerParam.parameter.isDeprecated) {
+          b.annotations.add(
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This parameter is deprecated.')]),
+          );
+        }
+      }),
     );
   }
 
@@ -172,24 +169,23 @@ List<Parameter> generateParameters({
     );
 
     parameters.add(
-      Parameter(
-        (b) {
-          b
-            ..name = cookieParam.normalizedName
-            ..type = parameterType
-            ..named = true
-            ..required = !wiresDefaultTo && cookieParam.parameter.isRequired
-            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
+      Parameter((b) {
+        b
+          ..name = cookieParam.normalizedName
+          ..type = parameterType
+          ..named = true
+          ..required = !wiresDefaultTo && cookieParam.parameter.isRequired
+          ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
-          if (cookieParam.parameter.isDeprecated) {
-            b.annotations.add(
-              refer('Deprecated', 'dart:core').call([
-                literalString('This parameter is deprecated.'),
-              ]),
-            );
-          }
-        },
-      ),
+        if (cookieParam.parameter.isDeprecated) {
+          b.annotations.add(
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This parameter is deprecated.')]),
+          );
+        }
+      }),
     );
   }
   // Multipart header parameters come last so names can be deduplicated.
@@ -219,23 +215,22 @@ void _addMultipartHeaderParameters({
     );
 
     parameters.add(
-      Parameter(
-        (b) {
-          b
-            ..name = info.name
-            ..type = parameterType
-            ..named = true
-            ..required = info.isRequired;
+      Parameter((b) {
+        b
+          ..name = info.name
+          ..type = parameterType
+          ..named = true
+          ..required = info.isRequired;
 
-          if (info.isDeprecated) {
-            b.annotations.add(
-              refer('Deprecated', 'dart:core').call([
-                literalString('This parameter is deprecated.'),
-              ]),
-            );
-          }
-        },
-      ),
+        if (info.isDeprecated) {
+          b.annotations.add(
+            refer(
+              'Deprecated',
+              'dart:core',
+            ).call([literalString('This parameter is deprecated.')]),
+          );
+        }
+      }),
     );
   }
 }

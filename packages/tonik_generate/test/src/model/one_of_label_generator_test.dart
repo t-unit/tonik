@@ -46,9 +46,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere(
-        (c) => c.name == 'PrimitiveChoice',
-      );
+      final baseClass = classes.firstWhere((c) => c.name == 'PrimitiveChoice');
       final generated = format(baseClass.accept(emitter).toString());
 
       final toLabelMethod = baseClass.methods.firstWhere(
@@ -98,9 +96,7 @@ void main() {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Choice',
-        models: [
-          (discriminatorValue: 'a', model: classA),
-        ],
+        models: [(discriminatorValue: 'a', model: classA)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -205,9 +201,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: null, model: innerOneOf),
-        ],
+        models: [(discriminatorValue: null, model: innerOneOf)],
         context: context,
         examples: const [],
       );
@@ -263,9 +257,7 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Outer',
-        models: [
-          (discriminatorValue: 'inner', model: innerOneOf),
-        ],
+        models: [(discriminatorValue: 'inner', model: innerOneOf)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -378,14 +370,8 @@ String toLabel({required bool explode, required bool allowEmpty}) { return switc
         isDeprecated: false,
         name: 'WithBinary',
         models: [
-          (
-            discriminatorValue: 'binary',
-            model: BinaryModel(context: context),
-          ),
-          (
-            discriminatorValue: 'label',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'binary', model: BinaryModel(context: context)),
+          (discriminatorValue: 'label', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],

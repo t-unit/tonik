@@ -103,9 +103,7 @@ class QueryGenerator {
       ).statements;
     }
 
-    return [
-      _generateDeepObjectEncodingStatement(paramName, resolvedParam),
-    ];
+    return [_generateDeepObjectEncodingStatement(paramName, resolvedParam)];
   }
 
   Code _generateDeepObjectEncodingStatement(
@@ -133,11 +131,7 @@ class QueryGenerator {
   ) {
     if (!resolvedParam.isRequired) {
       body.add(
-        Block.of([
-          Code('if ($paramName != null) {'),
-          ...code,
-          const Code('}'),
-        ]),
+        Block.of([Code('if ($paramName != null) {'), ...code, const Code('}')]),
       );
     } else {
       body.addAll(code);

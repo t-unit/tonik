@@ -224,40 +224,33 @@ void main() {
         );
       });
 
-      test(
-        'includes only operations with matching tags when includeTags is '
-        'specified',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {getPetOp, listPetsOp, getUserOp, getStoreOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('includes only operations with matching tags when includeTags is '
+          'specified', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {getPetOp, listPetsOp, getUserOp, getStoreOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet'],
-            ),
-          );
+        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(2));
-          expect(transformed.operations, containsAll([getPetOp, listPetsOp]));
-          expect(transformed.operations, isNot(contains(getUserOp)));
-          expect(transformed.operations, isNot(contains(getStoreOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(2));
+        expect(transformed.operations, containsAll([getPetOp, listPetsOp]));
+        expect(transformed.operations, isNot(contains(getUserOp)));
+        expect(transformed.operations, isNot(contains(getStoreOp)));
+      });
 
       test('includes operations with multiple matching tags', () {
         final document = ApiDocument(
@@ -276,9 +269,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            includeTags: ['pet', 'user'],
-          ),
+          filter: FilterConfig(includeTags: ['pet', 'user']),
         );
 
         const transformer = ConfigTransformer();
@@ -292,42 +283,37 @@ void main() {
         expect(transformed.operations, isNot(contains(getStoreOp)));
       });
 
-      test(
-        'excludes operations with matching tags when excludeTags is '
-        'specified',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {getPetOp, listPetsOp, getUserOp, getStoreOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('excludes operations with matching tags when excludeTags is '
+          'specified', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {getPetOp, listPetsOp, getUserOp, getStoreOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              excludeTags: ['store'],
-            ),
-          );
+        const config = TonikConfig(
+          filter: FilterConfig(excludeTags: ['store']),
+        );
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(3));
-          expect(
-            transformed.operations,
-            containsAll([getPetOp, listPetsOp, getUserOp]),
-          );
-          expect(transformed.operations, isNot(contains(getStoreOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(3));
+        expect(
+          transformed.operations,
+          containsAll([getPetOp, listPetsOp, getUserOp]),
+        );
+        expect(transformed.operations, isNot(contains(getStoreOp)));
+      });
 
       test('excludes operations with multiple excluded tags', () {
         final document = ApiDocument(
@@ -346,9 +332,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeTags: ['store', 'user'],
-          ),
+          filter: FilterConfig(excludeTags: ['store', 'user']),
         );
 
         const transformer = ConfigTransformer();
@@ -393,72 +377,58 @@ void main() {
         expect(transformed.operations, isNot(contains(getStoreOp)));
       });
 
-      test(
-        'handles operation with multiple tags - keeps if any tag matches '
-        'include',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {petUserOp, getStoreOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('handles operation with multiple tags - keeps if any tag matches '
+          'include', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {petUserOp, getStoreOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet'],
-            ),
-          );
+        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(petUserOp));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(petUserOp));
+      });
 
-      test(
-        'handles operation with multiple tags - excludes if any tag matches '
-        'exclude',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {petUserOp, getPetOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('handles operation with multiple tags - excludes if any tag matches '
+          'exclude', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {petUserOp, getPetOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              excludeTags: ['user'],
-            ),
-          );
+        const config = TonikConfig(filter: FilterConfig(excludeTags: ['user']));
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(getPetOp));
-          expect(transformed.operations, isNot(contains(petUserOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(getPetOp));
+        expect(transformed.operations, isNot(contains(petUserOp)));
+      });
 
       test('returns empty set when all operations are filtered out', () {
         final document = ApiDocument(
@@ -476,11 +446,7 @@ void main() {
           requestBodies: const {},
         );
 
-        const config = TonikConfig(
-          filter: FilterConfig(
-            includeTags: ['user'],
-          ),
-        );
+        const config = TonikConfig(filter: FilterConfig(includeTags: ['user']));
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -504,11 +470,7 @@ void main() {
           requestBodies: const {},
         );
 
-        const config = TonikConfig(
-          filter: FilterConfig(
-            includeTags: ['pet'],
-          ),
-        );
+        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -516,37 +478,32 @@ void main() {
         expect(transformed.operations, isEmpty);
       });
 
-      test(
-        'operation with two tags - both in includeTags - is included',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {petUserOp, getStoreOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('operation with two tags - both in includeTags - is included', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {petUserOp, getStoreOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet', 'user'],
-            ),
-          );
+        const config = TonikConfig(
+          filter: FilterConfig(includeTags: ['pet', 'user']),
+        );
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(petUserOp));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(petUserOp));
+      });
 
       test(
         'operation with two tags - only one in includeTags - is included',
@@ -567,9 +524,7 @@ void main() {
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['user'],
-            ),
+            filter: FilterConfig(includeTags: ['user']),
           );
 
           const transformer = ConfigTransformer();
@@ -599,9 +554,7 @@ void main() {
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['store'],
-            ),
+            filter: FilterConfig(includeTags: ['store']),
           );
 
           const transformer = ConfigTransformer();
@@ -613,38 +566,33 @@ void main() {
         },
       );
 
-      test(
-        'operation with two tags - both in excludeTags - is excluded',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {petUserOp, getStoreOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('operation with two tags - both in excludeTags - is excluded', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {petUserOp, getStoreOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              excludeTags: ['pet', 'user'],
-            ),
-          );
+        const config = TonikConfig(
+          filter: FilterConfig(excludeTags: ['pet', 'user']),
+        );
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(getStoreOp));
-          expect(transformed.operations, isNot(contains(petUserOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(getStoreOp));
+        expect(transformed.operations, isNot(contains(petUserOp)));
+      });
 
       test(
         'operation with two tags - only one in excludeTags - is excluded',
@@ -665,9 +613,7 @@ void main() {
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(
-              excludeTags: ['pet'],
-            ),
+            filter: FilterConfig(excludeTags: ['pet']),
           );
 
           const transformer = ConfigTransformer();
@@ -677,110 +623,94 @@ void main() {
         },
       );
 
-      test(
-        'operation with two tags - includeTags matches one, excludeTags '
-        'matches the other - is excluded',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {petStoreOp, getUserOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('operation with two tags - includeTags matches one, excludeTags '
+          'matches the other - is excluded', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {petStoreOp, getUserOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet', 'user'],
-              excludeTags: ['store'],
-            ),
-          );
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['pet', 'user'],
+            excludeTags: ['store'],
+          ),
+        );
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(getUserOp));
-          expect(transformed.operations, isNot(contains(petStoreOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(getUserOp));
+        expect(transformed.operations, isNot(contains(petStoreOp)));
+      });
 
-      test(
-        'operation with three tags - complex include/exclude scenario',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {tripleTagOp, getPetOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('operation with three tags - complex include/exclude scenario', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {tripleTagOp, getPetOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          // Include pet (matches both), but exclude admin
-          // (only matches tripleTagOp)
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet'],
-              excludeTags: ['admin'],
-            ),
-          );
+        // Include pet (matches both), but exclude admin
+        // (only matches tripleTagOp)
+        const config = TonikConfig(
+          filter: FilterConfig(includeTags: ['pet'], excludeTags: ['admin']),
+        );
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(getPetOp));
-          expect(transformed.operations, isNot(contains(tripleTagOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(getPetOp));
+        expect(transformed.operations, isNot(contains(tripleTagOp)));
+      });
 
-      test(
-        'operation with no tags - is excluded when includeTags is '
-        'specified',
-        () {
-          final document = ApiDocument(
-            title: 'Test API',
-            version: '1.0.0',
-            models: const {},
-            responseHeaders: const {},
-            requestHeaders: const {},
-            servers: const {},
-            operations: {noTagOp, getPetOp},
-            responses: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            requestBodies: const {},
-          );
+      test('operation with no tags - is excluded when includeTags is '
+          'specified', () {
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {noTagOp, getPetOp},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-          const config = TonikConfig(
-            filter: FilterConfig(
-              includeTags: ['pet'],
-            ),
-          );
+        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
 
-          const transformer = ConfigTransformer();
-          final transformed = transformer.apply(document, config);
+        const transformer = ConfigTransformer();
+        final transformed = transformer.apply(document, config);
 
-          expect(transformed.operations, hasLength(1));
-          expect(transformed.operations, contains(getPetOp));
-          expect(transformed.operations, isNot(contains(noTagOp)));
-        },
-      );
+        expect(transformed.operations, hasLength(1));
+        expect(transformed.operations, contains(getPetOp));
+        expect(transformed.operations, isNot(contains(noTagOp)));
+      });
 
       test(
         'operation with no tags - is included when no filters specified',
@@ -829,9 +759,7 @@ void main() {
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(
-              excludeTags: ['user'],
-            ),
+            filter: FilterConfig(excludeTags: ['user']),
           );
 
           const transformer = ConfigTransformer();
@@ -889,9 +817,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['getPet'],
-          ),
+          filter: FilterConfig(excludeOperations: ['getPet']),
         );
 
         const transformer = ConfigTransformer();
@@ -919,9 +845,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['getPet', 'listPets'],
-          ),
+          filter: FilterConfig(excludeOperations: ['getPet', 'listPets']),
         );
 
         const transformer = ConfigTransformer();
@@ -950,9 +874,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['nonExistentOp'],
-          ),
+          filter: FilterConfig(excludeOperations: ['nonExistentOp']),
         );
 
         const transformer = ConfigTransformer();
@@ -979,9 +901,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['getPet', 'listPets'],
-          ),
+          filter: FilterConfig(excludeOperations: ['getPet', 'listPets']),
         );
 
         const transformer = ConfigTransformer();
@@ -1021,9 +941,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['getPet'],
-          ),
+          filter: FilterConfig(excludeOperations: ['getPet']),
         );
 
         const transformer = ConfigTransformer();
@@ -1050,9 +968,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeOperations: ['getPet'],
-          ),
+          filter: FilterConfig(excludeOperations: ['getPet']),
         );
 
         const transformer = ConfigTransformer();
@@ -1108,9 +1024,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['Pet'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['Pet']),
         );
 
         const transformer = ConfigTransformer();
@@ -1138,9 +1052,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['Pet', 'Status'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['Pet', 'Status']),
         );
 
         const transformer = ConfigTransformer();
@@ -1169,9 +1081,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['NonExistent'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['NonExistent']),
         );
 
         const transformer = ConfigTransformer();
@@ -1198,9 +1108,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['Pet', 'User'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['Pet', 'User']),
         );
 
         const transformer = ConfigTransformer();
@@ -1226,9 +1134,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['Status'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['Status']),
         );
 
         const transformer = ConfigTransformer();
@@ -1256,9 +1162,7 @@ void main() {
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(
-            excludeSchemas: ['Pet'],
-          ),
+          filter: FilterConfig(excludeSchemas: ['Pet']),
         );
 
         const transformer = ConfigTransformer();

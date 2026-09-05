@@ -63,10 +63,7 @@ void main() {
       expect(wire.single('file').contentType, 'application/octet-stream');
       expect(wire.single('file').bodyBytes, fileBytes);
       expect(wire.single('description').bodyText, 'test file');
-      expect(
-        wire.single('description').contentType,
-        startsWith('text/plain'),
-      );
+      expect(wire.single('description').contentType, startsWith('text/plain'));
     });
   });
 
@@ -82,10 +79,7 @@ void main() {
         );
 
         expect(response.response.headers['x-has-status']?.first, 'true');
-        expect(
-          response.response.headers['x-param-status']?.first,
-          expected,
-        );
+        expect(response.response.headers['x-param-status']?.first, expected);
       });
     }
   });
@@ -97,9 +91,7 @@ void main() {
         profile: Profile(firstName: 'John', lastName: 'Doe'),
       );
 
-      final response = requireSuccess(
-        await api.postComplexObject(body: form),
-      );
+      final response = requireSuccess(await api.postComplexObject(body: form));
 
       expect(response.response.headers['x-has-label']?.first, 'true');
       expect(response.response.headers['x-has-profile']?.first, 'true');
@@ -128,14 +120,15 @@ void main() {
         );
 
         final wire = MultipartWire(await server.takeRequest());
-        expect(
-          wire.named('tags').map((part) => part.bodyText),
-          ['dart', 'flutter', 'openapi'],
-        );
-        expect(
-          wire.named('priorities').map((part) => part.bodyText),
-          ['high', 'low'],
-        );
+        expect(wire.named('tags').map((part) => part.bodyText), [
+          'dart',
+          'flutter',
+          'openapi',
+        ]);
+        expect(wire.named('priorities').map((part) => part.bodyText), [
+          'high',
+          'low',
+        ]);
       },
     );
   });
@@ -155,14 +148,11 @@ void main() {
           ),
         );
 
-        final part = MultipartWire(await server.takeRequest()).single(
-          'categories',
-        );
+        final part = MultipartWire(
+          await server.takeRequest(),
+        ).single('categories');
         expect(part.contentType, startsWith('application/json'));
-        expect(jsonDecode(part.bodyText), [
-          'science & tech',
-          'arts & crafts',
-        ]);
+        expect(jsonDecode(part.bodyText), ['science & tech', 'arts & crafts']);
         expect(part.bodyText, isNot(contains('%26')));
         expect(part.bodyText, isNot(contains('%20')));
       },
@@ -173,9 +163,7 @@ void main() {
     test('sends only required fields when optional are null', () async {
       const form = MixedRequiredForm(requiredField: 'hello');
 
-      final response = requireSuccess(
-        await api.postMixedRequired(body: form),
-      );
+      final response = requireSuccess(await api.postMixedRequired(body: form));
       expect(response.response.headers['x-has-required']?.first, 'true');
       expect(response.response.headers['x-has-optional']?.first, 'false');
       expect(response.response.headers['x-has-optionalfile']?.first, 'false');
@@ -195,9 +183,7 @@ void main() {
         optionalFile: TonikFileBytes(fileBytes),
       );
 
-      final response = requireSuccess(
-        await api.postMixedRequired(body: form),
-      );
+      final response = requireSuccess(await api.postMixedRequired(body: form));
       expect(response.response.headers['x-has-required']?.first, 'true');
       expect(response.response.headers['x-has-optional']?.first, 'true');
 
@@ -243,9 +229,9 @@ void main() {
         TonikFileBytes(Uint8List.fromList([7, 8, 9]), fileName: 'three.bin'),
       ];
 
-      await _rawApi(server).postMultipleFiles(
-        body: MultipleFilesForm(files: files),
-      );
+      await _rawApi(
+        server,
+      ).postMultipleFiles(body: MultipleFilesForm(files: files));
 
       final parts = MultipartWire(await server.takeRequest()).named('files');
       expect(parts.map((part) => part.filename), [
@@ -272,10 +258,7 @@ void main() {
         final response = await api.getMultipartResponse();
 
         expect(response, isTonikError);
-        expect(
-          requireError(response).error,
-          isA<ResponseDecodingException>(),
-        );
+        expect(requireError(response).error, isA<ResponseDecodingException>());
       },
     );
   });
@@ -299,10 +282,7 @@ void main() {
 
         final wire = MultipartWire(await server.takeRequest());
         expect(wire.single('description').bodyText, 'test desc');
-        expect(
-          wire.single('description').header('x-part-meta'),
-          'meta-value',
-        );
+        expect(wire.single('description').header('x-part-meta'), 'meta-value');
         expect(wire.single('file').bodyBytes, fileBytes);
         expect(wire.single('file').header('x-file-hash'), 'abc123');
         expect(wire.single('file').header('x-file-tag'), 'tag-value');
@@ -322,10 +302,7 @@ void main() {
       );
 
       final wire = MultipartWire(await server.takeRequest());
-      expect(
-        wire.single('description').header('x-part-meta'),
-        'meta-value',
-      );
+      expect(wire.single('description').header('x-part-meta'), 'meta-value');
       expect(wire.single('file').header('x-file-hash'), 'abc123');
       expect(wire.single('file').header('x-file-tag'), isNull);
     });
@@ -339,10 +316,7 @@ void main() {
         final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
 
         await _rawApi(server).postByteField(
-          body: ByteForm(
-            label: 'test-label',
-            data: TonikFileBytes(fileBytes),
-          ),
+          body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
         );
 
         final wire = MultipartWire(await server.takeRequest());
@@ -386,9 +360,7 @@ void main() {
         ),
       );
 
-      final model = MultipartWire(
-        await server.takeRequest(),
-      ).single('model');
+      final model = MultipartWire(await server.takeRequest()).single('model');
       expect(model.contentType, startsWith('application/json'));
       expect(jsonDecode(model.bodyText), 'custom-model-name');
     });
@@ -402,10 +374,7 @@ void main() {
       );
 
       final response = requireSuccess(await api.postMapField(body: form));
-      expect(
-        response.response.headers['x-param-name']?.first,
-        'test-resource',
-      );
+      expect(response.response.headers['x-param-name']?.first, 'test-resource');
       expect(response.response.headers['x-has-metadata']?.first, 'true');
       expect(response.response.headers['x-metadata-is-json']?.first, 'true');
 
@@ -425,9 +394,7 @@ void main() {
 
     test('omits optional map field when null', () async {
       final response = requireSuccess(
-        await api.postMapField(
-          body: const MapFieldForm(name: 'no-metadata'),
-        ),
+        await api.postMapField(body: const MapFieldForm(name: 'no-metadata')),
       );
 
       expect(response.response.headers['x-has-metadata']?.first, 'false');
@@ -465,10 +432,11 @@ void main() {
         expect(wire.single('temperature').bodyText, '0.7');
         expect(wire.single('active').bodyText, 'true');
         expect(wire.single('status').bodyText, 'active');
-        expect(
-          wire.named('tags').map((part) => part.bodyText),
-          ['alpha', 'beta', 'gamma'],
-        );
+        expect(wire.named('tags').map((part) => part.bodyText), [
+          'alpha',
+          'beta',
+          'gamma',
+        ]);
         expect(
           wire.single('metadata').contentType,
           startsWith('application/json'),
@@ -569,9 +537,7 @@ void main() {
           payload: Latin1FormValue(word: 'café'),
         ),
       );
-      final part = MultipartWire(
-        await server.takeRequest(),
-      ).single('payload');
+      final part = MultipartWire(await server.takeRequest()).single('payload');
 
       expect(part.bodyBytes, ascii.encode('word=caf%E9'));
       expect(
@@ -612,8 +578,5 @@ void main() {
 }
 
 MultipartApi _rawApi(RawRequestServer server) => MultipartApi(
-  CustomServer(
-    baseUrl: server.baseUrl,
-    serverConfig: testServerConfig(),
-  ),
+  CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
 );

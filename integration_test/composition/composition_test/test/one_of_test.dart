@@ -5100,9 +5100,7 @@ void main() {
         setUp(() {
           const allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
             threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
-                ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
-                  int: 456,
-                ),
+                ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(int: 456),
             threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
                 ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: false),
           );
@@ -6107,10 +6105,7 @@ void main() {
 
       test('create with string value', () {
         expect(anyVariant, isA<OneOfBooleanSchemaUnknown>());
-        expect(
-          (anyVariant as OneOfBooleanSchemaUnknown).value,
-          'hello',
-        );
+        expect((anyVariant as OneOfBooleanSchemaUnknown).value, 'hello');
       });
 
       test('create with int value', () {
@@ -6128,9 +6123,9 @@ void main() {
       });
 
       test('toJson with map value', () {
-        const variant = OneOfBooleanSchemaUnknown(
-          <String, String>{'key': 'value'},
-        );
+        const variant = OneOfBooleanSchemaUnknown(<String, String>{
+          'key': 'value',
+        });
         expect(variant.toJson(), {'key': 'value'});
       });
 
@@ -6142,16 +6137,14 @@ void main() {
       });
 
       test('fromJson prefers Class1 when matching', () {
-        final result = OneOfBooleanSchema.fromJson(
-          const <String, Object?>{'name': 'test'},
-        );
+        final result = OneOfBooleanSchema.fromJson(const <String, Object?>{
+          'name': 'test',
+        });
         expect(result, isA<OneOfBooleanSchemaClass1>());
       });
 
       test('fromJson roundtrip with Class1', () {
-        const original = OneOfBooleanSchemaClass1(
-          Class1(name: 'test'),
-        );
+        const original = OneOfBooleanSchemaClass1(Class1(name: 'test'));
         final json = original.toJson();
         final reconstructed = OneOfBooleanSchema.fromJson(json);
         expect(reconstructed, original);
@@ -6235,9 +6228,7 @@ void main() {
       late OneOfBooleanSchema classVariant;
 
       setUp(() {
-        classVariant = const OneOfBooleanSchemaClass1(
-          Class1(name: 'test'),
-        );
+        classVariant = const OneOfBooleanSchemaClass1(Class1(name: 'test'));
       });
 
       test('toJson', () {

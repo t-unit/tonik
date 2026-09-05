@@ -1098,10 +1098,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 
@@ -1147,10 +1144,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('threads allowReserved into inner-map and whole-list encode for '
@@ -1196,10 +1190,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
 
     test('generates runtime throw for List<Map<String, ClassModel>> '
@@ -1243,10 +1234,7 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expected));
     });
   });
 }

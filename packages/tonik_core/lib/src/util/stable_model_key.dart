@@ -35,12 +35,7 @@ class StableModelSorter {
   );
 
   String stableAliasKey({required Model model}) {
-    final modelKey = _computeKey(
-      model,
-      {},
-      1,
-      preserveCompoundOrder: true,
-    );
+    final modelKey = _computeKey(model, {}, 1, preserveCompoundOrder: true);
     return 'AliasModel{null,$modelKey}';
   }
 
@@ -64,21 +59,26 @@ class StableModelSorter {
     Set<Model> visited,
     int depth, {
     required bool preserveCompoundOrder,
-  }) =>
-      'ClassModel{$name,'
-      '${properties.map((p) => '${p.$1}:'
-          '${_computeKey(
-            p.$2,
+  }) {
+    final propertyKeys = properties
+        .map((property) {
+          final modelKey = _computeKey(
+            property.$2,
             visited,
             depth + 1,
             preserveCompoundOrder: preserveCompoundOrder,
-          )}').join(',')},'
-      'ap:${_policyKey(
-        policy,
-        visited,
-        depth,
-        preserveCompoundOrder: preserveCompoundOrder,
-      )}}';
+          );
+          return '${property.$1}:$modelKey';
+        })
+        .join(',');
+    final policyKey = _policyKey(
+      policy,
+      visited,
+      depth,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'ClassModel{$name,$propertyKeys,ap:$policyKey}';
+  }
 
   /// Returns a deterministically sorted list of [models].
   ///
@@ -179,13 +179,14 @@ class StableModelSorter {
         depth,
         preserveCompoundOrder: preserveCompoundOrder,
       ),
-      ListModel(:final content, :final name) =>
-        'ListModel{$name,${_computeKey(
-          content,
-          visited,
-          depth + 1,
-          preserveCompoundOrder: preserveCompoundOrder,
-        )}}',
+      ListModel(:final content, :final name) => _nestedModelKey(
+        'ListModel',
+        name,
+        content,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
       ClassModel(
         :final name,
         :final properties,
@@ -201,21 +202,22 @@ class StableModelSorter {
         ),
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
-      AliasModel(:final name, :final model) =>
-        'AliasModel{$name,${_computeKey(
-          model,
-          visited,
-          depth + 1,
-          preserveCompoundOrder: preserveCompoundOrder,
-        )}}',
-      MapModel(:final name, :final valueModel) =>
-        'MapModel{$name,'
-            '${_computeKey(
-              valueModel,
-              visited,
-              depth + 1,
-              preserveCompoundOrder: preserveCompoundOrder,
-            )}}',
+      AliasModel(:final name, :final model) => _nestedModelKey(
+        'AliasModel',
+        name,
+        model,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
+      MapModel(:final name, :final valueModel) => _nestedModelKey(
+        'MapModel',
+        name,
+        valueModel,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',
@@ -233,6 +235,23 @@ class StableModelSorter {
         'stableKey not implemented for ${model.runtimeType}',
       ),
     };
+  }
+
+  String _nestedModelKey(
+    String type,
+    String? name,
+    Model model,
+    Set<Model> visited,
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelKey = _computeKey(
+      model,
+      visited,
+      depth + 1,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return '$type{$name,$modelKey}';
   }
 
   String _allOfKey(
@@ -276,29 +295,37 @@ class StableModelSorter {
   }) => switch (policy) {
     ForbiddenAdditionalProperties() => 'forbidden',
     AllowedAdditionalProperties(:final valueModel, :final origin) =>
-      'allowed(${origin.name},'
-          '${_computeKey(
-            valueModel,
-            visited,
-            depth + 1,
-            preserveCompoundOrder: preserveCompoundOrder,
-          )})',
+      _allowedAdditionalPropertiesKey(
+        valueModel,
+        origin,
+        visited,
+        depth,
+        preserveCompoundOrder: preserveCompoundOrder,
+      ),
   };
 
-  /// Computes compound member keys in declaration order.
-  String _orderedModels(
-    List<Model> models,
+  String _allowedAdditionalPropertiesKey(
+    Model valueModel,
+    AdditionalPropertiesOrigin origin,
     Set<Model> visited,
-    int depth,
-  ) {
+    int depth, {
+    required bool preserveCompoundOrder,
+  }) {
+    final modelKey = _computeKey(
+      valueModel,
+      visited,
+      depth + 1,
+      preserveCompoundOrder: preserveCompoundOrder,
+    );
+    return 'allowed(${origin.name},$modelKey)';
+  }
+
+  /// Computes compound member keys in declaration order.
+  String _orderedModels(List<Model> models, Set<Model> visited, int depth) {
     return models
         .map(
-          (m) => _computeKey(
-            m,
-            visited,
-            depth + 1,
-            preserveCompoundOrder: true,
-          ),
+          (m) =>
+              _computeKey(m, visited, depth + 1, preserveCompoundOrder: true),
         )
         .join(',');
   }
@@ -310,16 +337,15 @@ class StableModelSorter {
     int depth,
   ) {
     return models
-        .map(
-          (dm) =>
-              '${dm.discriminatorValue}:'
-              '${_computeKey(
-                dm.model,
-                visited,
-                depth + 1,
-                preserveCompoundOrder: true,
-              )}',
-        )
+        .map((dm) {
+          final modelKey = _computeKey(
+            dm.model,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: true,
+          );
+          return '${dm.discriminatorValue}:$modelKey';
+        })
         .join(',');
   }
 
@@ -348,16 +374,15 @@ class StableModelSorter {
   ) {
     final sorted = models.toList()..sort(_cheapDiscriminatedModelCompare);
     return sorted
-        .map(
-          (model) =>
-              '${model.discriminatorValue}:'
-              '${_computeKey(
-                model.model,
-                visited,
-                depth + 1,
-                preserveCompoundOrder: false,
-              )}',
-        )
+        .map((model) {
+          final modelKey = _computeKey(
+            model.model,
+            visited,
+            depth + 1,
+            preserveCompoundOrder: false,
+          );
+          return '${model.discriminatorValue}:$modelKey';
+        })
         .join(',');
   }
 

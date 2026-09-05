@@ -206,10 +206,7 @@ void main() {
           '3.14'.decodeSimpleNullableBigDecimal(),
           BigDecimal.parse('3.14'),
         );
-        expect(
-          '2024-03-15'.decodeSimpleNullableDate(),
-          Date(2024, 3, 15),
-        );
+        expect('2024-03-15'.decodeSimpleNullableDate(), Date(2024, 3, 15));
         expect(
           'https://example.com'.decodeSimpleNullableUri(),
           Uri.parse('https://example.com'),
@@ -383,10 +380,12 @@ void main() {
       );
 
       test('decodeSimpleNullableStringNullableList keeps members raw', () {
-        expect(
-          'foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(),
-          ['foo', 'bar%2Cbaz', null, 'qux'],
-        );
+        expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(), [
+          'foo',
+          'bar%2Cbaz',
+          null,
+          'qux',
+        ]);
         expect(''.decodeSimpleNullableStringNullableList(), isNull);
         expect(
           (null as String?).decodeSimpleNullableStringNullableList(),

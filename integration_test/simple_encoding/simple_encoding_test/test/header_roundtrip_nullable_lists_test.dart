@@ -29,10 +29,7 @@ void main() {
           nullableStringList: ['hello world', 'foo/bar', null],
         );
 
-        expect(
-          response,
-          isTonikSuccess,
-        );
+        expect(response, isTonikSuccess);
         final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         final recordedRequest = await imposterServer.takeRequest();
@@ -54,18 +51,12 @@ void main() {
         // The request encodes the null element as an empty string.
         requireError(response);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-nullable-integer-list'],
-          '1,,2',
-        );
+        expect(recordedRequest.headers['x-nullable-integer-list'], '1,,2');
 
         // A null array element has no wire representation in parameter styles,
         // so the echoed empty element cannot be decoded back to int. See
         // docs/uri_encoding_limitations.md.
-        expect(
-          response,
-          isTonikError,
-        );
+        expect(response, isTonikError);
       },
     );
 

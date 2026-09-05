@@ -23,10 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = ClassGenerator(
-      nameManager: nameManager,
-      package: 'example',
-    );
+    generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -145,9 +142,7 @@ void main() {
       );
       expect(sentinelField.static, isTrue);
       expect(sentinelField.modifier, FieldModifier.constant);
-      final valueField = implClass.fields.firstWhere(
-        (f) => f.name == '_value',
-      );
+      final valueField = implClass.fields.firstWhere((f) => f.name == '_value');
       expect(valueField.modifier, FieldModifier.final$);
       expect(valueField.type?.accept(emitter).toString(), 'User');
       final implCallMethod = implClass.methods.firstWhere(

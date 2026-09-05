@@ -415,21 +415,18 @@ void main() {
       );
     });
 
-    test(
-      'query mode escapes a literal percent so %20-looking input is not '
-      'collapsed to a space',
-      () {
-        expect(
-          'a%20b'.uriEncode(
-            allowEmpty: true,
-            useQueryComponent: true,
-            allowReserved: true,
-            textEncoding: utf8,
-          ),
-          'a%2520b',
-        );
-      },
-    );
+    test('query mode escapes a literal percent so %20-looking input is not '
+        'collapsed to a space', () {
+      expect(
+        'a%20b'.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        'a%2520b',
+      );
+    });
 
     test('a literal percent sequence is not decoded back into a bracket', () {
       expect(
@@ -549,11 +546,12 @@ void main() {
 
     test('list keeps reserved chars literal but encodes & = + per item', () {
       expect(
-        ['a:b', 'c&d', 'e=f', 'g+h'].uriEncode(
-          allowEmpty: true,
-          allowReserved: true,
-          textEncoding: utf8,
-        ),
+        [
+          'a:b',
+          'c&d',
+          'e=f',
+          'g+h',
+        ].uriEncode(allowEmpty: true, allowReserved: true, textEncoding: utf8),
         'a:b,c%26d,e%3Df,g%2Bh',
       );
     });
@@ -589,11 +587,10 @@ void main() {
     test('map keeps reserved chars literal but encodes & = + in keys and '
         'values', () {
       expect(
-        {'a&b': 'c=d', 'e:f': 'g+h'}.uriEncode(
-          allowEmpty: true,
-          allowReserved: true,
-          textEncoding: utf8,
-        ),
+        {
+          'a&b': 'c=d',
+          'e:f': 'g+h',
+        }.uriEncode(allowEmpty: true, allowReserved: true, textEncoding: utf8),
         'a%26b,c%3Dd,e:f,g%2Bh',
       );
     });

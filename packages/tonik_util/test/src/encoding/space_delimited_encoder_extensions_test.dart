@@ -6,26 +6,27 @@ void main() {
   group('SpaceDelimitedStringListEncoder', () {
     group('with explode=false', () {
       test('encodes list of strings with space delimiter', () {
-        final result = ['red', 'green', 'blue'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'red',
+          'green',
+          'blue',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['red%20green%20blue']);
       });
 
       test('encodes list with special characters', () {
-        final result = ['item 1', 'item 2'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'item 1',
+          'item 2',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['item%201%20item%202']);
       });
 
       test('encodes list with reserved characters', () {
-        final result = ['a&b', 'c=d'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'a&b',
+          'c=d',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['a%26b%20c%3Dd']);
       });
 
@@ -46,10 +47,9 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = ['single'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'single',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['single']);
       });
 
@@ -91,36 +91,37 @@ void main() {
       );
 
       test('encodes non-ASCII characters', () {
-        final result = ['café', '你好'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'café',
+          '你好',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['caf%C3%A9%20%E4%BD%A0%E5%A5%BD']);
       });
 
       test('encodes URL with special characters', () {
-        final result = ['http://example.com', '/api/v1'].toSpaceDelimited(
-          explode: false,
-          allowEmpty: true,
-        );
+        final result = [
+          'http://example.com',
+          '/api/v1',
+        ].toSpaceDelimited(explode: false, allowEmpty: true);
         expect(result, ['http%3A%2F%2Fexample.com%20%2Fapi%2Fv1']);
       });
     });
 
     group('with explode=true', () {
       test('encodes list as separate values', () {
-        final result = ['red', 'green', 'blue'].toSpaceDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = [
+          'red',
+          'green',
+          'blue',
+        ].toSpaceDelimited(explode: true, allowEmpty: true);
         expect(result, ['red', 'green', 'blue']);
       });
 
       test('encodes list with special characters as separate values', () {
-        final result = ['item 1', 'item 2'].toSpaceDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = [
+          'item 1',
+          'item 2',
+        ].toSpaceDelimited(explode: true, allowEmpty: true);
         expect(result, ['item%201', 'item%202']);
       });
 
@@ -141,10 +142,9 @@ void main() {
       });
 
       test('encodes single item list', () {
-        final result = ['single'].toSpaceDelimited(
-          explode: true,
-          allowEmpty: true,
-        );
+        final result = [
+          'single',
+        ].toSpaceDelimited(explode: true, allowEmpty: true);
         expect(result, ['single']);
       });
 
@@ -205,38 +205,34 @@ void main() {
 
   group('allowReserved', () {
     test('reserved literal except & = + per item, explode=false', () {
-      final result = ['a:b', 'c&d=e+f'].toSpaceDelimited(
-        explode: false,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c&d=e+f',
+      ].toSpaceDelimited(explode: false, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b%20c%26d%3De%2Bf']);
     });
 
     test('reserved literal except & = + per item, explode=true', () {
-      final result = ['a:b', 'c&d=e+f'].toSpaceDelimited(
-        explode: true,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c&d=e+f',
+      ].toSpaceDelimited(explode: true, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b', 'c%26d%3De%2Bf']);
     });
 
     test('%20 delimiter is unaffected by allowReserved', () {
-      final result = ['a:b', 'c:d'].toSpaceDelimited(
-        explode: false,
-        allowEmpty: true,
-        allowReserved: true,
-      );
+      final result = [
+        'a:b',
+        'c:d',
+      ].toSpaceDelimited(explode: false, allowEmpty: true, allowReserved: true);
       expect(result, ['a:b%20c:d']);
     });
 
     test('default byte-identical to encodeComponent, explode=false', () {
       const items = ['a:b', 'c&d=e+f', 'x y'];
-      expect(
-        items.toSpaceDelimited(explode: false, allowEmpty: true),
-        [items.map(Uri.encodeComponent).join('%20')],
-      );
+      expect(items.toSpaceDelimited(explode: false, allowEmpty: true), [
+        items.map(Uri.encodeComponent).join('%20'),
+      ]);
     });
 
     test('default byte-identical to encodeComponent, explode=true', () {
@@ -261,10 +257,9 @@ void main() {
 
     test('binary default is byte-identical to Uri.encodeComponent', () {
       const value = [97, 58, 98, 32, 99]; // "a:b c"
-      expect(
-        value.toSpaceDelimited(explode: false, allowEmpty: true),
-        [Uri.encodeComponent('a:b c')],
-      );
+      expect(value.toSpaceDelimited(explode: false, allowEmpty: true), [
+        Uri.encodeComponent('a:b c'),
+      ]);
     });
 
     test('alreadyEncoded short-circuits regardless of allowReserved', () {

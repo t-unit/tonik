@@ -35,16 +35,10 @@ void main() {
           enumUnion: const OneOfEnumStatusEnum(StatusEnum.active),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          'active',
-        );
+        expect(recordedRequest.headers['x-enum-union'], 'active');
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.active);
@@ -55,16 +49,10 @@ void main() {
           enumUnion: const OneOfEnumStatusEnum(StatusEnum.inactive),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          'inactive',
-        );
+        expect(recordedRequest.headers['x-enum-union'], 'inactive');
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.inactive);
@@ -75,16 +63,10 @@ void main() {
           enumUnion: const OneOfEnumStatusEnum(StatusEnum.pending),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          'pending',
-        );
+        expect(recordedRequest.headers['x-enum-union'], 'pending');
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.pending);
@@ -95,16 +77,10 @@ void main() {
           enumUnion: const OneOfEnumStatusEnum(StatusEnum.archived),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          'archived',
-        );
+        expect(recordedRequest.headers['x-enum-union'], 'archived');
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.archived);
@@ -117,16 +93,10 @@ void main() {
           enumUnion: const OneOfEnumPriorityEnum(PriorityEnum.one),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          '1',
-        );
+        expect(recordedRequest.headers['x-enum-union'], '1');
 
         // Note: Integer enum values sent as headers are decoded back to integer
         // variants when possible. The decoder tries PriorityEnum first.
@@ -140,16 +110,10 @@ void main() {
           enumUnion: const OneOfEnumPriorityEnum(PriorityEnum.two),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          '2',
-        );
+        expect(recordedRequest.headers['x-enum-union'], '2');
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumPriorityEnum;
         expect(decoded.value, PriorityEnum.two);
@@ -160,16 +124,10 @@ void main() {
           enumUnion: const OneOfEnumPriorityEnum(PriorityEnum.five),
         );
 
-        expect(
-          result,
-          isTonikSuccess,
-        );
+        expect(result, isTonikSuccess);
         final success = requireSuccess(result);
         final recordedRequest = await imposterServer.takeRequest();
-        expect(
-          recordedRequest.headers['x-enum-union'],
-          '5',
-        );
+        expect(recordedRequest.headers['x-enum-union'], '5');
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumPriorityEnum;
         expect(decoded.value, PriorityEnum.five);
@@ -182,16 +140,10 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripOneOfEnum.call();
 
-          expect(
-            result,
-            isTonikSuccess,
-          );
+          expect(result, isTonikSuccess);
           final success = requireSuccess(result);
           final recordedRequest = await imposterServer.takeRequest();
-          expect(
-            recordedRequest.headers['x-enum-union'],
-            isNull,
-          );
+          expect(recordedRequest.headers['x-enum-union'], isNull);
           expect(success.value.xEnumUnion, isNull);
         },
       );

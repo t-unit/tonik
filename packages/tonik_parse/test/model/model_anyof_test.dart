@@ -338,9 +338,7 @@ void main() {
     test('import anyOf with description', () {
       final api = Importer().import(anyOfWithDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Payload',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Payload')
               as AnyOfModel;
 
       expect(model.description, 'The request payload can be text or binary');
@@ -349,9 +347,7 @@ void main() {
     test('import anyOf without description', () {
       final api = Importer().import(anyOfWithoutDescription);
       final model =
-          api.models.firstWhere(
-                (m) => m is NamedModel && m.name == 'Mixed',
-              )
+          api.models.firstWhere((m) => m is NamedModel && m.name == 'Mixed')
               as AnyOfModel;
 
       expect(model.description, isNull);

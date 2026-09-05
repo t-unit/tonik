@@ -253,36 +253,35 @@ class ApiClientGenerator {
       }
     }
 
-    return Method(
-      (b) {
-        b
-          ..name = nameManager.operationMethodName(operation)
-          ..returns = TypeReference(
-            (b) => b
-              ..symbol = 'Future'
-              ..url = 'dart:core'
-              ..types.add(resultType),
-          )
-          ..docs.addAll(docs);
+    return Method((b) {
+      b
+        ..name = nameManager.operationMethodName(operation)
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'Future'
+            ..url = 'dart:core'
+            ..types.add(resultType),
+        )
+        ..docs.addAll(docs);
 
-        if (operation.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This operation is deprecated.'),
-            ]),
-          );
-        }
+      if (operation.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This operation is deprecated.')]),
+        );
+      }
 
-        b
-          ..optionalParameters.addAll([
-            ...requiredParams.map((p) => p.rebuild((b) => b..named = true)),
-            ...optionalParams.map((p) => p.rebuild((b) => b..named = true)),
-          ])
-          ..modifier = MethodModifier.async
-          ..lambda = true
-          ..body = refer(operationFieldName).call([], paramMap).code;
-      },
-    );
+      b
+        ..optionalParameters.addAll([
+          ...requiredParams.map((p) => p.rebuild((b) => b..named = true)),
+          ...optionalParams.map((p) => p.rebuild((b) => b..named = true)),
+        ])
+        ..modifier = MethodModifier.async
+        ..lambda = true
+        ..body = refer(operationFieldName).call([], paramMap).code;
+    });
   }
 
   /// Formats security scheme information for method documentation

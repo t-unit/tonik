@@ -345,57 +345,52 @@ Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellat
     // `{type: "null"}` response schema imports as. It can legitimately
     // complete normally with `null`, so the unassigned try/catch branch must
     // not be emitted.
-    test(
-      'nullable Never response body uses assigned-var shape',
-      () {
-        final operation = Operation(
-          operationId: 'nullableNeverBodyOp',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/nullable-never-body',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          securitySchemes: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: NeverModel(context: context, isNullable: true),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
-          },
-        );
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-          cookieParameters: [],
-        );
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
+    test('nullable Never response body uses assigned-var shape', () {
+      final operation = Operation(
+        operationId: 'nullableNeverBodyOp',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/nullable-never-body',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: NeverModel(context: context, isNullable: true),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+                examples: const [],
+              ),
+            },
+          ),
+        },
+      );
+      const normalizedParams = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+        cookieParameters: [],
+      );
+      final method = generator.generateCallMethod(operation, normalizedParams);
 
-        expect(
-          method.returns?.accept(emitter).toString(),
-          'Future<TonikResult<Never?,Response<Object?>>>',
-        );
+      expect(
+        method.returns?.accept(emitter).toString(),
+        'Future<TonikResult<Never?,Response<Object?>>>',
+      );
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancellation}) async {
   late final Uri _$uri;
   late final Object? _$data;
@@ -493,15 +488,14 @@ Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancella
   return TonikSuccess<Never?, Response<Object?>>(_$parsedResponse, _$response);
 }
 ''';
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      },
-    );
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
 
     test('returns result with model for single status code with body only', () {
       final operation = Operation(
@@ -541,10 +535,7 @@ Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancella
         headers: [],
         cookieParameters: [],
       );
-      final method = generator.generateCallMethod(
-        operation,
-        normalizedParams,
-      );
+      final method = generator.generateCallMethod(operation, normalizedParams);
       expect(
         method.returns?.accept(emitter).toString(),
         'Future<TonikResult<String,Response<Object?>>>',

@@ -84,17 +84,12 @@ extension LabelStringListEncoder on List<String> {
     }
 
     if (explode) {
-      return map(
-        (item) {
-          final value = alreadyEncoded
-              ? item
-              : item.uriEncode(
-                  allowEmpty: allowEmpty,
-                  textEncoding: utf8,
-                );
-          return '.$value';
-        },
-      ).join();
+      return map((item) {
+        final value = alreadyEncoded
+            ? item
+            : item.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
+        return '.$value';
+      }).join();
     } else {
       final encodedValues = uriEncode(
         allowEmpty: allowEmpty,
@@ -126,21 +121,16 @@ extension LabelStringMapEncoder on Map<String, String> {
     }
 
     if (explode) {
-      return entries.map(
-        (entry) {
-          final key = Uri.encodeComponent(entry.key);
-          if (entry.value.isEmpty) {
-            return '.$key';
-          }
-          final value = alreadyEncoded
-              ? entry.value
-              : entry.value.uriEncode(
-                  allowEmpty: allowEmpty,
-                  textEncoding: utf8,
-                );
-          return '.$key=$value';
-        },
-      ).join();
+      return entries.map((entry) {
+        final key = Uri.encodeComponent(entry.key);
+        if (entry.value.isEmpty) {
+          return '.$key';
+        }
+        final value = alreadyEncoded
+            ? entry.value
+            : entry.value.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8);
+        return '.$key=$value';
+      }).join();
     } else {
       final encodedPairs = uriEncode(
         allowEmpty: allowEmpty,

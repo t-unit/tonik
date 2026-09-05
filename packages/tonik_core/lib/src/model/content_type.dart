@@ -1,7 +1,1 @@
-enum ContentType {
-  json,
-  text,
-  bytes,
-  form,
-  multipart,
-}
+enum ContentType { json, text, bytes, form, multipart }

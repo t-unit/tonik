@@ -167,22 +167,20 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
             textEncoding: textEncoding,
           ),
         )
-        ..add(
-          switch (entry.value) {
-            ScalarPropertyValue(:final value) => _encode(
-              value,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            ),
-            ArrayPropertyValue(:final values) => _joinEncoded(
-              values,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              textEncoding: textEncoding,
-            ),
-          },
-        );
+        ..add(switch (entry.value) {
+          ScalarPropertyValue(:final value) => _encode(
+            value,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            textEncoding: textEncoding,
+          ),
+          ArrayPropertyValue(:final values) => _joinEncoded(
+            values,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+            textEncoding: textEncoding,
+          ),
+        });
     }
     return [(name: paramName, value: parts.join(','))];
   }

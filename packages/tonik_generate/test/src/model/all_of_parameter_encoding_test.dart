@@ -37,9 +37,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: [
-          StringModel(context: context),
-        ],
+        models: [StringModel(context: context)],
         context: context,
         examples: const [],
       );
@@ -66,9 +64,7 @@ void main() {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: [
-          StringModel(context: context),
-        ],
+        models: [StringModel(context: context)],
         context: context,
         examples: const [],
       );

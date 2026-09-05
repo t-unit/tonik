@@ -30,9 +30,7 @@ void main() {
     test('201 - uploads data with contentEncoding:base64 field', () async {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '201');
 
-      final binaryData = Uint8List.fromList(
-        List.generate(256, (i) => i),
-      );
+      final binaryData = Uint8List.fromList(List.generate(256, (i) => i));
       final base64String = base64.encode(binaryData);
 
       final contentEncodedData = ContentEncodedData(
@@ -73,44 +71,38 @@ void main() {
       expect(decoded, equals(binaryData));
     });
 
-    test(
-      'format:byte and contentEncoding:base64 produce identical JSON',
-      () {
-        final binaryData = Uint8List.fromList([1, 2, 3, 4, 5]);
-        final base64String = base64.encode(binaryData);
+    test('format:byte and contentEncoding:base64 produce identical JSON', () {
+      final binaryData = Uint8List.fromList([1, 2, 3, 4, 5]);
+      final base64String = base64.encode(binaryData);
 
-        // `contentEncoding: base64` stays a string here because text/plain
-        // config opts out of TonikFile's format:byte handling.
-        final formatByteData = Base64Data(
-          name: 'format-byte',
-          encodedData: TonikFileBytes(binaryData),
-        );
+      // `contentEncoding: base64` stays a string here because text/plain
+      // config opts out of TonikFile's format:byte handling.
+      final formatByteData = Base64Data(
+        name: 'format-byte',
+        encodedData: TonikFileBytes(binaryData),
+      );
 
-        final contentEncodedData = ContentEncodedData(
-          name: 'content-encoding',
-          encodedData: base64String,
-        );
+      final contentEncodedData = ContentEncodedData(
+        name: 'content-encoding',
+        encodedData: base64String,
+      );
 
-        final formatByteJson = formatByteData.toJson()! as Map<String, dynamic>;
-        final contentEncodedJson =
-            contentEncodedData.toJson()! as Map<String, dynamic>;
+      final formatByteJson = formatByteData.toJson()! as Map<String, dynamic>;
+      final contentEncodedJson =
+          contentEncodedData.toJson()! as Map<String, dynamic>;
 
-        expect(formatByteJson['encodedData'], isA<String>());
-        expect(contentEncodedJson['encodedData'], isA<String>());
-        expect(
-          formatByteJson['encodedData'],
-          equals(contentEncodedJson['encodedData']),
-        );
-      },
-    );
+      expect(formatByteJson['encodedData'], isA<String>());
+      expect(contentEncodedJson['encodedData'], isA<String>());
+      expect(
+        formatByteJson['encodedData'],
+        equals(contentEncodedJson['encodedData']),
+      );
+    });
 
     test('400 - bad request', () async {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '400');
 
-      const contentEncodedData = ContentEncodedData(
-        name: '',
-        encodedData: '',
-      );
+      const contentEncodedData = ContentEncodedData(name: '', encodedData: '');
 
       final result = await contentEncodedApi.uploadContentEncodedData(
         body: contentEncodedData,

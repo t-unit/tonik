@@ -13,9 +13,10 @@ void main() {
     emissions: [
       MultipartAppend(
         name: specLiteralString('value'),
-        value: refer('utf8', 'dart:convert').property('encode').call([
-          refer('body').property('value'),
-        ]),
+        value: refer(
+          'utf8',
+          'dart:convert',
+        ).property('encode').call([refer('body').property('value')]),
         source: MultipartValueSource.bytes,
         contentType: 'text/plain',
       ),
@@ -23,9 +24,7 @@ void main() {
   );
 
   test('HTTP multipart body constructs a native text part', () {
-    _expectBody(
-      buildHttpMultipartBodyStatements(plan),
-      r'''
+    _expectBody(buildHttpMultipartBodyStatements(plan), r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
   _$multipartFiles.add(
@@ -37,8 +36,7 @@ Object? test() {
   );
   return _$multipartFiles;
 }
-''',
-    );
+''');
   });
 }
 

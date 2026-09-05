@@ -7,10 +7,7 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 DefaultApi _api(String baseUrl) => DefaultApi(
-  CustomServer(
-    baseUrl: baseUrl,
-    serverConfig: testServerConfig(),
-  ),
+  CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
 );
 
 void main() {
@@ -64,16 +61,13 @@ void main() {
       expect(value.active, isFalse);
     });
 
-    test(
-      'explicit null on a nullable defaulted field decodes to null, '
-      'NOT the default',
-      () {
-        final value = DefaultedPrimitives.fromJson(const <String, Object?>{
-          'title': null,
-        });
-        expect(value.title, isNull);
-      },
-    );
+    test('explicit null on a nullable defaulted field decodes to null, '
+        'NOT the default', () {
+      final value = DefaultedPrimitives.fromJson(const <String, Object?>{
+        'title': null,
+      });
+      expect(value.title, isNull);
+    });
 
     test(
       'missing key on nullable defaulted field falls through to default',
@@ -85,25 +79,19 @@ void main() {
       },
     );
 
-    test(
-      'nickname (nullable + default: null) carries no default — '
-      'explicit null decodes to null',
-      () {
-        final value = DefaultedPrimitives.fromJson(const <String, Object?>{
-          'nickname': null,
-        });
-        expect(value.nickname, isNull);
-      },
-    );
+    test('nickname (nullable + default: null) carries no default — '
+        'explicit null decodes to null', () {
+      final value = DefaultedPrimitives.fromJson(const <String, Object?>{
+        'nickname': null,
+      });
+      expect(value.nickname, isNull);
+    });
 
-    test(
-      'nickname (nullable + default: null) carries no default — '
-      'missing key decodes to null',
-      () {
-        final value = DefaultedPrimitives.fromJson(const <String, Object?>{});
-        expect(value.nickname, isNull);
-      },
-    );
+    test('nickname (nullable + default: null) carries no default — '
+        'missing key decodes to null', () {
+      final value = DefaultedPrimitives.fromJson(const <String, Object?>{});
+      expect(value.nickname, isNull);
+    });
 
     test('missing key falls through to default', () {
       final value = DefaultedPrimitives.fromJson(const <String, Object?>{
@@ -154,10 +142,7 @@ void main() {
     });
 
     test('some keys absent fall through to defaults', () {
-      final value = DefaultedPrimitives.fromSimple(
-        'name=alice',
-        explode: true,
-      );
+      final value = DefaultedPrimitives.fromSimple('name=alice', explode: true);
       expect(value.name, 'alice');
       expect(value.count, 0);
       expect(value.rate, 1.5);
@@ -182,10 +167,7 @@ void main() {
     });
 
     test('some keys absent fall through to defaults', () {
-      final value = DefaultedPrimitives.fromForm(
-        'name=alice',
-        explode: true,
-      );
+      final value = DefaultedPrimitives.fromForm('name=alice', explode: true);
       expect(value.name, 'alice');
       expect(value.count, 0);
       expect(value.rate, 1.5);
@@ -245,14 +227,11 @@ void main() {
       expect(decoded, original);
     });
 
-    test(
-      'default value NOT in enum values is dropped — the field keeps the '
-      'no-default behaviour and remains null when the key is missing',
-      () {
-        final value = Subscription.fromJson(const <String, Object?>{});
-        expect(value.fallbackPriority, isNull);
-      },
-    );
+    test('default value NOT in enum values is dropped — the field keeps the '
+        'no-default behaviour and remains null when the key is missing', () {
+      final value = Subscription.fromJson(const <String, Object?>{});
+      expect(value.fallbackPriority, isNull);
+    });
   });
 
   group('Filters — collection const defaults', () {
@@ -260,25 +239,19 @@ void main() {
       const value = Filters();
       expect(value.tags, const <String>['new', 'featured']);
       expect(value.counts, const <String, int>{'x': 1, 'y': 2});
-      expect(
-        value.raw,
-        const <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(value.raw, const <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('public static const exposes default value', () {
       expect(Filters.tagsDefault, const <String>['new', 'featured']);
       expect(Filters.countsDefault, const <String, int>{'x': 1, 'y': 2});
-      expect(
-        Filters.rawDefault,
-        const <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(Filters.rawDefault, const <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('defaults are identical-by-reference across instances', () {
@@ -300,13 +273,10 @@ void main() {
       final value = Filters.fromJson(const <String, Object?>{});
       expect(value.tags, const <String>['new', 'featured']);
       expect(value.counts, const <String, int>{'x': 1, 'y': 2});
-      expect(
-        value.raw,
-        const <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(value.raw, const <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('fromJson preserves const identity of defaults on missing keys', () {
@@ -333,13 +303,10 @@ void main() {
       });
       expect(value.tags, const <String>['alpha', 'beta']);
       expect(value.counts, const <String, int>{'x': 1, 'y': 2});
-      expect(
-        value.raw,
-        const <String, Object?>{
-          'any': 'value',
-          'nested': <Object?>[1, 2, 3],
-        },
-      );
+      expect(value.raw, const <String, Object?>{
+        'any': 'value',
+        'nested': <Object?>[1, 2, 3],
+      });
     });
 
     test('round-trip: fromJson(toJson(...)) yields an equal instance', () {
@@ -428,12 +395,9 @@ void main() {
 
   group('API client methods with explicit args override defaults', () {
     test('explicit query/header/cookie values replace the defaults', () async {
-      await _api(baseUrl).listThings(
-        region: 'eu',
-        page: 7,
-        retries: 9,
-        tracking: true,
-      );
+      await _api(
+        baseUrl,
+      ).listThings(region: 'eu', page: 7, retries: 9, tracking: true);
 
       final recordedRequest = await imposterServer.takeRequest();
       final uri = recordedRequest.uri;
@@ -525,23 +489,20 @@ void main() {
   });
 
   group('API client method — enum header parameter wire encoding', () {
-    test(
-      'omitted enum header parameter serialises the default variant on the '
-      'wire',
-      () async {
-        await _api(baseUrl).listSubscriptions();
+    test('omitted enum header parameter serialises the default variant on the '
+        'wire', () async {
+      await _api(baseUrl).listSubscriptions();
 
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(recordedRequest.headers['x-mode'], 'auto');
-      },
-    );
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['x-mode'], 'auto');
+    });
 
     test(
       'explicit enum header value replaces the default on the wire',
       () async {
-        await _api(baseUrl).listSubscriptions(
-          mode: SubscriptionsParametersModel2.manual,
-        );
+        await _api(
+          baseUrl,
+        ).listSubscriptions(mode: SubscriptionsParametersModel2.manual);
 
         final recordedRequest = await imposterServer.takeRequest();
         expect(recordedRequest.headers['x-mode'], 'manual');
@@ -552,21 +513,18 @@ void main() {
   group('BadlyDefaulted — runtime fallback validates on access', () {
     const offendingValue = 'not a date';
 
-    test(
-      'the static getter throws an InvalidFormatException whose structured '
-      'value and format fields identify the offending default and expected '
-      'format',
-      () {
-        expect(
-          () => BadlyDefaulted.$whenDefault,
-          throwsA(
-            isA<InvalidFormatException>()
-                .having((e) => e.value, 'value', offendingValue)
-                .having((e) => e.format, 'format', contains('ISO8601')),
-          ),
-        );
-      },
-    );
+    test('the static getter throws an InvalidFormatException whose structured '
+        'value and format fields identify the offending default and expected '
+        'format', () {
+      expect(
+        () => BadlyDefaulted.$whenDefault,
+        throwsA(
+          isA<InvalidFormatException>()
+              .having((e) => e.value, 'value', offendingValue)
+              .having((e) => e.format, 'format', contains('ISO8601')),
+        ),
+      );
+    });
 
     test(
       'fromJson on missing key propagates the same InvalidFormatException via '
@@ -599,16 +557,13 @@ void main() {
       },
     );
 
-    test(
-      'writeOnly field is excluded from fromJson — wire value is ignored, '
-      'default still applies',
-      () {
-        final value = RwoDefaults.fromJson(const <String, Object?>{
-          'writeOnlyToken': 'on-wire',
-        });
-        expect(value.writeOnlyToken, 'wo-token');
-      },
-    );
+    test('writeOnly field is excluded from fromJson — wire value is ignored, '
+        'default still applies', () {
+      final value = RwoDefaults.fromJson(const <String, Object?>{
+        'writeOnlyToken': 'on-wire',
+      });
+      expect(value.writeOnlyToken, 'wo-token');
+    });
 
     test(
       'toJson omits readOnly field even when set to a non-default value',
@@ -632,48 +587,39 @@ void main() {
     });
   });
 
-  group(
-    'RwoSchemaLevel — schema-level readOnly with defaulted properties',
-    () {
-      test(
-        'decoding a JSON missing the defaulted keys yields the defaults',
-        () {
-          final value = RwoSchemaLevel.fromJson(const <String, Object?>{});
-          expect(value.label, 'schema-ro');
-          expect(value.count, 42);
-        },
-      );
+  group('RwoSchemaLevel — schema-level readOnly with defaulted properties', () {
+    test('decoding a JSON missing the defaulted keys yields the defaults', () {
+      final value = RwoSchemaLevel.fromJson(const <String, Object?>{});
+      expect(value.label, 'schema-ro');
+      expect(value.count, 42);
+    });
 
-      test('encoding throws because the whole schema is read-only', () {
-        const value = RwoSchemaLevel();
-        expect(
-          value.toJson,
-          throwsA(
-            isA<EncodingException>().having(
-              (e) => e.message,
-              'message',
-              allOf(contains('RwoSchemaLevel'), contains('read-only')),
-            ),
+    test('encoding throws because the whole schema is read-only', () {
+      const value = RwoSchemaLevel();
+      expect(
+        value.toJson,
+        throwsA(
+          isA<EncodingException>().having(
+            (e) => e.message,
+            'message',
+            allOf(contains('RwoSchemaLevel'), contains('read-only')),
           ),
-        );
-      });
+        ),
+      );
+    });
 
-      test('static defaults are emitted and reachable', () {
-        expect(RwoSchemaLevel.labelDefault, 'schema-ro');
-        expect(RwoSchemaLevel.countDefault, 42);
-      });
-    },
-  );
+    test('static defaults are emitted and reachable', () {
+      expect(RwoSchemaLevel.labelDefault, 'schema-ro');
+      expect(RwoSchemaLevel.countDefault, 42);
+    });
+  });
 
   group('AliasChainHolder — alias chain default propagation', () {
-    test(
-      'AliasA -> AliasB -> AliasC default propagates three levels '
-      'to the property',
-      () {
-        const value = AliasChainHolder();
-        expect(value.viaChain, 'c-default');
-      },
-    );
+    test('AliasA -> AliasB -> AliasC default propagates three levels '
+        'to the property', () {
+      const value = AliasChainHolder();
+      expect(value.viaChain, 'c-default');
+    });
 
     test(
       'sibling default on outer alias overrides the chain target default',
@@ -723,16 +669,13 @@ void main() {
         },
       );
 
-      test(
-        'additionalProperties typed int — extras in the default decode '
-        'into the typed AP map at runtime',
-        () {
-          final value = ApDefaults.fromJson(const <String, Object?>{});
-          final typedExtras = value.typedExtras!;
-          expect(typedExtras.name, 'n');
-          expect(typedExtras.additionalProperties, <String, int>{'count': 7});
-        },
-      );
+      test('additionalProperties typed int — extras in the default decode '
+          'into the typed AP map at runtime', () {
+        final value = ApDefaults.fromJson(const <String, Object?>{});
+        final typedExtras = value.typedExtras!;
+        expect(typedExtras.name, 'n');
+        expect(typedExtras.additionalProperties, <String, int>{'count': 7});
+      });
 
       test(
         'additionalProperties: false — extras absent from the class because no '
@@ -775,78 +718,53 @@ void main() {
     });
   });
 
-  group(
-    'OneOfNoDiscHolder — oneOf without discriminator',
-    () {
-      test(
-        'default matching exactly one variant decodes to that variant',
-        () {
-          final single = OneOfNoDiscHolder.singleDefault;
-          expect(single, isA<OneOfNoDiscOneOfShapeA>());
-          expect(
-            (single as OneOfNoDiscOneOfShapeA).value.onlyA,
-            'from-default',
-          );
-        },
-      );
+  group('OneOfNoDiscHolder — oneOf without discriminator', () {
+    test('default matching exactly one variant decodes to that variant', () {
+      final single = OneOfNoDiscHolder.singleDefault;
+      expect(single, isA<OneOfNoDiscOneOfShapeA>());
+      expect((single as OneOfNoDiscOneOfShapeA).value.onlyA, 'from-default');
+    });
 
-      test(
-        'default matching multiple variants decodes to the first matching '
-        'variant (existing decoder contract)',
-        () {
-          final ambiguous = OneOfNoDiscHolder.ambiguousDefault;
-          expect(ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
-        },
-      );
+    test('default matching multiple variants decodes to the first matching '
+        'variant (existing decoder contract)', () {
+      final ambiguous = OneOfNoDiscHolder.ambiguousDefault;
+      expect(ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
+    });
 
-      test('OneOfNoDiscHolder.fromJson({}) populates both defaults', () {
-        final holder = OneOfNoDiscHolder.fromJson(const <String, Object?>{});
-        expect(holder.single, isA<OneOfNoDiscOneOfShapeA>());
-        expect(holder.ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
-      });
-    },
-  );
+    test('OneOfNoDiscHolder.fromJson({}) populates both defaults', () {
+      final holder = OneOfNoDiscHolder.fromJson(const <String, Object?>{});
+      expect(holder.single, isA<OneOfNoDiscOneOfShapeA>());
+      expect(holder.ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
+    });
+  });
 
-  group(
-    'OneOfNoDiscRoutedHolder — oneOf routes to the second variant when the '
-    'first variant rejects the default',
-    () {
-      test(
-        'static getter resolves to the second variant when the first cannot '
-        'decode the default',
-        () {
-          final routed = OneOfNoDiscRoutedHolder.routedDefault;
-          expect(routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
-          final second =
-              (routed as OneOfNoDiscRoutedOneOfRouteSecondOnly).value;
-          expect(second.flexible, 'matches-second');
-        },
-      );
+  group('OneOfNoDiscRoutedHolder — oneOf routes to the second variant when the '
+      'first variant rejects the default', () {
+    test('static getter resolves to the second variant when the first cannot '
+        'decode the default', () {
+      final routed = OneOfNoDiscRoutedHolder.routedDefault;
+      expect(routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
+      final second = (routed as OneOfNoDiscRoutedOneOfRouteSecondOnly).value;
+      expect(second.flexible, 'matches-second');
+    });
 
-      test(
-        'fromJson with missing key falls through to the routed default',
-        () {
-          final holder = OneOfNoDiscRoutedHolder.fromJson(
-            const <String, Object?>{},
-          );
-          expect(holder.routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
-        },
+    test('fromJson with missing key falls through to the routed default', () {
+      final holder = OneOfNoDiscRoutedHolder.fromJson(
+        const <String, Object?>{},
       );
-    },
-  );
+      expect(holder.routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
+    });
+  });
 
   group('AnyOfDefaultHolder — anyOf default with multiple matches', () {
-    test(
-      'default matching multiple variants decodes into all matching variant '
-      'fields (existing decoder contract)',
-      () {
-        final any = AnyOfDefaultHolder.anyDefault;
-        expect(any.anyOfShapeA, isNotNull);
-        expect(any.anyOfShapeA!.a, 'a-val');
-        expect(any.anyOfShapeB, isNotNull);
-        expect(any.anyOfShapeB!.b, 5);
-      },
-    );
+    test('default matching multiple variants decodes into all matching variant '
+        'fields (existing decoder contract)', () {
+      final any = AnyOfDefaultHolder.anyDefault;
+      expect(any.anyOfShapeA, isNotNull);
+      expect(any.anyOfShapeA!.a, 'a-val');
+      expect(any.anyOfShapeB, isNotNull);
+      expect(any.anyOfShapeB!.b, 5);
+    });
 
     test('AnyOfDefaultHolder.fromJson({}) populates both fields', () {
       final holder = AnyOfDefaultHolder.fromJson(const <String, Object?>{});
@@ -858,29 +776,20 @@ void main() {
     });
   });
 
-  group(
-    'Node — nullable self-referential default-null collapse',
-    () {
-      test(
-        'nullable self-referential default null collapses to no default '
-        '— nextOrNull accepts a null literal directly',
-        () {
-          const root = Node(label: 'root');
-          expect(root.nextOrNull, isNull);
-          expect(root.label, 'root');
-        },
-      );
-    },
-  );
+  group('Node — nullable self-referential default-null collapse', () {
+    test('nullable self-referential default null collapses to no default '
+        '— nextOrNull accepts a null literal directly', () {
+      const root = Node(label: 'root');
+      expect(root.nextOrNull, isNull);
+      expect(root.label, 'root');
+    });
+  });
 
   group('DirectDecimal — non-const leaf default at the field root', () {
-    test(
-      'BigDecimal default reachable via static getter and decodes the '
-      'spec literal',
-      () {
-        expect(DirectDecimal.amountDefault.toString(), '12.34');
-      },
-    );
+    test('BigDecimal default reachable via static getter and decodes the '
+        'spec literal', () {
+      expect(DirectDecimal.amountDefault.toString(), '12.34');
+    });
 
     test(
       'fromJson with missing key falls through to the BigDecimal default',
@@ -927,14 +836,11 @@ void main() {
       },
     );
 
-    test(
-      'base64 (format: byte) default decodes the spec literal into the '
-      'underlying bytes',
-      () {
-        final encoded = BinaryDefaults.encodedDefault;
-        expect(encoded.toBytes(), <int>[72, 101, 108, 108, 111]);
-      },
-    );
+    test('base64 (format: byte) default decodes the spec literal into the '
+        'underlying bytes', () {
+      final encoded = BinaryDefaults.encodedDefault;
+      expect(encoded.toBytes(), <int>[72, 101, 108, 108, 111]);
+    });
 
     test('fromJson with missing keys falls through to both defaults', () {
       final value = BinaryDefaults.fromJson(const <String, Object?>{});

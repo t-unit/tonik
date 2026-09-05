@@ -23,10 +23,7 @@ final class AdditionalPropertiesPlan {
 }
 
 final class ApBuilderResult {
-  const ApBuilderResult({
-    required this.codes,
-    this.inlineHelpers = const [],
-  });
+  const ApBuilderResult({required this.codes, this.inlineHelpers = const []});
 
   final List<Code> codes;
   final List<InlineHelper> inlineHelpers;

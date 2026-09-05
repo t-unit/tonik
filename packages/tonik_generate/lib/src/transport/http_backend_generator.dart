@@ -96,9 +96,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   String get clientAccessorFieldName => '_client';
 
   @override
-  Reference get nativeClientAccessorType => FunctionType(
-    (b) => b..returnType = nativeClientType,
-  );
+  Reference get nativeClientAccessorType =>
+      FunctionType((b) => b..returnType = nativeClientType);
 
   @override
   String get clientAdapterName => '_HttpClientAdapter';
@@ -539,14 +538,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       .nullSafeProperty('isCancelled')
       .ifNullThen(literalFalse)
       .conditional(
-        refer(
-          'TonikErrorType.cancelled',
-          'package:tonik_util/tonik_util.dart',
-        ),
-        refer(
-          'TonikErrorType.network',
-          'package:tonik_util/tonik_util.dart',
-        ),
+        refer('TonikErrorType.cancelled', 'package:tonik_util/tonik_util.dart'),
+        refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
       );
 
   List<Code> _requiredMultipartRequestStatements({
@@ -568,13 +561,10 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         const Code(') {'),
         declareFinal(bodyRequest)
             .assign(
-              refer(
-                'AbortableRequest',
-                'package:http/http.dart',
-              ).newInstance(
-                [literalString(plan.methodName), plan.uri],
-                abortTrigger,
-              ),
+              refer('AbortableRequest', 'package:http/http.dart').newInstance([
+                literalString(plan.methodName),
+                plan.uri,
+              ], abortTrigger),
             )
             .statement,
         refer(bodyRequest)
@@ -588,10 +578,10 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
               refer(
                 'AbortableMultipartRequest',
                 'package:http/http.dart',
-              ).newInstance(
-                [literalString(plan.methodName), plan.uri],
-                abortTrigger,
-              ),
+              ).newInstance([
+                literalString(plan.methodName),
+                plan.uri,
+              ], abortTrigger),
             )
             .statement,
         refer(multipartRequest).property('files').property('addAll').call([
@@ -610,14 +600,9 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   }) => [
     refer(request)
         .assign(
-          refer(
-            'AbortableRequest',
-            'package:http/http.dart',
-          ).newInstance(
+          refer('AbortableRequest', 'package:http/http.dart').newInstance(
             [literalString(plan.methodName), plan.uri],
-            {
-              'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
-            },
+            {'abortTrigger': cancellation.nullSafeProperty('whenCancelled')},
           ),
         )
         .statement,
@@ -641,10 +626,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         const Code(') {'),
         declareFinal(bodyRequest)
             .assign(
-              refer(
-                'AbortableRequest',
-                'package:http/http.dart',
-              ).newInstance(
+              refer('AbortableRequest', 'package:http/http.dart').newInstance(
                 [literalString(plan.methodName), plan.uri],
                 {
                   'abortTrigger': cancellation.nullSafeProperty(
@@ -684,10 +666,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         const Code('} else {'),
         declareFinal(ordinaryRequest)
             .assign(
-              refer(
-                'AbortableRequest',
-                'package:http/http.dart',
-              ).newInstance(
+              refer('AbortableRequest', 'package:http/http.dart').newInstance(
                 [literalString(plan.methodName), plan.uri],
                 {
                   'abortTrigger': cancellation.nullSafeProperty(

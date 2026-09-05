@@ -418,14 +418,11 @@ Expression _buildMapSimpleExpression(
       (isNullable
               ? expression.nullSafeProperty('toSimple')
               : expression.property('toSimple'))
-          .call(
-            [],
-            {
-              'explode': literalBool(explode),
-              'allowEmpty': literalBool(allowEmpty),
-              if (literal) 'literal': literalBool(true),
-            },
-          ),
+          .call([], {
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(allowEmpty),
+            if (literal) 'literal': literalBool(true),
+          }),
     UnsupportedMapPropertyValueConversion() =>
       generateEncodingExceptionExpression(
         'Map with complex value types cannot be simple-encoded.',
@@ -463,29 +460,21 @@ Expression _buildListMapContentSimpleExpression(
       .call([
         Method(
           (b) => b
-            ..requiredParameters.add(
-              Parameter((b) => b..name = 'e'),
-            )
-            ..body = converted.property('toSimple').call(
-              [],
-              {
-                'explode': literalBool(explode),
-                'allowEmpty': literalBool(allowEmpty),
-                if (literal) 'literal': literalBool(true),
-              },
-            ).code,
+            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+            ..body = converted.property('toSimple').call([], {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+              if (literal) 'literal': literalBool(true),
+            }).code,
         ).closure,
       ])
       .property('toList')
       .call([])
       .property('toSimple')
-      .call(
-        [],
-        {
-          'explode': literalBool(explode),
-          'allowEmpty': literalBool(allowEmpty),
-          'alreadyEncoded': literalBool(true),
-          if (literal) 'literal': literalBool(true),
-        },
-      );
+      .call([], {
+        'explode': literalBool(explode),
+        'allowEmpty': literalBool(allowEmpty),
+        'alreadyEncoded': literalBool(true),
+        if (literal) 'literal': literalBool(true),
+      });
 }

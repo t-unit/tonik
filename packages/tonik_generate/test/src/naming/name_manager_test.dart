@@ -698,12 +698,8 @@ void main() {
       });
 
       // Verify caching
-      final (
-        baseName: baseName2,
-        implementationNames: implementationNames2,
-      ) = manager.responseNames(
-        response,
-      );
+      final (baseName: baseName2, implementationNames: implementationNames2) =
+          manager.responseNames(response);
       expect(baseName2, baseName);
       expect(identical(implementationNames, implementationNames2), isTrue);
     });
@@ -730,12 +726,8 @@ void main() {
       expect(implementationNames, isEmpty);
 
       // Verify caching
-      final (
-        baseName: baseName2,
-        implementationNames: implementationNames2,
-      ) = manager.responseNames(
-        response,
-      );
+      final (baseName: baseName2, implementationNames: implementationNames2) =
+          manager.responseNames(response);
       expect(baseName2, baseName);
       expect(identical(implementationNames, implementationNames2), isTrue);
     });
@@ -1030,9 +1022,7 @@ void main() {
         final model = EnumModel(
           name: 'Status',
           nameOverride: 'CustomStatus',
-          values: {
-            const EnumEntry(value: 'active'),
-          },
+          values: {const EnumEntry(value: 'active')},
           isNullable: false,
           isDeprecated: false,
           context: context,
@@ -1247,35 +1237,29 @@ void main() {
         expect(result.fallbackName, 'unknown');
       });
 
-      test(
-        'collision between two normalized names disambiguates the second '
-        'occurrence — the first keeps the base name',
-        () {
-          final model = EnumModel<String>(
-            name: 'Status',
-            values: {
-              const EnumEntry<String>(
-                value: 'active',
-                nameOverride: 'Activated',
-              ),
-              const EnumEntry<String>(value: 'inactive'),
-            },
-            fallbackValue: const EnumEntry<String>(
-              value: 'unknown',
-              nameOverride: 'Activated',
-            ),
-            isNullable: false,
-            isDeprecated: false,
-            context: context,
-            examples: const [],
-          );
+      test('collision between two normalized names disambiguates the second '
+          'occurrence — the first keeps the base name', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          fallbackValue: const EnumEntry<String>(
+            value: 'unknown',
+            nameOverride: 'Activated',
+          ),
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        );
 
-          final result = manager.enumVariantNames(model);
+        final result = manager.enumVariantNames(model);
 
-          expect(result.valueNames, ['activated', 'inactive']);
-          expect(result.fallbackName, 'activated2');
-        },
-      );
+        expect(result.valueNames, ['activated', 'inactive']);
+        expect(result.fallbackName, 'activated2');
+      });
 
       test('caches per model — second call returns the same record', () {
         final model = EnumModel<String>(

@@ -116,10 +116,7 @@ const generatedClassTokens = {
 /// Unlike [generatedClassTokens] which are methods the generator adds,
 /// these are members every Dart class inherits. A field named `runtimeType`
 /// would illegally override `Object.runtimeType` with an incompatible type.
-const reservedObjectMembers = {
-  'runtimeType',
-  'noSuchMethod',
-};
+const reservedObjectMembers = {'runtimeType', 'noSuchMethod'};
 
 const Set<String> allKeywords = {
   ...dartKeywords,
@@ -285,9 +282,7 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
 
   // Split on separators and case boundaries, but NOT on $
   final tokens = cleaned
-      .split(
-        RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
-      )
+      .split(RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'))
       .where((token) => token.isNotEmpty)
       .toList();
 

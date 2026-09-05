@@ -73,10 +73,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'user',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('user', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -102,10 +99,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'user',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('user', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -131,10 +125,7 @@ void main() {
         allowEmpty: true,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'user',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('user', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -160,10 +151,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'combined',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('combined', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -190,10 +178,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'variant',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('variant', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -220,10 +205,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'flexible',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('flexible', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -256,10 +238,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'aliased',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('aliased', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -280,10 +259,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'count',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('count', parameter);
       final code = result.accept(scopedEmitter).toString();
 
       expect(
@@ -305,10 +281,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'items',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('items', parameter);
       final code = result.accept(scopedEmitter).toString();
 
       expect(
@@ -336,10 +309,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'status',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('status', parameter);
       final code = result.accept(scopedEmitter).toString();
 
       expect(
@@ -363,10 +333,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'userData',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('userData', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -387,10 +354,7 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode(
-        'data',
-        parameter,
-      );
+      final result = buildToDeepObjectQueryParameterCode('data', parameter);
 
       final code = result.accept(emitter).toString();
       expect(
@@ -416,10 +380,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'filter',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('filter', parameter);
 
         final code = methodBody(result);
         expect(
@@ -454,10 +415,7 @@ void main() {
           allowEmpty: true,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'filter',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('filter', parameter);
 
         final code = methodBody(result);
         expect(
@@ -491,10 +449,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'counts',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('counts', parameter);
 
         final code = methodBody(result);
         expect(
@@ -530,10 +485,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'flags',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('flags', parameter);
 
         final code = methodBody(result);
         expect(
@@ -618,10 +570,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'meta',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('meta', parameter);
 
         final code = methodBody(result);
         expect(
@@ -673,10 +622,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'nested',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('nested', parameter);
 
         final code = methodBody(result);
         expect(
@@ -710,10 +656,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'tags',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('tags', parameter);
 
         final code = methodBody(result);
         expect(
@@ -873,10 +816,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'filter',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('filter', parameter);
 
         final code = methodBody(result);
         expect(
@@ -974,10 +914,7 @@ void main() {
           allowEmpty: false,
         );
 
-        final result = buildToDeepObjectQueryParameterCode(
-          'data',
-          parameter,
-        );
+        final result = buildToDeepObjectQueryParameterCode('data', parameter);
 
         final code = result.accept(emitter).toString();
         expect(

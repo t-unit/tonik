@@ -58,10 +58,7 @@ void main() {
           },
         },
         'tags': [
-          {
-            'name': 'pet',
-            'description': 'Pet operations',
-          },
+          {'name': 'pet', 'description': 'Pet operations'},
         ],
       };
 

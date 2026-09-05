@@ -666,16 +666,12 @@ Future<Object?> _data({required Payload body}) async {
           rawContentType: 'application/json',
           examples: const [],
         ),
-        multipartContentFixture(
-          context,
-          [
-            multipartPartFixture(
-              name: 'value',
-              model: StringModel(context: context),
-            ),
-          ],
-          name: 'Upload',
-        ),
+        multipartContentFixture(context, [
+          multipartPartFixture(
+            name: 'value',
+            model: StringModel(context: context),
+          ),
+        ], name: 'Upload'),
       },
     );
     final method = generator.generateBodyMethod(
@@ -708,80 +704,74 @@ Future<Object?> _data({required Payload body}) async {
   });
 
   group('multipart bodies', () {
-    test(
-      'emits ordered duplicate-preserving scalar JSON and file parts',
-      () {
-        final metadata = ClassModel(
-          name: 'Metadata',
-          properties: [
-            _formProperty(
-              context,
-              name: 'id',
-              model: StringModel(context: context),
-            ),
-          ],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-        );
-
-        final method = generator.generateBodyMethod(
-          _operation(
+    test('emits ordered duplicate-preserving scalar JSON and file parts', () {
+      final metadata = ClassModel(
+        name: 'Metadata',
+        properties: [
+          _formProperty(
             context,
-            requestBody: _multipartBody(
-              context,
-              [
-                multipartPartFixture(
-                  name: 'item',
-                  model: StringModel(context: context),
-                  encoding: const PartEncoding(
-                    contentType: ContentType.text,
-                    rawContentType: 'text/plain; charset=iso-8859-1',
-                    wireContentType: 'text/plain; charset=iso-8859-1',
-                    textEncoding: TextEncoding.latin1,
-                    headers: null,
-                    style: null,
-                    explode: null,
-                    allowReserved: null,
-                  ),
-                ),
-                multipartPartFixture(
-                  name: 'metadata',
-                  model: metadata,
-                  encoding: const PartEncoding(
-                    contentType: ContentType.json,
-                    rawContentType: 'application/json',
-                    headers: null,
-                    style: null,
-                    explode: null,
-                    allowReserved: null,
-                  ),
-                ),
-                multipartPartFixture(
-                  name: 'item',
-                  model: BinaryModel(context: context),
-                  encoding: const PartEncoding(
-                    contentType: ContentType.bytes,
-                    rawContentType: 'image/png',
-                    headers: null,
-                    style: null,
-                    explode: null,
-                    allowReserved: null,
-                  ),
-                ),
-                multipartPartFixture(
-                  name: 'note',
-                  model: StringModel(context: context),
-                  isRequired: false,
-                  isNullable: true,
-                ),
-              ],
-              name: 'Upload',
-            ),
+            name: 'id',
+            model: StringModel(context: context),
           ),
-        );
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
 
-        const expected = r'''
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _multipartBody(context, [
+            multipartPartFixture(
+              name: 'item',
+              model: StringModel(context: context),
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain; charset=iso-8859-1',
+                wireContentType: 'text/plain; charset=iso-8859-1',
+                textEncoding: TextEncoding.latin1,
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            ),
+            multipartPartFixture(
+              name: 'metadata',
+              model: metadata,
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            ),
+            multipartPartFixture(
+              name: 'item',
+              model: BinaryModel(context: context),
+              encoding: const PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'image/png',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            ),
+            multipartPartFixture(
+              name: 'note',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+            ),
+          ], name: 'Upload'),
+        ),
+      );
+
+      const expected = r'''
 Future<Object?> _data({required Upload body}) async {
   final _$multipartFiles = <MultipartFile>[];
   _$multipartFiles.add(
@@ -819,39 +809,34 @@ Future<Object?> _data({required Upload body}) async {
 }
 ''';
 
-        expect(
-          collapseWhitespace(format('${method.accept(emitter)}')),
-          collapseWhitespace(format(expected)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
 
     test('emits repeated scalar and file parts in collection order', () {
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _multipartBody(
-            context,
-            [
-              multipartPartFixture(
-                name: 'tag',
-                model: ListModel(
-                  content: StringModel(context: context),
-                  context: context,
-                  examples: const [],
-                ),
+          requestBody: _multipartBody(context, [
+            multipartPartFixture(
+              name: 'tag',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                examples: const [],
               ),
-              multipartPartFixture(
-                name: 'file',
-                model: ListModel(
-                  content: BinaryModel(context: context),
-                  context: context,
-                  examples: const [],
-                ),
+            ),
+            multipartPartFixture(
+              name: 'file',
+              model: ListModel(
+                content: BinaryModel(context: context),
+                context: context,
+                examples: const [],
               ),
-            ],
-            name: 'BatchUpload',
-          ),
+            ),
+          ], name: 'BatchUpload'),
         ),
       );
 
@@ -930,25 +915,21 @@ Future<Object?> _data({OptionalUpload? body}) async {
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _multipartBody(
-            context,
-            [
-              multipartPartFixture(
-                name: 'value',
-                model: StringModel(context: context),
-                encoding: const PartEncoding(
-                  contentType: ContentType.text,
-                  rawContentType: 'text/plain; charset=utf-16',
-                  wireContentType: 'text/plain; charset=utf-8',
-                  headers: null,
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          requestBody: _multipartBody(context, [
+            multipartPartFixture(
+              name: 'value',
+              model: StringModel(context: context),
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain; charset=utf-16',
+                wireContentType: 'text/plain; charset=utf-8',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            ],
-            name: 'UnsupportedTextUpload',
-          ),
+            ),
+          ], name: 'UnsupportedTextUpload'),
         ),
       );
 
@@ -976,36 +957,32 @@ Future<Object?> _data({required UnsupportedTextUpload body}) async {
       final method = generator.generateBodyMethod(
         _operation(
           context,
-          requestBody: _multipartBody(
-            context,
-            [
-              multipartPartFixture(
-                name: 'value',
-                model: StringModel(context: context),
-                encoding: PartEncoding(
-                  contentType: null,
-                  rawContentType: null,
-                  headers: {
-                    'X-Trace': ResponseHeaderObject(
-                      name: 'X-Trace',
-                      description: null,
-                      isRequired: true,
-                      isDeprecated: false,
-                      explode: false,
-                      model: IntegerModel(context: context),
-                      context: context,
-                      encoding: ResponseHeaderEncoding.simple,
-                      examples: const [],
-                    ),
-                  },
-                  style: null,
-                  explode: null,
-                  allowReserved: null,
-                ),
+          requestBody: _multipartBody(context, [
+            multipartPartFixture(
+              name: 'value',
+              model: StringModel(context: context),
+              encoding: PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                headers: {
+                  'X-Trace': ResponseHeaderObject(
+                    name: 'X-Trace',
+                    description: null,
+                    isRequired: true,
+                    isDeprecated: false,
+                    explode: false,
+                    model: IntegerModel(context: context),
+                    context: context,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            ],
-            name: 'HeaderUpload',
-          ),
+            ),
+          ], name: 'HeaderUpload'),
         ),
       );
 
@@ -1096,11 +1073,7 @@ RequestBodyObject _multipartBody(
   content: {multipartContentFixture(context, parts, name: name)},
 );
 
-typedef _ProfileForm = ({
-  ClassModel model,
-  Property callback,
-  Property tags,
-});
+typedef _ProfileForm = ({ClassModel model, Property callback, Property tags});
 
 _ProfileForm _profileFormModel(Context context) {
   final displayName = _formProperty(

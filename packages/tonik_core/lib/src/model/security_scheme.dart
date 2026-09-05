@@ -3,10 +3,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 sealed class SecurityScheme {
-  const SecurityScheme({
-    required this.type,
-    required this.description,
-  });
+  const SecurityScheme({required this.type, required this.description});
 
   final SecuritySchemeType type;
   final String? description;
@@ -15,13 +12,7 @@ sealed class SecurityScheme {
   String toString() => 'SecurityScheme{type: $type, description: $description}';
 }
 
-enum SecuritySchemeType {
-  apiKey,
-  http,
-  mutualTLS,
-  oauth2,
-  openIdConnect,
-}
+enum SecuritySchemeType { apiKey, http, mutualTLS, oauth2, openIdConnect }
 
 class ApiKeySecurityScheme extends SecurityScheme {
   const ApiKeySecurityScheme({
@@ -141,10 +132,7 @@ class OAuth2Flow {
 
 @immutable
 class SecurityRequirement {
-  const SecurityRequirement({
-    required this.scheme,
-    required this.scopes,
-  });
+  const SecurityRequirement({required this.scheme, required this.scopes});
 
   final SecurityScheme scheme;
   final List<String> scopes;

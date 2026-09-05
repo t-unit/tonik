@@ -126,10 +126,9 @@ void main() {
 
         final klass = generator.generateClass(model);
 
-        expect(
-          klass.docs,
-          ['/// A flexible model that can have multiple values'],
-        );
+        expect(klass.docs, [
+          '/// A flexible model that can have multiple values',
+        ]);
       });
 
       test('generates class with multiline doc comment', () {
@@ -198,12 +197,7 @@ void main() {
           ],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 1,
-            ),
+            Example(name: null, summary: null, description: null, value: 1),
           ],
         );
 
@@ -228,12 +222,7 @@ void main() {
           ],
           context: context,
           examples: const [
-            Example(
-              name: null,
-              summary: null,
-              description: null,
-              value: 1,
-            ),
+            Example(name: null, summary: null, description: null, value: 1),
           ],
         );
 
@@ -457,30 +446,27 @@ void main() {
       );
     });
 
-    test(
-      'generates copyWith getter returning interface type',
-      () {
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'ValueChoice',
-          models: [
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (discriminatorValue: null, model: IntegerModel(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates copyWith getter returning interface type', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'ValueChoice',
+        models: [
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
+      final klass = generator.generateClass(model);
 
-        final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
-        expect(copyWith.type, MethodType.getter);
-        expect(
-          copyWith.returns?.accept(emitter).toString(),
-          r'$$ValueChoiceCopyWith<ValueChoice>',
-        );
-      },
-    );
+      final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
+      expect(copyWith.type, MethodType.getter);
+      expect(
+        copyWith.returns?.accept(emitter).toString(),
+        r'$$ValueChoiceCopyWith<ValueChoice>',
+      );
+    });
   });
 
   group('currentEncodingShape with multiple fields of same shape', () {
@@ -680,14 +666,8 @@ void main() {
           isDeprecated: false,
           name: 'EntityChoice',
           models: [
-            (
-              discriminatorValue: 'person',
-              model: personModel,
-            ),
-            (
-              discriminatorValue: 'company',
-              model: companyModel,
-            ),
+            (discriminatorValue: 'person', model: personModel),
+            (discriminatorValue: 'company', model: companyModel),
           ],
           discriminator: 'type',
           context: context,
@@ -803,14 +783,8 @@ String toSimple({
           isDeprecated: false,
           name: 'EntityChoice',
           models: [
-            (
-              discriminatorValue: 'person',
-              model: personModel,
-            ),
-            (
-              discriminatorValue: 'company',
-              model: companyModel,
-            ),
+            (discriminatorValue: 'person', model: personModel),
+            (discriminatorValue: 'company', model: companyModel),
           ],
           discriminator: 'type',
           context: context,
@@ -844,9 +818,7 @@ String toSimple({
           isTrue,
         );
         expect(
-          toFormMethod.optionalParameters.any(
-            (p) => p.name == 'allowReserved',
-          ),
+          toFormMethod.optionalParameters.any((p) => p.name == 'allowReserved'),
           isTrue,
         );
 
@@ -1117,10 +1089,7 @@ String toSimple({
       );
       expect(allowEmptyParam.named, isTrue);
       expect(allowEmptyParam.required, isFalse);
-      expect(
-        allowEmptyParam.defaultTo?.accept(emitter).toString(),
-        'true',
-      );
+      expect(allowEmptyParam.defaultTo?.accept(emitter).toString(), 'true');
     });
 
     test('generates complete method for single complex variant', () {
@@ -1135,9 +1104,7 @@ String toSimple({
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'FlexibleChoice',
-        models: [
-          (discriminatorValue: 'user', model: userModel),
-        ],
+        models: [(discriminatorValue: 'user', model: userModel)],
         context: context,
         examples: const [],
       );
@@ -1198,10 +1165,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
     test('generates complete method with discriminator', () {
@@ -1226,12 +1190,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'DiscriminatedChoice',
-        models: [
-          (
-            discriminatorValue: 'data',
-            model: classModel,
-          ),
-        ],
+        models: [(discriminatorValue: 'data', model: classModel)],
         discriminator: 'type',
         context: context,
         examples: const [],
@@ -1248,10 +1207,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { _$mapValues.add(data!.parameterProperties(allowEmpty: allowEmpty)); _$discriminatorValue ??= r'data'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map; }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
     test('generates complete method for anyOf with dynamic encoding shape', () {
@@ -1278,9 +1234,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'MixedChoice',
-        models: [
-          (discriminatorValue: 'inner', model: anyOfModel),
-        ],
+        models: [(discriminatorValue: 'inner', model: anyOfModel)],
         context: context,
         examples: const [],
       );
@@ -1320,178 +1274,143 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
-    test(
-      'generates complete method for anyOf with dynamic encoding shape '
-      'and discriminator',
-      () {
-        final anyOfModel = AnyOfModel(
-          isDeprecated: false,
-          name: 'InnerChoice',
-          models: [
-            (
-              discriminatorValue: 'string',
-              model: StringModel(context: context),
+    test('generates complete method for anyOf with dynamic encoding shape '
+        'and discriminator', () {
+      final anyOfModel = AnyOfModel(
+        isDeprecated: false,
+        name: 'InnerChoice',
+        models: [
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (
+            discriminatorValue: 'data',
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Data',
+              properties: const [],
+              context: context,
+              examples: const [],
             ),
-            (
-              discriminatorValue: 'data',
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'Data',
-                properties: const [],
-                context: context,
-                examples: const [],
-              ),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'MixedChoice',
-          models: [
-            (discriminatorValue: 'inner', model: anyOfModel),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'MixedChoice',
+        models: [(discriminatorValue: 'inner', model: anyOfModel)],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final method = klass.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(method.accept(emitter).toString());
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      final generated = format(method.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: throw EncodingException( 'Cannot encode simple type to map in parameterProperties', ); case EncodingShape.complex: _$mapValues.add( innerChoice!.parameterProperties(allowEmpty: allowEmpty), ); _$discriminatorValue ??= r'inner'; break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map; }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expectedMethod),
-        );
-      },
-    );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
+    });
 
-    test(
-      'generates complete method for anyOf with simple composite and '
-      'complex class',
-      () {
-        final anyOfModel = AnyOfModel(
-          isDeprecated: false,
-          name: 'InnerChoice',
-          models: [
-            (
-              discriminatorValue: 'string',
-              model: StringModel(context: context),
-            ),
-            (
-              discriminatorValue: 'number',
-              model: IntegerModel(context: context),
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('generates complete method for anyOf with simple composite and '
+        'complex class', () {
+      final anyOfModel = AnyOfModel(
+        isDeprecated: false,
+        name: 'InnerChoice',
+        models: [
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (discriminatorValue: 'number', model: IntegerModel(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexData',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexData',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'MixedChoice',
-          models: [
-            (discriminatorValue: 'inner', model: anyOfModel),
-            (discriminatorValue: 'complex', model: classModel),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'MixedChoice',
+        models: [
+          (discriminatorValue: 'inner', model: anyOfModel),
+          (discriminatorValue: 'complex', model: classModel),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final method = klass.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(method.accept(emitter).toString());
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      final generated = format(method.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (complexData != null) { _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty)); } if (innerChoice != null) { throw EncodingException( 'Cannot encode anyOf with simple type to map in parameterProperties', ); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expectedMethod),
-        );
-      },
-    );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
+    });
 
-    test(
-      'generates complete method for anyOf with mixed simple and complex '
-      'at top level',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'ComplexData',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
+    test('generates complete method for anyOf with mixed simple and complex '
+        'at top level', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'ComplexData',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'MixedTopLevel',
-          models: [
-            (
-              discriminatorValue: 'string',
-              model: StringModel(context: context),
-            ),
-            (discriminatorValue: 'complex', model: classModel),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'MixedTopLevel',
+        models: [
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (discriminatorValue: 'complex', model: classModel),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final method = klass.methods.firstWhere(
-          (m) => m.name == 'parameterProperties',
-        );
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
 
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(method.accept(emitter).toString());
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+      final generated = format(method.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (complexData != null) { _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty)); } if (string != null) { throw EncodingException( 'Cannot encode anyOf with simple type to map in parameterProperties', ); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expectedMethod),
-        );
-      },
-    );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
+    });
 
     test('generates complete method for anyOf with only simple types', () {
       final model = AnyOfModel(
@@ -1520,10 +1439,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
     test('merges parameterProperties from nested complex types', () {
@@ -1564,10 +1480,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
     test('throws when anyOf contains list model', () {
@@ -1599,10 +1512,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (list != null) { throw EncodingException('Lists are not supported in parameterProperties'); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
 
     test('merges parameterProperties from a nested mixed-encoding anyOf', () {
@@ -1620,10 +1530,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -1632,9 +1539,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OuterChoice',
-        models: [
-          (discriminatorValue: 'inner', model: innerAnyOf),
-        ],
+        models: [(discriminatorValue: 'inner', model: innerAnyOf)],
         context: context,
         examples: const [],
       );
@@ -1674,10 +1579,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 }
 ''';
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expectedMethod),
-      );
+      expect(collapseWhitespace(generated), collapseWhitespace(expectedMethod));
     });
   });
 
@@ -2248,9 +2150,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       final klass = generator.generateClass(model);
 
-      final toFormMethod = klass.methods.firstWhere(
-        (m) => m.name == 'toForm',
-      );
+      final toFormMethod = klass.methods.firstWhere((m) => m.name == 'toForm');
 
       expect(toFormMethod.optionalParameters.length, 6);
 
@@ -2310,19 +2210,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final method = klass.methods.firstWhere(
-        (m) => m.name == 'toSimple',
-      );
+      final method = klass.methods.firstWhere((m) => m.name == 'toSimple');
 
       final generated = format(method.accept(emitter).toString());
 
@@ -2349,19 +2244,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final method = klass.methods.firstWhere(
-        (m) => m.name == 'toForm',
-      );
+      final method = klass.methods.firstWhere((m) => m.name == 'toForm');
 
       final generated = format(method.accept(emitter).toString());
 
@@ -2441,10 +2331,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -2513,19 +2400,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final method = klass.methods.firstWhere(
-        (m) => m.name == 'toLabel',
-      );
+      final method = klass.methods.firstWhere((m) => m.name == 'toLabel');
 
       final generated = format(method.accept(emitter).toString());
 
@@ -2588,19 +2470,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final method = klass.methods.firstWhere(
-        (m) => m.name == 'toMatrix',
-      );
+      final method = klass.methods.firstWhere((m) => m.name == 'toMatrix');
 
       final generated = format(method.accept(emitter).toString());
 
@@ -2628,25 +2505,17 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final generated = format(
-        klass.accept(emitter).toString(),
-      );
+      final generated = format(klass.accept(emitter).toString());
 
       // MapModel should NOT be attempted in fromSimple decoding
-      expect(
-        collapseWhitespace(generated),
-        isNot(contains('decodeSimpleMap')),
-      );
+      expect(collapseWhitespace(generated), isNot(contains('decodeSimpleMap')));
     });
 
     test('currentEncodingShape returns complex for MapModel property', () {
@@ -2662,10 +2531,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: 'text',
-            model: StringModel(context: context),
-          ),
+          (discriminatorValue: 'text', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
@@ -2686,42 +2552,38 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   });
 
   group('special characters in discriminator', () {
-    test(
-      'toJson escapes discriminator value containing single quote',
-      () {
-        final personModel = ClassModel(
-          isDeprecated: false,
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toJson escapes discriminator value containing single quote', () {
+      final personModel = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'EntityChoice',
-          models: [
-            (discriminatorValue: "it's-a-person", model: personModel),
-          ],
-          discriminator: 'type',
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'EntityChoice',
+        models: [(discriminatorValue: "it's-a-person", model: personModel)],
+        discriminator: 'type',
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 Object? toJson() {
   final _$values = <Object?>{};
   final _$mapValues = <Map<String, Object?>>[];
@@ -2759,49 +2621,44 @@ Object? toJson() {
 }
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-    test(
-      'toJson escapes discriminator field name containing single quote',
-      () {
-        final personModel = ClassModel(
-          isDeprecated: false,
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toJson escapes discriminator field name containing single quote', () {
+      final personModel = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'EntityChoice',
-          models: [
-            (discriminatorValue: 'person', model: personModel),
-          ],
-          discriminator: "it's-a-type",
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'EntityChoice',
+        models: [(discriminatorValue: 'person', model: personModel)],
+        discriminator: "it's-a-type",
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
     final _$discValue = _$discriminatorValue;
     if (_$discValue != null) {
       _$map.putIfAbsent(r"it's-a-type", () => _$discValue);
@@ -2809,12 +2666,11 @@ Object? toJson() {
     return _$map;
 ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group('with useImmutableCollections', () {
@@ -2842,19 +2698,14 @@ Object? toJson() {
               examples: const [],
             ),
           ),
-          (
-            discriminatorValue: null,
-            model: IntegerModel(context: context),
-          ),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
       );
 
       final klass = immutableGenerator.generateClass(model);
-      final listField = klass.fields.firstWhere(
-        (f) => f.name == 'iList',
-      );
+      final listField = klass.fields.firstWhere((f) => f.name == 'iList');
       final typeRef = listField.type! as TypeReference;
       expect(typeRef.symbol, 'IList');
       expect(
@@ -2863,10 +2714,7 @@ Object? toJson() {
         'fast_immutable_collections.dart',
       );
       expect(typeRef.types.length, 1);
-      expect(
-        (typeRef.types.first as TypeReference).symbol,
-        'String',
-      );
+      expect((typeRef.types.first as TypeReference).symbol, 'String');
 
       // Equality should use direct == (IList has built-in value equality)
       final generated = format(klass.accept(emitter).toString());
@@ -2886,45 +2734,43 @@ bool operator ==(Object other) {
   });
 
   group('Base64Model in AnyOf', () {
-    test(
-      'toSimple converts Base64Model field via toBase64String',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Text',
-          properties: [
-            Property(
-              name: 'content',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toSimple converts Base64Model field via toBase64String', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Text',
+        properties: [
+          Property(
+            name: 'content',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'AnyOfBase64',
-          models: [
-            (discriminatorValue: null, model: classModel),
-            (discriminatorValue: null, model: Base64Model(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'AnyOfBase64',
+        models: [
+          (discriminatorValue: null, model: classModel),
+          (discriminatorValue: null, model: Base64Model(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final toSimpleMethod = klass.methods.firstWhere(
-          (m) => m.name == 'toSimple',
-        );
-        final generated = format(toSimpleMethod.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final toSimpleMethod = klass.methods.firstWhere(
+        (m) => m.name == 'toSimple',
+      );
+      final generated = format(toSimpleMethod.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 @override
 String toSimple({
   required bool explode,
@@ -2967,49 +2813,44 @@ String toSimple({
 }
 ''';
 
-        expect(generated.trim(), format(expectedMethod).trim());
-      },
-    );
+      expect(generated.trim(), format(expectedMethod).trim());
+    });
 
-    test(
-      'toForm converts Base64Model field via toBase64String',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Text',
-          properties: [
-            Property(
-              name: 'content',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toForm converts Base64Model field via toBase64String', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Text',
+        properties: [
+          Property(
+            name: 'content',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'AnyOfBase64',
-          models: [
-            (discriminatorValue: null, model: classModel),
-            (discriminatorValue: null, model: Base64Model(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'AnyOfBase64',
+        models: [
+          (discriminatorValue: null, model: classModel),
+          (discriminatorValue: null, model: Base64Model(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final toFormMethod = klass.methods.firstWhere(
-          (m) => m.name == 'toForm',
-        );
-        final generated = format(toFormMethod.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final toFormMethod = klass.methods.firstWhere((m) => m.name == 'toForm');
+      final generated = format(toFormMethod.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           @override
           List<ParameterEntry> toForm(
             String paramName, {
@@ -3067,49 +2908,46 @@ String toSimple({
           }
         ''';
 
-        expect(generated.trim(), format(expectedMethod).trim());
-      },
-    );
+      expect(generated.trim(), format(expectedMethod).trim());
+    });
 
-    test(
-      'toLabel converts Base64Model field via toBase64String',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Text',
-          properties: [
-            Property(
-              name: 'content',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('toLabel converts Base64Model field via toBase64String', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Text',
+        properties: [
+          Property(
+            name: 'content',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'AnyOfBase64',
-          models: [
-            (discriminatorValue: null, model: classModel),
-            (discriminatorValue: null, model: Base64Model(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'AnyOfBase64',
+        models: [
+          (discriminatorValue: null, model: classModel),
+          (discriminatorValue: null, model: Base64Model(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final toLabelMethod = klass.methods.firstWhere(
-          (m) => m.name == 'toLabel',
-        );
-        final generated = format(toLabelMethod.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final toLabelMethod = klass.methods.firstWhere(
+        (m) => m.name == 'toLabel',
+      );
+      final generated = format(toLabelMethod.accept(emitter).toString());
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
 @override
 String toLabel({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
@@ -3143,49 +2981,46 @@ String toLabel({required bool explode, required bool allowEmpty}) {
 }
 ''';
 
-        expect(generated.trim(), format(expectedMethod).trim());
-      },
-    );
+      expect(generated.trim(), format(expectedMethod).trim());
+    });
 
-    test(
-      'uriEncode converts Base64Model variant via toBase64String',
-      () {
-        final classModel = ClassModel(
-          isDeprecated: false,
-          name: 'Text',
-          properties: [
-            Property(
-              name: 'content',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test('uriEncode converts Base64Model variant via toBase64String', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Text',
+        properties: [
+          Property(
+            name: 'content',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'AnyOfBase64',
-          models: [
-            (discriminatorValue: null, model: classModel),
-            (discriminatorValue: null, model: Base64Model(context: context)),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'AnyOfBase64',
+        models: [
+          (discriminatorValue: null, model: classModel),
+          (discriminatorValue: null, model: Base64Model(context: context)),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final klass = generator.generateClass(model);
-        final uriEncodeMethod = klass.methods.firstWhere(
-          (m) => m.name == 'uriEncode',
-        );
-        final generated = format(uriEncodeMethod.accept(emitter).toString());
+      final klass = generator.generateClass(model);
+      final uriEncodeMethod = klass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+      final generated = format(uriEncodeMethod.accept(emitter).toString());
 
-        const expectedMethod = '''
+      const expectedMethod = '''
           @override
           String uriEncode({
             required bool allowEmpty,
@@ -3210,9 +3045,8 @@ String toLabel({required bool explode, required bool allowEmpty}) {
           }
         ''';
 
-        expect(generated.trim(), format(expectedMethod).trim());
-      },
-    );
+      expect(generated.trim(), format(expectedMethod).trim());
+    });
   });
 
   group('AnyModel in AnyOf', () {
@@ -3601,9 +3435,7 @@ Object? toJson() {
 
     test('fromJson assigns AnyModel field as catch-all', () {
       final klass = generator.generateClass(makeMixedFilter());
-      final ctor = klass.constructors.firstWhere(
-        (c) => c.name == 'fromJson',
-      );
+      final ctor = klass.constructors.firstWhere((c) => c.name == 'fromJson');
       final wrapped = Method(
         (b) => b
           ..name = 'wrap'
@@ -3640,9 +3472,7 @@ void wrap() {
 
     test('fromSimple skips AnyModel field — passes null to constructor', () {
       final klass = generator.generateClass(makeMixedFilter());
-      final ctor = klass.constructors.firstWhere(
-        (c) => c.name == 'fromSimple',
-      );
+      final ctor = klass.constructors.firstWhere((c) => c.name == 'fromSimple');
       final wrapped = Method(
         (b) => b
           ..name = 'wrap'
@@ -3675,9 +3505,7 @@ void wrap() {
 
     test('fromForm skips AnyModel field — passes null to constructor', () {
       final klass = generator.generateClass(makeMixedFilter());
-      final ctor = klass.constructors.firstWhere(
-        (c) => c.name == 'fromForm',
-      );
+      final ctor = klass.constructors.firstWhere((c) => c.name == 'fromForm');
       final wrapped = Method(
         (b) => b
           ..name = 'wrap'
@@ -3756,9 +3584,7 @@ void wrap() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyAny',
-        models: [
-          (discriminatorValue: null, model: AnyModel(context: context)),
-        ],
+        models: [(discriminatorValue: null, model: AnyModel(context: context))],
         context: context,
         examples: const [],
       );
@@ -3774,17 +3600,13 @@ void wrap() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyAny',
-        models: [
-          (discriminatorValue: null, model: AnyModel(context: context)),
-        ],
+        models: [(discriminatorValue: null, model: AnyModel(context: context))],
         context: context,
         examples: const [],
       );
 
       final klass = generator.generateClass(model);
-      final ctor = klass.constructors.firstWhere(
-        (c) => c.name == 'fromJson',
-      );
+      final ctor = klass.constructors.firstWhere((c) => c.name == 'fromJson');
       final wrapped = Method(
         (b) => b
           ..name = 'wrap'
@@ -3810,9 +3632,7 @@ void wrap() {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyAny',
-        models: [
-          (discriminatorValue: null, model: AnyModel(context: context)),
-        ],
+        models: [(discriminatorValue: null, model: AnyModel(context: context))],
         context: context,
         examples: const [],
       );
@@ -3846,9 +3666,7 @@ EncodingShape get currentEncodingShape {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyAny',
-        models: [
-          (discriminatorValue: null, model: AnyModel(context: context)),
-        ],
+        models: [(discriminatorValue: null, model: AnyModel(context: context))],
         context: context,
         examples: const [],
       );
@@ -3898,39 +3716,37 @@ Object? toJson() {
   });
 
   group('recursion splicing', () {
-    test(
-      r'AnyOf { Tree, ClassA } splices _$encodeTree into toJson',
-      () {
-        final tree = MapModel(
-          name: 'Tree',
-          valueModel: AnyModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        tree.valueModel = tree;
-        final classA = ClassModel(
-          isDeprecated: false,
-          name: 'ClassA',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'TreeAndClassA',
-          models: [
-            (discriminatorValue: null, model: tree),
-            (discriminatorValue: null, model: classA),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test(r'AnyOf { Tree, ClassA } splices _$encodeTree into toJson', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      tree.valueModel = tree;
+      final classA = ClassModel(
+        isDeprecated: false,
+        name: 'ClassA',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'TreeAndClassA',
+        models: [
+          (discriminatorValue: null, model: tree),
+          (discriminatorValue: null, model: classA),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final clazz = generator.generateClass(model);
-        final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
-        final actual = format(toJson.accept(emitter).toString());
+      final clazz = generator.generateClass(model);
+      final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
+      final actual = format(toJson.accept(emitter).toString());
 
-        const expected = r'''
+      const expected = r'''
           @override
           Object? toJson() {
             late final Object? Function(Object?) _$encodeTree;
@@ -3982,54 +3798,48 @@ Object? toJson() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(actual),
-          collapseWhitespace(format(expected)),
-        );
-      },
-    );
+      expect(collapseWhitespace(actual), collapseWhitespace(format(expected)));
+    });
 
-    test(
-      r'AnyOf { Tree, ClassA } splices _$decodeTree into fromJson',
-      () {
-        final tree = MapModel(
-          name: 'Tree',
-          valueModel: AnyModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        tree.valueModel = tree;
-        final classA = ClassModel(
-          isDeprecated: false,
-          name: 'ClassA',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'TreeAndClassA',
-          models: [
-            (discriminatorValue: null, model: tree),
-            (discriminatorValue: null, model: classA),
-          ],
-          context: context,
-          examples: const [],
-        );
+    test(r'AnyOf { Tree, ClassA } splices _$decodeTree into fromJson', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      tree.valueModel = tree;
+      final classA = ClassModel(
+        isDeprecated: false,
+        name: 'ClassA',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'TreeAndClassA',
+        models: [
+          (discriminatorValue: null, model: tree),
+          (discriminatorValue: null, model: classA),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final clazz = generator.generateClass(model);
-        final fromJsonCtor = clazz.constructors.firstWhere(
-          (c) => c.name == 'fromJson',
-        );
-        final actual = format(
-          Class(
-            (b) => b
-              ..name = 'TreeAndClassA'
-              ..constructors.add(fromJsonCtor),
-          ).accept(emitter).toString(),
-        );
+      final clazz = generator.generateClass(model);
+      final fromJsonCtor = clazz.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      final actual = format(
+        Class(
+          (b) => b
+            ..name = 'TreeAndClassA'
+            ..constructors.add(fromJsonCtor),
+        ).accept(emitter).toString(),
+      );
 
-        const expected = r'''
+      const expected = r'''
           class TreeAndClassA {
             factory TreeAndClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _$decodeTree;
@@ -4059,56 +3869,50 @@ Object? toJson() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(actual),
-          collapseWhitespace(format(expected)),
-        );
-      },
-    );
+      expect(collapseWhitespace(actual), collapseWhitespace(format(expected)));
+    });
 
-    test(
-      'AnyOf { A, B } indirect cycle splices two mutually recursive '
-      'decode helpers into fromJson',
-      () {
-        final a = MapModel(
-          name: 'A',
-          valueModel: AnyModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        final b = MapModel(
-          name: 'B',
-          valueModel: AnyModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        a.valueModel = b;
-        b.valueModel = a;
+    test('AnyOf { A, B } indirect cycle splices two mutually recursive '
+        'decode helpers into fromJson', () {
+      final a = MapModel(
+        name: 'A',
+        valueModel: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final b = MapModel(
+        name: 'B',
+        valueModel: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      a.valueModel = b;
+      b.valueModel = a;
 
-        final model = AnyOfModel(
-          isDeprecated: false,
-          name: 'AAndB',
-          models: [
-            (discriminatorValue: null, model: a),
-            (discriminatorValue: null, model: b),
-          ],
-          context: context,
-          examples: const [],
-        );
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'AAndB',
+        models: [
+          (discriminatorValue: null, model: a),
+          (discriminatorValue: null, model: b),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final clazz = generator.generateClass(model);
-        final fromJsonCtor = clazz.constructors.firstWhere(
-          (c) => c.name == 'fromJson',
-        );
-        final actual = format(
-          Class(
-            (b) => b
-              ..name = 'AAndB'
-              ..constructors.add(fromJsonCtor),
-          ).accept(emitter).toString(),
-        );
+      final clazz = generator.generateClass(model);
+      final fromJsonCtor = clazz.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      final actual = format(
+        Class(
+          (b) => b
+            ..name = 'AAndB'
+            ..constructors.add(fromJsonCtor),
+        ).accept(emitter).toString(),
+      );
 
-        const expected = r'''
+      const expected = r'''
           class AAndB {
             factory AAndB.fromJson(Object? json) {
               late final B Function(Object?) _$decodeB;
@@ -4139,11 +3943,7 @@ Object? toJson() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(actual),
-          collapseWhitespace(format(expected)),
-        );
-      },
-    );
+      expect(collapseWhitespace(actual), collapseWhitespace(format(expected)));
+    });
   });
 }

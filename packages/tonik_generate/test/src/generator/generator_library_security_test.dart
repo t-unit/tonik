@@ -279,9 +279,7 @@ void main() {
             context: ctx,
             summary: 'Get public data',
             description: 'Get public data',
-            tags: {
-              Tag(name: 'public'),
-            },
+            tags: {Tag(name: 'public')},
             isDeprecated: false,
             path: '/public',
             method: HttpMethod.get,

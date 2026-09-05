@@ -205,10 +205,7 @@ void main() {
     final listModel = arrayWithNullableItems.model as ListModel;
     expect(listModel.isContentNullable, isTrue);
     expect(listModel.content, isA<StringModel>());
-    expect(
-      (listModel.content as StringModel).context.path,
-      contains('array'),
-    );
+    expect((listModel.content as StringModel).context.path, contains('array'));
   });
 
   test('imports array with nullable items via nullable flag', () {
@@ -291,9 +288,7 @@ void main() {
     final api = Importer().import(spec);
 
     final model =
-        api.models.firstWhere(
-              (m) => m is ClassModel && m.name == 'Person',
-            )
+        api.models.firstWhere((m) => m is ClassModel && m.name == 'Person')
             as ClassModel;
     final name = model.properties.firstWhere((p) => p.name == 'name');
     expect(name.model, isA<StringModel>());

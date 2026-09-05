@@ -14,11 +14,10 @@ void main() {
     hookPath = File('.githooks/commit-msg').absolute.path;
     installerPath = File('scripts/install_git_hooks.sh').absolute.path;
 
-    final result = await Process.run(
-      'git',
-      ['init', '--quiet'],
-      workingDirectory: repository.path,
-    );
+    final result = await Process.run('git', [
+      'init',
+      '--quiet',
+    ], workingDirectory: repository.path);
     expect(result.exitCode, 0, reason: result.stderr.toString());
   });
 
@@ -86,17 +85,13 @@ void main() {
       const [],
       workingDirectory: repository.path,
     );
-    expect(
-      installResult.exitCode,
-      0,
-      reason: installResult.stderr.toString(),
-    );
+    expect(installResult.exitCode, 0, reason: installResult.stderr.toString());
 
-    final configResult = await Process.run(
-      'git',
-      ['config', '--get', 'core.hooksPath'],
-      workingDirectory: repository.path,
-    );
+    final configResult = await Process.run('git', [
+      'config',
+      '--get',
+      'core.hooksPath',
+    ], workingDirectory: repository.path);
     expect(configResult.exitCode, 0, reason: configResult.stderr.toString());
     expect(configResult.stdout.toString().trim(), '.githooks');
   });
@@ -110,9 +105,7 @@ Future<ProcessResult> validateSubject({
   final messageFile = File('${repository.path}/COMMIT_EDITMSG')
     ..writeAsStringSync('$subject\n');
 
-  return Process.run(
-    hookPath,
-    [messageFile.path],
-    workingDirectory: repository.path,
-  );
+  return Process.run(hookPath, [
+    messageFile.path,
+  ], workingDirectory: repository.path);
 }

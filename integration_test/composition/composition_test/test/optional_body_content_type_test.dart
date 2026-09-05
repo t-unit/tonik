@@ -36,10 +36,7 @@ void main() {
 
       requireSuccess(result);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(
-        recordedRequest.headers['content-type'],
-        'application/json',
-      );
+      expect(recordedRequest.headers['content-type'], 'application/json');
     });
   });
 }

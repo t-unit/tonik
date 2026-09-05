@@ -20,10 +20,10 @@ void main() {
 
       final properties = normalizeResponseProperties(response);
 
-      expect(
-        properties.map((property) => property.normalizedName),
-        ['bodyHeader', 'body'],
-      );
+      expect(properties.map((property) => property.normalizedName), [
+        'bodyHeader',
+        'body',
+      ]);
       expect(properties.first.header, same(header));
       expect(properties.last.header, isNull);
     });
@@ -40,10 +40,10 @@ void main() {
 
       final properties = normalizeResponseProperties(response);
 
-      expect(
-        properties.map((property) => property.normalizedName),
-        ['body', 'body2'],
-      );
+      expect(properties.map((property) => property.normalizedName), [
+        'body',
+        'body2',
+      ]);
       expect(properties.first.header, same(header));
       expect(properties.first.property.name, rawName);
       expect(properties.last.header, isNull);
@@ -55,19 +55,17 @@ void main() {
     final literalBodyHeader = _header('bodyHeader', context);
     final response = _response(
       context: context,
-      headers: {
-        'body_': normalizedBody,
-        'bodyHeader': literalBodyHeader,
-      },
+      headers: {'body_': normalizedBody, 'bodyHeader': literalBodyHeader},
       bodies: {_body('application/json', context)},
     );
 
     final properties = normalizeResponseProperties(response);
 
-    expect(
-      properties.map((property) => property.normalizedName),
-      ['body', 'bodyHeader', 'body2'],
-    );
+    expect(properties.map((property) => property.normalizedName), [
+      'body',
+      'bodyHeader',
+      'body2',
+    ]);
     expect(properties[0].header, same(normalizedBody));
     expect(properties[1].header, same(literalBodyHeader));
     expect(properties[2].header, isNull);
@@ -90,10 +88,7 @@ void main() {
       body: response.bodies.first,
     );
 
-    expect(
-      baseProperties.map((property) => property.normalizedName),
-      ['body'],
-    );
+    expect(baseProperties.map((property) => property.normalizedName), ['body']);
     expect(baseProperties.single.header, same(header));
     expect(
       implementationProperties.map((property) => property.normalizedName),

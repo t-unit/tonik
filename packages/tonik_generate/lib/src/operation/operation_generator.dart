@@ -117,89 +117,88 @@ class OperationGenerator {
       backend: backendGenerator.backend,
     ).plan(operation, normalizedParams);
 
-    return Class(
-      (b) {
-        b
-          ..name = className
-          ..fields.addAll([
-            Field(
-              (b) => b
-                ..name = '_baseUrl'
-                ..modifier = FieldModifier.final$
-                ..type = refer('String', 'dart:core'),
-            ),
-            Field(
-              (b) => b
-                ..name = backendGenerator.clientAccessorFieldName
-                ..modifier = FieldModifier.final$
-                ..type = backendGenerator.nativeClientAccessorType,
-            ),
-          ])
-          ..fields.addAll(defaults.fields);
+    return Class((b) {
+      b
+        ..name = className
+        ..fields.addAll([
+          Field(
+            (b) => b
+              ..name = '_baseUrl'
+              ..modifier = FieldModifier.final$
+              ..type = refer('String', 'dart:core'),
+          ),
+          Field(
+            (b) => b
+              ..name = backendGenerator.clientAccessorFieldName
+              ..modifier = FieldModifier.final$
+              ..type = backendGenerator.nativeClientAccessorType,
+          ),
+        ])
+        ..fields.addAll(defaults.fields);
 
-        if (operation.isDeprecated) {
-          b.annotations.add(
-            refer('Deprecated', 'dart:core').call([
-              literalString('This operation is deprecated.'),
-            ]),
-          );
-        }
+      if (operation.isDeprecated) {
+        b.annotations.add(
+          refer(
+            'Deprecated',
+            'dart:core',
+          ).call([literalString('This operation is deprecated.')]),
+        );
+      }
 
-        b
-          ..constructors.add(
-            Constructor(
-              (b) => b
-                ..requiredParameters.addAll([
-                  Parameter(
-                    (b) => b
-                      ..name = '_baseUrl'
-                      ..toThis = true,
-                  ),
-                  Parameter(
-                    (b) => b
-                      ..name = backendGenerator.clientAccessorFieldName
-                      ..toThis = true,
-                  ),
-                ]),
-            ),
-          )
-          ..methods.addAll([
-            ...defaults.getters,
-            generateCallMethod(
+      b
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..requiredParameters.addAll([
+                Parameter(
+                  (b) => b
+                    ..name = '_baseUrl'
+                    ..toThis = true,
+                ),
+                Parameter(
+                  (b) => b
+                    ..name = backendGenerator.clientAccessorFieldName
+                    ..toThis = true,
+                ),
+              ]),
+          ),
+        )
+        ..methods.addAll([
+          ...defaults.getters,
+          generateCallMethod(
+            operation,
+            normalizedParams,
+            defaultsByName: defaults.byName,
+            requestPlan: requestPlan,
+          ),
+          _pathGenerator.generatePathMethod(
+            operation,
+            normalizedParams.pathParameters,
+          ),
+          backendGenerator.generateBodyMethod(
+            operation: operation,
+            requestPlan: requestPlan,
+            nameManager: nameManager,
+            package: package,
+            useImmutableCollections: useImmutableCollections,
+          ),
+          if (operation.queryParameters.isNotEmpty)
+            _queryParametersGenerator.generateQueryParametersMethod(
               operation,
-              normalizedParams,
-              defaultsByName: defaults.byName,
-              requestPlan: requestPlan,
+              normalizedParams.queryParameters,
             ),
-            _pathGenerator.generatePathMethod(
-              operation,
-              normalizedParams.pathParameters,
-            ),
-            backendGenerator.generateBodyMethod(
-              operation: operation,
-              requestPlan: requestPlan,
-              nameManager: nameManager,
-              package: package,
-              useImmutableCollections: useImmutableCollections,
-            ),
-            if (operation.queryParameters.isNotEmpty)
-              _queryParametersGenerator.generateQueryParametersMethod(
-                operation,
-                normalizedParams.queryParameters,
-              ),
-            backendGenerator.generateOptionsMethod(
-              operation: operation,
-              nameManager: nameManager,
-              package: package,
-              useImmutableCollections: useImmutableCollections,
-              headers: normalizedParams.headers,
-              cookies: normalizedParams.cookieParameters,
-            ),
-            if (operation.responses.isNotEmpty)
-              _parseGenerator.generateParseResponseMethod(operation),
-          ]);
-      },
-    );
+          backendGenerator.generateOptionsMethod(
+            operation: operation,
+            nameManager: nameManager,
+            package: package,
+            useImmutableCollections: useImmutableCollections,
+            headers: normalizedParams.headers,
+            cookies: normalizedParams.cookieParameters,
+          ),
+          if (operation.responses.isNotEmpty)
+            _parseGenerator.generateParseResponseMethod(operation),
+        ]);
+    });
   }
 
   /// Generates the call() method for the operation
@@ -322,11 +321,7 @@ class OperationGenerator {
             ),
           )
           ..add(
-            _resultClass(
-                  'TonikSuccess',
-                  resultValueType,
-                  nativeResponseType,
-                )
+            _resultClass('TonikSuccess', resultValueType, nativeResponseType)
                 .call([refer(parsedResponseVar), refer(responseVar)])
                 .returned
                 .statement,
@@ -411,9 +406,10 @@ class OperationGenerator {
         const Code('try {'),
         declareFinal(r'_$baseUri')
             .assign(
-              refer('Uri', 'dart:core').property('parse').call([
-                refer('_baseUrl'),
-              ]),
+              refer(
+                'Uri',
+                'dart:core',
+              ).property('parse').call([refer('_baseUrl')]),
             )
             .statement,
         declareFinal(
@@ -433,25 +429,23 @@ class OperationGenerator {
               }),
             )
             .statement,
-        refer(r'_$data').assign(
-          () {
-            final isDataAsync = _bodyRequiresAsyncLowering(requestPlan.body);
-            final dataCall = refer('_data').call([], {
-              if (hasRequestBody) 'body': refer('body'),
-              if (hasRequestBody)
-                ...() {
-                  final args = <String, Expression>{};
-                  for (final info in extractOperationMultipartHeaderParamInfo(
-                    operation,
-                  )) {
-                    args[info.name] = refer(info.name);
-                  }
-                  return args;
-                }(),
-            });
-            return isDataAsync ? dataCall.awaited : dataCall;
-          }(),
-        ).statement,
+        refer(r'_$data').assign(() {
+          final isDataAsync = _bodyRequiresAsyncLowering(requestPlan.body);
+          final dataCall = refer('_data').call([], {
+            if (hasRequestBody) 'body': refer('body'),
+            if (hasRequestBody)
+              ...() {
+                final args = <String, Expression>{};
+                for (final info in extractOperationMultipartHeaderParamInfo(
+                  operation,
+                )) {
+                  args[info.name] = refer(info.name);
+                }
+                return args;
+              }(),
+          });
+          return isDataAsync ? dataCall.awaited : dataCall;
+        }()).statement,
         refer(r'_$options')
             .assign(
               refer('_options').call([], {
