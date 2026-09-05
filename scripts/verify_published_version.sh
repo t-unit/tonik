@@ -237,7 +237,7 @@ if [ "$TEST_ONLY" = false ]; then
     print_step "Checking Imposter JAR..."
     if [ ! -f imposter.jar ]; then
         print_step "Downloading Imposter JAR..."
-        curl -L https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.6.8/imposter-4.6.8.jar \
+        curl -L https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.9.3/imposter-4.9.3.jar \
              -o imposter.jar
         print_success "Imposter JAR downloaded"
     else
