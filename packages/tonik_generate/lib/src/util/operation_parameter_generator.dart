@@ -206,7 +206,11 @@ void _addMultipartHeaderParameters({
   required NameManager nameManager,
   required String package,
 }) {
-  for (final info in extractOperationMultipartHeaderParamInfo(operation)) {
+  for (final info in extractOperationMultipartHeaderParamInfo(
+    operation,
+    nameManager: nameManager,
+    package: package,
+  )) {
     final parameterType = typeReference(
       info.model,
       nameManager,

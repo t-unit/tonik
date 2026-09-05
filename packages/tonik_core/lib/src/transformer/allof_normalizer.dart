@@ -191,22 +191,9 @@ class AllOfNormalizer {
                 content.model = transformed;
               }
             case MultipartRequestContent():
-              for (final part in content.parts) {
-                part.model = _transformModel(part.model, cache);
-              }
-              if (content.additionalPropertiesPolicy
-                  case AllowedAdditionalProperties(
-                    :final valueModel,
-                    :final origin,
-                  )) {
-                final transformed = _transformModel(valueModel, cache);
-                if (!identical(transformed, valueModel)) {
-                  content.additionalPropertiesPolicy =
-                      AllowedAdditionalProperties(
-                        valueModel: transformed,
-                        origin: origin,
-                      );
-                }
+              final transformed = cache[content.model];
+              if (transformed != null && transformed != content.model) {
+                content.model = transformed;
               }
           }
         }

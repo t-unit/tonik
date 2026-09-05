@@ -26,46 +26,7 @@ class RequestBodyFileGenerator {
     log.fine('Writing ${apiDocument.requestBodies.length} request body files');
 
     final generatedFiles = <String>[];
-    final names = requestBodyGenerator.nameManager;
-    final emittedModels = {
-      for (final model in apiDocument.models.whereType<NamedModel>())
-        names.modelName(model),
-    };
     for (final requestBody in apiDocument.requestBodies) {
-      for (final content
-          in requestBody.resolvedContent.whereType<MultipartRequestContent>()) {
-        final name = names.multipartObjectName(content);
-        final isComponent =
-            content.sourceName != null &&
-            content.sourceContext ==
-                Context.initial().pushAll(['components', 'schemas']);
-        final results = [
-          if (!isComponent &&
-              !excludeSchemas.contains(content.sourceName) &&
-              !(deprecatedSchemas == DeprecatedHandling.exclude &&
-                  content.isDeprecated) &&
-              emittedModels.add(name))
-            classGenerator.generateMultipart(content),
-          if (content.alias != null &&
-              emittedModels.add(names.multipartAliasName(content)))
-            classGenerator.generateMultipartAlias(content),
-        ];
-        for (final result in results) {
-          generatedFiles.add(
-            writeGeneratedArtifact(
-              outputDirectory: outputDirectory,
-              package: package,
-              relativePath: path.posix.join(
-                'lib',
-                'src',
-                'model',
-                result.filename,
-              ),
-              content: result.code,
-            ),
-          );
-        }
-      }
       if (requestBody.contentCount <= 1) {
         log.fine(
           'Skipping request body ${requestBody.name ?? requestBody.context} '

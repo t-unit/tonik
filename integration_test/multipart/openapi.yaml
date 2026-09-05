@@ -18,6 +18,24 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/all-of-upload:
+    post:
+      operationId: postAllOfUpload
+      tags:
+        - multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CloudflareUpload'
+            encoding:
+              metadata:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/read-only:
     post:
       operationId: postReadOnlyFields
@@ -909,6 +927,68 @@ components:
           description: A simple text label
         tree:
           $ref: '#/components/schemas/RecursiveList'
+
+    UploadFiles:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+
+    UploadMetadataBase:
+      type: object
+      required:
+        - metadata
+      properties:
+        metadata:
+          $ref: '#/components/schemas/MetadataBase'
+
+    UploadMetadataAnnotations:
+      type: object
+      required:
+        - metadata
+      properties:
+        metadata:
+          $ref: '#/components/schemas/MetadataAnnotations'
+
+    MetadataBase:
+      type: object
+      required:
+        - id
+        - source
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+
+    MetadataAnnotations:
+      type: object
+      required:
+        - annotations
+      properties:
+        annotations:
+          type: object
+          required:
+            - language
+            - labels
+          properties:
+            language:
+              type: string
+            labels:
+              type: array
+              items:
+                type: string
+
+    CloudflareUpload:
+      allOf:
+        - $ref: '#/components/schemas/UploadFiles'
+        - $ref: '#/components/schemas/UploadMetadataBase'
+        - $ref: '#/components/schemas/UploadMetadataAnnotations'
 
     GenericResponse:
       type: object

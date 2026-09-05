@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 typedef MultipartHeaderParamInfo = ({
@@ -40,14 +41,20 @@ List<Parameter> buildMultipartHeaderParameters(
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   MultipartRequestContent content, {
   Set<String> reservedNames = const {},
+  NameManager? nameManager,
+  String? package,
 }) {
-  final normalizedProps = normalizeMultipartParts(content);
+  final normalizedProps = normalizeMultipartProperties(
+    content,
+    nameManager: nameManager,
+    package: package,
+  );
 
   final result = <MultipartHeaderParamInfo>[];
   final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
 
-  for (final (:normalizedName, part: property) in normalizedProps) {
-    final headers = property.encoding.headers;
+  for (final property in normalizedProps) {
+    final headers = content.encoding[property.rawName]?.headers;
     if (headers == null || headers.isEmpty) continue;
 
     final isPropertyOptional = !property.isRequired || property.isNullable;
@@ -58,7 +65,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
       final isRequired = !isPropertyOptional && header.isRequired;
 
       final baseName = normalizeMultipartHeaderName(
-        normalizedName,
+        property.normalizedName,
         rawHeaderName,
       );
       final paramName = _uniqueMultipartHeaderParameterName(
@@ -69,7 +76,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
       result.add((
         content: content,
         name: paramName,
-        normalizedPropertyName: normalizedName,
+        normalizedPropertyName: property.normalizedName,
         rawHeaderName: rawHeaderName,
         model: header.model,
         isRequired: isRequired,
@@ -83,8 +90,10 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
 
 /// Extracts all per-part header parameters using names scoped to one operation.
 List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
-  Operation operation,
-) {
+  Operation operation, {
+  NameManager? nameManager,
+  String? package,
+}) {
   final hasRequestBody =
       operation.requestBody?.resolvedContent.isNotEmpty ?? false;
   if (!hasRequestBody) return const [];
@@ -112,6 +121,8 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
     final parameters = extractMultipartHeaderParamInfo(
       content,
       reservedNames: usedNames,
+      nameManager: nameManager,
+      package: package,
     );
     result.addAll(parameters);
     usedNames.addAll(parameters.map((parameter) => parameter.name));
@@ -120,29 +131,255 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
   return result;
 }
 
-List<({String normalizedName, MultipartPart part})> normalizeMultipartParts(
-  MultipartRequestContent content,
-) =>
-    ensureUniqueness(
-          content.parts
-              .where((part) => !part.isReadOnly)
-              .map(
-                (part) => (
-                  normalizedName: normalizeSingle(
-                    part.nameOverride ?? part.name,
-                    preserveNumbers: true,
-                  ),
-                  originalValue: part,
-                ),
-              )
-              .toList(),
-          defaultPrefix: defaultFieldPrefix,
-        )
-        .map(
-          (item) =>
-              (normalizedName: item.normalizedName, part: item.originalValue),
-        )
-        .toList();
+class MultipartPropertyPlan {
+  const MultipartPropertyPlan({
+    required this.rawName,
+    required this.normalizedName,
+    required this.properties,
+    required this.accessPaths,
+    required this.isRequired,
+    required this.isNullable,
+  });
+
+  final String rawName;
+  final String normalizedName;
+  final List<Property> properties;
+  final List<List<MultipartAccessSegment>> accessPaths;
+  final bool isRequired;
+  final bool isNullable;
+
+  Property get property => properties.first;
+}
+
+typedef MultipartAccessSegment = ({String name, bool receiverNullable});
+
+List<MultipartPropertyPlan> normalizeMultipartProperties(
+  MultipartRequestContent content, {
+  NameManager? nameManager,
+  String? package,
+}) {
+  final occurrences =
+      <({Property property, List<MultipartAccessSegment> path})>[];
+  _collectMultipartProperties(
+    content.model,
+    const [],
+    multipartModelIsNullable(content.model),
+    <Model>{},
+    occurrences,
+    nameManager,
+    package,
+  );
+
+  final grouped =
+      <
+        String,
+        List<({Property property, List<MultipartAccessSegment> path})>
+      >{};
+  for (final occurrence in occurrences) {
+    if (occurrence.property.isReadOnly ||
+        _modelIsReadOnly(occurrence.property.model, <Model>{})) {
+      continue;
+    }
+    (grouped[occurrence.property.name] ??= []).add(occurrence);
+  }
+  final unmatchedEncodingKeys = content.encoding.keys
+      .where((key) => !grouped.containsKey(key))
+      .toList();
+  if (unmatchedEncodingKeys.isNotEmpty) {
+    throw ArgumentError(
+      'Multipart encoding references properties that are not writable or do '
+      'not exist in the body model: ${unmatchedEncodingKeys.join(', ')}.',
+    );
+  }
+  final uniqueNames = ensureUniqueness([
+    for (final entry in grouped.entries)
+      (
+        normalizedName: normalizeSingle(
+          entry.value.first.property.nameOverride ?? entry.key,
+          preserveNumbers: true,
+        ),
+        originalValue: entry,
+      ),
+  ], defaultPrefix: defaultFieldPrefix);
+  return [
+    for (final item in uniqueNames)
+      MultipartPropertyPlan(
+        rawName: item.originalValue.key,
+        normalizedName: item.normalizedName,
+        properties: [
+          for (final occurrence in item.originalValue.value)
+            occurrence.property,
+        ],
+        accessPaths: [
+          for (final occurrence in item.originalValue.value) occurrence.path,
+        ],
+        isRequired: item.originalValue.value.any(
+          (occurrence) => occurrence.property.isRequired,
+        ),
+        isNullable: item.originalValue.value.every(
+          (occurrence) =>
+              occurrence.property.isNullable ||
+              multipartModelIsNullable(occurrence.property.model) ||
+              !occurrence.property.isRequired ||
+              occurrence.property.isWriteOnly ||
+              occurrence.path.any((segment) => segment.receiverNullable),
+        ),
+      ),
+  ];
+}
+
+void _collectMultipartProperties(
+  Model model,
+  List<MultipartAccessSegment> path,
+  bool receiverNullable,
+  Set<Model> active,
+  List<({Property property, List<MultipartAccessSegment> path})> result,
+  NameManager? nameManager,
+  String? package,
+) {
+  if (_modelIsReadOnly(model, <Model>{})) {
+    if (path.isEmpty) {
+      throw ArgumentError(
+        'Multipart body root ${model.runtimeType} at ${model.context} is '
+        'read-only and cannot be used as a request body.',
+      );
+    }
+    return;
+  }
+  if (!active.add(model)) {
+    throw ArgumentError(
+      'Multipart body model contains a cycle while resolving ${model.context}.',
+    );
+  }
+  try {
+    switch (model) {
+      case AliasModel():
+        _collectMultipartProperties(
+          model.model,
+          path,
+          receiverNullable || model.isNullable,
+          active,
+          result,
+          nameManager,
+          package,
+        );
+      case ClassModel():
+        _rejectExplicitAdditionalProperties(model);
+        for (final (:normalizedName, :property) in normalizeProperties(
+          model.properties,
+        )) {
+          result.add((
+            property: property,
+            path: [
+              ...path,
+              (name: normalizedName, receiverNullable: receiverNullable),
+            ],
+          ));
+        }
+      case AllOfModel():
+        _rejectExplicitAdditionalProperties(model);
+        final namedMembers = ensureUniqueness([
+          for (final member in model.models)
+            (
+              normalizedName: normalizeSingle(
+                _multipartMemberTypeName(member, nameManager, package),
+                preserveNumbers: true,
+              ),
+              originalValue: member,
+            ),
+        ], defaultPrefix: defaultFieldPrefix);
+        for (final member in namedMembers) {
+          final memberNullable =
+              receiverNullable ||
+              multipartModelIsNullable(member.originalValue);
+          _collectMultipartProperties(
+            member.originalValue,
+            [
+              ...path,
+              (name: member.normalizedName, receiverNullable: receiverNullable),
+            ],
+            memberNullable,
+            active,
+            result,
+            nameManager,
+            package,
+          );
+        }
+      default:
+        throw ArgumentError(
+          'Unsupported multipart body root/member ${model.runtimeType} at '
+          '${model.context}. Multipart bodies require a class, an alias to a '
+          'supported model, or an allOf containing supported members.',
+        );
+    }
+  } finally {
+    active.remove(model);
+  }
+}
+
+bool multipartModelIsNullable(Model model, [Set<Model>? active]) {
+  final visited = active ?? <Model>{};
+  if (!visited.add(model)) return false;
+  try {
+    return switch (model) {
+      AliasModel(:final isNullable, :final model) =>
+        isNullable || multipartModelIsNullable(model, visited),
+      _ => model.isEffectivelyNullable,
+    };
+  } finally {
+    visited.remove(model);
+  }
+}
+
+void _rejectExplicitAdditionalProperties(Model model) {
+  final policy = switch (model) {
+    ClassModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
+    AllOfModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
+    _ => null,
+  };
+  if (policy case AllowedAdditionalProperties(
+    origin: AdditionalPropertiesOrigin.explicit,
+  )) {
+    throw ArgumentError(
+      'Multipart body model ${model.runtimeType} at ${model.context} declares '
+      'additional properties. Dynamic multipart part names are not supported.',
+    );
+  }
+}
+
+bool _modelIsReadOnly(Model model, Set<Model> active) {
+  if (!active.add(model)) return false;
+  try {
+    return switch (model) {
+      AliasModel(:final isReadOnly, :final model) =>
+        isReadOnly || _modelIsReadOnly(model, active),
+      ClassModel(:final isReadOnly) ||
+      ListModel(:final isReadOnly) ||
+      MapModel(:final isReadOnly) ||
+      EnumModel(:final isReadOnly) ||
+      AllOfModel(:final isReadOnly) ||
+      OneOfModel(:final isReadOnly) ||
+      AnyOfModel(:final isReadOnly) => isReadOnly,
+      _ => false,
+    };
+  } finally {
+    active.remove(model);
+  }
+}
+
+String _multipartMemberTypeName(
+  Model model,
+  NameManager? nameManager,
+  String? package,
+) {
+  if (nameManager != null && package != null) {
+    return typeReference(model, nameManager, package).symbol;
+  }
+  if (model case NamedModel(name: final name?)) return name;
+  return model.context.path.isEmpty
+      ? model.runtimeType.toString()
+      : model.context.path.last;
+}
 
 String _uniqueMultipartHeaderParameterName(
   String baseName,

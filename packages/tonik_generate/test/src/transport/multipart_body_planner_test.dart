@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 
 import 'multipart_test_support.dart';
 
@@ -833,6 +834,436 @@ Object? test() {
       });
     }
   });
+
+  group('regular multipart root models', () {
+    test('discovers class, alias, and nested allOf member access in order', () {
+      final files = _classWithProperties(context, 'UploadFiles', [
+        _property(
+          context,
+          'files',
+          _list(context, BinaryModel(context: context)),
+        ),
+      ]);
+      final metadataBase = _classWithProperties(context, 'MetadataBase', [
+        _property(context, 'metadata', _classModel(context, 'Base')),
+      ]);
+      final annotations = _classWithProperties(context, 'Annotations', [
+        _property(context, 'metadata', _classModel(context, 'Details')),
+      ]);
+      final nested = _allOf(context, 'Nested', [metadataBase, annotations]);
+      final root = AliasModel(
+        name: 'UploadAlias',
+        context: context,
+        model: _allOf(context, 'Upload', [files, nested]),
+        defaultValue: null,
+        examples: const [],
+      );
+
+      final properties = normalizeMultipartProperties(_content(root));
+      expect(properties.map((property) => property.rawName), [
+        'files',
+        'metadata',
+      ]);
+      expect(
+        properties.first.accessPaths.single.map((segment) => segment.name),
+        ['uploadFiles', 'files'],
+      );
+      expect(
+        properties.last.accessPaths.map(
+          (path) => path.map((segment) => segment.name).toList(),
+        ),
+        [
+          ['nested', 'metadataBase', 'metadata'],
+          ['nested', 'annotations', 'metadata'],
+        ],
+      );
+    });
+
+    test('rejects unsupported map roots clearly', () {
+      final content = _content(
+        MapModel(
+          valueModel: BinaryModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+      );
+      expect(
+        () => emit(content),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Unsupported multipart body root/member MapModel'),
+          ),
+        ),
+      );
+    });
+
+    test('rejects Cloudflare-style dynamic parts before emitting parts', () {
+      final model = _classWithProperties(
+        context,
+        'Snippet',
+        [_property(context, 'metadata', _classModel(context, 'Metadata'))],
+        additionalProperties: AllowedAdditionalProperties(
+          valueModel: BinaryModel(context: context),
+        ),
+      );
+      expect(
+        () => emit(_content(model)),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Dynamic multipart part names are not supported'),
+          ),
+        ),
+      );
+    });
+
+    test('allows the implicit object additional-properties default', () {
+      final model = _classWithProperties(context, 'Upload', [
+        _property(context, 'label', StringModel(context: context)),
+      ]);
+      expect(emit(_content(model)), contains('body.label'));
+    });
+
+    test('rejects cycles and unmatched raw encoding keys', () {
+      final alias = AliasModel(
+        name: 'Cycle',
+        context: context,
+        model: StringModel(context: context),
+        defaultValue: null,
+        examples: const [],
+      );
+      alias.model = alias;
+      expect(
+        () => normalizeMultipartProperties(_content(alias)),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('cycle'),
+          ),
+        ),
+      );
+
+      final model = _classWithProperties(context, 'Upload', [
+        _property(context, 'raw-name', StringModel(context: context)),
+      ]);
+      expect(
+        () => normalizeMultipartProperties(
+          _content(model, encoding: {'normalizedName': _encoding()}),
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('normalizedName'),
+          ),
+        ),
+      );
+    });
+
+    test('uses effective model and root nullability in generated access', () {
+      final nullableValue = AliasModel(
+        name: 'NullableValue',
+        context: context,
+        model: StringModel(context: context),
+        isNullable: true,
+        defaultValue: null,
+        examples: const [],
+      );
+      final nullableClass = _classWithProperties(context, 'Upload', [
+        _property(context, 'value', nullableValue),
+      ], isNullable: true);
+      final property = normalizeMultipartProperties(
+        _content(nullableClass),
+      ).single;
+      expect(property.isNullable, isTrue);
+      expect(emit(_content(nullableClass)), contains('body?.value'));
+
+      final member = _classWithProperties(context, 'Member', [
+        _property(context, 'value', StringModel(context: context)),
+      ]);
+      final nullableAllOf = _allOf(context, 'NullableAllOf', [
+        member,
+      ], isNullable: true);
+      expect(emit(_content(nullableAllOf)), contains('body?.member?.value'));
+    });
+
+    test(
+      'keeps required write-only parts required but guards their access',
+      () {
+        final model = _classWithProperties(context, 'Credentials', [
+          _property(
+            context,
+            'secret',
+            StringModel(context: context),
+            isWriteOnly: true,
+          ),
+        ]);
+
+        final property = normalizeMultipartProperties(_content(model)).single;
+        expect(property.isRequired, isTrue);
+        expect(property.isNullable, isTrue);
+        final code = emit(_content(model));
+        expect(code, contains('if (body.secret == null)'));
+        expect(code, contains('Required multipart property "secret" is null.'));
+        expect(code, contains('utf8.encode(body.secret!)'));
+      },
+    );
+
+    test('rejects read-only roots and excludes read-only members', () {
+      final readOnly = _classWithProperties(context, 'ReadOnly', [
+        _property(context, 'server', StringModel(context: context)),
+      ], isReadOnly: true);
+      expect(
+        () => emit(_content(readOnly)),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('read-only'),
+          ),
+        ),
+      );
+
+      final writable = _classWithProperties(context, 'Writable', [
+        _property(context, 'client', StringModel(context: context)),
+      ]);
+      final properties = normalizeMultipartProperties(
+        _content(_allOf(context, 'Combined', [readOnly, writable])),
+      );
+      expect(properties.map((property) => property.rawName), ['client']);
+    });
+
+    test('rejects incompatible nested duplicate definitions structurally', () {
+      final leftMetadata = _classWithProperties(context, 'LeftMetadata', [
+        _property(context, 'id', StringModel(context: context)),
+      ]);
+      final rightMetadata = _classWithProperties(context, 'RightMetadata', [
+        _property(context, 'id', IntegerModel(context: context)),
+      ]);
+      final root = _allOf(context, 'Upload', [
+        _classWithProperties(context, 'Left', [
+          _property(context, 'metadata', leftMetadata, isRequired: false),
+        ]),
+        _classWithProperties(context, 'Right', [
+          _property(context, 'metadata', rightMetadata, isRequired: false),
+        ]),
+      ]);
+      expect(
+        () => emit(_content(root)),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('incompatible definitions'),
+          ),
+        ),
+      );
+    });
+
+    test('compares nested explicit additional-properties policies', () {
+      ClassModel metadata(AdditionalPropertiesPolicy policy) =>
+          _classWithProperties(context, 'Metadata', [
+            _property(context, 'id', StringModel(context: context)),
+          ], additionalProperties: policy);
+
+      AllOfModel root(Model left, Model right) => _allOf(context, 'Upload', [
+        _classWithProperties(context, 'Left', [
+          _property(context, 'metadata', left),
+        ]),
+        _classWithProperties(context, 'Right', [
+          _property(context, 'metadata', right),
+        ]),
+      ]);
+
+      final allowedString = AllowedAdditionalProperties(
+        valueModel: StringModel(context: context),
+      );
+      final anotherAllowedString = AllowedAdditionalProperties(
+        valueModel: StringModel(context: context),
+      );
+      final allowedInteger = AllowedAdditionalProperties(
+        valueModel: IntegerModel(context: context),
+      );
+
+      expect(
+        emit(
+          _content(
+            root(metadata(allowedString), metadata(anotherAllowedString)),
+          ),
+        ),
+        contains('mergeMultipartValues'),
+      );
+      for (final incompatible in [
+        root(metadata(allowedString), metadata(allowedInteger)),
+        root(
+          metadata(allowedString),
+          metadata(const ForbiddenAdditionalProperties()),
+        ),
+      ]) {
+        expect(
+          () => emit(_content(incompatible)),
+          throwsA(
+            isA<ArgumentError>().having(
+              (error) => error.message,
+              'message',
+              contains('incompatible definitions'),
+            ),
+          ),
+        );
+      }
+
+      expect(
+        emit(
+          _content(
+            root(
+              _classWithProperties(context, 'ImplicitMetadata', [
+                _property(context, 'id', StringModel(context: context)),
+              ]),
+              metadata(const ForbiddenAdditionalProperties()),
+            ),
+          ),
+        ),
+        contains('mergeMultipartValues'),
+      );
+    });
+
+    test('only merges duplicate enum values from the same generated type', () {
+      final shared = _stringEnum(context);
+      AllOfModel root(Model left, Model right) => _allOf(context, 'Upload', [
+        _classWithProperties(context, 'Left', [
+          _property(context, 'status', left),
+        ]),
+        _classWithProperties(context, 'Right', [
+          _property(context, 'status', right),
+        ]),
+      ]);
+
+      expect(
+        emit(_content(root(shared, shared))),
+        contains('body.left.status'),
+      );
+      expect(
+        () => emit(_content(root(_stringEnum(context), _stringEnum(context)))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('incompatible definitions'),
+          ),
+        ),
+      );
+    });
+
+    test('merges compatible duplicate objects without losing object style', () {
+      final root = _duplicateMetadataRoot(context);
+      final jsonCode = emit(_content(root));
+      expect(jsonCode, contains('body.left.metadata.toJson()'));
+      expect(jsonCode, contains('body.right.metadata.toJson()'));
+      expect(jsonCode, contains('mergeObjects: true'));
+      expect(jsonCode, contains(r'jsonEncode(_$metadataMultipartValue)'));
+
+      final styleCode = emit(
+        _content(
+          root,
+          encoding: {
+            'metadata': _encoding(style: EncodingStyle.form, explode: true),
+          },
+        ),
+      );
+      expect(styleCode, contains('body.left.metadata.parameterProperties'));
+      expect(styleCode, contains('body.right.metadata.parameterProperties'));
+      expect(styleCode, contains('mergeMultipartPropertyValues'));
+      expect(styleCode, contains('toRawStyleParts'));
+      expect(styleCode, isNot(contains('jsonEncode')));
+
+      final deepObjectCode = emit(
+        _content(
+          root,
+          encoding: {
+            'metadata': _encoding(
+              style: EncodingStyle.deepObject,
+              explode: true,
+            ),
+          },
+        ),
+      );
+      expect(deepObjectCode, contains('mergeMultipartPropertyValues'));
+      expect(deepObjectCode, contains('toDeepObject'));
+
+      final formCode = emit(
+        _content(
+          root,
+          encoding: {
+            'metadata': _encoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+        ),
+      );
+      expect(formCode, contains('mergeMultipartPropertyValues'));
+      expect(formCode, contains('toForm'));
+    });
+
+    test('merges repeated mutable and immutable lists and maps in order', () {
+      final list = _list(context, StringModel(context: context));
+      final map = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final root = _allOf(context, 'Collections', [
+        _classWithProperties(context, 'First', [
+          _property(context, 'items', list),
+          _property(context, 'metadata', map),
+        ]),
+        _classWithProperties(context, 'Second', [
+          _property(context, 'items', list),
+          _property(context, 'metadata', map),
+        ]),
+      ]);
+      final mutable = emit(_content(root));
+      expect(mutable, contains('body.first.items'));
+      expect(mutable, contains('body.second.items'));
+      expect(mutable, contains("propertyName: r'items'"));
+      expect(mutable, contains("propertyName: r'metadata'"));
+      expect(mutable, contains('mergeObjects: true'));
+
+      final nonExploded = emit(
+        _content(
+          root,
+          encoding: {
+            'items': _encoding(style: EncodingStyle.form, explode: false),
+          },
+        ),
+      );
+      expect(nonExploded, contains('mergeMultipartLists'));
+      expect(nonExploded, contains("propertyName: r'items')!"));
+      expect(nonExploded, contains(r'_$itemsMultipartValue.toSimple'));
+
+      const immutablePlanner = MultipartBodyPlanner(
+        backend: TransportBackend.http,
+        useImmutableCollections: true,
+      );
+      final immutablePlan = immutablePlanner.plan(
+        _content(root),
+        bodyAccessor: 'body',
+        isRequired: true,
+      );
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..body = Block.of(buildHttpMultipartBodyStatements(immutablePlan)),
+      );
+      final immutableCode = format('${method.accept(emitter)}');
+      expect(immutableCode, contains('body.first.items.unlock'));
+      expect(immutableCode, contains('body.second.metadata.unlock'));
+    });
+  });
 }
 
 ClassModel _classModel(Context context, String name) => ClassModel(
@@ -842,6 +1273,88 @@ ClassModel _classModel(Context context, String name) => ClassModel(
   isDeprecated: false,
   examples: const [],
 );
+
+ClassModel _classWithProperties(
+  Context context,
+  String name,
+  List<Property> properties, {
+  AdditionalPropertiesPolicy? additionalProperties,
+  bool isNullable = false,
+  bool isReadOnly = false,
+}) => ClassModel(
+  name: name,
+  properties: properties,
+  context: context,
+  additionalPropertiesPolicy: additionalProperties,
+  isNullable: isNullable,
+  isReadOnly: isReadOnly,
+  isDeprecated: false,
+  examples: const [],
+);
+
+Property _property(
+  Context context,
+  String name,
+  Model model, {
+  bool isRequired = true,
+  bool isNullable = false,
+  bool isWriteOnly = false,
+}) => Property(
+  name: name,
+  model: model,
+  isRequired: isRequired,
+  isNullable: isNullable,
+  isWriteOnly: isWriteOnly,
+  isDeprecated: false,
+  examples: const [],
+  defaultValue: null,
+);
+
+AllOfModel _allOf(
+  Context context,
+  String name,
+  List<Model> models, {
+  bool isNullable = false,
+}) => AllOfModel(
+  name: name,
+  models: models,
+  context: context,
+  isNullable: isNullable,
+  isDeprecated: false,
+  examples: const [],
+);
+
+MultipartRequestContent _content(
+  Model model, {
+  Map<String, PartEncoding> encoding = const {},
+}) => MultipartRequestContent(
+  model: model,
+  encoding: encoding,
+  rawContentType: 'multipart/form-data',
+  examples: const [],
+);
+
+AllOfModel _duplicateMetadataRoot(Context context) =>
+    _allOf(context, 'Upload', [
+      _classWithProperties(context, 'Left', [
+        _property(
+          context,
+          'metadata',
+          _classWithProperties(context, 'MetadataBase', [
+            _property(context, 'id', StringModel(context: context)),
+          ]),
+        ),
+      ]),
+      _classWithProperties(context, 'Right', [
+        _property(
+          context,
+          'metadata',
+          _classWithProperties(context, 'MetadataDetails', [
+            _property(context, 'label', StringModel(context: context)),
+          ]),
+        ),
+      ]),
+    ]);
 
 ListModel _list(Context context, Model content) =>
     ListModel(content: content, context: context, examples: const []);

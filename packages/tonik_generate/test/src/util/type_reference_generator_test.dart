@@ -20,11 +20,22 @@ void main() {
       });
 
       test('keeps a named nullable alias as the multipart value type', () {
-        final content = MultipartRequestContent(
+        final model = AliasModel(
           name: 'UploadAlias',
-          sourceName: 'Upload',
           context: context,
-          parts: const [],
+          model: ClassModel(
+            name: 'Upload',
+            context: context,
+            properties: const [],
+            isDeprecated: false,
+            examples: const [],
+          ),
+          defaultValue: null,
+          examples: const [],
+        );
+        final content = MultipartRequestContent(
+          model: model,
+          encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
         );
@@ -36,18 +47,24 @@ void main() {
         expect(type.isNullable, isFalse);
       });
 
-      test('uses the immediate reference and local nullability '
-          'for an annotated alias', () {
-        final content = MultipartRequestContent(
-          context: Context.initial().pushAll(['upload', 'body']),
-          sourceName: 'Upload',
-          sourceContext: context,
-          alias: MultipartContentAlias(
-            targetName: 'UploadAlias',
-            targetContext: context,
-            isNullable: true,
+      test('keeps nullability owned by an annotated alias typedef', () {
+        final model = AliasModel(
+          name: 'UploadAlias',
+          context: context,
+          model: ClassModel(
+            name: 'Upload',
+            context: context,
+            properties: const [],
+            isDeprecated: false,
+            examples: const [],
           ),
-          parts: const [],
+          isNullable: true,
+          defaultValue: null,
+          examples: const [],
+        );
+        final content = MultipartRequestContent(
+          model: model,
+          encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
         );
@@ -56,17 +73,23 @@ void main() {
 
         expect(type.symbol, 'UploadAlias');
         expect(type.url, 'package:example/src/model/upload_alias.dart');
-        expect(type.isNullable, isTrue);
+        expect(type.isNullable, isFalse);
       });
 
       test(
         'does not add a nullable suffix already owned by an object typedef',
         () {
-          final content = MultipartRequestContent(
+          final model = ClassModel(
             name: 'Upload',
             context: context,
+            properties: const [],
             isNullable: true,
-            parts: const [],
+            isDeprecated: false,
+            examples: const [],
+          );
+          final content = MultipartRequestContent(
+            model: model,
+            encoding: const {},
             rawContentType: 'multipart/form-data',
             examples: const [],
           );

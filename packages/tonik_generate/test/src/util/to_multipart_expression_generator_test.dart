@@ -297,6 +297,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.name == null) {
+              throw EncodingException(r'Required multipart property "name" is null.');
+            }
             if (body.name != null) {
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -406,25 +409,34 @@ $expectedPartCode
     });
 
     test('serializes parts from aliased multipart content', () {
+      final part = multipartPartFixture(
+        name: 'title',
+        model: StringModel(context: testContext),
+        encoding: const PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain',
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
+          headers: null,
+        ),
+      );
       final content = MultipartRequestContent(
-        name: 'FormAlias',
-        sourceName: 'InnerForm',
-        context: testContext,
-        rawContentType: 'multipart/form-data',
-        parts: [
-          multipartPartFixture(
-            name: 'title',
-            model: StringModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+        model: AliasModel(
+          name: 'FormAlias',
+          context: testContext,
+          model: ClassModel(
+            name: 'InnerForm',
+            context: testContext,
+            properties: [part.property],
+            isDeprecated: false,
+            examples: const [],
           ),
-        ],
+          defaultValue: null,
+          examples: const [],
+        ),
+        encoding: {'title': part.encoding},
+        rawContentType: 'multipart/form-data',
         examples: const [],
       );
 
@@ -515,7 +527,12 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse(r'text/plain'))));
+            if (body.password == null) {
+              throw EncodingException(r'Required multipart property "password" is null.');
+            }
+            if (body.password != null) {
+              _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
+            }
             return _$formData;
           }
         '''),
@@ -947,6 +964,9 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.count == null) {
+              throw EncodingException(r'Required multipart property "count" is null.');
+            }
             if (body.count != null) {
               _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -1095,6 +1115,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.score == null) {
+              throw EncodingException(r'Required multipart property "score" is null.');
+            }
             if (body.score != null) {
               _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
@@ -1633,6 +1656,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.status == null) {
+              throw EncodingException(r'Required multipart property "status" is null.');
+            }
             if (body.status != null) {
               _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -1768,6 +1794,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.photo == null) {
+              throw EncodingException(r'Required multipart property "photo" is null.');
+            }
             if (body.photo != null) {
               switch (body.photo!) {
                 case TonikFileBytes(:final bytes, :final fileName):
@@ -2231,6 +2260,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.address == null) {
+              throw EncodingException(r'Required multipart property "address" is null.');
+            }
             if (body.address != null) {
               _$formData.files.add(MapEntry(
                 r'address',
@@ -4878,6 +4910,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.tags == null) {
+              throw EncodingException(r'Required multipart property "tags" is null.');
+            }
             if (body.tags != null) {
               for (final item in body.tags!) {
                 _$formData.fields.add(MapEntry(r'tags', item));
@@ -6692,6 +6727,9 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.file == null) {
+              throw EncodingException(r'Required multipart property "file" is null.');
+            }
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
               _$fileHeaders[r'X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];

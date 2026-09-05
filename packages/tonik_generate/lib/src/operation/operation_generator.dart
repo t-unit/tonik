@@ -115,6 +115,9 @@ class OperationGenerator {
 
     final requestPlan = OperationRequestPlanner(
       backend: backendGenerator.backend,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
     ).plan(operation, normalizedParams);
 
     return Class((b) {
@@ -224,6 +227,9 @@ class OperationGenerator {
     final cookieArgs = <String, Expression>{};
     requestPlan ??= OperationRequestPlanner(
       backend: backendGenerator.backend,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
     ).plan(operation, normalizedParams);
 
     for (final pathParam in requestPlan.pathParameters) {
@@ -438,6 +444,8 @@ class OperationGenerator {
                 final args = <String, Expression>{};
                 for (final info in extractOperationMultipartHeaderParamInfo(
                   operation,
+                  nameManager: nameManager,
+                  package: package,
                 )) {
                   args[info.name] = refer(info.name);
                 }

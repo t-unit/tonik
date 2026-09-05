@@ -1,4 +1,3 @@
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -74,11 +73,7 @@ void main() {
     },
   };
 
-  test('warns and omits repeated allOf members in first-occurrence order', () {
-    final logs = <LogRecord>[];
-    final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
-    addTearDown(subscription.cancel);
-
+  test('preserves repeated allOf members in declaration order', () {
     final api = Importer().import({
       'openapi': '3.0.3',
       'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -121,13 +116,8 @@ void main() {
     final wrapper = api.models.whereType<ClassModel>().single;
     final nested = wrapper.properties.single.model as AllOfModel;
 
-    expect(compound.models, [zebra, alpha]);
-    expect(nested.models, [zebra, alpha]);
-    final warnings = logs.where((record) => record.level == Level.WARNING);
-    expect(warnings.map((record) => record.message), [
-      'Ignoring duplicate member in allOf at components/schemas/Compound.',
-      'Ignoring duplicate member in allOf at components/schemas/Wrapper/value/allOf.',
-    ]);
+    expect(compound.models, [zebra, alpha, zebra]);
+    expect(nested.models, [zebra, alpha, zebra]);
   });
 
   test('Imports allOf with inline schema', () {

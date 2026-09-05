@@ -38,13 +38,20 @@ class HttpBodyGenerator {
     final inlineHelpers = <InlineHelper>[];
     final isRequired = requestBody.isRequired;
     final headerParameters = buildMultipartHeaderParameters(
-      extractOperationMultipartHeaderParamInfo(operation),
+      extractOperationMultipartHeaderParamInfo(
+        operation,
+        nameManager: nameManager,
+        package: package,
+      ),
       nameManager,
       package,
       useImmutableCollections: useImmutableCollections,
     );
-    bodyPlan ??= const OperationRequestPlanner(
+    bodyPlan ??= OperationRequestPlanner(
       backend: TransportBackend.http,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
     ).planBody(operation);
 
     if (content.length > 1) {
