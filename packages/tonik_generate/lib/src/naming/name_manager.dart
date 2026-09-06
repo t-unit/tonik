@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:change_case/change_case.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -17,6 +19,12 @@ class NameManager({
   final _rawObjectNames = <String, String>{};
 
   final operationNames = <Operation, String>{};
+  final _operationFilenames = <String>{};
+
+  /// File names for all cached operation names.
+  late final Set<String> operationFilenames = UnmodifiableSetView(
+    _operationFilenames,
+  );
 
   final tagNames = <Tag, String>{};
 
@@ -199,7 +207,9 @@ class NameManager({
   /// For API client method names, use [operationMethodName] instead.
   String operationName(Operation operation) {
     return operationNames.putIfAbsent(operation, () {
-      return generator.generateOperationName(operation, _usedFileNames);
+      final name = generator.generateOperationName(operation, _usedFileNames);
+      _operationFilenames.add(fileNameForClass(name));
+      return name;
     });
   }
 

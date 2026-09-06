@@ -4,6 +4,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_generate/src/generated_artifact_writer.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
@@ -11,7 +12,7 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 class const OperationBaseFileGenerator({
   required final OperationBaseGenerator operationBaseGenerator,
   required final String operationBaseFilename,
-  required final Set<String> operationFilenames,
+  required final NameManager nameManager,
 }) {
   String writeFile({required String outputDirectory, required String package}) {
     final operationDirectory = Directory(
@@ -24,7 +25,7 @@ class const OperationBaseFileGenerator({
       for (final stale in operationDirectory.listSync().whereType<File>()) {
         final staleFilename = path.basename(stale.path);
         if (staleFilename != operationBaseFilename &&
-            !operationFilenames.contains(staleFilename) &&
+            !nameManager.operationFilenames.contains(staleFilename) &&
             baseFilenamePattern.hasMatch(staleFilename) &&
             stale.readAsStringSync().startsWith(
               '// Generated code - do not modify by hand',

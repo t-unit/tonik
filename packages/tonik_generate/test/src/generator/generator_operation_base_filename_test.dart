@@ -68,11 +68,11 @@ void main() {
             package: _packageName,
             config: TonikConfig(transport: TransportConfig(backend: backend)),
             operationBaseFilenameResolver:
-                ({required generator, required operationFilenames}) {
+                ({required generator, required nameManager}) {
                   resolutionCount++;
                   return operationBaseFilename(
                     generator: generator,
-                    operationFilenames: operationFilenames,
+                    nameManager: nameManager,
                   );
                 },
           );

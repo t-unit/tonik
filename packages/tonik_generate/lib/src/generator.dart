@@ -58,7 +58,7 @@ class const Generator() {
     @visibleForTesting
     String Function({
       required OperationBaseGenerator generator,
-      required Set<String> operationFilenames,
+      required NameManager nameManager,
     })?
     operationBaseFilenameResolver,
   }) async {
@@ -84,13 +84,10 @@ class const Generator() {
           servers: apiDocument.servers,
         );
 
-    final operationFilenames = Set.unmodifiable(
-      nameManager.operationNames.values.map(nameManager.fileNameForClass),
-    );
     final resolvedOperationBaseFilename =
         (operationBaseFilenameResolver ?? operationBaseFilename)(
           generator: backendGenerator.operationBaseGenerator,
-          operationFilenames: operationFilenames,
+          nameManager: nameManager,
         );
 
     final classGenerator = ClassGenerator(
@@ -152,7 +149,7 @@ class const Generator() {
     final operationBaseFileGenerator = OperationBaseFileGenerator(
       operationBaseGenerator: backendGenerator.operationBaseGenerator,
       operationBaseFilename: resolvedOperationBaseFilename,
-      operationFilenames: operationFilenames,
+      nameManager: nameManager,
     );
 
     final requestBodyGenerator = RequestBodyGenerator(
