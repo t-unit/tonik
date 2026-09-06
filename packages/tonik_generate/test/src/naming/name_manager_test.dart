@@ -1070,6 +1070,30 @@ void main() {
           throwsUnsupportedError,
         );
       });
+
+      test('caches operation base filename resolution', () {
+        final operation = Operation(
+          operationId: 'HttpOperation',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        manager.operationName(operation);
+
+        final first = manager.operationBaseFilename('http_operation.dart');
+        final second = manager.operationBaseFilename('http_operation.dart');
+
+        expect(first, 'http_operation_base.dart');
+        expect(identical(first, second), isTrue);
+      });
     });
 
     group('tagName', () {

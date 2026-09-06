@@ -16,7 +16,6 @@ import 'package:tonik_generate/src/model/typedef_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_base_file_generator.dart';
-import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
@@ -55,12 +54,6 @@ class const Generator() {
     required String package,
     TonikConfig config = const TonikConfig(),
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
-    @visibleForTesting
-    String Function({
-      required OperationBaseGenerator generator,
-      required NameManager nameManager,
-    })?
-    operationBaseFilenameResolver,
   }) async {
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
@@ -84,11 +77,9 @@ class const Generator() {
           servers: apiDocument.servers,
         );
 
-    final resolvedOperationBaseFilename =
-        (operationBaseFilenameResolver ?? operationBaseFilename)(
-          generator: backendGenerator.operationBaseGenerator,
-          nameManager: nameManager,
-        );
+    final resolvedOperationBaseFilename = nameManager.operationBaseFilename(
+      backendGenerator.operationBaseGenerator.filename,
+    );
 
     final classGenerator = ClassGenerator(
       nameManager: nameManager,

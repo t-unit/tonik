@@ -4,7 +4,6 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generator.dart';
-import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 
 const _packageName = 'test_package';
 
@@ -51,53 +50,39 @@ void main() {
         );
       });
 
-      test(
-        '$backend resolves once and shares multiple-collision filename',
-        () async {
-          final operations = {
-            _operation(details.baseClassName),
-            _operation('${details.baseClassName}Base'),
-            _operation('${details.baseClassName}BaseBase'),
-            _operation('RegularOperation'),
-          };
-          var resolutionCount = 0;
+      test('$backend shares the multiple-collision filename', () async {
+        final operations = {
+          _operation(details.baseClassName),
+          _operation('${details.baseClassName}Base'),
+          _operation('${details.baseClassName}BaseBase'),
+          _operation('RegularOperation'),
+        };
+        await const Generator().generate(
+          apiDocument: _document(operations),
+          outputDirectory: tempDirectory.path,
+          package: _packageName,
+          config: TonikConfig(transport: TransportConfig(backend: backend)),
+        );
 
-          await const Generator().generate(
-            apiDocument: _document(operations),
-            outputDirectory: tempDirectory.path,
-            package: _packageName,
-            config: TonikConfig(transport: TransportConfig(backend: backend)),
-            operationBaseFilenameResolver:
-                ({required generator, required nameManager}) {
-                  resolutionCount++;
-                  return operationBaseFilename(
-                    generator: generator,
-                    nameManager: nameManager,
-                  );
-                },
+        final expectedBaseFilename =
+            '${details.filenameStem}_base_base_base.dart';
+        final operationDirectory = _operationDirectory(tempDirectory);
+        expect(
+          File(path.join(operationDirectory.path, expectedBaseFilename))
+              .existsSync(),
+          isTrue,
+        );
+
+        for (final operation in operations) {
+          final className = operation.operationId!;
+          final filename = _filenameForClass(className);
+          _expectOperationUsesBase(
+            file: File(path.join(operationDirectory.path, filename)),
+            details: details,
+            baseFilename: expectedBaseFilename,
           );
-
-          expect(resolutionCount, 1);
-          final expectedBaseFilename =
-              '${details.filenameStem}_base_base_base.dart';
-          final operationDirectory = _operationDirectory(tempDirectory);
-          expect(
-            File(path.join(operationDirectory.path, expectedBaseFilename))
-                .existsSync(),
-            isTrue,
-          );
-
-          for (final operation in operations) {
-            final className = operation.operationId!;
-            final filename = _filenameForClass(className);
-            _expectOperationUsesBase(
-              file: File(path.join(operationDirectory.path, filename)),
-              details: details,
-              baseFilename: expectedBaseFilename,
-            );
-          }
-        },
-      );
+        }
+      });
 
       test('$backend writes the default base for an empty document', () async {
         await const Generator().generate(

@@ -1,5 +1,4 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Generates the backend-specific operation base shared by generated
@@ -31,15 +30,4 @@ abstract interface class const OperationBaseGenerator() {
     required bool isVoid,
     required bool isDataAsync,
   });
-}
-
-String operationBaseFilename({
-  required OperationBaseGenerator generator,
-  required NameManager nameManager,
-}) {
-  var filename = generator.filename;
-  while (nameManager.operationFilenames.contains(filename)) {
-    filename = '${filename.substring(0, filename.length - 5)}_base.dart';
-  }
-  return filename;
 }

@@ -20,6 +20,7 @@ class NameManager({
 
   final operationNames = <Operation, String>{};
   final _operationFilenames = <String>{};
+  final _operationBaseFilenames = <String, String>{};
 
   /// File names for all cached operation names.
   late final Set<String> operationFilenames = UnmodifiableSetView(
@@ -210,6 +211,20 @@ class NameManager({
       final name = generator.generateOperationName(operation, _usedFileNames);
       _operationFilenames.add(fileNameForClass(name));
       return name;
+    });
+  }
+
+  /// Resolves and caches a base filename that does not collide with an
+  /// operation filename.
+  ///
+  /// All operation names must be generated before calling this method.
+  String operationBaseFilename(String preferredFilename) {
+    return _operationBaseFilenames.putIfAbsent(preferredFilename, () {
+      var filename = preferredFilename;
+      while (_operationFilenames.contains(filename)) {
+        filename = '${filename.substring(0, filename.length - 5)}_base.dart';
+      }
+      return filename;
     });
   }
 
