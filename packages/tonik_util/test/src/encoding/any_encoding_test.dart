@@ -2062,6 +2062,48 @@ void main() {
   });
 
   group('encodeAnyToFormEntries', () {
+    test('escapes the declared name while retaining reserved value chars', () {
+      expect(
+        encodeAnyToFormEntries(
+          'a/b?c:d@e',
+          name: 'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const [(name: 'filter%2Fname', value: 'a/b?c:d@e')],
+      );
+    });
+
+    test('escapes declared name and value chars without allowReserved', () {
+      expect(
+        encodeAnyToFormEntries(
+          'a/b?c:d@e',
+          name: 'filter/name',
+          explode: false,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
+        const [(name: 'filter%2Fname', value: 'a%2Fb%3Fc%3Ad%40e')],
+      );
+    });
+
+    test('retains declared name charset and query-component encoding', () {
+      expect(
+        encodeAnyToFormEntries(
+          'café/a b',
+          name: 'clé/a b',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
+        ),
+        const [(name: 'cl%E9%2Fa+b', value: 'caf%E9/a+b')],
+      );
+    });
+
     test('empty list value yields no entries', () {
       expect(
         encodeAnyToFormEntries(

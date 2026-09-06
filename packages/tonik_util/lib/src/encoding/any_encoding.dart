@@ -419,7 +419,11 @@ List<ParameterEntry> encodeAnyToFormEntries(
   }
   return [
     (
-      name: name,
+      name: name.uriEncode(
+        allowEmpty: true,
+        useQueryComponent: useQueryComponent,
+        textEncoding: textEncoding,
+      ),
       value: encodeAnyToForm(
         value,
         explode: explode,

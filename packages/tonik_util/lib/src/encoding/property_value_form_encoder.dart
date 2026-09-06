@@ -182,6 +182,16 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
           ),
         });
     }
-    return [(name: paramName, value: parts.join(','))];
+    return [
+      (
+        name: _encode(
+          paramName,
+          useQueryComponent: useQueryComponent,
+          allowReserved: false,
+          textEncoding: textEncoding,
+        ),
+        value: parts.join(','),
+      ),
+    ];
   }
 }
