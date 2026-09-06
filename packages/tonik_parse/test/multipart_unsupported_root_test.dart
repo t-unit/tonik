@@ -1,4 +1,3 @@
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/example_importer.dart';
@@ -9,37 +8,18 @@ import 'package:tonik_parse/src/response_header_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
-  test('unsupported multipart roots warn and produce an empty body', () {
-    final records = <LogRecord>[];
-    final subscription = Logger.root.onRecord.listen(records.add);
-    addTearDown(subscription.cancel);
+  test('multipart parsing retains unsupported roots as regular models', () {
     for (final version in ['3.0.3', '3.1.0']) {
       for (final entry in _unsupportedRoots.entries) {
-        records.clear();
-        final api = Importer().import(_document(entry.value, version));
+        final api = Importer().import(_document(entry.value.schema, version));
         final content =
             api.requestBodies.single.resolvedContent.single
                 as MultipartRequestContent;
-        expect(content.parts, isEmpty, reason: '$version: ${entry.key}');
         expect(content.contentType, ContentType.multipart);
-        expect(content.name, isNull);
-        expect(content.sourceName, isNull);
-        expect(content.alias, isNull);
-        expect(content.sourceContext, content.context);
         expect(
-          content.context,
-          RequestBodyImporter.rootContext.pushAll(['Upload', 'body']),
-        );
-        expect(
-          content.additionalPropertiesPolicy,
-          isA<ForbiddenAdditionalProperties>(),
-        );
-        expect(
-          records
-              .singleWhere((record) => record.level == Level.WARNING)
-              .message,
-          'Multipart body at components/requestBodies/Upload has an unsupported or missing root schema. '
-          'Generating an empty multipart body.',
+          content.model.resolved.runtimeType,
+          entry.value.resolvedType,
+          reason: '$version: ${entry.key}',
         );
       }
     }
@@ -68,51 +48,84 @@ void main() {
   });
 }
 
-const _unsupportedRoots = <String, Object?>{
-  'missing schema': null,
-  'string': {'type': 'string'},
-  'integer': {'type': 'integer'},
-  'boolean': {'type': 'boolean'},
-  'boolean schema': true,
-  'false schema': false,
-  'null': {'type': 'null'},
-  'multiple types': {
-    'type': ['string', 'object'],
-  },
-  'map': {
-    'type': 'object',
-    'additionalProperties': {'type': 'string'},
-  },
-  'referenced binary': {r'$ref': '#/components/schemas/Binary'},
-  'aliased binary': {r'$ref': '#/components/schemas/BinaryAlias'},
-  'referenced map': {r'$ref': '#/components/schemas/Map'},
-  'referenced composition': {r'$ref': '#/components/schemas/Composed'},
-  'annotated composition': {
-    r'$ref': '#/components/schemas/Composed',
-    'description': 'Upload',
-    'nullable': true,
-  },
-  'allOf': {
-    'allOf': [
-      {'type': 'string'},
-    ],
-  },
-  'oneOf': {
-    'oneOf': [
-      {'type': 'string'},
-      {'type': 'object'},
-    ],
-  },
-  'anyOf': {
-    'anyOf': [
-      {'type': 'string'},
-      {'type': 'object'},
-    ],
-  },
-  'array': {
-    'type': 'array',
-    'items': {'type': 'string'},
-  },
+const _unsupportedRoots = <String, ({Object? schema, Type resolvedType})>{
+  'missing schema': (schema: null, resolvedType: AnyModel),
+  'string': (schema: {'type': 'string'}, resolvedType: StringModel),
+  'integer': (schema: {'type': 'integer'}, resolvedType: IntegerModel),
+  'boolean': (schema: {'type': 'boolean'}, resolvedType: BooleanModel),
+  'boolean schema': (schema: true, resolvedType: AnyModel),
+  'false schema': (schema: false, resolvedType: NeverModel),
+  'null': (schema: {'type': 'null'}, resolvedType: NeverModel),
+  'multiple types': (
+    schema: {
+      'type': ['string', 'object'],
+    },
+    resolvedType: OneOfModel,
+  ),
+  'map': (
+    schema: {
+      'type': 'object',
+      'additionalProperties': {'type': 'string'},
+    },
+    resolvedType: MapModel,
+  ),
+  'referenced binary': (
+    schema: {r'$ref': '#/components/schemas/Binary'},
+    resolvedType: BinaryModel,
+  ),
+  'aliased binary': (
+    schema: {r'$ref': '#/components/schemas/BinaryAlias'},
+    resolvedType: BinaryModel,
+  ),
+  'referenced map': (
+    schema: {r'$ref': '#/components/schemas/Map'},
+    resolvedType: MapModel,
+  ),
+  'referenced composition': (
+    schema: {r'$ref': '#/components/schemas/Composed'},
+    resolvedType: AllOfModel,
+  ),
+  'annotated composition': (
+    schema: {
+      r'$ref': '#/components/schemas/Composed',
+      'description': 'Upload',
+      'nullable': true,
+    },
+    resolvedType: AllOfModel,
+  ),
+  'allOf': (
+    schema: {
+      'allOf': [
+        {'type': 'string'},
+      ],
+    },
+    resolvedType: AllOfModel,
+  ),
+  'oneOf': (
+    schema: {
+      'oneOf': [
+        {'type': 'string'},
+        {'type': 'object'},
+      ],
+    },
+    resolvedType: OneOfModel,
+  ),
+  'anyOf': (
+    schema: {
+      'anyOf': [
+        {'type': 'string'},
+        {'type': 'object'},
+      ],
+    },
+    resolvedType: AnyOfModel,
+  ),
+  'array': (
+    schema: {
+      'type': 'array',
+      'items': {'type': 'string'},
+    },
+    resolvedType: ListModel,
+  ),
 };
 
 Map<String, dynamic> _document(Object? schema, String version) => {

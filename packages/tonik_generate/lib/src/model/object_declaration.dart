@@ -24,32 +24,4 @@ class ObjectDeclaration._({
         isReadOnly: model.isReadOnly,
         isWriteOnly: model.isWriteOnly,
       );
-
-  new fromMultipart(MultipartRequestContent content, String name)
-    : this._(
-        name: name,
-        properties: [
-          for (final part in content.parts)
-            Property(
-              name: part.name,
-              nameOverride: part.nameOverride,
-              description: part.description,
-              model: part.model,
-              isRequired: part.isRequired,
-              isNullable: part.isNullable,
-              isDeprecated: part.isDeprecated,
-              isReadOnly: part.isReadOnly,
-              isWriteOnly: part.isWriteOnly,
-              defaultValue: part.defaultValue,
-              examples: part.examples,
-            ),
-        ],
-        additionalPropertiesPolicy: content.additionalPropertiesPolicy,
-        examples: content.schemaExamples,
-        description: content.description,
-        isDeprecated: content.isDeprecated,
-        isNullable: content.isNullable,
-        isReadOnly: content.isReadOnly,
-        isWriteOnly: content.isWriteOnly,
-      );
 }

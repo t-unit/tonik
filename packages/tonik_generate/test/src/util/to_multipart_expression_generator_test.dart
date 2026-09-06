@@ -4,7 +4,6 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
-import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 
 import '../transport/multipart_test_support.dart';
@@ -63,7 +62,8 @@ void main() {
       ),
     ]);
     final result = buildMultipartBodyStatements(
-      _planMultipartBody(content, 'body'),
+      const MultipartBodyPlanner(backend: TransportBackend.dio)
+          .plan(content, bodyAccessor: 'body', isRequired: true),
     );
     final expected =
         '''
@@ -100,7 +100,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -287,7 +288,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -297,6 +299,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.name == null) {
+              throw EncodingException(r'Required multipart property "name" is null.');
+            }
             if (body.name != null) {
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -325,7 +330,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -364,7 +370,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -388,7 +395,8 @@ $expectedPartCode
       final content = multipartContentFixture(testContext, []);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -406,30 +414,40 @@ $expectedPartCode
     });
 
     test('serializes parts from aliased multipart content', () {
+      final part = multipartPartFixture(
+        name: 'title',
+        model: StringModel(context: testContext),
+        encoding: const PartEncoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain',
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
+          headers: null,
+        ),
+      );
       final content = MultipartRequestContent(
-        name: 'FormAlias',
-        sourceName: 'InnerForm',
-        context: testContext,
-        rawContentType: 'multipart/form-data',
-        parts: [
-          multipartPartFixture(
-            name: 'title',
-            model: StringModel(context: testContext),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
-              headers: null,
-            ),
+        model: AliasModel(
+          name: 'FormAlias',
+          context: testContext,
+          model: ClassModel(
+            name: 'InnerForm',
+            context: testContext,
+            properties: [part.property],
+            isDeprecated: false,
+            examples: const [],
           ),
-        ],
+          defaultValue: null,
+          examples: const [],
+        ),
+        encoding: {'title': part.encoding},
+        rawContentType: 'multipart/form-data',
         examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -469,7 +487,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -505,7 +524,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -515,7 +535,12 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse(r'text/plain'))));
+            if (body.password == null) {
+              throw EncodingException(r'Required multipart property "password" is null.');
+            }
+            if (body.password != null) {
+              _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
+            }
             return _$formData;
           }
         '''),
@@ -540,7 +565,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -575,7 +601,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -612,7 +639,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -651,7 +679,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -686,7 +715,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -721,7 +751,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -756,7 +787,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -791,7 +823,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -826,7 +859,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -861,7 +895,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -898,7 +933,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -937,7 +973,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -947,6 +984,9 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.count == null) {
+              throw EncodingException(r'Required multipart property "count" is null.');
+            }
             if (body.count != null) {
               _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -976,7 +1016,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1012,7 +1053,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1048,7 +1090,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1085,7 +1128,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1095,6 +1139,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.score == null) {
+              throw EncodingException(r'Required multipart property "score" is null.');
+            }
             if (body.score != null) {
               _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
@@ -1126,7 +1173,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1164,7 +1212,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1202,7 +1251,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1240,7 +1290,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1278,7 +1329,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1328,7 +1380,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1380,7 +1433,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1425,7 +1479,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1472,7 +1527,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1516,7 +1572,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1564,7 +1621,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1614,7 +1672,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1624,6 +1683,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.status == null) {
+              throw EncodingException(r'Required multipart property "status" is null.');
+            }
             if (body.status != null) {
               _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
@@ -1653,7 +1715,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1700,7 +1763,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1749,7 +1813,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1759,6 +1824,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.photo == null) {
+              throw EncodingException(r'Required multipart property "photo" is null.');
+            }
             if (body.photo != null) {
               switch (body.photo!) {
                 case TonikFileBytes(:final bytes, :final fileName):
@@ -1797,7 +1865,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1851,7 +1920,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1899,7 +1969,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1958,7 +2029,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2008,7 +2080,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2059,7 +2132,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2110,7 +2184,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2160,7 +2235,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2212,7 +2288,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2222,6 +2299,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.address == null) {
+              throw EncodingException(r'Required multipart property "address" is null.');
+            }
             if (body.address != null) {
               _$formData.files.add(MapEntry(
                 r'address',
@@ -2263,7 +2343,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2314,7 +2395,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2364,7 +2446,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2413,7 +2496,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2461,7 +2545,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2509,7 +2594,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2563,7 +2649,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2615,7 +2702,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -2673,7 +2761,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2733,7 +2822,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -2792,7 +2882,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2854,7 +2945,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -2913,7 +3005,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2974,7 +3067,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -3037,7 +3131,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3098,7 +3193,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3143,7 +3239,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3206,7 +3303,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3274,7 +3372,10 @@ $expectedPartCode
         ]);
 
         final code = emitStatements(
-          buildMultipartBodyStatements(_planMultipartBody(content, 'body')),
+          buildMultipartBodyStatements(
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
+          ),
         );
 
         expect(
@@ -3314,7 +3415,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3362,7 +3464,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3402,7 +3505,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3450,7 +3554,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3494,7 +3599,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3537,7 +3643,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3615,7 +3722,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3695,7 +3803,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3773,7 +3882,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3851,7 +3961,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3936,7 +4047,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3985,7 +4097,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4026,7 +4139,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4067,7 +4181,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4115,7 +4230,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4156,7 +4272,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4198,7 +4315,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4240,7 +4358,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4295,7 +4414,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4350,7 +4470,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4403,7 +4524,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4444,7 +4566,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4485,7 +4608,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4536,7 +4660,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4577,7 +4702,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4620,7 +4746,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4666,7 +4793,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4722,7 +4850,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4771,7 +4900,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4815,7 +4945,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4859,7 +4990,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4869,6 +5001,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.tags == null) {
+              throw EncodingException(r'Required multipart property "tags" is null.');
+            }
             if (body.tags != null) {
               for (final item in body.tags!) {
                 _$formData.fields.add(MapEntry(r'tags', item));
@@ -4903,7 +5038,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -4942,7 +5078,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -4975,7 +5112,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -5025,7 +5163,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5064,7 +5203,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5104,7 +5244,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5150,7 +5291,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5193,7 +5335,8 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            _planMultipartBody(content, 'body'),
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -5235,7 +5378,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5288,7 +5432,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5327,7 +5472,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5382,7 +5528,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5426,7 +5573,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5477,7 +5625,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5523,7 +5672,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5565,7 +5715,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5607,7 +5758,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -5647,7 +5799,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyExpression(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitExpressionAsMethod(result);
@@ -5699,7 +5852,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5759,7 +5913,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5829,7 +5984,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5885,7 +6041,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5939,7 +6096,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6004,7 +6162,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6056,7 +6215,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6126,7 +6286,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6177,7 +6338,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6240,7 +6402,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6296,7 +6459,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6364,7 +6528,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6422,7 +6587,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6479,7 +6645,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6548,7 +6715,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6600,7 +6768,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6667,7 +6836,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6677,6 +6847,9 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
+            if (body.file == null) {
+              throw EncodingException(r'Required multipart property "file" is null.');
+            }
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
               _$fileHeaders[r'X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
@@ -6732,7 +6905,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6786,7 +6960,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -6841,7 +7016,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6900,7 +7076,8 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          _planMultipartBody(content, 'body'),
+          const MultipartBodyPlanner(backend: TransportBackend.dio)
+              .plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6974,7 +7151,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7025,7 +7203,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7060,7 +7239,8 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        _planMultipartBody(content, 'body'),
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7090,13 +7270,6 @@ $expectedPartCode
     });
   });
 }
-
-MultipartBodyPlan _planMultipartBody(
-  MultipartRequestContent content,
-  String bodyAccessor,
-) =>
-    const MultipartBodyPlanner(backend: TransportBackend.dio)
-        .plan(content, bodyAccessor: bodyAccessor, isRequired: true);
 
 ClassModel _testClassModel(Context context) => ClassModel(
   name: 'NestedValue',

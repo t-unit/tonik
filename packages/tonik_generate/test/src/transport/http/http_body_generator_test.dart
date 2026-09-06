@@ -703,108 +703,28 @@ Future<Object?> _data({required Payload body}) async {
   });
 
   group('multipart bodies', () {
-    test('emits ordered duplicate-preserving scalar JSON and file parts', () {
-      final metadata = ClassModel(
-        name: 'Metadata',
-        properties: [
-          _formProperty(
-            context,
-            name: 'id',
+    test('emits a runtime error for incompatible duplicate definitions', () {
+      final operation = _operation(
+        context,
+        requestBody: _multipartBody(context, [
+          multipartPartFixture(
+            name: 'item',
             model: StringModel(context: context),
           ),
-        ],
-        context: context,
-        isDeprecated: false,
-        examples: const [],
+          multipartPartFixture(
+            name: 'item',
+            model: BinaryModel(context: context),
+          ),
+        ], name: 'Upload'),
       );
 
-      final method = generator.generateBodyMethod(
-        _operation(
-          context,
-          requestBody: _multipartBody(context, [
-            multipartPartFixture(
-              name: 'item',
-              model: StringModel(context: context),
-              encoding: const PartEncoding(
-                contentType: ContentType.text,
-                rawContentType: 'text/plain; charset=iso-8859-1',
-                wireContentType: 'text/plain; charset=iso-8859-1',
-                textEncoding: TextEncoding.latin1,
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-            multipartPartFixture(
-              name: 'metadata',
-              model: metadata,
-              encoding: const PartEncoding(
-                contentType: ContentType.json,
-                rawContentType: 'application/json',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-            multipartPartFixture(
-              name: 'item',
-              model: BinaryModel(context: context),
-              encoding: const PartEncoding(
-                contentType: ContentType.bytes,
-                rawContentType: 'image/png',
-                headers: null,
-                style: null,
-                explode: null,
-                allowReserved: null,
-              ),
-            ),
-            multipartPartFixture(
-              name: 'note',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-            ),
-          ], name: 'Upload'),
-        ),
-      );
+      final method = generator.generateBodyMethod(operation);
 
-      const expected = r'''
+      const expected = '''
 Future<Object?> _data({required Upload body}) async {
-  final _$multipartFiles = <MultipartFile>[];
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'item',
-      latin1.encode(body.item),
-      contentType: MediaType.parse(r'text/plain; charset=iso-8859-1'),
-    ),
+  throw EncodingException(
+    r'Multipart property "item" has incompatible definitions (StringModel and BinaryModel).',
   );
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'metadata',
-      utf8.encode(jsonEncode(body.metadata.toJson())),
-      contentType: MediaType.parse(r'application/json'),
-    ),
-  );
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'item',
-      body.item2.toBytes(),
-      filename: body.item2.fileName ?? r'item',
-      contentType: MediaType.parse(r'image/png'),
-    ),
-  );
-  if (body.note != null) {
-    _$multipartFiles.add(
-      MultipartFile.fromBytes(
-        r'note',
-        utf8.encode(body.note!),
-        contentType: MediaType.parse(r'text/plain'),
-      ),
-    );
-  }
-  return _$multipartFiles;
 }
 ''';
 
@@ -1061,7 +981,7 @@ RequestBodyObject _body(
 
 RequestBodyObject _multipartBody(
   Context context,
-  List<MultipartPart> parts, {
+  List<MultipartPartFixture> parts, {
   required String name,
   bool isRequired = true,
 }) => RequestBodyObject(

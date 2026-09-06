@@ -431,11 +431,11 @@ void main() {
 
   group('multipart per-part header parameters', () {
     test('generates parameter for property with one header', () {
-      final partModel1 = MultipartRequestContent(
+      final partModel1 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -513,11 +513,11 @@ void main() {
     });
 
     test('generates multiple header parameters for multiple headers', () {
-      final partModel2 = MultipartRequestContent(
+      final partModel2 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -614,11 +614,11 @@ void main() {
     test(
       'optional property with required header produces optional parameter',
       () {
-        final partModel3 = MultipartRequestContent(
+        final partModel3 = _multipartContent(
           rawContentType: 'multipart/form-data',
           name: 'UploadForm',
           parts: [
-            MultipartPart(
+            MultipartPartFixture(
               encoding: _binaryEncoding,
               name: 'avatar',
               model: BinaryModel(context: context),
@@ -695,11 +695,11 @@ void main() {
     );
 
     test('does not filter out Content-Type header', () {
-      final partModel4 = MultipartRequestContent(
+      final partModel4 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -786,11 +786,11 @@ void main() {
     });
 
     test('no extra parameters for property without headers', () {
-      final partModel5 = MultipartRequestContent(
+      final partModel5 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'name',
             model: StringModel(context: context),
@@ -855,11 +855,11 @@ void main() {
       // Query param "file_custom" normalizes to "fileCustom".
       // Multipart header "X-Custom" on property "file" also normalizes to
       // "fileCustom". We need unique names.
-      final partModel6 = MultipartRequestContent(
+      final partModel6 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -955,11 +955,11 @@ void main() {
     });
 
     test('multipart header parameter does not collide with cancellation', () {
-      final model = MultipartRequestContent(
+      final model = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'c',
             model: BinaryModel(context: context),
@@ -1033,11 +1033,11 @@ void main() {
 
     test('multipart headers remain unique after repeated normalization '
         'collisions', () {
-      final model = MultipartRequestContent(
+      final model = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -1114,11 +1114,11 @@ void main() {
     });
 
     test('generates deprecated annotation for deprecated multipart header', () {
-      final partModel7 = MultipartRequestContent(
+      final partModel7 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -1206,11 +1206,11 @@ void main() {
         examples: const [],
       );
 
-      final bodyModel = MultipartRequestContent(
+      final bodyModel = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -1294,11 +1294,11 @@ void main() {
         defaultValue: 'static-trace-id',
       );
 
-      final partModel8 = MultipartRequestContent(
+      final partModel8 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
         parts: [
-          MultipartPart(
+          MultipartPartFixture(
             encoding: _binaryEncoding,
             name: 'file',
             model: BinaryModel(context: context),
@@ -2293,15 +2293,63 @@ void main() {
   });
 }
 
+MultipartRequestContent _multipartContent({
+  required String rawContentType,
+  required String name,
+  required List<MultipartPartFixture> parts,
+  required Context context,
+  required List<Example> examples,
+}) => MultipartRequestContent(
+  model: ClassModel(
+    name: name,
+    context: context,
+    properties: [for (final part in parts) part.property],
+    isDeprecated: false,
+    examples: const [],
+  ),
+  encoding: {for (final part in parts) part.property.name: part.encoding},
+  rawContentType: rawContentType,
+  examples: examples,
+);
+
+final class MultipartPartFixture._({
+  required final Property property,
+  required final PartEncoding encoding,
+}) {
+  new({
+    required String name,
+    required Model model,
+    required bool isRequired,
+    required bool isNullable,
+    required bool isDeprecated,
+    required List<Example> examples,
+    required Object? defaultValue,
+    required PartEncoding encoding,
+  }) : this._(
+         property: Property(
+           name: name,
+           model: model,
+           isRequired: isRequired,
+           isNullable: isNullable,
+           isDeprecated: isDeprecated,
+           examples: examples,
+           defaultValue: defaultValue,
+         ),
+         encoding: encoding,
+       );
+}
+
 MultipartRequestContent _withEncoding(
   MultipartRequestContent content,
   Map<String, PartEncoding> byName,
-) {
-  for (final part in content.parts) {
-    part.encoding = byName[part.name] ?? part.encoding;
-  }
-  return content;
-}
+) => MultipartRequestContent(
+  model: content.model,
+  encoding: {...content.encoding, ...byName},
+  rawContentType: content.rawContentType,
+  wireContentType: content.wireContentType,
+  textEncoding: content.textEncoding,
+  examples: content.examples,
+);
 
 const _binaryEncoding = PartEncoding(
   contentType: ContentType.bytes,

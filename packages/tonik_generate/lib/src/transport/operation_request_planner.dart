@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
@@ -7,7 +8,12 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
-class const OperationRequestPlanner({required final TransportBackend backend}) {
+class const OperationRequestPlanner({
+  required final TransportBackend backend,
+  final NameManager? nameManager,
+  final String? package,
+  final bool useImmutableCollections = false,
+}) {
   OperationRequestPlan plan(
     Operation operation,
     NormalizedRequestParameters parameters,
@@ -126,7 +132,11 @@ class const OperationRequestPlanner({required final TransportBackend backend}) {
       return const AbsentBodyPlan();
     }
 
-    final headers = extractOperationMultipartHeaderParamInfo(operation);
+    final headers = extractOperationMultipartHeaderParamInfo(
+      operation,
+      nameManager: nameManager,
+      package: package,
+    );
     final variants = [
       for (final item in content)
         _contentPlan(
@@ -152,7 +162,12 @@ class const OperationRequestPlanner({required final TransportBackend backend}) {
     required List<MultipartHeaderParamInfo> headerParameters,
   }) {
     if (content is MultipartRequestContent) {
-      return MultipartBodyPlanner(backend: backend).plan(
+      return MultipartBodyPlanner(
+        backend: backend,
+        nameManager: nameManager,
+        package: package,
+        useImmutableCollections: useImmutableCollections,
+      ).plan(
         content,
         bodyAccessor: bodyAccessor,
         isRequired: isRequired,
