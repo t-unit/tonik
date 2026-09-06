@@ -213,7 +213,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException(
+        @override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException(
           r'ServerStatus is read-only and cannot be encoded.',
         );
       ''';

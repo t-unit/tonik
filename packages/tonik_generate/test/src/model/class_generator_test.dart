@@ -58,27 +58,36 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
-    test(
-      'generates class implementing ParameterEncodable and UriEncodable',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: const [],
-          context: context,
-          examples: const [],
-        );
+    test('generates class extending ObjectParameterEncodable '
+        'and implementing UriEncodable', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
+      final result = generator.generateClass(model);
 
-        expect(result.implements.length, 2);
-        final implementsNames = result.implements
-            .map((i) => i.accept(emitter).toString())
-            .toList();
-        expect(implementsNames, contains('ParameterEncodable'));
-        expect(implementsNames, contains('UriEncodable'));
-      },
-    );
+      expect(result.extend?.symbol, 'ObjectParameterEncodable');
+      expect(result.extend?.url, 'package:tonik_util/tonik_util.dart');
+      expect(result.implements, hasLength(1));
+      expect(result.implements.single.symbol, 'UriEncodable');
+      expect(
+        result.implements.single.url,
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      final hook = result.methods.singleWhere(
+        (method) => method.name == 'parameterProperties',
+      );
+      expect(
+        hook.returns?.accept(emitter).toString(),
+        'Map<String,PropertyValue>',
+      );
+      expect(hook.annotations.single.accept(emitter).toString(), 'override');
+    });
 
     group('Never property decoding', () {
       ClassModel buildShape() => ClassModel(
@@ -1465,29 +1474,8 @@ factory ModelWithSimpleListRoundtrip.fromForm(
   }
           ''';
 
-        const expectedToFormMethod = '''
-            List<ParameterEntry> toForm(
-              String paramName, {
-              required bool explode,
-              required bool allowEmpty,
-              required Encoding textEncoding,
-              bool useQueryComponent = false,
-              bool allowReserved = false,
-              Map<String, FormFieldEncoding> fieldEncodings = const {},
-            }) {
-              return parameterProperties(allowEmpty: allowEmpty).toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
-                fieldEncodings: fieldEncodings,
-                textEncoding: textEncoding,
-              );
-            }
-          ''';
-
         const expectedParameterPropertiesMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'tags'] = PropertyValue.array(tags);
@@ -1500,10 +1488,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           contains(collapseWhitespace(expectedFromFormConstructor)),
         );
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedToFormMethod)),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
 
         expect(
           collapseWhitespace(generatedCode),
@@ -1546,7 +1531,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
       });
 
-      test('generates toForm method for simple properties', () {
+      test('inherits toForm method for simple properties', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'SimpleModel',
@@ -1575,36 +1560,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        final toFormMethod = result.methods.firstWhere(
-          (m) => m.name == 'toForm',
-        );
-
-        expect(
-          toFormMethod.returns?.accept(emitter).toString(),
-          'List<ParameterEntry>',
-        );
-        expect(toFormMethod.requiredParameters.length, 1);
-        expect(toFormMethod.requiredParameters[0].name, 'paramName');
-        expect(toFormMethod.optionalParameters.length, 6);
-        expect(toFormMethod.optionalParameters[0].name, 'explode');
-        expect(toFormMethod.optionalParameters[0].required, isTrue);
-        expect(toFormMethod.optionalParameters[0].named, isTrue);
-        expect(toFormMethod.optionalParameters[1].name, 'allowEmpty');
-        expect(toFormMethod.optionalParameters[1].required, isTrue);
-        expect(toFormMethod.optionalParameters[1].named, isTrue);
-        expect(toFormMethod.optionalParameters[2].name, 'textEncoding');
-        expect(toFormMethod.optionalParameters[2].required, isTrue);
-        expect(toFormMethod.optionalParameters[2].named, isTrue);
-        expect(toFormMethod.optionalParameters[3].name, 'useQueryComponent');
-        expect(toFormMethod.optionalParameters[3].required, isFalse);
-        expect(toFormMethod.optionalParameters[3].named, isTrue);
-        expect(toFormMethod.optionalParameters[4].name, 'allowReserved');
-        expect(toFormMethod.optionalParameters[4].required, isFalse);
-        expect(toFormMethod.optionalParameters[4].named, isTrue);
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('generates toForm method for complex properties', () {
+      test('inherits toForm method for complex properties', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'ComplexModel',
@@ -1628,41 +1587,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        const expectedToFormBody = '''
-          @override
-          List<ParameterEntry> toForm(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-            required Encoding textEncoding,
-            bool useQueryComponent = false,
-            bool allowReserved = false,
-            Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              fieldEncodings: fieldEncodings,
-              textEncoding: textEncoding,
-            );
-          }
-        ''';
-
-        final toFormMethod = result.methods.singleWhere(
-          (method) => method.name == 'toForm',
-        );
-        expect(
-          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedToFormBody)),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('array property still comma-joins because toForm emits no explode '
-          'descriptor', () {
+      test('array property uses the inherited form encoder', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'TagContainer',
@@ -1686,40 +1614,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        const expectedToFormBody = '''
-          @override
-          List<ParameterEntry> toForm(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-            required Encoding textEncoding,
-            bool useQueryComponent = false,
-            bool allowReserved = false,
-            Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              fieldEncodings: fieldEncodings,
-              textEncoding: textEncoding,
-            );
-          }
-        ''';
-
-        final toFormMethod = result.methods.singleWhere(
-          (method) => method.name == 'toForm',
-        );
-        expect(
-          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedToFormBody)),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('generates toForm method for empty model', () {
+      test('inherits toForm method for empty model', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'EmptyModel',
@@ -1729,37 +1627,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        const expectedToFormMethod = '''
-          @override
-          List<ParameterEntry> toForm(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-            required Encoding textEncoding,
-            bool useQueryComponent = false,
-            bool allowReserved = false,
-            Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-              fieldEncodings: fieldEncodings,
-              textEncoding: textEncoding,
-            );
-          }
-        ''';
-
-        final toFormMethod = result.methods.singleWhere(
-          (method) => method.name == 'toForm',
-        );
-        expect(
-          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedToFormMethod)),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
       test('generates fromForm constructor with mixed property types', () {
@@ -1951,7 +1819,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         },
       );
 
-      test('generates toForm method with mixed property types', () {
+      test('inherits toForm method with mixed property types', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'UserForm',
@@ -1989,37 +1857,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        const expectedToFormMethod = '''
-            @override
-            List<ParameterEntry> toForm(
-              String paramName, {
-              required bool explode,
-              required bool allowEmpty,
-              required Encoding textEncoding,
-              bool useQueryComponent = false,
-              bool allowReserved = false,
-              Map<String, FormFieldEncoding> fieldEncodings = const {},
-            }) {
-              return parameterProperties(allowEmpty: allowEmpty).toForm(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-                allowReserved: allowReserved,
-                fieldEncodings: fieldEncodings,
-                textEncoding: textEncoding,
-              );
-            }
-          ''';
-
-        final toFormMethod = result.methods.singleWhere(
-          (method) => method.name == 'toForm',
-        );
-        expect(
-          collapseWhitespace(format(toFormMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedToFormMethod)),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
       test('generates fromForm constructor with all primitive types', () {
@@ -2175,7 +2013,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     });
 
     group('toMatrix method', () {
-      test('generates toMatrix method for simple properties', () {
+      test('inherits toMatrix method for simple properties', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'SimpleModel',
@@ -2204,53 +2042,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        final toMatrixMethod = result.methods.firstWhere(
-          (m) => m.name == 'toMatrix',
-        );
-        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toMatrixMethod.requiredParameters.length, 1);
-        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
-        expect(
-          toMatrixMethod.requiredParameters.first.type
-              ?.accept(emitter)
-              .toString(),
-          'String',
-        );
-        expect(toMatrixMethod.optionalParameters.length, 2);
-        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
-        expect(toMatrixMethod.optionalParameters.first.required, isTrue);
-        expect(toMatrixMethod.optionalParameters.first.named, isTrue);
-        expect(
-          toMatrixMethod.optionalParameters.first.type
-              ?.accept(emitter)
-              .toString(),
-          'bool',
-        );
-        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
-        expect(toMatrixMethod.optionalParameters.last.required, isTrue);
-        expect(toMatrixMethod.optionalParameters.last.named, isTrue);
-        expect(
-          toMatrixMethod.optionalParameters.last.type
-              ?.accept(emitter)
-              .toString(),
-          'bool',
-        );
-
-        const expectedToMatrixMethod = '''
-          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, );
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToMatrixMethod))),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('generates toMatrix method for complex properties', () {
+      test('inherits toMatrix method for complex properties', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'ComplexModel',
@@ -2295,32 +2090,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        // Test method signature
-        final toMatrixMethod = result.methods.firstWhere(
-          (m) => m.name == 'toMatrix',
-        );
-        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toMatrixMethod.requiredParameters.length, 1);
-        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
-        expect(toMatrixMethod.optionalParameters.length, 2);
-        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
-        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
-
-        const expectedToMatrixMethod = '''
-          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, );
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToMatrixMethod))),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('generates toMatrix method for empty model', () {
+      test('inherits toMatrix method for empty model', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'EmptyModel',
@@ -2330,30 +2103,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-        final toMatrixMethod = result.methods.firstWhere(
-          (m) => m.name == 'toMatrix',
-        );
-        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toMatrixMethod.requiredParameters.length, 1);
-        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
-        expect(toMatrixMethod.optionalParameters.length, 2);
-        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
-        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
-
-        const expectedToMatrixMethod = '''
-          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, );
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToMatrixMethod))),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('toMatrix method generates proper method body for single '
+      test('toMatrix method inherits encoding for single '
           'property model', () {
         final model = ClassModel(
           isDeprecated: false,
@@ -2374,28 +2127,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final result = generator.generateClass(model);
-
-        final toMatrixMethod = result.methods.firstWhere(
-          (m) => m.name == 'toMatrix',
-        );
-        expect(toMatrixMethod.name, 'toMatrix');
-        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toMatrixMethod.lambda, isNot(isTrue));
-
-        const expectedToMatrixMethod = '''
-          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, );
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(format(generatedCode)),
-          contains(collapseWhitespace(format(expectedToMatrixMethod))),
-        );
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
       });
 
-      test('encoding methods have @override annotation', () {
+      test('model-specific hook and toJson override inherited contracts', () {
         final model = ClassModel(
           isDeprecated: false,
           name: 'TestModel',
@@ -2416,47 +2151,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
 
-        // Verify toSimple has @override
-        final toSimple = result.methods.firstWhere((m) => m.name == 'toSimple');
-        expect(toSimple.annotations, hasLength(1));
-        expect(
-          toSimple.annotations.first.code.accept(emitter).toString(),
-          'override',
+        final hook = result.methods.singleWhere(
+          (method) => method.name == 'parameterProperties',
         );
-
-        // Verify toForm has @override
-        final toForm = result.methods.firstWhere((m) => m.name == 'toForm');
-        expect(toForm.annotations, hasLength(1));
-        expect(
-          toForm.annotations.first.code.accept(emitter).toString(),
-          'override',
-        );
-
-        // Verify toLabel has @override
-        final toLabel = result.methods.firstWhere((m) => m.name == 'toLabel');
-        expect(toLabel.annotations, hasLength(1));
-        expect(
-          toLabel.annotations.first.code.accept(emitter).toString(),
-          'override',
-        );
-
-        // Verify toMatrix has @override
-        final toMatrix = result.methods.firstWhere((m) => m.name == 'toMatrix');
-        expect(toMatrix.annotations, hasLength(1));
-        expect(
-          toMatrix.annotations.first.code.accept(emitter).toString(),
-          'override',
-        );
-
-        // Verify toDeepObject has @override
-        final toDeepObject = result.methods.firstWhere(
-          (m) => m.name == 'toDeepObject',
-        );
-        expect(toDeepObject.annotations, hasLength(1));
-        expect(
-          toDeepObject.annotations.first.code.accept(emitter).toString(),
-          'override',
-        );
+        expect(hook.annotations.single.accept(emitter).toString(), 'override');
 
         // Verify toJson has @override
         final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
@@ -2486,6 +2184,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         expect(classes[1], isA<TypeDef>());
 
         final classSpec = classes[0] as Class;
+        expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
         expect(classSpec.name, r'$RawUser');
       });
 
@@ -2523,6 +2222,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         expect(classes.whereType<TypeDef>().length, 0);
 
         final classSpec = classes[0] as Class;
+        expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
         expect(classSpec.name, 'Order');
       });
 
@@ -2563,6 +2263,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classes = generator.generateClasses(model);
 
         final classSpec = classes[0] as Class;
+        expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
         expect(classSpec.name, r'$RawAccount');
         expect(classSpec.fields.length, 1);
         expect(classSpec.fields.first.name, 'id');
@@ -3096,6 +2797,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
 
           const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Counts', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toString()); } return _$result; }
 ''';
 
@@ -3139,7 +2841,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             );
 
             const expectedMethod = r"""
-  Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  @override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     final _$result = <String, PropertyValue>{};
     _$result[r'version'] = PropertyValue.scalar(version.toString());
     if (additionalProperties.isNotEmpty) {

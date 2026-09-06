@@ -53,6 +53,10 @@ void main() {
         (m) => m.name == 'parameterProperties',
       );
 
+      expect(
+        parameterPropertiesMethod.annotations.single.accept(emitter).toString(),
+        'override',
+      );
       expect(parameterPropertiesMethod.type, isNot(MethodType.getter));
       expect(
         parameterPropertiesMethod.returns?.accept(emitter).toString(),
@@ -100,6 +104,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'id'] = PropertyValue.scalar(id.toString());
@@ -129,6 +134,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return <String, PropertyValue>{}; }
 ''';
 
@@ -170,6 +176,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (nullableName != null) {
@@ -222,6 +229,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
   throw EncodingException(
     r'parameterProperties not supported for User: contains complex types',
@@ -289,6 +297,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
@@ -363,6 +372,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
@@ -434,6 +444,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
@@ -489,6 +500,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -545,6 +557,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
     throw EncodingException(
       r'parameterProperties not supported for ComplexContainer: contains complex types',
@@ -610,6 +623,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (value != null) {
@@ -795,6 +809,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -877,6 +892,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (tags != null) {
@@ -940,6 +956,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       expect(parameterPropertiesMethod, isNotNull);
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (ids != null) {
@@ -994,6 +1011,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       expect(parameterPropertiesMethod, isNotNull);
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'tags'] = PropertyValue.array(tags);
@@ -1050,6 +1068,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       expect(parameterPropertiesMethod, isNotNull);
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'id'] = PropertyValue.scalar(id.toString());
@@ -1117,6 +1136,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       expect(parameterPropertiesMethod, isNotNull);
 
       const expectedMethod = '''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
     throw EncodingException(
       r'parameterProperties not supported for ComplexListContainer: contains complex types',
@@ -1174,6 +1194,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
       expect(parameterPropertiesMethod, isNotNull);
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (statuses != null) {
@@ -1230,6 +1251,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(result.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (items != null) {
@@ -1281,6 +1303,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'tags'] = PropertyValue.array(tags);
@@ -1325,6 +1348,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (tags != null) {
@@ -1378,6 +1402,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -1427,6 +1452,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -1550,6 +1576,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'ratio'] = PropertyValue.scalar(ratio.toString());
@@ -1597,6 +1624,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data != null) {
@@ -1648,6 +1676,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data != null) {
@@ -1703,6 +1732,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'label'] = PropertyValue.scalar(label);
@@ -1759,6 +1789,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         // Should generate null-aware encoding because the model is nullable
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (description != null) {
@@ -1863,6 +1894,7 @@ if (description != null) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (items != null) {
@@ -1879,7 +1911,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       },
     );
 
-    test('toForm calls parameterProperties with useQueryComponent', () {
+    test('toForm inherits encoding through parameterProperties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'FormData',
@@ -1908,31 +1940,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
 
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-List<ParameterEntry> toForm(
-  String paramName, {
-  required bool explode,
-  required bool allowEmpty,
-  required Encoding textEncoding, bool useQueryComponent = false,
-  bool allowReserved = false,
-  Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  return parameterProperties(allowEmpty: allowEmpty).toForm(
-    paramName,
-    explode: explode,
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved, fieldEncodings: fieldEncodings, textEncoding: textEncoding,
-  );
-}
-''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
     });
 
     test('generates null-safe toJson and fromJson for required property '
@@ -2054,6 +2062,7 @@ List<ParameterEntry> toForm(
         // Should generate null-aware encoding because the nested alias
         // is nullable
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (label != null) {
@@ -2095,6 +2104,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
@@ -2134,6 +2144,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (signature != null) {
@@ -2175,6 +2186,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (signature != null) {
@@ -2221,6 +2233,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'declared'] = PropertyValue.scalar(declared);
@@ -2271,6 +2284,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);
@@ -2332,6 +2346,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final methodCode = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
@@ -2413,6 +2428,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final methodCode = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
@@ -2472,6 +2488,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       final methodCode = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'name'] = PropertyValue.scalar(name);

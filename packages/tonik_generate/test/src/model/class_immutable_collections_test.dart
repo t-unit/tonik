@@ -72,6 +72,7 @@ void main() {
 
       test('generates IList field type', () {
         final result = generator.generateClass(model);
+        expect(result.extend?.symbol, 'ObjectParameterEncodable');
         final field = result.fields.firstWhere((f) => f.name == 'tags');
         final typeRef = field.type! as TypeReference;
         expect(typeRef.symbol, 'IList');

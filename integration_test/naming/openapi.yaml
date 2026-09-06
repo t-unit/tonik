@@ -1970,3 +1970,11 @@ components:
           $ref: '#/components/schemas/$User'
         second:
           $ref: '#/components/schemas/$$User'
+
+    ObjectParameterEncodable:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string

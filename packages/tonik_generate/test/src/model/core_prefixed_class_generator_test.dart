@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 
 void main() {
   group('ClassGenerator with CorePrefixedAllocator', () {
@@ -19,6 +20,27 @@ void main() {
       );
       generator = ClassGenerator(nameManager: nameManager, package: 'example');
       context = Context.initial();
+    });
+
+    test('qualifies the superclass when the model has the same name', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'ObjectParameterEncodable',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final generatedClass = generator.generateClass(model);
+      expect(generatedClass.extend?.url, 'package:tonik_util/tonik_util.dart');
+      expect(generatedClass.name, 'ObjectParameterEncodable');
+
+      final allocator = CorePrefixedAllocator(
+        additionalImports: ['package:tonik_util/tonik_util.dart'],
+      );
+      expect(
+        allocator.allocate(generatedClass.extend!),
+        '_i1.ObjectParameterEncodable',
+      );
     });
 
     test('generates code with prefixed dart:core types', () {

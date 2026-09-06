@@ -9,7 +9,6 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_builders.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
-import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/default_resolution.dart';
@@ -191,8 +190,9 @@ class const ClassGenerator({
         ..name = className
         ..docs.addAll(formatDocsWithExamples(model.description, model.examples))
         ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-        ..implements.add(
-          refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+        ..extend = refer(
+          'ObjectParameterEncodable',
+          'package:tonik_util/tonik_util.dart',
         )
         ..implements.add(
           refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
@@ -260,13 +260,6 @@ class const ClassGenerator({
           model,
           normalizedProperties.where((p) => !p.property.isReadOnly).toList(),
         ),
-        _buildToSimpleMethod(),
-        _buildToFormMethod(),
-        _buildToLabelMethod(),
-        _buildToMatrixMethod(),
-        _buildToDeepObjectMethod(),
-        buildToPipeDelimitedMethod(),
-        buildToSpaceDelimitedMethod(),
         _buildUriEncodeMethod(className),
       ]);
 
@@ -1085,6 +1078,7 @@ class const ClassGenerator({
     if (model.isReadOnly) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'parameterProperties'
           ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(_buildParameterPropertiesParameters())
@@ -1222,6 +1216,7 @@ class const ClassGenerator({
         activeApPolicy(model.additionalPropertiesPolicy) == null) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'parameterProperties'
           ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(_buildParameterPropertiesParameters())
@@ -1274,6 +1269,7 @@ class const ClassGenerator({
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'parameterProperties'
         ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
@@ -1357,6 +1353,7 @@ class const ClassGenerator({
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'parameterProperties'
         ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
@@ -1370,6 +1367,7 @@ class const ClassGenerator({
   ) {
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'parameterProperties'
         ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
@@ -1500,32 +1498,13 @@ class const ClassGenerator({
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'parameterProperties'
         ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
         ..body = Block.of(methodBody),
     );
   }
-
-  Method _buildToSimpleMethod() => Method(
-    (b) => b
-      ..annotations.add(refer('override', 'dart:core'))
-      ..name = 'toSimple'
-      ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll(buildSimpleEncodingParameters())
-      ..body = Block.of([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toSimple')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'literal': refer('literal'),
-            })
-            .returned
-            .statement,
-      ]),
-  );
 
   Constructor _buildFromFormConstructor(
     String className,
@@ -1740,121 +1719,6 @@ class const ClassGenerator({
 
     return Block.of(codes);
   }
-
-  Method _buildToFormMethod() => Method(
-    (b) => b
-      ..annotations.add(refer('override', 'dart:core'))
-      ..name = 'toForm'
-      ..returns = buildParameterEntryListType()
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = 'paramName'
-            ..type = refer('String', 'dart:core'),
-        ),
-      )
-      ..optionalParameters.addAll(buildFormEncodingParameters())
-      ..body = Block.of([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toForm')
-            .call(
-              [refer('paramName')],
-              {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-                'allowReserved': refer('allowReserved'),
-                'fieldEncodings': refer('fieldEncodings'),
-                'textEncoding': refer('textEncoding'),
-              },
-            )
-            .returned
-            .statement,
-      ]),
-  );
-
-  Method _buildToLabelMethod() => Method(
-    (b) => b
-      ..annotations.add(refer('override', 'dart:core'))
-      ..name = 'toLabel'
-      ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll(buildEncodingParameters())
-      ..body = Block.of([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toLabel')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-            })
-            .returned
-            .statement,
-      ]),
-  );
-
-  Method _buildToMatrixMethod() => Method(
-    (b) => b
-      ..annotations.add(refer('override', 'dart:core'))
-      ..name = 'toMatrix'
-      ..returns = refer('String', 'dart:core')
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = 'paramName'
-            ..type = refer('String', 'dart:core'),
-        ),
-      )
-      ..optionalParameters.addAll(buildEncodingParameters())
-      ..body = Block.of([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toMatrix')
-            .call(
-              [refer('paramName')],
-              {'explode': refer('explode'), 'allowEmpty': refer('allowEmpty')},
-            )
-            .returned
-            .statement,
-      ]),
-  );
-
-  Method _buildToDeepObjectMethod() => Method(
-    (b) => b
-      ..annotations.add(refer('override', 'dart:core'))
-      ..name = 'toDeepObject'
-      ..returns = TypeReference(
-        (b) => b
-          ..symbol = 'List'
-          ..url = 'dart:core'
-          ..types.add(
-            refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
-          ),
-      )
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = 'paramName'
-            ..type = refer('String', 'dart:core'),
-        ),
-      )
-      ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
-      ..body = Block.of([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toDeepObject')
-            .call(
-              [refer('paramName')],
-              {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'allowReserved': refer('allowReserved'),
-              },
-            )
-            .returned
-            .statement,
-      ]),
-  );
 
   Method _buildUriEncodeMethod(String className) => Method(
     (b) => b
