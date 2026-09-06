@@ -1041,6 +1041,59 @@ void main() {
 
         expect(name, 'GetUserById');
       });
+
+      test('caches operation filenames as names are generated', () {
+        final operation = Operation(
+          operationId: 'getUserById',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final filenames = manager.operationFilenames;
+        expect(filenames, isEmpty);
+
+        manager.operationName(operation);
+
+        expect(identical(filenames, manager.operationFilenames), isTrue);
+        expect(filenames, {'get_user_by_id.dart'});
+        expect(
+          () => filenames.add('another_operation.dart'),
+          throwsUnsupportedError,
+        );
+      });
+
+      test('caches operation base filename resolution', () {
+        final operation = Operation(
+          operationId: 'HttpOperation',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        manager.operationName(operation);
+
+        final first = manager.operationBaseFilename('http_operation.dart');
+        final second = manager.operationBaseFilename('http_operation.dart');
+
+        expect(first, 'http_operation_base.dart');
+        expect(identical(first, second), isTrue);
+      });
     });
 
     group('tagName', () {

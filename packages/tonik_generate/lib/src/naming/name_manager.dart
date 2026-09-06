@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:change_case/change_case.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -17,6 +19,13 @@ class NameManager({
   final _rawObjectNames = <String, String>{};
 
   final operationNames = <Operation, String>{};
+  final _operationFilenames = <String>{};
+  final _operationBaseFilenames = <String, String>{};
+
+  /// File names for all cached operation names.
+  late final Set<String> operationFilenames = UnmodifiableSetView(
+    _operationFilenames,
+  );
 
   final tagNames = <Tag, String>{};
 
@@ -199,7 +208,23 @@ class NameManager({
   /// For API client method names, use [operationMethodName] instead.
   String operationName(Operation operation) {
     return operationNames.putIfAbsent(operation, () {
-      return generator.generateOperationName(operation, _usedFileNames);
+      final name = generator.generateOperationName(operation, _usedFileNames);
+      _operationFilenames.add(fileNameForClass(name));
+      return name;
+    });
+  }
+
+  /// Resolves and caches a base filename that does not collide with an
+  /// operation filename.
+  ///
+  /// All operation names must be generated before calling this method.
+  String operationBaseFilename(String preferredFilename) {
+    return _operationBaseFilenames.putIfAbsent(preferredFilename, () {
+      var filename = preferredFilename;
+      while (_operationFilenames.contains(filename)) {
+        filename = '${filename.substring(0, filename.length - 5)}_base.dart';
+      }
+      return filename;
     });
   }
 

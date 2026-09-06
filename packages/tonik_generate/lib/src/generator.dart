@@ -64,9 +64,21 @@ class const Generator() {
 
     final nameGenerator = NameGenerator();
     final stableModelSorter = StableModelSorter();
-    final nameManager = NameManager(
-      generator: nameGenerator,
-      stableModelSorter: stableModelSorter,
+    final nameManager =
+        NameManager(
+          generator: nameGenerator,
+          stableModelSorter: stableModelSorter,
+        )..prime(
+          models: apiDocument.models,
+          responses: apiDocument.responses,
+          requestBodies: apiDocument.requestBodies,
+          operations: apiDocument.operations,
+          tags: apiDocument.operationsByTag.keys,
+          servers: apiDocument.servers,
+        );
+
+    final resolvedOperationBaseFilename = nameManager.operationBaseFilename(
+      backendGenerator.operationBaseGenerator.filename,
     );
 
     final classGenerator = ClassGenerator(
@@ -118,6 +130,7 @@ class const Generator() {
       package: package,
       defaultsCache: defaultsCache,
       backendGenerator: backendGenerator,
+      operationBaseFilename: resolvedOperationBaseFilename,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -126,6 +139,7 @@ class const Generator() {
     );
     final operationBaseFileGenerator = OperationBaseFileGenerator(
       operationBaseGenerator: backendGenerator.operationBaseGenerator,
+      operationBaseFilename: resolvedOperationBaseFilename,
       nameManager: nameManager,
     );
 
@@ -179,15 +193,6 @@ class const Generator() {
 
     final serverFileGenerator = ServerFileGenerator(
       serverGenerator: serverGenerator,
-    );
-
-    nameManager.prime(
-      models: apiDocument.models,
-      responses: apiDocument.responses,
-      requestBodies: apiDocument.requestBodies,
-      operations: apiDocument.operations,
-      tags: apiDocument.operationsByTag.keys,
-      servers: apiDocument.servers,
     );
 
     generatePubspec(

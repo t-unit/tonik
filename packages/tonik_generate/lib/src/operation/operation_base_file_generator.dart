@@ -11,24 +11,21 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 
 class const OperationBaseFileGenerator({
   required final OperationBaseGenerator operationBaseGenerator,
+  required final String operationBaseFilename,
   required final NameManager nameManager,
 }) {
   String writeFile({required String outputDirectory, required String package}) {
-    final selectedFilename = _selectedFilename;
     final operationDirectory = Directory(
       path.join(outputDirectory, package, 'lib', 'src', 'operation'),
     );
-    final operationFilenames = nameManager.operationNames.values
-        .map(nameManager.fileNameForClass)
-        .toSet();
     if (operationDirectory.existsSync()) {
       final baseFilenamePattern = RegExp(
         r'^(?:dio|http)_operation(?:_base)*\.dart$',
       );
       for (final stale in operationDirectory.listSync().whereType<File>()) {
         final staleFilename = path.basename(stale.path);
-        if (staleFilename != selectedFilename &&
-            !operationFilenames.contains(staleFilename) &&
+        if (staleFilename != operationBaseFilename &&
+            !nameManager.operationFilenames.contains(staleFilename) &&
             baseFilenamePattern.hasMatch(staleFilename) &&
             stale.readAsStringSync().startsWith(
               '// Generated code - do not modify by hand',
@@ -58,16 +55,9 @@ class const OperationBaseFileGenerator({
         'lib',
         'src',
         'operation',
-        selectedFilename,
+        operationBaseFilename,
       ),
       content: code,
-    );
-  }
-
-  String get _selectedFilename {
-    return operationBaseFilename(
-      generator: operationBaseGenerator,
-      nameManager: nameManager,
     );
   }
 }

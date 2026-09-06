@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
@@ -26,6 +25,7 @@ class OperationGenerator({
   required final String package,
   required final OperationDefaultsCache defaultsCache,
   required final TransportBackendGenerator backendGenerator,
+  required final String operationBaseFilename,
   final bool useImmutableCollections = false,
 }) {
   final QueryGenerator _queryParametersGenerator = QueryGenerator(
@@ -126,7 +126,7 @@ class OperationGenerator({
         ..extend = backendGenerator.operationBaseGenerator.baseType(
           package: package,
           valueType: resultValueType,
-          filename: _operationBaseFilename,
+          filename: operationBaseFilename,
         )
         ..fields.addAll(defaults.fields);
 
@@ -196,13 +196,6 @@ class OperationGenerator({
             _parseGenerator.generateParseResponseMethod(operation),
         ]);
     });
-  }
-
-  String get _operationBaseFilename {
-    return operationBaseFilename(
-      generator: backendGenerator.operationBaseGenerator,
-      nameManager: nameManager,
-    );
   }
 
   /// Generates the call() method for the operation
@@ -283,7 +276,7 @@ class OperationGenerator({
     final execution = backendGenerator.operationBaseGenerator
         .executionInvocation(
           package: package,
-          filename: _operationBaseFilename,
+          filename: operationBaseFilename,
           plan: requestPlan,
           path: pathExpr,
           queryParameters: queryArgs.isEmpty
