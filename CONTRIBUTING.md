@@ -21,10 +21,24 @@ melos run setup-git-hooks      # enforce Conventional Commit subjects
 See `melos.scripts` in the root [pubspec.yaml](pubspec.yaml) for all available commands:
 
 ```bash
-melos run test                        # run tests for a package
+melos run test                        # all unit tests and both integration backends
 melos run generate                    # run build_runner where needed
 melos run generate-integration-tests  # regenerate integration test packages
 ```
+
+Local and CI integration analysis check every generated client, test package,
+and the helper package using four parallel workers. Local runs wait for all
+analysis to pass before starting tests. Adjust the worker limit to suit
+available CPU and memory:
+
+```bash
+INTEGRATION_ANALYSIS_JOBS=2 melos run test
+```
+
+The same setting applies to `melos run test-integration-current` and
+`melos run test-integration-all`. The CI analysis script accepts the same
+override. Each worker resolves a package's dependencies before analyzing it;
+failures are collected with their package diagnostics.
 
 ## Architecture
 
