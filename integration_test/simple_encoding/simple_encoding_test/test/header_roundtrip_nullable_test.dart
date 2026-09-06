@@ -1,6 +1,7 @@
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -21,6 +22,18 @@ void main() {
       ),
     );
   }
+
+  test(
+    'nullable object alias constructs a const model with inherited encoding',
+    () {
+      const ParameterEncodable value = NullableObject(name: 'a/b', count: 2);
+      expect(value, isA<ObjectParameterEncodable>());
+      expect(
+        value.toSimple(explode: true, allowEmpty: false),
+        'name=a%2Fb,count=2',
+      );
+    },
+  );
 
   group('Header Roundtrip Nullable', () {
     group('Nullable String', () {

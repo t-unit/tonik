@@ -1,8 +1,46 @@
+import 'dart:convert';
+
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test(
+    'inherited form encoding reads an immutable array from the model hook',
+    () {
+      const ObjectParameterEncodable value = ItemSummary(
+        id: 1,
+        name: 'item',
+        categories: IListConst(['a,b', 'c']),
+      );
+      expect(
+        value.toForm(
+          'filter',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        [
+          (name: 'id', value: '1'),
+          (name: 'name', value: 'item'),
+          (name: 'categories', value: 'a%2Cb,c'),
+        ],
+      );
+    },
+  );
+
+  test('inherited encoding reads immutable additional properties', () {
+    const ObjectParameterEncodable value = BucketWithExtras(
+      label: 'primary',
+      additionalProperties: IMapConst({'x': 1}),
+    );
+    expect(
+      value.toSimple(explode: true, allowEmpty: false),
+      'label=primary,x=1',
+    );
+  });
+
   group('Filters — collection const defaults under immutableCollections', () {
     test('defaults are IListConst / IMapConst typed', () {
       const value = Filters();

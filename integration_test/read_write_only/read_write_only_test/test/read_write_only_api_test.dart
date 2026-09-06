@@ -380,7 +380,13 @@ void main() {
       const status = ServerStatus(uptime: 1, version: '1.0');
       expect(
         () => status.toSimple(explode: false, allowEmpty: true),
-        throwsA(isA<EncodingException>()),
+        throwsA(
+          isA<EncodingException>().having(
+            (error) => error.message,
+            'message',
+            'ServerStatus is read-only and cannot be encoded.',
+          ),
+        ),
       );
     });
 

@@ -20,6 +20,15 @@ void main() {
   });
 
   group('DefaultedPrimitives — primitive const defaults', () {
+    test('const defaults feed the inherited parameter encoder', () {
+      const ParameterEncodable value = DefaultedPrimitives();
+      expect(value, isA<ObjectParameterEncodable>());
+      expect(
+        value.toSimple(explode: true, allowEmpty: false),
+        'name=anon,count=0,rate=1.5,active=true,title=Mx.',
+      );
+    });
+
     test('constructor with no args yields all defaults', () {
       const value = DefaultedPrimitives();
       expect(value.name, 'anon');

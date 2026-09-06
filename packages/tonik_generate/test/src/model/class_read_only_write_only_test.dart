@@ -382,6 +382,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
+@override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (password == null) { throw EncodingException(r'Required property password is null.'); } _$result[r'password'] = PropertyValue.scalar(password!); return _$result; }
 ''';
 
@@ -393,116 +394,46 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
   });
 
   group('readOnly/writeOnly toSimple', () {
-    test('toSimple delegates to filtered parameterProperties', () {
+    test('toSimple inherits encoding through filtered parameterProperties', () {
       final model = buildMixedModel(context);
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        String toSimple({
-          required bool explode,
-          required bool allowEmpty,
-          bool literal = false,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
     });
   });
 
   group('readOnly/writeOnly toForm', () {
-    test('toForm delegates to filtered parameterProperties', () {
+    test('toForm inherits encoding through filtered parameterProperties', () {
       final model = buildMixedModel(context);
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        List<ParameterEntry> toForm(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          required Encoding textEncoding,
-          bool useQueryComponent = false,
-          bool allowReserved = false,
-          Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty).toForm(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
-            fieldEncodings: fieldEncodings,
-            textEncoding: textEncoding,
-          );
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
     });
   });
 
   group('readOnly/writeOnly toLabel', () {
-    test('toLabel delegates to filtered parameterProperties', () {
+    test('toLabel inherits encoding through filtered parameterProperties', () {
       final model = buildMixedModel(context);
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
     });
   });
 
   group('readOnly/writeOnly toMatrix', () {
-    test('toMatrix delegates to filtered parameterProperties', () {
+    test('toMatrix inherits encoding through filtered parameterProperties', () {
       final model = buildMixedModel(context);
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
-''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
     });
   });
 
   group('readOnly/writeOnly toDeepObject', () {
-    test('toDeepObject delegates to filtered parameterProperties', () {
-      final model = buildMixedModel(context);
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-List<ParameterEntry> toDeepObject( String paramName, { required bool explode, required bool allowEmpty, bool allowReserved = false, }) { return parameterProperties(allowEmpty: allowEmpty).toDeepObject( paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, ); }
-''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+    test(
+      'toDeepObject inherits encoding through filtered parameterProperties',
+      () {
+        final model = buildMixedModel(context);
+        final generatedClass = generator.generateClass(model);
+        expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
+      },
+    );
   });
 
   group('readOnly/writeOnly fields and constructor', () {
