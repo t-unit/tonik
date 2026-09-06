@@ -165,14 +165,16 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   }
 
   /// Uses property names when exploded and [paramName] when collapsed.
+  ///
+  /// Empty objects expand to nothing under RFC 6570 Sections 2.3 and 3.2.1,
+  /// regardless of [allowEmpty].
   String toMatrix(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
   }) {
-    _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
-      return ';$paramName';
+      return '';
     }
     if (explode) {
       // Matrix is an RFC 6570 named operator: empty values expand to the

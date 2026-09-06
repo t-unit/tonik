@@ -288,10 +288,7 @@ void main() {
     test('empty objects preserve each style response when allowed', () {
       expect(empty.toSimple(explode: true, allowEmpty: true), '');
       expect(empty.toLabel(explode: true, allowEmpty: true), '.');
-      expect(
-        empty.toMatrix('filter', explode: false, allowEmpty: true),
-        ';filter',
-      );
+      expect(empty.toMatrix('filter', explode: false, allowEmpty: true), '');
       expect(
         empty.toForm(
           'filter',
@@ -315,21 +312,57 @@ void main() {
       );
     });
 
-    for (final entry in encoders.entries) {
-      test(
-        '${entry.key} preserves the empty-object policy when disallowed',
-        () {
-          if (entry.key == 'form') {
-            expect(entry.value(empty, allowEmpty: false), <ParameterEntry>[]);
-          } else {
-            expect(
-              () => entry.value(empty, allowEmpty: false),
-              throwsA(isA<EmptyValueException>()),
-            );
-          }
-        },
+    test('simple rejects empty objects when disallowed', () {
+      expect(
+        () => empty.toSimple(explode: true, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
       );
-    }
+    });
+
+    test('form omits empty objects when allowEmpty=false', () {
+      expect(
+        empty.toForm(
+          'filter',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        <ParameterEntry>[],
+      );
+    });
+
+    test('label rejects empty objects when disallowed', () {
+      expect(
+        () => empty.toLabel(explode: true, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('matrix omits empty objects when allowEmpty=false', () {
+      expect(empty.toMatrix('filter', explode: true, allowEmpty: false), '');
+      expect(empty.toMatrix('filter', explode: false, allowEmpty: false), '');
+    });
+
+    test('deepObject rejects empty objects when disallowed', () {
+      expect(
+        () => empty.toDeepObject('filter', explode: true, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('pipeDelimited rejects empty objects when disallowed', () {
+      expect(
+        () => empty.toPipeDelimited('filter', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('spaceDelimited rejects empty objects when disallowed', () {
+      expect(
+        () => empty.toSpaceDelimited('filter', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
 
     test(
       'empty scalar and array properties remain valid for simple styles',
