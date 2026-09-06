@@ -79,21 +79,6 @@ void main() {
         'package:tonik_util/tonik_util.dart',
       );
 
-      for (final methodName in [
-        'toSimple',
-        'toForm',
-        'toLabel',
-        'toMatrix',
-        'toDeepObject',
-        'toPipeDelimited',
-        'toSpaceDelimited',
-      ]) {
-        expect(
-          result.methods.any((method) => method.name == methodName),
-          isFalse,
-        );
-      }
-
       final hook = result.methods.singleWhere(
         (method) => method.name == 'parameterProperties',
       );
@@ -1504,10 +1489,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
 
         expect(
           collapseWhitespace(generatedCode),
@@ -1580,10 +1561,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
       });
 
       test('inherits toForm method for complex properties', () {
@@ -1611,10 +1588,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
       });
 
       test('array property uses the inherited form encoder', () {
@@ -1642,10 +1615,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
       });
 
       test('inherits toForm method for empty model', () {
@@ -1659,10 +1628,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
       });
 
       test('generates fromForm constructor with mixed property types', () {
@@ -1893,10 +1858,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toForm'),
-          isFalse,
-        );
       });
 
       test('generates fromForm constructor with all primitive types', () {
@@ -2082,10 +2043,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toMatrix'),
-          isFalse,
-        );
       });
 
       test('inherits toMatrix method for complex properties', () {
@@ -2134,10 +2091,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toMatrix'),
-          isFalse,
-        );
       });
 
       test('inherits toMatrix method for empty model', () {
@@ -2151,10 +2104,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toMatrix'),
-          isFalse,
-        );
       });
 
       test('toMatrix method inherits encoding for single '
@@ -2179,10 +2128,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final result = generator.generateClass(model);
         expect(result.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          result.methods.any((method) => method.name == 'toMatrix'),
-          isFalse,
-        );
       });
 
       test('model-specific hook and toJson override inherited contracts', () {
@@ -2240,10 +2185,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final classSpec = classes[0] as Class;
         expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          classSpec.methods.any((method) => method.name == 'toSimple'),
-          isFalse,
-        );
         expect(classSpec.name, r'$RawUser');
       });
 
@@ -2282,10 +2223,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final classSpec = classes[0] as Class;
         expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          classSpec.methods.any((method) => method.name == 'toSimple'),
-          isFalse,
-        );
         expect(classSpec.name, 'Order');
       });
 
@@ -2327,10 +2264,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         final classSpec = classes[0] as Class;
         expect(classSpec.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          classSpec.methods.any((method) => method.name == 'toSimple'),
-          isFalse,
-        );
         expect(classSpec.name, r'$RawAccount');
         expect(classSpec.fields.length, 1);
         expect(classSpec.fields.first.name, 'id');

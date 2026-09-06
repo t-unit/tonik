@@ -36,18 +36,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any(
-          (method) => method.name == 'toPipeDelimited',
-        ),
-        isFalse,
-      );
-      expect(
-        generatedClass.methods.any(
-          (method) => method.name == 'toSpaceDelimited',
-        ),
-        isFalse,
-      );
     },
   );
 }

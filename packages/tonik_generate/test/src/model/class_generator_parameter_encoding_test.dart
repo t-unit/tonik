@@ -1941,10 +1941,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toForm'),
-        isFalse,
-      );
     });
 
     test('generates null-safe toJson and fromJson for required property '

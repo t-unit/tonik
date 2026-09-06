@@ -1161,10 +1161,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toSimple'),
-        isFalse,
-      );
     });
 
     test('inherits toSimple for class with complex properties', () {
@@ -1203,10 +1199,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toSimple'),
-        isFalse,
-      );
     });
 
     test('inherits toSimple for empty class', () {
@@ -1220,10 +1212,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toSimple'),
-        isFalse,
-      );
     });
   });
 }

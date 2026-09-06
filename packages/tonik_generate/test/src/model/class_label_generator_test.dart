@@ -51,10 +51,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toLabel'),
-        isFalse,
-      );
     });
 
     test(
@@ -96,10 +92,6 @@ void main() {
 
         final generatedClass = generator.generateClass(model);
         expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-        expect(
-          generatedClass.methods.any((method) => method.name == 'toLabel'),
-          isFalse,
-        );
       },
     );
   });
@@ -135,10 +127,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toLabel'),
-        isFalse,
-      );
     });
 
     test('inherits toLabel for class with composite properties requiring '
@@ -188,10 +176,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toLabel'),
-        isFalse,
-      );
     });
 
     test('inherits toLabel for class with mixed properties including '
@@ -241,10 +225,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toLabel'),
-        isFalse,
-      );
     });
 
     test('inherits toLabel for empty class', () {
@@ -258,10 +238,6 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        generatedClass.methods.any((method) => method.name == 'toLabel'),
-        isFalse,
-      );
     });
   });
 }

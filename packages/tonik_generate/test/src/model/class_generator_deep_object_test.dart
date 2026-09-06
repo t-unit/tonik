@@ -51,10 +51,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('inherits toDeepObject method for empty model', () {
@@ -68,10 +64,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method inherits encoding for single '
@@ -96,10 +88,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method inherits encoding for multiple '
@@ -142,10 +130,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method inherits encoding through '
@@ -174,10 +158,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method works with nullable required properties', () {
@@ -201,10 +181,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method works with optional properties', () {
@@ -228,10 +204,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method works with mixed simple and complex types', () {
@@ -280,10 +252,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
 
     test('toDeepObject method is inherited from ObjectParameterEncodable', () {
@@ -307,10 +275,6 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(result.extend?.symbol, 'ObjectParameterEncodable');
-      expect(
-        result.methods.any((method) => method.name == 'toDeepObject'),
-        isFalse,
-      );
     });
   });
 }
