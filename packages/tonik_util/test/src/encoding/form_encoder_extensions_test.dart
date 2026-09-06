@@ -1095,42 +1095,185 @@ void main() {
       );
     });
 
-    test('int encoder escapes & in the parameter name', () {
+    test('int encoder escapes reserved characters in the parameter name', () {
       expect(
-        42.toForm('q&a', explode: false, allowEmpty: true, textEncoding: utf8),
-        const <ParameterEntry>[(name: 'q%26a', value: '42')],
+        42.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: '42')],
       );
     });
 
-    test('list explode=false escapes the parameter name', () {
+    test('URI encoder escapes the name and preserves reserved value chars', () {
       expect(
-        [
-          'a',
-          'b',
-        ].toForm('q&a', explode: false, allowEmpty: true, textEncoding: utf8),
-        const <ParameterEntry>[(name: 'q%26a', value: 'a,b')],
-      );
-    });
-
-    test('list explode=true escapes the parameter name on every entry', () {
-      expect(
-        [
-          'a',
-          'b',
-        ].toForm('q&a', explode: true, allowEmpty: true, textEncoding: utf8),
+        Uri.parse('https://example.com/a').toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
         const <ParameterEntry>[
-          (name: 'q%26a', value: 'a'),
-          (name: 'q%26a', value: 'b'),
+          (name: 'filter%2Fname', value: 'https://example.com/a'),
         ],
       );
     });
 
-    test('map explode=false escapes the parameter name', () {
+    test('double encoder escapes reserved characters in the name', () {
       expect(
-        {
-          'k': 'v',
-        }.toForm('q&a', explode: false, allowEmpty: true, textEncoding: utf8),
-        const <ParameterEntry>[(name: 'q%26a', value: 'k,v')],
+        3.14.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: '3.14')],
+      );
+    });
+
+    test('num encoder escapes reserved characters in the name', () {
+      const num value = 2;
+      expect(
+        value.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: '2')],
+      );
+    });
+
+    test('bool encoder escapes reserved characters in the name', () {
+      expect(
+        true.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'true')],
+      );
+    });
+
+    test('DateTime encoder escapes the name and preserves value colons', () {
+      expect(
+        DateTime.utc(2024, 3, 15, 12, 30).toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[
+          (name: 'filter%2Fname', value: '2024-03-15T12:30:00.000Z'),
+        ],
+      );
+    });
+
+    test('BigDecimal encoder escapes reserved characters in the name', () {
+      expect(
+        BigDecimal.parse('3.14').toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: '3.14')],
+      );
+    });
+
+    test('binary encoder escapes the name and preserves value slashes', () {
+      expect(
+        [97, 47, 98].toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'a/b')],
+      );
+    });
+
+    test('list explode=false escapes the name and preserves value slashes', () {
+      expect(
+        ['a/b', 'c/d'].toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'a/b,c/d')],
+      );
+    });
+
+    test('list explode=true escapes the name on every entry', () {
+      expect(
+        ['a/b', 'c/d'].toForm(
+          'filter/name',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[
+          (name: 'filter%2Fname', value: 'a/b'),
+          (name: 'filter%2Fname', value: 'c/d'),
+        ],
+      );
+    });
+
+    test('list escapes the name without re-encoding encoded values', () {
+      expect(
+        ['a%2Fb', 'c%3Ad'].toForm(
+          'filter/name',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          alreadyEncoded: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[
+          (name: 'filter%2Fname', value: 'a%2Fb'),
+          (name: 'filter%2Fname', value: 'c%3Ad'),
+        ],
+      );
+    });
+
+    test('map explode=false escapes the name and preserves member slashes', () {
+      expect(
+        {'k/1': 'a/b'}.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'k/1,a/b')],
+      );
+    });
+
+    test('map escapes the name without re-encoding encoded values', () {
+      expect(
+        {'k/1': 'a%2Fb'}.toForm(
+          'filter/name',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+          alreadyEncoded: true,
+          textEncoding: utf8,
+        ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'k/1,a%2Fb')],
       );
     });
 
@@ -1160,30 +1303,47 @@ void main() {
       );
     });
 
-    test('parameter name keeps other reserved chars literal under '
-        'allowReserved', () {
+    test('parameter name escapes reserved chars with allowReserved', () {
       expect(
-        'v'.toForm(
-          'a:b',
+        'a/b?c:d@e'.toForm(
+          'filter/name',
           explode: false,
           allowEmpty: true,
           allowReserved: true,
           textEncoding: utf8,
         ),
-        const <ParameterEntry>[(name: 'a:b', value: 'v')],
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'a/b?c:d@e')],
       );
     });
 
+    test(
+      'parameter name and value escape reserved chars without allowReserved',
+      () {
+        expect(
+          'a/b?c:d@e'.toForm(
+            'filter/name',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          const <ParameterEntry>[
+            (name: 'filter%2Fname', value: 'a%2Fb%3Fc%3Ad%40e'),
+          ],
+        );
+      },
+    );
+
     test('encodes raw names and values directly with Latin-1', () {
       expect(
-        'café'.toForm(
-          'clé',
+        'café/a b'.toForm(
+          'clé/a b',
           explode: false,
           allowEmpty: true,
+          allowReserved: true,
           useQueryComponent: true,
           textEncoding: latin1,
         ),
-        const <ParameterEntry>[(name: 'cl%E9', value: 'caf%E9')],
+        const <ParameterEntry>[(name: 'cl%E9%2Fa+b', value: 'caf%E9/a+b')],
       );
     });
   });
