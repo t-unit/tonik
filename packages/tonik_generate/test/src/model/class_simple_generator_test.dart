@@ -1131,7 +1131,7 @@ void main() {
   });
 
   group('ClassGenerator toSimple generation', () {
-    test('generates toSimple for class with only simple properties', () {
+    test('inherits toSimple for class with only simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'SimpleClass',
@@ -1160,42 +1160,14 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final toSimpleMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'toSimple',
-      );
-
-      expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toSimpleMethod.optionalParameters, hasLength(3));
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        toSimpleMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty', 'literal']),
-      );
-      expect(
-        toSimpleMethod.optionalParameters
-            .where((p) => p.name != 'literal')
-            .every((p) => p.required),
-        isTrue,
-      );
-
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toSimple({
-          required bool explode,
-          required bool allowEmpty,
-          bool literal = false,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toSimple'),
+        isFalse,
       );
     });
 
-    test('generates toSimple for class with complex properties', () {
+    test('inherits toSimple for class with complex properties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'ComplexClass',
@@ -1230,31 +1202,14 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final toSimpleMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'toSimple',
-      );
-
-      expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toSimple({
-          required bool explode,
-          required bool allowEmpty,
-          bool literal = false,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
-        }
-      ''';
-
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toSimple'),
+        isFalse,
       );
     });
 
-    test('generates toSimple for empty class', () {
+    test('inherits toSimple for empty class', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'EmptyClass',
@@ -1264,27 +1219,10 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final toSimpleMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'toSimple',
-      );
-
-      expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toSimple({
-          required bool explode,
-          required bool allowEmpty,
-          bool literal = false,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
-        }
-      ''';
-
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toSimple'),
+        isFalse,
       );
     });
   });

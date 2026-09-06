@@ -19,6 +19,7 @@ export 'src/encoding/form_encoder_extensions.dart';
 export 'src/encoding/form_field_encoding.dart';
 export 'src/encoding/label_encoder_extensions.dart';
 export 'src/encoding/matrix_encoder_extensions.dart';
+export 'src/encoding/object_parameter_encodable.dart';
 export 'src/encoding/parameter_entry.dart';
 export 'src/encoding/pipe_delimited_encoder_extensions.dart';
 export 'src/encoding/property_value.dart';

@@ -1,5 +1,3 @@
-import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -11,10 +9,6 @@ void main() {
   late NameManager nameManager;
   late NameGenerator nameGenerator;
   late Context context;
-  late DartEmitter emitter;
-  final format = DartFormatter(
-    languageVersion: DartFormatter.latestLanguageVersion,
-  ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -24,11 +18,10 @@ void main() {
     );
     generator = ClassGenerator(nameManager: nameManager, package: 'example');
     context = Context.initial();
-    emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
   group('ClassGenerator toLabel generation', () {
-    test('generates toLabel for class with only simple properties', () {
+    test('inherits toLabel for class with only simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'SimpleClass',
@@ -57,32 +50,15 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final toLabelMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'toLabel',
-      );
-
-      expect(toLabelMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toLabelMethod.optionalParameters.length, 2);
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        toLabelMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
-      );
-
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toLabel'),
+        isFalse,
       );
     });
 
     test(
-      'generates toLabel that throws for class with nested class property',
+      'inherits toLabel that throws for class with nested class property',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -119,23 +95,17 @@ void main() {
         );
 
         final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
+        expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
         expect(
-          collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          generatedClass.methods.any((method) => method.name == 'toLabel'),
+          isFalse,
         );
       },
     );
   });
 
   group('ClassGenerator toLabel method for label encoding', () {
-    test('generates toLabel for class with only simple properties', () {
+    test('inherits toLabel for class with only simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'SimpleClass',
@@ -164,20 +134,14 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toLabel'),
+        isFalse,
       );
     });
 
-    test('generates toLabel for class with composite properties requiring '
+    test('inherits toLabel for class with composite properties requiring '
         'runtime checks', () {
       final model = ClassModel(
         isDeprecated: false,
@@ -223,20 +187,14 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toLabel'),
+        isFalse,
       );
     });
 
-    test('generates toLabel for class with mixed properties including '
+    test('inherits toLabel for class with mixed properties including '
         'nullable composites', () {
       final model = ClassModel(
         isDeprecated: false,
@@ -282,20 +240,14 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toLabel'),
+        isFalse,
       );
     });
 
-    test('generates toLabel for empty class', () {
+    test('inherits toLabel for empty class', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'EmptyClass',
@@ -305,16 +257,10 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(allowEmpty: allowEmpty)
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
-        }
-      ''';
+      expect(generatedClass.extend?.symbol, 'ObjectParameterEncodable');
       expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        generatedClass.methods.any((method) => method.name == 'toLabel'),
+        isFalse,
       );
     });
   });

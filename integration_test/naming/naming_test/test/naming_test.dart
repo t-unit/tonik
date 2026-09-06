@@ -15,6 +15,7 @@ import 'package:naming_api/src/model/keyword_enum.dart';
 import 'package:naming_api/src/model/keyword_property_names.dart';
 import 'package:naming_api/src/model/multipart_name_collision_form.dart';
 import 'package:naming_api/src/model/object_method_collider.dart';
+import 'package:naming_api/src/model/object_parameter_encodable.dart' as naming;
 import 'package:naming_api/src/model/self_referencer.dart';
 import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/user.dart';
@@ -283,7 +284,38 @@ void main() {
     });
   });
 
+  test(
+    'schema named ObjectParameterEncodable inherits the runtime superclass',
+    () {
+      const model = naming.ObjectParameterEncodable(value: 'a/b');
+      const ParameterEncodable parameter = model;
+      expect(model, isA<ObjectParameterEncodable>());
+      expect(model.toSimple(explode: true, allowEmpty: false), 'value=a%2Fb');
+      expect(
+        parameter.toLabel(explode: false, allowEmpty: false),
+        '.value,a%2Fb',
+      );
+      expect(model.toJson(), {'value': 'a/b'});
+    },
+  );
+
   group('generated method name collisions', () {
+    test('inherited encoding dispatches to the hook beside escaped fields', () {
+      const model = GeneratedMethodCollider(
+        $toSimple: 'method',
+        $parameterProperties: 'field',
+      );
+      expect(model.$parameterProperties, 'field');
+      expect(model.parameterProperties().keys, [
+        'toSimple',
+        'parameterProperties',
+      ]);
+      expect(
+        model.toSimple(explode: true, allowEmpty: false),
+        'toSimple=method,parameterProperties=field',
+      );
+    });
+
     test('GeneratedMethodCollider has escaped field names', () {
       const model = GeneratedMethodCollider(
         $call: 'invoke',
