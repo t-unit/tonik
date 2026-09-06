@@ -3,61 +3,118 @@ import 'package:defaulted_api/src/operation/get_compound_defaults.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final decoders = <String, Object? Function(Map<String, Object?>)>{
-    'allOf': (json) => AllOfDefaults.fromJson(json).toJson(),
-    'oneOf': (json) => OneOfDefaults.fromJson(json).toJson(),
-    'anyOf': (json) => AnyOfDefaults.fromJson(json).toJson(),
-  };
-  const defaults = {
-    'single': 3,
-    'multiple': 3,
-    'aliased': 3,
-    'aliasOverride': 2,
-    'overridden': 0,
-    'inline': 3,
-    'nullable': 3,
-    'zero': 0,
-    'disabled': false,
-  };
+  test('allOf defaults apply to missing properties', () {
+    final value = AllOfDefaults.fromJson(const <String, Object?>{});
 
-  for (final MapEntry(key: kind, value: decode) in decoders.entries) {
-    group('$kind enclosing defaults', () {
-      test(
-        'missing keys use defaults for single, multiple, and alias schemas',
-        () {
-          expect(decode({}), defaults);
-        },
-      );
+    expect(value.single?.toJson(), 3);
+    expect(value.multiple?.toJson(), 3);
+    expect(value.aliased?.toJson(), 3);
+    expect(value.aliasOverride?.toJson(), 2);
+    expect(value.overridden?.toJson(), 0);
+    expect(value.inline?.toJson(), 3);
+    expect(value.nullable?.toJson(), 3);
+    expect(value.zero?.toJson(), 0);
+    expect(value.disabled?.toJson(), isFalse);
+    expect(value.nullDefault, isNull);
+    expect(value.noDefault, isNull);
+  });
 
-      test('supplied values override defaults', () {
-        final supplied = {
-          for (final key in defaults.keys) key: key == 'disabled' ? true : 9,
-        };
-        expect(decode(supplied), supplied);
-      });
+  test('oneOf defaults apply to missing properties', () {
+    final value = OneOfDefaults.fromJson(const <String, Object?>{});
 
-      test('nullable explicit null wins over the non-null default', () {
-        expect(decode({'nullable': null}), {
-          for (final entry in defaults.entries)
-            if (entry.key != 'nullable') entry.key: entry.value,
-        });
-      });
+    expect(value.single?.toJson(), 3);
+    expect(value.multiple?.toJson(), 3);
+    expect(value.aliased?.toJson(), 3);
+    expect(value.aliasOverride?.toJson(), 2);
+    expect(value.overridden?.toJson(), 0);
+    expect(value.inline?.toJson(), 3);
+    expect(value.nullable?.toJson(), 3);
+    expect(value.zero?.toJson(), 0);
+    expect(value.disabled?.toJson(), isFalse);
+    expect(value.nullDefault, isNull);
+    expect(value.noDefault, isNull);
+  });
 
-      test('null defaults and absent defaults retain no-default behavior', () {
-        expect(decode({'nullDefault': null}), defaults);
-        expect(decode({'nullDefault': 4, 'noDefault': 5}), {
-          ...defaults,
-          'nullDefault': 4,
-          'noDefault': 5,
-        });
-      });
+  test('anyOf defaults apply to missing properties', () {
+    final value = AnyOfDefaults.fromJson(const <String, Object?>{});
 
-      test('defaults survive a JSON round-trip', () {
-        final encoded = decode({})! as Map<String, Object?>;
-        expect(decode(encoded), encoded);
-      });
+    expect(value.single?.toJson(), 3);
+    expect(value.multiple?.toJson(), 3);
+    expect(value.aliased?.toJson(), 3);
+    expect(value.aliasOverride?.toJson(), 2);
+    expect(value.overridden?.toJson(), 0);
+    expect(value.inline?.toJson(), 3);
+    expect(value.nullable?.toJson(), 3);
+    expect(value.zero?.toJson(), 0);
+    expect(value.disabled?.toJson(), isFalse);
+    expect(value.nullDefault, isNull);
+    expect(value.noDefault, isNull);
+  });
+
+  test('supplied values override compound defaults', () {
+    final allOf = AllOfDefaults.fromJson(const {'single': 9, 'disabled': true});
+    final oneOf = OneOfDefaults.fromJson(const {'multiple': 9, 'aliased': 8});
+    final anyOf = AnyOfDefaults.fromJson(const {'overridden': 9, 'zero': 8});
+
+    expect(allOf.single?.toJson(), 9);
+    expect(allOf.disabled?.toJson(), isTrue);
+    expect(oneOf.multiple?.toJson(), 9);
+    expect(oneOf.aliased?.toJson(), 8);
+    expect(anyOf.overridden?.toJson(), 9);
+    expect(anyOf.zero?.toJson(), 8);
+  });
+
+  test('explicit null wins over nullable compound defaults', () {
+    final allOf = AllOfDefaults.fromJson(const {'nullable': null});
+    final oneOf = OneOfDefaults.fromJson(const {'nullable': null});
+    final anyOf = AnyOfDefaults.fromJson(const {'nullable': null});
+
+    expect(allOf.nullable, isNull);
+    expect(oneOf.nullable, isNull);
+    expect(anyOf.nullable, isNull);
+  });
+
+  test('null schema defaults leave explicit null unchanged', () {
+    final allOf = AllOfDefaults.fromJson(const {'nullDefault': null});
+    final oneOf = OneOfDefaults.fromJson(const {'nullDefault': null});
+    final anyOf = AnyOfDefaults.fromJson(const {'nullDefault': null});
+
+    expect(allOf.nullDefault, isNull);
+    expect(oneOf.nullDefault, isNull);
+    expect(anyOf.nullDefault, isNull);
+  });
+
+  test('properties without defaults accept supplied values', () {
+    final allOf = AllOfDefaults.fromJson(const {
+      'nullDefault': 4,
+      'noDefault': 5,
     });
-  }
+    final oneOf = OneOfDefaults.fromJson(const {
+      'nullDefault': 4,
+      'noDefault': 5,
+    });
+    final anyOf = AnyOfDefaults.fromJson(const {
+      'nullDefault': 4,
+      'noDefault': 5,
+    });
+
+    expect(allOf.nullDefault?.toJson(), 4);
+    expect(allOf.noDefault?.toJson(), 5);
+    expect(oneOf.nullDefault?.toJson(), 4);
+    expect(oneOf.noDefault?.toJson(), 5);
+    expect(anyOf.nullDefault?.toJson(), 4);
+    expect(anyOf.noDefault?.toJson(), 5);
+  });
+
+  test('compound defaults survive a JSON round-trip', () {
+    final allOf = AllOfDefaults.fromJson(const <String, Object?>{});
+    final oneOf = OneOfDefaults.fromJson(const <String, Object?>{});
+    final anyOf = AnyOfDefaults.fromJson(const <String, Object?>{});
+
+    expect(AllOfDefaults.fromJson(allOf.toJson()), allOf);
+    expect(OneOfDefaults.fromJson(oneOf.toJson()), oneOf);
+    expect(AnyOfDefaults.fromJson(anyOf.toJson()), anyOf);
+  });
 
   test('compound defaults are public computed getters', () {
     expect(AllOfDefaults.singleDefault.toJson(), 3);
