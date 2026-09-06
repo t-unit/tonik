@@ -27,6 +27,7 @@ void main() {
         nameManager: nameManager,
         package: 'api',
         backendGenerator: const DioBackendGenerator(),
+        operationBaseFilename: 'dio_operation.dart',
         defaultsCache: OperationDefaultsCache(
           nameManager: nameManager,
           package: 'api',

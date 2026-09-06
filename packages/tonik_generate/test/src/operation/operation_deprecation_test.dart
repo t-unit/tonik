@@ -128,6 +128,7 @@ void main() {
         nameManager: nameManager,
         package: 'test_package',
         backendGenerator: const DioBackendGenerator(),
+        operationBaseFilename: 'dio_operation.dart',
         defaultsCache: OperationDefaultsCache(
           nameManager: nameManager,
           package: 'test_package',

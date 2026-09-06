@@ -16,6 +16,7 @@ import 'package:tonik_generate/src/model/typedef_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_base_file_generator.dart';
+import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
@@ -54,6 +55,12 @@ class const Generator() {
     required String package,
     TonikConfig config = const TonikConfig(),
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
+    @visibleForTesting
+    String Function({
+      required OperationBaseGenerator generator,
+      required Set<String> operationFilenames,
+    })?
+    operationBaseFilenameResolver,
   }) async {
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
@@ -64,10 +71,27 @@ class const Generator() {
 
     final nameGenerator = NameGenerator();
     final stableModelSorter = StableModelSorter();
-    final nameManager = NameManager(
-      generator: nameGenerator,
-      stableModelSorter: stableModelSorter,
+    final nameManager =
+        NameManager(
+          generator: nameGenerator,
+          stableModelSorter: stableModelSorter,
+        )..prime(
+          models: apiDocument.models,
+          responses: apiDocument.responses,
+          requestBodies: apiDocument.requestBodies,
+          operations: apiDocument.operations,
+          tags: apiDocument.operationsByTag.keys,
+          servers: apiDocument.servers,
+        );
+
+    final operationFilenames = Set.unmodifiable(
+      nameManager.operationNames.values.map(nameManager.fileNameForClass),
     );
+    final resolvedOperationBaseFilename =
+        (operationBaseFilenameResolver ?? operationBaseFilename)(
+          generator: backendGenerator.operationBaseGenerator,
+          operationFilenames: operationFilenames,
+        );
 
     final classGenerator = ClassGenerator(
       nameManager: nameManager,
@@ -118,6 +142,7 @@ class const Generator() {
       package: package,
       defaultsCache: defaultsCache,
       backendGenerator: backendGenerator,
+      operationBaseFilename: resolvedOperationBaseFilename,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -126,7 +151,8 @@ class const Generator() {
     );
     final operationBaseFileGenerator = OperationBaseFileGenerator(
       operationBaseGenerator: backendGenerator.operationBaseGenerator,
-      nameManager: nameManager,
+      operationBaseFilename: resolvedOperationBaseFilename,
+      operationFilenames: operationFilenames,
     );
 
     final requestBodyGenerator = RequestBodyGenerator(
@@ -179,15 +205,6 @@ class const Generator() {
 
     final serverFileGenerator = ServerFileGenerator(
       serverGenerator: serverGenerator,
-    );
-
-    nameManager.prime(
-      models: apiDocument.models,
-      responses: apiDocument.responses,
-      requestBodies: apiDocument.requestBodies,
-      operations: apiDocument.operations,
-      tags: apiDocument.operationsByTag.keys,
-      servers: apiDocument.servers,
     );
 
     generatePubspec(
