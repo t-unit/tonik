@@ -11,8 +11,14 @@ Defaults are supported on:
 - model class properties (`components.schemas.*.properties.*.default`),
 - operation parameters (the parameter's `schema.default`) for path, query,
   header, and cookie locations,
+- referenced `allOf`, `oneOf`, and `anyOf` schemas with an enclosing
+  `default`, including references through aliases,
 - `$ref` siblings — a property `$ref`-ing another schema can carry a
   sibling `default` that overrides the target's default (OAS 3.1+).
+
+Defaults declared on individual composition branches are not inherited by the
+composition. A local property or parameter default takes precedence over the
+referenced schema's default.
 
 ## Behaviour
 

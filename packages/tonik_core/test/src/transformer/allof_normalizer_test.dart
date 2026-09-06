@@ -59,6 +59,40 @@ void main() {
         expect(alias.isDeprecated, isFalse);
       });
 
+      test('preserves the enclosing default over the member default', () {
+        final inner = AliasModel(
+          model: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: 7,
+        );
+        final compound = AllOfModel(
+          name: 'RetryCount',
+          models: [inner],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: 0,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: {compound},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final alias = normalizer.apply(document).models.single as AliasModel;
+        expect(alias.defaultValue, 0);
+      });
+
       test('preserves deprecated flag from AllOfModel', () {
         final baseModel = StringModel(context: context);
 
