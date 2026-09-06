@@ -160,18 +160,32 @@ void main() {
   });
 
   for (final backend in ['dio', 'http']) {
-    test('CI analysis keeps one worker by default for $backend', () async {
+    test('CI analysis uses four workers by default for $backend', () async {
       final result = await runScript(
         script: 'analyze_integration_packages.sh',
         arguments: [backend],
+        environment: {'TONIK_TEST_BLOCK_FIRST': '1'},
       );
       expect(result.exitCode, 0, reason: '${result.stdout}\n${result.stderr}');
-      expect(result.stdout, contains('backend=$backend packages=85 workers=1'));
+      expect(result.stdout, contains('backend=$backend packages=85 workers=4'));
       final recorded = events();
-      expectCompleteAnalysis(recorded, workers: 1);
+      expectCompleteAnalysis(recorded, workers: 4);
       expect(recorded.where((e) => e.phase == 'test'), isEmpty);
     });
   }
+
+  test('CI analysis honors a single-worker override', () async {
+    final result = await runScript(
+      script: 'analyze_integration_packages.sh',
+      arguments: ['http'],
+      environment: {'INTEGRATION_ANALYSIS_JOBS': '1'},
+    );
+    expect(result.exitCode, 0, reason: '${result.stdout}\n${result.stderr}');
+    expect(result.stdout, contains('backend=http packages=85 workers=1'));
+    final recorded = events();
+    expectCompleteAnalysis(recorded, workers: 1);
+    expect(recorded.where((e) => e.phase == 'test'), isEmpty);
+  });
 
   test(
     'all failures are reported after draining the complete package queue',

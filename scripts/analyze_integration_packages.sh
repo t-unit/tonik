@@ -12,4 +12,4 @@ fi
 backend="$1"
 validate_integration_backend "$backend"
 discover_integration_packages "$backend"
-analyze_integration_packages "$backend" "${INTEGRATION_ANALYSIS_JOBS-1}"
+analyze_integration_packages "$backend" "${INTEGRATION_ANALYSIS_JOBS-4}"
