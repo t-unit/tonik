@@ -438,28 +438,16 @@ void main() {
       },
     );
 
-    test('empty map renders ;paramName with allowEmpty=true', () {
+    test('empty map expands to nothing with allowEmpty=true', () {
       const value = <String, PropertyValue>{};
-      expect(
-        value.toMatrix('point', explode: false, allowEmpty: true),
-        ';point',
-      );
-      expect(
-        value.toMatrix('point', explode: true, allowEmpty: true),
-        ';point',
-      );
+      expect(value.toMatrix('point', explode: false, allowEmpty: true), '');
+      expect(value.toMatrix('point', explode: true, allowEmpty: true), '');
     });
 
-    test('empty map throws with allowEmpty=false', () {
+    test('empty map expands to nothing with allowEmpty=false', () {
       const value = <String, PropertyValue>{};
-      expect(
-        () => value.toMatrix('point', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
-      expect(
-        () => value.toMatrix('point', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(value.toMatrix('point', explode: false, allowEmpty: false), '');
+      expect(value.toMatrix('point', explode: true, allowEmpty: false), '');
     });
 
     test(
