@@ -49,3 +49,92 @@ discover_integration_packages() {
     exit 1
   fi
 }
+
+# Keep dependency resolution and analysis ordered within each package, while
+# allowing independent packages to use the available analysis workers.
+analyze_integration_packages() (
+  local backend="$1"
+  local analysis_jobs="$2"
+  local analysis_logs
+  local package_dir
+  local package_index=0
+  local failed=0
+  local runner_failed=0
+  local -a all_packages=(
+    "${GENERATED_INTEGRATION_PACKAGES[@]}"
+    "${INTEGRATION_TEST_PACKAGES[@]}"
+    integration_test/test_helpers
+  )
+  local package_count="${#all_packages[@]}"
+
+  if [[ ! "$analysis_jobs" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Error: INTEGRATION_ANALYSIS_JOBS must be a positive integer." >&2
+    exit 64
+  fi
+  if [ ! -d "$INTEGRATION_TEST_ROOT/test_helpers" ]; then
+    echo "Error: integration test helper package is missing." >&2
+    exit 1
+  fi
+
+  # Compare lengths first so even very large valid overrides cannot overflow
+  # shell arithmetic or xargs' worker-count argument.
+  if [ "${#analysis_jobs}" -gt "${#package_count}" ] || \
+    [ "$analysis_jobs" -gt "$package_count" ]; then
+    analysis_jobs="$package_count"
+  fi
+
+  analysis_logs="$(mktemp -d "${TMPDIR:-/tmp}/tonik-analysis.XXXXXX")" || exit 1
+  trap 'rm -rf "$analysis_logs"' EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+
+  echo "Analysis: backend=$backend packages=$package_count workers=$analysis_jobs"
+
+  # xargs -P maintains a rolling pool on both macOS' Bash 3.2 and Linux.
+  # NUL-delimited arguments preserve paths containing spaces. Map every package
+  # failure to exit 1: xargs stops dispatching early if a worker exits with 255.
+  if for package_dir in "${all_packages[@]}"; do
+    printf '%s\0' "$INTEGRATION_REPO_ROOT/$package_dir" \
+      "$package_dir" "$analysis_logs/$package_index"
+    package_index=$((package_index + 1))
+  done | xargs -0 -n 3 -P "$analysis_jobs" bash -c '
+    echo "Analyzing $2"
+    if (
+      cd "$1" &&
+      dart pub get &&
+      dart analyze --fatal-infos --fatal-warnings
+    ) >"$3.log" 2>&1; then
+      : >"$3.ok" || exit 1
+      echo "Analysis passed: $2"
+    else
+      echo "Analysis failed: $2" >&2
+      exit 1
+    fi
+  ' integration-analysis; then
+    :
+  else
+    runner_failed=1
+  fi
+
+  # Print failures together, after every worker has finished, so diagnostics
+  # remain readable and no package failure can be hidden by a later success.
+  package_index=0
+  for package_dir in "${all_packages[@]}"; do
+    if [ ! -f "$analysis_logs/$package_index.ok" ]; then
+      failed=$((failed + 1))
+      echo "--- Analysis failed: $package_dir ---" >&2
+      if [ -f "$analysis_logs/$package_index.log" ]; then
+        cat "$analysis_logs/$package_index.log" >&2
+      else
+        echo "Error: analysis worker did not produce a log." >&2
+      fi
+    fi
+    package_index=$((package_index + 1))
+  done
+
+  if [ "$runner_failed" -ne 0 ] || [ "$failed" -ne 0 ]; then
+    echo "Error: integration analysis failed ($failed/$package_count packages)." >&2
+    exit 1
+  fi
+  echo "Analysis complete: $package_count/$package_count packages passed."
+)
