@@ -1,4 +1,3 @@
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -79,11 +78,7 @@ void main() {
     },
   };
 
-  test('warns and omits repeated anyOf members in first-occurrence order', () {
-    final logs = <LogRecord>[];
-    final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
-    addTearDown(subscription.cancel);
-
+  test('preserves repeated anyOf members in declaration order', () {
     final api = Importer().import({
       'openapi': '3.0.3',
       'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -137,16 +132,13 @@ void main() {
     expect(compound.models, [
       (model: zebra, discriminatorValue: 'z'),
       (model: alpha, discriminatorValue: 'a'),
+      (model: zebra, discriminatorValue: 'z'),
     ]);
     expect(nested.discriminator, isNull);
     expect(nested.models, [
       (model: zebra, discriminatorValue: null),
       (model: alpha, discriminatorValue: null),
-    ]);
-    final warnings = logs.where((record) => record.level == Level.WARNING);
-    expect(warnings.map((record) => record.message), [
-      'Ignoring duplicate member in anyOf at components/schemas/Compound.',
-      'Ignoring duplicate member in anyOf at components/schemas/Wrapper/value/anyOf.',
+      (model: zebra, discriminatorValue: null),
     ]);
   });
 

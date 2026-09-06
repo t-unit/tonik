@@ -29,9 +29,17 @@ class const DioDataGenerator({
 
     final content = requestBody.resolvedContent;
     final isRequired = requestBody.isRequired;
-    final headerInfo = extractOperationMultipartHeaderParamInfo(operation);
-    bodyPlan ??= const OperationRequestPlanner(backend: TransportBackend.dio)
-        .planBody(operation);
+    final headerInfo = extractOperationMultipartHeaderParamInfo(
+      operation,
+      nameManager: nameManager,
+      package: package,
+    );
+    bodyPlan ??= OperationRequestPlanner(
+      backend: TransportBackend.dio,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
+    ).planBody(operation);
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 

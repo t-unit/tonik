@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -419,11 +418,7 @@ void main() {
   });
 
   group(r'$ref in composite types with siblings', () {
-    test('named structural siblings omit duplicate members and warn', () {
-      final logs = <LogRecord>[];
-      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
-      addTearDown(subscription.cancel);
-
+    test('named structural siblings preserve duplicate members', () {
       final api = Importer().import({
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -451,12 +446,7 @@ void main() {
       );
       final combined = api.models.whereType<AllOfModel>().single;
 
-      expect(combined.models, [base, extra]);
-      final warnings = logs.where((record) => record.level == Level.WARNING);
-      expect(warnings.map((record) => record.message), [
-        'Ignoring duplicate member in allOf at components/schemas/Combined.',
-        'Ignoring duplicate member in allOf at components/schemas/Combined.',
-      ]);
+      expect(combined.models, [base, extra, base, extra]);
     });
 
     test(r'$ref + description in allOf member creates AliasModel', () {
@@ -771,11 +761,7 @@ void main() {
   });
 
   group(r'$ref in properties with siblings', () {
-    test('property structural siblings omit duplicate members and warn', () {
-      final logs = <LogRecord>[];
-      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
-      addTearDown(subscription.cancel);
-
+    test('property structural siblings preserve duplicate members', () {
       final api = Importer().import({
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -809,12 +795,7 @@ void main() {
       final wrapper = api.models.whereType<ClassModel>().single;
       final combined = wrapper.properties.single.model as AllOfModel;
 
-      expect(combined.models, [base, extra]);
-      final warnings = logs.where((record) => record.level == Level.WARNING);
-      expect(warnings.map((record) => record.message), [
-        'Ignoring duplicate member in allOf at components/schemas/Wrapper/value/allOf.',
-        'Ignoring duplicate member in allOf at components/schemas/Wrapper/value/allOf.',
-      ]);
+      expect(combined.models, [base, extra, base, extra]);
     });
 
     test(r'$ref + description in property sets description on property', () {

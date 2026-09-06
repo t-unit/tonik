@@ -1,20 +1,27 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-BuiltStatements buildMultipartBodyStatements(MultipartBodyPlan plan) =>
-    BuiltStatements.simple([
-      declareFinal(r'_$formData')
-          .assign(refer('FormData', 'package:dio/dio.dart').call([]))
-          .statement,
-      for (final emission in plan.emissions)
-        switch (emission) {
-          MultipartCode(:final code) => code,
-          MultipartAppend() => _append(emission),
-        },
-      refer(r'_$formData').returned.statement,
+BuiltStatements buildMultipartBodyStatements(MultipartBodyPlan plan) {
+  if (plan.runtimeEncodingError case final encodingError?) {
+    return BuiltStatements.simple([
+      generateEncodingExceptionExpression(encodingError, raw: true).statement,
     ]);
+  }
+  return BuiltStatements.simple([
+    declareFinal(r'_$formData')
+        .assign(refer('FormData', 'package:dio/dio.dart').call([]))
+        .statement,
+    for (final emission in plan.emissions)
+      switch (emission) {
+        MultipartCode(:final code) => code,
+        MultipartAppend() => _append(emission),
+      },
+    refer(r'_$formData').returned.statement,
+  ]);
+}
 
 BuiltExpression buildMultipartBodyExpression(MultipartBodyPlan plan) =>
     BuiltExpression.simple(

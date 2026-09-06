@@ -19,66 +19,69 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test(
-      'emits and exports an inline multipart value without schema models',
-      () async {
-        final content = MultipartRequestContent(
-          context: ctx.pushAll(['upload', 'body']),
-          parts: const [],
-          rawContentType: 'multipart/form-data',
-          examples: const [],
-        );
-        final document = ApiDocument(
-          title: 'Test',
-          version: '1.0.0',
-          models: const {},
-          responseHeaders: const {},
-          requestHeaders: const {},
-          servers: const {},
-          operations: const {},
-          responses: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          requestBodies: {
-            RequestBodyObject(
-              name: null,
-              context: ctx.push('upload'),
-              description: null,
-              isRequired: true,
-              content: {content},
-            ),
-          },
-        );
+    test('emits one regular model for an inline multipart value', () async {
+      final model = ClassModel(
+        context: ctx.pushAll(['upload', 'body']),
+        properties: const [],
+        isDeprecated: false,
+        examples: const [],
+      );
+      final content = MultipartRequestContent(
+        model: model,
+        encoding: const {},
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+      );
+      final document = ApiDocument(
+        title: 'Test',
+        version: '1.0.0',
+        models: {model},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: {
+          RequestBodyObject(
+            name: null,
+            context: ctx.push('upload'),
+            description: null,
+            isRequired: true,
+            content: {content},
+          ),
+        },
+      );
 
-        await const Generator().generate(
-          apiDocument: document,
-          outputDirectory: tempDir.path,
-          package: 'test_package',
-        );
+      await const Generator().generate(
+        apiDocument: document,
+        outputDirectory: tempDir.path,
+        package: 'test_package',
+      );
 
-        final lib = path.join(tempDir.path, 'test_package', 'lib');
-        expect(
-          File(path.join(lib, 'src', 'model', 'upload_body_model.dart'))
-              .existsSync(),
-          isTrue,
-        );
-        expect(
-          Directory(path.join(lib, 'src', 'request_body')).existsSync(),
-          isFalse,
-        );
-        final exports = RegExp(r"^export '([^']+)';$", multiLine: true)
-            .allMatches(
-              File(path.join(lib, 'test_package.dart')).readAsStringSync(),
-            )
-            .map((match) => match.group(1)!)
-            .toList();
-        expect(exports, [
-          'src/model/upload_body_model.dart',
-          'src/server/server.dart',
-        ]);
-      },
-    );
+      final lib = path.join(tempDir.path, 'test_package', 'lib');
+      expect(
+        File(path.join(lib, 'src', 'model', 'upload_body_model.dart'))
+            .existsSync(),
+        isTrue,
+      );
+      expect(
+        Directory(path.join(lib, 'src', 'request_body')).existsSync(),
+        isFalse,
+      );
+      final exports = RegExp(r"^export '([^']+)';$", multiLine: true)
+          .allMatches(
+            File(path.join(lib, 'test_package.dart')).readAsStringSync(),
+          )
+          .map((match) => match.group(1)!)
+          .toList();
+      expect(exports, [
+        'src/model/upload_body_model.dart',
+        'src/server/server.dart',
+      ]);
+    });
 
     test(
       'generates request body file (multi-content) and response files',

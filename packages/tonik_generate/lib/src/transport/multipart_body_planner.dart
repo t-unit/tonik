@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
@@ -8,7 +9,12 @@ import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Resolves serialization before native multipart containers are constructed.
-class const MultipartBodyPlanner({required final TransportBackend backend}) {
+class const MultipartBodyPlanner({
+  required final TransportBackend backend,
+  final NameManager? nameManager,
+  final String? package,
+  final bool useImmutableCollections = false,
+}) {
   bool get _dio => backend == TransportBackend.dio;
 
   MultipartBodyPlan plan(
@@ -18,13 +24,150 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
     List<MultipartHeaderParamInfo>? headerParameters,
   }) {
     final parameters =
-        (headerParameters ?? extractMultipartHeaderParamInfo(content))
+        (headerParameters ??
+                extractMultipartHeaderParamInfo(
+                  content,
+                  nameManager: nameManager,
+                  package: package,
+                ))
             .where((parameter) => identical(parameter.content, content))
             .toList();
     final emissions = <MultipartEmission>[];
-    for (final (:normalizedName, :part) in normalizeMultipartParts(content)) {
-      final nullable = part.isNullable || !part.isRequired;
-      final accessor = refer(bodyAccessor).property(normalizedName);
+    final mergeHelpers = <MultipartMergeHelper>{};
+    final normalization = normalizeMultipartProperties(
+      content,
+      nameManager: nameManager,
+      package: package,
+    );
+    if (normalization.runtimeEncodingError case final runtimeEncodingError?) {
+      return MultipartBodyPlan(
+        value: refer(bodyAccessor),
+        rawContentType: content.rawContentType,
+        isRequired: isRequired,
+        emissions: const [],
+        runtimeEncodingError: runtimeEncodingError,
+      );
+    }
+    final properties = normalization.properties;
+    for (final property in properties) {
+      final runtimeEncodingError = _incompatibleDefinitionsError(property);
+      if (runtimeEncodingError != null) {
+        return MultipartBodyPlan(
+          value: refer(bodyAccessor),
+          rawContentType: content.rawContentType,
+          isRequired: isRequired,
+          emissions: const [],
+          runtimeEncodingError: runtimeEncodingError,
+        );
+      }
+    }
+    for (final property in properties) {
+      final resolvedEncoding = _resolveEncoding(
+        content.encoding[property.rawName],
+        property.property.model,
+      );
+      final accesses = [
+        for (final path in property.accessPaths)
+          _access(refer(bodyAccessor), path),
+      ];
+      final mergedObjects =
+          accesses.length > 1 &&
+          property.properties.every(
+            (candidate) =>
+                candidate.model.resolved is ClassModel ||
+                candidate.model.resolved is AllOfModel,
+          );
+      final mergedMaps =
+          accesses.length > 1 &&
+          property.properties.every(
+            (candidate) => candidate.model.resolved is MapModel,
+          );
+      final mergedLists =
+          accesses.length > 1 &&
+          property.properties.every(
+            (candidate) => candidate.model.resolved is ListModel,
+          );
+      final mergedObjectProperties =
+          mergedObjects &&
+          (resolvedEncoding.isStyleBased ||
+              resolvedEncoding.contentType == ContentType.form);
+      final nullable = property.isNullable || !property.isRequired;
+      final Expression accessor;
+      if (accesses.length == 1) {
+        accessor = accesses.single;
+      } else {
+        final variable = '_\$${property.normalizedName}MultipartValue';
+        final mergeHelper = mergedObjectProperties
+            ? MultipartMergeHelper.propertyValues
+            : mergedLists
+            ? MultipartMergeHelper.lists
+            : MultipartMergeHelper.dynamicValues;
+        mergeHelpers.add(mergeHelper);
+        final mergeFunction = switch (mergeHelper) {
+          MultipartMergeHelper.propertyValues =>
+            '_mergeMultipartPropertyValues',
+          MultipartMergeHelper.lists => '_mergeMultipartLists',
+          MultipartMergeHelper.dynamicValues => '_mergeMultipartValues',
+        };
+        var mergeExpression = refer(mergeFunction).call(
+          [
+            literalList([
+              for (var i = 0; i < accesses.length; i++)
+                if (mergedObjects)
+                  _objectMergeValue(
+                    accesses[i],
+                    nullable: _occurrenceIsNullable(
+                      property.accessPaths[i],
+                      property.properties[i],
+                    ),
+                    asProperties: mergedObjectProperties,
+                  )
+                else if (useImmutableCollections &&
+                    (property.properties[i].model.resolved is ListModel ||
+                        property.properties[i].model.resolved is MapModel))
+                  _immutableMergeValue(
+                    accesses[i],
+                    nullable: _occurrenceIsNullable(
+                      property.accessPaths[i],
+                      property.properties[i],
+                    ),
+                  )
+                else
+                  accesses[i],
+            ]),
+          ],
+          {
+            'propertyName': specLiteralString(property.rawName),
+            if ((mergedObjects && !mergedObjectProperties) || mergedMaps)
+              'mergeObjects': literalTrue,
+          },
+        );
+        if (!nullable && (mergedObjectProperties || mergedLists)) {
+          mergeExpression = mergeExpression.nullChecked;
+        }
+        emissions.add(
+          MultipartCode(
+            declareFinal(variable).assign(mergeExpression).statement,
+          ),
+        );
+        accessor = refer(variable);
+      }
+      if (property.isRequired && property.isNullable) {
+        emissions.add(
+          MultipartCode(
+            Block.of([
+              const Code('if ('),
+              accessor.code,
+              const Code(' == null) { '),
+              generateEncodingExceptionExpression(
+                'Required multipart property "${property.rawName}" is null.',
+                raw: true,
+              ).code,
+              const Code('; }'),
+            ]),
+          ),
+        );
+      }
       if (nullable) {
         emissions.add(
           MultipartCode(
@@ -37,20 +180,30 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
         );
       }
       final headers = _headers(
-        part,
-        normalizedName,
+        content.encoding[property.rawName],
+        property.normalizedName,
         parameters,
         nullable,
         emissions,
       );
+      final hasNullAwareAccess =
+          accesses.length == 1 &&
+          property.accessPaths.single.any(
+            (segment) => segment.receiverNullable,
+          );
       final input = (
-        name: part.name,
-        normalizedName: normalizedName,
-        value: nullable ? accessor.nullChecked : accessor,
-        encoding: part.encoding,
+        name: property.rawName,
+        normalizedName: property.normalizedName,
+        value: nullable
+            ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
+                  .nullChecked
+            : accessor,
+        encoding: resolvedEncoding,
         headers: headers,
+        isMergedObject: mergedObjects,
+        isMergedObjectProperties: mergedObjectProperties,
       );
-      emissions.addAll(_part(input, part.model.resolved));
+      emissions.addAll(_part(input, property.property.model.resolved));
       if (nullable) emissions.add(const MultipartCode(Code('}')));
     }
     return MultipartBodyPlan(
@@ -59,6 +212,7 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
       isRequired: isRequired,
       emissions: emissions,
       usesCustomParts: !_dio && parameters.isNotEmpty,
+      mergeHelpers: mergeHelpers,
     );
   }
 
@@ -376,14 +530,17 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
           'supported for object multipart part ${part.name}',
         );
       }
-      final entries = part.value
-          .property('parameterProperties')
-          .call([], {'allowEmpty': literalTrue})
-          .property('toRawStyleParts')
-          .call(
-            [specLiteralString(part.name)],
-            {'explode': literalBool(encoding.explode ?? true)},
-          );
+      final entries =
+          (part.isMergedObjectProperties
+                  ? part.value
+                  : part.value.property('parameterProperties').call([], {
+                      'allowEmpty': literalTrue,
+                    }))
+              .property('toRawStyleParts')
+              .call(
+                [specLiteralString(part.name)],
+                {'explode': literalBool(encoding.explode ?? true)},
+              );
       final variable = _dio ? r'_$part' : 'entry';
       final partsVariable = '${part.normalizedName}RawParts';
       return [
@@ -438,7 +595,11 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
     return [
       _text(
         part,
-        _json(part.value.property('toJson').call([])),
+        _json(
+          part.isMergedObject
+              ? part.value
+              : part.value.property('toJson').call([]),
+        ),
         fallback: 'application/json',
       ),
     ];
@@ -511,13 +672,13 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
   }
 
   Expression? _headers(
-    MultipartPart part,
+    PartEncoding? encoding,
     String normalizedName,
     List<MultipartHeaderParamInfo> parameters,
     bool nullable,
     List<MultipartEmission> emissions,
   ) {
-    final headers = part.encoding.headers?.entries
+    final headers = encoding?.headers?.entries
         .where((entry) => entry.key.toLowerCase() != 'content-type')
         .toList();
     if (headers == null || headers.isEmpty) return null;
@@ -580,6 +741,193 @@ class const MultipartBodyPlanner({required final TransportBackend backend}) {
     }
     return refer(variable);
   }
+
+  PartEncoding _resolveEncoding(PartEncoding? encoding, Model model) {
+    if (encoding?.isStyleBased ?? false) return encoding!;
+    final defaultType = _defaultContentType(model, <Model>{});
+    final contentType = encoding?.contentType ?? defaultType;
+    final rawContentType =
+        encoding?.rawContentType ??
+        switch (contentType) {
+          ContentType.json => 'application/json',
+          ContentType.bytes => 'application/octet-stream',
+          _ => 'text/plain',
+        };
+    return PartEncoding(
+      contentType: contentType,
+      rawContentType: rawContentType,
+      wireContentType: encoding?.wireContentType ?? rawContentType,
+      textEncoding: encoding?.textEncoding ?? TextEncoding.utf8,
+      headers: encoding?.headers,
+      style: null,
+      explode: null,
+      allowReserved: null,
+    );
+  }
+
+  ContentType _defaultContentType(Model model, Set<Model> active) {
+    if (!active.add(model)) return ContentType.json;
+    try {
+      return switch (model) {
+        AliasModel() => _defaultContentType(model.model, active),
+        ListModel() => _defaultContentType(model.content, active),
+        BinaryModel() || Base64Model() => ContentType.bytes,
+        ClassModel() ||
+        AllOfModel() ||
+        OneOfModel() ||
+        AnyOfModel() ||
+        AnyModel() ||
+        MapModel() => ContentType.json,
+        _ => ContentType.text,
+      };
+    } finally {
+      active.remove(model);
+    }
+  }
+
+  String? _incompatibleDefinitionsError(MultipartPropertyPlan property) {
+    final first = property.properties.first.model;
+    for (final candidate in property.properties.skip(1)) {
+      if (!_compatibleModels(first, candidate.model, <(Model, Model)>{})) {
+        return 'Multipart property "${property.rawName}" has incompatible '
+            'definitions (${first.runtimeType} and '
+            '${candidate.model.runtimeType}).';
+      }
+    }
+    return null;
+  }
+
+  bool _compatibleModels(Model left, Model right, Set<(Model, Model)> active) {
+    if (identical(left, right)) return true;
+    final pair = (left, right);
+    if (!active.add(pair)) return true;
+    try {
+      if (left is AliasModel) {
+        return _compatibleModels(left.model, right, active);
+      }
+      if (right is AliasModel) {
+        return _compatibleModels(left, right.model, active);
+      }
+      if (left is ListModel && right is ListModel) {
+        return left.isContentNullable == right.isContentNullable &&
+            _compatibleModels(left.content, right.content, active);
+      }
+      if (left is MapModel && right is MapModel) {
+        return left.isValueNullable == right.isValueNullable &&
+            _compatibleModels(left.valueModel, right.valueModel, active);
+      }
+      final leftObject = left is ClassModel || left is AllOfModel;
+      final rightObject = right is ClassModel || right is AllOfModel;
+      if (leftObject && rightObject) {
+        if (!_compatibleAdditionalProperties(left, right, active)) {
+          return false;
+        }
+        final leftProperties = _objectProperties(left, <Model>{});
+        final rightProperties = _objectProperties(right, <Model>{});
+        final overlapping = leftProperties.keys.toSet().intersection(
+          rightProperties.keys.toSet(),
+        );
+        for (final name in overlapping) {
+          for (final leftProperty in leftProperties[name]!) {
+            for (final rightProperty in rightProperties[name]!) {
+              final leftNullable =
+                  leftProperty.isNullable ||
+                  multipartModelIsNullable(leftProperty.model);
+              final rightNullable =
+                  rightProperty.isNullable ||
+                  multipartModelIsNullable(rightProperty.model);
+              if (leftNullable != rightNullable ||
+                  !_compatibleModels(
+                    leftProperty.model,
+                    rightProperty.model,
+                    active,
+                  )) {
+                return false;
+              }
+            }
+          }
+        }
+        return true;
+      }
+      if (left is EnumModel && right is EnumModel) {
+        // Distinct named enums generate distinct Dart types. Comparing their
+        // instances dynamically would therefore reject even equal wire values.
+        return false;
+      }
+      return left.runtimeType == right.runtimeType;
+    } finally {
+      active.remove(pair);
+    }
+  }
+
+  bool _compatibleAdditionalProperties(
+    Model left,
+    Model right,
+    Set<(Model, Model)> active,
+  ) {
+    final leftPolicy = _effectiveExplicitAdditionalProperties(left);
+    final rightPolicy = _effectiveExplicitAdditionalProperties(right);
+    if (leftPolicy == null || rightPolicy == null) return true;
+    if (leftPolicy is ForbiddenAdditionalProperties ||
+        rightPolicy is ForbiddenAdditionalProperties) {
+      return leftPolicy is ForbiddenAdditionalProperties &&
+          rightPolicy is ForbiddenAdditionalProperties;
+    }
+    final leftAllowed = leftPolicy as AllowedAdditionalProperties;
+    final rightAllowed = rightPolicy as AllowedAdditionalProperties;
+    return multipartModelIsNullable(leftAllowed.valueModel) ==
+            multipartModelIsNullable(rightAllowed.valueModel) &&
+        _compatibleModels(
+          leftAllowed.valueModel,
+          rightAllowed.valueModel,
+          active,
+        );
+  }
+}
+
+AdditionalPropertiesPolicy? _effectiveExplicitAdditionalProperties(
+  Model model,
+) {
+  final policy = switch (model) {
+    ClassModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
+    AllOfModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
+    _ => null,
+  };
+  return switch (policy) {
+    AllowedAdditionalProperties(
+      origin: AdditionalPropertiesOrigin.implicitDefault,
+    ) =>
+      null,
+    _ => policy,
+  };
+}
+
+Map<String, List<Property>> _objectProperties(Model model, Set<Model> active) {
+  if (!active.add(model)) return const {};
+  try {
+    switch (model) {
+      case AliasModel():
+        return _objectProperties(model.model, active);
+      case ClassModel():
+        final result = <String, List<Property>>{};
+        for (final property in model.properties) {
+          (result[property.name] ??= []).add(property);
+        }
+        return result;
+      case AllOfModel():
+        final result = <String, List<Property>>{};
+        for (final member in model.models) {
+          for (final entry in _objectProperties(member, active).entries) {
+            (result[entry.key] ??= []).addAll(entry.value);
+          }
+        }
+        return result;
+      default:
+        return const {};
+    }
+  } finally {
+    active.remove(model);
+  }
 }
 
 typedef _Part = ({
@@ -588,6 +936,8 @@ typedef _Part = ({
   Expression value,
   PartEncoding encoding,
   Expression? headers,
+  bool isMergedObject,
+  bool isMergedObjectProperties,
 });
 
 _Part _withValue(_Part part, Expression value) => (
@@ -596,7 +946,47 @@ _Part _withValue(_Part part, Expression value) => (
   value: value,
   encoding: part.encoding,
   headers: part.headers,
+  isMergedObject: part.isMergedObject,
+  isMergedObjectProperties: part.isMergedObjectProperties,
 );
+
+Expression _objectMergeValue(
+  Expression value, {
+  required bool nullable,
+  required bool asProperties,
+}) {
+  final member = asProperties ? 'parameterProperties' : 'toJson';
+  return nullable
+      ? value
+            .nullSafeProperty(member)
+            .call([], asProperties ? {'allowEmpty': literalTrue} : const {})
+      : value
+            .property(member)
+            .call([], asProperties ? {'allowEmpty': literalTrue} : const {});
+}
+
+Expression _immutableMergeValue(Expression value, {required bool nullable}) =>
+    nullable ? value.nullSafeProperty('unlock') : value.property('unlock');
+
+Expression _access(Expression root, List<MultipartAccessSegment> path) {
+  var result = root;
+  for (final segment in path) {
+    result = segment.receiverNullable
+        ? result.nullSafeProperty(segment.name)
+        : result.property(segment.name);
+  }
+  return result;
+}
+
+bool _occurrenceIsNullable(
+  List<MultipartAccessSegment> path,
+  Property property,
+) =>
+    path.any((segment) => segment.receiverNullable) ||
+    property.isNullable ||
+    multipartModelIsNullable(property.model) ||
+    !property.isRequired ||
+    property.isWriteOnly;
 
 Expression _json(Expression value) =>
     refer('jsonEncode', 'dart:convert').call([value]);

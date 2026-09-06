@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/multipart_merge_method_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
@@ -106,6 +107,9 @@ class OperationGenerator({
 
     final requestPlan = OperationRequestPlanner(
       backend: backendGenerator.backend,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
     ).plan(operation, normalizedParams);
     final resultValueType = resultTypeForOperation(
       operation,
@@ -167,6 +171,7 @@ class OperationGenerator({
             operation,
             normalizedParams.pathParameters,
           ),
+          ...generateMultipartMergeMethods(requestPlan.body),
           backendGenerator.generateBodyMethod(
             operation: operation,
             requestPlan: requestPlan,
@@ -214,8 +219,12 @@ class OperationGenerator({
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
     final cookieArgs = <String, Expression>{};
-    requestPlan ??= OperationRequestPlanner(backend: backendGenerator.backend)
-        .plan(operation, normalizedParams);
+    requestPlan ??= OperationRequestPlanner(
+      backend: backendGenerator.backend,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
+    ).plan(operation, normalizedParams);
 
     for (final pathParam in requestPlan.pathParameters) {
       pathArgs[pathParam.normalizedName] = pathParam.value;
@@ -250,7 +259,11 @@ class OperationGenerator({
     final dataArgs = <String, Expression>{
       if (hasRequestBody) 'body': refer('body'),
       if (hasRequestBody)
-        for (final info in extractOperationMultipartHeaderParamInfo(operation))
+        for (final info in extractOperationMultipartHeaderParamInfo(
+          operation,
+          nameManager: nameManager,
+          package: package,
+        ))
           info.name: refer(info.name),
     };
     final optionsArgs = <String, Expression>{

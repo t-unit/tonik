@@ -138,101 +138,17 @@ final class ModelRequestContent({
       'textEncoding: $textEncoding, examples: $examples)';
 }
 
-final class MultipartRequestContent._({
-  required var List<MultipartPart> parts,
-  required final Context context,
+final class MultipartRequestContent({
+  required var Model model,
+
+  /// Per-use multipart encoding settings keyed by the raw schema property
+  /// name. Defaults are resolved from the property's model by the generator.
+  required final Map<String, PartEncoding> encoding,
   required super.rawContentType,
   required super.examples,
-  required final String? sourceName,
-  required final Context sourceContext,
-  required var String? sourceNameOverride,
-  required var AdditionalPropertiesPolicy additionalPropertiesPolicy,
   super.wireContentType,
   super.textEncoding,
-  final String? name,
-  var String? nameOverride,
-  var List<Example> schemaExamples = const [],
-  final MultipartContentAlias? alias,
-  var String? description,
-  var bool isDeprecated = false,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
 }) extends RequestContent {
-  new({
-    required List<MultipartPart> parts,
-    required Context context,
-    required String rawContentType,
-    required List<Example> examples,
-    String? wireContentType,
-    TextEncoding textEncoding = TextEncoding.utf8,
-    String? name,
-    String? nameOverride,
-    String? sourceName,
-    Context? sourceContext,
-    String? sourceNameOverride,
-    List<Example> schemaExamples = const [],
-    MultipartContentAlias? alias,
-    String? description,
-    bool isDeprecated = false,
-    bool isNullable = false,
-    bool isReadOnly = false,
-    bool isWriteOnly = false,
-    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
-  }) : this._(
-         parts: parts,
-         context: context,
-         rawContentType: rawContentType,
-         examples: examples,
-         wireContentType: wireContentType,
-         textEncoding: textEncoding,
-         name: name,
-         nameOverride: nameOverride,
-         sourceName: sourceName ?? name,
-         sourceContext: sourceContext ?? context,
-         sourceNameOverride:
-             sourceNameOverride ??
-             (sourceName == null || sourceName == name ? nameOverride : null),
-         schemaExamples: schemaExamples,
-         alias: alias,
-         description: description,
-         isDeprecated: isDeprecated,
-         isNullable: isNullable,
-         isReadOnly: isReadOnly,
-         isWriteOnly: isWriteOnly,
-         additionalPropertiesPolicy:
-             additionalPropertiesPolicy ??
-             AllowedAdditionalProperties(
-               valueModel: AnyModel(context: context),
-               origin: AdditionalPropertiesOrigin.implicitDefault,
-             ),
-       );
-
   @override
   ContentType get contentType => ContentType.multipart;
 }
-
-final class MultipartContentAlias({
-  required final String targetName,
-  required final Context targetContext,
-  var String? targetNameOverride,
-  final bool isNullable = false,
-  final String? description,
-  final bool isDeprecated = false,
-  final List<Example> examples = const [],
-});
-
-final class MultipartPart({
-  required final String name,
-  required var Model model,
-  required var PartEncoding encoding,
-  required var bool isRequired,
-  required var bool isNullable,
-  required var bool isDeprecated,
-  required var List<Example> examples,
-  required var Object? defaultValue,
-  var String? nameOverride,
-  var String? description,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
-});

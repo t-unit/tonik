@@ -1,9 +1,7 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
 
@@ -204,6 +202,7 @@ void main() {
       expect(parts.last.source, MultipartValueSource.bytes);
       expect(parts.last.filename, same(filename));
       expect(parts.last.contentType, 'application/octet-stream');
+      expect(multipart.runtimeEncodingError, isNull);
     });
   });
 
@@ -257,8 +256,13 @@ void main() {
             content: {
               if (contentType == ContentType.multipart)
                 MultipartRequestContent(
-                  parts: const [],
-                  context: context,
+                  model: ClassModel(
+                    context: context,
+                    properties: const [],
+                    isDeprecated: false,
+                    examples: const [],
+                  ),
+                  encoding: const {},
                   rawContentType: _rawContentTypes[contentType]!,
                   examples: const [],
                 )
@@ -280,7 +284,7 @@ void main() {
       }
     });
 
-    test('retains multipart property order, duplicates, and file metadata', () {
+    test('plans incompatible duplicate definitions as a runtime error', () {
       final context = Context.initial();
 
       final content = multipartContentFixture(context, [
@@ -325,41 +329,12 @@ void main() {
       final plan = const OperationRequestPlanner(backend: TransportBackend.http)
           .plan(operation, parameters);
       final body = plan.body as MultipartBodyPlan;
-      final method = Method(
-        (builder) => builder
-          ..name = 'test'
-          ..returns = refer('Object?', 'dart:core')
-          ..body = Block.of(buildHttpMultipartBodyStatements(body)),
-      );
-      final format = DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
-      const expected = r'''
-Object? test() {
-  final _$multipartFiles = <MultipartFile>[];
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      r'item',
-      utf8.encode(body.item),
-      contentType: MediaType.parse(r'text/plain'),
-    ),
-  );
-  if (body.item2 != null) {
-    _$multipartFiles.add(
-      MultipartFile.fromBytes(
-        r'item',
-        body.item2!.toBytes(),
-        filename: body.item2!.fileName ?? r'item',
-        contentType: MediaType.parse(r'application/octet-stream'),
-      ),
-    );
-  }
-  return _$multipartFiles;
-}
-''';
+
+      expect(body.emissions, isEmpty);
       expect(
-        collapseWhitespace(format('${method.accept(DartEmitter())}')),
-        collapseWhitespace(format(expected)),
+        body.runtimeEncodingError,
+        'Multipart property "item" has incompatible definitions '
+        '(StringModel and BinaryModel).',
       );
     });
 

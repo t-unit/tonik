@@ -45,46 +45,8 @@ class const ClassGenerator({
     ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
   );
 
-  ({String code, String filename}) generateMultipart(
-    MultipartRequestContent content,
-  ) => _generate(
-    ObjectDeclaration.fromMultipart(
-      content,
-      nameManager.multipartObjectName(content),
-    ),
-  );
-
   ({String code, String filename}) _generate(ObjectDeclaration model) {
     return _generateFile(model.name, _generateClasses(model));
-  }
-
-  ({String code, String filename}) generateMultipartAlias(
-    MultipartRequestContent content,
-  ) {
-    final alias = content.alias!;
-    final targetType = requestContentTypeReference(
-      content,
-      nameManager,
-      package,
-    );
-    final name = nameManager.multipartAliasName(content);
-    return _generateFile(name, [
-      TypeDef(
-        (b) => b
-          ..name = name
-          ..docs.addAll(
-            formatDocsWithExamples(alias.description, alias.examples),
-          )
-          ..annotations.addAll([
-            if (alias.isDeprecated)
-              refer(
-                'Deprecated',
-                'dart:core',
-              ).call([literalString('This typedef is deprecated.')]),
-          ])
-          ..definition = targetType,
-      ),
-    ]);
   }
 
   ({String code, String filename}) _generateFile(
@@ -121,15 +83,6 @@ class const ClassGenerator({
   List<Spec> generateClasses(ClassModel model) => _generateClasses(
     ObjectDeclaration.fromModel(model, nameManager.modelName(model)),
   );
-
-  @visibleForTesting
-  List<Spec> generateMultipartClasses(MultipartRequestContent content) =>
-      _generateClasses(
-        ObjectDeclaration.fromMultipart(
-          content,
-          nameManager.multipartObjectName(content),
-        ),
-      );
 
   List<Spec> _generateClasses(ObjectDeclaration model) {
     final className = model.name;
