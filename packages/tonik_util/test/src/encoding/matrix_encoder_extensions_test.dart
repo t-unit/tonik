@@ -306,28 +306,22 @@ void main() {
 
     test('encodes empty map with explode=false and allowEmpty=true', () {
       final map = <String, String>{};
-      expect(map.toMatrix('point', explode: false, allowEmpty: true), ';point');
+      expect(map.toMatrix('point', explode: false, allowEmpty: true), '');
     });
 
     test('encodes empty map with explode=false and allowEmpty=false', () {
       final map = <String, String>{};
-      expect(
-        () => map.toMatrix('point', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(map.toMatrix('point', explode: false, allowEmpty: false), '');
     });
 
     test('encodes empty map with explode=true and allowEmpty=true', () {
       final map = <String, String>{};
-      expect(map.toMatrix('point', explode: true, allowEmpty: true), ';point');
+      expect(map.toMatrix('point', explode: true, allowEmpty: true), '');
     });
 
     test('encodes empty map with explode=true and allowEmpty=false', () {
       final map = <String, String>{};
-      expect(
-        () => map.toMatrix('point', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(map.toMatrix('point', explode: true, allowEmpty: false), '');
     });
 
     test('encodes map with special characters and explode=true', () {

@@ -148,9 +148,8 @@ extension MatrixStringMapEncoder on Map<String, String> {
   /// When [explode] is true, produces key=value pairs separated by semicolons.
   /// When false, produces key,value pairs without separators.
   ///
-  /// The [allowEmpty] parameter controls whether empty maps are allowed:
-  /// - When `true`, empty maps are encoded as `;paramName`
-  /// - When `false`, empty maps throw an exception
+  /// Empty maps expand to nothing under RFC 6570 Sections 2.3 and 3.2.1,
+  /// regardless of [allowEmpty].
   ///
   /// The [alreadyEncoded] parameter indicates whether the values are already
   /// URL-encoded. When `true`, values are not re-encoded to prevent double
@@ -161,11 +160,8 @@ extension MatrixStringMapEncoder on Map<String, String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     if (isEmpty) {
-      return ';$paramName';
+      return '';
     }
 
     if (explode) {
