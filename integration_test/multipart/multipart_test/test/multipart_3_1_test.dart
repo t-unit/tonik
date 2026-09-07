@@ -258,29 +258,23 @@ void main() {
     });
   });
 
-  group('OAS 3.1 format:byte field', () {
-    test(
-      'sends the classified base64 field with its transfer header',
-      () async {
-        final server = await _jsonServer();
-        final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
+  group('Legacy Tonik format:byte compatibility in OAS 3.1', () {
+    test('preserves legacy base64 encoding and its transfer header', () async {
+      final server = await _jsonServer();
+      final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
 
-        final response = await _api(server).postByteField31(
-          body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
-        );
+      final response = await _api(server).postByteField31(
+        body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
+      );
 
-        expect(response, isTonikSuccess);
-        final wire = MultipartWire(await server.takeRequest());
-        expect(wire.single('label').bodyText, 'test-label');
-        expect(wire.single('label').contentType, startsWith('text/plain'));
-        expect(wire.single('data').contentType, 'application/octet-stream');
-        expect(wire.single('data').bodyText, '3q2+7w==');
-        expect(
-          wire.single('data').header('content-transfer-encoding'),
-          'base64',
-        );
-      },
-    );
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('label').bodyText, 'test-label');
+      expect(wire.single('label').contentType, startsWith('text/plain'));
+      expect(wire.single('data').contentType, 'application/octet-stream');
+      expect(wire.single('data').bodyText, '3q2+7w==');
+      expect(wire.single('data').header('content-transfer-encoding'), 'base64');
+    });
   });
 
   group('OAS 3.1 AnyModel multipart JSON encoding', () {
