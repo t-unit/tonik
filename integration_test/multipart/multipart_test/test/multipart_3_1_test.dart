@@ -260,7 +260,7 @@ void main() {
 
   group('OAS 3.1 format:byte field', () {
     test(
-      'sends format:byte as binary part, not a readable text field',
+      'sends the classified base64 field with its transfer header',
       () async {
         final server = await _jsonServer();
         final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
@@ -274,7 +274,11 @@ void main() {
         expect(wire.single('label').bodyText, 'test-label');
         expect(wire.single('label').contentType, startsWith('text/plain'));
         expect(wire.single('data').contentType, 'application/octet-stream');
-        expect(wire.single('data').bodyBytes, fileBytes);
+        expect(wire.single('data').bodyText, '3q2+7w==');
+        expect(
+          wire.single('data').header('content-transfer-encoding'),
+          'base64',
+        );
       },
     );
   });

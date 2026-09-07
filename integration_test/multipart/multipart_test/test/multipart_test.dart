@@ -307,23 +307,21 @@ void main() {
   });
 
   group('format:byte field (OAS 3.0)', () {
-    test(
-      'sends format:byte as binary part, not a readable text field',
-      () async {
-        final server = await RawRequestServer.start();
-        final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
+    test('sends format:byte as base64 text with its transfer header', () async {
+      final server = await RawRequestServer.start();
+      final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
 
-        await _rawApi(server).postByteField(
-          body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
-        );
+      await _rawApi(server).postByteField(
+        body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
+      );
 
-        final wire = MultipartWire(await server.takeRequest());
-        expect(wire.single('label').bodyText, 'test-label');
-        expect(wire.single('label').contentType, startsWith('text/plain'));
-        expect(wire.single('data').contentType, 'application/octet-stream');
-        expect(wire.single('data').bodyBytes, fileBytes);
-      },
-    );
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('label').bodyText, 'test-label');
+      expect(wire.single('label').contentType, startsWith('text/plain'));
+      expect(wire.single('data').contentType, 'application/octet-stream');
+      expect(wire.single('data').bodyText, '3q2+7w==');
+      expect(wire.single('data').header('content-transfer-encoding'), 'base64');
+    });
   });
 
   group('anyOf model in multipart', () {

@@ -1951,7 +1951,7 @@ $expectedPartCode
     });
 
     test(
-      'generates binary switch for Base64Model property (same as BinaryModel)',
+      'generates base64 bytes and transfer header for Base64Model property',
       () {
         final content = multipartContentFixture(testContext, [
           multipartPartFixture(
@@ -1980,18 +1980,18 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            switch (body.avatar) {
-              case TonikFileBytes(:final bytes, :final fileName):
-                _$formData.files.add(MapEntry(
-                  r'avatar',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'avatar'),
-                ));
-              case TonikFilePath(:final path, :final fileName):
-                _$formData.files.add(MapEntry(
-                  r'avatar',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
-                ));
-            }
+            final _$avatarHeaders = <String, List<String>>{
+              r'Content-Transfer-Encoding': [r'base64'],
+            };
+            _$formData.files.add(MapEntry(
+              r'avatar',
+              MultipartFile.fromBytes(
+                ascii.encode(body.avatar.toBase64String()),
+                filename: body.avatar.fileName ?? r'avatar',
+                contentType: DioMediaType.parse(r'application/octet-stream'),
+                headers: _$avatarHeaders,
+              ),
+            ));
             return _$formData;
           }
         '''),

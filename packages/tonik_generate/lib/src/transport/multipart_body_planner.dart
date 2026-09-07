@@ -185,6 +185,11 @@ class const MultipartBodyPlanner({
         parameters,
         nullable,
         emissions,
+        base64: switch (property.property.model.resolved) {
+          Base64Model() => true,
+          ListModel(:final content) => content.resolved is Base64Model,
+          _ => false,
+        },
       );
       final hasNullAwareAccess =
           accesses.length == 1 &&
@@ -211,13 +216,19 @@ class const MultipartBodyPlanner({
       rawContentType: content.rawContentType,
       isRequired: isRequired,
       emissions: emissions,
-      usesCustomParts: !_dio && parameters.isNotEmpty,
+      usesCustomParts:
+          !_dio &&
+          (parameters.isNotEmpty ||
+              emissions.whereType<MultipartAppend>().any(
+                (part) => part.headers != null,
+              )),
       mergeHelpers: mergeHelpers,
     );
   }
 
   List<MultipartEmission> _part(_Part part, Model model) => switch (model) {
-    BinaryModel() || Base64Model() => _file(part),
+    BinaryModel() => _file(part),
+    Base64Model() => [_base64(part)],
     ListModel() => _list(part, model),
     NeverModel() => _error(
       "Cannot encode NeverModel property '${part.name}' - this type does not "
@@ -323,6 +334,20 @@ class const MultipartBodyPlanner({
     ];
   }
 
+  MultipartAppend _base64(_Part part) => MultipartAppend(
+    name: specLiteralString(part.name),
+    value: refer(
+      'ascii',
+      'dart:convert',
+    ).property('encode').call([part.value.property('toBase64String').call([])]),
+    source: MultipartValueSource.bytes,
+    filename: part.value
+        .property('fileName')
+        .ifNullThen(specLiteralString(part.name)),
+    contentType: part.encoding.wireContentType ?? 'application/octet-stream',
+    headers: part.headers,
+  );
+
   List<MultipartEmission> _list(_Part part, ListModel model) {
     final encoding = part.encoding;
     final item = model.content.resolved;
@@ -349,7 +374,10 @@ class const MultipartBodyPlanner({
       );
     }
     final itemPart = _withValue(part, refer('item'));
-    if (item is BinaryModel || item is Base64Model) {
+    if (item is Base64Model) {
+      return _loop('item', part.value, [_base64(itemPart)]);
+    }
+    if (item is BinaryModel) {
       return _loop('item', part.value, _file(itemPart, listItem: true));
     }
     if (contentBased) {
@@ -676,19 +704,25 @@ class const MultipartBodyPlanner({
     String normalizedName,
     List<MultipartHeaderParamInfo> parameters,
     bool nullable,
-    List<MultipartEmission> emissions,
-  ) {
+    List<MultipartEmission> emissions, {
+    required bool base64,
+  }) {
     final headers = encoding?.headers?.entries
         .where((entry) => entry.key.toLowerCase() != 'content-type')
         .toList();
-    if (headers == null || headers.isEmpty) return null;
+    if (!base64 && (headers == null || headers.isEmpty)) return null;
     final variable = '_\$${normalizedName}Headers';
     emissions.add(
       MultipartCode(
         declareFinal(variable)
             .assign(
               literalMap(
-                {},
+                {
+                  if (base64)
+                    specLiteralString('Content-Transfer-Encoding'): _dio
+                        ? literalList([specLiteralString('base64')])
+                        : specLiteralString('base64'),
+                },
                 refer('String', 'dart:core'),
                 _dio
                     ? TypeReference(
@@ -703,7 +737,7 @@ class const MultipartBodyPlanner({
             .statement,
       ),
     );
-    for (final entry in headers) {
+    for (final entry in headers ?? <MapEntry<String, ResponseHeader>>[]) {
       final header = entry.value.resolve();
       final parameter = parameters.firstWhere(
         (parameter) =>
@@ -719,14 +753,30 @@ class const MultipartBodyPlanner({
         explode: header.explode,
         allowEmpty: true,
       );
-      final assignment = refer(variable)
-          .index(specLiteralString(entry.key))
-          .assign(
-            _dio
-                ? literalList([serialized.expression])
-                : serialized.unsafeRawBody,
-          )
-          .statement;
+      final assignment =
+          base64 && entry.key.toLowerCase() == 'content-transfer-encoding'
+          ? Block.of([
+              const Code('if ('),
+              serialized.unsafeRawBody.parenthesized
+                  .property('toLowerCase')
+                  .call([])
+                  .code,
+              const Code(" != 'base64') {"),
+              generateEncodingExceptionExpression(
+                'Multipart property "$normalizedName" requires '
+                'Content-Transfer-Encoding: base64.',
+                raw: true,
+              ).statement,
+              const Code('}'),
+            ])
+          : refer(variable)
+                .index(specLiteralString(entry.key))
+                .assign(
+                  _dio
+                      ? literalList([serialized.expression])
+                      : serialized.unsafeRawBody,
+                )
+                .statement;
       emissions.add(
         MultipartCode(
           header.isRequired
