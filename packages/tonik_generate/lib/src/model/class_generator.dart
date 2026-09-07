@@ -1237,6 +1237,7 @@ class const ClassGenerator({
       final resolvedModel = model.resolved;
 
       if (resolvedModel is NeverModel) {
+        if (!isRequired) continue;
         propertyAssignments.add(
           generateEncodingExceptionExpression(
             'Cannot encode NeverModel property $propertyName: '
@@ -1292,6 +1293,19 @@ class const ClassGenerator({
       final isNullable =
           prop.property.isNullable || fieldModel.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
+
+      if (fieldModel.resolved is NeverModel) {
+        if (isRequired) {
+          propertyAssignments.add(
+            generateEncodingExceptionExpression(
+              'Cannot encode NeverModel property $propertyName: '
+              'this type does not permit any value',
+              raw: true,
+            ).statement,
+          );
+        }
+        continue;
+      }
 
       if (fieldModel.encodingShape == EncodingShape.simple) {
         propertyAssignments.addAll(
@@ -1415,6 +1429,7 @@ class const ClassGenerator({
       }
 
       if (resolvedModel is NeverModel) {
+        if (!isRequired) continue;
         propertyAssignments.add(
           generateEncodingExceptionExpression(
             'Cannot encode NeverModel property $propertyName: '
