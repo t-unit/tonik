@@ -411,3 +411,69 @@ components:
         mapping:
           person: '#/components/schemas/PersonModel'
           company: '#/components/schemas/CompanyModel'
+
+    DateTimeChoice:
+      type: string
+      format: date-time
+      default: '2026-09-06T12:00:00.1000+02:00'
+      enum:
+        - '2026-09-06T12:00:00.1000+02:00'
+        - '2026-09-06T12:00:00.100+02:00'
+        - '2026-09-06T12:00:00.123456789+02:00'
+      x-dart-enum:
+        - toDateTime
+        - $toDateTime
+        - nanoseconds
+
+    DateTimeChoiceAlias:
+      $ref: '#/components/schemas/DateTimeChoice'
+
+    DateTimeChoiceAliasChain:
+      $ref: '#/components/schemas/DateTimeChoiceAlias'
+
+    DateTimeDefaultEnvelope:
+      type: object
+      required:
+        - timestamp
+        - aliased
+      properties:
+        timestamp:
+          $ref: '#/components/schemas/DateTimeChoice'
+        aliased:
+          $ref: '#/components/schemas/DateTimeChoiceAliasChain'
+
+    DateTimeEnvelope:
+      type: object
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          $ref: '#/components/schemas/DateTimeChoice'
+        defaulted:
+          type: string
+          format: date-time
+          enum:
+            - '2026-09-06T12:00:00.1000+02:00'
+          x-dart-enum:
+            - toDateTime
+          default: '2026-09-06T12:00:00.1000+02:00'
+        optional:
+          type: string
+          format: date-time
+          nullable: true
+          enum:
+            - '2026-09-06t10:00:00.1000z'
+            - null
+          x-dart-enum:
+            - lowercase
+
+    EmptyDateTimeChoice:
+      type: string
+      format: date-time
+      enum: []
+
+    InvalidDateTimeChoice:
+      type: string
+      format: date-time
+      enum:
+        - not-a-date

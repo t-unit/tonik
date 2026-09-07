@@ -376,7 +376,10 @@ class NameManager({
           model.fallbackValue!.nameOverride ??
               model.fallbackValue!.value.toString(),
       ];
-      final normalized = normalizeEnumValues(inputs);
+      final normalized = normalizeEnumValues(
+        inputs,
+        additionalReservedNames: {if (model.isDateTime) 'toDateTime'},
+      );
       final result = (
         valueNames: List<String>.unmodifiable(
           normalized.take(values.length).map((n) => n.normalizedName),

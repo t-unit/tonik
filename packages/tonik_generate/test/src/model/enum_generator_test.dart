@@ -172,6 +172,110 @@ void main() {
       expect(toJson.body?.accept(DartEmitter()).toString(), r'_$rawValue');
     });
 
+    test(
+      'date-time enum keeps literals and reserves the conversion method',
+      () {
+        final model = EnumModel<String>(
+          name: 'Timestamp',
+          values: {
+            const EnumEntry(
+              value: '2026-09-06T12:00:00.1000+02:00',
+              nameOverride: 'toDateTime',
+            ),
+            const EnumEntry(
+              value: '2026-09-06T12:00:00.100+02:00',
+              nameOverride: r'$toDateTime',
+            ),
+          },
+          isDateTime: true,
+          isNullable: false,
+          isDeprecated: false,
+          context: Context.initial(),
+          examples: const [],
+        );
+
+        final generated = generator.generateEnum(model, 'Timestamp').enumValue;
+        final conversion = generated.methods.firstWhere(
+          (method) => method.name == 'toDateTime',
+        );
+
+        expect(generated.values[0].name, r'$toDateTime');
+        expect(generated.values[1].name, r'$toDateTime2');
+        expect(
+          generated.values[0].arguments.single.accept(DartEmitter()).toString(),
+          "r'2026-09-06T12:00:00.1000+02:00'",
+        );
+        expect(conversion.type, isNull);
+        expect(
+          conversion.returns?.accept(DartEmitter()).toString(),
+          'DateTime',
+        );
+        expect(
+          formatMethod(conversion.rebuild((b) => b.docs.clear()), 'Timestamp'),
+          format(r'''
+        class Timestamp {
+          DateTime toDateTime() {
+            return OffsetDateTime.parse(_$rawValue);
+          }
+        }'''),
+        );
+      },
+    );
+
+    test('plain string enum may retain a toDateTime member', () {
+      final model = EnumModel<String>(
+        name: 'Plain',
+        values: {const EnumEntry(value: 'toDateTime')},
+        isNullable: false,
+        isDeprecated: false,
+        context: Context.initial(),
+        examples: const [],
+      );
+
+      final generated = generator.generateEnum(model, 'Plain').enumValue;
+
+      expect(generated.values.single.name, 'toDateTime');
+      expect(generated.methods.any((m) => m.name == 'toDateTime'), isFalse);
+    });
+
+    test(
+      'date-time conversion rejects a synthetic fallback before parsing',
+      () {
+        final model = EnumModel<String>(
+          name: 'Timestamp',
+          values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+          fallbackValue: const EnumEntry(
+            value: '2026-01-01T00:00:00Z',
+            nameOverride: 'toDateTime',
+          ),
+          isDateTime: true,
+          isNullable: false,
+          isDeprecated: false,
+          context: Context.initial(),
+          examples: const [],
+        );
+
+        final generated = generator.generateEnum(model, 'Timestamp').enumValue;
+        final conversion = generated.methods.firstWhere(
+          (method) => method.name == 'toDateTime',
+        );
+
+        expect(generated.values.last.name, r'$toDateTime');
+        expect(
+          formatMethod(conversion.rebuild((b) => b.docs.clear()), 'Timestamp'),
+          format(r'''
+        class Timestamp {
+          DateTime toDateTime() {
+            if (this == Timestamp.$toDateTime) {
+              throw StateError('Cannot convert unknown enum value to DateTime');
+            }
+            return OffsetDateTime.parse(_$rawValue);
+          }
+        }'''),
+        );
+      },
+    );
+
     test('generates nullable enum code', () {
       final model = EnumModel<String>(
         isDeprecated: false,

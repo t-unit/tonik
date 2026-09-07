@@ -308,6 +308,14 @@ class EnumModel<T>({
   @override var String? nameOverride,
   var String? description,
 
+  /// Whether string values have the OpenAPI `date-time` format.
+  ///
+  /// The format enables date-time conversion; values retain string identity.
+  final bool isDateTime = false,
+
+  /// The schema default, retained for date-time enums.
+  final Object? defaultValue,
+
   /// Optional fallback value if no other value matches.
   var EnumEntry<T>? fallbackValue,
   var bool isReadOnly = false,

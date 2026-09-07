@@ -171,6 +171,12 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ),
         )
         ..values.addAll(enumValues);
+
+      if (model.isDateTime && T == String) {
+        b.methods.add(
+          _generateToDateTimeMethod(actualEnumName, fallbackNormalizedName),
+        );
+      }
     });
 
     final typedefValue = model.isNullable
@@ -366,6 +372,47 @@ class const EnumGenerator({required final NameManager nameManager}) {
                 ],
                 {'orElse': orElse},
               )
+              .returned
+              .statement,
+        ]),
+    );
+  }
+
+  Method _generateToDateTimeMethod(
+    String actualEnumName,
+    String? fallbackNormalizedName,
+  ) {
+    return Method(
+      (b) => b
+        ..name = 'toDateTime'
+        ..returns = refer('DateTime', 'dart:core')
+        ..docs.addAll([
+          '/// Parses this value as a date-time, preserving its UTC offset.',
+          '///',
+          '/// Conversion uses `OffsetDateTime.parse`, with Dart date-time',
+          '/// normalization and microsecond precision. It does not change the',
+          '/// original string used for enum identity and serialization.',
+          '///',
+          '/// Throws `DecodingException` if the literal cannot be parsed.',
+          if (fallbackNormalizedName != null)
+            '/// Throws `StateError` for the unknown fallback value.',
+        ])
+        ..body = Block.of([
+          if (fallbackNormalizedName != null) ...[
+            Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+            refer('StateError', 'dart:core')
+                .call([
+                  literalString(
+                    'Cannot convert unknown enum value to DateTime',
+                  ),
+                ])
+                .thrown
+                .statement,
+            const Code('}'),
+          ],
+          refer('OffsetDateTime', 'package:tonik_util/tonik_util.dart')
+              .property('parse')
+              .call([refer(_rawValueFieldName)])
               .returned
               .statement,
         ]),

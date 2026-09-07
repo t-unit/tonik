@@ -111,6 +111,117 @@ void main() {
     expect((required as EnumModel).isNullable, isFalse);
   });
 
+  group('date-time enums', () {
+    test('retains named literals, nullability and reference defaults', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Timestamp': {
+              'type': ['string', 'null'],
+              'format': 'date-time',
+              'enum': [
+                '2026-09-06T12:00:00.1000+02:00',
+                '2026-09-06T12:00:00.100+02:00',
+                null,
+              ],
+              'x-dart-enum': ['precise', 'short'],
+              'default': '2026-09-06T12:00:00.1000+02:00',
+            },
+            'TimestampAlias': {r'$ref': '#/components/schemas/Timestamp'},
+            'TimestampAliasChain': {
+              r'$ref': '#/components/schemas/TimestampAlias',
+            },
+            'Event': {
+              'type': 'object',
+              'properties': {
+                'timestamp': {
+                  r'$ref': '#/components/schemas/Timestamp',
+                  'default': '2026-09-06T12:00:00.100+02:00',
+                },
+                'inherited': {r'$ref': '#/components/schemas/Timestamp'},
+                'aliased': {
+                  r'$ref': '#/components/schemas/TimestampAliasChain',
+                },
+              },
+            },
+          },
+        },
+      });
+      final timestamp = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Timestamp',
+      ) as EnumModel<String>;
+      final event = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Event',
+      ) as ClassModel;
+
+      expect(timestamp.isDateTime, isTrue);
+      expect(timestamp.isNullable, isTrue);
+      expect(timestamp.defaultValue, '2026-09-06T12:00:00.1000+02:00');
+      expect(timestamp.values, {
+        const EnumEntry(
+          value: '2026-09-06T12:00:00.1000+02:00',
+          nameOverride: 'precise',
+        ),
+        const EnumEntry(
+          value: '2026-09-06T12:00:00.100+02:00',
+          nameOverride: 'short',
+        ),
+      });
+      final reference = event.properties.first.model as AliasModel;
+      expect(reference.model, same(timestamp));
+      expect(reference.defaultValue, '2026-09-06T12:00:00.100+02:00');
+      expect(event.properties[1].model, same(timestamp));
+      expect(
+        event.properties[1].effectiveDefaultValue,
+        '2026-09-06T12:00:00.1000+02:00',
+      );
+      expect(event.properties[2].model.resolved, same(timestamp));
+      expect(
+        event.properties[2].effectiveDefaultValue,
+        '2026-09-06T12:00:00.1000+02:00',
+      );
+    });
+
+    test('imports inline date-time enum ahead of content encoding', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Event': {
+              'type': 'object',
+              'properties': {
+                'timestamp': {
+                  'type': 'string',
+                  'format': 'date-time',
+                  'contentEncoding': 'base64',
+                  'enum': ['2026-09-06T12:00:00.1000+02:00'],
+                },
+                'regular': {'type': 'string', 'format': 'date-time'},
+                'uri': {
+                  'type': 'string',
+                  'format': 'uri',
+                  'enum': ['https://example.com'],
+                },
+              },
+            },
+          },
+        },
+      });
+      final event = api.models.whereType<ClassModel>().single;
+      final timestamp = event.properties.first.model as EnumModel<String>;
+
+      expect(timestamp.isDateTime, isTrue);
+      expect(timestamp.values.single.value, '2026-09-06T12:00:00.1000+02:00');
+      expect(event.properties[1].model, isA<DateTimeModel>());
+      expect(event.properties[2].model, isA<UriModel>());
+    });
+  });
+
   group('empty enum', () {
     test('adds typed fallback cases and warns', () {
       final logs = <LogRecord>[];

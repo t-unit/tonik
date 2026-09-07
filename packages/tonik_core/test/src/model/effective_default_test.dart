@@ -18,6 +18,38 @@ void main() {
   );
 
   group('effectiveDefault', () {
+    test('inherits a date-time enum default through an alias chain', () {
+      final model = EnumModel<String>(
+        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        isDateTime: true,
+        defaultValue: '2026-09-06T12:00:00.1000+02:00',
+        isNullable: false,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+      final inner = AliasModel(
+        model: model,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final outer = AliasModel(
+        model: inner,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      expect(effectiveDefault(null, model), '2026-09-06T12:00:00.1000+02:00');
+      expect(effectiveDefault(null, outer), '2026-09-06T12:00:00.1000+02:00');
+      expect(outer.defaultValue, '2026-09-06T12:00:00.1000+02:00');
+      expect(
+        effectiveDefault('2026-09-06T12:00:00.100+02:00', outer),
+        '2026-09-06T12:00:00.100+02:00',
+      );
+    });
+
     test('returns the local default when set, regardless of model type', () {
       expect(effectiveDefault('local', StringModel(context: context)), 'local');
     });

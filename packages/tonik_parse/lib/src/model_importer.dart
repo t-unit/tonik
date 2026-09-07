@@ -1474,6 +1474,8 @@ class ModelImporter._(
     }
 
     var model = switch (types.firstOrNull) {
+      'string' when schema.format == 'date-time' && schema.enumerated != null =>
+        _parseStringEnum(name, schema, context),
       'string' when schema.format == 'date-time' => DateTimeModel(
         context: context,
       ),
@@ -1492,18 +1494,10 @@ class ModelImporter._(
         _resolveContentEncodedModel(schema, context),
       'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.format == 'byte' => Base64Model(context: context),
-      'string' when schema.enumerated != null => _parseEnum<String>(
+      'string' when schema.enumerated != null => _parseStringEnum(
         name,
-        schema.enumerated!,
-        schema.isNullable ?? hasNullType,
+        schema,
         context,
-        emptyFallbackValue: _unknownEnumCaseName,
-        description: schema.description,
-        isDeprecated: schema.isDeprecated ?? false,
-        isReadOnly: schema.isReadOnly ?? false,
-        isWriteOnly: schema.isWriteOnly ?? false,
-        xDartEnum: schema.xDartEnum,
-        examples: exampleImporter.fromSchema(schema),
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -2041,6 +2035,26 @@ class ModelImporter._(
     return model;
   }
 
+  EnumModel<String> _parseStringEnum(
+    String? name,
+    Schema schema,
+    Context context,
+  ) => _parseEnum<String>(
+    name,
+    schema.enumerated!,
+    schema.isNullable ?? schema.hasNullType,
+    context,
+    emptyFallbackValue: _unknownEnumCaseName,
+    isDateTime: schema.format == 'date-time',
+    defaultValue: schema.format == 'date-time' ? schema.rawDefault : null,
+    description: schema.description,
+    isDeprecated: schema.isDeprecated ?? false,
+    isReadOnly: schema.isReadOnly ?? false,
+    isWriteOnly: schema.isWriteOnly ?? false,
+    xDartEnum: schema.xDartEnum,
+    examples: exampleImporter.fromSchema(schema),
+  );
+
   EnumModel<T> _parseEnum<T>(
     String? name,
     List<dynamic> values,
@@ -2050,6 +2064,8 @@ class ModelImporter._(
     required String? description,
     required bool isDeprecated,
     required List<Example> examples,
+    bool isDateTime = false,
+    Object? defaultValue,
     bool isReadOnly = false,
     bool isWriteOnly = false,
     List<String>? xDartEnum,
@@ -2109,6 +2125,8 @@ class ModelImporter._(
       isWriteOnly: isWriteOnly,
       examples: examples,
       fallbackValue: fallbackValue,
+      isDateTime: isDateTime,
+      defaultValue: defaultValue,
     );
 
     if (name == null || _findNamedModel(name) == null) {
