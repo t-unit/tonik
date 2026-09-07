@@ -611,6 +611,65 @@ Object? test() {
   });
 
   group('content-based arrays', () {
+    test('emits a separate JSON part for each object by default', () {
+      expectPropertyCode(_list(context, _classModel(context, 'ListItem')), r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }''');
+    });
+
+    test('emits a separate JSON part for each map', () {
+      expectPropertyCode(
+        _list(
+          context,
+          MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }''',
+      );
+    });
+
+    test('keeps explicit content-type parameters on each allOf object', () {
+      expectPropertyCode(
+        _list(
+          context,
+          _allOf(context, 'Combined', [_classModel(context, 'Member')]),
+        ),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'value',
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/vnd.items+json; profile=v2'),
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/vnd.items+json; profile=v2',
+        ),
+      );
+    });
+
     test('rejects arrays of arrays', () {
       expectPropertyCode(
         ListModel(
@@ -660,11 +719,6 @@ Object? test() {
     });
 
     for (final entry in <({String name, Model model, String encodedValue})>[
-      (
-        name: 'objects',
-        model: _classModel(context, 'ListItem'),
-        encodedValue: 'body.value.map((item) => item.toJson()).toList()',
-      ),
       (
         name: 'enums',
         model: _stringEnum(context),

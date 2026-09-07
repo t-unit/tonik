@@ -138,6 +138,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/ComplexResponse'
 
+  /multipart/object-arrays:
+    post:
+      operationId: postObjectArrays
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ObjectArrayForm'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/object-arrays-override:
+    post:
+      operationId: postObjectArraysOverride
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ObjectArrayForm'
+            encoding:
+              items:
+                contentType: 'application/vnd.items+json; profile=v2'
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/arrays:
     post:
       operationId: postArrayFields
@@ -723,6 +754,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Category'
+
+    ObjectArrayForm:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectArrayItem'
+        optionalItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectArrayItem'
+
+    ObjectArrayItem:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
 
     ArrayForm:
       type: object

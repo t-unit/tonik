@@ -5174,7 +5174,9 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.addresses) {
+                _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+              }
               return _$formData;
             }
           '''),
