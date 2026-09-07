@@ -266,8 +266,9 @@ class const MultipartBodyPlanner({
     );
   }
 
-  List<MultipartEmission> _file(_Part part, {bool listItem = false}) {
-    final declared = part.encoding.wireContentType;
+  List<MultipartEmission> _file(_Part part) {
+    final contentType =
+        part.encoding.wireContentType ?? 'application/octet-stream';
     if (!_dio) {
       return [
         MultipartAppend(
@@ -277,14 +278,11 @@ class const MultipartBodyPlanner({
           filename: part.value
               .property('fileName')
               .ifNullThen(specLiteralString(part.name)),
-          contentType: declared ?? 'application/octet-stream',
+          contentType: contentType,
           headers: part.headers,
         ),
       ];
     }
-    final contentType = listItem || declared == 'application/octet-stream'
-        ? null
-        : declared;
     final filename = refer('fileName').ifNullThen(specLiteralString(part.name));
     return [
       MultipartCode(
@@ -350,7 +348,7 @@ class const MultipartBodyPlanner({
     }
     final itemPart = _withValue(part, refer('item'));
     if (item is BinaryModel || item is Base64Model) {
-      return _loop('item', part.value, _file(itemPart, listItem: true));
+      return _loop('item', part.value, _file(itemPart));
     }
     if (contentBased) {
       if (encoding.contentType != ContentType.json &&
