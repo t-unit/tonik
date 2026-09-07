@@ -87,9 +87,9 @@ Object? test() {
       expectPropertyCode(BinaryModel(context: context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       body.value.toBytes(),
-      filename: body.value.fileName ?? r'value',
+      filename: (body.value.fileName ?? r'value').replaceAll(r'\', r'\\'),
       contentType: MediaType.parse(r'application/octet-stream'),
     ),
   );''');
@@ -178,7 +178,7 @@ Object? test() {
         expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toString()),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -206,7 +206,7 @@ Object? test() {
   if (body.displayName != null) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'display-name',
+        (r'display-name').replaceAll(r'\', r'\\'),
         utf8.encode(body.displayName!),
         contentType: MediaType.parse(r'text/plain'),
       ),
@@ -301,7 +301,7 @@ Object? test() {
       expectPropertyCode(AnyModel(context: context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(encodeAnyToJson(body.value))),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -318,7 +318,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value)),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -373,7 +373,7 @@ Object? test() {
         expectPropertyCode(entry.model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value.toJson())),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -392,7 +392,7 @@ Object? test() {
   )) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        entry.name,
+        (entry.name).replaceAll(r'\', r'\\'),
         utf8.encode(entry.value),
         contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
       ),
@@ -412,7 +412,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(
         body.value
             .toForm(
@@ -442,7 +442,7 @@ Object? test() {
       expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toJson()),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -452,7 +452,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value.toJson())),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -468,7 +468,7 @@ Object? test() {
       expectPropertyCode(_integerEnum(context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toJson().toString()),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -480,7 +480,7 @@ Object? test() {
       expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toTimeZonedIso8601String()),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -490,7 +490,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value)),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -507,7 +507,7 @@ Object? test() {
       expectPropertyCode(model, r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toString()),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -517,7 +517,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value)),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -535,7 +535,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       ascii.encode(body.value),
       contentType: MediaType.parse(r'text/plain; charset=iso-8859-1'),
     ),
@@ -554,7 +554,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       latin1.encode(body.value),
       contentType: MediaType.parse(
         r'application/vnd.example.text; charset=iso-8859-1',
@@ -572,7 +572,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       latin1.encode(body.value.toString()),
       contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
     ),
@@ -588,7 +588,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       latin1.encode(body.value.toJson()),
       contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
     ),
@@ -604,7 +604,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       latin1.encode(jsonEncode(encodeAnyToJson(body.value))),
       contentType: MediaType.parse(r'application/json; charset=us-ascii'),
     ),
@@ -620,7 +620,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       latin1.encode(jsonEncode(body.value.toJson())),
       contentType: MediaType.parse(r'application/json; charset=us-ascii'),
     ),
@@ -639,7 +639,7 @@ Object? test() {
       .toRawStyleParts(r'value', explode: true)) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        entry.name,
+        (entry.name).replaceAll(r'\', r'\\'),
         latin1.encode(entry.value),
         contentType: MediaType.parse(r'text/plain'),
       ),
@@ -660,7 +660,7 @@ Object? test() {
   for (final item in body.value) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\', r'\\'),
         latin1.encode(item),
         contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
       ),
@@ -715,7 +715,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value)),
       contentType: MediaType.parse(r'application/octet-stream'),
     ),
@@ -763,7 +763,7 @@ Object? test() {
           '''
   _\$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\\', r'\\\\'),
       utf8.encode(jsonEncode(${entry.encodedValue})),
       contentType: MediaType.parse(r'application/json'),
     ),
@@ -821,7 +821,7 @@ Object? test() {
   for (final item in body.value) {
     _\$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\\', r'\\\\'),
         utf8.encode(${entry.encodedItem}),
         contentType: MediaType.parse(r'application/json'),
       ),
@@ -836,7 +836,7 @@ Object? test() {
         r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value.toSimple(explode: false, allowEmpty: true)),
       contentType: MediaType.parse(r'text/plain'),
     ),
@@ -867,7 +867,7 @@ Object? test() {
   )) {
     _\$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\\', r'\\\\'),
         utf8.encode(item),
         contentType: MediaType.parse(r'text/plain'),
       ),
@@ -909,7 +909,7 @@ Object? test() {
   for (final item in body.value) {
     _\$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\\', r'\\\\'),
         utf8.encode(${entry.encodedItem}),
         contentType: MediaType.parse(r'text/plain'),
       ),
@@ -1046,7 +1046,7 @@ Object? test() {
   if (body?.value != null) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\', r'\\'),
         utf8.encode((body?.value)!),
         contentType: MediaType.parse(r'text/plain'),
       ),
@@ -1075,7 +1075,7 @@ Object? test() {
   if (body.member?.value != null) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        r'value',
+        (r'value').replaceAll(r'\', r'\\'),
         utf8.encode((body.member?.value)!),
         contentType: MediaType.parse(r'text/plain'),
       ),

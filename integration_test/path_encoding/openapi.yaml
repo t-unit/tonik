@@ -20,6 +20,121 @@ tags:
     description: Operations testing simple-style path parameters (RFC 6570 Section 3.2.2)
 
 paths:
+  /reports{labels}:
+    get:
+      operationId: testLabelLiteralPrefix
+      tags: [label]
+      parameters:
+        - name: labels
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /reports/{labels}.json:
+    get:
+      operationId: testLabelLiteralSuffix
+      tags: [label]
+      parameters:
+        - name: labels
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /reports/{name}{labels}{revision}.json/:
+    get:
+      operationId: testAdjacentPathStyles
+      tags: [label]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: labels
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+        - name: revision
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/binary{value}.json:
+    get:
+      operationId: testLabelBinaryWithSuffix
+      tags: [label]
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+            format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/objects{value}.json:
+    get:
+      operationId: testMatrixObjectArrayWithSuffix
+      tags: [matrix]
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
   /label/primitive/string/{value}:
     get:
       operationId: testLabelPrimitiveString

@@ -1642,6 +1642,212 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
     });
 
+    test('omits an optional forbidden property from a simple query object', () {
+      final model = ClassModel(
+        name: 'ProfileFilter',
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'password',
+            model: NeverModel(context: context, isNullable: false),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+      );
+
+      final method = generator
+          .generateClass(model)
+          .methods
+          .singleWhere((method) => method.name == 'parameterProperties');
+      const expected = r'''
+@override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  return _$result;
+}
+''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('omits an optional forbidden alias beside a string list', () {
+      final model = ClassModel(
+        name: 'ProfileListFilter',
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'password',
+            model: AliasModel(
+              name: 'Forbidden',
+              model: NeverModel(context: context, isNullable: false),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+      );
+
+      final method = generator
+          .generateClass(model)
+          .methods
+          .singleWhere((method) => method.name == 'parameterProperties');
+      const expected = r'''
+@override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'tags'] = PropertyValue.array(tags);
+  return _$result;
+}
+''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('omits an optional forbidden property beside an Any scalar', () {
+      final model = ClassModel(
+        name: 'ProfileMixedFilter',
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        properties: [
+          Property(
+            name: 'data',
+            model: AnyModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'password',
+            model: NeverModel(context: context, isNullable: false),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+      );
+
+      final method = generator
+          .generateClass(model)
+          .methods
+          .singleWhere((method) => method.name == 'parameterProperties');
+      const expected = r'''
+@override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (data != null) {
+    _$result[r'data'] = PropertyValue.scalar(
+      encodeUnknownFlatScalar(data!, context: 'ProfileMixedFilter.data'),
+    );
+  }
+  return _$result;
+}
+''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('rejects a required write-only forbidden property beside a list', () {
+      final model = ClassModel(
+        name: 'RequiredForbiddenFilter',
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'password',
+            model: NeverModel(context: context, isNullable: false),
+            isRequired: true,
+            isNullable: false,
+            isWriteOnly: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+      );
+
+      final method = generator
+          .generateClass(model)
+          .methods
+          .singleWhere((method) => method.name == 'parameterProperties');
+      const expected = r'''
+@override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'tags'] = PropertyValue.array(tags);
+  throw EncodingException(
+    r'Cannot encode NeverModel property password: this type does not permit any value',
+  );
+  return _$result;
+}
+''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test(
       'mixed model NeverModel property throws that no value is permitted',
       () {

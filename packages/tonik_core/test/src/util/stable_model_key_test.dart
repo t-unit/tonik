@@ -392,6 +392,36 @@ void main() {
       expect(key, contains('count:IntegerModel'));
     });
 
+    test('distinguishes date-time enums from ordinary string enums', () {
+      final plain = EnumModel<String>(
+        name: 'Timestamp',
+        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final dateTime = DateTimeEnumModel(
+        name: 'Timestamp',
+        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      expect(
+        sorter.stableKeyOf(plain),
+        'EnumModel{Timestamp,2026-09-06T12:00:00.1000+02:00}',
+      );
+      expect(
+        sorter.stableKeyOf(dateTime),
+        'DateTimeEnumModel{Timestamp,2026-09-06T12:00:00.1000+02:00}',
+      );
+      expect(sorter.sortModels([plain, dateTime]), [dateTime, plain]);
+      expect(sorter.sortModels([dateTime, plain]), [dateTime, plain]);
+    });
+
     test('generates stable key for EnumModel with sorted values', () {
       final model1 = EnumModel<String>(
         name: 'Status',

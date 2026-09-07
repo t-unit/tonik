@@ -297,7 +297,10 @@ void main() {
       test('decodes nullable string values', () {
         expect('test'.decodeSimpleNullableString(), 'test');
         expect(null.decodeSimpleNullableString(), isNull);
-        expect(''.decodeSimpleNullableString(), isNull);
+      });
+
+      test('preserves a present empty nullable string', () {
+        expect(''.decodeSimpleNullableString(), '');
       });
 
       test('decodes integer values', () {
@@ -475,7 +478,7 @@ void main() {
         expect('50%'.decodeSimpleNullableString(), '50%');
         expect('foo%2Cbar'.decodeSimpleNullableString(), 'foo%2Cbar');
         expect('%ZZ'.decodeSimpleNullableString(), '%ZZ');
-        expect(''.decodeSimpleNullableString(), isNull);
+        expect(''.decodeSimpleNullableString(), '');
         expect((null as String?).decodeSimpleNullableString(), isNull);
       });
 

@@ -16,6 +16,57 @@ tags:
     description: Operations testing boolean schemas (AnyModel and NeverModel)
 
 paths:
+  /profiles:
+    get:
+      operationId: searchProfiles
+      tags:
+        - boolean-schemas
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ProfileFilter'
+      responses:
+        '204':
+          description: Search accepted
+
+  /profiles/tags:
+    get:
+      operationId: searchProfilesByTags
+      tags:
+        - boolean-schemas
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ProfileListFilter'
+      responses:
+        '204':
+          description: Search accepted
+
+  /profiles/data:
+    get:
+      operationId: searchProfilesByData
+      tags:
+        - boolean-schemas
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ProfileMixedFilter'
+      responses:
+        '204':
+          description: Search accepted
+
   /json/any/echo:
     post:
       operationId: echoJsonAny
@@ -1166,6 +1217,35 @@ paths:
 
 components:
   schemas:
+    ProfileFilter:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        password: false
+
+    ProfileListFilter:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        password:
+          $ref: '#/components/schemas/NeverValid'
+
+    ProfileMixedFilter:
+      type: object
+      required:
+        - data
+      properties:
+        data: true
+        password: false
+
     AnyValue: true
 
     NeverValid: false

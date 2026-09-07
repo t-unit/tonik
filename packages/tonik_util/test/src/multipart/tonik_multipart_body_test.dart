@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -63,6 +64,80 @@ void main() {
       '\r\n'
       'Hi\r\n'
       '--test--\r\n',
+    );
+  });
+
+  test('quotes backslashes in multipart names and filenames exactly once', () {
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: r'profile\name',
+        bytes: utf8.encode('Ada'),
+        contentType: 'text/plain',
+        filename: r'directory\name.txt',
+        headers: const {'X-Part-Meta': r'keep\value'},
+      ),
+    ], boundary: 'test');
+
+    final wire = latin1.decode(body.bodyBytes);
+    expect(
+      wire,
+      '--test\r\n'
+      r'content-disposition: form-data; name="profile\\name"; '
+      r'filename="directory\\name.txt"'
+      '\r\ncontent-type: text/plain\r\n'
+      r'X-Part-Meta: keep\value'
+      '\r\n\r\nAda\r\n--test--\r\n',
+    );
+    final disposition = HeaderValue.parse(
+      wire.split('\r\n')[1].substring('content-disposition: '.length),
+    );
+    expect(disposition.parameters['name'], r'profile\name');
+    expect(disposition.parameters['filename'], r'directory\name.txt');
+  });
+
+  test('preserves trailing and consecutive backslashes when MIME parsed', () {
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: r'trailing\',
+        bytes: const [65],
+        contentType: 'text/plain',
+      ),
+      TonikMultipartPart(
+        name: r'consecutive\\slashes',
+        bytes: const [66],
+        contentType: 'text/plain',
+      ),
+    ], boundary: 'test');
+
+    final wire = latin1.decode(body.bodyBytes);
+    expect(wire, contains(r'name="trailing\\"'));
+    expect(wire, contains(r'name="consecutive\\\\slashes"'));
+    final trailing = HeaderValue.parse(
+      wire.split('\r\n')[1].substring('content-disposition: '.length),
+    );
+    final consecutive = HeaderValue.parse(
+      wire.split('\r\n')[6].substring('content-disposition: '.length),
+    );
+    expect(trailing.parameters['name'], r'trailing\');
+    expect(consecutive.parameters['name'], r'consecutive\\slashes');
+  });
+
+  test('retains percent escaping for quotes and line breaks', () {
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: 'quote"line\r\nnext',
+        bytes: const [65],
+        contentType: 'text/plain',
+        filename: 'line\nquote"',
+      ),
+    ], boundary: 'test');
+
+    expect(
+      latin1.decode(body.bodyBytes),
+      '--test\r\n'
+      'content-disposition: form-data; name="quote%22line%0D%0Anext"; '
+      'filename="line%0D%0Aquote%22"\r\n'
+      'content-type: text/plain\r\n\r\nA\r\n--test--\r\n',
     );
   });
 

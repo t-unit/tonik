@@ -113,7 +113,7 @@ $expectedPartCode
               final _$formData = FormData();
               _$formData.files.add(
                 MapEntry(
-                  r'name',
+                  (r'name').replaceAll(r'\', r'\\'),
                   MultipartFile.fromBytes(
                     latin1.encode(body.name),
                     contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
@@ -144,7 +144,7 @@ $expectedPartCode
         r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromBytes(
         latin1.encode(body.value),
         contentType: DioMediaType.parse(
@@ -167,7 +167,7 @@ $expectedPartCode
       expectPropertyCode(IntegerModel(context: testContext), r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromBytes(
         latin1.encode(body.value.toString()),
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
@@ -177,7 +177,7 @@ $expectedPartCode
       expectPropertyCode(_testStringEnum(testContext), r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromBytes(
         latin1.encode(body.value.toJson()),
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
@@ -187,7 +187,7 @@ $expectedPartCode
       expectPropertyCode(AnyModel(context: testContext), r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromBytes(
         latin1.encode(jsonEncode(encodeAnyToJson(body.value))),
         contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
@@ -199,7 +199,7 @@ $expectedPartCode
         r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromBytes(
         latin1.encode(jsonEncode(body.value.toJson())),
         contentType: DioMediaType.parse(r'application/json; charset=us-ascii'),
@@ -227,7 +227,7 @@ $expectedPartCode
   for (final item in body.value) {
     _$formData.files.add(
       MapEntry(
-        r'value',
+        (r'value').replaceAll(r'\', r'\\'),
         MultipartFile.fromBytes(
           latin1.encode(item),
           contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
@@ -251,7 +251,7 @@ $expectedPartCode
         r'''
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromString(
         body.value,
         contentType: DioMediaType.parse(r'text/plain'),
@@ -303,7 +303,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "name" is null.');
             }
             if (body.name != null) {
-              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -342,7 +342,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             if (body.nickname != null) {
-              _$formData.files.add(MapEntry(r'nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'nickname').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -382,7 +382,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             if (body.bio != null) {
-              _$formData.files.add(MapEntry(r'bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'bio').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -457,7 +457,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'title').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.title, contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -498,7 +498,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -539,7 +539,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "password" is null.');
             }
             if (body.password != null) {
-              _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'password').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -576,7 +576,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'data').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -690,7 +690,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -726,7 +726,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -762,7 +762,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'value').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -798,7 +798,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -834,7 +834,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'birth_date').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -870,7 +870,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'amount').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -906,7 +906,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'website').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -944,7 +944,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'created_at').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -988,7 +988,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "count" is null.');
             }
             if (body.count != null) {
-              _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -1027,7 +1027,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1064,7 +1064,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1101,7 +1101,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1143,7 +1143,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "score" is null.');
             }
             if (body.score != null) {
-              _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
             return _$formData;
           }
@@ -1184,7 +1184,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1223,7 +1223,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1262,7 +1262,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1301,7 +1301,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1340,7 +1340,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'value').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1391,7 +1391,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1444,7 +1444,7 @@ $expectedPartCode
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1490,7 +1490,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
             return _$formData;
           }
         '''),
@@ -1538,7 +1538,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1583,7 +1583,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
             return _$formData;
           }
         '''),
@@ -1633,7 +1633,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             if (body.status != null) {
-              _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -1687,7 +1687,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "status" is null.');
             }
             if (body.status != null) {
-              _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -1729,13 +1729,13 @@ $expectedPartCode
             switch (body.avatar) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'avatar',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'avatar'),
+                  (r'avatar').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'avatar',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
+                  (r'avatar').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\')),
                 ));
             }
             return _$formData;
@@ -1778,13 +1778,13 @@ $expectedPartCode
               switch (body.document!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'document',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'document'),
+                    (r'document').replaceAll(r'\', r'\\'),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'document',
-                    await MultipartFile.fromFile(path, filename: fileName ?? r'document'),
+                    (r'document').replaceAll(r'\', r'\\'),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\')),
                   ));
               }
             }
@@ -1831,13 +1831,13 @@ $expectedPartCode
               switch (body.photo!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'photo',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'photo'),
+                    (r'photo').replaceAll(r'\', r'\\'),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'photo',
-                    await MultipartFile.fromFile(path, filename: fileName ?? r'photo'),
+                    (r'photo').replaceAll(r'\', r'\\'),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\')),
                   ));
               }
             }
@@ -1879,19 +1879,19 @@ $expectedPartCode
             switch (body.image) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'image',
+                  (r'image').replaceAll(r'\', r'\\'),
                   MultipartFile.fromBytes(
                     bytes,
-                    filename: fileName ?? r'image',
+                    filename: (fileName ?? r'image').replaceAll(r'\', r'\\'),
                     contentType: DioMediaType.parse(r'image/png'),
                   ),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'image',
+                  (r'image').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(
                     path,
-                    filename: fileName ?? r'image',
+                    filename: (fileName ?? r'image').replaceAll(r'\', r'\\'),
                     contentType: DioMediaType.parse(r'image/png'),
                   ),
                 ));
@@ -1934,13 +1934,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
             }
             return _$formData;
@@ -1984,10 +1984,10 @@ $expectedPartCode
               r'Content-Transfer-Encoding': [r'base64'],
             };
             _$formData.files.add(MapEntry(
-              r'avatar',
+              (r'avatar').replaceAll(r'\', r'\\'),
               MultipartFile.fromBytes(
                 ascii.encode(body.avatar.toBase64String()),
-                filename: body.avatar.fileName ?? r'avatar',
+                filename: (body.avatar.fileName ?? r'avatar').replaceAll(r'\', r'\\'),
                 contentType: DioMediaType.parse(r'application/octet-stream'),
                 headers: _$avatarHeaders,
               ),
@@ -2041,7 +2041,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -2092,7 +2092,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -2144,7 +2144,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -2196,7 +2196,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -2248,7 +2248,7 @@ $expectedPartCode
             final _$formData = FormData();
             if (body.address != null) {
               _$formData.files.add(MapEntry(
-                r'address',
+                (r'address').replaceAll(r'\', r'\\'),
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
                   contentType: DioMediaType.parse(r'application/json'),
@@ -2304,7 +2304,7 @@ $expectedPartCode
             }
             if (body.address != null) {
               _$formData.files.add(MapEntry(
-                r'address',
+                (r'address').replaceAll(r'\', r'\\'),
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
                   contentType: DioMediaType.parse(r'application/json'),
@@ -2355,7 +2355,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/xml'),
@@ -2408,7 +2408,7 @@ $expectedPartCode
               final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               return _$formData;
             }
@@ -2460,7 +2460,7 @@ $expectedPartCode
               if (body.address != null) {
                 for (final entry in body.address!
                     .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                  _$formData.fields.add(MapEntry(entry.name, entry.value));
+                  _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
                 }
               }
               return _$formData;
@@ -2509,7 +2509,7 @@ $expectedPartCode
               final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               return _$formData;
             }
@@ -2558,7 +2558,7 @@ $expectedPartCode
               final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               return _$formData;
             }
@@ -2607,7 +2607,7 @@ $expectedPartCode
               final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               return _$formData;
             }
@@ -2661,7 +2661,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -2720,7 +2720,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'address',
+                  (r'address').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -2779,7 +2779,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'address',
+                  (r'address').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -2840,7 +2840,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r"it's-form",
+                  (r"it's-form").replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     itsFormEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -2900,7 +2900,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'path\form',
+                  (r'path\form').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     pathBackslashFormEntries
                         .map((e) => '${e.name}=${e.value}')
@@ -2963,7 +2963,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'$total',
+                  (r'$total').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     $totalEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -3024,7 +3024,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'address',
+                  (r'address').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -3083,7 +3083,7 @@ $expectedPartCode
                     .toRawStyleParts(r'address', explode: true);
                 for (final _$part in addressRawParts) {
                   _$formData.files.add(
-                    MapEntry(_$part.name, MultipartFile.fromString(_$part.value)),
+                    MapEntry((_$part.name).replaceAll(r'\', r'\\'), MultipartFile.fromString(_$part.value)),
                   );
                 }
                 return _$formData;
@@ -3152,7 +3152,7 @@ $expectedPartCode
                 for (final _$part in addressRawParts) {
                   _$formData.files.add(
                     MapEntry(
-                      _$part.name,
+                      (_$part.name).replaceAll(r'\', r'\\'),
                       MultipartFile.fromString(
                         _$part.value,
                         headers: _$addressHeaders,
@@ -3255,7 +3255,7 @@ $expectedPartCode
                     .toRawStyleParts(r'address', explode: false);
                 for (final _$part in addressRawParts) {
                   _$formData.files.add(
-                    MapEntry(_$part.name, MultipartFile.fromString(_$part.value)),
+                    MapEntry((_$part.name).replaceAll(r'\', r'\\'), MultipartFile.fromString(_$part.value)),
                   );
                 }
                 return _$formData;
@@ -3325,7 +3325,7 @@ $expectedPartCode
                   useQueryComponent: true,
                 textEncoding: utf8,);
                 _$formData.files.add(MapEntry(
-                  r'address',
+                  (r'address').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
@@ -3427,7 +3427,7 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(
-                r'metadata',
+                (r'metadata').replaceAll(r'\', r'\\'),
                 MultipartFile.fromString(
                   jsonEncode(body.metadata),
                   contentType: DioMediaType.parse(r'application/json'),
@@ -3477,7 +3477,7 @@ $expectedPartCode
               final _$formData = FormData();
               if (body.metadata != null) {
                 _$formData.files.add(MapEntry(
-                  r'metadata',
+                  (r'metadata').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     jsonEncode(body.metadata!),
                     contentType: DioMediaType.parse(r'application/json'),
@@ -3517,7 +3517,7 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(
-                r'metadata',
+                (r'metadata').replaceAll(r'\', r'\\'),
                 MultipartFile.fromString(
                   jsonEncode(body.metadata),
                   contentType: DioMediaType.parse(r'application/json'),
@@ -3684,7 +3684,7 @@ $expectedPartCode
                 }
                 _$formData.files.add(
                   MapEntry(
-                    r'metadata',
+                    (r'metadata').replaceAll(r'\', r'\\'),
                     MultipartFile.fromString(
                       metadataParts.join('&'),
                       contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
@@ -3764,7 +3764,7 @@ $expectedPartCode
                   }
                   _$formData.files.add(
                     MapEntry(
-                      r'metadata',
+                      (r'metadata').replaceAll(r'\', r'\\'),
                       MultipartFile.fromString(
                         metadataParts.join('&'),
                         contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
@@ -3844,7 +3844,7 @@ $expectedPartCode
                 }
                 _$formData.files.add(
                   MapEntry(
-                    r"it's-meta",
+                    (r"it's-meta").replaceAll(r'\', r'\\'),
                     MultipartFile.fromString(
                       itsMetaParts.join('&'),
                       contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
@@ -3923,7 +3923,7 @@ $expectedPartCode
                 }
                 _$formData.files.add(
                   MapEntry(
-                    r'path\to',
+                    (r'path\to').replaceAll(r'\', r'\\'),
                     MultipartFile.fromString(
                       pathBackslashToParts.join('&'),
                       contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
@@ -4002,7 +4002,7 @@ $expectedPartCode
                 }
                 _$formData.files.add(
                   MapEntry(
-                    r'$total',
+                    (r'$total').replaceAll(r'\', r'\\'),
                     MultipartFile.fromString(
                       $totalParts.join('&'),
                       contentType: DioMediaType.parse(r'application/x-www-form-urlencoded'),
@@ -4059,7 +4059,7 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(
-                r'metadata',
+                (r'metadata').replaceAll(r'\', r'\\'),
                 MultipartFile.fromString(
                   jsonEncode(body.metadata),
                   contentType: DioMediaType.parse(r'application/json'),
@@ -4109,7 +4109,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.tags) {
-              _$formData.fields.add(MapEntry(r'tags', item));
+              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
             return _$formData;
           }
@@ -4151,7 +4151,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.tags) {
-              _$formData.fields.add(MapEntry(r'tags', item));
+              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
             return _$formData;
           }
@@ -4194,7 +4194,7 @@ $expectedPartCode
               final _$formData = FormData();
               _$formData.fields.add(
                 MapEntry(
-                  r'tags',
+                  (r'tags').replaceAll(r'\', r'\\'),
                   body.tags.uriEncode(
                     allowEmpty: true,
                     textEncoding: utf8,
@@ -4242,7 +4242,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              _$formData.fields.add(MapEntry(r'tags', item));
+              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
             return _$formData;
           }
@@ -4284,7 +4284,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry(r'tags', item));
+              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
             return _$formData;
           }
@@ -4428,7 +4428,7 @@ $expectedPartCode
               for (final item in body.statuses) {
                 _$formData.fields.add(
                   MapEntry(
-                    r'statuses',
+                    (r'statuses').replaceAll(r'\', r'\\'),
                     item.uriEncode(allowEmpty: true, textEncoding: utf8),
                   ),
                 );
@@ -4483,7 +4483,7 @@ $expectedPartCode
               final _$formData = FormData();
               _$formData.fields.add(
                 MapEntry(
-                  r'codes',
+                  (r'codes').replaceAll(r'\', r'\\'),
                   body.codes
                       .map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8))
                       .toList()
@@ -4536,7 +4536,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry(r'scores', item.toString()));
+              _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), item.toString()));
             }
             return _$formData;
           }
@@ -4578,7 +4578,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry(r'scores', jsonEncode(item)));
+              _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), jsonEncode(item)));
             }
             return _$formData;
           }
@@ -4621,7 +4621,7 @@ $expectedPartCode
               final _$formData = FormData();
               _$formData.fields.add(
                 MapEntry(
-                  r'scores',
+                  (r'scores').replaceAll(r'\', r'\\'),
                   body.scores
                       .map((item) => jsonEncode(item))
                       .toList()
@@ -4672,7 +4672,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
+              _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), item.toTimeZonedIso8601String()));
             }
             return _$formData;
           }
@@ -4714,7 +4714,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry(r'dates', jsonEncode(item)));
+              _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), jsonEncode(item)));
             }
             return _$formData;
           }
@@ -4760,9 +4760,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
               }
             }
             return _$formData;
@@ -4807,9 +4807,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
               }
             }
             return _$formData;
@@ -4862,7 +4862,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
             return _$formData;
           }
@@ -4912,7 +4912,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
+              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
             }
             return _$formData;
           }
@@ -4958,7 +4958,7 @@ $expectedPartCode
             final _$formData = FormData();
             if (body.tags != null) {
               for (final item in body.tags!) {
-                _$formData.fields.add(MapEntry(r'tags', item));
+                _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
               }
             }
             return _$formData;
@@ -5006,7 +5006,7 @@ $expectedPartCode
             }
             if (body.tags != null) {
               for (final item in body.tags!) {
-                _$formData.fields.add(MapEntry(r'tags', item));
+                _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
               }
             }
             return _$formData;
@@ -5049,7 +5049,7 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),
@@ -5089,7 +5089,7 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),
@@ -5124,7 +5124,7 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final item in body.tags) {
-                _$formData.fields.add(MapEntry(r'tags', item));
+                _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
               }
               return _$formData;
             }
@@ -5174,7 +5174,7 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),
@@ -5214,7 +5214,7 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),
@@ -5256,7 +5256,7 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               if (body.tags != null) {
-                _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
+                _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
               }
               return _$formData;
             }
@@ -5303,7 +5303,7 @@ $expectedPartCode
               void test() {
                 final _$formData = FormData();
                 for (final item in body.tags) {
-                  _$formData.fields.add(MapEntry(r'tags', item));
+                  _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
                 }
                 return _$formData;
               }
@@ -5347,7 +5347,7 @@ $expectedPartCode
               void test() {
                 final _$formData = FormData();
                 for (final item in body.scores) {
-                  _$formData.fields.add(MapEntry(r'scores', item.toString()));
+                  _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), item.toString()));
                 }
                 return _$formData;
               }
@@ -5390,7 +5390,7 @@ $expectedPartCode
               void test() {
                 final _$formData = FormData();
                 for (final item in body.dates) {
-                  _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
+                  _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), item.toTimeZonedIso8601String()));
                 }
                 return _$formData;
               }
@@ -5446,7 +5446,7 @@ $expectedPartCode
                   for (final item in body.priorities) {
                     _$formData.fields.add(
                       MapEntry(
-                        r'priorities',
+                        (r'priorities').replaceAll(r'\', r'\\'),
                         item.uriEncode(allowEmpty: true, textEncoding: utf8),
                       ),
                     );
@@ -5485,7 +5485,7 @@ $expectedPartCode
                 final _$formData = FormData();
                 if (body.tags != null) {
                   for (final item in body.tags!) {
-                    _$formData.fields.add(MapEntry(r'tags', item));
+                    _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
                   }
                 }
                 return _$formData;
@@ -5539,7 +5539,7 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'priorities').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),
@@ -5587,9 +5587,9 @@ $expectedPartCode
                 for (final item in body.files) {
                   switch (item) {
                     case TonikFileBytes(:final bytes, :final fileName):
-                      _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
+                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
                     case TonikFilePath(:final path, :final fileName):
-                      _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
+                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
                   }
                 }
                 return _$formData;
@@ -5811,7 +5811,7 @@ $expectedPartCode
           void test() {
             await () async {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+              _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
               return _$formData;
             }();
           }
@@ -5868,13 +5868,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
             }
             return _$formData;
@@ -5931,13 +5931,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
             }
             return _$formData;
@@ -5998,7 +5998,7 @@ $expectedPartCode
             final _$addressHeaders = <String, List<String>>{};
             _$addressHeaders[r'X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'address',
+              (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse(r'application/json'),
@@ -6055,7 +6055,7 @@ $expectedPartCode
             final _$descriptionHeaders = <String, List<String>>{};
             _$descriptionHeaders[r'X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'description',
+              (r'description').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
             ));
             return _$formData;
@@ -6110,7 +6110,7 @@ $expectedPartCode
             final _$countHeaders = <String, List<String>>{};
             _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'count',
+              (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
             ));
             return _$formData;
@@ -6176,7 +6176,7 @@ $expectedPartCode
             final _$statusHeaders = <String, List<String>>{};
             _$statusHeaders[r'X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'status',
+              (r'status').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
             ));
             return _$formData;
@@ -6230,13 +6230,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
             }
             return _$formData;
@@ -6305,13 +6305,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
             }
             return _$formData;
@@ -6352,13 +6352,13 @@ $expectedPartCode
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
+                  (r'file').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
             }
             return _$formData;
@@ -6416,7 +6416,7 @@ $expectedPartCode
             final _$tagsHeaders = <String, List<String>>{};
             _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags) {
-              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
+              _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
             return _$formData;
           }
@@ -6476,7 +6476,7 @@ $expectedPartCode
               ];
               _$formData.files.add(
                 MapEntry(
-                  r'tags',
+                  (r'tags').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
                     body.tags.uriEncode(
                       allowEmpty: true,
@@ -6542,7 +6542,7 @@ $expectedPartCode
             final _$tagsHeaders = <String, List<String>>{};
             _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
+              _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
             return _$formData;
           }
@@ -6601,7 +6601,7 @@ $expectedPartCode
             final _$datesHeaders = <String, List<String>>{};
             _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
+              _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
             return _$formData;
           }
@@ -6661,9 +6661,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files', headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), headers: _$filesHeaders)));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files', headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), headers: _$filesHeaders)));
               }
             }
             return _$formData;
@@ -6729,7 +6729,7 @@ $expectedPartCode
             final _$addressesHeaders = <String, List<String>>{};
             _$addressesHeaders[r'X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
+              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
             return _$formData;
           }
@@ -6787,13 +6787,13 @@ $expectedPartCode
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
+                    (r'file').replaceAll(r'\', r'\\'),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
+                    (r'file').replaceAll(r'\', r'\\'),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                   ));
               }
             }
@@ -6856,13 +6856,13 @@ $expectedPartCode
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
+                    (r'file').replaceAll(r'\', r'\\'),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
+                    (r'file').replaceAll(r'\', r'\\'),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                   ));
               }
             }
@@ -6919,7 +6919,7 @@ $expectedPartCode
             final _$dataHeaders = <String, List<String>>{};
             _$dataHeaders[r'X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'data',
+              (r'data').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
             ));
             return _$formData;
@@ -6974,7 +6974,7 @@ $expectedPartCode
             final _$countHeaders = <String, List<String>>{};
             _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'count',
+              (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
             ));
             return _$formData;
@@ -7030,7 +7030,7 @@ $expectedPartCode
             final _$createdAtHeaders = <String, List<String>>{};
             _$createdAtHeaders[r'X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              r'createdAt',
+              (r'createdAt').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
             ));
             return _$formData;
@@ -7093,7 +7093,7 @@ $expectedPartCode
                 ];
                 _$formData.files.add(
                   MapEntry(
-                    r'dates',
+                    (r'dates').replaceAll(r'\', r'\\'),
                     MultipartFile.fromString(
                       body.dates
                           .map((item) => item.toTimeZonedIso8601String())
@@ -7168,13 +7168,13 @@ $expectedPartCode
             switch (body.document) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'document',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'document', headers: _$documentHeaders),
+                  (r'document').replaceAll(r'\', r'\\'),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), headers: _$documentHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  r'document',
-                  await MultipartFile.fromFile(path, filename: fileName ?? r'document', headers: _$documentHeaders),
+                  (r'document').replaceAll(r'\', r'\\'),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), headers: _$documentHeaders),
                 ));
             }
             return _$formData;
@@ -7214,7 +7214,7 @@ $expectedPartCode
           format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
+              _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
               return _$formData;
             }
           '''),
@@ -7253,13 +7253,13 @@ $expectedPartCode
               switch (body.itsField) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r"it's-field",
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? r"it's-field"),
+                    (r"it's-field").replaceAll(r'\', r'\\'),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    r"it's-field",
-                    await MultipartFile.fromFile(path, filename: fileName ?? r"it's-field"),
+                    (r"it's-field").replaceAll(r'\', r'\\'),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\')),
                   ));
               }
               return _$formData;

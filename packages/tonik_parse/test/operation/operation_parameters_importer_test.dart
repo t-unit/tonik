@@ -34,7 +34,7 @@ void main() {
                 'items': {'type': 'string'},
               },
             },
-            {r'$ref': '#/components/parameters/Authorization'},
+            {r'$ref': '#/components/parameters/RequestId'},
           ],
           'responses': {
             '200': {'description': 'Successful response'},
@@ -51,11 +51,11 @@ void main() {
           'description': 'API Version header',
           'schema': {'type': 'string'},
         },
-        'Authorization': {
-          'name': 'authorization',
+        'RequestId': {
+          'name': 'x-request-id',
           'in': 'header',
           'required': true,
-          'description': 'Bearer token',
+          'description': 'Request identifier',
           'schema': {'type': 'string'},
         },
         'ItemId': {
@@ -136,12 +136,12 @@ void main() {
     expect(apiVersionHeader?.description, 'API Version header');
     expect(apiVersionHeader?.model, isA<StringModel>());
 
-    final authHeader = headerParams.firstWhereOrNull(
-      (h) => h.rawName == 'authorization',
+    final requestIdHeader = headerParams.firstWhereOrNull(
+      (h) => h.rawName == 'x-request-id',
     );
-    expect(authHeader?.isRequired, true);
-    expect(authHeader?.description, 'Bearer token');
-    expect(authHeader?.model, isA<StringModel>());
+    expect(requestIdHeader?.isRequired, true);
+    expect(requestIdHeader?.description, 'Request identifier');
+    expect(requestIdHeader?.model, isA<StringModel>());
   });
 
   test('parameters are correctly associated with operation', () {
@@ -197,7 +197,7 @@ void main() {
     expect(headerParams, hasLength(2));
 
     final headerParamNames = headerParams?.map((h) => h.rawName).toSet();
-    expect(headerParamNames, containsAll(['api-version', 'authorization']));
+    expect(headerParamNames, containsAll(['api-version', 'x-request-id']));
 
     final apiVersionHeader = headerParams?.firstWhereOrNull(
       (h) => h.rawName == 'api-version',
@@ -205,11 +205,11 @@ void main() {
     expect(apiVersionHeader?.isRequired, true);
     expect(apiVersionHeader?.description, 'API Version header');
 
-    final authHeader = headerParams?.firstWhereOrNull(
-      (h) => h.rawName == 'authorization',
+    final requestIdHeader = headerParams?.firstWhereOrNull(
+      (h) => h.rawName == 'x-request-id',
     );
-    expect(authHeader?.isRequired, true);
-    expect(authHeader?.description, 'Bearer token');
+    expect(requestIdHeader?.isRequired, true);
+    expect(requestIdHeader?.description, 'Request identifier');
   });
 
   test('handles parameter references correctly', () {
@@ -231,11 +231,11 @@ void main() {
     expect(includeDeletedParam?.description, 'Include deleted items');
     expect(includeDeletedParam?.isRequired, false);
 
-    final authHeader = operation?.headers
+    final requestIdHeader = operation?.headers
         .whereType<RequestHeaderObject>()
-        .firstWhereOrNull((h) => h.rawName == 'authorization');
-    expect(authHeader?.description, 'Bearer token');
-    expect(authHeader?.isRequired, true);
+        .firstWhereOrNull((h) => h.rawName == 'x-request-id');
+    expect(requestIdHeader?.description, 'Request identifier');
+    expect(requestIdHeader?.isRequired, true);
 
     final apiVersionHeader = operation?.headers
         .whereType<RequestHeaderObject>()

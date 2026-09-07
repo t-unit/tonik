@@ -7,6 +7,7 @@ Object? effectiveDefault(Object? localDefault, Model model) {
   if (localDefault != null) return localDefault;
   return switch (model) {
     AliasModel(:final defaultValue) ||
+    EnumModel(:final defaultValue) ||
     CompositeModel(:final defaultValue) => defaultValue,
     _ => null,
   };
