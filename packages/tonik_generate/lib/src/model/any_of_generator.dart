@@ -1522,6 +1522,7 @@ class const AnyOfGenerator({
                         package: package,
                         contextClass: className,
                         explode: refer('explode'),
+                        useImmutableCollections: useImmutableCollections,
                       ))
                 .expression,
         };

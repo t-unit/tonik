@@ -97,6 +97,42 @@ paths:
         '200':
           $ref: '#/components/responses/ReservedHeaderResponse'
 
+  /response-header-maps:
+    get:
+      operationId: testResponseHeaderMaps
+      tags:
+        - simple-encoding
+      responses:
+        '204':
+          description: Flat maps encoded in response headers
+          headers:
+            X-Meta:
+              style: simple
+              explode: true
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+            X-Counts:
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/HeaderCountsAlias'
+            X-Flags:
+              style: simple
+              explode: true
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+            X-Status:
+              style: simple
+              explode: true
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/StatusEnum'
+
   /anyof/{flexibleValue}:
     get:
       operationId: testAnyOfInPath
@@ -1367,6 +1403,17 @@ components:
       schema:
         type: string
   schemas:
+    HeaderCounts:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/HeaderCount'
+
+    HeaderCountsAlias:
+      $ref: '#/components/schemas/HeaderCounts'
+
+    HeaderCount:
+      type: integer
+
     StatusEnum:
       type: string
       enum:
