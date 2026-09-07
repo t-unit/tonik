@@ -173,6 +173,9 @@ void main() {
       const expectedMethod = r'''
         factory User.fromJson(Object? json) {
           final _$map = json.decodeMap(context: r'User');
+          if (!_$map.containsKey(r'createdAt')) {
+            throw JsonDecodingException(r'Missing required property User.createdAt.');
+          }
           return User(
             id: _$map[r'id'].decodeJsonInt(context: r'User.id'),
             name: _$map[r'name'].decodeJsonString(context: r'User.name'),

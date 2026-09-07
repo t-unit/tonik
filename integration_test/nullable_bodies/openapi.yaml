@@ -19,6 +19,19 @@ tags:
     description: Operations returning nullable primitive bodies
 
 paths:
+  /profile:
+    get:
+      operationId: getProfile
+      tags:
+        - nullable-bodies
+      responses:
+        '200':
+          description: A profile with a required nullable nickname
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
   /winner/inline:
     get:
       operationId: getWinnerInline
@@ -50,6 +63,45 @@ paths:
 
 components:
   schemas:
+    Profile:
+      type: object
+      required: [nickname]
+      properties:
+        nickname:
+          type: string
+          nullable: true
+        bio:
+          type: string
+
+    AliasProfile:
+      type: object
+      required: [nickname]
+      properties:
+        nickname:
+          $ref: '#/components/schemas/WinnerName'
+
+    DirectionalProfile:
+      type: object
+      required: [nickname, credential]
+      properties:
+        nickname:
+          type: string
+          nullable: true
+          readOnly: true
+        credential:
+          type: string
+          nullable: true
+          writeOnly: true
+
+    DefaultProfile:
+      type: object
+      required: [nickname]
+      properties:
+        nickname:
+          type: string
+          nullable: true
+          default: guest
+
     WinnerName:
       type: string
       nullable: true

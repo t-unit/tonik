@@ -721,6 +721,23 @@ class const ClassGenerator({
                 !requiredInResponse ||
                 property.model.isEffectivelyNullable;
 
+      if (requiredInResponse && defaulted == null && decodeIsNullable) {
+        codes
+          ..add(
+            Code(
+              r'if (!_$map.containsKey('
+              '${specLiteralStringCode(jsonKey)})) {',
+            ),
+          )
+          ..add(
+            generateJsonDecodingExceptionExpression(
+              'Missing required property $className.$jsonKey.',
+              raw: true,
+            ).statement,
+          )
+          ..add(const Code('}'));
+      }
+
       final valueBuilt = buildFromJsonValueExpression(
         '_\$map[${specLiteralStringCode(jsonKey)}]',
         model: property.model,

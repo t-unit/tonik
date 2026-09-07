@@ -910,8 +910,65 @@ void main() {
       const expectedMethod = r'''
   factory User.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'User');
+    if (!_$map.containsKey(r'name')) {
+      throw JsonDecodingException(r'Missing required property User.name.');
+    }
     return User(
       name: _$map[r'name'].decodeJsonNullableString(context: r'User.name'),
+    );
+  }''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('checks presence through a nullable alias chain', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Profile',
+        properties: [
+          Property(
+            name: 'display-name',
+            model: AliasModel(
+              name: 'DisplayName',
+              model: AliasModel(
+                name: 'NullableName',
+                model: StringModel(context: context),
+                isNullable: true,
+                context: context,
+                examples: const [],
+                defaultValue: null,
+              ),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        examples: const [],
+      );
+
+      const expectedMethod = r'''
+  factory Profile.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Profile');
+    if (!_$map.containsKey(r'display-name')) {
+      throw JsonDecodingException(
+        r'Missing required property Profile.display-name.',
+      );
+    }
+    return Profile(
+      displayName: _$map[r'display-name'].decodeJsonNullableString(
+        context: r'Profile.display-name',
+      ),
     );
   }''';
 
@@ -1077,6 +1134,9 @@ void main() {
       const expectedMethod = r'''
   factory Repo.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'Repo');
+    if (!_$map.containsKey(r'license')) {
+      throw JsonDecodingException(r'Missing required property Repo.license.');
+    }
     return Repo(
       license: _$map[r'license'] == null
           ? null
@@ -1124,6 +1184,11 @@ void main() {
       const expectedMethod = r'''
   factory Item.fromJson(Object? json) {
     final _$map = json.decodeMap(context: r'Item');
+    if (!_$map.containsKey(r'description')) {
+      throw JsonDecodingException(
+        r'Missing required property Item.description.',
+      );
+    }
     return Item(
       description: _$map[r'description'].decodeJsonNullableString(
         context: r'Item.description',
