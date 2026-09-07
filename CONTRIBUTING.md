@@ -40,6 +40,32 @@ The same setting applies to `melos run test-integration-current` and
 override. Each worker resolves a package's dependencies before analyzing it;
 failures are collected with their package diagnostics.
 
+Integration setup always recompiles Tonik and freshly generates all 44 clients.
+It runs up to four generators at once, starting the next whenever a slot becomes
+free. The default `TONIK_WORKERS` splits available CPUs between those generators.
+An explicit `TONIK_WORKERS` reduces the default number of concurrent generators;
+`INTEGRATION_SETUP_JOBS` overrides that number. Nonzero `workerCount` values in
+fixture configuration files still take precedence over `TONIK_WORKERS`. Explicit
+overrides can exceed the machine's CPU budget, so adjust both limits together:
+
+```bash
+INTEGRATION_SETUP_JOBS=2 TONIK_WORKERS=2 melos run generate-integration-tests
+bash scripts/test_integration_setup.sh # verify the setup scheduler
+```
+
+CI runs all five unit suites on every existing OS/SDK variant and collects
+coverage on Linux with stable Dart. Before every push or pull request, run all
+unit suites and the complete integration suites on both backends with
+`melos run test`.
+
+Complete integration runs use one Dart runner for all packages. It starts one
+fresh Imposter JVM per package and runs that package's test files sequentially.
+Each file clears the fixture's request store before
+using that server; a failed reset fails the file. The runner stops the JVM when
+the package ends or the run is cancelled. Fixtures must finish their requests
+before completing a test. Individual `dart test` and VS Code runs continue to
+start their own servers and need no wrapper or extra setup.
+
 ## Architecture
 
 For an overview of which package does what and how changes propagate, see [.github/copilot-instructions.md](.github/copilot-instructions.md).

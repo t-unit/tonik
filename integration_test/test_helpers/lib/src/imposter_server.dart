@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-/// Fast JVM cold-start flags. Each suite spins up a fresh JVM in `setUpAll`,
-/// so start-up latency dominates over peak throughput: C1-only JIT and the
+/// Fast JVM cold-start flags. Start-up latency dominates over peak throughput
+/// for these fixture servers: C1-only JIT and the
 /// serial collector shave seconds off boot for these short-lived servers.
 const _fastStartJvmArgs = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
 
@@ -20,12 +20,34 @@ final class const RecordedRequest(
 
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
-class ImposterServer() {
+class ImposterServer({final int? sharedPort}) {
   Process? _process;
-  int _port = 0;
+  int _port = sharedPort ?? 0;
   Completer<void> _readyCompleter = Completer<void>();
+  bool _stopRequested = false;
 
   int get port => _port;
+
+  /// Clears all request state before a sequential test file uses a shared JVM.
+  Future<void> resetRequests() async {
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 5);
+    try {
+      final request = await client.deleteUrl(
+        Uri.parse('http://localhost:$_port/system/store/tonik'),
+      );
+      final response = await request.close().timeout(
+        const Duration(seconds: 5),
+      );
+      await response.drain<void>().timeout(const Duration(seconds: 5));
+      if (response.statusCode != HttpStatus.noContent) {
+        throw StateError(
+          'Unable to reset Imposter request state: ${response.statusCode}',
+        );
+      }
+    } finally {
+      client.close(force: true);
+    }
+  }
 
   /// Returns and removes the last request recorded by the Imposter fixture.
   Future<RecordedRequest> takeRequest() async {
@@ -117,6 +139,12 @@ class ImposterServer() {
     int maxAttempts = 2,
     List<String> jvmArgs = _fastStartJvmArgs,
   }) async {
+    if (sharedPort != null) {
+      await resetRequests();
+      return;
+    }
+    _stopRequested = false;
+    _readyCompleter = Completer<void>();
     final imposterJar = path.join(
       Directory.current.parent.parent.path,
       'imposter.jar',
@@ -139,8 +167,8 @@ class ImposterServer() {
         return;
       } on Exception catch (e) {
         lastError = e;
-        _process?.kill();
-        _process = null;
+        await _stopProcess();
+        if (_stopRequested) rethrow;
         _readyCompleter = Completer<void>();
         if (attempt < maxAttempts) {
           print(
@@ -159,6 +187,7 @@ class ImposterServer() {
     required int timeoutSec,
   }) async {
     _port = await _findAvailablePort();
+    if (_stopRequested) throw Exception('Imposter startup was cancelled.');
 
     _process = await Process.start(
       'java',
@@ -178,6 +207,11 @@ class ImposterServer() {
       environment: {...Platform.environment, 'IMPOSTER_LOG_LEVEL': 'INFO'},
     );
 
+    if (_stopRequested) {
+      await stop();
+      throw Exception('Imposter startup was cancelled.');
+    }
+
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {
       // Signal readiness when we see the startup message.
       if (data.contains('Mock engine up and running') &&
@@ -190,7 +224,7 @@ class ImposterServer() {
     });
 
     final ready = await _waitForImposterReady(timeoutSec: timeoutSec);
-    if (!ready) {
+    if (!ready || _stopRequested) {
       throw Exception(
         'Imposter server failed to start within $timeoutSec seconds '
         'on port $_port. Check Java/Imposter logs above for details.',
@@ -217,37 +251,58 @@ class ImposterServer() {
 
     // Add a small delay to allow OpenAPI plugin to fully initialize
     await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (_stopRequested) return false;
 
     // Then verify the server is actually responding
     final deadline = DateTime.now().add(const Duration(seconds: 5));
-    final client = HttpClient();
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 5);
 
-    while (DateTime.now().isBefore(deadline)) {
-      try {
-        final request = await client.getUrl(
-          Uri.parse('http://localhost:$_port'),
-        );
-        final response = await request.close();
-        await response.drain<void>();
+    try {
+      while (DateTime.now().isBefore(deadline) && !_stopRequested) {
+        try {
+          final request = await client
+              .getUrl(Uri.parse('http://localhost:$_port'))
+              .timeout(const Duration(seconds: 5));
+          final response = await request.close().timeout(
+            const Duration(seconds: 5),
+          );
+          await response.drain<void>().timeout(const Duration(seconds: 5));
 
-        return true; // Server is ready and responding
-      } on SocketException catch (_) {
-        // ignore
-      } on HttpException catch (_) {
-        // ignore
+          return true; // Server is ready and responding
+        } on SocketException catch (_) {
+          // ignore
+        } on HttpException catch (_) {
+          // ignore
+        } on TimeoutException {
+          return false;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       }
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+      return false;
+    } finally {
+      client.close(force: true);
     }
-    return false;
   }
 
   /// Stops the Imposter server process.
   ///
   /// Kills the process and waits for it to exit. Safe to call multiple times.
   Future<void> stop() async {
-    if (_process != null) {
-      _process!.kill();
-      await _process!.exitCode;
+    _stopRequested = true;
+    if (!_readyCompleter.isCompleted) _readyCompleter.complete();
+    await _stopProcess();
+  }
+
+  Future<void> _stopProcess() async {
+    final process = _process;
+    if (process != null) {
+      process.kill();
+      try {
+        await process.exitCode.timeout(const Duration(seconds: 5));
+      } on TimeoutException {
+        process.kill(ProcessSignal.sigkill);
+        await process.exitCode;
+      }
       _process = null;
     }
   }
@@ -263,7 +318,11 @@ Future<ImposterServer> setupImposterServer({
   int maxAttempts = 2,
   List<String> jvmArgs = _fastStartJvmArgs,
 }) async {
-  final server = ImposterServer();
+  final sharedPort = sharedImposterPort(
+    Platform.environment,
+    Directory.current.path,
+  );
+  final server = ImposterServer(sharedPort: sharedPort);
   await server.start(
     timeoutSec: timeoutSec,
     maxAttempts: maxAttempts,
@@ -271,4 +330,18 @@ Future<ImposterServer> setupImposterServer({
   );
   addTearDown(() => server.stop());
   return server;
+}
+
+/// Accepts a run-owned server only for its matching package.
+int? sharedImposterPort(Map<String, String> environment, String directory) {
+  final rawPort = environment['TONIK_IMPOSTER_PORT'];
+  if (rawPort == null) return null;
+  final port = int.tryParse(rawPort);
+  if (port == null ||
+      port < 1 ||
+      port > 65535 ||
+      environment['TONIK_IMPOSTER_PACKAGE'] != path.normalize(directory)) {
+    throw StateError('Invalid shared Imposter server configuration.');
+  }
+  return port;
 }

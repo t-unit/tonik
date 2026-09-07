@@ -6,6 +6,18 @@ INTEGRATION_TEST_ROOT="$INTEGRATION_REPO_ROOT/integration_test"
 EXPECTED_GENERATED_INTEGRATION_PACKAGES=44
 EXPECTED_INTEGRATION_TEST_PACKAGES=40
 
+run_integration_package_tests() (
+  cd "$INTEGRATION_REPO_ROOT"
+  (
+    cd integration_test/test_helpers
+    dart pub get
+    dart test
+  )
+  dart --packages=integration_test/test_helpers/.dart_tool/package_config.json \
+    integration_test/test_helpers/bin/run_integration_tests.dart \
+    "${INTEGRATION_TEST_PACKAGES[@]}"
+)
+
 validate_integration_backend() {
   local backend="$1"
   if [ "$backend" != "dio" ] && [ "$backend" != "http" ]; then
