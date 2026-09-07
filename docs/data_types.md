@@ -60,13 +60,17 @@ If a class also contains nested objects, `fromSimple`/`fromForm` throw because t
 
 Tonik provides timezone-aware parsing for `date-time` format strings using the `OffsetDateTime` class. The parsing behavior depends on the timezone information present in the input:
 
-All generated code will always expose Dart `DateTime` objects in the generated code. However, internally Tonik uses `OffsetDateTime.parse()` to provide consistent timezone handling. The `OffsetDateTime` class extends Dart's `DateTime` interface while preserving timezone offset information:
+Regular date-time fields expose Dart `DateTime` objects. Internally Tonik uses `OffsetDateTime.parse()` to provide consistent timezone handling. The `OffsetDateTime` class extends Dart's `DateTime` interface while preserving timezone offset information:
 
 | Input Format | Return Type | Example | Description |
 |--------------|-------------|---------|-------------|
 | UTC (with Z) | `OffsetDateTime` (UTC) | `2023-12-25T15:30:45Z` | OffsetDateTime with zero offset (UTC) |
 | Local (no timezone) | `OffsetDateTime` (system timezone) | `2023-12-25T15:30:45` | OffsetDateTime with system timezone offset |
 | Timezone offset | `OffsetDateTime` (specified offset) | `2023-12-25T15:30:45+05:00` | OffsetDateTime with the specified offset |
+
+Date-time schemas with `enum` generate string-backed Dart enums. Each declared string is a distinct member and serializes exactly as written in the schema, even when two strings represent the same instant. For example, `2026-09-06T12:00:00.1000+02:00` remains distinct from `2026-09-06T12:00:00.100+02:00`.
+
+Call `value.toDateTime()` when you need a `DateTime`. This uses the same offset-preserving parser as regular date-time fields, with Dart's normalization and microsecond precision; it leaves enum identity and serialization unchanged. Conversion throws `DecodingException` for literals the parser cannot handle, or `StateError` for a configured unknown fallback member. Unknown wire strings are rejected unless an enum fallback is configured.
 
 ### Binary and Text Bodies
 
