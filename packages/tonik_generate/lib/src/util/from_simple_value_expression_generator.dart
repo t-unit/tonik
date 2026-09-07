@@ -5,6 +5,7 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// Returns the reason why simple decoding is not supported for the given model,
 /// or `null` if simple decoding is supported.
@@ -30,9 +31,20 @@ String? getSimpleDecodingUnsupportedReason(Model model) {
     NeverModel() => 'NeverModel does not permit any value',
     ListModel(:final content) => _getListContentUnsupportedReason(content),
     AliasModel(:final model) => getSimpleDecodingUnsupportedReason(model),
-    MapModel() => 'Map types cannot be simple-decoded',
+    MapModel(:final valueModel) => _getMapValueUnsupportedReason(valueModel),
     NamedModel() || CompositeModel() => 'Unsupported model type: $model',
   };
+}
+
+String? _getMapValueUnsupportedReason(Model model) {
+  if (model is AliasModel) {
+    return _getMapValueUnsupportedReason(model.model);
+  }
+  if (model is AnyModel) return null;
+  if (model.encodingShape != EncodingShape.simple) {
+    return 'Map values must be scalar in simple encoding';
+  }
+  return getSimpleDecodingUnsupportedReason(model);
 }
 
 String? _getListContentUnsupportedReason(Model content) {
@@ -70,6 +82,7 @@ BuiltExpression buildSimpleValueExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  bool useImmutableCollections = false,
 }) {
   return BuiltExpression.simple(
     _buildSimpleValueExpression(
@@ -81,6 +94,7 @@ BuiltExpression buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      useImmutableCollections: useImmutableCollections,
     ),
   );
 }
@@ -94,6 +108,7 @@ Expression _buildSimpleValueExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  bool useImmutableCollections = false,
 }) {
   final contextParam = (contextClass != null || contextProperty != null)
       ? {
@@ -188,18 +203,76 @@ Expression _buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      useImmutableCollections: useImmutableCollections,
       explode: explode,
     ),
     NeverModel() => _buildNeverModelExpression(value, isRequired),
     AnyModel() => value,
-    MapModel() => generateSimpleDecodingExceptionExpression(
-      'Map types cannot be simple-decoded.',
+    final MapModel mapModel => _buildMapFromSimpleExpression(
+      value,
+      mapModel,
+      isRequired,
+      nameManager,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      explode: explode,
+      contextParam: contextParam,
+      useImmutableCollections: useImmutableCollections,
     ),
     NamedModel() ||
     CompositeModel() => generateSimpleDecodingExceptionExpression(
       'Unsupported model type for simple decoding.',
     ),
   };
+}
+
+Expression _buildMapFromSimpleExpression(
+  Expression value,
+  MapModel model,
+  bool isRequired,
+  NameManager nameManager, {
+  required Expression explode,
+  required Map<String, Expression> contextParam,
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  bool useImmutableCollections = false,
+}) {
+  final unsupportedReason = _getMapValueUnsupportedReason(model.valueModel);
+  if (unsupportedReason != null) {
+    return generateSimpleDecodingExceptionExpression('$unsupportedReason.');
+  }
+
+  final decodeValue = _buildSimpleValueExpression(
+    refer('v'),
+    model: model.valueModel,
+    isRequired:
+        !model.isValueNullable && !model.valueModel.isEffectivelyNullable,
+    nameManager: nameManager,
+    explode: explode,
+    package: package,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
+    useImmutableCollections: useImmutableCollections,
+  );
+  final decoder = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((p) => p..name = 'v'))
+      ..body = decodeValue.code,
+  ).closure;
+  final result = value
+      .property(isRequired ? 'decodeSimpleMap' : 'decodeSimpleNullableMap')
+      .call([decoder], {'explode': explode, ...contextParam});
+  if (!useImmutableCollections) return result;
+
+  final immutableMap = refer(
+    'IMap',
+    'package:fast_immutable_collections/fast_immutable_collections.dart',
+  ).call([result]);
+  return isRequired
+      ? immutableMap
+      : value.equalTo(literalNull).conditional(literalNull, immutableMap);
 }
 
 Expression _buildNeverModelExpression(Expression value, bool isRequired) {

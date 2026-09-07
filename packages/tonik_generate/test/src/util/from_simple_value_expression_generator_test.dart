@@ -607,6 +607,147 @@ void main() {
       });
     });
 
+    group('MapModel', () {
+      test('generates required exploded string map decoding', () {
+        final model = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        expect(getSimpleDecodingUnsupportedReason(model), isNull);
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            explode: literalBool(true),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleMap((v) => v.decodeSimpleString(), '
+          'explode: true, )',
+        );
+      });
+
+      test('generates optional non-exploded typed maps with context', () {
+        final model = MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model: model,
+            isRequired: false,
+            nameManager: nameManager,
+            contextProperty: 'X-Counts',
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleNullableMap((v) => '
+          "v.decodeSimpleInt(context: r'X-Counts'), "
+          "explode: false, context: r'X-Counts', )",
+        );
+      });
+
+      test('unwraps aliases for the map and its values', () {
+        final model = AliasModel(
+          model: MapModel(
+            valueModel: AliasModel(
+              model: BooleanModel(context: context),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+            context: context,
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        expect(getSimpleDecodingUnsupportedReason(model), isNull);
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            explode: literalBool(true),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleMap((v) => v.decodeSimpleBool(), explode: true, )',
+        );
+      });
+
+      test('honors nullable map values', () {
+        final model = MapModel(
+          valueModel: IntegerModel(context: context),
+          isValueNullable: true,
+          context: context,
+          examples: const [],
+        );
+
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleMap((v) => v.decodeSimpleNullableInt(), '
+          'explode: false, )',
+        );
+      });
+
+      test('rejects nested maps before recursively generating decoders', () {
+        final model = MapModel(
+          valueModel: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+        );
+
+        expect(
+          getSimpleDecodingUnsupportedReason(model),
+          'Map values must be scalar in simple encoding',
+        );
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            explode: literalBool(true),
+          ).accept(emitter).toString(),
+          "throw  SimpleDecodingException('Map values must be scalar "
+          "in simple encoding.')",
+        );
+      });
+
+      test('rejects list values', () {
+        final model = MapModel(
+          valueModel: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+        );
+
+        expect(
+          getSimpleDecodingUnsupportedReason(model),
+          'Map values must be scalar in simple encoding',
+        );
+      });
+    });
+
     group('BinaryModel', () {
       test('generates TonikFileBytes wrapping for required BinaryModel', () {
         final value = refer('value');
