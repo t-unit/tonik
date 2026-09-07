@@ -1280,6 +1280,42 @@ paths:
   # MATRIX STYLE - MAP PARAMETERS
   # =============================================================================
 
+  /items/{coordinates}:
+    get:
+      operationId: testMatrixExplodedCoordinates
+      tags: [matrix]
+      summary: An empty exploded object leaves the literal trailing slash
+      parameters:
+        - name: coordinates
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '204':
+          description: OK
+
+  /matrix/object/optional/{value}:
+    get:
+      operationId: testMatrixOptionalObject
+      tags: [matrix]
+      summary: An object with all optional properties omitted expands to nothing
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OptionalObject'
+      responses:
+        '204':
+          description: OK
+
   /matrix/map/string/{values}:
     get:
       operationId: testMatrixMapString
@@ -1695,6 +1731,12 @@ components:
         - 1
         - 2
         - 3
+
+    OptionalObject:
+      type: object
+      properties:
+        name:
+          type: string
 
     SimpleObject:
       type: object

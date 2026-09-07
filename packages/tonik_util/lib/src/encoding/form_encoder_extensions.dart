@@ -9,6 +9,8 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 /// Form encoding produces a list of [ParameterEntry] (`name=value` pairs) that
 /// callers join with the separator for their context — `&` for query strings
 /// and urlencoded bodies, `; ` for cookies.
+/// Declared parameter names are always percent-encoded; `allowReserved` applies
+/// to values, including object member names serialized as part of an object.
 
 // Items, keys, and values may be empty strings; encode to '' rather than throw.
 String _encodeValue(
@@ -38,7 +40,6 @@ extension FormUriEncoder on Uri {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -66,7 +67,6 @@ extension FormStringEncoder on String {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -94,7 +94,6 @@ extension FormIntEncoder on int {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -122,7 +121,6 @@ extension FormDoubleEncoder on double {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -150,7 +148,6 @@ extension FormNumEncoder on num {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -178,7 +175,6 @@ extension FormBoolEncoder on bool {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -206,7 +202,6 @@ extension FormDateTimeEncoder on DateTime {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -234,7 +229,6 @@ extension FormBigDecimalEncoder on BigDecimal {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
@@ -274,7 +268,6 @@ extension FormStringListEncoder on List<String> {
           name: _encodeValue(
             paramName,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
             textEncoding: textEncoding,
           ),
           value: uriEncode(
@@ -294,7 +287,6 @@ extension FormStringListEncoder on List<String> {
           name: _encodeValue(
             paramName,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
             textEncoding: textEncoding,
           ),
           value: alreadyEncoded
@@ -338,7 +330,6 @@ extension FormStringMapEncoder on Map<String, String> {
           name: _encodeValue(
             paramName,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
             textEncoding: textEncoding,
           ),
           value: uriEncode(
@@ -391,7 +382,6 @@ extension FormBinaryEncoder on List<int> {
       name: _encodeValue(
         paramName,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(

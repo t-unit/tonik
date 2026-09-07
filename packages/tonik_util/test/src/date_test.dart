@@ -176,6 +176,33 @@ void main() {
     });
 
     group('form encoding', () {
+      test('toForm escapes reserved name chars with allowReserved', () {
+        expect(
+          Date(2024, 3, 15).toForm(
+            'filter/name',
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+            textEncoding: utf8,
+          ),
+          const [(name: 'filter%2Fname', value: '2024-03-15')],
+        );
+      });
+
+      test('toForm retains name charset and query-component encoding', () {
+        expect(
+          Date(2024, 3, 15).toForm(
+            'clé/a b',
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+            useQueryComponent: true,
+            textEncoding: latin1,
+          ),
+          const [(name: 'cl%E9%2Fa+b', value: '2024-03-15')],
+        );
+      });
+
       test('toForm returns URL-encoded ISO date string', () {
         final date = Date(2024, 3, 15);
         final encoded = date

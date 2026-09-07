@@ -249,6 +249,64 @@ paths:
         '204':
           description: No Content
 
+  /form-reserved-names:
+    get:
+      operationId: testFormReservedNames
+      tags:
+        - query
+      summary: Test reserved characters in declared form query names
+      parameters:
+        - name: filter/name
+          in: query
+          style: form
+          allowReserved: true
+          schema:
+            type: string
+        - name: default/name
+          in: query
+          style: form
+          allowReserved: false
+          schema:
+            type: string
+        - name: repeated/name
+          in: query
+          style: form
+          explode: true
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: object/name
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/ReservedListObject'
+        - name: defaultObject/name
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ReservedListObject'
+        - name: date/name
+          in: query
+          style: form
+          allowReserved: true
+          schema:
+            type: string
+            format: date
+        - name: enum/name
+          in: query
+          style: form
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/ReservedChoice'
+      responses:
+        '204':
+          description: No Content
+
 components:
   schemas:
     ReservedChoice:
