@@ -1,43 +1,24 @@
 # Spring Boot MVC + springdoc
 
+From the repository root ([setup](../README.md#run)):
+
 ```sh
-./examples/run.sh java_spring_boot --backend both
+./examples/run.sh java_spring_boot
 ```
 
-Java 17, Maven 3.9.11, Spring Boot 3.5.5 and springdoc 2.8.13 are pinned in the
-Dockerfile and Maven parent/dependency declarations. The runtime image is
-Eclipse Temurin 17.0.16_8. Spring's controllers, Jackson models and Swagger
-annotations produce **OpenAPI 3.0.1** at `/openapi.json`. JSON `produces` is
-explicit so springdoc does not advertise wildcard `*/*` for JSON models.
+[Main.java](server/src/main/java/example/Main.java) uses Spring Boot 3.5.5 and
+springdoc 2.8.13 to produce OpenAPI 3.0 from records and controller annotations.
+Java 17 and Maven dependencies are pinned in the [Dockerfile](server/Dockerfile)
+and [pom.xml](server/pom.xml).
 
-The standalone Dart client has 18 explicit live tests.
+- JSON response media types are explicit; otherwise springdoc advertises `*/*`.
+- `/uploads/json` combines a file with a typed `application/json` part parsed by
+  Jackson. Ordinary forms use Spring's form converter and `MultiValueMap`.
+- Jackson normalizes the echoed timestamp from `+02:00` to UTC. Repeated query
+  values use the Servlet parameter array to keep literal commas inside elements.
+- Payment union annotations belong on the containing property; putting them on
+  both the interface and subtypes would create a circular schema. This example
+  covers `oneOf` and `allOf`.
 
-| Case | Producer behavior | Runtime/parser setup | Dio | HTTP | Limitation/evidence |
-| --- | --- | --- | --- | --- | --- |
-| JSON/formats/maps/null | Records and Schema metadata | Jackson | Pass | Pass | Initial timestamp has +02:00; Jackson normalizes its echoed value to UTC. |
-| Path/query/header/cookie | Spring parameter annotations | Servlet/Spring binding | Pass | Pass | Repeated raw parameter values preserve literal commas inside each element. |
-| URL-encoded form | FormFields request schema | FormHttpMessageConverter and MultiValueMap | Pass | Pass | ContentCachingRequestWrapper captures the bytes read by the converter. |
-| Multipart file/scalars | Explicit UploadFields request schema | Spring MultipartFile and RequestParam | Pass | Pass | File and scalars really travel in multipart, including a zero-byte path file. |
-| Typed JSON multipart part | RequestPart + explicit Encoding contentType | Jackson deserializes Metadata part | Pass | Pass | Receipt reads actual part Content-Type; optional charset is allowed. |
-| Binary/four charsets | Explicit byte-body schemas/media | byte[] and Charset encoders | Pass | Pass | UTF-8, Latin-1, Windows-1252 and Shift-JIS are actual bytes. |
-| `oneOf` | Union annotation on PaymentDocument.payment | Jackson polymorphic property | Pass | Pass | Both card and bank; card echo. |
-| `allOf` | Details references Product and Audit | Flat JSON handler result | Pass | Pass | Real flat JSON decoded into both constituents. |
-| 201/204/404 | Spring status annotations | Real handlers | Pass | Pass | Distinct customer input plus raw response checks secret omission. |
-| gzip | Standard embedded-server compression | Threshold 1 byte | Enabled; not explicitly asserted | Enabled; not explicitly asserted | Separate from charsets. |
-
-Two producer/runtime details are deliberate. Putting the same polymorphic union
-on both the base interface and subtypes produced a circular schema; placing the
-Jackson and schema annotations on the containing payment property produces the
-valid union used here. For repeated query values, Spring's List conversion can
-split commas; the receipt uses the Servlet API's parsed parameter array to
-preserve each value exactly.
-
-The echo test explicitly asserts Jackson's native UTC normalization. Instant
-comparison alone would miss that offset change. Native Bean Validation errors,
-`anyOf`, file arrays and advanced parameter styles remain follow-ups for this
-stack. Typed JSON parts are covered here rather than represented as JSON strings
-in ordinary form fields.
-
-References: [springdoc](https://springdoc.org/),
-[Spring multipart](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/multipart-forms.html),
-[Spring form converter](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/converter/FormHttpMessageConverter.html).
+See the [Dart demo](client/bin/example.dart), [live tests](client/test/live_test.dart),
+and [Spring multipart documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/multipart-forms.html).

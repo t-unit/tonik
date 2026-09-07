@@ -1,12 +1,11 @@
 # Real server examples
 
 Run Tonik-generated Dart clients against real servers using both Dio and HTTP.
-Requires Docker Compose, Python 3.9+, and Dart 3.13+.
+Requires Bash, Docker Compose, curl, and Dart 3.13+.
 
 ```sh
 git clone https://github.com/t-unit/tonik.git
 cd tonik
-dart pub get
 ./examples/run.sh python_fastapi
 ```
 

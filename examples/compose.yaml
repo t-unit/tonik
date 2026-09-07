@@ -19,9 +19,3 @@ services:
     profiles: [ruby_rails]
     build: ./ruby_rails/server
     ports: ["127.0.0.1::8000"]
-  validator:
-    profiles: [tools]
-    build: ./scripts/validator
-    network_mode: none
-    volumes:
-      - ./.artifacts:/artifacts:ro

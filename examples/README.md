@@ -1,52 +1,48 @@
 # Real server examples
 
-Five local servers generate OpenAPI and exchange real HTTP requests with
-Tonik-generated Dart clients. Their fake catalog data is fixed; no database,
-credentials, or external API is involved. The servers exercise framework parsing
-and serialization in addition to Tonik's existing fixture-based integration tests.
+Generate Dart clients from five real servers and call them with both Dio and
+HTTP. Every server uses fixed fake data and runs without a database or credentials.
 
-| Language | Server and producer | OpenAPI |
+| Language | Server and OpenAPI producer | OpenAPI |
 | --- | --- | --- |
-| Python | [FastAPI + Pydantic](python_fastapi/README.md) | 3.1 |
-| TypeScript | [NestJS + Swagger, Express adapter](typescript_nestjs/README.md) | 3.0 |
-| JavaScript | [Fastify + Swagger, dynamic mode](javascript_fastify/README.md) | 3.0 |
-| Java | [Spring Boot MVC + springdoc](java_spring_boot/README.md) | 3.0 |
-| Ruby | [Rails API + rswag request specs](ruby_rails/README.md) | 3.0 |
+| Python | [FastAPI + Pydantic](python_fastapi) | 3.1 |
+| TypeScript | [NestJS + Swagger on Express](typescript_nestjs) | 3.0 |
+| JavaScript | [Fastify + Swagger](javascript_fastify) | 3.0 |
+| Java | [Spring Boot + springdoc](java_spring_boot) | 3.0 |
+| Ruby | [Rails + rswag](ruby_rails) | 3.0 |
 
-## Run locally
+## Run
 
-Prerequisites: Docker with Docker Compose, Python 3.9+ for the standard-library
-runner, and this repository's Dart SDK and resolved root dependencies. Server
-runtimes and schema validation dependencies run inside containers. Set
-`TONIK_DART` to an SDK executable if the usual `dart` command is a wrapper; the
-runner automatically uses `.fvm/flutter_sdk/bin/cache/dart-sdk/bin/dart` when
-available.
+Install Bash, Docker with Docker Compose, curl, and Dart 3.13+. The runner resolves Dart
+dependencies; server dependencies are pinned and installed inside containers.
 
 ```sh
-# At the repository root, once:
-dart pub get
-
-# An explicit example is required. Both backends are the default.
 ./examples/run.sh python_fastapi
 ./examples/run.sh java_spring_boot --backend http
-./examples/run.sh all --backend both
-
-# Accept a changed producer snapshot only after reviewing the schema diff:
-./examples/run.sh ruby_rails --backend both --update-spec
+./examples/run.sh all
 ```
 
-Each run builds only the selected server, binds a random port on `127.0.0.1`,
-waits for readiness, and fetches `/openapi.json` from the live process. The pinned
-validator checks the actual OAS dialect and required contract features. The
-runner compares the fresh document with `openapi.json`, ignoring object key order
-but preserving array order and content. It then compiles the local Tonik CLI,
-generates the selected backend, resolves the generated package and standalone
-Dart client against the local `tonik_util`, analyzes both, runs the demonstration,
-and executes explicit live tests. With `--backend both`, generation and tests run
-sequentially for Dio and HTTP.
+Both backends run by default. The script uses the repository's FVM SDK when
+available, or `dart` from PATH. Set `TONIK_DART` to choose another SDK executable.
 
-Servers shut down after success, failure, or interruption. Compose project names
-are unique per invocation. A per-example directory lock prevents another run
-from overwriting generated clients or artifacts. Readiness has a 180-second
-limit, adjustable with `--timeout`. Initial Docker dependency downloads and
-builds take longer than subsequent runs.
+The runner starts the selected server on a random localhost port, fetches fresh
+OpenAPI, and passes it unchanged to the local Tonik generator. It then analyzes
+the generated package and client, runs the demo and tests, and stops the server.
+Readiness is limited to 180 seconds; use `--timeout SECONDS` to change it.
+
+## Explore
+
+Each directory contains the native app in `server/`, a Dart demo in
+`client/bin/example.dart`, and concrete live assertions in `client/test/`.
+The examples cover JSON models and formats, query/form encoding, multipart files,
+binary bodies, four text charsets, composition, and HTTP statuses. Each server's
+README explains its framework-specific behavior.
+
+Generated clients and fetched schemas are ignored. The current schema and server
+logs remain in `.artifacts/<example>/`. Add `--update-spec` to refresh the saved
+`openapi.json` snapshot after a successful run; snapshots are reference files,
+and client generation always uses the live schema.
+
+These examples are on-demand only. They are outside the workspace/default test
+commands and refuse `CI=true` or `CI=1`. Simultaneous runs of the same example are
+blocked to protect its generated client.
