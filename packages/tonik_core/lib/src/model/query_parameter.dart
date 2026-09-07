@@ -20,6 +20,10 @@ enum QueryParameterEncoding() {
   /// Objects are serialized as `paramName[property]=value`.
   /// Example: `?id[role]=admin&id[firstName]=Alex`
   deepObject,
+
+  /// A JSON content value serialized as one percent-encoded query parameter.
+  /// Example: `?filter=%7B%22status%22%3A%22active%22%7D`
+  json,
 }
 
 sealed class const QueryParameter({required final Context context}) {

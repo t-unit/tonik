@@ -1,10 +1,14 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_delimited_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating query parameters method for operations.
@@ -20,6 +24,8 @@ class const QueryGenerator({
     queryParameters,
   ) {
     final parameters = <Parameter>[];
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final helpers = <InlineHelper>[];
     final body = <Code>[
       declareFinal(r'_$entries')
           .assign(
@@ -53,11 +59,23 @@ class const QueryGenerator({
         ),
       );
 
-      final encodingCode = _generateEncodingCode(paramName, resolvedParam);
-      _addCodeWithNullCheck(body, encodingCode, paramName, resolvedParam);
+      final encodingCode = _generateEncodingCode(
+        paramName,
+        resolvedParam,
+        helperContext: helperContext,
+      );
+      helpers.addAll(encodingCode.inlineFunctions);
+      _addCodeWithNullCheck(
+        body,
+        encodingCode.unsafeRawStatements,
+        paramName,
+        resolvedParam,
+      );
     }
 
-    body.add(_generateReturnStatement());
+    body
+      ..insertAll(0, spliceInlineHelpers(helpers))
+      ..add(_generateReturnStatement());
 
     return Method(
       (b) => b
@@ -69,11 +87,41 @@ class const QueryGenerator({
     );
   }
 
-  List<Code> _generateEncodingCode(
+  BuiltStatements _generateEncodingCode(
     String paramName,
-    QueryParameterObject resolvedParam,
-  ) {
+    QueryParameterObject resolvedParam, {
+    required InlineHelperContext helperContext,
+  }) {
     final encoding = resolvedParam.encoding;
+
+    if (encoding == QueryParameterEncoding.json) {
+      final value = buildToJsonQueryParameterExpression(
+        paramName,
+        resolvedParam,
+        nameManager: nameManager,
+        package: package,
+        helperContext: helperContext,
+        useImmutableCollections: useImmutableCollections,
+        receiverIsPromotedNonNull: !resolvedParam.isRequired,
+      );
+      final entries = refer('jsonEncode', 'dart:convert')
+          .call([value.unsafeRawBody])
+          .property('toForm')
+          .call(
+            [specLiteralString(resolvedParam.rawName)],
+            {
+              'explode': literalBool(false),
+              'allowEmpty': literalBool(false),
+              'textEncoding': refer('utf8', 'dart:convert'),
+            },
+          );
+      return BuiltStatements(
+        statements: [
+          refer(r'_$entries').property('addAll').call([entries]).statement,
+        ],
+        inlineFunctions: value.inlineFunctions,
+      );
+    }
 
     if (encoding == QueryParameterEncoding.form) {
       return buildToFormQueryParameterCode(
@@ -82,7 +130,7 @@ class const QueryGenerator({
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
         allowReserved: resolvedParam.allowReserved,
-      ).statements;
+      );
     }
 
     if (encoding == QueryParameterEncoding.spaceDelimited ||
@@ -94,10 +142,12 @@ class const QueryGenerator({
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
         allowReserved: resolvedParam.allowReserved,
-      ).statements;
+      );
     }
 
-    return [_generateDeepObjectEncodingStatement(paramName, resolvedParam)];
+    return BuiltStatements.simple([
+      _generateDeepObjectEncodingStatement(paramName, resolvedParam),
+    ]);
   }
 
   Code _generateDeepObjectEncodingStatement(

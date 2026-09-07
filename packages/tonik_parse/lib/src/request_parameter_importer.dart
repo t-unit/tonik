@@ -1,9 +1,11 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
+import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 
@@ -224,16 +226,9 @@ class RequestParameterImporter({
           return null;
         }
 
-        if (parameter.schema == null) {
-          throw ArgumentError(
-            'Parameter ${name ?? context.path} must have a schema. '
-            'Complex parameters via content are not supported.',
-          );
-        }
-
-        final model = modelImporter.importSchema(parameter.schema!, context);
-
-        final rawDefault = parameter.schema!.rawDefault;
+        final schema = _parameterSchema(parameter);
+        final model = modelImporter.importSchema(schema, context);
+        final rawDefault = schema.rawDefault;
 
         switch (parameter.location) {
           case ParameterLocation.header:
@@ -261,7 +256,9 @@ class RequestParameterImporter({
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding: _queryEncoding(parameter.style),
+              encoding: parameter.content == null
+                  ? _queryEncoding(parameter.style)
+                  : core.QueryParameterEncoding.json,
               explode:
                   parameter.explode ??
                   _defaultExplodeForQueryParameter(parameter.style),
@@ -271,7 +268,11 @@ class RequestParameterImporter({
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               allowReserved: parameter.allowReserved ?? false,
               context: context,
-              examples: exampleImporter.fromParameter(parameter),
+              examples: parameter.content == null
+                  ? exampleImporter.fromParameter(parameter)
+                  : exampleImporter.fromMediaType(
+                      parameter.content!.values.single,
+                    ),
               defaultValue: rawDefault,
             );
             if (parameter.xDartName != null) {
@@ -319,6 +320,45 @@ class RequestParameterImporter({
             return cookieParam;
         }
     }
+  }
+
+  Schema _parameterSchema(Parameter parameter) {
+    final schema = parameter.schema;
+    final content = parameter.content;
+    if ((schema == null) == (content == null)) {
+      throw ArgumentError(
+        'Parameter ${parameter.name} must have exactly one of '
+        'schema or content.',
+      );
+    }
+    if (schema != null) return schema;
+
+    if (content!.length != 1) {
+      throw ArgumentError(
+        'Parameter ${parameter.name} content must have exactly one media type.',
+      );
+    }
+    if (parameter.location != ParameterLocation.query) {
+      throw UnimplementedError(
+        'Parameter content is only supported for query parameters, '
+        'found ${parameter.location.name} parameter ${parameter.name}.',
+      );
+    }
+    final mediaType = content.entries.single;
+    if (resolveContentType(mediaType.key, contentTypes: const {}, log: log) !=
+        core.ContentType.json) {
+      throw UnimplementedError(
+        'Unsupported content media type ${mediaType.key} for query parameter '
+        '${parameter.name}. Only JSON content is supported.',
+      );
+    }
+    final contentSchema = mediaType.value.schema;
+    if (contentSchema == null) {
+      throw ArgumentError(
+        'Content for query parameter ${parameter.name} must have a schema.',
+      );
+    }
+    return contentSchema;
   }
 
   // OpenAPI reserves these headers for media types and security schemes.

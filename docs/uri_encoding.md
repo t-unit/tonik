@@ -11,6 +11,21 @@ When `allowReserved` is not set (the default), tonik percent-encodes reserved ch
 following RFC 3986. This is the standard, safe behavior and is byte-for-byte identical to
 earlier tonik releases.
 
+## JSON query content
+
+Query parameters with `content: application/json` serialize their value as JSON and
+send it as one percent-encoded query parameter. JSON media types with a `+json`
+suffix are also supported. For example, `filter: {"status": "active"}` is sent as:
+
+```
+?filter=%7B%22status%22%3A%22active%22%7D
+```
+
+Generated models use their JSON representation, including nested models and formatted
+values. Optional parameters are omitted when no value or default is provided. Style,
+explode, and allowReserved settings apply to schema-based serialization; JSON content
+is always encoded as a single value.
+
 ## `allowReserved: true`
 
 OpenAPI lets a query parameter — or a property of an `application/x-www-form-urlencoded`

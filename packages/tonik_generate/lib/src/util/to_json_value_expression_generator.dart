@@ -73,22 +73,27 @@ BuiltExpression buildToJsonPathParameterExpression(
 
 /// Creates a [BuiltExpression] that correctly serializes a query parameter
 /// to its JSON representation.
+/// Set [receiverIsPromotedNonNull] when an optional parameter has been guarded.
 BuiltExpression buildToJsonQueryParameterExpression(
   String parameterName,
   QueryParameterObject parameter, {
   required NameManager nameManager,
   String? package,
   InlineHelperContext? helperContext,
+  bool useImmutableCollections = false,
+  bool receiverIsPromotedNonNull = false,
 }) {
   final model = parameter.model;
   return _buildSerializationExpression(
     refer(parameterName),
     model,
-    false,
+    model.isEffectivelyNullable,
     nameManager: nameManager,
     package: package,
     helperContext:
         helperContext ?? InlineHelperContext(nameManager: nameManager),
+    useImmutableCollections: useImmutableCollections,
+    receiverIsPromotedNonNull: receiverIsPromotedNonNull,
   );
 }
 
@@ -596,7 +601,7 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
           MapModel() => _handleMapExpressionBody(
             paramRef,
             model,
-            false,
+            model.isNullable,
             nameManager: nameManager,
             package: resolvedPackage,
             helperContext: helperContext,
@@ -607,7 +612,7 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
           ListModel() => _handleListExpressionBody(
             paramRef,
             model,
-            false,
+            model.isNullable,
             nameManager: nameManager,
             package: resolvedPackage,
             helperContext: helperContext,

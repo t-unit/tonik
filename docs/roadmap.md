@@ -30,7 +30,7 @@
 - `contains`, `minContains`, `maxContains`
 
 **Encoding & Content:**
-- Parameter encoding via content - only `schema` supported (see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content))
+- Parameter encoding via non-JSON content, and content on header, path, or cookie parameters (JSON query content is supported; see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content))
 - XML de- and encoding
 
 **References:**

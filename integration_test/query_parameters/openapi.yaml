@@ -16,6 +16,97 @@ tags:
     description: Operations demonstrating query parameters
 
 paths:
+  /items:
+    get:
+      tags:
+        - query
+      parameters:
+        - name: filter
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+      responses:
+        '204':
+          description: No content
+  /json-content-filter:
+    get:
+      operationId: testJsonContentFilter
+      tags:
+        - query
+      parameters:
+        - $ref: '#/components/parameters/JsonFilter'
+      responses:
+        '204':
+          description: No content
+  /json-content-recursive:
+    get:
+      operationId: testJsonContentRecursive
+      tags:
+        - query
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRecursiveFilter'
+        - name: other
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRecursiveFilter'
+      responses:
+        '204':
+          description: No content
+  /json-content-nullable:
+    get:
+      operationId: testJsonContentNullable
+      tags:
+        - query
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items:
+                  type: string
+                  format: date-time
+        - name: other
+          in: query
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items:
+                  type: string
+                  format: date-time
+      responses:
+        '204':
+          description: No content
+  /json-content-default:
+    get:
+      operationId: testJsonContentDefault
+      tags:
+        - query
+      parameters:
+        - name: status
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultJsonStatus'
+      responses:
+        '204':
+          description: No content
   /form-primitive:
     get:
       operationId: testFormPrimitive
@@ -1857,7 +1948,31 @@ paths:
           description: OK
 
 components:
+  parameters:
+    JsonFilter:
+      name: filter
+      in: query
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonFilter'
   schemas:
+    JsonRecursiveFilter:
+      type: object
+      nullable: true
+      additionalProperties:
+        $ref: '#/components/schemas/JsonRecursiveFilter'
+    JsonFilter:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+    DefaultJsonStatus:
+      type: string
+      default: active
     PartialFilter:
       type: object
       required:
