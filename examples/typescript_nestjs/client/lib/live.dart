@@ -5,8 +5,9 @@ import 'package:tonik_util/tonik_util.dart';
 
 CustomServer liveServer() {
   final ci = Platform.environment['CI']?.toLowerCase();
-  if (ci == 'true' || ci == '1') {
-    throw StateError('Live examples are on-demand only; CI is refused.');
+  if ((ci == 'true' || ci == '1') &&
+      Platform.environment['GITHUB_EVENT_NAME'] != 'workflow_dispatch') {
+    throw StateError('Live examples require a manual workflow_dispatch in CI.');
   }
   final baseUrl = Platform.environment['TONIK_EXAMPLE_BASE_URL'];
   if (baseUrl == null || baseUrl.isEmpty) {

@@ -30,6 +30,9 @@ OpenAPI, and passes it unchanged to the local Tonik generator. It then analyzes
 the generated package and client, runs the demo and tests, and stops the server.
 Readiness is limited to 180 seconds; use `--timeout SECONDS` to change it.
 
+On GitHub, open **Actions → Real Server Examples → Run workflow** and choose a
+server and backend. Logs and fetched schemas are saved as workflow artifacts.
+
 ## Explore
 
 Each directory contains the native app in `server/`, a Dart demo in
@@ -44,5 +47,5 @@ logs remain in `.artifacts/<example>/`. Add `--update-spec` to refresh the saved
 and client generation always uses the live schema.
 
 These examples are on-demand only. They are outside the workspace/default test
-commands and refuse `CI=true` or `CI=1`. Simultaneous runs of the same example are
-blocked to protect its generated client.
+commands; CI runs require a manual `workflow_dispatch`. Simultaneous local runs
+of the same example are blocked to protect its generated client.

@@ -11,7 +11,7 @@ Examples: python_fastapi, typescript_nestjs, javascript_fastify,
 
 Build a local server, fetch its OpenAPI, generate Dart clients, and run the demos
 and live tests. Both backends run by default. Requires Docker Compose, curl, and
-Dart. Set TONIK_DART to choose a Dart SDK executable. These tests refuse CI.
+Dart. Set TONIK_DART to choose a Dart SDK executable. CI requires a manual workflow.
 HELP
 }
 
@@ -43,7 +43,11 @@ case "$backend" in
   *) fail '--backend must be both, dio, or http' ;;
 esac
 [[ "$timeout" =~ ^[1-9][0-9]*$ ]] || fail '--timeout must be a positive integer'
-case "${CI:-}" in [Tt][Rr][Uu][Ee]|1) fail 'Live examples are on-demand only; CI is refused.' ;; esac
+case "${CI:-}" in
+  [Tt][Rr][Uu][Ee]|1)
+    [[ "${GITHUB_EVENT_NAME:-}" == workflow_dispatch ]] || fail 'Live examples require a manual workflow_dispatch in CI.'
+    ;;
+esac
 
 # Resolve paths once so this script works from any working directory.
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
