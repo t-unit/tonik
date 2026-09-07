@@ -14,13 +14,20 @@ final class MultipartWire._(final List<MultipartWirePart> parts) {
       throw StateError('Request has no multipart boundary: $contentType');
     }
 
-    return MultipartWire._(
-      request.bodyText
-          .split('--$boundary')
-          .where((segment) => segment.contains('\r\n\r\n'))
-          .map(MultipartWirePart.new)
-          .toList(growable: false),
-    );
+    final body = request.bodyText;
+    if (!body.startsWith('--$boundary\r\n') ||
+        !body.endsWith('\r\n--$boundary--\r\n')) {
+      throw StateError('Multipart body is missing opening or closing boundary');
+    }
+    final parts = body
+        .split('--$boundary')
+        .where((segment) => segment.contains('\r\n\r\n'))
+        .map(MultipartWirePart.new)
+        .toList(growable: false);
+    if (parts.isEmpty) {
+      throw StateError('Multipart body contains no parts');
+    }
+    return MultipartWire._(parts);
   }
 
   List<MultipartWirePart> named(String name) =>

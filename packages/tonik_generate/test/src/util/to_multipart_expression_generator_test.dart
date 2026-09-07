@@ -70,6 +70,9 @@ void main() {
 void test() {
   final _\$formData = FormData();
 $expectedPartCode
+  if (_\$formData.fields.isEmpty && _\$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _\$formData;
 }
 ''';
@@ -120,6 +123,9 @@ $expectedPartCode
                   ),
                 ),
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -305,6 +311,9 @@ $expectedPartCode
             if (body.name != null) {
               _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -343,6 +352,9 @@ $expectedPartCode
             final _$formData = FormData();
             if (body.nickname != null) {
               _$formData.files.add(MapEntry((r'nickname').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -384,6 +396,9 @@ $expectedPartCode
             if (body.bio != null) {
               _$formData.files.add(MapEntry((r'bio').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -391,7 +406,7 @@ $expectedPartCode
       );
     });
 
-    test('generates empty FormData when there are no parts', () {
+    test('rejects multipart bodies that contain no parts', () {
       final content = multipartContentFixture(testContext, []);
 
       final result = buildMultipartBodyStatements(
@@ -406,6 +421,9 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -458,6 +476,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'title').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.title, contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -499,6 +520,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -541,6 +565,9 @@ $expectedPartCode
             if (body.password != null) {
               _$formData.files.add(MapEntry((r'password').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.password!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -577,6 +604,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'data').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -615,6 +645,9 @@ $expectedPartCode
             throw EncodingException(
               r"Cannot encode NeverModel property 'impossible' - this type does not permit any value.",
             );
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -653,6 +686,9 @@ $expectedPartCode
               throw EncodingException(
                 r"Cannot encode NeverModel property '$total' - this type does not permit any value.",
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -691,6 +727,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -727,6 +766,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -763,6 +805,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'value').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -799,6 +844,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -835,6 +883,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'birth_date').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -871,6 +922,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'amount').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -907,6 +961,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'website').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -945,6 +1002,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'created_at').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -990,6 +1050,9 @@ $expectedPartCode
             if (body.count != null) {
               _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1028,6 +1091,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1065,6 +1131,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1102,6 +1171,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1145,6 +1217,9 @@ $expectedPartCode
             if (body.score != null) {
               _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1185,6 +1260,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1224,6 +1302,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1263,6 +1344,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1302,6 +1386,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1341,6 +1428,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'value').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1392,6 +1482,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1445,6 +1538,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1491,6 +1587,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1539,6 +1638,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1584,6 +1686,9 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1634,6 +1739,9 @@ $expectedPartCode
             final _$formData = FormData();
             if (body.status != null) {
               _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -1689,6 +1797,9 @@ $expectedPartCode
             if (body.status != null) {
               _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1737,6 +1848,9 @@ $expectedPartCode
                   (r'avatar').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\')),
                 ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -1787,6 +1901,9 @@ $expectedPartCode
                     await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\')),
                   ));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -1840,6 +1957,9 @@ $expectedPartCode
                     await MultipartFile.fromFile(path, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\')),
                   ));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -1896,6 +2016,9 @@ $expectedPartCode
                   ),
                 ));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -1942,6 +2065,9 @@ $expectedPartCode
                   (r'file').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -1992,6 +2118,9 @@ $expectedPartCode
                 headers: _$avatarHeaders,
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2047,6 +2176,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2098,6 +2230,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2150,6 +2285,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2202,6 +2340,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2254,6 +2395,9 @@ $expectedPartCode
                   contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -2311,6 +2455,9 @@ $expectedPartCode
                 ),
               ));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2361,6 +2508,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/xml'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2409,6 +2559,9 @@ $expectedPartCode
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -2463,6 +2616,9 @@ $expectedPartCode
                   _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
                 }
               }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -2510,6 +2666,9 @@ $expectedPartCode
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -2560,6 +2719,9 @@ $expectedPartCode
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -2608,6 +2770,9 @@ $expectedPartCode
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -2667,6 +2832,9 @@ $expectedPartCode
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -2728,6 +2896,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -2787,6 +2958,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -2848,6 +3022,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -2910,6 +3087,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -2971,6 +3151,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3033,6 +3216,9 @@ $expectedPartCode
                   ),
                 );
               }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -3085,6 +3271,9 @@ $expectedPartCode
                   _$formData.files.add(
                     MapEntry((_$part.name).replaceAll(r'\', r'\\'), MultipartFile.fromString(_$part.value)),
                   );
+                }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
                 }
                 return _$formData;
               }
@@ -3160,6 +3349,9 @@ $expectedPartCode
                     ),
                   );
                 }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3207,6 +3399,9 @@ $expectedPartCode
                 throw EncodingException(
                   r'pipeDelimited style is not supported for object multipart part address',
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3257,6 +3452,9 @@ $expectedPartCode
                   _$formData.files.add(
                     MapEntry((_$part.name).replaceAll(r'\', r'\\'), MultipartFile.fromString(_$part.value)),
                   );
+                }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
                 }
                 return _$formData;
               }
@@ -3334,6 +3532,9 @@ $expectedPartCode
                     headers: _$addressHeaders,
                   ),
                 ),);
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3433,6 +3634,9 @@ $expectedPartCode
                   contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -3484,6 +3688,9 @@ $expectedPartCode
                   ),
                 ));
               }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -3523,6 +3730,9 @@ $expectedPartCode
                   contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -3568,6 +3778,9 @@ $expectedPartCode
               throw EncodingException(
                 r'deepObject style is not supported for map multipart properties (property: metadata). Maps do not implement ParameterEncodable.toDeepObject().',
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -3613,6 +3826,9 @@ $expectedPartCode
                 throw EncodingException(
                   r"deepObject style is not supported for map multipart properties (property: it's-meta). Maps do not implement ParameterEncodable.toDeepObject().",
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3691,6 +3907,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3772,6 +3991,9 @@ $expectedPartCode
                     ),
                   );
                 }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3851,6 +4073,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -3930,6 +4155,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -4009,6 +4237,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -4065,6 +4296,9 @@ $expectedPartCode
                   contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -4111,6 +4345,9 @@ $expectedPartCode
             for (final item in body.tags) {
               _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4152,6 +4389,9 @@ $expectedPartCode
             final _$formData = FormData();
             for (final item in body.tags) {
               _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -4202,6 +4442,9 @@ $expectedPartCode
                   ),
                 ),
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -4244,6 +4487,9 @@ $expectedPartCode
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
               _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4285,6 +4531,9 @@ $expectedPartCode
             final _$formData = FormData();
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -4329,6 +4578,9 @@ $expectedPartCode
             throw EncodingException(
               r'deepObject style is not supported for array multipart properties (property: tags).',
             );
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4372,6 +4624,9 @@ $expectedPartCode
               throw EncodingException(
                 r"deepObject style is not supported for array multipart properties (property: it's-tags).",
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -4432,6 +4687,9 @@ $expectedPartCode
                     item.uriEncode(allowEmpty: true, textEncoding: utf8),
                   ),
                 );
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -4494,6 +4752,9 @@ $expectedPartCode
                       ),
                 ),
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -4538,6 +4799,9 @@ $expectedPartCode
             for (final item in body.scores) {
               _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), item.toString()));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4579,6 +4843,9 @@ $expectedPartCode
             final _$formData = FormData();
             for (final item in body.scores) {
               _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), jsonEncode(item)));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -4632,6 +4899,9 @@ $expectedPartCode
                       ),
                 ),
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -4674,6 +4944,9 @@ $expectedPartCode
             for (final item in body.dates) {
               _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), item.toTimeZonedIso8601String()));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4715,6 +4988,9 @@ $expectedPartCode
             final _$formData = FormData();
             for (final item in body.dates) {
               _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), jsonEncode(item)));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -4765,6 +5041,9 @@ $expectedPartCode
                   _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
               }
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4811,6 +5090,9 @@ $expectedPartCode
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -4864,6 +5146,9 @@ $expectedPartCode
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4914,6 +5199,9 @@ $expectedPartCode
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -4960,6 +5248,9 @@ $expectedPartCode
               for (final item in body.tags!) {
                 _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -5009,6 +5300,9 @@ $expectedPartCode
                 _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
               }
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -5050,6 +5344,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -5090,6 +5387,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -5125,6 +5425,9 @@ $expectedPartCode
               final _$formData = FormData();
               for (final item in body.tags) {
                 _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -5174,7 +5477,12 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.addresses) {
+                _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -5215,6 +5523,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -5257,6 +5568,9 @@ $expectedPartCode
               final _$formData = FormData();
               if (body.tags != null) {
                 _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
@@ -5305,6 +5619,9 @@ $expectedPartCode
                 for (final item in body.tags) {
                   _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
                 }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5349,6 +5666,9 @@ $expectedPartCode
                 for (final item in body.scores) {
                   _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), item.toString()));
                 }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5391,6 +5711,9 @@ $expectedPartCode
                 final _$formData = FormData();
                 for (final item in body.dates) {
                   _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), item.toTimeZonedIso8601String()));
+                }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
                 }
                 return _$formData;
               }
@@ -5451,6 +5774,9 @@ $expectedPartCode
                       ),
                     );
                   }
+                  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                    throw EncodingException(r'Multipart request body must contain at least one part.');
+                  }
                   return _$formData;
                 }
               '''),
@@ -5487,6 +5813,9 @@ $expectedPartCode
                   for (final item in body.tags!) {
                     _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
                   }
+                }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
                 }
                 return _$formData;
               }
@@ -5540,6 +5869,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'priorities').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -5592,6 +5924,9 @@ $expectedPartCode
                       _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
                   }
                 }
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5639,6 +5974,9 @@ $expectedPartCode
                 throw EncodingException(
                   r'Arrays of arrays are not supported for multipart encoding (property: matrix).',
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5686,6 +6024,9 @@ $expectedPartCode
                 throw EncodingException(
                   r'Arrays of arrays are not supported for multipart encoding (property: $matrix).',
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5729,6 +6070,9 @@ $expectedPartCode
                 throw EncodingException(
                   r'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5772,6 +6116,9 @@ $expectedPartCode
                 throw EncodingException(
                   r"""Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "it's-items". Only application/json is supported for content-based array serialization.""",
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -5812,6 +6159,9 @@ $expectedPartCode
             await () async {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }();
           }
@@ -5877,6 +6227,9 @@ $expectedPartCode
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -5939,6 +6292,9 @@ $expectedPartCode
                   (r'file').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6005,6 +6361,9 @@ $expectedPartCode
                 headers: _$addressHeaders,
               ),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6058,6 +6417,9 @@ $expectedPartCode
               (r'description').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6113,6 +6475,9 @@ $expectedPartCode
               (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6179,6 +6544,9 @@ $expectedPartCode
               (r'status').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6238,6 +6606,9 @@ $expectedPartCode
                   (r'file').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6314,6 +6685,9 @@ $expectedPartCode
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                 ));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6360,6 +6734,9 @@ $expectedPartCode
                   (r'file').replaceAll(r'\', r'\\'),
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
                 ));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6417,6 +6794,9 @@ $expectedPartCode
             _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags) {
               _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6487,6 +6867,9 @@ $expectedPartCode
                   ),
                 ),
               );
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -6543,6 +6926,9 @@ $expectedPartCode
             _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
               _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6602,6 +6988,9 @@ $expectedPartCode
             _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$datesHeaders)));
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6665,6 +7054,9 @@ $expectedPartCode
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), headers: _$filesHeaders)));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6731,6 +7123,9 @@ $expectedPartCode
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6796,6 +7191,9 @@ $expectedPartCode
                     await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
                   ));
               }
+            }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
@@ -6866,6 +7264,9 @@ $expectedPartCode
                   ));
               }
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6922,6 +7323,9 @@ $expectedPartCode
               (r'data').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -6977,6 +7381,9 @@ $expectedPartCode
               (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -7033,6 +7440,9 @@ $expectedPartCode
               (r'createdAt').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
             ));
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -7107,6 +7517,9 @@ $expectedPartCode
                     ),
                   ),
                 );
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }
             '''),
@@ -7177,6 +7590,9 @@ $expectedPartCode
                   await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), headers: _$documentHeaders),
                 ));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         '''),
@@ -7215,6 +7631,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           '''),
@@ -7261,6 +7680,9 @@ $expectedPartCode
                     (r"it's-field").replaceAll(r'\', r'\\'),
                     await MultipartFile.fromFile(path, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\')),
                   ));
+              }
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }

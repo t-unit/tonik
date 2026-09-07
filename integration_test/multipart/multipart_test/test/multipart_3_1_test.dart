@@ -72,14 +72,16 @@ void main() {
       expect(parts.single.bodyText, 'a,b,c');
     });
 
-    test('omits the optional array when it is null', () async {
+    test('rejects an omitted array when no other part exists', () async {
       final server = await _jsonServer();
 
       final response = await _api(server)
           .postFormNonExploded(body: const FormNonExplodedForm());
 
-      expect(response, isTonikSuccess);
-      expect(MultipartWire(await server.takeRequest()).named('tags'), isEmpty);
+      final error = requireError(response);
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(server.requestCount, 0);
     });
 
     test('serializes an empty array as one empty multipart field', () async {

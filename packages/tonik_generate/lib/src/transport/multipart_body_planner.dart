@@ -389,6 +389,17 @@ class const MultipartBodyPlanner({
           'is supported for content-based array serialization.',
         );
       }
+      if (item is ClassModel ||
+          item is MapModel ||
+          (item is CompositeModel &&
+              (item.hasComplexTypes || item.hasMixedTypes))) {
+        final json = item is MapModel
+            ? itemPart.value
+            : itemPart.value.property('toJson').call([]);
+        return _loop('item', part.value, [
+          _text(itemPart, _json(json), fallback: 'application/json'),
+        ]);
+      }
       final variable = _dio ? 'e' : 'item';
       final itemValue = refer(variable);
       final itemJson = switch (item) {

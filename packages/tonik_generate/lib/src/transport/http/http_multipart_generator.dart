@@ -31,6 +31,14 @@ List<Code> buildHttpMultipartBodyStatements(MultipartBodyPlan plan) {
         MultipartCode(:final code) => code,
         MultipartAppend() => _append(emission, variable, custom),
       },
+    Block.of([
+      Code('if ($variable.isEmpty) {'),
+      generateEncodingExceptionExpression(
+        'Multipart request body must contain at least one part.',
+        raw: true,
+      ).statement,
+      const Code('}'),
+    ]),
     (custom
             ? refer(
                 'TonikMultipartBody',

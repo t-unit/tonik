@@ -249,7 +249,7 @@ void main() {
     },
   );
 
-  test('omits empty base64 arrays and absent optional binary fields', () async {
+  test('rejects empty custom multipart parts before sending', () async {
     final server = await RawRequestServer.start();
     final api = MultipartApi(
       CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
@@ -259,9 +259,32 @@ void main() {
       body: const Base64PartsForm(files: []),
       filesPartLabel: 'empty',
     );
+    final error = requireError(response);
+    expect(error.type, TonikErrorType.encoding);
+    expect(error.error, isA<EncodingException>());
+    expect(server.requestCount, 0);
+  });
+
+  test('omits empty base64 arrays when a binary part is present', () async {
+    final server = await RawRequestServer.start();
+    final api = MultipartApi(
+      CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.postBase64Parts(
+      body: const Base64PartsForm(
+        files: [],
+        binary: TonikFileBytes([0, 255, 128, 65], fileName: 'raw.bin'),
+      ),
+      filesPartLabel: 'empty',
+    );
     expect(response, isTonikSuccess);
 
-    expect(MultipartWire(await server.takeRequest()).parts, isEmpty);
+    final wire = MultipartWire(await server.takeRequest());
+    expect(wire.parts, hasLength(1));
+    expect(wire.named('files'), isEmpty);
+    expect(wire.single('binary').filename, 'raw.bin');
+    expect(wire.single('binary').bodyBytes, [0, 255, 128, 65]);
   });
 
   test(

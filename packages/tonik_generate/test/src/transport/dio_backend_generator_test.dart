@@ -45,6 +45,9 @@ Object? test() {
       ),
     ),
   );
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$formData;
 }
 ''';
@@ -90,6 +93,9 @@ Object? test() {
   _$formData.fields.add(MapEntry(
     (entry.name).replaceAll(r'\', r'\\'), entry.value,
   ));
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$formData;
 }
 ''';
