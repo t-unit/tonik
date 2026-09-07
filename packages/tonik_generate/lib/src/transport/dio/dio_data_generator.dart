@@ -138,6 +138,7 @@ class const DioDataGenerator({
         switch (item.contentType) {
           ContentType.text || ContentType.form => true,
           ContentType.json => _encodesJsonRoot(item.model),
+          ContentType.bytes => item.model is BinaryModel,
           _ => false,
         };
     final built = _bodyExpression(
@@ -201,11 +202,11 @@ class const DioDataGenerator({
         );
       case ContentType.bytes:
         return BuiltExpression.simple(switch (content.model) {
-          BinaryModel() =>
-            (isRequired
-                    ? value.property('toBytes')
-                    : value.nullSafeProperty('toBytes'))
-                .call([]),
+          // Dio transforms ordinary byte lists; Uint8List is sent as raw bytes.
+          BinaryModel() => refer(
+            'Uint8List',
+            'dart:typed_data',
+          ).property('fromList').call([value.property('toBytes').call([])]),
           PrimitiveModel() => value,
           _ => generateEncodingExceptionExpression(
             'Unsupported model for bytes content type.',
