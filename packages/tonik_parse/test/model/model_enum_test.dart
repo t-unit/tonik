@@ -111,6 +111,48 @@ void main() {
     expect((required as EnumModel).isNullable, isFalse);
   });
 
+  test('inherits defaults from string and integer enum components', () {
+    final api = Importer().import({
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Status': {
+            'type': 'string',
+            'enum': ['active', 'inactive'],
+            'default': 'active',
+          },
+          'Priority': {
+            'type': 'integer',
+            'enum': [1, 2],
+            'default': 2,
+          },
+          'Event': {
+            'type': 'object',
+            'properties': {
+              'status': {r'$ref': '#/components/schemas/Status'},
+              'priority': {r'$ref': '#/components/schemas/Priority'},
+            },
+          },
+        },
+      },
+    });
+    final status = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'Status',
+    ) as EnumModel<String>;
+    final priority = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'Priority',
+    ) as EnumModel<int>;
+    final event = api.models.whereType<ClassModel>().single;
+
+    expect(status, isNot(isA<DateTimeEnumModel>()));
+    expect(status.defaultValue, 'active');
+    expect(priority.defaultValue, 2);
+    expect(event.properties[0].effectiveDefaultValue, 'active');
+    expect(event.properties[1].effectiveDefaultValue, 2);
+  });
+
   group('date-time enums', () {
     test('retains named literals, nullability and reference defaults', () {
       final api = Importer().import({
@@ -157,7 +199,7 @@ void main() {
         (m) => m is NamedModel && m.name == 'Event',
       ) as ClassModel;
 
-      expect(timestamp.isDateTime, isTrue);
+      expect(timestamp, isA<DateTimeEnumModel>());
       expect(timestamp.isNullable, isTrue);
       expect(timestamp.defaultValue, '2026-09-06T12:00:00.1000+02:00');
       expect(timestamp.values, {
@@ -215,7 +257,7 @@ void main() {
       final event = api.models.whereType<ClassModel>().single;
       final timestamp = event.properties.first.model as EnumModel<String>;
 
-      expect(timestamp.isDateTime, isTrue);
+      expect(timestamp, isA<DateTimeEnumModel>());
       expect(timestamp.values.single.value, '2026-09-06T12:00:00.1000+02:00');
       expect(event.properties[1].model, isA<DateTimeModel>());
       expect(event.properties[2].model, isA<UriModel>());

@@ -378,7 +378,7 @@ class NameManager({
       ];
       final normalized = normalizeEnumValues(
         inputs,
-        additionalReservedNames: {if (model.isDateTime) 'toDateTime'},
+        additionalReservedNames: {if (model is DateTimeEnumModel) 'toDateTime'},
       );
       final result = (
         valueNames: List<String>.unmodifiable(

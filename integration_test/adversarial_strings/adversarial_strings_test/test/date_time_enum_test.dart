@@ -160,6 +160,14 @@ void main() {
     });
   });
 
+  test('ordinary string and integer enums inherit component defaults', () {
+    final value = PlainEnumDefaultEnvelope.fromJson(const <String, Object?>{});
+
+    expect(value.status, DefaultedStringChoice.active);
+    expect(value.priority, DefaultedIntegerChoice.two);
+    expect(value.toJson(), {'status': 'active', 'priority': 2});
+  });
+
   test('unknown fallback cannot be converted or serialized', () {
     final value = EmptyDateTimeChoice.fromJson('2026-09-06T12:00:00Z');
 

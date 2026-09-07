@@ -425,6 +425,27 @@ components:
         - $toDateTime
         - nanoseconds
 
+    DefaultedStringChoice:
+      type: string
+      enum: [active, inactive]
+      default: active
+
+    DefaultedIntegerChoice:
+      type: integer
+      enum: [1, 2]
+      default: 2
+
+    PlainEnumDefaultEnvelope:
+      type: object
+      required:
+        - status
+        - priority
+      properties:
+        status:
+          $ref: '#/components/schemas/DefaultedStringChoice'
+        priority:
+          $ref: '#/components/schemas/DefaultedIntegerChoice'
+
     DateTimeChoiceAlias:
       $ref: '#/components/schemas/DateTimeChoice'
 

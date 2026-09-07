@@ -19,9 +19,8 @@ void main() {
 
   group('effectiveDefault', () {
     test('inherits a date-time enum default through an alias chain', () {
-      final model = EnumModel<String>(
+      final model = DateTimeEnumModel(
         values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
-        isDateTime: true,
         defaultValue: '2026-09-06T12:00:00.1000+02:00',
         isNullable: false,
         isDeprecated: false,

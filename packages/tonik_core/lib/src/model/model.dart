@@ -39,6 +39,7 @@ sealed class Model({required final Context context}) {
     ListModel(:final name) => 'ListModel($name)',
     MapModel(:final name) => 'MapModel($name)',
     ClassModel(:final name) => 'ClassModel($name)',
+    DateTimeEnumModel(:final name) => 'DateTimeEnumModel($name)',
     EnumModel(:final name) => 'EnumModel($name)',
     AllOfModel(:final name) => 'AllOfModel($name)',
     OneOfModel(:final name) => 'OneOfModel($name)',
@@ -308,12 +309,7 @@ class EnumModel<T>({
   @override var String? nameOverride,
   var String? description,
 
-  /// Whether string values have the OpenAPI `date-time` format.
-  ///
-  /// The format enables date-time conversion; values retain string identity.
-  final bool isDateTime = false,
-
-  /// The schema default, retained for date-time enums.
+  /// The enclosing schema's raw default, validated during generation.
   final Object? defaultValue,
 
   /// Optional fallback value if no other value matches.
@@ -327,6 +323,32 @@ class EnumModel<T>({
   @override
   String toString() =>
       'EnumModel<$T>{name: $name, nameOverride: $nameOverride, '
+      'values: $values, isNullable: $isNullable, description: $description, '
+      'isDeprecated: $isDeprecated, fallbackValue: $fallbackValue, '
+      'examples: $examples}';
+}
+
+/// An enum of exact string literals with date-time conversion support.
+///
+/// Values keep their original spelling for identity and serialization.
+/// Date-time parsing is a separate conversion and never determines membership.
+class DateTimeEnumModel({
+  required super.values,
+  required super.isNullable,
+  required super.context,
+  required super.isDeprecated,
+  required super.examples,
+  super.name,
+  super.nameOverride,
+  super.description,
+  super.defaultValue,
+  super.fallbackValue,
+  super.isReadOnly,
+  super.isWriteOnly,
+}) extends EnumModel<String> {
+  @override
+  String toString() =>
+      'DateTimeEnumModel{name: $name, nameOverride: $nameOverride, '
       'values: $values, isNullable: $isNullable, description: $description, '
       'isDeprecated: $isDeprecated, fallbackValue: $fallbackValue, '
       'examples: $examples}';

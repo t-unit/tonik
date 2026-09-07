@@ -145,6 +145,7 @@ class StableModelSorter() {
     if (depth > _maxDepth) {
       return switch (model) {
         ClassModel(:final name) => 'ClassModel{$name}',
+        DateTimeEnumModel(:final name) => 'DateTimeEnumModel{$name}',
         EnumModel(:final name) => 'EnumModel{$name}',
         AliasModel(:final name) => 'AliasModel{$name}',
         ListModel(:final name) => 'ListModel{$name}',
@@ -200,6 +201,8 @@ class StableModelSorter() {
           depth,
           preserveCompoundOrder: preserveCompoundOrder,
         ),
+      DateTimeEnumModel(:final name, :final values) =>
+        'DateTimeEnumModel{$name,${_stableSortedEnumValues(values)}}',
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) => _nestedModelKey(

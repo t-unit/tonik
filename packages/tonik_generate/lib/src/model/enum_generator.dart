@@ -172,7 +172,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
         )
         ..values.addAll(enumValues);
 
-      if (model.isDateTime && T == String) {
+      if (model is DateTimeEnumModel) {
         b.methods.add(
           _generateToDateTimeMethod(actualEnumName, fallbackNormalizedName),
         );

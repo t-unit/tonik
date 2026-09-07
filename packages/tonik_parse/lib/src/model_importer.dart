@@ -1503,18 +1503,10 @@ class ModelImporter._(
       'number' when schema.format == 'float' || schema.format == 'double' =>
         DoubleModel(context: context),
       'number' => NumberModel(context: context),
-      'integer' when schema.enumerated != null => _parseEnum<int>(
+      'integer' when schema.enumerated != null => _parseIntegerEnum(
         name,
-        schema.enumerated!,
-        schema.isNullable ?? hasNullType,
+        schema,
         context,
-        emptyFallbackValue: -1,
-        description: schema.description,
-        isDeprecated: schema.isDeprecated ?? false,
-        isReadOnly: schema.isReadOnly ?? false,
-        isWriteOnly: schema.isWriteOnly ?? false,
-        xDartEnum: schema.xDartEnum,
-        examples: exampleImporter.fromSchema(schema),
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -1533,6 +1525,11 @@ class ModelImporter._(
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
+      _logModelAdded(model);
+      _registerModel(model);
+    }
+
+    if (model is EnumModel && (name == null || _findNamedModel(name) == null)) {
       _logModelAdded(model);
       _registerModel(model);
     }
@@ -2039,37 +2036,66 @@ class ModelImporter._(
     String? name,
     Schema schema,
     Context context,
-  ) => _parseEnum<String>(
-    name,
-    schema.enumerated!,
-    schema.isNullable ?? schema.hasNullType,
-    context,
-    emptyFallbackValue: _unknownEnumCaseName,
-    isDateTime: schema.format == 'date-time',
-    defaultValue: schema.format == 'date-time' ? schema.rawDefault : null,
-    description: schema.description,
-    isDeprecated: schema.isDeprecated ?? false,
-    isReadOnly: schema.isReadOnly ?? false,
-    isWriteOnly: schema.isWriteOnly ?? false,
-    xDartEnum: schema.xDartEnum,
-    examples: exampleImporter.fromSchema(schema),
-  );
+  ) {
+    final parsed = _parseEnumValues<String>(
+      name,
+      schema,
+      context,
+      emptyFallbackValue: _unknownEnumCaseName,
+    );
+    final createEnum = schema.format == 'date-time'
+        ? DateTimeEnumModel.new
+        : EnumModel<String>.new;
+    return createEnum(
+      name: name,
+      values: parsed.values,
+      isNullable: parsed.isNullable,
+      fallbackValue: parsed.fallbackValue,
+      context: context,
+      defaultValue: schema.rawDefault,
+      description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
+    );
+  }
 
-  EnumModel<T> _parseEnum<T>(
+  EnumModel<int> _parseIntegerEnum(
     String? name,
-    List<dynamic> values,
-    bool isNullable,
+    Schema schema,
+    Context context,
+  ) {
+    final parsed = _parseEnumValues<int>(
+      name,
+      schema,
+      context,
+      emptyFallbackValue: -1,
+    );
+    return EnumModel<int>(
+      name: name,
+      values: parsed.values,
+      isNullable: parsed.isNullable,
+      fallbackValue: parsed.fallbackValue,
+      context: context,
+      defaultValue: schema.rawDefault,
+      description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
+    );
+  }
+
+  ({Set<EnumEntry<T>> values, bool isNullable, EnumEntry<T>? fallbackValue})
+  _parseEnumValues<T>(
+    String? name,
+    Schema schema,
     Context context, {
     required T emptyFallbackValue,
-    required String? description,
-    required bool isDeprecated,
-    required List<Example> examples,
-    bool isDateTime = false,
-    Object? defaultValue,
-    bool isReadOnly = false,
-    bool isWriteOnly = false,
-    List<String>? xDartEnum,
   }) {
+    final values = schema.enumerated!;
+    final xDartEnum = schema.xDartEnum;
     log.fine('Parsing enum $name<$T> for $context with values $values');
     final location = switch (name) {
       final name? when name.isNotEmpty => context.push(name).toString(),
@@ -2114,27 +2140,11 @@ class ModelImporter._(
       );
     }
 
-    final model = EnumModel<T>(
-      isDeprecated: isDeprecated,
+    return (
       values: enumValues,
-      isNullable: isNullable || hasNull,
-      context: context,
-      name: name,
-      description: description,
-      isReadOnly: isReadOnly,
-      isWriteOnly: isWriteOnly,
-      examples: examples,
+      isNullable: (schema.isNullable ?? schema.hasNullType) || hasNull,
       fallbackValue: fallbackValue,
-      isDateTime: isDateTime,
-      defaultValue: defaultValue,
     );
-
-    if (name == null || _findNamedModel(name) == null) {
-      _logModelAdded(model);
-      _registerModel(model);
-    }
-
-    return model;
   }
 
   void _logModelAdded(Model model) {

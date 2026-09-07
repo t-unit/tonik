@@ -175,7 +175,7 @@ void main() {
     test(
       'date-time enum keeps literals and reserves the conversion method',
       () {
-        final model = EnumModel<String>(
+        final model = DateTimeEnumModel(
           name: 'Timestamp',
           values: {
             const EnumEntry(
@@ -187,7 +187,6 @@ void main() {
               nameOverride: r'$toDateTime',
             ),
           },
-          isDateTime: true,
           isNullable: false,
           isDeprecated: false,
           context: Context.initial(),
@@ -241,14 +240,13 @@ void main() {
     test(
       'date-time conversion rejects a synthetic fallback before parsing',
       () {
-        final model = EnumModel<String>(
+        final model = DateTimeEnumModel(
           name: 'Timestamp',
           values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
           fallbackValue: const EnumEntry(
             value: '2026-01-01T00:00:00Z',
             nameOverride: 'toDateTime',
           ),
-          isDateTime: true,
           isNullable: false,
           isDeprecated: false,
           context: Context.initial(),
