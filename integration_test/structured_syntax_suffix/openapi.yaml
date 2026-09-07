@@ -12,6 +12,37 @@ tags:
   - name: widgets
     description: Widget operations
 paths:
+  /document:
+    get:
+      tags: [widgets]
+      operationId: getDocument
+      responses:
+        '200':
+          description: Document representations selected by media parameters
+          content:
+            application/vnd.example.document+json:
+              schema:
+                type: integer
+            application/vnd.example.document+json;version=2:
+              schema:
+                type: string
+            'application/vnd.example.document+json;version=2;profile="Full;V2"':
+              schema:
+                type: boolean
+  /document/reversed:
+    get:
+      tags: [widgets]
+      operationId: getDocumentReversed
+      responses:
+        '200':
+          description: Parameterized representation declared first
+          content:
+            application/vnd.example.document+json;version=2:
+              schema:
+                type: string
+            application/vnd.example.document+json:
+              schema:
+                type: integer
   /widget:
     get:
       tags:
