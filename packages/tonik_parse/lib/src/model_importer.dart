@@ -147,14 +147,19 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.isBooleanSchema != null) {
-      final model = schema.isBooleanSchema!
+    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
+      final model = schema.isBooleanSchema != false
           ? AnyModel(context: context)
           : NeverModel(context: context, isNullable: false);
       final aliasModel = AliasModel(
         name: name,
         model: model,
         context: context,
+        description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
+        isNullable: schema.isNullable ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
         defaultValue: schema.rawDefault,
         examples: const [],
       );
@@ -428,7 +433,7 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.isBooleanSchema != null) {
+    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
       // Already fully populated in pass 1.
       applyExamples(existingModel, examples);
       return;
@@ -1415,8 +1420,8 @@ class ModelImporter._(
       return existing;
     }
 
-    if (schema.isBooleanSchema != null) {
-      return schema.isBooleanSchema!
+    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
+      return schema.isBooleanSchema != false
           ? AnyModel(context: context)
           : NeverModel(context: context, isNullable: false);
     }

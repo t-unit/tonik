@@ -201,7 +201,10 @@ ApFlatCaptureResult buildApFlatCaptureLoop(
       return RejectingApFlatCapture(
         codes: [
           ..._knownKeysConst(plan),
-          Code('for (final _\$entry in $sourceMapVar.entries) {'),
+          Code(
+            'for (final ${plan.knownWireKeys.isEmpty ? '_' : r'_$entry'} '
+            'in $sourceMapVar.entries) {',
+          ),
           ..._exclusionOpen(plan),
           throwExpression.statement,
           ..._exclusionClose(plan),
