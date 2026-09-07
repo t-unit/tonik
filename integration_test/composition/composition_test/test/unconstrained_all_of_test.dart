@@ -3,6 +3,16 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('integer intersection retains its wrapper and JSON encoding', () {
+    const value = IntegerEmptyIntersection(int: 7);
+
+    expect(value.toJson(), 7);
+    expect(
+      IntegerEmptyIntersection.fromJson(7),
+      const IntegerEmptyIntersection(int: 7),
+    );
+  });
+
   test('all-Any intersections roundtrip null, arrays and constrained maps', () {
     final value = UnconstrainedAllOfHolder.fromJson(const {
       'any': null,

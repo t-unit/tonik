@@ -1661,19 +1661,28 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         examples: const [],
       );
 
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-
+      final method = generator
+          .generateClass(model)
+          .methods
+          .singleWhere((method) => method.name == 'parameterProperties');
+      const expected = r'''
+@override
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (parameter != null) {
+    _$result[r'Parameter'] = PropertyValue.scalar(
+      encodeUnknownFlatScalar(
+        parameter!,
+        context: r'$20100401Payments.Parameter',
+      ),
+    );
+  }
+  return _$result;
+}
+''';
       expect(
-        collapseWhitespace(classCode),
-        contains(
-          collapseWhitespace(r'''
-encodeUnknownFlatScalar(
-  parameter!,
-  context: r'$20100401Payments.Parameter',
-)
-'''),
-        ),
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
       );
     });
 

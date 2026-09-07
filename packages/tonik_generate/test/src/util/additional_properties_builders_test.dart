@@ -427,20 +427,19 @@ void main() {
       );
 
       const expected = r'''
-        void run() {
-          for (final _ in _$values.entries) {
-            throw FormDecodingException(
-              r'Map values cannot be decoded from a flat value at Order.additionalProperties',
-            );
+        class Temp {
+          void run() {
+            for (final _ in _$values.entries) {
+              throw FormDecodingException(
+                r'Map values cannot be decoded from a flat value at Order.additionalProperties',
+              );
+            }
           }
         }
       ''';
 
       expect(result, isA<RejectingApFlatCapture>());
-      expect(
-        collapseWhitespace(formatCodes(result.codes)),
-        contains(collapseWhitespace(expected)),
-      );
+      expect(formatCodes(result.codes), format(expected));
     });
   });
 

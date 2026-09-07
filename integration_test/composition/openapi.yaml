@@ -1016,6 +1016,11 @@ components:
     EmptyIntersection:
       allOf: [{}, {}]
 
+    IntegerEmptyIntersection:
+      allOf:
+        - type: integer
+        - {}
+
     OpenEmptyIntersection:
       allOf: [{}]
       additionalProperties: true
