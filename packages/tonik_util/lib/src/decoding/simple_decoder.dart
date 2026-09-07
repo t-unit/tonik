@@ -28,11 +28,9 @@ extension SimpleDecoder on String? {
 
   /// Decodes a string to a nullable string.
   ///
-  /// Returns null if the string is empty or null.
-  String? decodeSimpleNullableString({String? context}) {
-    if (this?.isEmpty ?? true) return null;
-    return this!;
-  }
+  /// Returns the string value as is, including an empty string.
+  /// Returns null only when the value is absent.
+  String? decodeSimpleNullableString({String? context}) => this;
 
   /// Decodes a string to an integer.
   ///
@@ -300,10 +298,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!
-        .split(',')
-        .map((s) => s.decodeSimpleNullableString(context: context))
-        .toList();
+    return this!.split(',').map((s) => s.isEmpty ? null : s).toList();
   }
 
   /// Decodes a string to a nullable list of nullable strings.
