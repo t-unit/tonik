@@ -59,6 +59,8 @@ coverage/
 
 # Internal planning docs
 docs/plans/
+PLAN.md
+PLANNING.md
 
 # Local agent configuration
 AGENTS.md

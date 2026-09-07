@@ -1,0 +1,14 @@
+name: ruby_rails_example
+publish_to: none
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+dependencies:
+  # Keep one lockfile stable when switching the generated transport.
+  dio: 5.11.1
+  http: 1.6.0
+  ruby_rails_api:
+    path: ../generated/ruby_rails_api
+  tonik_util:
+    path: ../../../packages/tonik_util
+dev_dependencies:
+  test: 1.32.0

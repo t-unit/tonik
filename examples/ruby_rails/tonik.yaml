@@ -1,0 +1,5 @@
+packageName: ruby_rails_api
+spec: openapi.json
+outputDir: generated
+contentTypes:
+  text/csv: text

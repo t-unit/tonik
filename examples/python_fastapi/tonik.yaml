@@ -1,0 +1,5 @@
+packageName: python_fastapi_api
+spec: openapi.json
+outputDir: generated
+contentTypes:
+  text/csv: text

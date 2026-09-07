@@ -1,0 +1,14 @@
+name: typescript_nestjs_example
+publish_to: none
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+dependencies:
+  # Keep one lockfile stable when switching the generated transport.
+  dio: 5.11.1
+  http: 1.6.0
+  typescript_nestjs_api:
+    path: ../generated/typescript_nestjs_api
+  tonik_util:
+    path: ../../../packages/tonik_util
+dev_dependencies:
+  test: 1.32.0
