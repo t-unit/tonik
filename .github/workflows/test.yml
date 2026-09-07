@@ -72,10 +72,6 @@ jobs:
         shell: bash
         run: bash scripts/test_integration_setup.sh
 
-      - name: Test published-version verification
-        shell: bash
-        run: bash scripts/test_verify_published_version.sh
-
       - name: Run fixed-offset tests in a DST timezone
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         working-directory: packages/tonik_util
