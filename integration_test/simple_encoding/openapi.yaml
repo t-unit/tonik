@@ -16,6 +16,87 @@ tags:
     description: Operations demonstrating simple encoding
 
 paths:
+  /headers/reserved/no-content:
+    parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: testReservedHeadersNoContent
+      tags:
+        - simple-encoding
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+
+  /headers/reserved/json:
+    parameters:
+      - name: CONTENT-TYPE
+        in: header
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: testReservedHeadersJson
+      tags:
+        - simple-encoding
+      parameters:
+        - $ref: '#/components/parameters/ReservedAccept'
+        - $ref: '#/components/parameters/ReservedAuthorization'
+        - name: X-Trace-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: JSON response
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /headers/reserved/status:
+    get:
+      operationId: testReservedResponseContentType
+      tags:
+        - simple-encoding
+      responses:
+        '200':
+          description: Status
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                enum: [text/plain]
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /headers/reserved/referenced-response:
+    get:
+      operationId: testReservedReferencedResponseHeader
+      tags:
+        - simple-encoding
+      responses:
+        '200':
+          $ref: '#/components/responses/ReservedHeaderResponse'
+
   /anyof/{flexibleValue}:
     get:
       operationId: testAnyOfInPath
@@ -1248,6 +1329,43 @@ paths:
                 format: byte
 
 components:
+  parameters:
+    ReservedAccept:
+      name: aCcEpT
+      in: header
+      required: true
+      schema:
+        type: string
+    ReservedAuthorization:
+      name: AUTHORIZATION
+      in: header
+      required: true
+      schema:
+        type: string
+  responses:
+    ReservedHeaderResponse:
+      description: Response with reserved and ordinary headers
+      headers:
+        CONTENT-TYPE:
+          $ref: '#/components/headers/StaleMediaType'
+        X-Media-Type:
+          $ref: '#/components/headers/Content-Type'
+        X-Request-Id:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: string
+  headers:
+    StaleMediaType:
+      schema:
+        type: string
+        enum: [text/plain]
+    Content-Type:
+      description: Reusable identifier for an ordinary response header
+      schema:
+        type: string
   schemas:
     StatusEnum:
       type: string
