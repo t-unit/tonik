@@ -50,16 +50,16 @@ List<({String normalizedName, Property property})> normalizeProperties(
 /// - [123, one_two_three] -> [oneHundredTwentyThree, oneTwoThree]
 /// - [_, __, ___] -> [value, value2, value3]
 List<({String normalizedName, String originalValue})> normalizeEnumValues(
-  List<String> values,
-) {
-  final normalized = values
-      .map(
-        (value) => (
-          normalizedName: normalizeEnumValueName(value),
-          originalValue: value,
-        ),
-      )
-      .toList();
+  List<String> values, {
+  Set<String> additionalReservedNames = const {},
+}) {
+  final normalized = values.map((value) {
+    final name = normalizeEnumValueName(value);
+    return (
+      normalizedName: additionalReservedNames.contains(name) ? '\$$name' : name,
+      originalValue: value,
+    );
+  }).toList();
 
   return ensureUniqueness(normalized);
 }

@@ -47,6 +47,117 @@ void main() {
       );
     });
 
+    test(
+      'wraps required and optional aliased map headers as immutable maps',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        final operation = Operation(
+          operationId: 'mapHeaders',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/maps',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          securitySchemes: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 204): ResponseObject(
+              name: 'MapHeadersResponse',
+              context: context,
+              description: '',
+              bodies: const {},
+              headers: {
+                'X-Meta': ResponseHeaderObject(
+                  name: 'X-Meta',
+                  context: context,
+                  description: '',
+                  isRequired: true,
+                  isDeprecated: false,
+                  model: mapModel,
+                  explode: true,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+                'X-Optional': ResponseHeaderObject(
+                  name: 'X-Optional',
+                  context: context,
+                  description: '',
+                  isRequired: false,
+                  isDeprecated: false,
+                  model: AliasModel(
+                    name: 'MetaAlias',
+                    model: mapModel,
+                    context: context,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                  explode: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+        );
+        final immutableGenerator = ParseGenerator(
+          nameManager: nameManager,
+          package: package,
+          backendGenerator: const DioBackendGenerator(),
+          useImmutableCollections: true,
+        );
+
+        final code = collapseWhitespace(
+          format(
+            immutableGenerator
+                .generateParseResponseMethod(operation)
+                .accept(emitter)
+                .toString(),
+          ),
+        );
+
+        expect(
+          code,
+          contains(
+            collapseWhitespace('''
+            xMeta: IMap(
+              (response.headers[r'X-Meta']?.join(',')).decodeSimpleMap(
+                (v) => v.decodeSimpleString(context: r'X-Meta'),
+                explode: true,
+                context: r'X-Meta',
+              ),
+            ),
+          '''),
+          ),
+        );
+        expect(
+          code,
+          contains(
+            collapseWhitespace('''
+            xOptional: (response.headers[r'X-Optional']?.join(',')) == null
+              ? null
+              : IMap(
+                  (response.headers[r'X-Optional']?.join(','))
+                    .decodeSimpleNullableMap(
+                      (v) => v.decodeSimpleString(context: r'X-Optional'),
+                      explode: false,
+                      context: r'X-Optional',
+                    ),
+                ),
+          '''),
+          ),
+        );
+      },
+    );
+
     test('generates for primitive response', () {
       final operation = Operation(
         operationId: 'primitiveOp',

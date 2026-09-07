@@ -11,6 +11,8 @@ Defaults are supported on:
 - model class properties (`components.schemas.*.properties.*.default`),
 - operation parameters (the parameter's `schema.default`) for path, query,
   header, and cookie locations,
+- referenced string and integer enum schemas, including date-time enums
+  and references through aliases,
 - referenced `allOf`, `oneOf`, and `anyOf` schemas with an enclosing
   `default`, including references through aliases,
 - `$ref` siblings — a property `$ref`-ing another schema can carry a
@@ -19,6 +21,9 @@ Defaults are supported on:
 Defaults declared on individual composition branches are not inherited by the
 composition. A local property or parameter default takes precedence over the
 referenced schema's default.
+
+Enum defaults select the member with the exact declared wire value. Date-time
+enum defaults are enum constants and retain the original timestamp spelling.
 
 ## Behaviour
 

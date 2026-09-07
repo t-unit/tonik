@@ -125,9 +125,8 @@ class const PathGenerator({
       return;
     }
 
-    // Simple-encoded parameters and adjacent literals are concatenated into a
-    // single list entry. Label and matrix parameters always become their own
-    // list entries because they produce their own prefix (. or ;).
+    // Every expansion belongs to its original slash-delimited segment,
+    // including label and matrix prefixes (. or ;) and adjacent literals.
     final currentConcatParts = <Expression>[];
 
     for (final part in parts.where((p) => p.isNotEmpty)) {
@@ -170,16 +169,12 @@ class const PathGenerator({
           );
           currentConcatParts.add(valueExpression.expression);
         case PathParameterEncoding.label:
-          _flushConcatParts(currentConcatParts, pathPartExpressions);
-
           final valueExpression = buildToLabelPathParameterExpression(
             param.normalizedName,
             param.parameter,
           );
-          pathPartExpressions.add(valueExpression.expression);
+          currentConcatParts.add(valueExpression.expression);
         case PathParameterEncoding.matrix:
-          _flushConcatParts(currentConcatParts, pathPartExpressions);
-
           // `.resolved` is only needed for this pre-flight type test —
           // `isEffectivelyNullable` and `buildMatrixParameterExpression`
           // handle aliases.
@@ -208,7 +203,7 @@ class const PathGenerator({
             explode: literalBool(param.parameter.explode),
             allowEmpty: literalBool(param.parameter.allowEmptyValue),
           );
-          pathPartExpressions.add(matrixExpression.expression);
+          currentConcatParts.add(matrixExpression.expression);
       }
     }
 
@@ -226,7 +221,12 @@ class const PathGenerator({
         if (i > 0) {
           codes.add(const Code(' + '));
         }
-        codes.add(parts[i].code);
+        // Encoders can emit `throw` expressions. Parentheses keep an adjacent
+        // literal from becoming part of the thrown expression.
+        final part = parts[i];
+        codes.add(
+          part is BinaryExpression ? part.parenthesized.code : part.code,
+        );
       }
       target.add(CodeExpression(Block.of(codes)));
     }

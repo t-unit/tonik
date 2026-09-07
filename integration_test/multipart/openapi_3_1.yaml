@@ -15,6 +15,26 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/quoted-dynamic-names:
+    post:
+      operationId: postQuotedDynamicNames
+      tags:
+        - multipart
+      summary: Post exploded object properties containing backslashes
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuotedObjectForm'
+            encoding:
+              details:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
   /multipart31/read-only:
     post:
       operationId: postReadOnlyFields
@@ -326,6 +346,22 @@ paths:
 
 components:
   schemas:
+    QuotedObjectForm:
+      type: object
+      required:
+        - details
+      properties:
+        details:
+          $ref: '#/components/schemas/QuotedNameDetails'
+
+    QuotedNameDetails:
+      type: object
+      required:
+        - 'nested\field'
+      properties:
+        'nested\field':
+          type: string
+
     ReadOnlyFields:
       type: object
       required:

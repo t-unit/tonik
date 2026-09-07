@@ -28,11 +28,9 @@ extension SimpleDecoder on String? {
 
   /// Decodes a string to a nullable string.
   ///
-  /// Returns null if the string is empty or null.
-  String? decodeSimpleNullableString({String? context}) {
-    if (this?.isEmpty ?? true) return null;
-    return this!;
-  }
+  /// Returns the string value as is, including an empty string.
+  /// Returns null only when the value is absent.
+  String? decodeSimpleNullableString({String? context}) => this;
 
   /// Decodes a string to an integer.
   ///
@@ -300,10 +298,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!
-        .split(',')
-        .map((s) => s.decodeSimpleNullableString(context: context))
-        .toList();
+    return this!.split(',').map((s) => s.isEmpty ? null : s).toList();
   }
 
   /// Decodes a string to a nullable list of nullable strings.
@@ -313,6 +308,72 @@ extension SimpleDecoder on String? {
   List<String?>? decodeSimpleNullableStringNullableList({String? context}) {
     if (this?.isEmpty ?? true) return null;
     return decodeSimpleStringNullableList(context: context);
+  }
+
+  /// Decodes a flat simple-style object, converting values with [decodeValue].
+  ///
+  /// Exploded objects use `key=value,key=value`; non-exploded objects use
+  /// `key,value,key,value`. A bare exploded key has an empty value.
+  /// Keys and values retain literal percent sequences.
+  /// An empty string represents an empty map. Throws [InvalidTypeException]
+  /// for null and [InvalidFormatException] for malformed or duplicate pairs.
+  Map<String, T> decodeSimpleMap<T>(
+    T Function(String) decodeValue, {
+    required bool explode,
+    String? context,
+  }) {
+    final value = this;
+    if (value == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Map<String, T>,
+        context: context,
+      );
+    }
+    if (value.isEmpty) return {};
+
+    final parts = value.split(',');
+    final result = <String, T>{};
+    final location = context == null ? '' : ' in $context';
+    if (!explode && parts.length.isOdd) {
+      throw InvalidFormatException(
+        value: value,
+        format: 'alternating key-value pairs$location',
+      );
+    }
+    for (var i = 0; i < parts.length; i += explode ? 1 : 2) {
+      final String key;
+      final String rawValue;
+      if (explode) {
+        final separator = parts[i].indexOf('=');
+        key = separator == -1 ? parts[i] : parts[i].substring(0, separator);
+        rawValue = separator == -1 ? '' : parts[i].substring(separator + 1);
+      } else {
+        key = parts[i];
+        rawValue = parts[i + 1];
+      }
+      if (result.containsKey(key)) {
+        throw InvalidFormatException(
+          value: key,
+          format: 'single occurrence per key$location',
+        );
+      }
+      result[key] = decodeValue(rawValue);
+    }
+    return result;
+  }
+
+  /// Decodes a nullable flat simple-style object.
+  ///
+  /// Returns null only when the field is absent.
+  /// An empty field is an empty map.
+  Map<String, T>? decodeSimpleNullableMap<T>(
+    T Function(String) decodeValue, {
+    required bool explode,
+    String? context,
+  }) {
+    if (this == null) return null;
+    return decodeSimpleMap(decodeValue, explode: explode, context: context);
   }
 
   /// Decodes a string to a Date.
