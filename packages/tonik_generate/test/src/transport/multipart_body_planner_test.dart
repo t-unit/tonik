@@ -89,6 +89,40 @@ Object? test() {
   });
 
   group('single-value parts', () {
+    test(
+      'Dio retains a binary array content-type override for both sources',
+      () {
+        final content = multipartContentFixture(context, [
+          multipartPartFixture(
+            name: 'files',
+            model: ListModel(
+              content: BinaryModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            encoding: const PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'image/png',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          ),
+        ]);
+
+        final plan = const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true);
+        final parts = plan.emissions.whereType<MultipartAppend>().toList();
+
+        expect(parts, hasLength(2));
+        expect(parts[0].source, MultipartValueSource.bytes);
+        expect(parts[0].contentType, 'image/png');
+        expect(parts[1].source, MultipartValueSource.path);
+        expect(parts[1].contentType, 'image/png');
+      },
+    );
+
     test('retains file bytes and the existing filename fallback', () {
       expectPropertyCode(BinaryModel(context: context), r'''
   _$multipartFiles.add(

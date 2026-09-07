@@ -1841,12 +1841,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'avatar').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\')),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'avatar').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\')),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'avatar').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -1893,12 +1893,12 @@ $expectedPartCode
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'document').replaceAll(r'\', r'\\'),
-                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\')),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'document').replaceAll(r'\', r'\\'),
-                    await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\')),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
               }
             }
@@ -1949,12 +1949,12 @@ $expectedPartCode
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'photo').replaceAll(r'\', r'\\'),
-                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\')),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'photo').replaceAll(r'\', r'\\'),
-                    await MultipartFile.fromFile(path, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\')),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'photo').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
               }
             }
@@ -2058,12 +2058,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -5036,9 +5036,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
               }
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -5086,9 +5086,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
               }
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -5919,9 +5919,9 @@ $expectedPartCode
                 for (final item in body.files) {
                   switch (item) {
                     case TonikFileBytes(:final bytes, :final fileName):
-                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
                     case TonikFilePath(:final path, :final fileName):
-                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'))));
+                      _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'))));
                   }
                 }
                 if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6219,12 +6219,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6285,12 +6285,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6599,12 +6599,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6677,12 +6677,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6727,12 +6727,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'file').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\')),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -7050,9 +7050,9 @@ $expectedPartCode
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), MultipartFile.fromBytes(bytes, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$filesHeaders)));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry((r'files').replaceAll(r'\', r'\\'), await MultipartFile.fromFile(path, filename: (fileName ?? r'files').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$filesHeaders)));
               }
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -7183,12 +7183,12 @@ $expectedPartCode
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'file').replaceAll(r'\', r'\\'),
-                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'file').replaceAll(r'\', r'\\'),
-                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                   ));
               }
             }
@@ -7255,12 +7255,12 @@ $expectedPartCode
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'file').replaceAll(r'\', r'\\'),
-                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r'file').replaceAll(r'\', r'\\'),
-                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), headers: _$fileHeaders),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r'file').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$fileHeaders),
                   ));
               }
             }
@@ -7582,12 +7582,12 @@ $expectedPartCode
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'document').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), headers: _$documentHeaders),
+                  MultipartFile.fromBytes(bytes, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$documentHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
                   (r'document').replaceAll(r'\', r'\\'),
-                  await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), headers: _$documentHeaders),
+                  await MultipartFile.fromFile(path, filename: (fileName ?? r'document').replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream'), headers: _$documentHeaders),
                 ));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -7673,12 +7673,12 @@ $expectedPartCode
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r"it's-field").replaceAll(r'\', r'\\'),
-                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\')),
+                    MultipartFile.fromBytes(bytes, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
                     (r"it's-field").replaceAll(r'\', r'\\'),
-                    await MultipartFile.fromFile(path, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\')),
+                    await MultipartFile.fromFile(path, filename: (fileName ?? r"it's-field").replaceAll(r'\', r'\\'), contentType: DioMediaType.parse(r'application/octet-stream')),
                   ));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {

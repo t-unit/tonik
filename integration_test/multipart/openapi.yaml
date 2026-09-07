@@ -304,6 +304,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/FilesResponse'
 
+  /multipart/multiple-files-override:
+    post:
+      operationId: postMultipleFilesOverride
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipleFilesForm'
+            encoding:
+              files:
+                contentType: image/png
+      responses:
+        '204':
+          description: Uploaded
+
   /multipart/byte:
     post:
       operationId: postByteField
