@@ -38,13 +38,64 @@ Object? test() {
   final _$formData = FormData();
   _$formData.files.add(
     MapEntry(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       MultipartFile.fromString(
         body.value,
         contentType: DioMediaType.parse(r'text/plain'),
       ),
     ),
   );
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
+  test('quotes literal file names and dynamic field names for native Dio', () {
+    final plan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: [
+        MultipartAppend(
+          name: specLiteralString(r'profile\name'),
+          value: refer('bytes'),
+          source: MultipartValueSource.bytes,
+          filename: specLiteralString(r'file\name.txt'),
+        ),
+        MultipartAppend(
+          name: refer('entry').property('name'),
+          value: refer('entry').property('value'),
+          source: MultipartValueSource.field,
+        ),
+      ],
+    );
+    final method = Method(
+      (builder) => builder
+        ..name = 'test'
+        ..returns = refer('Object?', 'dart:core')
+        ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+    );
+    const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  _$formData.files.add(MapEntry(
+    (r'profile\name').replaceAll(r'\', r'\\'),
+    MultipartFile.fromBytes(bytes,
+      filename: (r'file\name.txt').replaceAll(r'\', r'\\')),
+  ));
+  _$formData.fields.add(MapEntry(
+    (entry.name).replaceAll(r'\', r'\\'), entry.value,
+  ));
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$formData;
 }
 ''';

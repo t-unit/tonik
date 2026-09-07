@@ -19,6 +19,16 @@ BuiltStatements buildMultipartBodyStatements(MultipartBodyPlan plan) {
         MultipartCode(:final code) => code,
         MultipartAppend() => _append(emission),
       },
+    Block.of([
+      const Code(
+        r'if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {',
+      ),
+      generateEncodingExceptionExpression(
+        'Multipart request body must contain at least one part.',
+        raw: true,
+      ).statement,
+      const Code('}'),
+    ]),
     refer(r'_$formData').returned.statement,
   ]);
 }
@@ -35,7 +45,11 @@ BuiltExpression buildMultipartBodyExpression(MultipartBodyPlan plan) =>
 
 Code _append(MultipartAppend part) {
   final arguments = <String, Expression>{
-    'filename': ?part.filename,
+    if (part.filename case final filename?)
+      'filename': filename.parenthesized.property('replaceAll').call([
+        specLiteralString(r'\'),
+        specLiteralString(r'\\'),
+      ]),
     if (part.contentType case final contentType?)
       'contentType': refer(
         'DioMediaType',
@@ -63,7 +77,13 @@ Code _append(MultipartAppend part) {
       .property(part.source == MultipartValueSource.field ? 'fields' : 'files')
       .property('add')
       .call([
-        refer('MapEntry', 'dart:core').call([part.name, value]),
+        refer('MapEntry', 'dart:core').call([
+          part.name.parenthesized.property('replaceAll').call([
+            specLiteralString(r'\'),
+            specLiteralString(r'\\'),
+          ]),
+          value,
+        ]),
       ])
       .statement;
 }

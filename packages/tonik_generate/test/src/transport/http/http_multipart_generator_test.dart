@@ -29,12 +29,98 @@ Object? test() {
   final _$multipartFiles = <MultipartFile>[];
   _$multipartFiles.add(
     MultipartFile.fromBytes(
-      r'value',
+      (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(body.value),
       contentType: MediaType.parse(r'text/plain'),
     ),
   );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
+}
+''');
+  });
+
+  test('quotes dynamic names and filenames for native HTTP parts', () {
+    final dynamicPlan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: [
+        MultipartAppend(
+          name: refer('entry').property('name'),
+          value: refer('bytes'),
+          source: MultipartValueSource.bytes,
+          filename: specLiteralString(r'file\name.txt'),
+          contentType: 'text/plain',
+        ),
+      ],
+    );
+    _expectBody(buildHttpMultipartBodyStatements(dynamicPlan), r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(MultipartFile.fromBytes(
+    (entry.name).replaceAll(r'\', r'\\'), bytes,
+    filename: (r'file\name.txt').replaceAll(r'\', r'\\'),
+    contentType: MediaType.parse(r'text/plain'),
+  ));
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$multipartFiles;
+}
+''');
+  });
+
+  test('passes raw names and filenames to the custom HTTP encoder', () {
+    final customPlan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      usesCustomParts: true,
+      emissions: [
+        MultipartAppend(
+          name: specLiteralString(r'profile\name'),
+          value: refer('bytes'),
+          source: MultipartValueSource.bytes,
+          filename: specLiteralString(r'file\name.txt'),
+          contentType: 'text/plain',
+          headers: refer('headers'),
+        ),
+      ],
+    );
+    _expectBody(buildHttpMultipartBodyStatements(customPlan), r'''
+Object? test() {
+  final _$multipartParts = <TonikMultipartPart>[];
+  _$multipartParts.add(TonikMultipartPart(
+    name: r'profile\name', bytes: bytes, contentType: r'text/plain',
+    filename: r'file\name.txt', headers: headers,
+  ));
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return TonikMultipartBody(_$multipartParts);
+}
+''');
+  });
+
+  test('rejects custom multipart bodies when there are no parts', () {
+    final emptyPlan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      usesCustomParts: true,
+      emissions: const [],
+    );
+
+    _expectBody(buildHttpMultipartBodyStatements(emptyPlan), r'''
+Object? test() {
+  final _$multipartParts = <TonikMultipartPart>[];
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return TonikMultipartBody(_$multipartParts);
 }
 ''');
   });

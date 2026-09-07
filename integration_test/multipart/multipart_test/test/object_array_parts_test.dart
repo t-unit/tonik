@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 import 'multipart_wire.dart';
 
@@ -32,7 +33,7 @@ void main() {
     expect(wire.named('optionalItems'), isEmpty);
   });
 
-  test('an empty object array emits no parts', () async {
+  test('rejects an entirely empty multipart body before sending', () async {
     final server = await RawRequestServer.start();
     final api = MultipartApi(CustomServer(baseUrl: server.baseUrl));
 
@@ -40,10 +41,41 @@ void main() {
       body: const ObjectArrayForm(items: []),
     );
 
-    expect(response, isTonikSuccess);
-    final wire = MultipartWire(await server.takeRequest());
-    expect(wire.parts, isEmpty);
+    final error = requireError(response);
+    expect(error.type, TonikErrorType.encoding);
+    expect(error.error, isA<EncodingException>());
+    expect(server.requestCount, 0);
   });
+
+  test('omits an absent optional multipart body', () async {
+    final server = await RawRequestServer.start();
+    final api = MultipartApi(CustomServer(baseUrl: server.baseUrl));
+
+    final response = await api.postOptionalObjectArrays();
+
+    expect(response, isTonikSuccess);
+    final request = await server.takeRequest();
+    expect(server.requestCount, 1);
+    expect(request.bodyBytes, isEmpty);
+    expect(request.header('content-type'), isNull);
+  });
+
+  test(
+    'rejects a supplied empty optional multipart body before sending',
+    () async {
+      final server = await RawRequestServer.start();
+      final api = MultipartApi(CustomServer(baseUrl: server.baseUrl));
+
+      final response = await api.postOptionalObjectArrays(
+        body: const ObjectArrayForm(items: []),
+      );
+
+      final error = requireError(response);
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(server.requestCount, 0);
+    },
+  );
 
   test('a single object emits one object part', () async {
     final server = await RawRequestServer.start();
@@ -88,7 +120,7 @@ void main() {
     expect(jsonDecode(items[1].bodyText), {'name': 'beta'});
   });
 
-  test('a present optional object array also emits repeated parts', () async {
+  test('omits an empty array when another array emits parts', () async {
     final server = await RawRequestServer.start();
     final api = MultipartApi(CustomServer(baseUrl: server.baseUrl));
 

@@ -1013,6 +1013,45 @@ components:
         anyOfValue:
           $ref: '#/components/schemas/AnyOfWithNull'
 
+    EmptyIntersection:
+      allOf: [{}, {}]
+
+    IntegerEmptyIntersection:
+      allOf:
+        - type: integer
+        - {}
+
+    OpenEmptyIntersection:
+      allOf: [{}]
+      additionalProperties: true
+
+    StringPropertiesIntersection:
+      allOf: [{}]
+      additionalProperties:
+        type: string
+
+    ClosedEmptyIntersection:
+      allOf: [{}]
+      additionalProperties: false
+
+    RecursiveEmptyIntersection:
+      allOf: [{}]
+      additionalProperties:
+        $ref: '#/components/schemas/RecursiveEmptyIntersection'
+
+    UnconstrainedAllOfHolder:
+      type: object
+      required: [any, open, strings, closed]
+      properties:
+        any:
+          $ref: '#/components/schemas/EmptyIntersection'
+        open:
+          $ref: '#/components/schemas/OpenEmptyIntersection'
+        strings:
+          $ref: '#/components/schemas/StringPropertiesIntersection'
+        closed:
+          $ref: '#/components/schemas/ClosedEmptyIntersection'
+
     StandaloneNullHolder:
       type: object
       required:

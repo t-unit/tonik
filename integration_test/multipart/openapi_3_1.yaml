@@ -15,6 +15,26 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/quoted-dynamic-names:
+    post:
+      operationId: postQuotedDynamicNames
+      tags:
+        - multipart
+      summary: Post exploded object properties containing backslashes
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuotedObjectForm'
+            encoding:
+              details:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
   /multipart31/read-only:
     post:
       operationId: postReadOnlyFields
@@ -272,16 +292,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/content-encoded-base64:
+    post:
+      operationId: postContentEncodedBase64
+      tags:
+        - multipart31
+      summary: Post a base64 content-encoded scalar
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ContentEncodedBase64Form'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart31/content-encoded-base64-array:
+    post:
+      operationId: postContentEncodedBase64Array
+      tags:
+        - multipart31
+      summary: Post repeated base64 content-encoded image parts
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ContentEncodedBase64ArrayForm'
+            encoding:
+              files:
+                contentType: image/png
+      responses:
+        '204':
+          description: Accepted
+
   /multipart31/byte:
     post:
       operationId: postByteField31
       tags:
         - multipart31
-      summary: Post a format byte field in multipart (OAS 3.1)
+      summary: Preserve legacy Tonik format byte multipart compatibility
       description: >-
-        Tests that format:byte (Base64Model) is sent as application/octet-stream,
-        not text/plain. Per OAS 3.1, format:byte defaults to
-        application/octet-stream in multipart encoding.
+        Preserves Tonik compatibility for legacy format:byte schemas by sending
+        base64 with application/octet-stream. Canonical OAS 3.1 schemas use
+        contentEncoding to specify the encoding.
       requestBody:
         required: true
         content:
@@ -326,6 +381,22 @@ paths:
 
 components:
   schemas:
+    QuotedObjectForm:
+      type: object
+      required:
+        - details
+      properties:
+        details:
+          $ref: '#/components/schemas/QuotedNameDetails'
+
+    QuotedNameDetails:
+      type: object
+      required:
+        - 'nested\field'
+      properties:
+        'nested\field':
+          type: string
+
     ReadOnlyFields:
       type: object
       required:
@@ -481,6 +552,26 @@ components:
         lastName:
           type: string
 
+    ContentEncodedBase64Form:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: string
+          contentEncoding: base64
+
+    ContentEncodedBase64ArrayForm:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            contentEncoding: base64
+
     ByteForm:
       type: object
       required:
@@ -494,8 +585,8 @@ components:
           type: string
           format: byte
           description: >-
-            Base64-encoded binary data. Per OAS 3.1, format:byte defaults to
-            application/octet-stream in multipart encoding.
+            Legacy format:byte input retained for Tonik compatibility, encoded as
+            base64 with application/octet-stream.
 
     AnyValue: true
 

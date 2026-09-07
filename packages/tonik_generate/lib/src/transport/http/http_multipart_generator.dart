@@ -31,6 +31,14 @@ List<Code> buildHttpMultipartBodyStatements(MultipartBodyPlan plan) {
         MultipartCode(:final code) => code,
         MultipartAppend() => _append(emission, variable, custom),
       },
+    Block.of([
+      Code('if ($variable.isEmpty) {'),
+      generateEncodingExceptionExpression(
+        'Multipart request body must contain at least one part.',
+        raw: true,
+      ).statement,
+      const Code('}'),
+    ]),
     (custom
             ? refer(
                 'TonikMultipartBody',
@@ -67,9 +75,19 @@ Code _append(MultipartAppend part, String variable, bool custom) {
       refer('MultipartFile', 'package:http/http.dart')
           .property('fromBytes')
           .call(
-            [part.name, bytes],
+            [
+              part.name.parenthesized.property('replaceAll').call([
+                specLiteralString(r'\'),
+                specLiteralString(r'\\'),
+              ]),
+              bytes,
+            ],
             {
-              'filename': ?part.filename,
+              if (part.filename case final filename?)
+                'filename': filename.parenthesized.property('replaceAll').call([
+                  specLiteralString(r'\'),
+                  specLiteralString(r'\\'),
+                ]),
               'contentType': refer(
                 'MediaType',
                 'package:http/http.dart',

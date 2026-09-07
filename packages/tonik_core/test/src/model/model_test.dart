@@ -9,6 +9,38 @@ void main() {
     context = Context.initial();
   });
 
+  test(
+    'date-time enum retains string behavior and identifies its model type',
+    () {
+      final model = DateTimeEnumModel(
+        name: 'Timestamp',
+        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        isNullable: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+      final alias = AliasModel(
+        model: model,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      expect(model, isA<EnumModel<String>>());
+      expect(model.encodingShape, EncodingShape.simple);
+      expect(model.isEffectivelyNullable, isTrue);
+      expect(
+        model.toString(),
+        startsWith('DateTimeEnumModel{name: Timestamp,'),
+      );
+      expect(
+        alias.toString(),
+        contains('model: DateTimeEnumModel(Timestamp),'),
+      );
+    },
+  );
+
   group('MapModel', () {
     test('has correct name and valueModel', () {
       final mapModel = MapModel(

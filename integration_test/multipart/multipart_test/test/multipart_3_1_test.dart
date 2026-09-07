@@ -72,14 +72,16 @@ void main() {
       expect(parts.single.bodyText, 'a,b,c');
     });
 
-    test('omits the optional array when it is null', () async {
+    test('rejects an omitted array when no other part exists', () async {
       final server = await _jsonServer();
 
       final response = await _api(server)
           .postFormNonExploded(body: const FormNonExplodedForm());
 
-      expect(response, isTonikSuccess);
-      expect(MultipartWire(await server.takeRequest()).named('tags'), isEmpty);
+      final error = requireError(response);
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(server.requestCount, 0);
     });
 
     test('serializes an empty array as one empty multipart field', () async {
@@ -258,25 +260,23 @@ void main() {
     });
   });
 
-  group('OAS 3.1 format:byte field', () {
-    test(
-      'sends format:byte as binary part, not a readable text field',
-      () async {
-        final server = await _jsonServer();
-        final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
+  group('Legacy Tonik format:byte compatibility in OAS 3.1', () {
+    test('preserves legacy base64 encoding and its transfer header', () async {
+      final server = await _jsonServer();
+      final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
 
-        final response = await _api(server).postByteField31(
-          body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
-        );
+      final response = await _api(server).postByteField31(
+        body: ByteForm(label: 'test-label', data: TonikFileBytes(fileBytes)),
+      );
 
-        expect(response, isTonikSuccess);
-        final wire = MultipartWire(await server.takeRequest());
-        expect(wire.single('label').bodyText, 'test-label');
-        expect(wire.single('label').contentType, startsWith('text/plain'));
-        expect(wire.single('data').contentType, 'application/octet-stream');
-        expect(wire.single('data').bodyBytes, fileBytes);
-      },
-    );
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('label').bodyText, 'test-label');
+      expect(wire.single('label').contentType, startsWith('text/plain'));
+      expect(wire.single('data').contentType, 'application/octet-stream');
+      expect(wire.single('data').bodyText, '3q2+7w==');
+      expect(wire.single('data').header('content-transfer-encoding'), 'base64');
+    });
   });
 
   group('OAS 3.1 AnyModel multipart JSON encoding', () {
