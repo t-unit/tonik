@@ -134,6 +134,10 @@ class RequestParameterImporter({
         }
 
         if (refParameter is InlinedObject<Parameter>) {
+          if (_isReservedHeaderParameter(refParameter.object)) {
+            return null;
+          }
+
           switch (refParameter.object.location) {
             case ParameterLocation.header:
               final existing = headers.firstWhere(
@@ -215,6 +219,10 @@ class RequestParameterImporter({
 
       case InlinedObject<Parameter>():
         final parameter = wrapper.object;
+
+        if (_isReservedHeaderParameter(parameter)) {
+          return null;
+        }
 
         if (parameter.schema == null) {
           throw ArgumentError(
@@ -312,6 +320,15 @@ class RequestParameterImporter({
         }
     }
   }
+
+  // OpenAPI reserves these headers for media types and security schemes.
+  bool _isReservedHeaderParameter(Parameter parameter) =>
+      parameter.location == ParameterLocation.header &&
+      const {
+        'accept',
+        'content-type',
+        'authorization',
+      }.contains(parameter.name.toLowerCase());
 
   core.HeaderParameterEncoding _headerEncoding(SerializationStyle? style) {
     if (style != null && style != SerializationStyle.simple) {

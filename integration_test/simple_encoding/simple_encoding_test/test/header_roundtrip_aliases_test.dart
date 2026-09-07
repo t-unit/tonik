@@ -82,22 +82,17 @@ void main() {
         expect(success.value.xUserName, userName);
       });
 
-      test(
-        'sends empty string as an empty header, decoded back as null',
-        () async {
-          const userName = '';
+      test('round-trips an empty string as an empty header', () async {
+        const userName = '';
 
-          final result = await api.testHeaderRoundtripAliases(
-            userName: userName,
-          );
+        final result = await api.testHeaderRoundtripAliases(userName: userName);
 
-          expect(result, isTonikSuccess);
-          final success = requireSuccess(result);
-          final recordedRequest = await imposterServer.takeRequest();
-          expect(recordedRequest.headers['x-user-name'], '');
-          expect(success.value.xUserName, isNull);
-        },
-      );
+        expect(result, isTonikSuccess);
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.headers['x-user-name'], '');
+        expect(success.value.xUserName, '');
+      });
 
       test('roundtrips UserName with special characters', () async {
         const userName = 'user@example.com';

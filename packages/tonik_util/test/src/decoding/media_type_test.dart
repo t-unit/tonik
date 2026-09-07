@@ -2,6 +2,79 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  group('media type parameters', () {
+    test('normalizes names and charset while preserving other value case', () {
+      expect(
+        parseMediaTypeParameters(
+          'Application/JSON; VERSION=Beta; Charset=UTF-8',
+        ),
+        {'version': 'Beta', 'charset': 'utf-8'},
+      );
+    });
+
+    test('parses quoted parameter values and escaped quotes', () {
+      expect(parseMediaTypeParameters(r'application/json; profile="a;b\"c"'), {
+        'profile': 'a;b"c',
+      });
+    });
+
+    test('matches a declared subset with extra parameters', () {
+      expect(
+        matchesMediaTypeParameters(
+          'application/json; charset=utf-8; version=2',
+          {'version': '2'},
+        ),
+        isTrue,
+      );
+    });
+
+    test('matches names and charset without regard to case', () {
+      expect(
+        matchesMediaTypeParameters('application/json; CHARSET=UTF-8', {
+          'Charset': 'utf-8',
+        }),
+        isTrue,
+      );
+    });
+
+    test('requires other parameter values to match case', () {
+      expect(
+        matchesMediaTypeParameters('application/json; profile=Beta', {
+          'profile': 'beta',
+        }),
+        isFalse,
+      );
+    });
+
+    test('rejects a missing declared parameter', () {
+      expect(
+        matchesMediaTypeParameters('application/json; charset=utf-8', {
+          'version': '2',
+        }),
+        isFalse,
+      );
+    });
+
+    test('rejects a different parameter value', () {
+      expect(
+        matchesMediaTypeParameters('application/json; version=3', {
+          'version': '2',
+        }),
+        isFalse,
+      );
+    });
+
+    test('rejects missing and malformed headers', () {
+      expect(matchesMediaTypeParameters(null, {'version': '2'}), isFalse);
+      expect(
+        matchesMediaTypeParameters('application/json; version="2', {
+          'version': '2',
+        }),
+        isFalse,
+      );
+    });
+  });
+
   group('extractMediaType', () {
     test('returns null for null header', () {
       expect(extractMediaType(null), isNull);

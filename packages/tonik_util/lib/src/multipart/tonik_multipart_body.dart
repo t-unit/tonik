@@ -69,7 +69,7 @@ final class TonikMultipartBody._(
       _validatePart(part);
       bytes
         ..add(ascii.encode('--$boundary\r\n'))
-        ..add(latin1.encode(_partHeaders(part)))
+        ..add(utf8.encode(_partHeaders(part)))
         ..add(part.bytes)
         ..add(const [13, 10]);
     }
@@ -121,8 +121,10 @@ final class TonikMultipartBody._(
     }
   }
 
-  static String _browserEncode(String value) =>
-      value.replaceAll(RegExp(r'\r\n|\r|\n'), '%0D%0A').replaceAll('"', '%22');
+  static String _browserEncode(String value) => value
+      .replaceAll(r'\', r'\\')
+      .replaceAll(RegExp(r'\r\n|\r|\n'), '%0D%0A')
+      .replaceAll('"', '%22');
 
   static String _newBoundary() {
     final suffix = List.generate(

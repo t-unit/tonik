@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -147,21 +149,36 @@ class const ParseGenerator({
     final mediaTypeGuard = isMediaRange
         ? _mediaTypeRangeGuard(normalized)
         : null;
+    final parameters = tonik_util.parseMediaTypeParameters(contentType);
+    final parameterGuard = parameters != null && parameters.isNotEmpty
+        ? refer(
+            'matchesMediaTypeParameters',
+            'package:tonik_util/tonik_util.dart',
+          ).call([
+            backendGenerator.responseContentType(refer('response')),
+            literalMap({
+              for (final entry in parameters.entries)
+                specLiteralString(entry.key): specLiteralString(entry.value),
+            }),
+          ]).code
+        : null;
 
     switch (status) {
       case ExplicitResponseStatus():
         return _caseWithGuards(
           'case (${status.statusCode}, $contentTypePattern)',
-          [?mediaTypeGuard],
+          [?mediaTypeGuard, ?parameterGuard],
         );
       case RangeResponseStatus():
         return _caseWithGuards('case (var status, $contentTypePattern)', [
           backendGenerator.responseStatusCodeRangeGuard(status),
           ?mediaTypeGuard,
+          ?parameterGuard,
         ]);
       case DefaultResponseStatus():
         return _caseWithGuards('case (_, $contentTypePattern)', [
           ?mediaTypeGuard,
+          ?parameterGuard,
         ]);
     }
   }
@@ -707,7 +724,7 @@ class const ParseGenerator({
 
     for (final body in resolvedResponse.bodies) {
       final raw = body.rawContentType;
-      final normalized = tonik_util.extractMediaType(raw);
+      final normalized = _contentTypeKey(raw);
       if (normalized == null) {
         contentTypes.add(raw);
         continue;
@@ -758,7 +775,15 @@ class const ParseGenerator({
     final catchAllRanges = <String?>[];
     final catchAllPatterns = <String?>[];
 
-    for (final contentType in contentTypes) {
+    final byParameterCount = contentTypes.indexed.toList()
+      ..sort((a, b) {
+        final aCount = tonik_util.parseMediaTypeParameters(a.$2)?.length ?? 0;
+        final bCount = tonik_util.parseMediaTypeParameters(b.$2)?.length ?? 0;
+        final countOrder = bCount.compareTo(aCount);
+        return countOrder != 0 ? countOrder : a.$1.compareTo(b.$1);
+      });
+
+    for (final (_, contentType) in byParameterCount) {
       switch (_contentTypeSpecificity(contentType)) {
         case 0:
           exact.add(contentType);
@@ -772,6 +797,18 @@ class const ParseGenerator({
     }
 
     return {...exact, ...typeRanges, ...catchAllRanges, ...catchAllPatterns};
+  }
+
+  String? _contentTypeKey(String contentType) {
+    final normalized = tonik_util.extractMediaType(contentType);
+    if (normalized == null) return null;
+    final parameters = tonik_util.parseMediaTypeParameters(contentType);
+    if (parameters == null || parameters.isEmpty) return normalized;
+    final names = parameters.keys.toList()..sort();
+    final normalizedParameters = names
+        .map((name) => '; $name=${jsonEncode(parameters[name])}')
+        .join();
+    return '$normalized$normalizedParameters';
   }
 
   int _contentTypeSpecificity(String? contentType) {

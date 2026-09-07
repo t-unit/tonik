@@ -1,13 +1,13 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-/// Normalizes AllOfModel instances with a single contained model to AliasModel.
+/// Removes unconstrained allOf members and normalizes redundant intersections.
 ///
 /// This transformer performs in-place replacement throughout the entire
 /// document, ensuring referential consistency by memoizing transformations.
 @immutable
-class const AllOfNormalizer() {
-  /// Normalizes allOf schemas with a single model to type aliases.
+class const AllOfNormalizer({final bool normalizeSingleMembers = true}) {
+  /// Normalizes allOf schemas, optionally reducing single models to aliases.
   ///
   /// This simplifies patterns like `allOf: [$ref, {description: ...}]` used
   /// by Spotify and others to add descriptions to referenced schemas.
@@ -56,6 +56,9 @@ class const AllOfNormalizer() {
       for (final param in operation.pathParameters) {
         _updatePathParameterModel(param, cache);
       }
+      for (final param in operation.cookieParameters) {
+        _updateCookieParameterModel(param, cache);
+      }
     }
 
     for (final requestBody in document.requestBodies) {
@@ -76,6 +79,9 @@ class const AllOfNormalizer() {
     for (final param in document.pathParameters) {
       _updatePathParameterModel(param, cache);
     }
+    for (final param in document.cookieParameters) {
+      _updateCookieParameterModel(param, cache);
+    }
 
     return document;
   }
@@ -91,32 +97,70 @@ class const AllOfNormalizer() {
 
     final Model result;
 
-    if (model is AllOfModel && model.models.length == 1) {
-      final containedModel = _transformModel(model.models.first, cache);
-      result = AliasModel(
-        name: model.name,
-        model: containedModel,
-        context: model.context,
-        description: model.description,
-        isDeprecated: model.isDeprecated,
-        isNullable: model.isNullable,
-        nameOverride: model.nameOverride,
-        defaultValue: model.defaultValue,
-        examples: model.examples,
-      );
-    } else if (model is AllOfModel) {
+    if (model is AllOfModel) {
       final newModels = <Model>[];
+      var hasUnconstrainedMember = false;
       for (final m in model.models) {
-        newModels.add(_transformModel(m, cache));
+        final transformed = _transformModel(m, cache);
+        if (transformed.resolved is AnyModel) {
+          // An unconstrained schema is the identity of an intersection.
+          hasUnconstrainedMember = true;
+        } else {
+          newModels.add(transformed);
+        }
       }
-      model.models
-        ..clear()
-        ..addAll(newModels);
-      result = model;
+      model.additionalPropertiesPolicy = _transformAdditionalProperties(
+        model.additionalPropertiesPolicy,
+        cache,
+      );
+      final hasExplicitAdditionalProperties =
+          switch (model.additionalPropertiesPolicy) {
+            AllowedAdditionalProperties(:final origin) =>
+              origin == AdditionalPropertiesOrigin.explicit,
+            ForbiddenAdditionalProperties() => true,
+          };
+      final isUnconstrained = hasUnconstrainedMember && newModels.isEmpty;
+      final additionalProperties = model.additionalPropertiesPolicy;
+      final hasRecursiveAdditionalProperties =
+          isUnconstrained &&
+          additionalProperties is AllowedAdditionalProperties &&
+          _referencesModel(additionalProperties.valueModel, model, {});
+      if (hasRecursiveAdditionalProperties) {
+        // Keep the concrete shell that recursive references already target.
+        // A recursive alias of an anonymous map is not a valid Dart typedef.
+        model.models = [_additionalPropertiesModel(model)];
+        result = model;
+      } else if (isUnconstrained ||
+          (!hasExplicitAdditionalProperties &&
+              normalizeSingleMembers &&
+              newModels.length == 1)) {
+        result = AliasModel(
+          name: model.name,
+          model: isUnconstrained
+              ? _additionalPropertiesModel(model)
+              : newModels.single,
+          context: model.context,
+          description: model.description,
+          isDeprecated: model.isDeprecated,
+          isNullable: model.isNullable,
+          isReadOnly: model.isReadOnly,
+          isWriteOnly: model.isWriteOnly,
+          nameOverride: model.nameOverride,
+          defaultValue: model.defaultValue,
+          examples: model.examples,
+        );
+      } else {
+        model.models = newModels;
+        result = model;
+      }
     } else if (model is ClassModel) {
       for (final prop in model.properties) {
         prop.model = _transformModel(prop.model, cache);
       }
+      model.additionalPropertiesPolicy = _transformAdditionalProperties(
+        model.additionalPropertiesPolicy,
+        cache,
+      );
       result = model;
     } else if (model is OneOfModel) {
       final newModels = <({String? discriminatorValue, Model model})>[];
@@ -126,9 +170,7 @@ class const AllOfNormalizer() {
           model: _transformModel(m.model, cache),
         ));
       }
-      model.models
-        ..clear()
-        ..addAll(newModels);
+      model.models = newModels;
       result = model;
     } else if (model is AnyOfModel) {
       final newModels = <({String? discriminatorValue, Model model})>[];
@@ -138,12 +180,13 @@ class const AllOfNormalizer() {
           model: _transformModel(m.model, cache),
         ));
       }
-      model.models
-        ..clear()
-        ..addAll(newModels);
+      model.models = newModels;
       result = model;
     } else if (model is ListModel) {
       model.content = _transformModel(model.content, cache);
+      result = model;
+    } else if (model is MapModel) {
+      model.valueModel = _transformModel(model.valueModel, cache);
       result = model;
     } else if (model is AliasModel) {
       model.model = _transformModel(model.model, cache);
@@ -156,16 +199,68 @@ class const AllOfNormalizer() {
     return result;
   }
 
+  AdditionalPropertiesPolicy _transformAdditionalProperties(
+    AdditionalPropertiesPolicy policy,
+    Map<Model, Model> cache,
+  ) {
+    if (policy is! AllowedAdditionalProperties) return policy;
+    final valueModel = _transformModel(policy.valueModel, cache);
+    if (identical(valueModel, policy.valueModel)) return policy;
+    return AllowedAdditionalProperties(
+      valueModel: valueModel,
+      origin: policy.origin,
+    );
+  }
+
+  Model _additionalPropertiesModel(AllOfModel model) {
+    final policy = model.additionalPropertiesPolicy;
+    if (policy is AllowedAdditionalProperties &&
+        policy.valueModel.resolved is AnyModel) {
+      return AnyModel(context: model.context);
+    }
+    return MapModel(
+      valueModel: policy is AllowedAdditionalProperties
+          ? policy.valueModel
+          : NeverModel(context: model.context, isNullable: false),
+      context: model.context,
+      examples: const [],
+    );
+  }
+
+  bool _referencesModel(Model model, Model target, Set<Model> visited) {
+    if (identical(model, target)) return true;
+    if (!visited.add(model)) return false;
+    final children = switch (model) {
+      AliasModel() => [model.model],
+      MapModel() => [model.valueModel],
+      ListModel() => [model.content],
+      ClassModel() => [
+        ...model.properties.map((property) => property.model),
+        if (model.additionalPropertiesPolicy case AllowedAdditionalProperties(
+          :final valueModel,
+        ))
+          valueModel,
+      ],
+      AllOfModel() => [
+        ...model.models,
+        if (model.additionalPropertiesPolicy case AllowedAdditionalProperties(
+          :final valueModel,
+        ))
+          valueModel,
+      ],
+      CompositeModel() => model.containedModels,
+      _ => const <Model>[],
+    };
+    return children.any((child) => _referencesModel(child, target, visited));
+  }
+
   void _updateResponseModels(Response response, Map<Model, Model> cache) {
     switch (response) {
       case ResponseAlias():
         _updateResponseModels(response.response, cache);
       case ResponseObject():
         for (final body in response.bodies) {
-          final transformed = cache[body.model];
-          if (transformed != null && transformed != body.model) {
-            body.model = transformed;
-          }
+          body.model = _transformModel(body.model, cache);
         }
         for (final header in response.headers.values) {
           _updateResponseHeaderModel(header, cache);
@@ -184,15 +279,9 @@ class const AllOfNormalizer() {
         for (final content in requestBody.content) {
           switch (content) {
             case ModelRequestContent():
-              final transformed = cache[content.model];
-              if (transformed != null && transformed != content.model) {
-                content.model = transformed;
-              }
+              content.model = _transformModel(content.model, cache);
             case MultipartRequestContent():
-              final transformed = cache[content.model];
-              if (transformed != null && transformed != content.model) {
-                content.model = transformed;
-              }
+              content.model = _transformModel(content.model, cache);
           }
         }
     }
@@ -206,10 +295,7 @@ class const AllOfNormalizer() {
       case ResponseHeaderAlias():
         _updateResponseHeaderModel(header.header, cache);
       case ResponseHeaderObject():
-        final transformed = cache[header.model];
-        if (transformed != null && transformed != header.model) {
-          header.model = transformed;
-        }
+        header.model = _transformModel(header.model, cache);
     }
   }
 
@@ -221,10 +307,7 @@ class const AllOfNormalizer() {
       case RequestHeaderAlias():
         _updateRequestHeaderModel(header.header, cache);
       case RequestHeaderObject():
-        final transformed = cache[header.model];
-        if (transformed != null && transformed != header.model) {
-          header.model = transformed;
-        }
+        header.model = _transformModel(header.model, cache);
     }
   }
 
@@ -236,10 +319,7 @@ class const AllOfNormalizer() {
       case QueryParameterAlias():
         _updateQueryParameterModel(param.parameter, cache);
       case QueryParameterObject():
-        final transformed = cache[param.model];
-        if (transformed != null && transformed != param.model) {
-          param.model = transformed;
-        }
+        param.model = _transformModel(param.model, cache);
     }
   }
 
@@ -248,10 +328,19 @@ class const AllOfNormalizer() {
       case PathParameterAlias():
         _updatePathParameterModel(param.parameter, cache);
       case PathParameterObject():
-        final transformed = cache[param.model];
-        if (transformed != null && transformed != param.model) {
-          param.model = transformed;
-        }
+        param.model = _transformModel(param.model, cache);
+    }
+  }
+
+  void _updateCookieParameterModel(
+    CookieParameter param,
+    Map<Model, Model> cache,
+  ) {
+    switch (param) {
+      case CookieParameterAlias():
+        _updateCookieParameterModel(param.parameter, cache);
+      case CookieParameterObject():
+        param.model = _transformModel(param.model, cache);
     }
   }
 }
