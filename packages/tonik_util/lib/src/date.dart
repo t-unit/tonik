@@ -102,7 +102,6 @@ class Date(
       name: paramName.uriEncode(
         allowEmpty: true,
         useQueryComponent: useQueryComponent,
-        allowReserved: allowReserved,
         textEncoding: textEncoding,
       ),
       value: uriEncode(
