@@ -148,7 +148,7 @@ GEM
     prettyprint (0.2.0)
     prism (1.9.0)
     public_suffix (7.0.5)
-    puma (7.0.2)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.7)
@@ -252,7 +252,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  puma (= 7.0.2)
+  puma (= 7.2.1)
   rails (= 8.0.2.1)
   rspec-rails (= 7.1.1)
   rswag-api (= 2.16.0)
