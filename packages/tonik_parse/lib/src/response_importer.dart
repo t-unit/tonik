@@ -88,6 +88,11 @@ class ResponseImporter({
 
         if (responseObj.headers != null) {
           for (final entry in responseObj.headers!.entries) {
+            // Response media types come from content, not a Header Object.
+            if (entry.key.toLowerCase() == 'content-type') {
+              continue;
+            }
+
             headers[entry.key] = headerImporter.importInlineHeader(
               wrapper: entry.value,
               context: context.push('header').push(entry.key),
