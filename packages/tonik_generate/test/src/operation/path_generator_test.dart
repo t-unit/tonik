@@ -234,7 +234,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toLabel(explode: false, allowEmpty: false, ), ];
+          return [r'users' + ids.toLabel(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -300,7 +300,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toMatrix(r'ids', explode: false, allowEmpty: false, ), ];
+          return [r'users' + ids.toMatrix(r'ids', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -371,7 +371,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required NullableStatus status}) {
-          return [r'items', status!.toMatrix(r'status', explode: false, allowEmpty: false, ), ];
+          return [r'items' + status!.toMatrix(r'status', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -601,7 +601,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String userId, required String type, required List<String> roles, }) {
-          return [r'users', userId.toSimple(explode: false, allowEmpty: false, ), type.toLabel(explode: false, allowEmpty: false, ), roles.toMatrix(r'roles', explode: false, allowEmpty: false, ), ];
+          return [r'users', userId.toSimple(explode: false, allowEmpty: false, ) + type.toLabel(explode: false, allowEmpty: false, ) + roles.toMatrix(r'roles', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -1100,7 +1100,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> tags}) {
-          return [r'data', tags.toMatrix(r'tags', explode: false, allowEmpty: false, ), ];
+          return [r'data' + tags.toMatrix(r'tags', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -1169,7 +1169,7 @@ void main() {
     const expectedMethod = '''
       List<String> _path({required List<int> ids}) {
         return [
-          r'data',
+          r'data' +
           ids
               .map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
               .toList()
@@ -1260,7 +1260,7 @@ void main() {
     const expectedMethod = '''
       List<String> _path({required List<AnonymousModel> statuses}) {
         return [
-          r'data',
+          r'data' +
           statuses
               .map<String>((e) => e.uriEncode(allowEmpty: false, textEncoding: utf8))
               .toList()
@@ -1346,7 +1346,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> filters}) {
-          return [r'data', throw EncodingException('Lists with complex content cannot be matrix-encoded'), ];
+          return [r'data' + (throw EncodingException('Lists with complex content cannot be matrix-encoded')), ];
         }
       ''';
 
@@ -1421,7 +1421,7 @@ void main() {
     const expectedMethod = '''
         List<String> _path({required List<List<String>> matrix}) {
           throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter matrix');
-          return [r'data'];
+          return [];
         }
       ''';
 
@@ -1913,7 +1913,7 @@ void main() {
     );
   });
 
-  test('label parameter with literal suffix emits separate list entries', () {
+  test('concatenates label parameter and literal suffix', () {
     final typeParam = PathParameterObject(
       name: 'type',
       rawName: 'type',
@@ -1948,7 +1948,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String type}) {
-          return [r'resources', type.toLabel(explode: false, allowEmpty: false, ), r'.json', ];
+          return [r'resources', type.toLabel(explode: false, allowEmpty: false, ) + r'.json', ];
         }
       ''';
 
@@ -1966,7 +1966,7 @@ void main() {
     );
   });
 
-  test('matrix parameter with literal suffix emits separate list entries', () {
+  test('concatenates matrix parameter and literal suffix', () {
     final rolesParam = PathParameterObject(
       name: 'roles',
       rawName: 'roles',
@@ -2001,7 +2001,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String roles}) {
-          return [r'resources', roles.toMatrix(r'roles', explode: false, allowEmpty: false, ), r'.json', ];
+          return [r'resources', roles.toMatrix(r'roles', explode: false, allowEmpty: false, ) + r'.json', ];
         }
       ''';
 
