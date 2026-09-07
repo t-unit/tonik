@@ -166,6 +166,7 @@ class ModelImporter._(
     if (schema.allOf != null) {
       final modelContext = context.push(name);
       final allOfModel = AllOfModel(
+        defaultValue: schema.rawDefault,
         isDeprecated: schema.isDeprecated ?? false,
         models: <Model>[],
         context: modelContext,
@@ -183,6 +184,7 @@ class ModelImporter._(
 
     if (schema.oneOf != null) {
       final oneOfModel = OneOfModel(
+        defaultValue: schema.rawDefault,
         isDeprecated: schema.isDeprecated ?? false,
         models: <DiscriminatedModel>[],
         context: context,
@@ -200,6 +202,7 @@ class ModelImporter._(
 
     if (schema.anyOf != null) {
       final anyOfModel = AnyOfModel(
+        defaultValue: schema.rawDefault,
         isDeprecated: schema.isDeprecated ?? false,
         models: <DiscriminatedModel>[],
         context: context,
@@ -236,6 +239,7 @@ class ModelImporter._(
     if (types.length > 1) {
       // Multi-type becomes OneOfModel — create shell.
       final oneOfModel = OneOfModel(
+        defaultValue: schema.rawDefault,
         isDeprecated: schema.isDeprecated ?? false,
         models: <DiscriminatedModel>[],
         context: context,
@@ -1085,6 +1089,7 @@ class ModelImporter._(
     }
 
     final allOfModel = AllOfModel(
+      defaultValue: schema.rawDefault,
       models: modelsToMerge,
       context: modelContext,
       isDeprecated: false,
@@ -1388,6 +1393,7 @@ class ModelImporter._(
     }
 
     final allOfModel = AllOfModel(
+      defaultValue: schema.rawDefault,
       name: name,
       models: modelsToMerge,
       context: modelContext,
@@ -1603,6 +1609,7 @@ class ModelImporter._(
     });
 
     final oneOfModel = OneOfModel(
+      defaultValue: schema.rawDefault,
       models: models.toList(),
       name: name,
       context: context,
@@ -1659,6 +1666,7 @@ class ModelImporter._(
     // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final allOfModel = AllOfModel(
+      defaultValue: schema.rawDefault,
       isDeprecated: schema.isDeprecated ?? false,
       models: <Model>[],
       context: modelContext,
@@ -1713,6 +1721,7 @@ class ModelImporter._(
     // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final oneOfModel = OneOfModel(
+      defaultValue: schema.rawDefault,
       isDeprecated: schema.isDeprecated ?? false,
       models: <DiscriminatedModel>[],
       context: context,
@@ -1765,6 +1774,7 @@ class ModelImporter._(
     // Register the model early (with an empty member list) so that
     // circular references can find it during member resolution.
     final anyOfModel = AnyOfModel(
+      defaultValue: schema.rawDefault,
       isDeprecated: schema.isDeprecated ?? false,
       models: <DiscriminatedModel>[],
       context: context,

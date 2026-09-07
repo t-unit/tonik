@@ -118,6 +118,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/Subscription'
 
+  /compound/{retries}:
+    get:
+      operationId: getCompoundDefaults
+      parameters:
+        - name: retries
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/AllOfDefaultAlias'
+        - name: choice
+          in: query
+          schema:
+            $ref: '#/components/schemas/OneOfSingleDefault'
+        - name: combination
+          in: header
+          schema:
+            $ref: '#/components/schemas/AnyOfSingleDefault'
+        - name: enabled
+          in: cookie
+          schema:
+            $ref: '#/components/schemas/AllOfFalseDefault'
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     DefaultedPrimitives:
@@ -496,3 +521,184 @@ components:
           type: string
           format: byte
           default: "SGVsbG8="
+    CompoundBranchDefault:
+      type: integer
+      default: 7
+    AllOfSingleDefault:
+      type: integer
+      allOf: [{type: integer}]
+      default: 3
+    AllOfMultipleDefault:
+      allOf: [{type: integer}, {type: number}]
+      default: 3
+    AllOfDefaultAlias:
+      $ref: '#/components/schemas/AllOfSingleDefault'
+    AllOfDefaultOuterAlias:
+      $ref: '#/components/schemas/AllOfDefaultAlias'
+    AllOfOverridingAlias:
+      $ref: '#/components/schemas/AllOfDefaultAlias'
+      default: 2
+    AllOfNullableDefault:
+      type: integer
+      allOf: [{type: integer}]
+      nullable: true
+      default: 3
+    AllOfNullDefault:
+      type: integer
+      allOf: [{type: integer}]
+      nullable: true
+      default: null
+    AllOfNoDefault:
+      allOf:
+        - $ref: '#/components/schemas/CompoundBranchDefault'
+    AllOfZeroDefault:
+      allOf: [{type: integer}]
+      default: 0
+    AllOfFalseDefault:
+      allOf: [{type: boolean}]
+      default: false
+    AllOfDefaults:
+      type: object
+      properties:
+        single:
+          $ref: '#/components/schemas/AllOfSingleDefault'
+        multiple:
+          $ref: '#/components/schemas/AllOfMultipleDefault'
+        aliased:
+          $ref: '#/components/schemas/AllOfDefaultOuterAlias'
+        aliasOverride:
+          $ref: '#/components/schemas/AllOfOverridingAlias'
+        overridden:
+          $ref: '#/components/schemas/AllOfDefaultOuterAlias'
+          default: 0
+        inline:
+          allOf: [{type: integer}]
+          default: 3
+        nullable:
+          $ref: '#/components/schemas/AllOfNullableDefault'
+        nullDefault:
+          $ref: '#/components/schemas/AllOfNullDefault'
+        noDefault:
+          $ref: '#/components/schemas/AllOfNoDefault'
+        zero:
+          $ref: '#/components/schemas/AllOfZeroDefault'
+        disabled:
+          $ref: '#/components/schemas/AllOfFalseDefault'
+    OneOfSingleDefault:
+      oneOf: [{type: integer}]
+      default: 3
+    OneOfMultipleDefault:
+      oneOf: [{type: integer}, {type: string}]
+      default: 3
+    OneOfDefaultAlias:
+      $ref: '#/components/schemas/OneOfSingleDefault'
+    OneOfDefaultOuterAlias:
+      $ref: '#/components/schemas/OneOfDefaultAlias'
+    OneOfOverridingAlias:
+      $ref: '#/components/schemas/OneOfDefaultAlias'
+      default: 2
+    OneOfNullableDefault:
+      type: integer
+      oneOf: [{type: integer}]
+      nullable: true
+      default: 3
+    OneOfNullDefault:
+      type: integer
+      oneOf: [{type: integer}]
+      nullable: true
+      default: null
+    OneOfNoDefault:
+      oneOf:
+        - $ref: '#/components/schemas/CompoundBranchDefault'
+    OneOfZeroDefault:
+      oneOf: [{type: integer}]
+      default: 0
+    OneOfFalseDefault:
+      oneOf: [{type: boolean}]
+      default: false
+    OneOfDefaults:
+      type: object
+      properties:
+        single:
+          $ref: '#/components/schemas/OneOfSingleDefault'
+        multiple:
+          $ref: '#/components/schemas/OneOfMultipleDefault'
+        aliased:
+          $ref: '#/components/schemas/OneOfDefaultOuterAlias'
+        aliasOverride:
+          $ref: '#/components/schemas/OneOfOverridingAlias'
+        overridden:
+          $ref: '#/components/schemas/OneOfDefaultOuterAlias'
+          default: 0
+        inline:
+          oneOf: [{type: integer}]
+          default: 3
+        nullable:
+          $ref: '#/components/schemas/OneOfNullableDefault'
+        nullDefault:
+          $ref: '#/components/schemas/OneOfNullDefault'
+        noDefault:
+          $ref: '#/components/schemas/OneOfNoDefault'
+        zero:
+          $ref: '#/components/schemas/OneOfZeroDefault'
+        disabled:
+          $ref: '#/components/schemas/OneOfFalseDefault'
+    AnyOfSingleDefault:
+      anyOf: [{type: integer}]
+      default: 3
+    AnyOfMultipleDefault:
+      anyOf: [{type: integer}, {type: string}]
+      default: 3
+    AnyOfDefaultAlias:
+      $ref: '#/components/schemas/AnyOfSingleDefault'
+    AnyOfDefaultOuterAlias:
+      $ref: '#/components/schemas/AnyOfDefaultAlias'
+    AnyOfOverridingAlias:
+      $ref: '#/components/schemas/AnyOfDefaultAlias'
+      default: 2
+    AnyOfNullableDefault:
+      type: integer
+      anyOf: [{type: integer}]
+      nullable: true
+      default: 3
+    AnyOfNullDefault:
+      type: integer
+      anyOf: [{type: integer}]
+      nullable: true
+      default: null
+    AnyOfNoDefault:
+      anyOf:
+        - $ref: '#/components/schemas/CompoundBranchDefault'
+    AnyOfZeroDefault:
+      anyOf: [{type: integer}]
+      default: 0
+    AnyOfFalseDefault:
+      anyOf: [{type: boolean}]
+      default: false
+    AnyOfDefaults:
+      type: object
+      properties:
+        single:
+          $ref: '#/components/schemas/AnyOfSingleDefault'
+        multiple:
+          $ref: '#/components/schemas/AnyOfMultipleDefault'
+        aliased:
+          $ref: '#/components/schemas/AnyOfDefaultOuterAlias'
+        aliasOverride:
+          $ref: '#/components/schemas/AnyOfOverridingAlias'
+        overridden:
+          $ref: '#/components/schemas/AnyOfDefaultOuterAlias'
+          default: 0
+        inline:
+          anyOf: [{type: integer}]
+          default: 3
+        nullable:
+          $ref: '#/components/schemas/AnyOfNullableDefault'
+        nullDefault:
+          $ref: '#/components/schemas/AnyOfNullDefault'
+        noDefault:
+          $ref: '#/components/schemas/AnyOfNoDefault'
+        zero:
+          $ref: '#/components/schemas/AnyOfZeroDefault'
+        disabled:
+          $ref: '#/components/schemas/AnyOfFalseDefault'

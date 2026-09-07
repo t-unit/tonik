@@ -190,6 +190,54 @@ void main() {
   });
 
   group('object-level explode=false collapse', () {
+    test('escapes the declared name while retaining reserved member chars', () {
+      expect(
+        <String, PropertyValue>{'k/1': const PropertyValue.scalar('a/b?c:d@e')}
+            .toForm(
+              'filter/name',
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+              textEncoding: utf8,
+            ),
+        const <ParameterEntry>[(name: 'filter%2Fname', value: 'k/1,a/b?c:d@e')],
+      );
+    });
+
+    test(
+      'escapes the declared name and member chars without allowReserved',
+      () {
+        expect(
+          <String, PropertyValue>{
+            'k/1': const PropertyValue.scalar('a/b?c:d@e'),
+          }.toForm(
+            'filter/name',
+            explode: false,
+            allowEmpty: true,
+            textEncoding: utf8,
+          ),
+          const <ParameterEntry>[
+            (name: 'filter%2Fname', value: 'k%2F1,a%2Fb%3Fc%3Ad%40e'),
+          ],
+        );
+      },
+    );
+
+    test('retains declared name charset and query-component encoding', () {
+      expect(
+        <String, PropertyValue>{'k/1': const PropertyValue.scalar('café/a b')}
+            .toForm(
+              'clé/a b',
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+              useQueryComponent: true,
+              textEncoding: latin1,
+            ),
+        const <ParameterEntry>[(name: 'cl%E9%2Fa+b', value: 'k/1,caf%E9/a+b')],
+      );
+    });
+
     test('collapses scalars and an array into a single comma-joined entry', () {
       expect(
         <String, PropertyValue>{

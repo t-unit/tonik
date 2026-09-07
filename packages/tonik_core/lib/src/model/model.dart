@@ -69,6 +69,9 @@ mixin NamedModel on Model {
 mixin CompositeModel on Model {
   List<Model> get containedModels;
 
+  /// The enclosing schema's default; defaults on members are not inherited.
+  Object? get defaultValue;
+
   @override
   EncodingShape get encodingShape {
     final shapes = containedModels.map((m) => m.encodingShape).toSet();
@@ -171,7 +174,7 @@ class AliasModel._({
        );
 
   /// The locally declared default if set, otherwise the first one found
-  /// while walking nested [AliasModel]s.
+  /// while walking nested [AliasModel]s and their terminal model.
   Object? get defaultValue => _resolveDefault(this, <AliasModel>{});
 
   static Object? _resolveDefault(AliasModel alias, Set<AliasModel> visited) {
@@ -185,7 +188,7 @@ class AliasModel._({
     if (alias._localDefault != null) return alias._localDefault;
     final inner = alias.model;
     if (inner is AliasModel) return _resolveDefault(inner, visited);
-    return null;
+    return effectiveDefault(null, inner);
   }
 
   @override
@@ -333,6 +336,7 @@ class AllOfModel({
   var bool isNullable = false,
   var bool isReadOnly = false,
   var bool isWriteOnly = false,
+  @override var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   this {
     this.additionalPropertiesPolicy =
@@ -370,6 +374,7 @@ class OneOfModel({
   var bool isNullable = false,
   var bool isReadOnly = false,
   var bool isWriteOnly = false,
+  @override var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
@@ -394,6 +399,7 @@ class AnyOfModel({
   var bool isNullable = false,
   var bool isReadOnly = false,
   var bool isWriteOnly = false,
+  @override var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
@@ -497,7 +503,7 @@ class Property({
   var String? description,
 }) {
   /// The property's own [defaultValue] when set, otherwise the default
-  /// carried by its [model] when that model is an [AliasModel] chain.
+  /// carried by its [model], following aliases to an enclosing schema default.
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override
