@@ -3,6 +3,157 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-09-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`tonik_util` - `v0.10.0`](#tonik_util---v0100)
+ - [`tonik_core` - `v0.10.0`](#tonik_core---v0100)
+ - [`tonik_parse` - `v0.10.0`](#tonik_parse---v0100)
+ - [`tonik_generate` - `v0.10.0`](#tonik_generate---v0100)
+ - [`tonik` - `v0.10.0`](#tonik---v0100)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `tonik_util` - `v0.10.0`
+
+ - **REFACTOR**: share object parameter encoding across generated models.
+ - **REFACTOR**: use named constructors for ServerConfig.
+ - **REFACTOR**: update generated API models and client code.
+ - **REFACTOR**(util): decouple content type parsing from Dio.
+ - **FIX**: preserve Unicode multipart filenames.
+ - **FIX**: escape backslashes in multipart quoted names.
+ - **FIX**: dispatch parameterized response media types.
+ - **FIX**: preserve empty string response headers.
+ - **FIX**: decode simple map response headers.
+ - **FIX**: omit empty matrix objects during path encoding.
+ - **FIX**: encode form query names independently of allowReserved.
+ - **FIX**: declare remaining fields in primary constructors.
+ - **FIX**(tonik_generate): correct HTTP multipart encoding.
+ - **FIX**: require non-null ServerConfig constructor arguments.
+ - **FIX**: reject broken euc-kr decoding.
+ - **FEAT**: require explicit text encoding for serialization.
+ - **FEAT**: parse request text encodings before generation.
+ - **FEAT**: add generated API cancellation support.
+ - **FEAT**: support response charsets.
+ - **DOCS**: document HTTP backend selection and migration.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+#### `tonik_core` - `v0.10.0`
+
+ - **REFACTOR**: represent date-time enums with a core subtype.
+ - **REFACTOR**: adopt primary constructors in tonik_core.
+ - **REFACTOR**: simplify request generation and multipart tests.
+ - **REFACTOR**: centralize multipart request content and lowering.
+ - **FIX**: normalize unconstrained allOf members during generation.
+ - **FIX**: preserve date-time enum wire values.
+ - **FIX**: preserve defaults on compound schemas.
+ - **FIX**(tonik_generate): preserve semantic codec ordering.
+ - **FEAT**: support multipart root model shapes.
+ - **FEAT**: parse request text encodings before generation.
+ - **FEAT**: add transport backend configuration.
+ - **BREAKING** **REFACTOR**: use lists for compound model members.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+#### `tonik_parse` - `v0.10.0`
+
+ - **REFACTOR**: represent date-time enums with a core subtype.
+ - **REFACTOR**: adopt primary constructors in remaining packages.
+ - **REFACTOR**: simplify request generation and multipart tests.
+ - **REFACTOR**: centralize multipart request content and lowering.
+ - **PERF**(tonik_parse): index named models during import.
+ - **FIX**: parse empty schemas as any JSON value.
+ - **FIX**: ignore response Content-Type header definitions.
+ - **FIX**: preserve date-time enum wire values.
+ - **FIX**: ignore reserved header parameters.
+ - **FIX**: preserve defaults on compound schemas.
+ - **FIX**: deduplicate compound members during parsing.
+ - **FEAT**: support multipart root model shapes.
+ - **FEAT**: parse request text encodings before generation.
+ - **BREAKING** **REFACTOR**: use lists for compound model members.
+ - **BREAKING** **FIX**(tonik_parse): preserve undeclared operation tags.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+#### `tonik_generate` - `v0.10.0`
+
+ - **REFACTOR**: restructure generated API code.
+ - **REFACTOR**: adopt primary constructors in remaining packages.
+ - **REFACTOR**: represent date-time enums with a core subtype.
+ - **REFACTOR**: share object parameter encoding across generated models.
+ - **REFACTOR**(generate): test filename caching through name manager.
+ - **REFACTOR**(generate): cache operation filenames in name manager.
+ - **REFACTOR**: localize multipart merge helpers.
+ - **REFACTOR**(tonik_generate): adopt primary constructors in operation bases.
+ - **REFACTOR**(tonik_generate): share operation execution through inheritance.
+ - **REFACTOR**: update generated API models and client code.
+ - **REFACTOR**: use named constructors for ServerConfig.
+ - **REFACTOR**: simplify request generation and multipart tests.
+ - **REFACTOR**: centralize multipart request content and lowering.
+ - **REFACTOR**: remove redirect settings from HTTP request generation.
+ - **REFACTOR**: remove generated artifact manifest tracking.
+ - **REFACTOR**: centralize generated artifact writing.
+ - **FIX**: emit valid multipart types.
+ - **FIX**: reject empty multipart bodies before sending.
+ - **FIX**: omit redundant multipart cast.
+ - **FIX**: reconcile multipart binary content types with main.
+ - **FIX**: defer multipart shape errors.
+ - **FIX**: defer multipart definition errors.
+ - **FIX**: preserve multipart binary content types.
+ - **FIX**: dispatch parameterized response media types.
+ - **FIX**(tonik_generate): align CI runtime fixtures and dependencies.
+ - **FIX**: satisfy multipart planner lint.
+ - **FIX**: base64 encode multipart byte fields.
+ - **FIX**: preserve adjacent path parameter expansions.
+ - **FIX**: normalize unconstrained allOf members during generation.
+ - **FIX**(generate): resolve operation base filename once.
+ - **FIX**(tonik_generate): preserve semantic codec ordering.
+ - **FIX**: deduplicate compound members during parsing.
+ - **FIX**: omit absent forbidden query properties.
+ - **FIX**: decode simple map response headers.
+ - **FIX**: preserve date-time enum wire values.
+ - **FIX**: preserve URI validation for form list elements.
+ - **FIX**: escape backslashes in multipart quoted names.
+ - **FIX**: preserve raw bytes in Dio binary requests.
+ - **FIX**: emit separate multipart object array parts.
+ - **FIX**(tonik_generate): correct HTTP multipart encoding.
+ - **FIX**: generate request options declarations correctly.
+ - **FIX**: preserve OpenAPI cancelToken parameter names.
+ - **FEAT**: support runtime selection between JSON and multipart bodies.
+ - **FEAT**: add multipart request generation.
+ - **FEAT**: support response charsets.
+ - **FEAT**: generate HTTP request bodies and headers.
+ - **FEAT**: generate HTTP client adapter lifecycle.
+ - **FEAT**: implement HTTP response normalization.
+ - **FEAT**: implement Dio backend generation.
+ - **FEAT**: add generated API cancellation support.
+ - **FEAT**: require explicit text encoding for serialization.
+ - **FEAT**: support multipart root model shapes.
+ - **FEAT**: add generated artifact manifest support.
+ - **FEAT**: add transport backend configuration.
+ - **FEAT**: parse request text encodings before generation.
+ - **DOCS**: document HTTP backend selection and migration.
+ - **BREAKING** **REFACTOR**: use lists for compound model members.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+#### `tonik` - `v0.10.0`
+
+ - **REFACTOR**: simplify real-server examples.
+ - **REFACTOR**: adopt primary constructors in remaining packages.
+ - **FEAT**: add transport backend configuration.
+ - **DOCS**: expose server examples on pub.dev.
+ - **DOCS**(tonik): fix generated response example.
+ - **DOCS**: document HTTP backend selection and migration.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+
 ## 2026-07-19
 
 ### Changes

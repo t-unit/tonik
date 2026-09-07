@@ -1,3 +1,21 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: represent date-time enums with a core subtype.
+ - **REFACTOR**: adopt primary constructors in tonik_core.
+ - **REFACTOR**: simplify request generation and multipart tests.
+ - **REFACTOR**: centralize multipart request content and lowering.
+ - **FIX**: normalize unconstrained allOf members during generation.
+ - **FIX**: preserve date-time enum wire values.
+ - **FIX**: preserve defaults on compound schemas.
+ - **FIX**(tonik_generate): preserve semantic codec ordering.
+ - **FEAT**: support multipart root model shapes.
+ - **FEAT**: parse request text encodings before generation.
+ - **FEAT**: add transport backend configuration.
+ - **BREAKING** **REFACTOR**: use lists for compound model members.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
 ## 0.9.0
 
  - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.

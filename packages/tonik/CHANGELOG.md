@@ -1,3 +1,18 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: simplify real-server examples.
+ - **REFACTOR**: adopt primary constructors in remaining packages.
+ - **FEAT**: add transport backend configuration.
+ - **DOCS**: expose server examples on pub.dev.
+ - **DOCS**(tonik): fix generated response example.
+ - **DOCS**: document HTTP backend selection and migration.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.9.0
 
  - **DOCS**: rewrite and rename the URI encoding doc for allowReserved support.

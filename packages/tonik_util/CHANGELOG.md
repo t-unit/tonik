@@ -1,3 +1,29 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: share object parameter encoding across generated models.
+ - **REFACTOR**: use named constructors for ServerConfig.
+ - **REFACTOR**: update generated API models and client code.
+ - **REFACTOR**(util): decouple content type parsing from Dio.
+ - **FIX**: preserve Unicode multipart filenames.
+ - **FIX**: escape backslashes in multipart quoted names.
+ - **FIX**: dispatch parameterized response media types.
+ - **FIX**: preserve empty string response headers.
+ - **FIX**: decode simple map response headers.
+ - **FIX**: omit empty matrix objects during path encoding.
+ - **FIX**: encode form query names independently of allowReserved.
+ - **FIX**: declare remaining fields in primary constructors.
+ - **FIX**(tonik_generate): correct HTTP multipart encoding.
+ - **FIX**: require non-null ServerConfig constructor arguments.
+ - **FIX**: reject broken euc-kr decoding.
+ - **FEAT**: require explicit text encoding for serialization.
+ - **FEAT**: parse request text encodings before generation.
+ - **FEAT**: add generated API cancellation support.
+ - **FEAT**: support response charsets.
+ - **DOCS**: document HTTP backend selection and migration.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
 ## 0.9.0
 
 > Note: This release has breaking changes.

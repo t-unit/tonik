@@ -60,7 +60,7 @@ dependencies:
   collection: ^1.19.1
 $transportDependencies$ficDependency
   meta: ^1.19.0
-  tonik_util: ^0.9.0
+  tonik_util: ^0.10.0
 
 dev_dependencies:
   lints: ^6.1.0

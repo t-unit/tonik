@@ -1,3 +1,24 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: represent date-time enums with a core subtype.
+ - **REFACTOR**: adopt primary constructors in remaining packages.
+ - **REFACTOR**: simplify request generation and multipart tests.
+ - **REFACTOR**: centralize multipart request content and lowering.
+ - **PERF**(tonik_parse): index named models during import.
+ - **FIX**: parse empty schemas as any JSON value.
+ - **FIX**: ignore response Content-Type header definitions.
+ - **FIX**: preserve date-time enum wire values.
+ - **FIX**: ignore reserved header parameters.
+ - **FIX**: preserve defaults on compound schemas.
+ - **FIX**: deduplicate compound members during parsing.
+ - **FEAT**: support multipart root model shapes.
+ - **FEAT**: parse request text encodings before generation.
+ - **BREAKING** **REFACTOR**: use lists for compound model members.
+ - **BREAKING** **FIX**(tonik_parse): preserve undeclared operation tags.
+ - **BREAKING** **FEAT**: require Dart 3.13 and adopt primary constructors.
+
 ## 0.9.0
 
 > Note: This release has breaking changes.
