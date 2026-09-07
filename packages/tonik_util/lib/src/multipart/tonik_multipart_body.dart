@@ -121,8 +121,10 @@ final class TonikMultipartBody._(
     }
   }
 
-  static String _browserEncode(String value) =>
-      value.replaceAll(RegExp(r'\r\n|\r|\n'), '%0D%0A').replaceAll('"', '%22');
+  static String _browserEncode(String value) => value
+      .replaceAll(r'\', r'\\')
+      .replaceAll(RegExp(r'\r\n|\r|\n'), '%0D%0A')
+      .replaceAll('"', '%22');
 
   static String _newBoundary() {
     final suffix = List.generate(

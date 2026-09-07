@@ -67,9 +67,19 @@ Code _append(MultipartAppend part, String variable, bool custom) {
       refer('MultipartFile', 'package:http/http.dart')
           .property('fromBytes')
           .call(
-            [part.name, bytes],
+            [
+              part.name.parenthesized.property('replaceAll').call([
+                specLiteralString(r'\'),
+                specLiteralString(r'\\'),
+              ]),
+              bytes,
+            ],
             {
-              'filename': ?part.filename,
+              if (part.filename case final filename?)
+                'filename': filename.parenthesized.property('replaceAll').call([
+                  specLiteralString(r'\'),
+                  specLiteralString(r'\\'),
+                ]),
               'contentType': refer(
                 'MediaType',
                 'package:http/http.dart',

@@ -283,6 +283,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart/quoted-names:
+    post:
+      operationId: postQuotedNames
+      tags:
+        - multipart
+      summary: Post multipart names containing backslashes
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuotedNamesForm'
+            encoding:
+              'aliases\':
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/quoted-names-headers:
+    post:
+      operationId: postQuotedNamesWithHeaders
+      tags:
+        - multipart
+      summary: Post quoted multipart names with custom headers
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuotedNamesForm'
+            encoding:
+              'profile\name':
+                headers:
+                  X-Part-Meta:
+                    required: true
+                    schema:
+                      type: string
+              'aliases\':
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/response:
     get:
       operationId: getMultipartResponse
@@ -841,6 +887,23 @@ components:
           description: >-
             Base64-encoded binary data. Per OAS 3.0.4 §4.7.15, format:byte
             defaults to application/octet-stream in multipart encoding.
+
+    QuotedNamesForm:
+      type: object
+      required:
+        - 'profile\name'
+        - 'aliases\'
+        - 'file\\path'
+      properties:
+        'profile\name':
+          type: string
+        'aliases\':
+          type: array
+          items:
+            type: string
+        'file\\path':
+          type: string
+          format: binary
 
     ModelType:
       type: string
