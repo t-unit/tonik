@@ -1629,7 +1629,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data != null) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeUnknownFlatScalar(data!, context: 'DynamicContainer.data'),
+      encodeUnknownFlatScalar(data!, context: r'DynamicContainer.data'),
     );
   }
   return _$result;
@@ -1639,6 +1639,41 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       expect(
         collapseWhitespace(classCode),
         contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('AnyModel encoding context preserves dollar-prefixed class names', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: r'$20100401Payments',
+        properties: [
+          Property(
+            name: 'Parameter',
+            model: AnyModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(
+          collapseWhitespace(r'''
+encodeUnknownFlatScalar(
+  parameter!,
+  context: r'$20100401Payments.Parameter',
+)
+'''),
+        ),
       );
     });
 
@@ -1681,7 +1716,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (data != null) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeUnknownFlatScalar(data!, context: 'ForbiddenContainer.data'),
+      encodeUnknownFlatScalar(data!, context: r'ForbiddenContainer.data'),
     );
   }
   throw EncodingException(

@@ -55,6 +55,8 @@ class const Generator() {
     TonikConfig config = const TonikConfig(),
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
   }) async {
+    const AllOfNormalizer(normalizeSingleMembers: false).apply(apiDocument);
+
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
     );

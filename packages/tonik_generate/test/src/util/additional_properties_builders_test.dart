@@ -417,7 +417,7 @@ void main() {
             context: context,
             examples: const [],
           ),
-          knownWireKeys: const {'name'},
+          knownWireKeys: const {},
         ),
         format: FlatWireFormat.form,
         sourceMapVar: r'_$values',
@@ -428,13 +428,10 @@ void main() {
 
       const expected = r'''
         void run() {
-          const _$knownKeys = {r'name'};
-          for (final _$entry in _$values.entries) {
-            if (!_$knownKeys.contains(_$entry.key)) {
-              throw FormDecodingException(
-                r'Map values cannot be decoded from a flat value at Order.additionalProperties',
-              );
-            }
+          for (final _ in _$values.entries) {
+            throw FormDecodingException(
+              r'Map values cannot be decoded from a flat value at Order.additionalProperties',
+            );
           }
         }
       ''';

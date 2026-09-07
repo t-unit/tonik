@@ -1406,7 +1406,7 @@ class const ClassGenerator({
               'package:tonik_util/tonik_util.dart',
             ).call(
               [refer(name).nullChecked],
-              {'context': literalString('$className.$propertyName')},
+              {'context': specLiteralString('$className.$propertyName')},
             ),
           ),
           const Code('}'),
