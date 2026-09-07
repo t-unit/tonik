@@ -43,6 +43,29 @@ void main() {
     );
   });
 
+  test('encodes Unicode filenames and custom header values as UTF-8', () {
+    final body = TonikMultipartBody([
+      TonikMultipartPart(
+        name: 'upload',
+        bytes: const [72, 105],
+        contentType: 'application/octet-stream',
+        filename: '報告.txt',
+        headers: const {'X-Part-Meta': 'café'},
+      ),
+    ], boundary: 'test');
+
+    expect(
+      utf8.decode(body.bodyBytes),
+      '--test\r\n'
+      'content-disposition: form-data; name="upload"; filename="報告.txt"\r\n'
+      'content-type: application/octet-stream\r\n'
+      'X-Part-Meta: café\r\n'
+      '\r\n'
+      'Hi\r\n'
+      '--test--\r\n',
+    );
+  });
+
   test('rejects line breaks in custom header values', () {
     final body = TonikMultipartBody([
       TonikMultipartPart(

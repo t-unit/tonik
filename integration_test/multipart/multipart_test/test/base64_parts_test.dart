@@ -39,6 +39,113 @@ void main() {
     expect(wire.single('label').header('content-transfer-encoding'), isNull);
   });
 
+  test(
+    'sends a Unicode filename when base64 adds the only custom part header',
+    () async {
+      final server = await RawRequestServer.start(
+        responseStatusCode: 200,
+        responseHeaders: {'content-type': 'application/json'},
+        responseBody: utf8.encode('{"success":true}'),
+      );
+      final api = MultipartApi(
+        CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
+      );
+
+      final response = await api.postByteField(
+        body: const ByteForm(
+          label: 'report',
+          data: TonikFileBytes([0, 255, 128, 65], fileName: '報告.txt'),
+        ),
+      );
+      expect(response, isTonikSuccess);
+
+      final data = MultipartWire(await server.takeRequest()).single('data');
+      expect(latin1.encode(data.filename!), [
+        229,
+        160,
+        177,
+        229,
+        145,
+        138,
+        46,
+        116,
+        120,
+        116,
+      ]);
+      expect(
+        utf8.decode(latin1.encode(data.header('content-disposition')!)),
+        'form-data; name="data"; filename="報告.txt"',
+      );
+      expect(data.bodyBytes, [65, 80, 43, 65, 81, 81, 61, 61]);
+      expect(data.header('content-transfer-encoding'), 'base64');
+      expect(data.contentType, 'application/octet-stream');
+    },
+  );
+
+  test(
+    'preserves Unicode filenames on base64 and sibling binary parts',
+    () async {
+      final server = await RawRequestServer.start();
+      final api = MultipartApi(
+        CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
+      );
+
+      final response = await api.postBase64Parts(
+        body: const Base64PartsForm(
+          files: [
+            TonikFileBytes([0, 255, 128, 65], fileName: '報告.txt'),
+          ],
+          binary: TonikFileBytes([0, 255, 128, 65], fileName: '画像.png'),
+        ),
+        filesPartLabel: 'images',
+      );
+      expect(response, isTonikSuccess);
+
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts, hasLength(2));
+      final encoded = wire.single('files');
+      expect(latin1.encode(encoded.filename!), [
+        229,
+        160,
+        177,
+        229,
+        145,
+        138,
+        46,
+        116,
+        120,
+        116,
+      ]);
+      expect(
+        utf8.decode(latin1.encode(encoded.header('content-disposition')!)),
+        'form-data; name="files"; filename="報告.txt"',
+      );
+      expect(encoded.bodyBytes, [65, 80, 43, 65, 81, 81, 61, 61]);
+      expect(encoded.header('content-transfer-encoding'), 'base64');
+      expect(encoded.header('x-part-label'), 'images');
+      expect(encoded.contentType, 'image/png');
+      final binary = wire.single('binary');
+      expect(latin1.encode(binary.filename!), [
+        231,
+        148,
+        187,
+        229,
+        131,
+        143,
+        46,
+        112,
+        110,
+        103,
+      ]);
+      expect(
+        utf8.decode(latin1.encode(binary.header('content-disposition')!)),
+        'form-data; name="binary"; filename="画像.png"',
+      );
+      expect(binary.bodyBytes, [0, 255, 128, 65]);
+      expect(binary.header('content-transfer-encoding'), isNull);
+    },
+  );
+
   test('base64 encodes file paths and preserves the filename', () async {
     final directory = await Directory.systemTemp.createTemp('multipart-byte-');
     addTearDown(() => directory.delete(recursive: true));
