@@ -186,7 +186,8 @@ update_test_pubspec_for_published() {
         # Update tonik_util version constraint to match the version being tested
         # This handles version constraints like "^0.0.8" or "^0.1.0"
         if grep -q "tonik_util:" "$pubspec_file"; then
-            sed -i '' "s/tonik_util: \^[0-9]*\.[0-9]*\.[0-9]*/tonik_util: ^$tonik_util_version/" "$pubspec_file"
+            sed "s/tonik_util: \^[0-9]*\.[0-9]*\.[0-9]*/tonik_util: ^$tonik_util_version/" "$pubspec_file" > "${pubspec_file}.tmp"
+            mv "${pubspec_file}.tmp" "$pubspec_file"
             print_success "Updated tonik_util to ^$tonik_util_version"
         fi
         
@@ -218,7 +219,11 @@ run_tests() {
     update_test_pubspec_for_published "pubspec.yaml"
     
     # Get dependencies
-    dart pub get
+    if ! dart pub get; then
+        print_error "$test_name dependency resolution failed"
+        cd "$INTEGRATION_TEST_DIR"
+        return 1
+    fi
     
     # Run tests with concurrency=1 to avoid port conflicts with Imposter mock servers
     if dart test; then
@@ -294,6 +299,9 @@ if [ "$GENERATE_ONLY" = true ]; then
     echo "Run with --test-only to execute tests"
     exit 0
 fi
+
+# Shared helpers must use the same published runtime as the test packages.
+update_test_pubspec_for_published "test_helpers/pubspec.yaml"
 
 echo ""
 print_step "Running integration tests..."
