@@ -1,0 +1,5 @@
+packageName: javascript_fastify_api
+spec: openapi.json
+outputDir: generated
+contentTypes:
+  text/csv: text

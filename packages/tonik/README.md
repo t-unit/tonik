@@ -151,7 +151,8 @@ switch (response) {
 }
 ```
 
-See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart) for more examples.
+See the [real server examples](https://github.com/t-unit/tonik/tree/main/examples)
+for Dart clients using FastAPI, NestJS, Fastify, Spring Boot, and Rails APIs.
 
 ## Feature Summary
 

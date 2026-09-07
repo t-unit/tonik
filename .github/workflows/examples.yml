@@ -1,0 +1,55 @@
+name: Real Server Examples
+run-name: Real server examples (${{ inputs.example }}, ${{ inputs.backend }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      example:
+        description: Server example
+        type: choice
+        default: all
+        options:
+          - all
+          - python_fastapi
+          - typescript_nestjs
+          - javascript_fastify
+          - java_spring_boot
+          - ruby_rails
+      backend:
+        description: Dart HTTP backend
+        type: choice
+        default: both
+        options:
+          - both
+          - dio
+          - http
+
+permissions:
+  contents: read
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Run examples
+        env:
+          EXAMPLE: ${{ inputs.example }}
+          BACKEND: ${{ inputs.backend }}
+        run: ./examples/run.sh "$EXAMPLE" --backend "$BACKEND"
+
+      - name: Upload server logs and schemas
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-artifacts
+          path: examples/.artifacts/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7

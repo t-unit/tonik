@@ -1,0 +1,10 @@
+node_modules
+dist
+target
+.venv
+__pycache__
+vendor/bundle
+.bundle
+log
+tmp
+.git

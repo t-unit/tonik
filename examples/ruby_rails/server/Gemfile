@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+ruby '3.4.5'
+gem 'rails', '8.0.2.1'
+gem 'puma', '7.0.2'
+gem 'rswag-api', '2.16.0'
+gem 'rswag-specs', '2.16.0'
+gem 'rspec-rails', '7.1.1'

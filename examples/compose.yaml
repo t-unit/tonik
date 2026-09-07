@@ -1,0 +1,21 @@
+services:
+  python_fastapi:
+    profiles: [python_fastapi]
+    build: ./python_fastapi/server
+    ports: ["127.0.0.1::8000"]
+  typescript_nestjs:
+    profiles: [typescript_nestjs]
+    build: ./typescript_nestjs/server
+    ports: ["127.0.0.1::8000"]
+  javascript_fastify:
+    profiles: [javascript_fastify]
+    build: ./javascript_fastify/server
+    ports: ["127.0.0.1::8000"]
+  java_spring_boot:
+    profiles: [java_spring_boot]
+    build: ./java_spring_boot/server
+    ports: ["127.0.0.1::8000"]
+  ruby_rails:
+    profiles: [ruby_rails]
+    build: ./ruby_rails/server
+    ports: ["127.0.0.1::8000"]

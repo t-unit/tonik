@@ -1,0 +1,5 @@
+packageName: java_spring_boot_api
+spec: openapi.json
+outputDir: generated
+contentTypes:
+  text/csv: text

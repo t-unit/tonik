@@ -1,0 +1,5 @@
+packageName: typescript_nestjs_api
+spec: openapi.json
+outputDir: generated
+contentTypes:
+  text/csv: text

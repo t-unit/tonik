@@ -1,0 +1,15 @@
+.artifacts/
+.locks/
+**/generated/
+**/.dart_tool/
+**/node_modules/
+**/.venv/
+**/__pycache__/
+**/target/
+**/vendor/bundle/
+**/log/
+**/tmp/
+**/pubspec_overrides.yaml
+**/dist/
+**/.bundle/
+**/server/openapi/
