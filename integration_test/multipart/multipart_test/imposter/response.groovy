@@ -325,7 +325,7 @@ switch (path) {
         break
 
     case '/multipart31/byte':
-        // format:byte fields default to application/octet-stream in OAS 3.1.
+        // Legacy Tonik format:byte compatibility uses application/octet-stream.
         // Binary parts do NOT appear in formParams (unlike text/plain parts).
         respond {
             withStatusCode 200

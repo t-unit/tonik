@@ -84,11 +84,7 @@ Object? test() {
 
   group('single-value parts', () {
     test('retains file bytes and the existing filename fallback', () {
-      for (final model in [
-        BinaryModel(context: context),
-        Base64Model(context: context),
-      ]) {
-        expectPropertyCode(model, r'''
+      expectPropertyCode(BinaryModel(context: context), r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
@@ -97,7 +93,79 @@ Object? test() {
       contentType: MediaType.parse(r'application/octet-stream'),
     ),
   );''');
-      }
+    });
+
+    test('encodes base64 file content using custom HTTP parts', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: Base64Model(context: context),
+        ),
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$multipartParts = <TonikMultipartPart>[];
+  final _$valueHeaders = <String, String>{
+    r'Content-Transfer-Encoding': r'base64',
+  };
+  _$multipartParts.add(TonikMultipartPart(
+    name: r'value',
+    bytes: ascii.encode(body.value.toBase64String()),
+    contentType: r'application/octet-stream',
+    filename: body.value.fileName ?? r'value',
+    headers: _$valueHeaders,
+  ));
+  return TonikMultipartBody(_$multipartParts);
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('encodes aliased base64 array items with their media override', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: _list(
+            context,
+            AliasModel(
+              name: 'EncodedBytes',
+              model: Base64Model(context: context),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ),
+          encoding: _encoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'image/png',
+          ),
+        ),
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$multipartParts = <TonikMultipartPart>[];
+  final _$valueHeaders = <String, String>{
+    r'Content-Transfer-Encoding': r'base64',
+  };
+  for (final item in body.value) {
+    _$multipartParts.add(TonikMultipartPart(
+      name: r'value',
+      bytes: ascii.encode(item.toBase64String()),
+      contentType: r'image/png',
+      filename: item.fileName ?? r'value',
+      headers: _$valueHeaders,
+    ));
+  }
+  return TonikMultipartBody(_$multipartParts);
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
     });
 
     test('converts date URI decimal and boolean scalar values once', () {

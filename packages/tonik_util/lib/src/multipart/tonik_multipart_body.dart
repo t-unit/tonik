@@ -69,7 +69,7 @@ final class TonikMultipartBody._(
       _validatePart(part);
       bytes
         ..add(ascii.encode('--$boundary\r\n'))
-        ..add(latin1.encode(_partHeaders(part)))
+        ..add(utf8.encode(_partHeaders(part)))
         ..add(part.bytes)
         ..add(const [13, 10]);
     }

@@ -266,9 +266,8 @@ paths:
         - multipart
       summary: Post a format byte field in multipart
       description: >-
-        Tests that format:byte (Base64Model) is sent as application/octet-stream,
-        not text/plain. Per OAS 3.0.4 §4.7.15, format:byte defaults to
-        application/octet-stream in multipart encoding.
+        Tests that format:byte (Base64Model) is sent as base64 text with
+        Content-Transfer-Encoding: base64 and application/octet-stream.
       requestBody:
         required: true
         content:
@@ -282,6 +281,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/base64-parts:
+    post:
+      operationId: postBase64Parts
+      tags:
+        - multipart
+      summary: Post repeated base64 parts with custom headers
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Base64PartsForm'
+            encoding:
+              files:
+                contentType: image/png
+                headers:
+                  X-Part-Label:
+                    required: true
+                    schema:
+                      type: string
+                  cOnTeNt-TrAnSfEr-EnCoDiNg:
+                    schema:
+                      type: string
+      responses:
+        '204':
+          description: Accepted
 
   /multipart/quoted-names:
     post:
@@ -887,6 +913,20 @@ components:
           description: >-
             Base64-encoded binary data. Per OAS 3.0.4 §4.7.15, format:byte
             defaults to application/octet-stream in multipart encoding.
+
+    Base64PartsForm:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: byte
+        binary:
+          type: string
+          format: binary
 
     QuotedNamesForm:
       type: object
