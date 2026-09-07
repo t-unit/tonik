@@ -15,10 +15,9 @@ discover_integration_packages "$backend"
 
 echo "Tests: backend=$backend packages=${#INTEGRATION_TEST_PACKAGES[@]}"
 for package_dir in "${INTEGRATION_TEST_PACKAGES[@]}"; do
-  echo "Testing $package_dir"
   (
     cd "$INTEGRATION_REPO_ROOT/$package_dir"
     dart pub get
-    dart test --concurrency=2
   )
 done
+run_integration_package_tests

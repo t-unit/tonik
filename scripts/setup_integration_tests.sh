@@ -30,52 +30,19 @@ if [ "$BACKEND" != "dio" ] && [ "$BACKEND" != "http" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/integration_setup_utils.sh"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INTEGRATION_TEST_DIR="$REPO_ROOT/integration_test"
 TONIK_BINARY="$REPO_ROOT/.dart_tool/tonik_compiled"
 
 if command -v nproc >/dev/null 2>&1; then
-  SETUP_JOBS="$(nproc)"
+  SETUP_CPUS="$(nproc)"
 elif command -v sysctl >/dev/null 2>&1; then
-  SETUP_JOBS="$(sysctl -n hw.ncpu)"
+  SETUP_CPUS="$(sysctl -n hw.ncpu)"
 else
-  SETUP_JOBS=4
+  SETUP_CPUS=4
 fi
-SETUP_JOBS="${INTEGRATION_SETUP_JOBS:-$SETUP_JOBS}"
-
-run_commands() {
-  local max_jobs="$1"
-  shift
-  local command
-  local failed=0
-  local -a pids=()
-  local -a batch_commands=()
-
-  for command in "$@"; do
-    bash -c "$command" &
-    pids+=("$!")
-    batch_commands+=("$command")
-    if [ "${#pids[@]}" -ge "$max_jobs" ]; then
-      for index in "${!pids[@]}"; do
-        if ! wait "${pids[$index]}"; then
-          echo "Error: command failed: ${batch_commands[$index]}" >&2
-          failed=1
-        fi
-      done
-      [ "$failed" -eq 0 ] || return 1
-      pids=()
-      batch_commands=()
-    fi
-  done
-
-  for index in "${!pids[@]}"; do
-    if ! wait "${pids[$index]}"; then
-      echo "Error: command failed: ${batch_commands[$index]}" >&2
-      failed=1
-    fi
-  done
-  [ "$failed" -eq 0 ]
-}
+configure_setup_workers "$SETUP_CPUS"
 
 add_tonik_util_override() {
   local pubspec="$1"
@@ -200,7 +167,7 @@ for directory in "${GENERATED_DIRS[@]}"; do
   rm -rf "$directory"
 done
 
-echo "Generating 44 API packages for $BACKEND (max $SETUP_JOBS jobs)..."
+echo "Generating 44 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
 run_commands "$SETUP_JOBS" "${GENERATION_COMMANDS[@]}"
 
 generated_count=0

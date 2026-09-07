@@ -54,7 +54,23 @@ jobs:
           melos bootstrap
 
       - name: Run tests with coverage
+        if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         run: melos run coverage-ci
+
+      - name: Run tests
+        if: matrix.sdk != 'stable' || matrix.os != 'ubuntu-latest'
+        shell: bash
+        run: |
+          set -e
+          (cd packages/tonik_util && dart test)
+          (cd packages/tonik_core && dart test)
+          (cd packages/tonik_parse && dart test)
+          (cd packages/tonik_generate && dart test)
+          (cd packages/tonik && dart test)
+
+      - name: Test integration setup scheduling
+        shell: bash
+        run: bash scripts/test_integration_setup.sh
 
       - name: Run fixed-offset tests in a DST timezone
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
