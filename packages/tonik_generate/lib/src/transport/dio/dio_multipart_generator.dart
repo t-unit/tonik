@@ -19,6 +19,16 @@ BuiltStatements buildMultipartBodyStatements(MultipartBodyPlan plan) {
         MultipartCode(:final code) => code,
         MultipartAppend() => _append(emission),
       },
+    Block.of([
+      const Code(
+        r'if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {',
+      ),
+      generateEncodingExceptionExpression(
+        'Multipart request body must contain at least one part.',
+        raw: true,
+      ).statement,
+      const Code('}'),
+    ]),
     refer(r'_$formData').returned.statement,
   ]);
 }

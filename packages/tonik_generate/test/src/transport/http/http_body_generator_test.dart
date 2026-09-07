@@ -641,6 +641,9 @@ Future<Object?> _data({required Payload body}) async {
     final PayloadJson value => utf8.encode(jsonEncode(value.value)),
     final PayloadFormData _ => await () async {
       final _$multipartFiles = <MultipartFile>[];
+      if (_$multipartFiles.isEmpty) {
+        throw EncodingException(r'Multipart request body must contain at least one part.');
+      }
       return _$multipartFiles;
     }(),
   };
@@ -690,6 +693,9 @@ Future<Object?> _data({required Payload body}) async {
           contentType: MediaType.parse(r'text/plain'),
         ),
       );
+      if (_$multipartFiles.isEmpty) {
+        throw EncodingException(r'Multipart request body must contain at least one part.');
+      }
       return _$multipartFiles;
     }(),
   };
@@ -781,6 +787,9 @@ Future<Object?> _data({required BatchUpload body}) async {
       ),
     );
   }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -820,6 +829,9 @@ Future<Object?> _data({OptionalUpload? body}) async {
       contentType: MediaType.parse(r'text/plain'),
     ),
   );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -862,6 +874,9 @@ Future<Object?> _data({required UnsupportedTextUpload body}) async {
       contentType: MediaType.parse(r'text/plain; charset=utf-8'),
     ),
   );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -924,6 +939,9 @@ Future<Object?> _data({
       headers: _$valueHeaders,
     ),
   );
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return TonikMultipartBody(_$multipartParts);
 }
 ''';

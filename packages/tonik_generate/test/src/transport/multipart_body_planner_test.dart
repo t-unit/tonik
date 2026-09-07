@@ -59,6 +59,9 @@ Object? test() {
       'Object? test() {',
       r'  final _$multipartFiles = <MultipartFile>[];',
       expectedPartCode,
+      r'  if (_$multipartFiles.isEmpty) {',
+      '''    throw EncodingException(r'Multipart request body must contain at least one part.');''',
+      '  }',
       r'  return _$multipartFiles;',
       '}',
     ].join('\n');
@@ -69,10 +72,13 @@ Object? test() {
     );
   }
 
-  test('emits an empty multipart body when there are no parts', () {
+  test('rejects multipart bodies when there are no parts', () {
     const expected = r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -149,6 +155,9 @@ Object? test() {
     filename: body.value.fileName ?? r'value',
     headers: _$valueHeaders,
   ));
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return TonikMultipartBody(_$multipartParts);
 }
 ''';
@@ -192,6 +201,9 @@ Object? test() {
       filename: item.fileName ?? r'value',
       headers: _$valueHeaders,
     ));
+  }
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
   }
   return TonikMultipartBody(_$multipartParts);
 }
@@ -246,6 +258,9 @@ Object? test() {
       ),
     );
   }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -297,6 +312,9 @@ Object? test() {
       headers: _$valueHeaders,
     ),
   );
+  if (_$multipartParts.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return TonikMultipartBody(_$multipartParts);
 }
 ''';
@@ -713,6 +731,65 @@ Object? test() {
   });
 
   group('content-based arrays', () {
+    test('emits a separate JSON part for each object by default', () {
+      expectPropertyCode(_list(context, _classModel(context, 'ListItem')), r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }''');
+    });
+
+    test('emits a separate JSON part for each map', () {
+      expectPropertyCode(
+        _list(
+          context,
+          MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }''',
+      );
+    });
+
+    test('keeps explicit content-type parameters on each allOf object', () {
+      expectPropertyCode(
+        _list(
+          context,
+          _allOf(context, 'Combined', [_classModel(context, 'Member')]),
+        ),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/vnd.items+json; profile=v2'),
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/vnd.items+json; profile=v2',
+        ),
+      );
+    });
+
     test('rejects arrays of arrays', () {
       expectPropertyCode(
         ListModel(
@@ -762,11 +839,6 @@ Object? test() {
     });
 
     for (final entry in <({String name, Model model, String encodedValue})>[
-      (
-        name: 'objects',
-        model: _classModel(context, 'ListItem'),
-        encodedValue: 'body.value.map((item) => item.toJson()).toList()',
-      ),
       (
         name: 'enums',
         model: _stringEnum(context),
@@ -1086,6 +1158,9 @@ Object? test() {
       ),
     );
   }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
   return _$multipartFiles;
 }
 ''';
@@ -1114,6 +1189,9 @@ Object? test() {
         contentType: MediaType.parse(r'text/plain'),
       ),
     );
+  }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
   }
   return _$multipartFiles;
 }

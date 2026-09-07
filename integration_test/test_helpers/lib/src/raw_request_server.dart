@@ -22,7 +22,12 @@ final class RawRequestServer._(
   final HttpServer _server,
   final Future<RawRequest> _request,
 ) {
+  int _requestCount = 0;
+
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
+
+  /// Number of requests received, including requests with unread bodies.
+  int get requestCount => _requestCount;
 
   static Future<RawRequestServer> start({
     int responseStatusCode = HttpStatus.noContent,
@@ -31,8 +36,10 @@ final class RawRequestServer._(
   }) async {
     final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     final requestCompleter = Completer<RawRequest>();
+    final rawServer = RawRequestServer._(server, requestCompleter.future);
 
     server.listen((request) async {
+      rawServer._requestCount++;
       final bodyBytes = await request.fold<List<int>>(
         <int>[],
         (bytes, chunk) => bytes..addAll(chunk),
@@ -58,7 +65,6 @@ final class RawRequestServer._(
       await request.response.close();
     });
 
-    final rawServer = RawRequestServer._(server, requestCompleter.future);
     addTearDown(rawServer.close);
     return rawServer;
   }

@@ -2684,6 +2684,9 @@ Future<Object?> _data({required Upload body}) async {
             if (body.nickname != null) {
               _$formData.files.add(MapEntry((r'nickname').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+              throw EncodingException(r'Multipart request body must contain at least one part.');
+            }
             return _$formData;
           }
         ''';
@@ -2883,6 +2886,9 @@ Future<Object?> _data({Payload? body}) async {
     final PayloadJson value => jsonEncode(value.value),
     final PayloadFormData _ => await () async {
       final _$formData = FormData();
+      if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+        throw EncodingException(r'Multipart request body must contain at least one part.');
+      }
       return _$formData;
     }(),
   };
@@ -2964,6 +2970,9 @@ Future<Object?> _data({Payload? body}) async {
               final CreateItemFormData value => await () async {
                 final _$formData = FormData();
                 _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse(r'text/plain'))));
+                if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                  throw EncodingException(r'Multipart request body must contain at least one part.');
+                }
                 return _$formData;
               }(),
             };
@@ -3298,6 +3307,9 @@ Future<Object?> _data({Payload? body}) async {
               if (body == null) return null;
               final _$formData = FormData();
               _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+              if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+                throw EncodingException(r'Multipart request body must contain at least one part.');
+              }
               return _$formData;
             }
           ''';
