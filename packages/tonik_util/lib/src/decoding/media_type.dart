@@ -1,3 +1,38 @@
+import 'package:http_parser/http_parser.dart';
+
+/// Parses media type parameters, returning null for missing or invalid input.
+///
+/// Parameter names and charset values are normalized to lowercase. Other
+/// values retain their case, with quoted-string escapes decoded.
+Map<String, String>? parseMediaTypeParameters(String? header) {
+  if (header == null) return null;
+  try {
+    final parsed = MediaType.parse(header);
+    return {
+      for (final entry in parsed.parameters.entries)
+        entry.key.toLowerCase(): entry.key.toLowerCase() == 'charset'
+            ? entry.value.toLowerCase()
+            : entry.value,
+    };
+  } on FormatException {
+    return null;
+  }
+}
+
+/// Returns whether [actual] contains every declared media type parameter.
+///
+/// Extra parameters are allowed. Parameter names and charset values match
+/// without regard to case; other parameter values match exactly.
+bool matchesMediaTypeParameters(String? actual, Map<String, String> declared) {
+  final parameters = parseMediaTypeParameters(actual);
+  if (parameters == null) return false;
+  return declared.entries.every((entry) {
+    final name = entry.key.toLowerCase();
+    final value = name == 'charset' ? entry.value.toLowerCase() : entry.value;
+    return parameters[name] == value;
+  });
+}
+
 /// Extracts the bare `type/subtype` portion of an HTTP `Content-Type` header.
 ///
 /// Servers commonly append `charset=utf-8`; ignoring parameters is required to

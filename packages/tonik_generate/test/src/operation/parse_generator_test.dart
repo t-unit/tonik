@@ -4403,7 +4403,7 @@ String _parseResponse(Response<List<int>> response) {
         );
       });
 
-      test('strips parameters from spec key in case pattern', () {
+      test('matches parameters from spec key with a guard', () {
         final operation = Operation(
           operationId: 'paramContentTypeOp',
           context: context,
@@ -4440,7 +4440,7 @@ String _parseResponse(Response<List<int>> response) {
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
-    case (200, r'application/json'):
+    case (200, r'application/json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'charset': r'utf-8'}):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return _$body;
@@ -4550,7 +4550,7 @@ String _parseResponse(Response<List<int>> response) {
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
-    case (_, r'application/vnd.foo+json'):
+    case (_, r'application/vnd.foo+json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'version': r'1'}):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return _$body;
@@ -4657,7 +4657,7 @@ String _parseResponse(Response<List<int>> response) {
                   ),
                   ResponseBody(
                     model: IntegerModel(context: context),
-                    rawContentType: 'application/json; charset=utf-8',
+                    rawContentType: 'application/JSON',
                     contentType: ContentType.json,
                     examples: const [],
                   ),
@@ -4699,11 +4699,93 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
               .map((r) => r.message)
               .toList();
           expect(warnings, hasLength(1));
-          expect(warnings.single, contains('application/json; charset=utf-8'));
+          expect(warnings.single, contains('application/JSON'));
           expect(warnings.single, contains('Application/JSON'));
           expect(warnings.single, contains('kept model: StringModel'));
           expect(warnings.single, contains('dropped models:'));
           expect(warnings.single, contains('IntegerModel'));
+        },
+      );
+
+      test(
+        'keeps distinct parameters and dedupes equivalent quoted parameters',
+        () {
+          final previousRootLevel = Logger.root.level;
+          Logger.root.level = Level.ALL;
+          addTearDown(() => Logger.root.level = previousRootLevel);
+          final logs = <LogRecord>[];
+          final sub = Logger('ParseGenerator').onRecord.listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final operation = Operation(
+            operationId: 'parameterVariants',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/parameter-variants',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: IntegerModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json; version=2',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: BooleanModel(context: context),
+                    rawContentType:
+                        'application/json; version=2; charset=UTF-8',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: DoubleModel(context: context),
+                    rawContentType:
+                        'Application/JSON; CHARSET="utf-8"; VERSION="2"',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+
+          final generated = generator
+              .generateParseResponseMethod(operation)
+              .accept(emitter)
+              .toString();
+
+          expect(generated, contains('decodeJsonInt()'));
+          expect(generated, contains('decodeJsonString()'));
+          expect(generated, contains('decodeJsonBool()'));
+          expect(generated, isNot(contains('decodeJsonDouble()')));
+          final warnings = logs.where(
+            (record) => record.level == Level.WARNING,
+          );
+          expect(warnings, hasLength(1));
+          expect(
+            warnings.single.message,
+            contains('dropped models: DoubleModel'),
+          );
         },
       );
 
@@ -4745,7 +4827,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
-                  rawContentType: 'application/json; charset=utf-8',
+                  rawContentType: 'Application/JSON',
                   contentType: ContentType.json,
                   examples: const [],
                 ),
@@ -4757,7 +4839,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
-                  rawContentType: 'application/xml; charset=utf-8',
+                  rawContentType: 'Application/XML',
                   contentType: ContentType.json,
                   examples: const [],
                 ),
@@ -4800,13 +4882,13 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
         final jsonWarning = warnings.firstWhere(
           (w) => w.contains('"application/json"'),
         );
-        expect(jsonWarning, contains('application/json; charset=utf-8'));
+        expect(jsonWarning, contains('Application/JSON'));
         expect(jsonWarning, isNot(contains('kept model:')));
         expect(jsonWarning, isNot(contains('dropped models:')));
         final xmlWarning = warnings.firstWhere(
           (w) => w.contains('"application/xml"'),
         );
-        expect(xmlWarning, contains('application/xml; charset=utf-8'));
+        expect(xmlWarning, contains('Application/XML'));
         expect(xmlWarning, isNot(contains('kept model:')));
         expect(xmlWarning, isNot(contains('dropped models:')));
       });
