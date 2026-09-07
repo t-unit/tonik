@@ -80,6 +80,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /files/optional:
+    post:
+      tags:
+        - files
+      summary: Upload an optional binary file
+      operationId: uploadOptionalFile
+      requestBody:
+        required: false
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: File accepted
+  /files/multi-content:
+    post:
+      tags:
+        - files
+      summary: Upload a binary file or JSON metadata
+      operationId: uploadMultiContentFile
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileInfo'
+      responses:
+        '204':
+          description: File accepted
   /images/{id}:
     get:
       tags:

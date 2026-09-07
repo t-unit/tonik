@@ -902,7 +902,7 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({required TonikFile body}) {
-          return body.toBytes();
+          return Uint8List.fromList(body.toBytes());
         }
       ''';
 
@@ -948,7 +948,8 @@ void main() {
 
         const expectedMethod = '''
         Object? _data({TonikFile? body}) {
-          return body?.toBytes();
+          if (body == null) return null;
+          return Uint8List.fromList(body.toBytes());
         }
       ''';
 
@@ -1127,7 +1128,7 @@ void main() {
         Object? _data({required Test body}) {
           return switch (body) {
             final TestJson value => value.value.toJson(),
-            final TestOctetStream value => value.value.toBytes(),
+            final TestOctetStream value => Uint8List.fromList(value.value.toBytes()),
           };
         }
       ''';
