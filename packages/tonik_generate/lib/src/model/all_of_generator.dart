@@ -1074,6 +1074,7 @@ class const AllOfGenerator({
               contextClass: className,
               contextProperty: name,
               explode: refer('explode'),
+              useImmutableCollections: useImmutableCollections,
             );
 
       constructorArgs[name] = expression.expression;

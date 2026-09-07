@@ -32,6 +32,52 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('generates immutable map decoding for an allOf map component', () {
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'MapComponent',
+      models: [
+        MapModel(
+          name: 'Metadata',
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+    final immutableGenerator = AllOfGenerator(
+      nameManager: nameManager,
+      package: 'example',
+      stableModelSorter: StableModelSorter(),
+      useImmutableCollections: true,
+    );
+
+    final generated = format(
+      immutableGenerator.generateClass(model).accept(emitter).toString(),
+    );
+
+    expect(
+      collapseWhitespace(generated),
+      contains(
+        collapseWhitespace('''
+          factory MapComponent.fromSimple(String? value, {required bool explode}) {
+            return MapComponent(
+              metadata: IMap(
+                value.decodeSimpleMap(
+                  (v) => v.decodeSimpleString(context: r'MapComponent.metadata'),
+                  explode: explode,
+                  context: r'MapComponent.metadata',
+                ),
+              ),
+            );
+          }
+        '''),
+      ),
+    );
+  });
+
   test('generates toSimple for allOf with list of DateTime', () {
     final model = AllOfModel(
       isDeprecated: false,

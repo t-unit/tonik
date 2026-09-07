@@ -323,6 +323,144 @@ void main() {
       });
     });
 
+    group('Maps', () {
+      test('decodes exploded string pairs', () {
+        expect(
+          'role=admin,firstName=Alex'.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: true,
+          ),
+          {'role': 'admin', 'firstName': 'Alex'},
+        );
+      });
+
+      test('decodes alternating keys and typed values', () {
+        expect(
+          'count,42,remaining,7'.decodeSimpleMap(
+            (value) => value.decodeSimpleInt(),
+            explode: false,
+          ),
+          {'count': 42, 'remaining': 7},
+        );
+      });
+
+      test('preserves percent sequences, equals signs and empty values', () {
+        expect(
+          '50%=a%20b,payload=SGVsbG8=,empty='.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: true,
+          ),
+          {'50%': 'a%20b', 'payload': 'SGVsbG8=', 'empty': ''},
+        );
+      });
+
+      test('returns empty maps for present empty fields', () {
+        expect(
+          ''.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: true,
+          ),
+          <String, String>{},
+        );
+        expect(
+          ''.decodeSimpleNullableMap(
+            (value) => value.decodeSimpleString(),
+            explode: false,
+          ),
+          <String, String>{},
+        );
+      });
+
+      test('returns null for an absent optional field', () {
+        expect(
+          null.decodeSimpleNullableMap(
+            (value) => value.decodeSimpleInt(),
+            explode: true,
+          ),
+          isNull,
+        );
+      });
+
+      test('rejects an absent required field with context', () {
+        expect(
+          () => null.decodeSimpleMap(
+            (value) => value.decodeSimpleInt(),
+            explode: true,
+            context: 'X-Counts',
+          ),
+          throwsA(
+            isA<InvalidTypeException>().having(
+              (error) => error.context,
+              'context',
+              'X-Counts',
+            ),
+          ),
+        );
+      });
+
+      test('decodes a bare exploded key as an empty string', () {
+        expect(
+          'role=admin,firstName'.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: true,
+          ),
+          {'role': 'admin', 'firstName': ''},
+        );
+      });
+
+      test('rejects an unmatched alternating key with context', () {
+        expect(
+          () => 'count,42,remaining'.decodeSimpleMap(
+            (value) => value.decodeSimpleInt(),
+            explode: false,
+            context: 'X-Counts',
+          ),
+          throwsA(
+            isA<InvalidFormatException>().having(
+              (error) => error.format,
+              'format',
+              'alternating key-value pairs in X-Counts',
+            ),
+          ),
+        );
+      });
+
+      test('rejects duplicate exploded keys', () {
+        expect(
+          () => 'role=admin,role=user'.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: true,
+          ),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('rejects duplicate non-exploded keys', () {
+        expect(
+          () => 'role,admin,role,user'.decodeSimpleMap(
+            (value) => value.decodeSimpleString(),
+            explode: false,
+          ),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('propagates a typed value error with context', () {
+        expect(
+          () => 'count=oops'.decodeSimpleMap(
+            (value) => value.decodeSimpleInt(context: 'X-Counts'),
+            explode: true,
+            context: 'X-Counts',
+          ),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((error) => error.value, 'value', 'oops')
+                .having((error) => error.context, 'context', 'X-Counts'),
+          ),
+        );
+      });
+    });
+
     group('Literal percent handling', () {
       test('decodeSimpleString returns percent signs literally', () {
         expect('50%'.decodeSimpleString(), '50%');

@@ -688,6 +688,7 @@ class const ParseGenerator({
         package: package,
         contextProperty: rawHeaderName,
         explode: literalBool(resolvedHeader.explode),
+        useImmutableCollections: useImmutableCollections,
       );
       supported[normalizedName] = decode.expression;
     }
