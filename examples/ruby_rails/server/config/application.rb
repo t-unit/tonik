@@ -6,7 +6,7 @@ require "rswag/specs"
 require "rack/deflater"
 
 class CatalogApplication < Rails::Application
-  config.load_defaults 8.0
+  config.load_defaults 8.1
   config.api_only = true
   config.eager_load = false
   config.secret_key_base = "local-example-secret-not-for-production-" * 3

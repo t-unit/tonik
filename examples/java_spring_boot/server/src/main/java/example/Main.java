@@ -265,7 +265,7 @@ public class Main {
           throws ServletException, IOException {
         if (request.getContentType() != null
             && request.getContentType().startsWith(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
-          chain.doFilter(new ContentCachingRequestWrapper(request), response);
+          chain.doFilter(new ContentCachingRequestWrapper(request, 0), response);
         } else {
           chain.doFilter(request, response);
         }

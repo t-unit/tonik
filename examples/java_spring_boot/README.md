@@ -6,9 +6,9 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh java_spring_boot
 ```
 
-[Main.java](server/src/main/java/example/Main.java) uses Spring Boot 3.5.5 and
-springdoc 2.8.13 to produce OpenAPI 3.0 from records and controller annotations.
-Java 17 and Maven dependencies are pinned in the [Dockerfile](server/Dockerfile)
+[Main.java](server/src/main/java/example/Main.java) uses Spring Boot 4.1.1 and
+springdoc 3.1.1 to produce OpenAPI 3.0 from records and controller annotations.
+Java 26 and Maven dependencies are pinned in the [Dockerfile](server/Dockerfile)
 and [pom.xml](server/pom.xml).
 
 - JSON response media types are explicit; otherwise springdoc advertises `*/*`.

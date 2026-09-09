@@ -1,4 +1,4 @@
-FROM ruby:3.4.5-slim
+FROM ruby:4.0.6-slim
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential libyaml-dev libxml2-dev libxslt1-dev pkg-config && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY Gemfile Gemfile.lock ./

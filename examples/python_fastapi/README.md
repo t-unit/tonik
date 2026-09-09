@@ -6,7 +6,7 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh python_fastapi
 ```
 
-[app.py](server/app.py) uses FastAPI 0.116.1 and Pydantic 2.11.7 to produce
+[app.py](server/app.py) uses FastAPI 0.141.1 and Pydantic 2.13.5 to produce
 OpenAPI 3.1 from Python models and route declarations. Runtime dependencies are
 pinned in [requirements.txt](server/requirements.txt).
 
@@ -19,6 +19,9 @@ vendor JSON, problem+json and CSV.
   email and phone keeps both fields.
 - Form bytes are captured before parsing so the receipt can show the original
   encoding. Files use FastAPI's normal `UploadFile` handling.
+- Upload annotations retain `format: binary` alongside FastAPI's
+  `contentMediaType` so Tonik generates file parameters for single, optional and
+  batch uploads.
 - Typed JSON multipart parts are demonstrated in the Spring example. FastAPI
   cannot simply combine an ordinary JSON request body with `File`/`Form`.
 

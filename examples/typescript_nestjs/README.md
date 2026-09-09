@@ -6,10 +6,13 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh typescript_nestjs
 ```
 
-[main.ts](server/main.ts) uses NestJS 11.1.6 and Swagger 11.2.0 to produce
+[main.ts](server/main.ts) uses NestJS 12.0.1 and Swagger 12.0.1 to produce
 OpenAPI 3.0 from DTO and controller decorators. Dependencies are pinned in
 [package.json](server/package.json) and its lockfile; no Swagger compiler plugin
 is needed.
+
+The Multer override keeps NestJS's internal upload middleware on the same pinned
+version as the direct dependency.
 
 - Express parses JSON and URL-encoded forms; Multer handles multipart files.
   The form parser's `verify` hook captures the original encoded bytes.
