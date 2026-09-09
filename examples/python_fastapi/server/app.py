@@ -18,12 +18,25 @@ from fastapi import (
 )
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, WithJsonSchema
 
 app = FastAPI(
     title="FastAPI catalog", version="1.0.0", servers=[{"url": "http://localhost"}]
 )
 app.add_middleware(GZipMiddleware, minimum_size=1)
+
+# Retain the binary format used by client generators alongside FastAPI's
+# contentMediaType annotation, including array items and optional uploads.
+BinaryUploadFile = Annotated[
+    UploadFile,
+    WithJsonSchema(
+        {
+            "type": "string",
+            "format": "binary",
+            "contentMediaType": "application/octet-stream",
+        }
+    ),
+]
 
 
 @app.middleware("http")
@@ -180,7 +193,7 @@ async def form(
 
 @app.post("/uploads", response_model=Receipt, tags=["Catalog"], operation_id="upload")
 async def upload(
-    file: Annotated[UploadFile, File()],
+    file: Annotated[BinaryUploadFile, File()],
     text: Annotated[str, Form()],
     count: Annotated[int, Form()],
     enabled: Annotated[bool, Form()],
@@ -348,7 +361,7 @@ class Problem(BaseModel):
     operation_id="batchUpload",
 )
 async def batch_upload(
-    files: Annotated[list[UploadFile], File()], tags: Annotated[list[str], Form()]
+    files: Annotated[list[BinaryUploadFile], File()], tags: Annotated[list[str], Form()]
 ):
     parts = []
     for file in files:
@@ -369,7 +382,7 @@ async def batch_upload(
     operation_id="optionalUpload",
 )
 async def optional_upload(
-    text: Annotated[str, Form()], file: Annotated[UploadFile | None, File()] = None
+    text: Annotated[str, Form()], file: Annotated[BinaryUploadFile | None, File()] = None
 ):
     return Receipt(
         text=text,
