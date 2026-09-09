@@ -5,5 +5,4 @@ gem 'puma', '8.0.2'
 gem 'rswag-api', '2.17.0'
 gem 'rswag-specs', '2.17.0'
 gem 'rspec-rails', '8.0.4'
-# Rails and json-schema still use parsing options removed in JSON 3.
 gem 'json', '2.21.2'

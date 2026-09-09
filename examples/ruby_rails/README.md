@@ -10,9 +10,6 @@ The [Rails app](server/config/application.rb) runs without a database. Rails
 8.1.3.1, rswag 2.17.0 and Ruby 4.0.6 are pinned in the [Gemfile](server/Gemfile),
 lockfile and Dockerfile.
 
-The JSON gem stays on 2.21.2 because Rails and rswag's json-schema dependency
-still use parsing APIs removed in JSON 3.
-
 rswag generates OpenAPI 3.0 from [request specs](server/spec/requests/catalog_spec.rb).
 The image build executes those specs with dry-run disabled, then Puma serves
 the generated document and receives the Dart requests.
