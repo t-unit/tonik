@@ -377,9 +377,14 @@ class const ClassGenerator({
     final copyWithProps = properties.map((prop) {
       final propModel = prop.property.model;
       final resolvedModel = propModel.resolved;
+      final typeRef = _getSchemaAwareTypeReference(prop.property, model);
       return (
         normalizedName: prop.normalizedName,
-        typeRef: _getSchemaAwareTypeReference(prop.property, model),
+        typeRef: typeRef,
+        isNullable:
+            (typeRef.isNullable ?? false) ||
+            propModel.isEffectivelyNullable ||
+            resolvedModel is AnyModel,
         skipCast: resolvedModel is AnyModel,
       );
     }).toList();
@@ -395,6 +400,7 @@ class const ClassGenerator({
           package,
           useImmutableCollections: useImmutableCollections,
         ),
+        isNullable: false,
         skipCast: false,
       ));
     }

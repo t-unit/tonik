@@ -30,6 +30,7 @@ void main() {
                 ..symbol = 'String'
                 ..url = 'dart:core',
             ),
+            isNullable: false,
             skipCast: false,
           ),
           (
@@ -40,6 +41,7 @@ void main() {
                 ..url = 'dart:core'
                 ..isNullable = true,
             ),
+            isNullable: true,
             skipCast: false,
           ),
         ],
@@ -63,9 +65,9 @@ void main() {
       const expected = '''
         TestClass Function({String? name, int? count}) get copyWith {
           const Object _sentinel = Object();
-          return ({Object? name = _sentinel, Object? count = _sentinel}) =>
+          return ({String? name, Object? count = _sentinel}) =>
             TestClass(
-              name: identical(name, _sentinel) ? this.name : (name as String),
+              name: name ?? this.name,
               count: identical(count, _sentinel) ? this.count : (count as int?),
             );
         }
@@ -76,24 +78,26 @@ void main() {
       );
     });
 
-    test('skips the cast when requested for an any model', () {
-      final copyWith = generateCopyWith(
-        className: 'TestClass',
-        properties: [
-          (
-            normalizedName: 'anyValue',
-            typeRef: TypeReference(
-              (b) => b
-                ..symbol = 'AnyValue'
-                ..url = 'package:my_api/src/model/any_value.dart'
-                ..isNullable = true,
+    test(
+      'preserves null for an any alias without an explicit nullable type',
+      () {
+        final copyWith = generateCopyWith(
+          className: 'TestClass',
+          properties: [
+            (
+              normalizedName: 'anyValue',
+              typeRef: TypeReference(
+                (b) => b
+                  ..symbol = 'AnyValue'
+                  ..url = 'package:my_api/src/model/any_value.dart',
+              ),
+              isNullable: true,
+              skipCast: true,
             ),
-            skipCast: true,
-          ),
-        ],
-      )!;
+          ],
+        )!;
 
-      const expected = '''
+        const expected = '''
         TestClass Function({AnyValue? anyValue}) get copyWith {
           const Object _sentinel = Object();
           return ({Object? anyValue = _sentinel}) => TestClass(
@@ -101,11 +105,12 @@ void main() {
           );
         }
       ''';
-      expect(
-        collapseWhitespace(format(copyWith.accept(emitter).toString())),
-        collapseWhitespace(format(expected)),
-      );
-    });
+        expect(
+          collapseWhitespace(format(copyWith.accept(emitter).toString())),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
 
     test('skips the cast for dart:core Object?', () {
       final copyWith = generateCopyWith(
@@ -119,6 +124,7 @@ void main() {
                 ..url = 'dart:core'
                 ..isNullable = true,
             ),
+            isNullable: true,
             skipCast: false,
           ),
         ],
@@ -150,6 +156,7 @@ void main() {
                 ..url = 'package:my_api/src/model/object.dart'
                 ..isNullable = true,
             ),
+            isNullable: true,
             skipCast: false,
           ),
         ],
@@ -181,6 +188,7 @@ void main() {
                 ..url = 'dart:core'
                 ..types.add(refer('String', 'dart:core')),
             ),
+            isNullable: false,
             skipCast: false,
           ),
         ],
@@ -188,9 +196,8 @@ void main() {
 
       const expected = '''
         TestClass Function({List<String>? items}) get copyWith {
-          const Object _sentinel = Object();
-          return ({Object? items = _sentinel}) => TestClass(
-            items: identical(items, _sentinel) ? this.items : (items as List<String>),
+          return ({List<String>? items}) => TestClass(
+            items: items ?? this.items,
           );
         }
       ''';
@@ -212,6 +219,7 @@ void main() {
                 ..url = 'dart:core'
                 ..isNullable = true,
             ),
+            isNullable: true,
             skipCast: false,
           ),
         ],

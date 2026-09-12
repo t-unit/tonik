@@ -2564,6 +2564,10 @@ class const AllOfGenerator({
       return (
         normalizedName: normalized.normalizedName,
         typeRef: typeRef,
+        isNullable:
+            (typeRef.isNullable ?? false) ||
+            propModel.isEffectivelyNullable ||
+            resolvedModel is AnyModel,
         // Skip cast for AnyModel since its typedef is Object?
         skipCast: resolvedModel is AnyModel,
       );
@@ -2582,6 +2586,7 @@ class const AllOfGenerator({
           package,
           useImmutableCollections: useImmutableCollections,
         ),
+        isNullable: false,
         skipCast: false,
       ));
     }

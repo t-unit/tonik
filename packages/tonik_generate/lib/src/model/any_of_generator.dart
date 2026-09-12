@@ -86,15 +86,20 @@ class const AnyOfGenerator({
       properties: normalized.map((n) {
         final model = n.property.model;
         final resolvedModel = model.resolved;
+        final typeRef = typeReference(
+          n.property.model,
+          nameManager,
+          package,
+          isNullableOverride: n.property.isNullable || !n.property.isRequired,
+          useImmutableCollections: useImmutableCollections,
+        );
         return (
           normalizedName: n.normalizedName,
-          typeRef: typeReference(
-            n.property.model,
-            nameManager,
-            package,
-            isNullableOverride: n.property.isNullable || !n.property.isRequired,
-            useImmutableCollections: useImmutableCollections,
-          ),
+          typeRef: typeRef,
+          isNullable:
+              (typeRef.isNullable ?? false) ||
+              model.isEffectivelyNullable ||
+              resolvedModel is AnyModel,
           skipCast: resolvedModel is AnyModel,
         );
       }).toList(),

@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 typedef CopyWithProperty = ({
   String normalizedName,
   TypeReference typeRef,
+  bool isNullable,
   bool skipCast,
 });
 
@@ -14,6 +15,12 @@ Method? generateCopyWith({
 
   final namedArgs = <String, Expression>{};
   for (final prop in properties) {
+    if (!prop.isNullable) {
+      namedArgs[prop.normalizedName] = refer(prop.normalizedName)
+          .ifNullThen(refer('this').property(prop.normalizedName));
+      continue;
+    }
+
     final originalType = prop.typeRef;
     final isDartCoreObjectNullable =
         originalType.symbol == 'Object' &&
@@ -35,8 +42,10 @@ Method? generateCopyWith({
             (b) => b
               ..name = prop.normalizedName
               ..named = true
-              ..type = refer('Object?', 'dart:core')
-              ..defaultTo = refer('_sentinel').code,
+              ..type = prop.isNullable
+                  ? refer('Object?', 'dart:core')
+                  : prop.typeRef.rebuild((b) => b..isNullable = true)
+              ..defaultTo = prop.isNullable ? refer('_sentinel').code : null,
           ),
         ),
       )
@@ -61,10 +70,11 @@ Method? generateCopyWith({
           ),
       )
       ..body = Block.of([
-        declareConst(
-          '_sentinel',
-          type: refer('Object', 'dart:core'),
-        ).assign(refer('Object', 'dart:core').constInstance([])).statement,
+        if (properties.any((prop) => prop.isNullable))
+          declareConst(
+            '_sentinel',
+            type: refer('Object', 'dart:core'),
+          ).assign(refer('Object', 'dart:core').constInstance([])).statement,
         closure.closure.returned.statement,
       ]),
   );

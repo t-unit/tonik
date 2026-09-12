@@ -89,16 +89,21 @@ class const ResponseGenerator({
       properties: properties.map((prop) {
         final model = prop.property.model;
         final resolvedModel = model.resolved;
+        final typeRef = typeReference(
+          prop.property.model,
+          nameManager,
+          package,
+          isNullableOverride:
+              prop.property.isNullable || !prop.property.isRequired,
+          useImmutableCollections: useImmutableCollections,
+        );
         return (
           normalizedName: prop.normalizedName,
-          typeRef: typeReference(
-            prop.property.model,
-            nameManager,
-            package,
-            isNullableOverride:
-                prop.property.isNullable || !prop.property.isRequired,
-            useImmutableCollections: useImmutableCollections,
-          ),
+          typeRef: typeRef,
+          isNullable:
+              (typeRef.isNullable ?? false) ||
+              model.isEffectivelyNullable ||
+              resolvedModel is AnyModel,
           skipCast: resolvedModel is AnyModel,
         );
       }).toList(),

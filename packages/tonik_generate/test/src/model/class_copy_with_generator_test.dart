@@ -84,9 +84,8 @@ void main() {
       expect(functionType.returnType?.symbol, 'User');
       const expectedCopyWith = '''
         User Function({String? name, int? age}) get copyWith {
-          const Object _sentinel = Object();
-          return ({Object? name = _sentinel, Object? age = _sentinel, }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
-            age: identical(age, _sentinel, ) ? this.age : (age as int),
+          return ({String? name, int? age, }) => User(name: name ?? this.name,
+            age: age ?? this.age,
           );
         }
       ''';
@@ -136,7 +135,7 @@ void main() {
       const expectedCopyWith = '''
         User Function({String? name, String? bio}) get copyWith {
           const Object _sentinel = Object();
-          return ({Object? name = _sentinel, Object? bio = _sentinel, }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
+          return ({String? name, Object? bio = _sentinel, }) => User(name: name ?? this.name,
             bio: identical(bio, _sentinel, ) ? this.bio : (bio as String?),
           );
         }
@@ -144,6 +143,69 @@ void main() {
       expect(
         collapseWhitespace(format(copyWith.accept(emitter).toString())),
         collapseWhitespace(format(expectedCopyWith)),
+      );
+    });
+
+    test('preserves nullable typedef semantics for required properties', () {
+      final nullableName = AliasModel(
+        name: 'NullableName',
+        model: StringModel(context: context),
+        isNullable: true,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final anyValue = AliasModel(
+        name: 'AnyValue',
+        model: AnyModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: nullableName,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'data',
+            model: anyValue,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final generated = generator.generateClasses(model).single as Class;
+      final copyWith = generated.methods.singleWhere(
+        (method) => method.name == 'copyWith',
+      );
+      const expected = '''
+        User Function({NullableName? name, AnyValue? data}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? name = _sentinel, Object? data = _sentinel}) =>
+            User(
+              name: identical(name, _sentinel) ? this.name : (name as NullableName),
+              data: identical(data, _sentinel) ? this.data : data,
+            );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
       );
     });
 
@@ -214,12 +276,12 @@ void main() {
       const expectedCopyWith = '''
         User Function({String? name, Address? homeAddress, Address? workAddress}) get copyWith {
           const Object _sentinel = Object();
-          return ({Object? name = _sentinel,
+          return ({String? name,
           Object? homeAddress = _sentinel,
-          Object? workAddress = _sentinel,
-        }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
+          Address? workAddress,
+        }) => User(name: name ?? this.name,
             homeAddress: identical(homeAddress, _sentinel, ) ? this.homeAddress : (homeAddress as Address?),
-            workAddress: identical(workAddress, _sentinel, ) ? this.workAddress : (workAddress as Address),
+            workAddress: workAddress ?? this.workAddress,
           );
         }
       ''';
@@ -277,9 +339,9 @@ void main() {
       const expectedCopyWith = '''
         User Function({List<String>? tags, List<String>? optionalTags}) get copyWith {
           const Object _sentinel = Object();
-          return ({Object? tags = _sentinel,
+          return ({List<String>? tags,
           Object? optionalTags = _sentinel,
-        }) => User(tags: identical(tags, _sentinel, ) ? this.tags : (tags as List<String>),
+        }) => User(tags: tags ?? this.tags,
             optionalTags: identical(optionalTags, _sentinel, ) ? this.optionalTags : (optionalTags as List<String>?),
           );
         }
@@ -338,13 +400,12 @@ void main() {
       expect(functionType.returnType?.symbol, 'User');
       const expectedCopyWith = '''
         User Function({String? firstName, String? lastName, String? id}) get copyWith {
-          const Object _sentinel = Object();
-          return ({Object? firstName = _sentinel,
-          Object? lastName = _sentinel,
-          Object? id = _sentinel,
-        }) => User(firstName: identical(firstName, _sentinel, ) ? this.firstName : (firstName as String),
-            lastName: identical(lastName, _sentinel, ) ? this.lastName : (lastName as String),
-            id: identical(id, _sentinel, ) ? this.id : (id as String),
+          return ({String? firstName,
+          String? lastName,
+          String? id,
+        }) => User(firstName: firstName ?? this.firstName,
+            lastName: lastName ?? this.lastName,
+            id: id ?? this.id,
           );
         }
       ''';
@@ -393,13 +454,8 @@ void main() {
       expect(functionType.returnType?.symbol, 'Widget');
       const expectedCopyWith = r'''
         Widget Function({String? $call, String? name}) get copyWith {
-          const Object _sentinel = Object();
-          return ({Object? $call = _sentinel, Object? name = _sentinel, }) => Widget($call: identical($call, _sentinel, )
-              ? this.$call
-              : ($call as String),
-            name: identical(name, _sentinel, )
-              ? this.name
-              : (name as String),
+          return ({String? $call, String? name, }) => Widget($call: $call ?? this.$call,
+            name: name ?? this.name,
           );
         }
       ''';
