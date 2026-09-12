@@ -7,7 +7,6 @@ void main() {
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
-
   final emitter = DartEmitter(useNullSafetySyntax: true);
 
   group('generateCopyWith', () {
@@ -20,511 +19,216 @@ void main() {
       expect(result, isNull);
     });
 
-    group('getter', () {
-      test('has correct name and type', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
+    test('returns a getter with typed nullable named parameters', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'name',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'String'
+                ..url = 'dart:core',
             ),
-          ],
-        );
-
-        expect(result!.getter.name, 'copyWith');
-        expect(result.getter.type, MethodType.getter);
-      });
-
-      test('returns interface type with class as type parameter', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
+            skipCast: false,
+          ),
+          (
+            normalizedName: 'count',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'int'
+                ..url = 'dart:core'
+                ..isNullable = true,
             ),
-          ],
-        );
+            skipCast: false,
+          ),
+        ],
+      )!;
 
-        final returnType = result!.getter.returns;
-        expect(returnType, isA<TypeReference>());
-        final typeRef = returnType! as TypeReference;
-        expect(typeRef.symbol, r'$$TestClassCopyWith');
-        expect(typeRef.types.first.symbol, 'TestClass');
-      });
-
-      test('returns implementation instance', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        expect(result!.getter.lambda, isTrue);
-        expect(result.getter.body.toString(), '_TestClassCopyWith(this)');
-      });
+      expect(copyWith.name, 'copyWith');
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'TestClass');
+      expect(functionType.namedParameters.keys, ['name', 'count']);
+      expect(functionType.requiredParameters, isEmpty);
+      expect(functionType.namedRequiredParameters, isEmpty);
+      expect(
+        functionType.namedParameters['name']?.accept(emitter).toString(),
+        'String?',
+      );
+      expect(
+        functionType.namedParameters['count']?.accept(emitter).toString(),
+        'int?',
+      );
+      const expected = '''
+        TestClass Function({String? name, int? count}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? name = _sentinel, Object? count = _sentinel}) =>
+            TestClass(
+              name: identical(name, _sentinel) ? this.name : (name as String),
+              count: identical(count, _sentinel) ? this.count : (count as int?),
+            );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
     });
 
-    group('interface class', () {
-      test(r'has correct name with $$ prefix', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
+    test('skips the cast when requested for an any model', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'anyValue',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'AnyValue'
+                ..url = 'package:my_api/src/model/any_value.dart'
+                ..isNullable = true,
             ),
-          ],
-        );
+            skipCast: true,
+          ),
+        ],
+      )!;
 
-        expect(result!.interfaceClass.name, r'$$TestClassCopyWith');
-      });
-
-      test('is abstract', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        expect(result!.interfaceClass.abstract, isTrue);
-      });
-
-      test(r'has generic type parameter $Res', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        expect(result!.interfaceClass.types.length, 1);
-        expect(result.interfaceClass.types.first.symbol, r'$Res');
-      });
-
-      test('has factory constructor redirecting to implementation', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final factory = result!.interfaceClass.constructors.first;
-        expect(factory.factory, isTrue);
-        expect(factory.requiredParameters.length, 1);
-        expect(factory.requiredParameters.first.name, 'value');
-        expect(factory.requiredParameters.first.type?.symbol, 'TestClass');
-        expect(factory.redirect?.symbol, '_TestClassCopyWith');
-      });
-
-      test(r'has call method returning $Res', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.interfaceClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        expect(callMethod.returns?.symbol, r'$Res');
-      });
-
-      test('call method has nullable parameters for each property', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-            (
-              normalizedName: 'age',
-              typeRef: TypeReference((b) => b..symbol = 'int'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.interfaceClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        expect(callMethod.optionalParameters.length, 2);
-        expect(callMethod.optionalParameters[0].name, 'name');
-        expect(callMethod.optionalParameters[0].named, isTrue);
-        expect(
-          (callMethod.optionalParameters[0].type as TypeReference?)?.isNullable,
-          isTrue,
-        );
-        expect(callMethod.optionalParameters[1].name, 'age');
-      });
-
-      test('has getter for each property', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final getters = result!.interfaceClass.methods
-            .where((m) => m.type == MethodType.getter)
-            .toList();
-        expect(getters.length, 1);
-        expect(getters.first.name, 'name');
-        // Getter preserves original nullability
-        // (String is non-nullable)
-        // When isNullable is not set, it defaults to null
-        // (which means non-nullable)
-        expect(
-          (getters.first.returns as TypeReference?)?.isNullable,
-          isNot(isTrue),
-        );
-      });
+      const expected = '''
+        TestClass Function({AnyValue? anyValue}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? anyValue = _sentinel}) => TestClass(
+            anyValue: identical(anyValue, _sentinel) ? this.anyValue : anyValue,
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
     });
 
-    group('implementation class', () {
-      test('has correct name with _ prefix', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
+    test('skips the cast for dart:core Object?', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'value',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'Object'
+                ..url = 'dart:core'
+                ..isNullable = true,
             ),
-          ],
-        );
+            skipCast: false,
+          ),
+        ],
+      )!;
 
-        expect(result!.implClass.name, '_TestClassCopyWith');
-      });
-
-      test('implements interface class', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        expect(result!.implClass.implements.length, 1);
-        final impl = result.implClass.implements.first;
-        expect(impl.symbol, r'$$TestClassCopyWith');
-      });
-
-      test('has static const _sentinel field', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final sentinel = result!.implClass.fields.firstWhere(
-          (f) => f.name == '_sentinel',
-        );
-        expect(sentinel.static, isTrue);
-        expect(sentinel.modifier, FieldModifier.constant);
-      });
-
-      test('has _value field of class type', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final valueField = result!.implClass.fields.firstWhere(
-          (f) => f.name == '_value',
-        );
-        expect(valueField.modifier, FieldModifier.final$);
-        expect(valueField.type?.symbol, 'TestClass');
-      });
-
-      test('has constructor that takes _value', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final ctor = result!.implClass.constructors.first;
-        expect(ctor.requiredParameters.length, 1);
-        expect(ctor.requiredParameters.first.toThis, isTrue);
-      });
-
-      test('getters delegate to _value', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final getter = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'name' && m.type == MethodType.getter,
-        );
-        expect(getter.lambda, isTrue);
-        expect(getter.body.toString(), '_value.name');
-      });
-
-      test('call method uses Object? parameters with sentinel default', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        expect(callMethod.optionalParameters.length, 1);
-        final param = callMethod.optionalParameters.first;
-        expect(param.type, isA<Reference>());
-        expect(param.type?.accept(emitter).toString(), 'Object?');
-        expect(param.defaultTo.toString(), '_sentinel');
-      });
-
-      test('call method body uses identical check with sentinel', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'name',
-              typeRef: TypeReference((b) => b..symbol = 'String'),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        const expectedCallMethod = r'''
-          @override
-          $Res call({Object? name = _sentinel}) {
-            return (TestClass(name: identical(name, _sentinel, ) ? this.name : (name as String)) as $Res);
-          }
-        ''';
-        expect(
-          collapseWhitespace(format(callMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedCallMethod)),
-        );
-      });
-
-      test('call method skips cast when skipCast is true', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'anyValue',
-              typeRef: TypeReference(
-                (b) => b
-                  ..symbol = 'AnyValue'
-                  ..isNullable = true,
-              ),
-              skipCast: true, // Skip cast for AnyModel properties
-            ),
-          ],
-        );
-
-        final callMethod = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        const expectedCallMethod = r'''
-          @override
-          $Res call({Object? anyValue = _sentinel}) {
-            return (TestClass(anyValue: identical(anyValue, _sentinel, ) ? this.anyValue : anyValue) as $Res);
-          }
-        ''';
-        expect(
-          collapseWhitespace(format(callMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedCallMethod)),
-        );
-      });
-
-      test('call method skips cast for dart:core Object? type', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'value',
-              typeRef: TypeReference(
-                (b) => b
-                  ..symbol = 'Object'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
-              ),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        const expectedCallMethod = r'''
-          @override
-          $Res call({Object? value = _sentinel}) {
-            return (TestClass(value: identical(value, _sentinel, ) ? this.value : value) as $Res);
-          }
-        ''';
-        expect(
-          collapseWhitespace(format(callMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedCallMethod)),
-        );
-      });
-
-      test('call method casts user-defined Object? type (not dart:core)', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'object',
-              typeRef: TypeReference(
-                (b) => b
-                  ..symbol = 'Object'
-                  ..url = 'package:my_api/src/model/object.dart'
-                  ..isNullable = true,
-              ),
-              skipCast: false,
-            ),
-          ],
-        );
-
-        final callMethod = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        const expectedCallMethod = r'''
-          @override
-          $Res call({Object? object = _sentinel}) {
-            return (TestClass(object: identical(object, _sentinel, ) ? this.object : (object as Object?)) as $Res);
-          }
-        ''';
-        expect(
-          collapseWhitespace(format(callMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedCallMethod)),
-        );
-      });
+      const expected = '''
+        TestClass Function({Object? value}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? value = _sentinel}) => TestClass(
+            value: identical(value, _sentinel) ? this.value : value,
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
     });
 
-    group('complex types', () {
-      test('handles generic types correctly', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'items',
-              typeRef: TypeReference(
-                (b) => b
-                  ..symbol = 'List'
-                  ..types.add(refer('String')),
-              ),
-              skipCast: false,
+    test('retains the cast for an imported class named Object', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'object',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'Object'
+                ..url = 'package:my_api/src/model/object.dart'
+                ..isNullable = true,
             ),
-          ],
-        );
-        final getter = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'items' && m.type == MethodType.getter,
-        );
-        expect(getter.returns?.accept(emitter).toString(), 'List<String>');
-        final callMethod = result.implClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        const expectedCallMethod = r'''
-          @override
-          $Res call({Object? items = _sentinel}) {
-            return (TestClass(items: identical(items, _sentinel, ) ? this.items : (items as List<String>)) as $Res);
-          }
-        ''';
-        expect(
-          collapseWhitespace(format(callMethod.accept(emitter).toString())),
-          collapseWhitespace(format(expectedCallMethod)),
-        );
-      });
+            skipCast: false,
+          ),
+        ],
+      )!;
 
-      test('handles already nullable types correctly', () {
-        final result = generateCopyWith(
-          className: 'TestClass',
-          properties: [
-            (
-              normalizedName: 'value',
-              typeRef: TypeReference(
-                (b) => b
-                  ..symbol = 'int'
-                  ..isNullable = true,
-              ),
-              skipCast: false,
+      const expected = '''
+        TestClass Function({Object? object}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? object = _sentinel}) => TestClass(
+            object: identical(object, _sentinel) ? this.object : (object as Object?),
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('preserves generic collection types', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'items',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
             ),
-          ],
-        );
-        final getter = result!.implClass.methods.firstWhere(
-          (m) => m.name == 'value' && m.type == MethodType.getter,
-        );
-        final returnType = getter.returns as TypeReference?;
-        expect(returnType?.symbol, 'int');
-        expect(returnType?.isNullable, isTrue);
-      });
+            skipCast: false,
+          ),
+        ],
+      )!;
+
+      const expected = '''
+        TestClass Function({List<String>? items}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? items = _sentinel}) => TestClass(
+            items: identical(items, _sentinel) ? this.items : (items as List<String>),
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('preserves Never? in the signature and cast', () {
+      final copyWith = generateCopyWith(
+        className: 'TestClass',
+        properties: [
+          (
+            normalizedName: 'impossible',
+            typeRef: TypeReference(
+              (b) => b
+                ..symbol = 'Never'
+                ..url = 'dart:core'
+                ..isNullable = true,
+            ),
+            skipCast: false,
+          ),
+        ],
+      )!;
+
+      const expected = '''
+        TestClass Function({Never? impossible}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? impossible = _sentinel}) => TestClass(
+            impossible: identical(impossible, _sentinel) ? this.impossible : (impossible as Never?),
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
     });
   });
 }

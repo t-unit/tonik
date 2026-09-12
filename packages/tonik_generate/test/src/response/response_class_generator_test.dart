@@ -431,7 +431,7 @@ void main() {
     });
 
     group('copyWith method generation', () {
-      test('generates copyWith getter returning interface type', () {
+      test('generates copyWith getter returning a typed function', () {
         final response = ResponseObject(
           name: 'CopyWithResponse',
           context: testContext,
@@ -475,9 +475,18 @@ void main() {
           (m) => m.name == 'copyWith',
         );
         expect(copyWith.type, MethodType.getter);
+        final functionType = copyWith.returns! as FunctionType;
+        expect(functionType.returnType?.symbol, 'CopyWithResponse');
+        expect(functionType.namedParameters.keys, [
+          'xRequired',
+          'body',
+          'xOptional',
+        ]);
         expect(
-          copyWith.returns?.accept(emitter).toString(),
-          r'$$CopyWithResponseCopyWith<CopyWithResponse>',
+          functionType.namedParameters.values.map(
+            (type) => type.accept(emitter).toString(),
+          ),
+          ['String?', 'String?', 'int?'],
         );
       });
 
@@ -514,9 +523,14 @@ void main() {
           (m) => m.name == 'copyWith',
         );
         expect(copyWith.type, MethodType.getter);
+        final functionType = copyWith.returns! as FunctionType;
+        expect(functionType.returnType?.symbol, 'SimpleCopyWithResponse');
+        expect(functionType.namedParameters.keys, ['xTest', 'body']);
         expect(
-          copyWith.returns?.accept(emitter).toString(),
-          r'$$SimpleCopyWithResponseCopyWith<SimpleCopyWithResponse>',
+          functionType.namedParameters.values.map(
+            (type) => type.accept(emitter).toString(),
+          ),
+          ['String?', 'String?'],
         );
       });
     });

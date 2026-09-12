@@ -1,250 +1,71 @@
 import 'package:code_builder/code_builder.dart';
 
-/// A property for copyWith generation.
 typedef CopyWithProperty = ({
   String normalizedName,
   TypeReference typeRef,
   bool skipCast,
 });
 
-/// Generates freezed-like copyWith infrastructure for a class.
-///
-/// This generates:
-/// - A getter that returns the copyWith interface
-/// - An abstract class (`$$<ClassName>CopyWith`)
-/// - An implementation class (`_<ClassName>CopyWith`)
-CopyWithResult? generateCopyWith({
+Method? generateCopyWith({
   required String className,
   required List<CopyWithProperty> properties,
 }) {
-  if (properties.isEmpty) {
-    return null;
-  }
-
-  final interfaceClassName = '\$\$${className}CopyWith';
-  final implClassName = '_${className}CopyWith';
-
-  return CopyWithResult(
-    getter: _generateCopyWithGetter(
-      className,
-      interfaceClassName,
-      implClassName,
-    ),
-    interfaceClass: _generateCopyWithInterface(
-      className,
-      interfaceClassName,
-      implClassName,
-      properties,
-    ),
-    implClass: _generateCopyWithImpl(
-      className,
-      interfaceClassName,
-      implClassName,
-      properties,
-    ),
-  );
-}
-
-/// Result of generating copyWith infrastructure.
-class const CopyWithResult({
-  /// The getter method to add to the main class.
-  required final Method getter,
-
-  /// The abstract interface class.
-  required final Class interfaceClass,
-
-  /// The implementation class.
-  required final Class implClass,
-});
-
-Method _generateCopyWithGetter(
-  String className,
-  String interfaceClassName,
-  String implClassName,
-) {
-  return Method(
-    (b) => b
-      ..name = 'copyWith'
-      ..type = MethodType.getter
-      ..returns = TypeReference(
-        (b) => b
-          ..symbol = interfaceClassName
-          ..types.add(refer(className)),
-      )
-      ..lambda = true
-      ..body = Code('$implClassName(this)'),
-  );
-}
-
-Class _generateCopyWithInterface(
-  String className,
-  String interfaceClassName,
-  String implClassName,
-  List<CopyWithProperty> properties,
-) {
-  final callParams = properties.map(
-    (prop) => Parameter(
-      (b) => b
-        ..name = prop.normalizedName
-        ..named = true
-        ..type = prop.typeRef.rebuild((b) => b..isNullable = true),
-    ),
-  );
-
-  final getters = properties.map(
-    (prop) => Method(
-      (b) => b
-        ..name = prop.normalizedName
-        ..type = MethodType.getter
-        ..returns = prop.typeRef,
-    ),
-  );
-
-  return Class(
-    (b) => b
-      ..name = interfaceClassName
-      ..abstract = true
-      ..types.add(refer(r'$Res'))
-      ..constructors.add(
-        Constructor(
-          (b) => b
-            ..factory = true
-            ..requiredParameters.add(
-              Parameter(
-                (b) => b
-                  ..name = 'value'
-                  ..type = refer(className),
-              ),
-            )
-            ..redirect = TypeReference(
-              (b) => b
-                ..symbol = implClassName
-                ..types.add(refer(r'$Res')),
-            ),
-        ),
-      )
-      ..methods.add(
-        Method(
-          (b) => b
-            ..name = 'call'
-            ..returns = refer(r'$Res')
-            ..optionalParameters.addAll(callParams),
-        ),
-      )
-      ..methods.addAll(getters),
-  );
-}
-
-Class _generateCopyWithImpl(
-  String className,
-  String interfaceClassName,
-  String implClassName,
-  List<CopyWithProperty> properties,
-) {
-  final callParams = properties.map(
-    (prop) => Parameter(
-      (b) => b
-        ..name = prop.normalizedName
-        ..named = true
-        ..type = refer('Object?', 'dart:core')
-        ..defaultTo = const Code('_sentinel'),
-    ),
-  );
-
-  final getters = properties.map(
-    (prop) => Method(
-      (b) => b
-        ..name = prop.normalizedName
-        ..type = MethodType.getter
-        ..annotations.add(refer('override', 'dart:core'))
-        ..returns = prop.typeRef
-        ..lambda = true
-        ..body = Code('_value.${prop.normalizedName}'),
-    ),
-  );
-
-  // Code.scope keeps type references routed through the import allocator.
-  final callBody = _buildCallMethodBody(className, properties);
-
-  return Class(
-    (b) => b
-      ..name = implClassName
-      ..types.add(refer(r'$Res'))
-      ..implements.add(
-        TypeReference(
-          (b) => b
-            ..symbol = interfaceClassName
-            ..types.add(refer(r'$Res')),
-        ),
-      )
-      ..constructors.add(
-        Constructor(
-          (b) => b
-            ..requiredParameters.add(
-              Parameter((b) => b..name = '_value')
-                  .rebuild((b) => b..toThis = true),
-            ),
-        ),
-      )
-      ..fields.addAll([
-        Field(
-          (b) => b
-            ..name = '_sentinel'
-            ..static = true
-            ..modifier = FieldModifier.constant
-            ..assignment = refer('Object', 'dart:core').newInstance([]).code,
-        ),
-        Field(
-          (b) => b
-            ..name = '_value'
-            ..modifier = FieldModifier.final$
-            ..type = refer(className),
-        ),
-      ])
-      ..methods.addAll(getters)
-      ..methods.add(
-        Method(
-          (b) => b
-            ..name = 'call'
-            ..annotations.add(refer('override', 'dart:core'))
-            ..returns = refer(r'$Res')
-            ..optionalParameters.addAll(callParams)
-            ..body = callBody,
-        ),
-      ),
-  );
-}
-
-Code _buildCallMethodBody(String className, List<CopyWithProperty> properties) {
-  if (properties.isEmpty) {
-    return refer(className).call([]).asA(refer(r'$Res')).returned.statement;
-  }
+  if (properties.isEmpty) return null;
 
   final namedArgs = <String, Expression>{};
   for (final prop in properties) {
-    final name = prop.normalizedName;
-    // Sentinel parameters are Object?, so constructor arguments cast back to
-    // the original type.
     final originalType = prop.typeRef;
-
     final isDartCoreObjectNullable =
         originalType.symbol == 'Object' &&
         originalType.url == 'dart:core' &&
         (originalType.isNullable ?? false);
-    final shouldSkipCast = prop.skipCast || isDartCoreObjectNullable;
-
-    final valueExpression = shouldSkipCast
-        ? refer(name)
-        : refer(name).asA(originalType);
-
-    namedArgs[name] = refer('identical', 'dart:core')
-        .call([refer(name), refer('_sentinel')])
-        .conditional(refer('this').property(name), valueExpression);
+    final value = prop.skipCast || isDartCoreObjectNullable
+        ? refer(prop.normalizedName)
+        : refer(prop.normalizedName).asA(originalType);
+    namedArgs[prop.normalizedName] = refer('identical', 'dart:core')
+        .call([refer(prop.normalizedName), refer('_sentinel')])
+        .conditional(refer('this').property(prop.normalizedName), value);
   }
 
-  return refer(className)
-      .call([], namedArgs)
-      .asA(refer(r'$Res'))
-      .returned
-      .statement;
+  final closure = Method(
+    (b) => b
+      ..optionalParameters.addAll(
+        properties.map(
+          (prop) => Parameter(
+            (b) => b
+              ..name = prop.normalizedName
+              ..named = true
+              ..type = refer('Object?', 'dart:core')
+              ..defaultTo = refer('_sentinel').code,
+          ),
+        ),
+      )
+      ..lambda = true
+      ..body = refer(className).call([], namedArgs).code,
+  );
+
+  return Method(
+    (b) => b
+      ..name = 'copyWith'
+      ..type = MethodType.getter
+      ..returns = FunctionType(
+        (b) => b
+          ..returnType = refer(className)
+          ..namedParameters.addEntries(
+            properties.map(
+              (prop) => MapEntry(
+                prop.normalizedName,
+                prop.typeRef.rebuild((b) => b..isNullable = true),
+              ),
+            ),
+          ),
+      )
+      ..body = Block.of([
+        declareConst(
+          '_sentinel',
+          type: refer('Object', 'dart:core'),
+        ).assign(refer('Object', 'dart:core').constInstance([])).statement,
+        closure.closure.returned.statement,
+      ]),
+  );
 }

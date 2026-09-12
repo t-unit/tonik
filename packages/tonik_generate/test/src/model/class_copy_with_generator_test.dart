@@ -45,7 +45,7 @@ void main() {
       expect(hasCopyWith, isFalse);
     });
 
-    test('generates freezed-like copyWith for simple properties', () {
+    test('generates typed copyWith for simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -74,91 +74,25 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      expect(generatedSpecs.length, 3);
-      final mainClass = generatedSpecs[0] as Class;
-      final copyWithGetter = mainClass.methods.firstWhere(
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
         (m) => m.name == 'copyWith',
       );
-      expect(copyWithGetter.type, MethodType.getter);
-      expect(
-        copyWithGetter.returns?.accept(emitter).toString(),
-        r'$$UserCopyWith<User>',
-      );
-      expect(copyWithGetter.lambda, isTrue);
-      expect(
-        copyWithGetter.body?.accept(emitter).toString(),
-        '_UserCopyWith(this)',
-      );
-      final interfaceClass = generatedSpecs[1] as Class;
-      expect(interfaceClass.name, r'$$UserCopyWith');
-      expect(interfaceClass.abstract, isTrue);
-      expect(interfaceClass.types.length, 1);
-      expect(interfaceClass.types.first.symbol, r'$Res');
-      final interfaceFactory = interfaceClass.constructors.firstWhere(
-        (c) => c.factory,
-      );
-      expect(interfaceFactory.requiredParameters.length, 1);
-      expect(interfaceFactory.requiredParameters.first.name, 'value');
-      expect(
-        interfaceFactory.requiredParameters.first.type
-            ?.accept(emitter)
-            .toString(),
-        'User',
-      );
-      final callMethod = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'call',
-      );
-      expect(callMethod.optionalParameters.length, 2);
-      expect(callMethod.optionalParameters[0].name, 'name');
-      expect(
-        callMethod.optionalParameters[0].type?.accept(emitter).toString(),
-        'String?',
-      );
-      expect(callMethod.optionalParameters[1].name, 'age');
-      expect(
-        callMethod.optionalParameters[1].type?.accept(emitter).toString(),
-        'int?',
-      );
-      final nameGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'name',
-      );
-      expect(nameGetter.type, MethodType.getter);
-      expect(nameGetter.returns?.accept(emitter).toString(), 'String');
-
-      final ageGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'age',
-      );
-      expect(ageGetter.type, MethodType.getter);
-      expect(ageGetter.returns?.accept(emitter).toString(), 'int');
-      final implClass = generatedSpecs[2] as Class;
-      expect(implClass.name, '_UserCopyWith');
-      expect(implClass.implements.length, 1);
-      expect(
-        implClass.implements.first.accept(emitter).toString(),
-        r'$$UserCopyWith<$Res>',
-      );
-      final sentinelField = implClass.fields.firstWhere(
-        (f) => f.name == '_sentinel',
-      );
-      expect(sentinelField.static, isTrue);
-      expect(sentinelField.modifier, FieldModifier.constant);
-      final valueField = implClass.fields.firstWhere((f) => f.name == '_value');
-      expect(valueField.modifier, FieldModifier.final$);
-      expect(valueField.type?.accept(emitter).toString(), 'User');
-      final implCallMethod = implClass.methods.firstWhere(
-        (m) => m.name == 'call',
-      );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? name = _sentinel, Object? age = _sentinel, }) {
-          return (User(name: identical(name, _sentinel, ) ? this.name : (name as String),
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'User');
+      const expectedCopyWith = '''
+        User Function({String? name, int? age}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? name = _sentinel, Object? age = _sentinel, }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
             age: identical(age, _sentinel, ) ? this.age : (age as int),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
 
@@ -191,27 +125,25 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      final interfaceClass = generatedSpecs[1] as Class;
-      final bioGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'bio',
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
+        (m) => m.name == 'copyWith',
       );
-      expect(bioGetter.type, MethodType.getter);
-      expect(bioGetter.returns?.accept(emitter).toString(), 'String?');
-      final implClass = generatedSpecs[2] as Class;
-      final implCallMethod = implClass.methods.firstWhere(
-        (m) => m.name == 'call',
-      );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? name = _sentinel, Object? bio = _sentinel, }) {
-          return (User(name: identical(name, _sentinel, ) ? this.name : (name as String),
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'User');
+      const expectedCopyWith = '''
+        User Function({String? name, String? bio}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? name = _sentinel, Object? bio = _sentinel, }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
             bio: identical(bio, _sentinel, ) ? this.bio : (bio as String?),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
 
@@ -271,35 +203,29 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      final interfaceClass = generatedSpecs[1] as Class;
-      final homeAddressGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'homeAddress',
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
+        (m) => m.name == 'copyWith',
       );
-      expect(homeAddressGetter.returns?.accept(emitter).toString(), 'Address?');
-
-      final workAddressGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'workAddress',
-      );
-      expect(workAddressGetter.returns?.accept(emitter).toString(), 'Address');
-      final implClass = generatedSpecs[2] as Class;
-      final implCallMethod = implClass.methods.firstWhere(
-        (m) => m.name == 'call',
-      );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? name = _sentinel,
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'User');
+      const expectedCopyWith = '''
+        User Function({String? name, Address? homeAddress, Address? workAddress}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? name = _sentinel,
           Object? homeAddress = _sentinel,
           Object? workAddress = _sentinel,
-        }) {
-          return (User(name: identical(name, _sentinel, ) ? this.name : (name as String),
+        }) => User(name: identical(name, _sentinel, ) ? this.name : (name as String),
             homeAddress: identical(homeAddress, _sentinel, ) ? this.homeAddress : (homeAddress as Address?),
             workAddress: identical(workAddress, _sentinel, ) ? this.workAddress : (workAddress as Address),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
 
@@ -340,36 +266,27 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      final interfaceClass = generatedSpecs[1] as Class;
-      final tagsGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'tags',
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
+        (m) => m.name == 'copyWith',
       );
-      expect(tagsGetter.returns?.accept(emitter).toString(), 'List<String>');
-
-      final optionalTagsGetter = interfaceClass.methods.firstWhere(
-        (m) => m.name == 'optionalTags',
-      );
-      expect(
-        optionalTagsGetter.returns?.accept(emitter).toString(),
-        'List<String>?',
-      );
-      final implClass = generatedSpecs[2] as Class;
-      final implCallMethod = implClass.methods.firstWhere(
-        (m) => m.name == 'call',
-      );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? tags = _sentinel,
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'User');
+      const expectedCopyWith = '''
+        User Function({List<String>? tags, List<String>? optionalTags}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? tags = _sentinel,
           Object? optionalTags = _sentinel,
-        }) {
-          return (User(tags: identical(tags, _sentinel, ) ? this.tags : (tags as List<String>),
+        }) => User(tags: identical(tags, _sentinel, ) ? this.tags : (tags as List<String>),
             optionalTags: identical(optionalTags, _sentinel, ) ? this.optionalTags : (optionalTags as List<String>?),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
 
@@ -411,35 +328,33 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      final interfaceClass = generatedSpecs[1] as Class;
-      final getterNames = interfaceClass.methods
-          .where((m) => m.type == MethodType.getter)
-          .map((m) => m.name)
-          .toList();
-      expect(getterNames, containsAll(['firstName', 'lastName', 'id']));
-      final implClass = generatedSpecs[2] as Class;
-      final implCallMethod = implClass.methods.firstWhere(
-        (m) => m.name == 'call',
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
+        (m) => m.name == 'copyWith',
       );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? firstName = _sentinel,
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'User');
+      const expectedCopyWith = '''
+        User Function({String? firstName, String? lastName, String? id}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? firstName = _sentinel,
           Object? lastName = _sentinel,
           Object? id = _sentinel,
-        }) {
-          return (User(firstName: identical(firstName, _sentinel, ) ? this.firstName : (firstName as String),
+        }) => User(firstName: identical(firstName, _sentinel, ) ? this.firstName : (firstName as String),
             lastName: identical(lastName, _sentinel, ) ? this.lastName : (lastName as String),
             id: identical(id, _sentinel, ) ? this.id : (id as String),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
 
-    test('escapes call property throughout copyWith infrastructure', () {
+    test('escapes call property in copyWith', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'Widget',
@@ -468,51 +383,29 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-      final mainClass = generatedSpecs[0] as Class;
-      final interfaceClass = generatedSpecs[1] as Class;
-      final implClass = generatedSpecs[2] as Class;
-
-      expect(mainClass.fields.map((field) => field.name), contains(r'$call'));
-      expect(
-        interfaceClass.methods.where((method) => method.name == 'call'),
-        hasLength(1),
+      expect(generatedSpecs, hasLength(1));
+      final mainClass = generatedSpecs.single as Class;
+      final copyWith = mainClass.methods.singleWhere(
+        (m) => m.name == 'copyWith',
       );
-      expect(
-        interfaceClass.methods
-            .singleWhere((method) => method.name == r'$call')
-            .type,
-        MethodType.getter,
-      );
-      expect(
-        interfaceClass.methods
-            .singleWhere((method) => method.name == 'call')
-            .optionalParameters
-            .map((parameter) => parameter.name),
-        [r'$call', 'name'],
-      );
-      expect(
-        implClass.methods.where((method) => method.name == 'call'),
-        hasLength(1),
-      );
-
-      final implCallMethod = implClass.methods.singleWhere(
-        (method) => method.name == 'call',
-      );
-      const expectedCallMethod = r'''
-        @override
-        $Res call({Object? $call = _sentinel, Object? name = _sentinel, }) {
-          return (Widget($call: identical($call, _sentinel, )
+      expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'Widget');
+      const expectedCopyWith = r'''
+        Widget Function({String? $call, String? name}) get copyWith {
+          const Object _sentinel = Object();
+          return ({Object? $call = _sentinel, Object? name = _sentinel, }) => Widget($call: identical($call, _sentinel, )
               ? this.$call
               : ($call as String),
             name: identical(name, _sentinel, )
               ? this.name
               : (name as String),
-          ) as $Res);
+          );
         }
       ''';
       expect(
-        collapseWhitespace(format(implCallMethod.accept(emitter).toString())),
-        collapseWhitespace(format(expectedCallMethod)),
+        collapseWhitespace(format(copyWith.accept(emitter).toString())),
+        collapseWhitespace(format(expectedCopyWith)),
       );
     });
   });

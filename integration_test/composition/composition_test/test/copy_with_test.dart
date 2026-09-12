@@ -2,6 +2,30 @@ import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test(
+    'typed copyWith functions preserve omitted and explicit null values',
+    () {
+      const original = AllOfPrimitiveModel(count: 42);
+      // Verify the hidden sentinel survives an explicitly typed function.
+      // ignore: omit_local_variable_types
+      final AllOfPrimitiveModel Function({int? count}) copy = original.copyWith;
+
+      expect(copy().count, 42);
+      // Null is not redundant: the closure defaults to a sentinel.
+      // ignore: avoid_redundant_argument_values
+      expect(copy.call(count: null).count, isNull);
+      expect(copy(count: 7).count, 7);
+      expect(original.count, 42);
+    },
+  );
+
+  test('copyWith rejects null for a nonnullable field', () {
+    const original = Class1(name: 'Alice');
+
+    expect(() => original.copyWith(name: null), throwsA(isA<TypeError>()));
+    expect(original.name, 'Alice');
+  });
+
   group('copyWith - Class models', () {
     group('Class1', () {
       test('copyWith creates new instance with changed values', () {

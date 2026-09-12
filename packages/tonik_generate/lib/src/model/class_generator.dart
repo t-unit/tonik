@@ -91,7 +91,7 @@ class const ClassGenerator({
 
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final copyWithResult = _buildCopyWith(
+    final copyWithGetter = _buildCopyWith(
       actualClassName,
       normalizedProperties,
       model,
@@ -101,12 +101,8 @@ class const ClassGenerator({
       _generateClassWithName(
         model,
         actualClassName,
-        copyWithGetter: copyWithResult?.getter,
+        copyWithGetter: copyWithGetter,
       ),
-      if (copyWithResult != null) ...[
-        copyWithResult.interfaceClass,
-        copyWithResult.implClass,
-      ],
       if (model.isNullable)
         TypeDef(
           (b) => b
@@ -144,7 +140,7 @@ class const ClassGenerator({
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(className, normalizedProperties, model)?.getter;
+        _buildCopyWith(className, normalizedProperties, model);
 
     bool hasConstDefault(({String normalizedName, Property property}) p) =>
         defaultsByName[p.normalizedName] is ConstDefaultBinding;
@@ -373,7 +369,7 @@ class const ClassGenerator({
           .call([specLiteralString(key)])
           .conditional(decoded, refer(defaulted.memberName));
 
-  CopyWithResult? _buildCopyWith(
+  Method? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> properties,
     ObjectDeclaration model,

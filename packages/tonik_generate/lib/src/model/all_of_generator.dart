@@ -47,7 +47,6 @@ class const AllOfGenerator({
     );
   }
 
-  /// Generates the main class and the copyWith infrastructure classes.
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
@@ -74,19 +73,13 @@ class const AllOfGenerator({
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
 
-    final copyWithResult = _buildCopyWith(
+    final copyWithGetter = _buildCopyWith(
       actualClassName,
       normalizedProperties,
       model,
     );
 
-    return [
-      generateClass(model, copyWithResult?.getter, actualClassName),
-      if (copyWithResult != null) ...[
-        copyWithResult.interfaceClass,
-        copyWithResult.implClass,
-      ],
-    ];
+    return [generateClass(model, copyWithGetter, actualClassName)];
   }
 
   @visibleForTesting
@@ -142,7 +135,7 @@ class const AllOfGenerator({
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(actualClassName, normalizedProperties, model)?.getter;
+        _buildCopyWith(actualClassName, normalizedProperties, model);
 
     return Class((b) {
       b
@@ -2548,7 +2541,7 @@ class const AllOfGenerator({
     );
   }
 
-  CopyWithResult? _buildCopyWith(
+  Method? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
