@@ -72,18 +72,12 @@ class const AnyOfGenerator({
 
     final normalized = normalizeProperties(pseudoProperties);
 
-    final copyWithResult = _buildCopyWith(actualClassName, normalized);
+    final copyWithGetter = _buildCopyWith(actualClassName, normalized);
 
-    return [
-      generateClass(model, copyWithResult?.getter, actualClassName),
-      if (copyWithResult != null) ...[
-        copyWithResult.interfaceClass,
-        copyWithResult.implClass,
-      ],
-    ];
+    return [generateClass(model, copyWithGetter, actualClassName)];
   }
 
-  CopyWithResult? _buildCopyWith(
+  Method? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalized,
   ) {
@@ -92,15 +86,20 @@ class const AnyOfGenerator({
       properties: normalized.map((n) {
         final model = n.property.model;
         final resolvedModel = model.resolved;
+        final typeRef = typeReference(
+          n.property.model,
+          nameManager,
+          package,
+          isNullableOverride: n.property.isNullable || !n.property.isRequired,
+          useImmutableCollections: useImmutableCollections,
+        );
         return (
           normalizedName: n.normalizedName,
-          typeRef: typeReference(
-            n.property.model,
-            nameManager,
-            package,
-            isNullableOverride: n.property.isNullable || !n.property.isRequired,
-            useImmutableCollections: useImmutableCollections,
-          ),
+          typeRef: typeRef,
+          isNullable:
+              (typeRef.isNullable ?? false) ||
+              model.isEffectivelyNullable ||
+              resolvedModel is AnyModel,
           skipCast: resolvedModel is AnyModel,
         );
       }).toList(),
@@ -155,7 +154,7 @@ class const AnyOfGenerator({
     final semanticProperties = _semanticProperties(normalized);
 
     final effectiveCopyWithGetter =
-        copyWithGetter ?? _buildCopyWith(actualClassName, normalized)?.getter;
+        copyWithGetter ?? _buildCopyWith(actualClassName, normalized);
 
     final fields = normalized.map((n) {
       final ref = typeReference(

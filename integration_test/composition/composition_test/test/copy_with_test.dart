@@ -2,6 +2,32 @@ import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('copyWith preserves a nonnullable field when passed null', () {
+    const original = Class1(name: 'Alice');
+
+    final copy = original.copyWith(name: null);
+
+    expect(copy.name, 'Alice');
+    expect(original.name, 'Alice');
+    expect(copy, isNot(same(original)));
+  });
+
+  test('copyWith preserves a nonnullable composite field when passed null', () {
+    const original = AllOfComplex(
+      class1: Class1(name: 'Alice'),
+      class2: Class2(number: 42),
+    );
+
+    final copy = original.copyWith(
+      class1: null,
+      class2: const Class2(number: 7),
+    );
+
+    expect(copy.class1, const Class1(name: 'Alice'));
+    expect(copy.class2, const Class2(number: 7));
+    expect(original.class2, const Class2(number: 42));
+  });
+
   group('copyWith - Class models', () {
     group('Class1', () {
       test('copyWith creates new instance with changed values', () {
