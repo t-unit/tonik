@@ -20,6 +20,22 @@ void main() {
       expect(obj.anyData, isA<Object?>());
       expect(obj.anyData, 'string value');
     });
+
+    test(
+      'copyWith clears a required nullable alias and preserves the name',
+      () {
+        const original = ObjectWithAny(name: 'test', anyData: 'string value');
+
+        final omitted = original.copyWith();
+        final cleared = original.copyWith(name: null, anyData: null);
+
+        expect(omitted.name, 'test');
+        expect(omitted.anyData, 'string value');
+        expect(cleared.name, 'test');
+        expect(cleared.anyData, isNull);
+        expect(original.anyData, 'string value');
+      },
+    );
   });
 
   group('NeverModel type verification', () {

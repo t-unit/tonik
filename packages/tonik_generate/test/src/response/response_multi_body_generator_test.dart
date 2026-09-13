@@ -100,10 +100,13 @@ void main() {
   });
 
   group('response with headers', () {
-    test('generates correct number of classes (main + copyWith helpers)', () {
-      // 3 main classes + 4 copyWith helpers (interface + impl for
-      // each subclass)
-      expect(classesWithHeaders.whereType<Class>().length, 7);
+    test('generates only the base and response variant classes', () {
+      expect(classesWithHeaders, hasLength(3));
+      expect(classesWithHeaders.whereType<Class>().map((c) => c.name), [
+        'TestResponse',
+        'TestResponsePlain',
+        'TestResponseJson',
+      ]);
     });
 
     group('base sealed class', () {
@@ -223,13 +226,22 @@ void main() {
           expect(hashCode.returns?.accept(emitter).toString(), 'int');
         });
 
-        test('has copyWith getter returning interface type', () {
+        test('has copyWith getter returning a typed function', () {
           final copyWith = methods.firstWhere((m) => m.name == 'copyWith');
           expect(copyWith, isNotNull);
           expect(copyWith.type, MethodType.getter);
+          final functionType = copyWith.returns! as FunctionType;
+          expect(functionType.returnType?.symbol, 'TestResponsePlain');
+          expect(functionType.namedParameters.keys, [
+            'contentType',
+            'body',
+            'body2',
+          ]);
           expect(
-            copyWith.returns?.accept(emitter).toString(),
-            r'$$TestResponsePlainCopyWith<TestResponsePlain>',
+            functionType.namedParameters.values.map(
+              (type) => type.accept(emitter).toString(),
+            ),
+            ['String?', 'String?', 'String?'],
           );
         });
       });
@@ -300,13 +312,22 @@ void main() {
           expect(hashCode.returns?.accept(emitter).toString(), 'int');
         });
 
-        test('has copyWith getter returning interface type', () {
+        test('has copyWith getter returning a typed function', () {
           final copyWith = methods.firstWhere((m) => m.name == 'copyWith');
           expect(copyWith, isNotNull);
           expect(copyWith.type, MethodType.getter);
+          final functionType = copyWith.returns! as FunctionType;
+          expect(functionType.returnType?.symbol, 'TestResponseJson');
+          expect(functionType.namedParameters.keys, [
+            'contentType',
+            'body',
+            'body2',
+          ]);
           expect(
-            copyWith.returns?.accept(emitter).toString(),
-            r'$$TestResponseJsonCopyWith<TestResponseJson>',
+            functionType.namedParameters.values.map(
+              (type) => type.accept(emitter).toString(),
+            ),
+            ['String?', 'String?', 'int?'],
           );
         });
       });
@@ -315,7 +336,6 @@ void main() {
 
   group('response without headers', () {
     test('generates correct number of classes (main only, no copyWith)', () {
-      // 3 main classes, no copyWith helpers since there are no header fields
       expect(classesWithoutHeaders.whereType<Class>().length, 3);
     });
 

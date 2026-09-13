@@ -446,7 +446,7 @@ void main() {
       );
     });
 
-    test('generates copyWith getter returning interface type', () {
+    test('generates copyWith getter returning a typed function', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'ValueChoice',
@@ -462,9 +462,14 @@ void main() {
 
       final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
       expect(copyWith.type, MethodType.getter);
+      final functionType = copyWith.returns! as FunctionType;
+      expect(functionType.returnType?.symbol, 'ValueChoice');
+      expect(functionType.namedParameters.keys, ['string', 'int']);
       expect(
-        copyWith.returns?.accept(emitter).toString(),
-        r'$$ValueChoiceCopyWith<ValueChoice>',
+        functionType.namedParameters.values.map(
+          (type) => type.accept(emitter).toString(),
+        ),
+        ['String?', 'int?'],
       );
     });
   });
