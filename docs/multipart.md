@@ -32,6 +32,32 @@ Primitive fields (`string`, `integer`, `number`, `boolean`), enums, `DateTime`, 
 
 ---
 
+## Dynamic Part Names
+
+Typed `additionalProperties` supports root map bodies and mixed objects with an
+`additionalProperties` field:
+
+```dart
+await api.postLabels(body: {'first': 'alpha'});
+await api.postForm(body: Form(
+  metadata: metadata,
+  additionalProperties: {'files': [TonikFileBytes(bytes)]},
+));
+```
+
+- Named parts precede dynamic entries in map order on both backends; arrays keep
+  item order. Objects/maps use JSON; arrays repeat the key for each part.
+- `immutableCollections: true` uses `IMap` and nested `IList`; aliases retain their types.
+- Null values and repeated-array nulls are omitted; packed JSON retains nulls and
+  delimited arrays retain empty slots. Supplied bodies must emit at least one part.
+- Keys cannot collide with declared raw names (even absent/read-only) or emitted
+  named-style keys. Collisions precede null omission; repeated array names remain valid.
+- Encoding and headers apply only to declared writable properties; no wildcards
+  or dynamic overrides. File-name fallback uses the dynamic key.
+- Required undeclared keys and array-size constraints are not validated.
+
+---
+
 ## File Uploads
 
 Use `type: string, format: binary` for file fields. Tonik generates a `TonikFile` property — use `TonikFileBytes` for in-memory data or `TonikFilePath` for a path on disk:
@@ -143,5 +169,9 @@ contentTypes:
 |---|---|
 | Multipart responses | Not supported |
 | Arrays of arrays | Not supported |
+| Untyped dynamic map values | Not supported |
+| Recursive dynamic collection values | Not supported |
+| Dynamic sources inside `allOf` | Not supported |
+| Unmatched or non-writable encoding keys | Encoding error |
 | `deepObject` style on arrays | Not supported |
 | `style` / `explode` in OAS 3.0 | Ignored — arrays always use separate parts |

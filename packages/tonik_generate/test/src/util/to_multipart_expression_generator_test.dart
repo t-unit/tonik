@@ -5722,55 +5722,57 @@ $expectedPartCode
         );
       });
 
-      test('list of enums, text/plain (parser default) → repeated uriEncode fields', () {
-        final enumModel = EnumModel<String>(
-          name: 'Priority',
-          isNullable: false,
-          isDeprecated: false,
-          values: {
-            const EnumEntry(value: 'high'),
-            const EnumEntry(value: 'low'),
-          },
-          context: testContext,
-          examples: const [],
-        );
+      test(
+        'list of enums, text/plain (parser default) → literal wire values',
+        () {
+          final enumModel = EnumModel<String>(
+            name: 'Priority',
+            isNullable: false,
+            isDeprecated: false,
+            values: {
+              const EnumEntry(value: 'high'),
+              const EnumEntry(value: 'low'),
+            },
+            context: testContext,
+            examples: const [],
+          );
 
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'priorities',
-            model: ListModel(
-              content: enumModel,
-              context: testContext,
-              examples: const [],
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'priorities',
+              model: ListModel(
+                content: enumModel,
+                context: testContext,
+                examples: const [],
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
             ),
-            encoding: const PartEncoding(
-              contentType: ContentType.text,
-              rawContentType: 'text/plain',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-            ),
-          ),
-        ]);
+          ]);
 
-        final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
-        );
+          final result = buildMultipartBodyStatements(
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
+          );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
                 void test() {
                   final _$formData = FormData();
                   for (final item in body.priorities) {
                     _$formData.fields.add(
                       MapEntry(
                         (r'priorities').replaceAll(r'\', r'\\'),
-                        item.uriEncode(allowEmpty: true, textEncoding: utf8),
+                        item.toJson(),
                       ),
                     );
                   }
@@ -5780,9 +5782,10 @@ $expectedPartCode
                   return _$formData;
                 }
               '''),
-          ),
-        );
-      });
+            ),
+          );
+        },
+      );
 
       test('optional list, no encoding → repeated fields with null guard', () {
         final content = multipartContentFixture(testContext, [

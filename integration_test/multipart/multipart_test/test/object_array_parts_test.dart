@@ -5,8 +5,6 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   test('sends ordered JSON object parts with the same field name', () async {
     final server = await RawRequestServer.start();

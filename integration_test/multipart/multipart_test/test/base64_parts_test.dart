@@ -6,8 +6,6 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   test('sends decoded format byte data as ASCII base64', () async {
     final server = await RawRequestServer.start(

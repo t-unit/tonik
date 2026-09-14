@@ -8,6 +8,23 @@ import 'package:tonik_generate/src/util/recursion_detector.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
+BuiltExpression buildToJsonModelExpression(
+  Expression receiver,
+  Model model, {
+  required NameManager nameManager,
+  String? package,
+  bool useImmutableCollections = false,
+}) => _buildSerializationExpression(
+  receiver,
+  model,
+  false,
+  nameManager: nameManager,
+  package: package,
+  helperContext: InlineHelperContext(nameManager: nameManager),
+  receiverIsPromotedNonNull: true,
+  useImmutableCollections: useImmutableCollections,
+);
+
 /// Creates a [BuiltExpression] that correctly serializes a property to its
 /// JSON representation.
 ///

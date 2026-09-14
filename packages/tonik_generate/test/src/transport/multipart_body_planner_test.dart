@@ -1070,23 +1070,22 @@ Object? test() {
       );
     });
 
-    test('defers unsupported map roots to runtime', () {
-      final content = _content(
-        MapModel(
-          valueModel: BinaryModel(context: context),
-          context: context,
-          examples: const [],
-        ),
+    test('normalizes binary map roots without a body wrapper', () {
+      final model = MapModel(
+        valueModel: BinaryModel(context: context),
+        context: context,
+        examples: const [],
       );
-      expectRuntimeEncodingError(
-        content,
-        'Unsupported multipart body root/member MapModel at '
-        '${content.model.context}. Multipart bodies require a class, an alias '
-        'to a supported model, or an allOf containing supported members.',
-      );
+      final result = normalizeMultipartProperties(_content(model));
+      expect(result.runtimeEncodingError, isNull);
+      expect(result.properties, isEmpty);
+      expect(result.dynamicSource!.accessPath, isEmpty);
+      expect(result.dynamicSource!.valueModel, same(model.valueModel));
+      expect(result.dynamicSource!.isValueNullable, isFalse);
+      expect(result.dynamicSource!.receiverNullable, isFalse);
     });
 
-    test('defers dynamic additional-property parts to runtime', () {
+    test('normalizes typed additional properties beside named metadata', () {
       final model = _classWithProperties(
         context,
         'Snippet',
@@ -1095,12 +1094,14 @@ Object? test() {
           valueModel: BinaryModel(context: context),
         ),
       );
-      expectRuntimeEncodingError(
-        _content(model),
-        'Multipart body model ClassModel at ${model.context} declares '
-        'additional properties. Dynamic multipart part names are not '
-        'supported.',
+      final result = normalizeMultipartProperties(_content(model));
+      expect(result.runtimeEncodingError, isNull);
+      expect(result.properties.single.rawName, 'metadata');
+      expect(
+        result.dynamicSource!.accessPath.single.name,
+        'additionalProperties',
       );
+      expect(result.dynamicSource!.declaredWireNames, {'metadata'});
     });
 
     test('allows the implicit object additional-properties default', () {

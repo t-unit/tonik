@@ -16,6 +16,7 @@ List<Parameter> generateParameters({
   required Operation operation,
   required NameManager nameManager,
   required String package,
+  bool useImmutableCollections = false,
   Map<String, OperationParameterDefault> defaultsByName = const {},
 }) {
   final hasRequestBody =
@@ -30,6 +31,7 @@ List<Parameter> generateParameters({
             nameManager,
             package,
             isNullableOverride: !requestBody.isRequired,
+            useImmutableCollections: useImmutableCollections,
           )
         : TypeReference(
             (b) => b

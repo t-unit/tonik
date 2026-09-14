@@ -94,7 +94,6 @@ class const DioDataGenerator({
           headerInfo,
           nameManager,
           package,
-          useImmutableCollections: useImmutableCollections,
         ),
         statements: [
           if (!isRequired) const Code('if (body == null) return null;'),
@@ -123,7 +122,6 @@ class const DioDataGenerator({
           headerInfo,
           nameManager,
           package,
-          useImmutableCollections: false,
         ),
         statements: [
           if (!isRequired) const Code('if (body == null) return null;'),

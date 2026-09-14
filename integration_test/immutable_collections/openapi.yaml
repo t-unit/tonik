@@ -18,6 +18,94 @@ tags:
     description: Operations for items with collection fields
 
 paths:
+  /dynamic-headers:
+    post:
+      operationId: postDynamicHeaders
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+            encoding:
+              label:
+                headers:
+                  X-Tags:
+                    required: true
+                    schema:
+                      type: array
+                      items:
+                        type: string
+      responses:
+        '204':
+          description: Accepted
+  /dynamic-headers-multi:
+    post:
+      operationId: postDynamicHeadersMulti
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+            encoding:
+              label:
+                headers:
+                  X-Tags:
+                    required: true
+                    schema:
+                      type: array
+                      items:
+                        type: string
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+      responses:
+        '204':
+          description: Accepted
+  /dynamic-inline-map:
+    post:
+      operationId: postDynamicInlineMap
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+      responses:
+        '204':
+          description: Accepted
+  /dynamic-map:
+    post:
+      operationId: postDynamicMap
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMap'
+      responses:
+        '204':
+          description: Accepted
+  /dynamic-mixed:
+    post:
+      operationId: postDynamicMixed
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+      responses:
+        '204':
+          description: Accepted
   /items/{id}:
     get:
       operationId: getItem
@@ -433,3 +521,22 @@ components:
             x: 1
             y: 2
 
+
+    DynamicMap:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: integer
+    DynamicMixed:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: integer

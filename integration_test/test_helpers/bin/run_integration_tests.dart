@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:test_helpers/src/imposter_server.dart';
+import 'package:test_helpers/test_helpers.dart';
 
 /// Runs complete packages in one process, owning one fresh JVM at a time.
 Future<void> main(List<String> arguments) async {

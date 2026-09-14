@@ -5,8 +5,6 @@ import 'package:multipart_api/multipart_api.dart' as oas30;
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   test('OAS 3.0 multipart omits read-only and absent optional parts', () async {
     final server = await RawRequestServer.start();

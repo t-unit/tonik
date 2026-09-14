@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:test_helpers/src/imposter_server.dart';
+import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   late ImposterServer server;

@@ -166,6 +166,7 @@ class ApiClientGenerator({
       operation: operation,
       nameManager: nameManager,
       package: package,
+      useImmutableCollections: useImmutableCollections,
       defaultsByName: qualifiedDefaults,
     );
 

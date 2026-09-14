@@ -3,5 +3,6 @@ library;
 
 export 'src/backend_test_support.dart';
 export 'src/imposter_server.dart';
+export 'src/multipart_wire.dart';
 export 'src/raw_request_server.dart';
 export 'src/test_result.dart';
