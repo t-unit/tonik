@@ -189,6 +189,7 @@ class const HttpBodyGenerator({
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          useImmutableCollections: useImmutableCollections,
           contextClass: operation.operationId,
           contextProperty: 'body',
           receiverIsPromotedNonNull: receiverIsPromotedNonNull,

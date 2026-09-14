@@ -18,6 +18,78 @@ tags:
     description: Operations for items with collection fields
 
 paths:
+  /json-nullable-list:
+    post:
+      operationId: postJsonNullableList
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              nullable: true
+              items:
+                type: integer
+      responses:
+        '204':
+          description: Accepted
+  /json-nullable-list-variant:
+    post:
+      operationId: postJsonNullableListVariant
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              nullable: true
+              items:
+                type: integer
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Accepted
+  /json-inline-map:
+    post:
+      operationId: postJsonInlineMap
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+      responses:
+        '204':
+          description: Accepted
+  /json-inline-nested:
+    post:
+      operationId: postJsonInlineNested
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: integer
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Accepted
   /dynamic-headers:
     post:
       operationId: postDynamicHeaders

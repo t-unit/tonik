@@ -116,6 +116,50 @@ Future<TonikResult<void, Response<Object?>>> call({
     );
   });
 
+  test('emits one part per dynamic primitive-union array item', () {
+    final union = OneOfModel(
+      name: 'PrimitiveUnion',
+      models: [
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+      ],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+    final content = _content(
+      MapModel(
+        context: context,
+        examples: const [],
+        valueModel: ListModel(
+          context: context,
+          examples: const [],
+          content: union,
+        ),
+      ),
+    );
+    _expectMethod(content, TransportBackend.http, r'''
+Object? encode() {
+  final _$multipartFiles = <MultipartFile>[];
+  final _$multipartMap = body;
+  for (final _$multipartEntry in _$multipartMap.entries) {
+    final _$multipartValue = _$multipartEntry.value;
+    for (final item in _$multipartValue) {
+      _$multipartFiles.add(MultipartFile.fromBytes(
+        (_$multipartEntry.key).replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/json'),
+      ));
+    }
+  }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$multipartFiles;
+}
+''');
+  });
+
   test('emits the complete nullable map method with guarded iteration', () {
     final content = _content(
       MapModel(

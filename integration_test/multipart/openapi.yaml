@@ -18,6 +18,23 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/dynamic-primitive-unions:
+    post:
+      operationId: postDynamicPrimitiveUnions
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DynamicPrimitiveUnion'
+      responses:
+        '204':
+          description: Accepted
   /multipart/dynamic-recursive-map:
     post:
       operationId: postDynamicRecursiveMap
@@ -1665,3 +1682,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DynamicRecursiveMap'
+
+    DynamicPrimitiveUnion:
+      oneOf:
+        - type: string
+        - type: integer

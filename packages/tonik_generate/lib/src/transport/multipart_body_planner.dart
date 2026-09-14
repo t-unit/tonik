@@ -332,19 +332,30 @@ class const MultipartBodyPlanner({
         _ => false,
       },
     );
+    final valueModel = source.valueModel.resolved;
+    final itemModel = valueModel is ListModel
+        ? valueModel.content.resolved
+        : valueModel;
+    final part = (
+      name: 'dynamic value',
+      wireName: entry.property('key'),
+      normalizedName: r'_$dynamic',
+      preserveOrder: true,
+      value: value,
+      encoding: _resolveEncoding(null, itemModel),
+      headers: headers,
+      isMergedObject: false,
+      isMergedMap: false,
+      isMergedObjectProperties: false,
+    );
     loopBody.addAll(
-      _part((
-        name: 'dynamic value',
-        wireName: entry.property('key'),
-        normalizedName: r'_$dynamic',
-        preserveOrder: true,
-        value: value,
-        encoding: _resolveEncoding(null, source.valueModel),
-        headers: headers,
-        isMergedObject: false,
-        isMergedMap: false,
-        isMergedObjectProperties: false,
-      ), source.valueModel.resolved),
+      valueModel is ListModel
+          ? _listItems(
+              part,
+              valueModel,
+              _part(_withValue(part, refer('item')), itemModel),
+            )
+          : _part(part, itemModel),
     );
     emissions.addAll(
       _loop(

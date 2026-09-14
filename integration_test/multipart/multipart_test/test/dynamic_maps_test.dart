@@ -596,6 +596,25 @@ void main() {
       expect(wire.parts[1].contentType, startsWith('application/json'));
     },
   );
+  test('repeats primitive union array items as separate JSON parts', () async {
+    expect(
+      await api.postDynamicPrimitiveUnions(
+        body: {
+          'values': [
+            DynamicPrimitiveUnion.fromJson('alpha'),
+            DynamicPrimitiveUnion.fromJson(7),
+          ],
+        },
+      ),
+      isTonikSuccess,
+    );
+    final wire = MultipartWire(await server.takeRequest());
+    expect(wire.parts.map((part) => part.name), ['values', 'values']);
+    expect(wire.parts.map((part) => part.bodyText), ['"alpha"', '7']);
+    expect(wire.parts[0].contentType, startsWith('application/json'));
+    expect(wire.parts[1].contentType, startsWith('application/json'));
+  });
+
   test(
     'keeps reserved characters literal in default dynamic enum arrays',
     () async {

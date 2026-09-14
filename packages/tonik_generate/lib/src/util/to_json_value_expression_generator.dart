@@ -239,7 +239,7 @@ BuiltExpression _buildSerializationExpression(
       return _handleListExpression(
         receiver,
         model,
-        !receiverIsPromotedNonNull && isNullable,
+        !receiverIsPromotedNonNull && (isNullable || model.isNullable),
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
