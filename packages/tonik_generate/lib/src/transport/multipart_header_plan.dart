@@ -410,13 +410,8 @@ bool multipartModelIsNullable(Model model, [Set<Model>? active]) {
   }
 }
 
-String? _additionalPropertiesError(Model model) {
-  final policy = switch (model) {
-    ClassModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
-    AllOfModel(:final additionalPropertiesPolicy) => additionalPropertiesPolicy,
-    _ => null,
-  };
-  if (policy case AllowedAdditionalProperties(
+String? _additionalPropertiesError(AllOfModel model) {
+  if (model.additionalPropertiesPolicy case AllowedAdditionalProperties(
     origin: AdditionalPropertiesOrigin.explicit,
   )) {
     return _dynamicAllOfError(model);
@@ -444,28 +439,28 @@ bool _containsRecursiveCollection(Model model) {
   return walk(model);
 }
 
-String? _dynamicValueError(Model model, [Set<Model>? active]) {
+String? _dynamicValueError(Model model) {
   if (_containsRecursiveCollection(model)) {
     return 'Recursive collection types are not supported for dynamic '
         'multipart values.';
   }
-  final visited = active ?? <Model>{};
-  if (!visited.add(model)) return null;
-  final resolved = model.resolved;
-  if (resolved is AnyModel) {
-    return 'Untyped dynamic multipart values are not supported '
-        '(${model.context}).';
-  }
-  if (resolved is AliasModel || resolved is NeverModel) {
-    return 'Unsupported dynamic multipart value ${resolved.runtimeType} '
-        '(${model.context}).';
-  }
+  var valueModel = model;
+  var resolved = model.resolved;
   if (resolved is ListModel) {
-    if (resolved.content.resolved is ListModel) {
+    valueModel = resolved.content;
+    resolved = valueModel.resolved;
+    if (resolved is ListModel) {
       return 'Arrays of arrays are not supported for dynamic multipart values '
           '(${model.context}).';
     }
-    return _dynamicValueError(resolved.content, visited);
+  }
+  if (resolved is AnyModel) {
+    return 'Untyped dynamic multipart values are not supported '
+        '(${valueModel.context}).';
+  }
+  if (resolved is AliasModel || resolved is NeverModel) {
+    return 'Unsupported dynamic multipart value ${resolved.runtimeType} '
+        '(${valueModel.context}).';
   }
   return null;
 }
