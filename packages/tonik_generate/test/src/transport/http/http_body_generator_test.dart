@@ -126,7 +126,7 @@ Object? _data({required IList<int>? body}) {
       format(dio.accept(emitter).toString()),
       format('''
 Object? _data({required IList<int>? body}) {
-  return body?.unlock;
+  return body?.unlock ?? 'null';
 }
 '''),
     );
@@ -187,7 +187,7 @@ Object? _data({required Payload body}) {
       format('''
 Object? _data({required Payload body}) {
   return switch (body) {
-    final PayloadJson value => value.value?.unlock,
+    final PayloadJson value => value.value?.unlock ?? 'null',
     final PayloadPlain value => utf8.encode(value.value),
   };
 }

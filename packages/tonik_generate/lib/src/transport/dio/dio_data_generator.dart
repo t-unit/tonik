@@ -192,6 +192,8 @@ class const DioDataGenerator({
         return BuiltExpression(
           body: _encodesJsonRoot(content.model)
               ? refer('jsonEncode', 'dart:convert').call([json.unsafeRawBody])
+              : isRequired && content.model.isEffectivelyNullable
+              ? json.unsafeRawBody.ifNullThen(literalString('null'))
               : json.unsafeRawBody,
           inlineFunctions: json.inlineFunctions,
         );

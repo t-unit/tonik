@@ -177,6 +177,24 @@ void main() {
       ]);
     },
   );
+  test('packed JSON arrays use the shared nullable URI codec', () async {
+    expect(
+      await api.postNamedNullableUriArray(
+        body: NamedNullableUriArray(
+          uris: [null, Uri.parse('https://example.test/a?b=c'), null],
+        ),
+      ),
+      isTonikSuccess,
+    );
+    final wire = MultipartWire(await server.takeRequest());
+    expect(wire.parts.single.name, 'uris');
+    expect(wire.parts.single.contentType, startsWith('application/json'));
+    expect(
+      wire.parts.single.bodyText,
+      '[null,"https://example.test/a?b=c",null]',
+    );
+  });
+
   test(
     'keeps empty positions for nulls in named delimiter-packed arrays',
     () async {

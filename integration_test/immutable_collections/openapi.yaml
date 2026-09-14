@@ -18,6 +18,22 @@ tags:
     description: Operations for items with collection fields
 
 paths:
+  /packed-merged:
+    post:
+      operationId: postPackedMerged
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PackedMerged'
+            encoding:
+              values:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
   /json-nullable-list:
     post:
       operationId: postJsonNullableList
@@ -612,3 +628,28 @@ components:
           type: array
           items:
             type: integer
+
+    PackedFirst:
+      type: object
+      required: [values]
+      properties:
+        values:
+          type: array
+          items:
+            type: string
+            format: uri
+            nullable: true
+    PackedSecond:
+      type: object
+      required: [values]
+      properties:
+        values:
+          type: array
+          items:
+            type: string
+            format: uri
+            nullable: true
+    PackedMerged:
+      allOf:
+        - $ref: '#/components/schemas/PackedFirst'
+        - $ref: '#/components/schemas/PackedSecond'

@@ -4,6 +4,29 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
 void main() {
+  test('sends explicit JSON null for a required nullable body', () async {
+    final server = await RawRequestServer.start();
+    final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
+    expect(await api.postJsonNullableList(body: null), isTonikSuccess);
+    final request = await server.takeRequest();
+    expect(request.bodyBytes, [110, 117, 108, 108]);
+    expect(request.header('content-type'), startsWith('application/json'));
+  });
+
+  test('sends explicit JSON null inside a JSON request variant', () async {
+    final server = await RawRequestServer.start();
+    final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
+    expect(
+      await api.postJsonNullableListVariant(
+        body: const JsonNullableListVariantPostBodyRequestBodyJson(null),
+      ),
+      isTonikSuccess,
+    );
+    final request = await server.takeRequest();
+    expect(request.bodyBytes, [110, 117, 108, 108]);
+    expect(request.header('content-type'), startsWith('application/json'));
+  });
+
   test('serializes a required nullable immutable JSON list', () async {
     final server = await RawRequestServer.start();
     final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));

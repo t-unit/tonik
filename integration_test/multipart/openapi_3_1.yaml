@@ -15,6 +15,22 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/named-nullable-uri-array:
+    post:
+      operationId: postNamedNullableUriArray
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NamedNullableUriArray'
+            encoding:
+              uris:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
   /multipart31/named-nullable-packed:
     post:
       operationId: postNamedNullablePacked
@@ -867,3 +883,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NamedNullableDateAlias'
+
+    NamedNullableUriArray:
+      type: object
+      required: [uris]
+      properties:
+        uris:
+          type: array
+          items:
+            type: [string, 'null']
+            format: uri

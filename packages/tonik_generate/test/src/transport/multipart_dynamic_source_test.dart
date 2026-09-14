@@ -436,6 +436,42 @@ Future<Object?> encode() async {
 ''', asynchronous: true);
   });
 
+  test('packs immutable nullable URI items through the shared JSON codec', () {
+    final content = multipartContentFixture(context, [
+      multipartPartFixture(
+        name: 'uris',
+        model: ListModel(
+          context: context,
+          examples: const [],
+          isContentNullable: true,
+          content: UriModel(context: context),
+        ),
+        encoding: const PartEncoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
+      ),
+    ]);
+    _expectMethod(content, TransportBackend.http, r'''
+Object? encode() {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(MultipartFile.fromBytes(
+    (r'uris').replaceAll(r'\', r'\\'),
+    utf8.encode(jsonEncode(body.uris.unlock.map((e) => e?.toString()).toList())),
+    contentType: MediaType.parse(r'application/json'),
+  ));
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$multipartFiles;
+}
+''', immutable: true);
+  });
+
   test('keeps merged immutable named lists mutable for packed JSON output', () {
     final list = ListModel(
       context: context,
@@ -477,7 +513,7 @@ Object? encode() {
   ], propertyName: r'items')!;
   _$multipartFiles.add(MultipartFile.fromBytes(
     (r'items').replaceAll(r'\', r'\\'),
-    utf8.encode(jsonEncode(_$itemsMultipartValue.toList())),
+    utf8.encode(jsonEncode(_$itemsMultipartValue)),
     contentType: MediaType.parse(r'application/json'),
   ));
   if (_$multipartFiles.isEmpty) {

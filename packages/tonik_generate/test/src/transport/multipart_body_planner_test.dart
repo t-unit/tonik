@@ -842,20 +842,19 @@ Object? test() {
       (
         name: 'enums',
         model: _stringEnum(context),
-        encodedValue: 'body.value.map((item) => item.toJson()).toList()',
+        encodedValue: 'body.value.map((e) => e.toJson()).toList()',
       ),
       (
         name: 'dates',
         model: DateTimeModel(context: context),
         encodedValue:
-            'body.value.map((item) => '
-            'item.toTimeZonedIso8601String()).toList()',
+            'body.value.map((e) => '
+            'e.toTimeZonedIso8601String()).toList()',
       ),
       (
         name: 'unconstrained values',
         model: AnyModel(context: context),
-        encodedValue:
-            'body.value.map((item) => encodeAnyToJson(item)).toList()',
+        encodedValue: 'body.value.map((e) => encodeAnyToJson(e)).toList()',
       ),
       (
         name: 'integers',

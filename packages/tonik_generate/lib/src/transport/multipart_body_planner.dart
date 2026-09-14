@@ -228,6 +228,7 @@ class const MultipartBodyPlanner({
         headers: headers,
         isMergedObject: mergedObjects,
         isMergedMap: mergedMaps,
+        isMergedList: mergedLists,
         isMergedObjectProperties: mergedObjectProperties,
       );
       for (final emission in _part(input, property.property.model.resolved)) {
@@ -346,6 +347,7 @@ class const MultipartBodyPlanner({
       headers: headers,
       isMergedObject: false,
       isMergedMap: false,
+      isMergedList: false,
       isMergedObjectProperties: false,
     );
     loopBody.addAll(
@@ -538,34 +540,11 @@ class const MultipartBodyPlanner({
           _text(itemPart, _json(json), fallback: 'application/json'),
         ]);
       }
-      final variable = _dio ? 'e' : 'item';
-      final itemValue = refer(variable);
-      Expression callItemMethod(String method) =>
-          (itemNullable
-                  ? itemValue.nullSafeProperty(method)
-                  : itemValue.property(method))
-              .call([]);
-      final itemJson = switch (item) {
-        ClassModel() ||
-        CompositeModel() ||
-        EnumModel() => callItemMethod('toJson'),
-        DateTimeModel() => callItemMethod('toTimeZonedIso8601String'),
-        AnyModel() when !_dio => _anyJson(itemValue),
-        _ => null,
-      };
-      return [
-        _text(
-          part,
-          _json(
-            itemJson == null
-                ? (useImmutableCollections
-                      ? part.value.property('toList').call([])
-                      : part.value)
-                : _mapped(part.value, itemJson, variable: variable),
-          ),
-          fallback: 'application/json',
-        ),
-      ];
+      return _jsonPart(
+        part,
+        model,
+        immutable: useImmutableCollections && !part.isMergedList,
+      );
     }
     if (item is ClassModel ||
         item is CompositeModel ||
@@ -699,27 +678,35 @@ class const MultipartBodyPlanner({
       return _urlEncodedMap(part);
     }
     if (!part.isMergedMap) {
-      final encoded = buildToJsonModelExpression(
-        part.value,
-        model,
-        nameManager:
-            nameManager ??
-            NameManager(
-              generator: NameGenerator(),
-              stableModelSorter: StableModelSorter(),
-            ),
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      );
-      return [
-        if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('{')),
-        for (final code in spliceInlineHelpers(encoded.inlineFunctions))
-          MultipartCode(code),
-        _text(part, _json(encoded.unsafeRawBody), fallback: 'application/json'),
-        if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('}')),
-      ];
+      return _jsonPart(part, model, immutable: useImmutableCollections);
     }
     return [_text(part, _json(part.value), fallback: 'application/json')];
+  }
+
+  List<MultipartEmission> _jsonPart(
+    _Part part,
+    Model model, {
+    required bool immutable,
+  }) {
+    final encoded = buildToJsonModelExpression(
+      part.value,
+      model,
+      nameManager:
+          nameManager ??
+          NameManager(
+            generator: NameGenerator(),
+            stableModelSorter: StableModelSorter(),
+          ),
+      package: package,
+      useImmutableCollections: immutable,
+    );
+    return [
+      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('{')),
+      for (final code in spliceInlineHelpers(encoded.inlineFunctions))
+        MultipartCode(code),
+      _text(part, _json(encoded.unsafeRawBody), fallback: 'application/json'),
+      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('}')),
+    ];
   }
 
   List<MultipartEmission> _object(_Part part) {
@@ -1187,6 +1174,7 @@ typedef _Part = ({
   Expression? headers,
   bool isMergedObject,
   bool isMergedMap,
+  bool isMergedList,
   bool isMergedObjectProperties,
 });
 
@@ -1200,6 +1188,7 @@ _Part _withValue(_Part part, Expression value) => (
   headers: part.headers,
   isMergedObject: part.isMergedObject,
   isMergedMap: part.isMergedMap,
+  isMergedList: part.isMergedList,
   isMergedObjectProperties: part.isMergedObjectProperties,
 );
 
