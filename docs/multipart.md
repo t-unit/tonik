@@ -34,27 +34,32 @@ Primitive fields (`string`, `integer`, `number`, `boolean`), enums, `DateTime`, 
 
 ## Dynamic Part Names
 
-Typed `additionalProperties` supports root map bodies and mixed objects with an
-`additionalProperties` field:
+Add `additionalProperties` to your `multipart/form-data` schema to accept fields
+whose names are supplied at runtime:
 
-```dart
-await api.postLabels(body: {'first': 'alpha'});
-await api.postForm(body: Form(
-  metadata: metadata,
-  additionalProperties: {'files': [TonikFileBytes(bytes)]},
-));
+```yaml
+schema:
+  type: object
+  additionalProperties:
+    type: string
 ```
 
-- Named parts precede dynamic entries in map order on both backends; arrays keep
-  item order. Objects/maps use JSON; arrays repeat the key for each part.
-- `immutableCollections: true` uses `IMap` and nested `IList`; aliases retain their types.
-- Null values and repeated-array nulls are omitted; packed JSON retains nulls and
-  delimited arrays retain empty slots. Supplied bodies must emit at least one part.
-- Keys cannot collide with declared raw names (even absent/read-only) or emitted
-  named-style keys. Collisions precede null omission; repeated array names remain valid.
-- Encoding and headers apply only to declared writable properties; no wildcards
-  or dynamic overrides. File-name fallback uses the dynamic key.
-- Required undeclared keys and array-size constraints are not validated.
+Pass a map as `body`, using the field names as keys:
+
+```dart
+await api.postLabels(body: {'language': 'en', 'theme': 'dark'});
+```
+
+If the schema also declares named properties, use the generated model and put
+dynamic fields in its `additionalProperties` argument:
+
+```dart
+await api.postForm(body: Form(
+  name: 'Jane',
+  age: 30,
+  additionalProperties: {'department': 'engineering'},
+));
+```
 
 ---
 
