@@ -2,8 +2,6 @@ import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   late ImposterServer imposterServer;
   late String baseUrl;

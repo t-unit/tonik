@@ -18,6 +18,381 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/dynamic-primitive-unions:
+    post:
+      operationId: postDynamicPrimitiveUnions
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DynamicPrimitiveUnion'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/dynamic-recursive-map:
+    post:
+      operationId: postDynamicRecursiveMap
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicRecursiveMap'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/dynamic-topics:
+    post:
+      operationId: postDynamicTopics
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DynamicTopic'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/postDynamicDates:
+    post:
+      operationId: postDynamicDates
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicDates'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/postDynamicDateMaps:
+    post:
+      operationId: postDynamicDateMaps
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicDateMaps'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/dynamic-inline:
+    post:
+      operationId: postDynamicInline
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+      responses:
+        '204':
+          description: Accepted
+  /multipart/dynamic-unsupported-array:
+    post:
+      operationId: postDynamicUnsupportedArray
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicUnsupportedArray'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/postDynamicStrings:
+    post:
+      operationId: postDynamicStrings
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicStrings'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postOptionalDynamicStrings:
+    post:
+      operationId: postOptionalDynamicStrings
+      tags: [multipart]
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicStrings'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicNullableValues:
+    post:
+      operationId: postDynamicNullableValues
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableValues'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicNullableRoot:
+    post:
+      operationId: postDynamicNullableRoot
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableRoot'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicBinary:
+    post:
+      operationId: postDynamicBinary
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicBinary'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicBase64:
+    post:
+      operationId: postDynamicBase64
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicBase64'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicBase64Arrays:
+    post:
+      operationId: postDynamicBase64Arrays
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicBase64Arrays'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicObjects:
+    post:
+      operationId: postDynamicObjects
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicObjects'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicMaps:
+    post:
+      operationId: postDynamicMaps
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMaps'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicObjectArrays:
+    post:
+      operationId: postDynamicObjectArrays
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicObjectArrays'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicArrays:
+    post:
+      operationId: postDynamicArrays
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicArrays'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicMixed:
+    post:
+      operationId: postDynamicMixed
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicCollision:
+    post:
+      operationId: postDynamicCollision
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicCollision'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicUntyped:
+    post:
+      operationId: postDynamicUntyped
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicUntyped'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/postDynamicAllOf:
+    post:
+      operationId: postDynamicAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicAllOf'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/dynamic-multi-content:
+    post:
+      operationId: postDynamicMultiContent
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicStrings'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DynamicStrings'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/dynamic-mixed-headers:
+    post:
+      operationId: postDynamicMixedHeaders
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicMixed'
+            encoding:
+              metadata:
+                contentType: application/vnd.metadata+json
+                headers:
+                  X-Source:
+                    required: true
+                    schema:
+                      type: string
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/dynamic-assets-wildcard:
+    post:
+      operationId: postDynamicAssetsWildcard
+      tags: [multipart]
+      parameters:
+        - name: base64
+          in: query
+          required: true
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+            encoding:
+              '*':
+                contentType: '*/*'
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/all-of-upload:
     post:
       operationId: postAllOfUpload
@@ -1182,3 +1557,133 @@ components:
           type: boolean
         message:
           type: string
+
+    DynamicStrings:
+      type: object
+      additionalProperties:
+        type: string
+    DynamicNullableValues:
+      type: object
+      additionalProperties:
+        type: string
+        nullable: true
+    DynamicNullableRoot:
+      type: object
+      nullable: true
+      additionalProperties:
+        type: string
+    DynamicBinary:
+      type: object
+      additionalProperties:
+        type: string
+        format: binary
+    DynamicBase64:
+      type: object
+      additionalProperties:
+        type: string
+        format: byte
+    DynamicBase64Arrays:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+          format: byte
+    DynamicObjects:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ObjectArrayItem'
+    DynamicMaps:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: integer
+    DynamicObjectArrays:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/ObjectArrayItem'
+    DynamicArrays:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: integer
+    DynamicMixed:
+      type: object
+      required: [metadata]
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ObjectArrayItem'
+      additionalProperties:
+        type: array
+        items:
+          type: integer
+    DynamicCollision:
+      type: object
+      properties:
+        raw-name:
+          type: string
+        read-only:
+          type: string
+          readOnly: true
+        additionalProperties:
+          type: string
+      additionalProperties:
+        type: string
+        nullable: true
+    DynamicUntyped:
+      type: object
+      additionalProperties: true
+    DynamicAllOf:
+      allOf:
+        - $ref: '#/components/schemas/DynamicMixed'
+
+    DynamicUnsupportedArray:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string
+      additionalProperties:
+        type: array
+        nullable: true
+        items:
+          type: array
+          items:
+            type: string
+
+    DynamicDates:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: string
+          format: date-time
+    DynamicDateMaps:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+
+    DynamicTopic:
+      type: string
+      enum: ['science & tech', 'a+b/c']
+
+    DynamicRecursiveMap:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/DynamicRecursiveMap'
+
+    DynamicPrimitiveUnion:
+      oneOf:
+        - type: string
+        - type: integer

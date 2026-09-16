@@ -32,6 +32,37 @@ Primitive fields (`string`, `integer`, `number`, `boolean`), enums, `DateTime`, 
 
 ---
 
+## Dynamic Part Names
+
+Add `additionalProperties` to your `multipart/form-data` schema to accept fields
+whose names are supplied at runtime:
+
+```yaml
+schema:
+  type: object
+  additionalProperties:
+    type: string
+```
+
+Pass a map as `body`, using the field names as keys:
+
+```dart
+await api.postLabels(body: {'language': 'en', 'theme': 'dark'});
+```
+
+If the schema also declares named properties, use the generated model and put
+dynamic fields in its `additionalProperties` argument:
+
+```dart
+await api.postForm(body: Form(
+  name: 'Jane',
+  age: 30,
+  additionalProperties: {'department': 'engineering'},
+));
+```
+
+---
+
 ## File Uploads
 
 Use `type: string, format: binary` for file fields. Tonik generates a `TonikFile` property — use `TonikFileBytes` for in-memory data or `TonikFilePath` for a path on disk:
@@ -143,5 +174,9 @@ contentTypes:
 |---|---|
 | Multipart responses | Not supported |
 | Arrays of arrays | Not supported |
+| Untyped dynamic map values | Not supported |
+| Recursive dynamic collection values | Not supported |
+| Dynamic sources inside `allOf` | Not supported |
+| Unmatched or non-writable encoding keys | Encoding error |
 | `deepObject` style on arrays | Not supported |
 | `style` / `explode` in OAS 3.0 | Ignored — arrays always use separate parts |

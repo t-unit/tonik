@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
-import 'package:test_helpers/src/imposter_server.dart';
+import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   test('ordinary test runs do not attach to a shared server', () {

@@ -94,7 +94,6 @@ class const DioDataGenerator({
           headerInfo,
           nameManager,
           package,
-          useImmutableCollections: useImmutableCollections,
         ),
         statements: [
           if (!isRequired) const Code('if (body == null) return null;'),
@@ -123,7 +122,6 @@ class const DioDataGenerator({
           headerInfo,
           nameManager,
           package,
-          useImmutableCollections: false,
         ),
         statements: [
           if (!isRequired) const Code('if (body == null) return null;'),
@@ -187,12 +185,15 @@ class const DioDataGenerator({
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          useImmutableCollections: useImmutableCollections,
           contextClass: operation.operationId,
           contextProperty: 'body',
         );
         return BuiltExpression(
           body: _encodesJsonRoot(content.model)
               ? refer('jsonEncode', 'dart:convert').call([json.unsafeRawBody])
+              : isRequired && content.model.isEffectivelyNullable
+              ? json.unsafeRawBody.ifNullThen(literalString('null'))
               : json.unsafeRawBody,
           inlineFunctions: json.inlineFunctions,
         );

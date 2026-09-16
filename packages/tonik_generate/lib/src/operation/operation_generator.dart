@@ -212,6 +212,7 @@ class OperationGenerator({
       operation: operation,
       nameManager: nameManager,
       package: package,
+      useImmutableCollections: useImmutableCollections,
       defaultsByName: defaultsByName,
     );
 

@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/dio/dio_data_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -43,6 +44,154 @@ Object? _data() {
     expect(
       collapseWhitespace(format('${method.accept(emitter)}')),
       collapseWhitespace(format(expected)),
+    );
+  });
+
+  test('unlocks an inline immutable JSON map on both transports', () {
+    final operation = _operation(
+      context,
+      requestBody: _body(
+        context,
+        model: MapModel(
+          context: context,
+          examples: const [],
+          valueModel: StringModel(context: context),
+        ),
+        contentType: ContentType.json,
+        rawContentType: 'application/json',
+      ),
+    );
+    final http = HttpBodyGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateBodyMethod(operation);
+    final dio = DioDataGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateDataMethod(operation);
+    expect(
+      format(http.accept(emitter).toString()),
+      format('''
+Object? _data({required IMap<String, String> body}) {
+  return utf8.encode(jsonEncode(body.unlock));
+}
+'''),
+    );
+    expect(
+      format(dio.accept(emitter).toString()),
+      format('''
+Object? _data({required IMap<String, String> body}) {
+  return body.unlock;
+}
+'''),
+    );
+  });
+
+  test('null-checks required nullable immutable list bodies', () {
+    final operation = _operation(
+      context,
+      requestBody: _body(
+        context,
+        model: ListModel(
+          context: context,
+          examples: const [],
+          isNullable: true,
+          content: IntegerModel(context: context),
+        ),
+        contentType: ContentType.json,
+        rawContentType: 'application/json',
+      ),
+    );
+    final http = HttpBodyGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateBodyMethod(operation);
+    final dio = DioDataGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateDataMethod(operation);
+    expect(
+      format(http.accept(emitter).toString()),
+      format('''
+Object? _data({required IList<int>? body}) {
+  return utf8.encode(jsonEncode(body?.unlock));
+}
+'''),
+    );
+    expect(
+      format(dio.accept(emitter).toString()),
+      format('''
+Object? _data({required IList<int>? body}) {
+  return body?.unlock ?? 'null';
+}
+'''),
+    );
+  });
+
+  test('null-checks nullable immutable lists in JSON variants', () {
+    final operation = _operation(
+      context,
+      requestBody: RequestBodyObject(
+        name: 'payload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          ModelRequestContent(
+            model: ListModel(
+              context: context,
+              examples: const [],
+              isNullable: true,
+              content: IntegerModel(context: context),
+            ),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+          ModelRequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            examples: const [],
+          ),
+        },
+      ),
+    );
+    final http = HttpBodyGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateBodyMethod(operation);
+    final dio = DioDataGenerator(
+      nameManager: generator.nameManager,
+      package: 'test_package',
+      useImmutableCollections: true,
+    ).generateDataMethod(operation);
+    expect(
+      format(http.accept(emitter).toString()),
+      format('''
+Object? _data({required Payload body}) {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value?.unlock)),
+    final PayloadPlain value => utf8.encode(value.value),
+  };
+}
+'''),
+    );
+    expect(
+      format(dio.accept(emitter).toString()),
+      format('''
+Object? _data({required Payload body}) {
+  return switch (body) {
+    final PayloadJson value => value.value?.unlock ?? 'null',
+    final PayloadPlain value => utf8.encode(value.value),
+  };
+}
+'''),
     );
   });
 

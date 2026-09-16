@@ -3,8 +3,6 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   test(
     'contentEncoding base64 serializes a scalar with one transfer header',

@@ -15,6 +15,185 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/named-nullable-uri-array:
+    post:
+      operationId: postNamedNullableUriArray
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NamedNullableUriArray'
+            encoding:
+              uris:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/named-nullable-packed:
+    post:
+      operationId: postNamedNullablePacked
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: [string, 'null']
+            encoding:
+              values:
+                style: form
+                explode: false
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/postDynamicNullableArrays:
+    post:
+      operationId: postDynamicNullableArrays
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableArrays'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/postDynamicNullableObjects:
+    post:
+      operationId: postDynamicNullableObjects
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableObjects'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/postDynamicNullableFiles:
+    post:
+      operationId: postDynamicNullableFiles
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableFiles'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/postDynamicNullableBase64:
+    post:
+      operationId: postDynamicNullableBase64
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableBase64'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/postNamedNullableArrays:
+    post:
+      operationId: postNamedNullableArrays
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NamedNullableArrays'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/named-nullable-json-array:
+    post:
+      operationId: postNamedNullableJsonArray
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NamedNullableJsonArray'
+            encoding:
+              dates:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/dynamic-nullable-mixed:
+    post:
+      operationId: postDynamicNullableMixed
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableMixed'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/dynamic-nullable-alias:
+    post:
+      operationId: postDynamicNullableAlias
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicNullableAlias'
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/dynamic-styled:
+    post:
+      operationId: postDynamicStyled
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicStyled'
+            encoding:
+              details:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+  /multipart31/dynamic-star-property:
+    post:
+      operationId: postDynamicStarProperty
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DynamicStarProperty'
+            encoding:
+              '*':
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
   /multipart31/quoted-dynamic-names:
     post:
       operationId: postQuotedDynamicNames
@@ -597,3 +776,120 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/AnyValue'
+
+    DynamicNullableText:
+      type: [string, 'null']
+    DynamicNullableMap:
+      type: [object, 'null']
+      additionalProperties:
+        $ref: '#/components/schemas/DynamicNullableText'
+    DynamicNullableAlias:
+      $ref: '#/components/schemas/DynamicNullableMap'
+    DynamicStyleDetails:
+      type: object
+      required: [extra]
+      properties:
+        extra:
+          type: string
+    DynamicStyled:
+      type: object
+      required: [details]
+      properties:
+        details:
+          $ref: '#/components/schemas/DynamicStyleDetails'
+      additionalProperties:
+        type: [string, 'null']
+    DynamicStarProperty:
+      type: object
+      required: ['*']
+      properties:
+        '*':
+          type: integer
+      additionalProperties:
+        type: string
+
+    DynamicNullableMixed:
+      type: [object, 'null']
+      properties:
+        label:
+          type: string
+      additionalProperties:
+        type: [string, 'null']
+
+    DynamicNullableTextAlias:
+      $ref: '#/components/schemas/DynamicNullableText'
+    DynamicNullableArrays:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/DynamicNullableTextAlias'
+    DynamicNullableObject:
+      type: [object, 'null']
+      required: [name]
+      properties:
+        name:
+          type: string
+    DynamicNullableObjects:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/DynamicNullableObject'
+    DynamicNullableFile:
+      type: [string, 'null']
+      format: binary
+    DynamicNullableFileAlias:
+      $ref: '#/components/schemas/DynamicNullableFile'
+    DynamicNullableFiles:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/DynamicNullableFileAlias'
+    DynamicNullableBase64:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: [string, 'null']
+          contentEncoding: base64
+    NamedNullableArrays:
+      type: object
+      required: [values, files, objects]
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/DynamicNullableTextAlias'
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DynamicNullableFileAlias'
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/DynamicNullableObject'
+    NamedNullableDate:
+      type: [string, 'null']
+      format: date-time
+    NamedNullableDateAlias:
+      $ref: '#/components/schemas/NamedNullableDate'
+    NamedNullableJsonArray:
+      type: object
+      required: [dates]
+      properties:
+        dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/NamedNullableDateAlias'
+
+    NamedNullableUriArray:
+      type: object
+      required: [uris]
+      properties:
+        uris:
+          type: array
+          items:
+            type: [string, 'null']
+            format: uri

@@ -1,11 +1,14 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/text_encoding_expression.dart';
+import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Resolves serialization before native multipart containers are constructed.
@@ -46,6 +49,22 @@ class const MultipartBodyPlanner({
         isRequired: isRequired,
         emissions: const [],
         runtimeEncodingError: runtimeEncodingError,
+      );
+    }
+    final dynamicSource = normalization.dynamicSource;
+    final reservedNames = dynamicSource?.declaredWireNames ?? const <String>{};
+    if (reservedNames.isNotEmpty) {
+      emissions.add(
+        MultipartCode(
+          declareFinal(r'_$multipartReservedNames')
+              .assign(
+                literalSet(
+                  reservedNames.map(specLiteralString),
+                  refer('String', 'dart:core'),
+                ),
+              )
+              .statement,
+        ),
       );
     }
     final properties = normalization.properties;
@@ -198,6 +217,8 @@ class const MultipartBodyPlanner({
           );
       final input = (
         name: property.rawName,
+        wireName: specLiteralString(property.rawName),
+        preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
         value: nullable
             ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
@@ -206,10 +227,33 @@ class const MultipartBodyPlanner({
         encoding: resolvedEncoding,
         headers: headers,
         isMergedObject: mergedObjects,
+        isMergedMap: mergedMaps,
+        isMergedList: mergedLists,
         isMergedObjectProperties: mergedObjectProperties,
       );
-      emissions.addAll(_part(input, property.property.model.resolved));
+      for (final emission in _part(input, property.property.model.resolved)) {
+        if (reservedNames.isNotEmpty && emission is MultipartAppend) {
+          emissions.add(
+            MultipartCode(
+              refer(r'_$multipartReservedNames')
+                  .property('add')
+                  .call([emission.name])
+                  .statement,
+            ),
+          );
+        }
+        emissions.add(emission);
+      }
       if (nullable) emissions.add(const MultipartCode(Code('}')));
+    }
+    if (dynamicSource != null) {
+      emissions.addAll(
+        _dynamicParts(
+          dynamicSource,
+          refer(bodyAccessor),
+          checkCollisions: reservedNames.isNotEmpty,
+        ),
+      );
     }
     return MultipartBodyPlan(
       value: refer(bodyAccessor),
@@ -226,6 +270,105 @@ class const MultipartBodyPlanner({
     );
   }
 
+  List<MultipartEmission> _dynamicParts(
+    MultipartDynamicSource source,
+    Expression body, {
+    required bool checkCollisions,
+  }) {
+    final emissions = <MultipartEmission>[
+      MultipartCode(
+        declareFinal(r'_$multipartMap')
+            .assign(_access(body, source.accessPath))
+            .statement,
+      ),
+      if (source.receiverNullable)
+        MultipartCode(
+          Block.of([
+            const Code(r'if (_$multipartMap == null) {'),
+            generateEncodingExceptionExpression(
+              'Required multipart body is null.',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ]),
+        ),
+    ];
+    final entry = refer(r'_$multipartEntry');
+    final value = refer(r'_$multipartValue');
+    final loopBody = <MultipartEmission>[
+      if (checkCollisions)
+        MultipartCode(
+          Block.of([
+            const Code('if ('),
+            refer(r'_$multipartReservedNames')
+                .property('contains')
+                .call([entry.property('key')])
+                .code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'Additional property keys must not collide with declared wire '
+              'keys or emitted named multipart parts.',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ]),
+        ),
+      MultipartCode(
+        declareFinal(r'_$multipartValue')
+            .assign(entry.property('value'))
+            .statement,
+      ),
+      if (source.isValueNullable)
+        const MultipartCode(Code(r'if (_$multipartValue == null) continue;')),
+    ];
+    final headers = _headers(
+      null,
+      'dynamic',
+      const [],
+      false,
+      loopBody,
+      base64: switch (source.valueModel.resolved) {
+        Base64Model() => true,
+        ListModel(:final content) => content.resolved is Base64Model,
+        _ => false,
+      },
+    );
+    final valueModel = source.valueModel.resolved;
+    final itemModel = valueModel is ListModel
+        ? valueModel.content.resolved
+        : valueModel;
+    final part = (
+      name: 'dynamic value',
+      wireName: entry.property('key'),
+      normalizedName: r'_$dynamic',
+      preserveOrder: true,
+      value: value,
+      encoding: _resolveEncoding(null, itemModel),
+      headers: headers,
+      isMergedObject: false,
+      isMergedMap: false,
+      isMergedList: false,
+      isMergedObjectProperties: false,
+    );
+    loopBody.addAll(
+      valueModel is ListModel
+          ? _listItems(
+              part,
+              valueModel,
+              _part(_withValue(part, refer('item')), itemModel),
+            )
+          : _part(part, itemModel),
+    );
+    emissions.addAll(
+      _loop(
+        r'_$multipartEntry',
+        refer(r'_$multipartMap').property('entries'),
+        loopBody,
+      ),
+    );
+    return emissions;
+  }
+
   List<MultipartEmission> _part(_Part part, Model model) => switch (model) {
     BinaryModel() => _file(part),
     Base64Model() => [_base64(part)],
@@ -238,7 +381,7 @@ class const MultipartBodyPlanner({
     AnyModel() => [
       _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
     ],
-    MapModel() => _map(part),
+    MapModel() => _map(part, model),
     ClassModel() || CompositeModel() => _object(part),
     EnumModel() => [_text(part, _enum(part.value, model, part.encoding))],
     PrimitiveModel() => [
@@ -261,12 +404,12 @@ class const MultipartBodyPlanner({
     final encoding = part.encoding.textEncoding;
     final plain = _dio && encoding == TextEncoding.utf8;
     return MultipartAppend(
-      name: name ?? specLiteralString(part.name),
+      name: name ?? part.wireName,
       value: plain
           ? text
           : textEncodingExpression(encoding).property('encode').call([text]),
       source: plain
-          ? (field && part.headers == null
+          ? (field && !part.preserveOrder && part.headers == null
                 ? MultipartValueSource.field
                 : MultipartValueSource.text)
           : MultipartValueSource.bytes,
@@ -283,18 +426,16 @@ class const MultipartBodyPlanner({
     if (!_dio) {
       return [
         MultipartAppend(
-          name: specLiteralString(part.name),
+          name: part.wireName,
           value: part.value,
           source: MultipartValueSource.file,
-          filename: part.value
-              .property('fileName')
-              .ifNullThen(specLiteralString(part.name)),
+          filename: part.value.property('fileName').ifNullThen(part.wireName),
           contentType: contentType,
           headers: part.headers,
         ),
       ];
     }
-    final filename = refer('fileName').ifNullThen(specLiteralString(part.name));
+    final filename = refer('fileName').ifNullThen(part.wireName);
     return [
       MultipartCode(
         Block.of([
@@ -306,7 +447,7 @@ class const MultipartBodyPlanner({
         ]),
       ),
       MultipartAppend(
-        name: specLiteralString(part.name),
+        name: part.wireName,
         value: refer('bytes'),
         source: MultipartValueSource.bytes,
         filename: filename,
@@ -321,7 +462,7 @@ class const MultipartBodyPlanner({
         ]),
       ),
       MultipartAppend(
-        name: specLiteralString(part.name),
+        name: part.wireName,
         value: refer('path'),
         source: MultipartValueSource.path,
         filename: filename,
@@ -333,15 +474,13 @@ class const MultipartBodyPlanner({
   }
 
   MultipartAppend _base64(_Part part) => MultipartAppend(
-    name: specLiteralString(part.name),
+    name: part.wireName,
     value: refer(
       'ascii',
       'dart:convert',
     ).property('encode').call([part.value.property('toBase64String').call([])]),
     source: MultipartValueSource.bytes,
-    filename: part.value
-        .property('fileName')
-        .ifNullThen(specLiteralString(part.name)),
+    filename: part.value.property('fileName').ifNullThen(part.wireName),
     contentType: part.encoding.wireContentType ?? 'application/octet-stream',
     headers: part.headers,
   );
@@ -349,6 +488,8 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _list(_Part part, ListModel model) {
     final encoding = part.encoding;
     final item = model.content.resolved;
+    final itemNullable =
+        model.isContentNullable || multipartModelIsNullable(model.content);
     final contentBased =
         !encoding.isStyleBased &&
         encoding.contentType != null &&
@@ -373,10 +514,10 @@ class const MultipartBodyPlanner({
     }
     final itemPart = _withValue(part, refer('item'));
     if (item is Base64Model) {
-      return _loop('item', part.value, [_base64(itemPart)]);
+      return _listItems(part, model, [_base64(itemPart)]);
     }
     if (item is BinaryModel) {
-      return _loop('item', part.value, _file(itemPart));
+      return _listItems(part, model, _file(itemPart));
     }
     if (contentBased) {
       if (encoding.contentType != ContentType.json &&
@@ -391,53 +532,48 @@ class const MultipartBodyPlanner({
           item is MapModel ||
           (item is CompositeModel &&
               (item.hasComplexTypes || item.hasMixedTypes))) {
-        final json = item is MapModel
-            ? itemPart.value
-            : itemPart.value.property('toJson').call([]);
-        return _loop('item', part.value, [
+        if (item is MapModel) {
+          return _listItems(part, model, _map(itemPart, item));
+        }
+        final json = itemPart.value.property('toJson').call([]);
+        return _listItems(part, model, [
           _text(itemPart, _json(json), fallback: 'application/json'),
         ]);
       }
-      final variable = _dio ? 'e' : 'item';
-      final itemValue = refer(variable);
-      final itemJson = switch (item) {
-        ClassModel() ||
-        CompositeModel() ||
-        EnumModel() => itemValue.property('toJson').call([]),
-        DateTimeModel() =>
-          itemValue.property('toTimeZonedIso8601String').call([]),
-        AnyModel() when !_dio => _anyJson(itemValue),
-        _ => null,
-      };
-      return [
-        _text(
-          part,
-          _json(
-            itemJson == null
-                ? part.value
-                : _mapped(part.value, itemJson, variable: variable),
-          ),
-          fallback: 'application/json',
-        ),
-      ];
+      return _jsonPart(
+        part,
+        model,
+        immutable: useImmutableCollections && !part.isMergedList,
+      );
     }
     if (item is ClassModel ||
         item is CompositeModel ||
         (!_dio && (item is MapModel || item is AnyModel))) {
+      if (item is MapModel) {
+        return _listItems(part, model, _map(itemPart, item));
+      }
       final json = switch (item) {
-        MapModel() => refer('item'),
         AnyModel() => _anyJson(refer('item')),
         _ => refer('item').property('toJson').call([]),
       };
-      return _loop('item', part.value, [
+      return _listItems(part, model, [
         _text(part, _json(json), fallback: 'application/json'),
       ]);
     }
     final itemText = _itemText(itemPart, item);
     if (encoding.explode ?? true) {
-      return _loop('item', part.value, [_listText(part, itemText)]);
+      return _listItems(part, model, [_listText(part, itemText)]);
     }
-    final strings = item is StringModel
+    final strings = itemNullable
+        ? _mapped(
+            part.value,
+            item is StringModel
+                ? refer('item').ifNullThen(literalString(''))
+                : refer('item')
+                      .equalTo(literalNull)
+                      .conditional(literalString(''), itemText),
+          )
+        : item is StringModel
         ? part.value
         : _mapped(part.value, itemText);
     if (encoding.style == EncodingStyle.spaceDelimited ||
@@ -470,6 +606,16 @@ class const MultipartBodyPlanner({
     return [_listText(part, serialized)];
   }
 
+  List<MultipartEmission> _listItems(
+    _Part part,
+    ListModel model,
+    List<MultipartEmission> body,
+  ) => _loop('item', part.value, [
+    if (model.isContentNullable || multipartModelIsNullable(model.content))
+      const MultipartCode(Code('if (item == null) continue;')),
+    ...body,
+  ]);
+
   MultipartAppend _listText(_Part part, Expression text) => _text(
     part,
     text,
@@ -483,7 +629,7 @@ class const MultipartBodyPlanner({
   Expression _itemText(_Part part, Model model) {
     if (model is StringModel) return part.value;
     if (model is EnumModel) {
-      return _dio
+      return _dio && part.encoding.isStyleBased
           ? part.value.property('uriEncode').call([], {
               'allowEmpty': literalTrue,
               'textEncoding': textEncodingExpression(
@@ -518,7 +664,7 @@ class const MultipartBodyPlanner({
         .call([]);
   }
 
-  List<MultipartEmission> _map(_Part part) {
+  List<MultipartEmission> _map(_Part part, MapModel model) {
     if (_dio && part.encoding.style == EncodingStyle.deepObject) {
       return _error(
         'deepObject style is not supported for map multipart '
@@ -531,7 +677,36 @@ class const MultipartBodyPlanner({
         part.encoding.contentType == ContentType.form) {
       return _urlEncodedMap(part);
     }
+    if (!part.isMergedMap) {
+      return _jsonPart(part, model, immutable: useImmutableCollections);
+    }
     return [_text(part, _json(part.value), fallback: 'application/json')];
+  }
+
+  List<MultipartEmission> _jsonPart(
+    _Part part,
+    Model model, {
+    required bool immutable,
+  }) {
+    final encoded = buildToJsonModelExpression(
+      part.value,
+      model,
+      nameManager:
+          nameManager ??
+          NameManager(
+            generator: NameGenerator(),
+            stableModelSorter: StableModelSorter(),
+          ),
+      package: package,
+      useImmutableCollections: immutable,
+    );
+    return [
+      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('{')),
+      for (final code in spliceInlineHelpers(encoded.inlineFunctions))
+        MultipartCode(code),
+      _text(part, _json(encoded.unsafeRawBody), fallback: 'application/json'),
+      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('}')),
+    ];
   }
 
   List<MultipartEmission> _object(_Part part) {
@@ -540,7 +715,7 @@ class const MultipartBodyPlanner({
       final entries = part.value
           .property('toDeepObject')
           .call(
-            [specLiteralString(part.name)],
+            [part.wireName],
             {
               'explode': literalTrue,
               'allowEmpty': literalTrue,
@@ -575,7 +750,7 @@ class const MultipartBodyPlanner({
                     }))
               .property('toRawStyleParts')
               .call(
-                [specLiteralString(part.name)],
+                [part.wireName],
                 {'explode': literalBool(encoding.explode ?? true)},
               );
       final variable = _dio ? r'_$part' : 'entry';
@@ -598,7 +773,7 @@ class const MultipartBodyPlanner({
       final entries = part.value
           .property('toForm')
           .call(
-            [specLiteralString(part.name)],
+            [part.wireName],
             {
               'explode': literalTrue,
               'allowEmpty': literalTrue,
@@ -991,21 +1166,29 @@ Map<String, List<Property>> _objectProperties(Model model, Set<Model> active) {
 
 typedef _Part = ({
   String name,
+  Expression wireName,
+  bool preserveOrder,
   String normalizedName,
   Expression value,
   PartEncoding encoding,
   Expression? headers,
   bool isMergedObject,
+  bool isMergedMap,
+  bool isMergedList,
   bool isMergedObjectProperties,
 });
 
 _Part _withValue(_Part part, Expression value) => (
   name: part.name,
+  wireName: part.wireName,
+  preserveOrder: part.preserveOrder,
   normalizedName: part.normalizedName,
   value: value,
   encoding: part.encoding,
   headers: part.headers,
   isMergedObject: part.isMergedObject,
+  isMergedMap: part.isMergedMap,
+  isMergedList: part.isMergedList,
   isMergedObjectProperties: part.isMergedObjectProperties,
 );
 

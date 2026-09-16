@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
-import 'multipart_wire.dart';
-
 void main() {
   test('rejects a closing-boundary-only body', () {
     final request = RawRequest(

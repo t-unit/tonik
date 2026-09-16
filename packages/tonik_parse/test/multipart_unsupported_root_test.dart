@@ -8,9 +8,9 @@ import 'package:tonik_parse/src/response_header_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
-  test('multipart parsing retains unsupported roots as regular models', () {
+  test('multipart parsing retains all root shapes as regular models', () {
     for (final version in ['3.0.3', '3.1.0']) {
-      for (final entry in _unsupportedRoots.entries) {
+      for (final entry in _rootShapes.entries) {
         final api = Importer().import(_document(entry.value.schema, version));
         final content =
             api.requestBodies.single.resolvedContent.single
@@ -48,7 +48,7 @@ void main() {
   });
 }
 
-const _unsupportedRoots = <String, ({Object? schema, Type resolvedType})>{
+const _rootShapes = <String, ({Object? schema, Type resolvedType})>{
   'missing schema': (schema: null, resolvedType: AnyModel),
   'string': (schema: {'type': 'string'}, resolvedType: StringModel),
   'integer': (schema: {'type': 'integer'}, resolvedType: IntegerModel),
