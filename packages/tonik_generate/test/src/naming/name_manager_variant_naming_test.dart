@@ -179,5 +179,86 @@ void main() {
       expect(variantName2, 'UserOrIntUser');
       expect(variantName1, isNot(variantName2));
     });
+
+    test('keeps distinct models with colliding hash codes separate', () {
+      final nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
+      final firstModel = _HashCollidingClassModel(name: 'User');
+      final secondModel = _HashCollidingClassModel(name: 'User');
+
+      final firstName = nameManager.generateVariantName(
+        parentClassName: 'Result',
+        model: firstModel,
+        discriminatorValue: null,
+      );
+      final secondName = nameManager.generateVariantName(
+        parentClassName: 'Result',
+        model: secondModel,
+        discriminatorValue: null,
+      );
+
+      expect(firstName, 'ResultUser');
+      expect(secondName, 'ResultUserModel');
+      expect(
+        nameManager.generateVariantName(
+          parentClassName: 'Result',
+          model: firstModel,
+          discriminatorValue: null,
+        ),
+        'ResultUser',
+      );
+      expect(
+        nameManager.generateVariantName(
+          parentClassName: 'Result',
+          model: secondModel,
+          discriminatorValue: null,
+        ),
+        'ResultUserModel',
+      );
+    });
+
+    test('distinguishes absent and literal null discriminators', () {
+      final nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
+      final model = StringModel(context: Context.initial());
+
+      final withoutDiscriminator = nameManager.generateVariantName(
+        parentClassName: 'Result',
+        model: model,
+        discriminatorValue: null,
+      );
+      final withLiteralNull = nameManager.generateVariantName(
+        parentClassName: 'Result',
+        model: model,
+        discriminatorValue: 'null',
+      );
+
+      expect(withoutDiscriminator, 'ResultString');
+      expect(withLiteralNull, 'ResultNull');
+    });
   });
+}
+
+class _HashCollidingClassModel({required super.name}) extends ClassModel {
+  this
+    : super(
+        isDeprecated: false,
+        properties: const [],
+        context: Context.initial(),
+        examples: const [],
+      );
+
+  @override
+  // Force collisions for the cache regression without changing model state.
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => 1;
+
+  @override
+  // Preserve model identity equality while forcing hash collisions.
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) => identical(this, other);
 }

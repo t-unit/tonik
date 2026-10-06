@@ -29,7 +29,7 @@ class NameManager({
 
   final tagNames = <Tag, String>{};
 
-  final variantNames = <String, String>{};
+  final variantNames = <(String, Model, String?), String>{};
 
   @visibleForTesting
   final Map<
@@ -262,8 +262,8 @@ class NameManager({
     required Model model,
     required String? discriminatorValue,
   }) {
-    final cacheKey =
-        '$parentClassName:${model.hashCode}:${discriminatorValue ?? 'null'}';
+    // Keep the model itself so hash collisions cannot reuse another variant.
+    final cacheKey = (parentClassName, model, discriminatorValue);
 
     return variantNames.putIfAbsent(cacheKey, () {
       return generator.generateVariantName(
