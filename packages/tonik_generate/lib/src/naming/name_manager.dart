@@ -262,7 +262,6 @@ class NameManager({
     required Model model,
     required String? discriminatorValue,
   }) {
-    // Keep the model itself so hash collisions cannot reuse another variant.
     final cacheKey = (parentClassName, model, discriminatorValue);
 
     return variantNames.putIfAbsent(cacheKey, () {
