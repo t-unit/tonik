@@ -4,6 +4,7 @@ import 'package:tonik_parse/src/contact_importer.dart';
 import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/external_documentation_importer.dart';
 import 'package:tonik_parse/src/license_importer.dart';
+import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/operation_importer.dart';
@@ -36,6 +37,7 @@ class Importer({
     _detectAndLogVersion(openApiObject.openapi);
 
     final exampleImporter = ExampleImporter(openApiObject: openApiObject);
+    final mediaTypeResolver = MediaTypeResolver(openApiObject);
     final modelImporter = ModelImporter(
       openApiObject,
       contentMediaTypes: contentMediaTypes,
@@ -53,6 +55,7 @@ class Importer({
       headerImporter: responseHeaderImporter,
       contentTypes: contentTypes,
       exampleImporter: exampleImporter,
+      mediaTypeResolver: mediaTypeResolver,
     );
     final parameterImporter = RequestParameterImporter(
       openApiObject: openApiObject,
@@ -65,6 +68,7 @@ class Importer({
       contentTypes: contentTypes,
       responseHeaderImporter: responseHeaderImporter,
       exampleImporter: exampleImporter,
+      mediaTypeResolver: mediaTypeResolver,
     );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,

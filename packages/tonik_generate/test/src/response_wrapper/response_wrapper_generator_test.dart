@@ -4,6 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
+import 'package:tonik_generate/src/transport/http_backend_generator.dart';
 
 void main() {
   late NameManager nameManager;
@@ -23,6 +24,59 @@ void main() {
     testContext = Context.initial();
     emitter = DartEmitter();
   });
+
+  test(
+    'HTTP status variants preserve stream item and native response types',
+    () {
+      final operation = Operation(
+        operationId: 'getItems',
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        path: '/items',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: 'Items',
+            description: '',
+            context: testContext,
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: IntegerModel(context: testContext),
+                rawContentType: 'application/x-ndjson',
+                contentType: ContentType.bytes,
+                examples: const [],
+                delivery: ResponseDelivery.ndjson,
+              ),
+            },
+          ),
+          const ExplicitResponseStatus(statusCode: 204): ResponseObject(
+            name: 'Empty',
+            description: '',
+            context: testContext,
+            headers: const {},
+            bodies: const {},
+          ),
+        },
+      );
+      final classes = ResponseWrapperGenerator(
+        nameManager: nameManager,
+        package: 'api',
+        backendGenerator: const HttpBackendGenerator(),
+      ).generateClasses(operation);
+      expect(
+        classes[1].fields.single.type!.accept(emitter).toString(),
+        'Stream<TonikResult<int,BaseResponse>>',
+      );
+      expect(classes[2].fields, isEmpty);
+    },
+  );
 
   group('generate', () {
     late Operation operation;

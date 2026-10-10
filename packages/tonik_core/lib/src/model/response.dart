@@ -110,11 +110,19 @@ class const ResponseObject({
       'description: $description, bodies: $bodies)';
 }
 
+enum ResponseDelivery() {
+  complete,
+  ndjson,
+  jsonLines,
+  sse,
+}
+
 class ResponseBody({
   required var Model model,
   required var String rawContentType,
   required var ContentType contentType,
   required var List<Example> examples,
+  final ResponseDelivery delivery = ResponseDelivery.complete,
 }) {
   @override
   String toString() =>

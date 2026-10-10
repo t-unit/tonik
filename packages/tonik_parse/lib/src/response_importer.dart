@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -13,6 +14,7 @@ class ResponseImporter({
   required final ModelImporter modelImporter,
   required final ResponseHeaderImporter headerImporter,
   required final ExampleImporter exampleImporter,
+  required final MediaTypeResolver mediaTypeResolver,
   final Map<String, core.ContentType> contentTypes = const {},
 }) {
   final log = Logger('ResponseImporter');
@@ -106,23 +108,40 @@ class ResponseImporter({
 
           for (final entry in mediaTypes.entries) {
             final rawContentType = entry.key;
+            final mediaType = mediaTypeResolver.resolve(entry.value);
             final contentType = resolveContentType(
               rawContentType,
               contentTypes: contentTypes,
               log: log,
             );
 
-            if (entry.value.schema != null) {
+            final delivery = mediaType.itemSchema == null
+                ? core.ResponseDelivery.complete
+                : switch (rawContentType
+                      .split(';')
+                      .first
+                      .trim()
+                      .toLowerCase()) {
+                    'application/x-ndjson' => core.ResponseDelivery.ndjson,
+                    'application/jsonl' => core.ResponseDelivery.jsonLines,
+                    'text/event-stream' => core.ResponseDelivery.sse,
+                    _ => core.ResponseDelivery.complete,
+                  };
+            final schema = delivery == core.ResponseDelivery.complete
+                ? mediaType.schema
+                : mediaType.itemSchema;
+            if (schema != null) {
               final model = modelImporter.importSchema(
-                entry.value.schema!,
+                schema,
                 context.push('body'),
               );
               bodies.add(
                 core.ResponseBody(
                   model: model,
+                  delivery: delivery,
                   rawContentType: rawContentType,
                   contentType: contentType,
-                  examples: exampleImporter.fromMediaType(entry.value),
+                  examples: exampleImporter.fromMediaType(mediaType),
                 ),
               );
             } else {
@@ -148,9 +167,10 @@ class ResponseImporter({
               bodies.add(
                 core.ResponseBody(
                   model: model,
+                  delivery: delivery,
                   rawContentType: rawContentType,
                   contentType: contentType,
-                  examples: exampleImporter.fromMediaType(entry.value),
+                  examples: exampleImporter.fromMediaType(mediaType),
                 ),
               );
             }

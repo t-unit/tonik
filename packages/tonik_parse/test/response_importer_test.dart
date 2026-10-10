@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
@@ -429,6 +430,7 @@ void main() {
       modelImporter: modelImporter,
       headerImporter: headerImporter,
       exampleImporter: exampleImporter,
+      mediaTypeResolver: MediaTypeResolver(openApiObject),
     )..responses = {};
 
     final simpleResponse =

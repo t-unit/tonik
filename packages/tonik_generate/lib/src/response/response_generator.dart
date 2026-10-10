@@ -3,12 +3,15 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -19,6 +22,8 @@ class const ResponseGenerator({
   required final NameManager nameManager,
   required final String package,
   final bool useImmutableCollections = false,
+  final TransportBackendGenerator backendGenerator =
+      const DioBackendGenerator(),
 }) {
   ({String code, String filename}) generate(Response response) {
     if (!response.hasHeaders && response.bodyCount <= 1) {
@@ -81,34 +86,48 @@ class const ResponseGenerator({
 
   Method? _buildCopyWith(
     String className,
-    List<({ResponseHeader? header, String normalizedName, Property property})>
-    properties,
+    List<NormalizedResponseProperty> properties,
   ) {
     return generateCopyWith(
       className: className,
       properties: properties.map((prop) {
         final model = prop.property.model;
         final resolvedModel = model.resolved;
-        final typeRef = typeReference(
-          prop.property.model,
-          nameManager,
-          package,
-          isNullableOverride:
-              prop.property.isNullable || !prop.property.isRequired,
-          useImmutableCollections: useImmutableCollections,
-        );
+        final typeRef = _propertyType(prop);
+        final isStreaming = _isStreaming(prop);
         return (
           normalizedName: prop.normalizedName,
           typeRef: typeRef,
           isNullable:
               (typeRef.isNullable ?? false) ||
-              model.isEffectivelyNullable ||
-              resolvedModel is AnyModel,
-          skipCast: resolvedModel is AnyModel,
+              (!isStreaming &&
+                  (model.isEffectivelyNullable || resolvedModel is AnyModel)),
+          skipCast: !isStreaming && resolvedModel is AnyModel,
         );
       }).toList(),
     );
   }
+
+  bool _isStreaming(NormalizedResponseProperty property) =>
+      property.body != null &&
+      property.body!.delivery != ResponseDelivery.complete;
+
+  TypeReference _propertyType(NormalizedResponseProperty property) =>
+      property.body != null
+      ? responseBodyType(
+          property.body!,
+          nameManager,
+          package,
+          backendGenerator,
+          useImmutableCollections: useImmutableCollections,
+        )
+      : typeReference(
+          property.property.model,
+          nameManager,
+          package,
+          isNullableOverride: !property.property.isRequired,
+          useImmutableCollections: useImmutableCollections,
+        );
 
   @visibleForTesting
   Class generateResponseClass(
@@ -129,7 +148,9 @@ class const ResponseGenerator({
             (prop) => (
               normalizedName: prop.normalizedName,
               hasCollectionValue:
-                  !useImmutableCollections && prop.property.model is ListModel,
+                  !useImmutableCollections &&
+                  !_isStreaming(prop) &&
+                  prop.property.model is ListModel,
             ),
           )
           .toList(),
@@ -141,7 +162,9 @@ class const ResponseGenerator({
             (p) => (
               normalizedName: p.normalizedName,
               hasCollectionValue:
-                  !useImmutableCollections && p.property.model is ListModel,
+                  !useImmutableCollections &&
+                  !_isStreaming(p) &&
+                  p.property.model is ListModel,
             ),
           )
           .toList(),
@@ -179,13 +202,7 @@ class const ResponseGenerator({
               b
                 ..name = prop.normalizedName
                 ..modifier = FieldModifier.final$
-                ..type = typeReference(
-                  prop.property.model,
-                  nameManager,
-                  package,
-                  isNullableOverride: !prop.property.isRequired,
-                  useImmutableCollections: useImmutableCollections,
-                );
+                ..type = _propertyType(prop);
 
               if (prop.property.isDeprecated) {
                 b.annotations.add(
@@ -234,13 +251,7 @@ class const ResponseGenerator({
               b
                 ..name = prop.normalizedName
                 ..modifier = FieldModifier.final$
-                ..type = typeReference(
-                  prop.property.model,
-                  nameManager,
-                  package,
-                  isNullableOverride: !prop.property.isRequired,
-                  useImmutableCollections: useImmutableCollections,
-                );
+                ..type = _propertyType(prop);
 
               if (prop.property.isDeprecated) {
                 b.annotations.add(
@@ -273,6 +284,7 @@ class const ResponseGenerator({
                 normalizedName: prop.normalizedName,
                 hasCollectionValue:
                     !useImmutableCollections &&
+                    !_isStreaming(prop) &&
                     prop.property.model is ListModel,
               ),
             )
@@ -285,7 +297,9 @@ class const ResponseGenerator({
               (p) => (
                 normalizedName: p.normalizedName,
                 hasCollectionValue:
-                    !useImmutableCollections && p.property.model is ListModel,
+                    !useImmutableCollections &&
+                    !_isStreaming(p) &&
+                    p.property.model is ListModel,
               ),
             )
             .toList(),
@@ -338,10 +352,11 @@ class const ResponseGenerator({
               (b) => b
                 ..name = bodyProperty.normalizedName
                 ..modifier = FieldModifier.final$
-                ..type = typeReference(
-                  body.model,
+                ..type = responseBodyType(
+                  body,
                   nameManager,
                   package,
+                  backendGenerator,
                   useImmutableCollections: useImmutableCollections,
                 ),
             ),

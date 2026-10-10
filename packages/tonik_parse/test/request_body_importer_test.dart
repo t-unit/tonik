@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart' as parse;
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart' as parse;
@@ -516,6 +517,7 @@ void main() {
       contentTypes: {},
       responseHeaderImporter: responseHeaderImporter,
       exampleImporter: exampleImporter,
+      mediaTypeResolver: MediaTypeResolver(openApiObject),
     )..import();
 
     final imported = importer.importRequestBody(

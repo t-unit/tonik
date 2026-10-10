@@ -2,13 +2,16 @@
 library;
 
 export 'src/date.dart';
+export 'src/decoding/decode_response_stream.dart';
 export 'src/decoding/decoding_exception.dart';
 export 'src/decoding/form_decoder.dart';
 export 'src/decoding/json_decoder.dart';
+export 'src/decoding/json_lines_decoder.dart';
 export 'src/decoding/media_type.dart';
 export 'src/decoding/object_decoder.dart';
 export 'src/decoding/response_decoder.dart';
 export 'src/decoding/simple_decoder.dart';
+export 'src/decoding/sse_decoder.dart';
 export 'src/encoding/any_encoding.dart';
 export 'src/encoding/binary_extensions.dart';
 export 'src/encoding/datetime_extension.dart';

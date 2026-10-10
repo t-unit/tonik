@@ -11,7 +11,7 @@ class Header({
   required final SerializationStyle? style,
   required final bool? explode,
   required final Schema? schema,
-  required final Map<String, MediaType>? content,
+  required final Map<String, ReferenceWrapper<MediaType>>? content,
 
   /// Single example inline value.
   final Object? example,
@@ -29,7 +29,7 @@ class Header({
     explode: json['explode'] as bool?,
     schema: const SchemaConverter().fromJson(json['schema']),
     content: (json['content'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+      (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
     ),
     example: json['example'],
     examples: (json['examples'] as Map<String, dynamic>?)?.map(

@@ -23,8 +23,8 @@ final class _HeaderClient(final Map<String, String> _headers)
   void close() => _inner.close();
 }
 
-TestResponse httpTestResponse(http.Response response) => TestResponse(
+TestResponse httpTestResponse(http.BaseResponse response) => TestResponse(
   statusCode: response.statusCode,
   headers: TestHeaders(response.headersSplitValues),
-  data: response.bodyBytes,
+  data: response is http.Response ? response.bodyBytes : null,
 );

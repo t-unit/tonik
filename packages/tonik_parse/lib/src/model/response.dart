@@ -5,7 +5,7 @@ import 'package:tonik_parse/src/model/reference.dart';
 class Response({
   required final String description,
   required final Map<String, ReferenceWrapper<Header>>? headers,
-  required final Map<String, MediaType>? content,
+  required final Map<String, ReferenceWrapper<MediaType>>? content,
 }) {
   factory fromJson(Map<String, dynamic> json) => Response(
     description: json['description'] as String,
@@ -13,7 +13,7 @@ class Response({
       (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
     ),
     content: (json['content'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+      (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
     ),
   );
 
