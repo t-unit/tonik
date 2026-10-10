@@ -66,7 +66,7 @@ the package ends or the run is cancelled. Fixtures must finish their requests
 before completing a test. Individual `dart test` and VS Code runs continue to
 start their own servers and need no wrapper or extra setup.
 
-Streaming integration tests use Imposter for finite NDJSON, JSONL, SSE, and
+Streaming integration tests use Imposter for finite NDJSON, JSONL, JSON-seq, SSE, and
 complete response alternatives. A small transport suite checks abort forwarding,
 caller-owned clients, and injected errors. Native timing tests use a loopback
 fixture with explicit chunk/EOF controls, since Imposter completes each response

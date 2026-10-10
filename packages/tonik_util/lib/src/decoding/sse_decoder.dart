@@ -83,8 +83,8 @@ Stream<Map<String, Object>> decodeSse(Stream<List<int>> source) {
         try {
           finishLine();
         } on FormatException catch (error, stack) {
-          fail(error, stack);
-          return;
+          resetEvent();
+          controller.addError(error, stack);
         }
       } else {
         line.writeCharCode(character);

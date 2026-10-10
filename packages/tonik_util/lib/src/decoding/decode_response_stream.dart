@@ -20,11 +20,7 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
       cleanup ??= Future<void>.sync(() => subscription?.cancel())
           .onError<Object>((_, _) {});
 
-  void fail(Object error, StackTrace stack, TonikErrorType type) {
-    if (finished) return;
-    finished = true;
-    cancellation.cancel(error);
-    unawaited(cancelSource());
+  void addFailure(Object error, StackTrace stack, TonikErrorType type) {
     controller.add(
       TonikError<T, R>(
         error,
@@ -33,6 +29,14 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
         response: response,
       ),
     );
+  }
+
+  void fail(Object error, StackTrace stack, TonikErrorType type) {
+    if (finished) return;
+    finished = true;
+    cancellation.cancel(error);
+    unawaited(cancelSource());
+    addFailure(error, stack, type);
     unawaited(controller.close());
   }
 
@@ -63,7 +67,7 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
             try {
               value = decode(json);
             } on Object catch (error, stack) {
-              fail(error, stack, TonikErrorType.decoding);
+              addFailure(error, stack, TonikErrorType.decoding);
               return;
             }
             controller.add(TonikSuccess<T, R>(value, response));
@@ -71,8 +75,8 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
           onError: (Object error, StackTrace stack) {
             if (error is _SourceFailure) {
               fail(error.error, error.stack, error.type);
-            } else {
-              fail(error, stack, TonikErrorType.decoding);
+            } else if (!finished && !cancellation.isCancelled) {
+              addFailure(error, stack, TonikErrorType.decoding);
             }
           },
           onDone: () {

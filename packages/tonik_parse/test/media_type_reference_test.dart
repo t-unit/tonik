@@ -194,6 +194,7 @@ void main() {
       'components': {
         'mediaTypes': {
           'Missing': {r'$ref': '#/components/mediaTypes/Absent'},
+          'External': {r'$ref': 'other.yaml#/components/mediaTypes/Items'},
           'Cycle': {r'$ref': '#/components/mediaTypes/Cycle'},
           'UnconsumedItem': {
             'itemSchema': {r'$ref': '#/components/schemas/Absent'},
@@ -205,33 +206,51 @@ void main() {
     expect(document.responses.single.resolved.bodies, isEmpty);
   });
 
-  test('external media supplies no item schema and ignores local siblings', () {
-    final document = Importer().import({
-      'openapi': '3.2.0',
-      'info': {'title': 'Media', 'version': '1'},
-      'paths': <String, dynamic>{},
-      'components': {
-        'responses': {
-          'Items': {
-            'description': 'Items',
-            'content': {
-              'application/x-ndjson': {
-                r'$ref': 'https://example.test/media.json#/Items',
-                'itemSchema': {'type': 'integer'},
-              },
-              'application/json': {
-                r'$ref': 'other.yaml#/components/mediaTypes/Complete',
+  test('consumed external media reference throws despite local siblings', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.2.0',
+        'info': {'title': 'Media', 'version': '1'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'Items': {
+              'description': 'Items',
+              'content': {
+                'application/x-ndjson': {
+                  r'$ref': 'https://example.test/media.json#/Items',
+                  'itemSchema': {'type': 'integer'},
+                },
               },
             },
           },
         },
-      },
-    });
-    final bodies = document.responses.single.resolved.bodies.toList();
-    expect(bodies[0].delivery, ResponseDelivery.complete);
-    expect(bodies[0].model, isA<BinaryModel>());
-    expect(bodies[1].delivery, ResponseDelivery.complete);
-    expect(bodies[1].model, isA<AnyModel>());
+      }),
+      throwsA(isA<UnimplementedError>()),
+    );
+  });
+
+  test('relative external media reference throws for a complete response', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.2.0',
+        'info': {'title': 'Media', 'version': '1'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'Item': {
+              'description': 'Item',
+              'content': {
+                'application/json': {
+                  r'$ref': 'other.yaml#/components/mediaTypes/Complete',
+                },
+              },
+            },
+          },
+        },
+      }),
+      throwsA(isA<UnimplementedError>()),
+    );
   });
 
   test('consumed external item schema throws', () {

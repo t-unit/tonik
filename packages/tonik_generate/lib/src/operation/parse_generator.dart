@@ -348,6 +348,7 @@ class const ParseGenerator({
                   refer(switch (body.delivery) {
                     ResponseDelivery.ndjson => 'decodeNdjson',
                     ResponseDelivery.jsonLines => 'decodeJsonLines',
+                    ResponseDelivery.jsonSequence => 'decodeJsonSequence',
                     ResponseDelivery.sse => 'decodeSse',
                     ResponseDelivery.complete => throw StateError(
                       'Complete responses cannot use stream decoding.',

@@ -219,6 +219,59 @@ void main() {
     );
   });
 
+  test('Dio JSON sequence frames records before existing item conversion', () {
+    final context = Context.initial();
+    operation.responses[const ExplicitResponseStatus(
+      statusCode: 200,
+    )] = ResponseObject(
+      name: 'Items',
+      context: context,
+      description: '',
+      headers: const {},
+      bodies: {
+        ResponseBody(
+          model: AnyModel(context: context),
+          rawContentType: 'application/json-seq',
+          contentType: ContentType.bytes,
+          examples: const [],
+          delivery: ResponseDelivery.jsonSequence,
+        ),
+      },
+    );
+    final parse = ParseGenerator(
+      nameManager: names,
+      package: 'api',
+      backendGenerator: const DioBackendGenerator(),
+    ).generateParseResponseMethod(operation);
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+    expect(
+      collapseWhitespace(format(parse.accept(emitter).toString())),
+      collapseWhitespace(
+        format(r'''
+        Stream<TonikResult<Object?, Response<Object?>>> _parseResponse(Response<Object?> response, TonikCancellation cancellation) {
+          final _$mediaType = extractMediaType(response.headers.value('content-type'));
+          switch ((response.statusCode, _$mediaType)) {
+            case (200, r'application/json-seq'):
+              final _$body = decodeResponseStream<Object?, Response<Object?>>(
+                ((response.data as ResponseBody)).stream, decodeJsonSequence,
+                (_$json) { return _$json; },
+                cancellation: cancellation, response: response,
+                sourceErrorType: (error) => error is DioException && error.type == DioExceptionType.cancel ? TonikErrorType.cancelled : TonikErrorType.network);
+              return _$body;
+            default:
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+          }
+        }
+      '''),
+      ),
+    );
+  });
+
   test('HTTP SSE uses the shared streaming response and item converter', () {
     final context = Context.initial();
     operation.responses[const ExplicitResponseStatus(
