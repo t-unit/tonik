@@ -30,6 +30,7 @@ import 'package:tonik_generate/src/server/server_generator.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator_factory.dart';
 import 'package:tonik_generate/src/util/model_worker_pool.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 
 class const Generator() {
   /// Below this model count, isolate setup outweighs the parallel speedup.
@@ -157,6 +158,7 @@ class const Generator() {
     );
 
     final responseGenerator = ResponseGenerator(
+      backendGenerator: backendGenerator,
       nameManager: nameManager,
       package: package,
       useImmutableCollections: useImmutableCollections,
@@ -167,6 +169,7 @@ class const Generator() {
     );
 
     final responseWrapperGenerator = ResponseWrapperGenerator(
+      backendGenerator: backendGenerator,
       nameManager: nameManager,
       package: package,
       useImmutableCollections: useImmutableCollections,
@@ -253,6 +256,7 @@ class const Generator() {
     publicArtifacts.addAll(responseWrapperFiles);
 
     operationBaseFileGenerator.writeFile(
+      includeStreaming: apiDocument.operations.any(hasStreamingResponse),
       outputDirectory: outputDirectory,
       package: package,
     );

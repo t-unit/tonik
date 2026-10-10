@@ -15,7 +15,7 @@ class Parameter({
   required final bool? explode,
   required final bool? allowReserved,
   required final Schema? schema,
-  required final Map<String, MediaType>? content,
+  required final Map<String, ReferenceWrapper<MediaType>>? content,
   required final String? xDartName,
 
   /// Single example inline value.
@@ -38,7 +38,7 @@ class Parameter({
     allowReserved: json['allowReserved'] as bool?,
     schema: const SchemaConverter().fromJson(json['schema']),
     content: (json['content'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+      (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
     ),
     xDartName: json['x-dart-name'] as String?,
     example: json['example'],

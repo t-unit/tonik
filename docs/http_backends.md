@@ -53,7 +53,7 @@ Generated servers accept the shared `ServerConfig<Client>` type:
 | `ServerConfig.clientFactory(factory)` | Created lazily and cached by the server | Yes |
 
 `server.close()` is safe to call more than once. A closed server cannot be used
-for another request.
+for another request. Streaming responses keep the same ownership rules.
 
 ## Native Boundary
 
@@ -63,12 +63,20 @@ Client customization and raw response inspection use backend-native types:
 |---|---|---|
 | Server configuration | `ServerConfig<Dio>` | `ServerConfig<http.Client>` |
 | Resolved client | `server.dio` | `server.client` |
-| Result response | `dio.Response<Object?>` | `http.Response` |
+| Ordinary operation result response | `dio.Response<Object?>` | `http.Response` |
+| Operation with a streaming alternative | `dio.Response<Object?>` | `http.BaseResponse` |
 
-`TonikSuccess.response` contains the completed native response.
-`TonikError.response` contains it when the backend produced a complete
-response, otherwise it is `null`. Code that reads these fields is intentionally
-backend-specific.
+`TonikSuccess.response` contains the native response. For an HTTP operation with
+a streaming alternative, a streamed branch contains the actual
+`http.StreamedResponse`; a buffered branch contains `http.Response`. A no-body
+branch releases the unused body through cancellation and retains the original
+`http.StreamedResponse` metadata.
+`TonikError.response` contains available native response metadata, otherwise it
+is `null`. Code that reads these fields is intentionally backend-specific.
+
+A streamed response's native body and typed stream share a single consumption.
+Read status, headers, and request metadata from `.response`, and consume the
+typed stream. Do not also listen to the native body stream.
 
 For authentication and other request customization, see the
 [Authentication Guide](authentication.md).
@@ -77,6 +85,17 @@ With `package:http`, a custom client controls whether it honors request
 cancellation. Response headers use `headersSplitValues`; the original
 distinction between repeated field lines and comma-separated values cannot
 always be recovered.
+
+## Streaming and Browsers
+
+Typed NDJSON, JSONL, and SSE response streams require an explicit `itemSchema`.
+`package:http` supports incremental streaming on native Dart and in browsers.
+Dio streams incrementally on native Dart, but its standard browser adapter
+buffers responses until completion.
+
+For incremental browser streaming, generate with `--backend http`; see
+[backend configuration](configuration.md#http-backend). See
+[Streaming Responses](streaming_responses.md) for detailed usage.
 
 ## Migrating Existing Clients
 
@@ -136,8 +155,11 @@ Then update affected call sites:
    // Dio output
    TonikResult<GetPetByIdResponse, dio.Response<Object?>>
 
-   // package:http output
+   // package:http output for an ordinary operation
    TonikResult<GetPetByIdResponse, http.Response>
+
+   // package:http output for an operation with a streaming alternative
+   TonikResult<EventsGet200Response, http.BaseResponse>
    ```
 
    Inferred result variables and patterns that only read `value`, `error`, or

@@ -40,7 +40,7 @@ The same setting applies to `melos run test-integration-current` and
 override. Each worker resolves a package's dependencies before analyzing it;
 failures are collected with their package diagnostics.
 
-Integration setup always recompiles Tonik and freshly generates all 44 clients.
+Integration setup always recompiles Tonik and freshly generates all 45 clients.
 It runs up to four generators at once, starting the next whenever a slot becomes
 free. The default `TONIK_WORKERS` splits available CPUs between those generators.
 An explicit `TONIK_WORKERS` reduces the default number of concurrent generators;
@@ -65,6 +65,12 @@ using that server; a failed reset fails the file. The runner stops the JVM when
 the package ends or the run is cancelled. Fixtures must finish their requests
 before completing a test. Individual `dart test` and VS Code runs continue to
 start their own servers and need no wrapper or extra setup.
+
+Streaming integration tests use Imposter for finite NDJSON, JSONL, SSE, and
+complete response alternatives. A small transport suite checks abort forwarding,
+caller-owned clients, and injected errors. Native timing tests use a loopback
+fixture with explicit chunk/EOF controls, since Imposter completes each response
+at once.
 
 ## Architecture
 

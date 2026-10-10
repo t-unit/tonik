@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
-final class const DioOperationBaseGenerator()
+final class const DioOperationBaseGenerator({final bool streaming = false})
     implements OperationBaseGenerator {
   static final _nativeResponse = TypeReference(
     (builder) => builder
@@ -10,22 +10,24 @@ final class const DioOperationBaseGenerator()
       ..url = 'package:dio/dio.dart'
       ..types.add(refer('Object?', 'dart:core')),
   );
-  static final _completedResponse = TypeReference(
-    (builder) => builder
-      ..symbol = 'Response'
-      ..url = 'package:dio/dio.dart'
-      ..types.add(
-        TypeReference(
-          (list) => list
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(refer('int', 'dart:core')),
-        ),
-      ),
-  );
+  TypeReference get _completedResponse => streaming
+      ? _nativeResponse
+      : TypeReference(
+          (builder) => builder
+            ..symbol = 'Response'
+            ..url = 'package:dio/dio.dart'
+            ..types.add(
+              TypeReference(
+                (list) => list
+                  ..symbol = 'List'
+                  ..url = 'dart:core'
+                  ..types.add(refer('int', 'dart:core')),
+              ),
+            ),
+        );
 
   @override
-  String get className => 'DioOperation';
+  String get className => streaming ? 'DioStreamingOperation' : 'DioOperation';
 
   @override
   String get filename => 'dio_operation.dart';
@@ -38,9 +40,10 @@ final class const DioOperationBaseGenerator()
     required String package,
     required Reference valueType,
     String? filename,
+    bool streaming = false,
   }) => TypeReference(
     (builder) => builder
-      ..symbol = className
+      ..symbol = streaming ? 'DioStreamingOperation' : 'DioOperation'
       ..url = 'package:$package/src/operation/${filename ?? this.filename}'
       ..types.add(valueType),
   );
@@ -57,6 +60,7 @@ final class const DioOperationBaseGenerator()
     required Expression? decode,
     required bool isVoid,
     required bool isDataAsync,
+    bool streaming = false,
   }) {
     final methodName = switch ((isVoid, isDataAsync)) {
       (false, false) => 'execute',
@@ -78,15 +82,21 @@ final class const DioOperationBaseGenerator()
       'cancellation': plan.cancellation,
       'prepare': isDataAsync ? _asyncClosure(request) : _closure(request),
       'decode': decode ?? _noopDecoder(),
+      if (streaming) 'isStreaming': refer('_isStreamingResponse'),
     });
   }
 
   @override
-  Iterable<Spec> generate() => [
+  Iterable<Spec> generate({bool includeStreaming = false}) => [
     _generateBase(),
     _generateOperationRequest(),
     _generatePreparedRequest(),
     _generateDispatchResult(),
+    if (includeStreaming) ...[
+      const DioOperationBaseGenerator(streaming: true)._generateBase(),
+      const DioOperationBaseGenerator(streaming: true)
+          ._generateDispatchResult(),
+    ],
   ];
 
   Class _generateBase() => Class(
@@ -177,11 +187,31 @@ final class const DioOperationBaseGenerator()
           ),
           _namedParameter(
             'decode',
-            _functionType(valueType, [_completedResponse]),
+            _functionType(valueType, [
+              _completedResponse,
+              if (streaming)
+                refer(
+                  'TonikCancellation',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+            ]),
           ),
+          if (streaming)
+            _namedParameter(
+              'isStreaming',
+              _functionType(refer('bool?', 'dart:core'), [_completedResponse]),
+            ),
         ])
         ..modifier = isDataAsync ? MethodModifier.async : null
         ..body = Block.of([
+          if (streaming) ...[
+            const Code('cancellation ??= '),
+            refer(
+              'TonikCancellation',
+              'package:tonik_util/tonik_util.dart',
+            ).call([]).code,
+            const Code(';'),
+          ],
           const Code('late final '),
           refer('_DioPreparedRequest').code,
           const Code(' prepared;'),
@@ -242,6 +272,8 @@ final class const DioOperationBaseGenerator()
                   [valueType],
                 ),
             'decode': refer('decode'),
+            if (streaming) 'cancellation': refer('cancellation'),
+            if (streaming) 'isStreaming': refer('isStreaming'),
           }).code,
           const Code(';'),
         ]),
@@ -259,7 +291,9 @@ final class const DioOperationBaseGenerator()
           ..types.add(
             TypeReference(
               (result) => result
-                ..symbol = '_DioDispatchResult'
+                ..symbol = streaming
+                    ? '_DioStreamingDispatchResult'
+                    : '_DioDispatchResult'
                 ..types.add(refer('V')),
             ),
           ),
@@ -287,7 +321,11 @@ final class const DioOperationBaseGenerator()
         const Code('    cancelToken.cancel(cancellation.reason);'),
         const Code('    return '),
         refer('Future', 'dart:async').property('value').call([
-          refer('_DioDispatchResult<V>').call([
+          refer(
+            streaming
+                ? '_DioStreamingDispatchResult<V>'
+                : '_DioDispatchResult<V>',
+          ).call([
             _tonikError(refer('V')).call(
               [refer('cancelToken.cancelError!')],
               {
@@ -326,7 +364,11 @@ final class const DioOperationBaseGenerator()
         const Code(' catch (exception, stackTrace) {'),
         const Code('  return '),
         refer('Future', 'dart:async').property('value').call([
-          refer('_DioDispatchResult<V>').call([
+          refer(
+            streaming
+                ? '_DioStreamingDispatchResult<V>'
+                : '_DioDispatchResult<V>',
+          ).call([
             _tonikError(refer('V')).call(
               [refer('exception')],
               {
@@ -349,11 +391,25 @@ final class const DioOperationBaseGenerator()
         const Code('>('),
         const Code('    prepared.uri,'),
         const Code('    data: prepared.data,'),
-        const Code('    options: prepared.options,'),
+        const Code('    options: prepared.options'),
+        if (streaming) ...[
+          const Code('.copyWith(responseType: '),
+          refer('ResponseType.stream', 'package:dio/dio.dart').code,
+          const Code(')'),
+        ],
+        const Code(','),
         const Code('    cancelToken: cancelToken,'),
         const Code('  );'),
-        const Code('  return response.then<_DioDispatchResult<V>>('),
-        const Code('    (value) => _DioDispatchResult<V>(null, value),'),
+        Code(
+          streaming
+              ? '  return response.then<_DioStreamingDispatchResult<V>>('
+              : '  return response.then<_DioDispatchResult<V>>(',
+        ),
+        Code(
+          streaming
+              ? '    (value) => _DioStreamingDispatchResult<V>(null, value),'
+              : '    (value) => _DioDispatchResult<V>(null, value),',
+        ),
         const Code('    onError: (exception, stackTrace) {'),
         const Code('      if (exception is '),
         refer('DioException', 'package:dio/dio.dart').code,
@@ -371,7 +427,11 @@ final class const DioOperationBaseGenerator()
           'package:tonik_util/tonik_util.dart',
         ).code,
         const Code(';'),
-        const Code('        return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '        return _DioStreamingDispatchResult<V>('
+              : '        return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -384,7 +444,11 @@ final class const DioOperationBaseGenerator()
             .code,
         const Code(', null);'),
         const Code('      }'),
-        const Code('      return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '      return _DioStreamingDispatchResult<V>('
+              : '      return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -419,7 +483,11 @@ final class const DioOperationBaseGenerator()
         const Code(';'),
         const Code('  return '),
         refer('Future', 'dart:async').property('value').call([
-          refer('_DioDispatchResult<V>').call([
+          refer(
+            streaming
+                ? '_DioStreamingDispatchResult<V>'
+                : '_DioDispatchResult<V>',
+          ).call([
             _tonikError(refer('V')).call(
               [refer('exception')],
               {
@@ -437,7 +505,11 @@ final class const DioOperationBaseGenerator()
         const Code(' catch (exception, stackTrace) {'),
         const Code('  return '),
         refer('Future', 'dart:async').property('value').call([
-          refer('_DioDispatchResult<V>').call([
+          refer(
+            streaming
+                ? '_DioStreamingDispatchResult<V>'
+                : '_DioDispatchResult<V>',
+          ).call([
             _tonikError(refer('V')).call(
               [refer('exception')],
               {
@@ -464,6 +536,11 @@ final class const DioOperationBaseGenerator()
         ..name = isVoid ? '_completeVoid' : '_complete'
         ..returns = _futureResult(valueType)
         ..optionalParameters.addAll([
+          if (streaming)
+            _namedParameter(
+              'cancellation',
+              refer('TonikCancellation', 'package:tonik_util/tonik_util.dart'),
+            ),
           _namedParameter(
             'dispatched',
             TypeReference(
@@ -473,7 +550,9 @@ final class const DioOperationBaseGenerator()
                 ..types.add(
                   TypeReference(
                     (result) => result
-                      ..symbol = '_DioDispatchResult'
+                      ..symbol = streaming
+                          ? '_DioStreamingDispatchResult'
+                          : '_DioDispatchResult'
                       ..types.add(valueType),
                   ),
                 ),
@@ -481,8 +560,20 @@ final class const DioOperationBaseGenerator()
           ),
           _namedParameter(
             'decode',
-            _functionType(valueType, [_completedResponse]),
+            _functionType(valueType, [
+              _completedResponse,
+              if (streaming)
+                refer(
+                  'TonikCancellation',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+            ]),
           ),
+          if (streaming)
+            _namedParameter(
+              'isStreaming',
+              _functionType(refer('bool?', 'dart:core'), [_completedResponse]),
+            ),
         ])
         ..modifier = MethodModifier.async
         ..body = Block.of([
@@ -492,13 +583,23 @@ final class const DioOperationBaseGenerator()
           const Code('final response = result.response!;'),
           if (!isVoid) const Code('final T value;'),
           const Code('try {'),
+          if (streaming) ..._selectResponse(valueType),
           if (isVoid)
-            const Code('  decode(response);')
+            Code(
+              streaming
+                  ? 'decode(response, cancellation);'
+                  : 'decode(response);',
+            )
           else
-            const Code('  value = decode(response);'),
+            Code(
+              streaming
+                  ? 'value = decode(response, cancellation);'
+                  : 'value = decode(response);',
+            ),
           const Code('} on '),
           refer('Object', 'dart:core').code,
           const Code(' catch (exception, stackTrace) {'),
+          if (streaming) const Code('cancellation.cancel(exception);'),
           _tonikError(valueType)
               .call(
                 [refer('exception')],
@@ -536,7 +637,9 @@ final class const DioOperationBaseGenerator()
           ..types.add(
             TypeReference(
               (result) => result
-                ..symbol = '_DioDispatchResult'
+                ..symbol = streaming
+                    ? '_DioStreamingDispatchResult'
+                    : '_DioDispatchResult'
                 ..types.add(refer('V')),
             ),
           ),
@@ -564,7 +667,11 @@ final class const DioOperationBaseGenerator()
         const Code(';'),
         const Code('  if (cancellation.isCancelled) {'),
         const Code('    cancelToken.cancel(cancellation.reason);'),
-        const Code('    return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '    return _DioStreamingDispatchResult<V>('
+              : '    return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('cancelToken.cancelError!')],
@@ -601,7 +708,11 @@ final class const DioOperationBaseGenerator()
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _DioStreamingDispatchResult<V>('
+              : '  return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -627,7 +738,13 @@ final class const DioOperationBaseGenerator()
         const Code('>('),
         const Code('    prepared.uri,'),
         const Code('    data: prepared.data,'),
-        const Code('    options: prepared.options,'),
+        const Code('    options: prepared.options'),
+        if (streaming) ...[
+          const Code('.copyWith(responseType: '),
+          refer('ResponseType.stream', 'package:dio/dio.dart').code,
+          const Code(')'),
+        ],
+        const Code(','),
         const Code('    cancelToken: cancelToken,'),
         const Code('  );'),
         const Code('} on '),
@@ -636,7 +753,11 @@ final class const DioOperationBaseGenerator()
         const Code('  if (exception.type == '),
         refer('DioExceptionType.cancel', 'package:dio/dio.dart').code,
         const Code(') {'),
-        const Code('    return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '    return _DioStreamingDispatchResult<V>('
+              : '    return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -652,7 +773,11 @@ final class const DioOperationBaseGenerator()
             .code,
         const Code(', null);'),
         const Code('  }'),
-        const Code('  return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _DioStreamingDispatchResult<V>('
+              : '  return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -670,7 +795,11 @@ final class const DioOperationBaseGenerator()
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _DioDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _DioStreamingDispatchResult<V>('
+              : '  return _DioDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -686,9 +815,57 @@ final class const DioOperationBaseGenerator()
             .code,
         const Code(', null);'),
         const Code('}'),
-        const Code('return _DioDispatchResult<V>(null, response);'),
+        Code(
+          streaming
+              ? 'return _DioStreamingDispatchResult<V>(null, response);'
+              : 'return _DioDispatchResult<V>(null, response);',
+        ),
       ]),
   );
+
+  List<Code> _selectResponse(Reference valueType) => [
+    const Code('final streamingBody = isStreaming(response);'),
+    const Code('if (streamingBody == false) {'),
+    const Code('try { response.data = await (response.data as '),
+    refer('ResponseBody', 'package:dio/dio.dart').code,
+    const Code(').stream.fold<'),
+    TypeReference(
+      (b) => b
+        ..symbol = 'List'
+        ..url = 'dart:core'
+        ..types.add(refer('int', 'dart:core')),
+    ).code,
+    const Code('>([], (bytes, chunk) => bytes..addAll(chunk));'),
+    const Code('} on '),
+    refer('Object', 'dart:core').code,
+    const Code(' catch (exception, stackTrace) {'),
+    const Code('final type = exception is '),
+    refer('DioException', 'package:dio/dio.dart').code,
+    const Code(' && exception.type == '),
+    refer('DioExceptionType.cancel', 'package:dio/dio.dart').code,
+    const Code(' ? '),
+    refer(
+      'TonikErrorType.cancelled',
+      'package:tonik_util/tonik_util.dart',
+    ).code,
+    const Code(' : '),
+    refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart').code,
+    const Code('; cancellation.cancel(exception);'),
+    _tonikError(valueType)
+        .call(
+          [refer('exception')],
+          {
+            'stackTrace': refer('stackTrace'),
+            'type': refer('type'),
+            'response': refer('response'),
+          },
+        )
+        .returned
+        .statement,
+    const Code(
+      '} } else if (streamingBody == null) { cancellation.cancel(); }',
+    ),
+  ];
 
   Class _generateOperationRequest() => Class(
     (builder) => builder
@@ -726,7 +903,7 @@ final class const DioOperationBaseGenerator()
 
   Class _generateDispatchResult() => Class(
     (builder) => builder
-      ..name = '_DioDispatchResult'
+      ..name = streaming ? '_DioStreamingDispatchResult' : '_DioDispatchResult'
       ..types.add(refer('T'))
       ..fields.addAll([
         _finalField(

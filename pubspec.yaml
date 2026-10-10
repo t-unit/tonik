@@ -258,6 +258,12 @@ melos:
         cd integration_test/recursive_map/recursive_map_test
         dart test
 
+    test-integration-streaming-response:
+      run: |
+        cd integration_test/streaming_response/streaming_response_test
+        dart test
+      description: Run generated streaming response integration tests
+
     test-integration-current:
       run: ./scripts/test_current_integration.sh
 

@@ -33,6 +33,13 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
   );
 
   @override
+  TypeReference get streamingNativeResponseType => TypeReference(
+    (builder) => builder
+      ..symbol = 'BaseResponse'
+      ..url = 'package:http/http.dart',
+  );
+
+  @override
   TypeReference get operationResponseType => TypeReference(
     (builder) => builder
       ..symbol = 'Response'
@@ -77,8 +84,31 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
       response.property('headers').index(literalString('content-type'));
 
   @override
-  Expression responseBodyBytes(Expression response) =>
-      response.property('bodyBytes');
+  Expression responseBodyBytes(Expression response, {bool streaming = false}) =>
+      (streaming
+              ? response
+                    .asA(refer('Response', 'package:http/http.dart'))
+                    .parenthesized
+              : response)
+          .property('bodyBytes');
+
+  @override
+  Expression responseBodyStream(Expression response) => response
+      .asA(refer('StreamedResponse', 'package:http/http.dart'))
+      .parenthesized
+      .property('stream');
+
+  @override
+  Expression streamSourceErrorType(
+    Expression error,
+    Expression cancellation,
+  ) => error
+      .isA(refer('RequestAbortedException', 'package:http/http.dart'))
+      .and(cancellation.property('isCancelled'))
+      .conditional(
+        refer('TonikErrorType.cancelled', 'package:tonik_util/tonik_util.dart'),
+        refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
+      );
 
   @override
   Expression responseHeaderValues(Expression response, String name) => response

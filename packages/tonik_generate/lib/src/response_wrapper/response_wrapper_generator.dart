@@ -3,18 +3,22 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
-import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 @immutable
 class const ResponseWrapperGenerator({
   required final NameManager nameManager,
   required final String package,
   final bool useImmutableCollections = false,
+  final TransportBackendGenerator backendGenerator =
+      const DioBackendGenerator(),
 }) {
   ({String code, String filename}) generate(Operation operation) {
     final emitter = DartEmitter(
@@ -70,10 +74,11 @@ class const ResponseWrapperGenerator({
           (b) => b
             ..name = 'body'
             ..modifier = FieldModifier.final$
-            ..type = typeReference(
-              body.model,
+            ..type = responseBodyType(
+              body,
               nameManager,
               package,
+              backendGenerator,
               useImmutableCollections: useImmutableCollections,
             ),
         );

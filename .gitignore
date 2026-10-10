@@ -49,6 +49,7 @@
 /integration_test/defaulted/defaulted_api
 /integration_test/immutable_collections/immutable_collections_api
 /integration_test/naming/naming_api
+/integration_test/streaming_response/streaming_response_api
 /integration_test/recursive_map/recursive_map_api
 
 # Coverage

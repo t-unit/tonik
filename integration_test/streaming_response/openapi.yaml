@@ -1,0 +1,437 @@
+openapi: 3.0.3
+info:
+  title: Streaming response
+  version: '1.0'
+servers:
+  - url: http://localhost:8080
+paths:
+  /items:
+    get:
+      operationId: getItems
+      tags: [streaming]
+      parameters:
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+        - name: X-Request
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Incremental items
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: object
+                required: [value]
+                properties:
+                  value:
+                    type: integer
+  /jsonl:
+    get:
+      operationId: getJsonLines
+      tags: [streaming]
+      responses:
+        '200':
+          description: JSON Lines items
+          content:
+            application/jsonl:
+              itemSchema:
+                type: object
+                required: [value]
+                properties:
+                  value:
+                    type: integer
+  /sse-data:
+    get:
+      operationId: getSseData
+      tags: [streaming]
+      responses:
+        '200':
+          description: Data-only SSE envelopes
+          content:
+            text/event-stream:
+              itemSchema:
+                $ref: '#/components/schemas/SseData'
+  /sse-fields:
+    get:
+      operationId: getSseFields
+      tags: [streaming]
+      responses:
+        '200':
+          description: SSE envelopes with optional fields
+          content:
+            text/event-stream:
+              itemSchema:
+                $ref: '#/components/schemas/SseFields'
+  /sse-required-event:
+    get:
+      operationId: getSseRequiredEvent
+      tags: [streaming]
+      responses:
+        '200':
+          description: SSE envelopes requiring an explicit event field
+          content:
+            text/event-stream:
+              itemSchema:
+                $ref: '#/components/schemas/SseRequiredEvent'
+  /ordinary:
+    get:
+      operationId: getOrdinary
+      tags: [streaming]
+      responses:
+        '200':
+          description: Completed JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [value]
+                properties:
+                  value:
+                    type: integer
+  /mixed:
+    get:
+      operationId: getMixed
+      tags: [streaming]
+      responses:
+        '200':
+          description: Stream or complete value
+          headers:
+            X-Count:
+              required: true
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamItem'
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/StreamItem'
+        '204':
+          description: Empty result
+        '400':
+          description: Ordinary modeled error
+          content:
+            application/json:
+              schema:
+                type: string
+        '2XX':
+          description: Other success stream
+          content:
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/StreamItem'
+        default:
+          description: Default complete result
+          content:
+            application/json:
+              schema:
+                type: string
+  /aliased-stream:
+    get:
+      operationId: getAliasedStream
+      tags: [streaming]
+      responses:
+        '200':
+          $ref: '#/components/responses/AliasedStream'
+  /profiles:
+    get:
+      operationId: getProfiles
+      tags: [streaming]
+      responses:
+        '200':
+          description: Parameter-specific media
+          content:
+            application/x-ndjson:
+              schema:
+                type: string
+            application/x-ndjson; profile=detail:
+              itemSchema:
+                $ref: '#/components/schemas/StreamItem'
+  /referenced-stream:
+    get:
+      operationId: getReferencedStream
+      tags: [streaming]
+      responses:
+        '200':
+          description: Reusable item stream
+          content:
+            application/x-ndjson:
+              $ref: '#/components/mediaTypes/ItemAlias'
+              description: 42
+              itemSchema:
+                type: string
+  /referenced-mixed:
+    get:
+      operationId: getReferencedMixed
+      tags: [streaming]
+      responses:
+        '200':
+          description: Reusable media and external fallback
+          content:
+            application/json:
+              $ref: '#/components/mediaTypes/CompleteItem'
+            application/x-ndjson:
+              $ref: '#/components/mediaTypes/ItemAlias'
+            application/jsonl:
+              $ref: '?revision=2#/components/mediaTypes/Unknown'
+              itemSchema:
+                type: integer
+  /schema-only:
+    get:
+      operationId: getSchemaOnly
+      tags: [streaming]
+      responses:
+        '200':
+          description: Finite complete sequential content
+          content:
+            application/x-ndjson:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StreamItem'
+  /referenced-request:
+    post:
+      operationId: postReferencedRequest
+      tags: [streaming]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            $ref: '#/components/mediaTypes/CompleteItem'
+      responses:
+        '200':
+          description: Complete echoed item
+          content:
+            application/json:
+              $ref: '#/components/mediaTypes/CompleteItem'
+  /nullable-items:
+    get:
+      operationId: getNullableItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Nullable integer items
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: integer
+                nullable: true
+  /any-items:
+    get:
+      operationId: getAnyItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Unconstrained items
+          content:
+            application/x-ndjson:
+              itemSchema: true
+  /never-items:
+    get:
+      operationId: getNeverItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Impossible items
+          content:
+            application/x-ndjson:
+              itemSchema: false
+  /nested-items:
+    get:
+      operationId: getNestedItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Aliased batches with nested collections
+          content:
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/StreamBatchAlias'
+  /events:
+    get:
+      operationId: getEvents
+      tags: [streaming]
+      responses:
+        '200':
+          description: Complete summary or incremental events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamSummary'
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/StreamEvent'
+  /alternative-items:
+    get:
+      operationId: getAlternativeItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Distinct item models by media
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: object
+                required: [count]
+                properties:
+                  count:
+                    type: integer
+            application/jsonl:
+              itemSchema:
+                type: object
+                required: [label]
+                properties:
+                  label:
+                    type: string
+        '202':
+          description: Distinct item model by status
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: object
+                required: [ready]
+                properties:
+                  ready:
+                    type: boolean
+components:
+  mediaTypes:
+    ItemAlias:
+      $ref: '#%2Fcomponents%2FmediaTypes%2FItemStream'
+      summary: 42
+    ItemStream:
+      schema:
+        properties: 3
+      itemSchema:
+        $ref: '#/components/schemas/StreamItem'
+      encoding: malformed
+      examples:
+        remote:
+          $ref: '?revision=2#/Example'
+        local:
+          value:
+            value: 11
+    CompleteItem:
+      schema:
+        $ref: '#/components/schemas/StreamItem'
+      itemSchema:
+        $ref: '#/components/schemas/UnconsumedItem'
+    UnusedAlias:
+      $ref: '#/components/mediaTypes/Absent'
+      description: 42
+  schemas:
+    SseData:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: string
+          contentMediaType: application/json
+          contentSchema:
+            type: object
+    SseFields:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: string
+        event:
+          type: string
+        id:
+          type: string
+        retry:
+          type: integer
+    SseRequiredEvent:
+      type: object
+      required: [data, event]
+      properties:
+        data:
+          type: string
+        event:
+          type: string
+    StreamBatchAlias:
+      $ref: '#/components/schemas/StreamBatch'
+    StreamBatch:
+      type: array
+      items:
+        $ref: '#/components/schemas/NestedStreamItem'
+    NestedStreamItem:
+      allOf:
+        - $ref: '#/components/schemas/StreamItem'
+        - type: object
+          required: [metrics]
+          properties:
+            metrics:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: integer
+    StreamSummary:
+      type: object
+      required: [total]
+      properties:
+        total:
+          type: integer
+    StreamEvent:
+      oneOf:
+        - $ref: '#/components/schemas/StateEvent'
+        - $ref: '#/components/schemas/ResultEvent'
+        - $ref: '#/components/schemas/ApplicationErrorEvent'
+      discriminator:
+        propertyName: kind
+        mapping:
+          state: '#/components/schemas/StateEvent'
+          result: '#/components/schemas/ResultEvent'
+          error: '#/components/schemas/ApplicationErrorEvent'
+    StateEvent:
+      type: object
+      required: [kind, progress]
+      properties:
+        kind:
+          type: string
+          enum: [state]
+        progress:
+          type: integer
+    ResultEvent:
+      type: object
+      required: [kind, result]
+      properties:
+        kind:
+          type: string
+          enum: [result]
+        result:
+          type: string
+    ApplicationErrorEvent:
+      type: object
+      required: [kind, message]
+      properties:
+        kind:
+          type: string
+          enum: [error]
+        message:
+          type: string
+    StreamItem:
+      type: object
+      required: [value]
+      properties:
+        value:
+          type: integer
+  responses:
+    StreamWithHeaders:
+      description: Stream with required header
+      headers:
+        X-Count:
+          required: true
+          schema:
+            type: integer
+      content:
+        application/x-ndjson:
+          itemSchema:
+            $ref: '#/components/schemas/StreamItem'
+    AliasedStream:
+      $ref: '#/components/responses/StreamWithHeaders'

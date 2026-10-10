@@ -4,6 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/discriminator.dart' as parse;
 import 'package:tonik_parse/src/model/open_api_object.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
 class ModelImporter._(
@@ -517,7 +518,7 @@ class ModelImporter._(
   ) {
     final ref = schema.ref!;
 
-    if (ref.contains(r'/$defs/')) {
+    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
       // For $defs references, delegate to the existing resolution logic.
       _removeModel(shell);
       final model = _resolveDefsReference(name, schema, context);
@@ -536,29 +537,7 @@ class ModelImporter._(
       return;
     }
 
-    if (!ref.startsWith('#/components/schemas/')) {
-      throw UnimplementedError(
-        'Only local schema references are supported, '
-        'found $ref for $name',
-      );
-    }
-
-    final refName = ref.split('/').last;
-
-    if (name == refName) {
-      throw ArgumentError(
-        'Schema $name has a direct self-reference which is not supported',
-      );
-    }
-
-    final refSchema = _schemas[refName];
-    if (refSchema == null) {
-      throw ArgumentError('Schema $ref not found for $name');
-    }
-
-    // Prefer the pass-1 shell before falling back to recursive resolution.
-    final refModel =
-        _findNamedModel(refName) ?? _resolveWithCycleCheck(refName, refSchema);
+    final refModel = _resolveReferenceTarget(ref, name: name);
 
     // Structural `$ref` siblings are represented as an allOf wrapper.
     if (_hasStructuralSiblings(schema)) {
@@ -1053,21 +1032,7 @@ class ModelImporter._(
   ) {
     final ref = schema.ref!;
 
-    if (!ref.startsWith('#/components/schemas/')) {
-      throw UnimplementedError(
-        'Only local schema references are supported, found $ref',
-      );
-    }
-
-    final refName = ref.split('/').last;
-    final refSchema = _schemas[refName];
-
-    if (refSchema == null) {
-      throw ArgumentError('Schema $ref not found');
-    }
-
-    final refModel =
-        _findNamedModel(refName) ?? _resolveWithCycleCheck(refName, refSchema);
+    final refModel = _resolveReferenceTarget(ref);
 
     final modelContext = context.push('allOf');
     final modelsToMerge = <Model>[refModel];
@@ -1106,23 +1071,29 @@ class ModelImporter._(
   }
 
   Model _resolveReferenceForProperty(String ref, Context context) {
-    if (ref.contains(r'/$defs/')) {
+    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
       return _resolveDefsReferenceForProperty(ref, context);
     }
 
+    return _resolveReferenceTarget(ref);
+  }
+
+  Model _resolveReferenceTarget(String ref, {String? name}) {
     if (!ref.startsWith('#/components/schemas/')) {
       throw UnimplementedError(
         'Only local schema references are supported, found $ref',
       );
     }
-
     final refName = ref.split('/').last;
+    if (name == refName) {
+      throw ArgumentError(
+        'Schema $name has a direct self-reference which is not supported',
+      );
+    }
     final refSchema = _schemas[refName];
-
     if (refSchema == null) {
       throw ArgumentError('Schema $ref not found');
     }
-
     return _findNamedModel(refName) ??
         _resolveWithCycleCheck(refName, refSchema);
   }
@@ -1307,33 +1278,11 @@ class ModelImporter._(
   Model _resolveReference(String? name, Schema schema, Context context) {
     final ref = schema.ref!;
 
-    if (ref.contains(r'/$defs/')) {
+    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
       return _resolveDefsReference(name, schema, context);
     }
 
-    if (!ref.startsWith('#/components/schemas/')) {
-      throw UnimplementedError(
-        'Only local schema references are supported, '
-        'found $ref for $name',
-      );
-    }
-
-    final refName = ref.split('/').last;
-
-    if (name == refName) {
-      throw ArgumentError(
-        'Schema $name has a direct self-reference which is not supported',
-      );
-    }
-
-    final refSchema = _schemas[refName];
-
-    if (refSchema == null) {
-      throw ArgumentError('Schema $ref not found for $name');
-    }
-
-    final refModel =
-        _findNamedModel(refName) ?? _resolveWithCycleCheck(refName, refSchema);
+    final refModel = _resolveReferenceTarget(ref, name: name);
 
     if (_hasStructuralSiblings(schema)) {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
@@ -1897,7 +1846,7 @@ class ModelImporter._(
 
     final ref = schema.ref!;
 
-    if (ref.contains(r'/$defs/')) {
+    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
       return _defs[ref];
     }
 

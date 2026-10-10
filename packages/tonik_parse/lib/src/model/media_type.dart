@@ -6,6 +6,7 @@ import 'package:tonik_parse/src/model/schema.dart';
 class MediaType({
   required final Schema? schema,
   required final Map<String, Encoding>? encoding,
+  final Schema? itemSchema,
 
   /// Single example inline value.
   final Object? example,
@@ -14,18 +15,46 @@ class MediaType({
   final Map<String, ReferenceWrapper<Example>>? examples,
 }) {
   factory fromJson(Map<String, dynamic> json) => MediaType(
-    schema: const SchemaConverter().fromJson(json['schema']),
-    encoding: (json['encoding'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
+    schema: _optional(() => const SchemaConverter().fromJson(json['schema'])),
+    itemSchema: _optional(
+      () => const SchemaConverter().fromJson(json['itemSchema']),
+    ),
+    encoding: _optionalMap(
+      json['encoding'],
+      (value) => Encoding.fromJson(value! as Map<String, dynamic>),
     ),
     example: json['example'],
-    examples: (json['examples'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+    examples: _optionalMap(
+      json['examples'],
+      ReferenceWrapper<Example>.fromJson,
     ),
   );
 
   @override
   String toString() =>
-      'MediaType{schema: $schema, encoding: $encoding, '
+      'MediaType{schema: $schema, itemSchema: $itemSchema, '
+      'encoding: $encoding, '
       'example: $example, examples: $examples}';
+}
+
+T? _optional<T>(T? Function() parse) {
+  try {
+    return parse();
+    // Optional media fields use casts and format checks while parsing JSON.
+    // ignore: avoid_catching_errors
+  } on TypeError catch (error) {
+    if (error is MalformedReferenceError) rethrow;
+    return null;
+  } on FormatException {
+    return null;
+  }
+}
+
+Map<String, T>? _optionalMap<T>(Object? value, T Function(Object?) parse) {
+  if (value is! Map<String, dynamic>) return null;
+  return {
+    for (final entry in value.entries)
+      if (_optional(() => parse(entry.value)) case final T parsed)
+        entry.key: parsed,
+  };
 }

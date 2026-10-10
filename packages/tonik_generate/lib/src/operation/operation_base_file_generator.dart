@@ -14,7 +14,11 @@ class const OperationBaseFileGenerator({
   required final String operationBaseFilename,
   required final NameManager nameManager,
 }) {
-  String writeFile({required String outputDirectory, required String package}) {
+  String writeFile({
+    required String outputDirectory,
+    required String package,
+    bool includeStreaming = false,
+  }) {
     final operationDirectory = Directory(
       path.join(outputDirectory, package, 'lib', 'src', 'operation'),
     );
@@ -36,7 +40,9 @@ class const OperationBaseFileGenerator({
     }
 
     final library = Library(
-      (builder) => builder.body.addAll(operationBaseGenerator.generate()),
+      (builder) => builder.body.addAll(
+        operationBaseGenerator.generate(includeStreaming: includeStreaming),
+      ),
     );
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),

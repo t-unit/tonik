@@ -2,15 +2,14 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_generate/src/operation/operation_base_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 
-final class const HttpOperationBaseGenerator()
+final class const HttpOperationBaseGenerator({final bool streaming = false})
     implements OperationBaseGenerator {
-  static final Reference _nativeResponse = refer(
-    'Response',
-    'package:http/http.dart',
-  );
+  Reference get _nativeResponse =>
+      refer(streaming ? 'BaseResponse' : 'Response', 'package:http/http.dart');
 
   @override
-  String get className => 'HttpOperation';
+  String get className =>
+      streaming ? 'HttpStreamingOperation' : 'HttpOperation';
 
   @override
   String get filename => 'http_operation.dart';
@@ -23,9 +22,10 @@ final class const HttpOperationBaseGenerator()
     required String package,
     required Reference valueType,
     String? filename,
+    bool streaming = false,
   }) => TypeReference(
     (builder) => builder
-      ..symbol = className
+      ..symbol = streaming ? 'HttpStreamingOperation' : 'HttpOperation'
       ..url = 'package:$package/src/operation/${filename ?? this.filename}'
       ..types.add(valueType),
   );
@@ -42,6 +42,7 @@ final class const HttpOperationBaseGenerator()
     required Expression? decode,
     required bool isVoid,
     required bool isDataAsync,
+    bool streaming = false,
   }) {
     final methodName = switch ((isVoid, isDataAsync)) {
       (false, false) => 'execute',
@@ -64,15 +65,21 @@ final class const HttpOperationBaseGenerator()
       'cancellation': plan.cancellation,
       'prepare': isDataAsync ? _asyncClosure(request) : _closure(request),
       'decode': decode ?? _noopDecoder(),
+      if (streaming) 'isStreaming': refer('_isStreamingResponse'),
     });
   }
 
   @override
-  Iterable<Spec> generate() => [
+  Iterable<Spec> generate({bool includeStreaming = false}) => [
     _generateBase(),
     _generateOperationRequest(),
     _generatePreparedRequest(),
     _generateDispatchResult(),
+    if (includeStreaming) ...[
+      const HttpOperationBaseGenerator(streaming: true)._generateBase(),
+      const HttpOperationBaseGenerator(streaming: true)
+          ._generateDispatchResult(),
+    ],
   ];
 
   Class _generateBase() => Class(
@@ -162,11 +169,31 @@ final class const HttpOperationBaseGenerator()
           ),
           _namedParameter(
             'decode',
-            _functionType(valueType, [_nativeResponse]),
+            _functionType(valueType, [
+              _nativeResponse,
+              if (streaming)
+                refer(
+                  'TonikCancellation',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+            ]),
           ),
+          if (streaming)
+            _namedParameter(
+              'isStreaming',
+              _functionType(refer('bool?', 'dart:core'), [_nativeResponse]),
+            ),
         ])
         ..modifier = MethodModifier.async
         ..body = Block.of([
+          if (streaming) ...[
+            const Code('cancellation ??= '),
+            refer(
+              'TonikCancellation',
+              'package:tonik_util/tonik_util.dart',
+            ).call([]).code,
+            const Code(';'),
+          ],
           const Code('late final '),
           refer('HttpOperationRequest').code,
           const Code(' request;'),
@@ -227,14 +254,24 @@ final class const HttpOperationBaseGenerator()
           const Code(');'),
           const Code('final error = dispatched.error;'),
           const Code('if (error != null) return error;'),
-          const Code('final response = dispatched.response!;'),
+          Code(
+            streaming
+                ? 'var response = dispatched.response!;'
+                : 'final response = dispatched.response!;',
+          ),
           const Code(''),
           if (isVoid) ...[
             const Code('try {'),
-            const Code('  decode(response);'),
+            if (streaming) ..._selectResponse(valueType),
+            Code(
+              streaming
+                  ? 'decode(response, cancellation);'
+                  : 'decode(response);',
+            ),
             const Code('} on '),
             refer('Object', 'dart:core').code,
             const Code(' catch (exception, stackTrace) {'),
+            if (streaming) const Code('cancellation.cancel(exception);'),
             _tonikError(valueType)
                 .call(
                   [refer('exception')],
@@ -257,10 +294,16 @@ final class const HttpOperationBaseGenerator()
           ] else ...[
             const Code('final T value;'),
             const Code('try {'),
-            const Code('  value = decode(response);'),
+            if (streaming) ..._selectResponse(valueType),
+            Code(
+              streaming
+                  ? 'value = decode(response, cancellation);'
+                  : 'value = decode(response);',
+            ),
             const Code('} on '),
             refer('Object', 'dart:core').code,
             const Code(' catch (exception, stackTrace) {'),
+            if (streaming) const Code('cancellation.cancel(exception);'),
             _tonikError(valueType)
                 .call(
                   [refer('exception')],
@@ -296,7 +339,9 @@ final class const HttpOperationBaseGenerator()
           ..types.add(
             TypeReference(
               (result) => result
-                ..symbol = '_HttpDispatchResult'
+                ..symbol = streaming
+                    ? '_HttpStreamingDispatchResult'
+                    : '_HttpDispatchResult'
                 ..types.add(refer('V')),
             ),
           ),
@@ -323,7 +368,11 @@ final class const HttpOperationBaseGenerator()
           'package:http/http.dart',
         ).newInstance([refer('prepared.uri')]).code,
         const Code(';'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -348,7 +397,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -442,7 +495,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _tonikError(refer('V'))
             .call(
               [refer('exception')],
@@ -467,7 +524,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('RequestAbortedException', 'package:http/http.dart').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _transportError(
           refer('V'),
           refer('_requestAbortErrorType(cancellation)'),
@@ -476,7 +537,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('ClientException', 'package:http/http.dart').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _transportError(
           refer('V'),
           refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
@@ -485,7 +550,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('TimeoutException', 'dart:async').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _transportError(
           refer('V'),
           refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
@@ -494,7 +563,11 @@ final class const HttpOperationBaseGenerator()
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
+        Code(
+          streaming
+              ? '  return _HttpStreamingDispatchResult<V>('
+              : '  return _HttpDispatchResult<V>(',
+        ),
         _transportError(
           refer('V'),
           refer('TonikErrorType.other', 'package:tonik_util/tonik_util.dart'),
@@ -502,36 +575,57 @@ final class const HttpOperationBaseGenerator()
         const Code(', null);'),
         const Code('}'),
         const Code(''),
-        const Code('final '),
-        _nativeResponse.code,
-        const Code(' response;'),
-        const Code('try {'),
-        const Code('  response = await '),
-        refer(
-          'Response',
-          'package:http/http.dart',
-        ).property('fromStream').call([refer('streamedResponse')]).code,
-        const Code(';'),
-        const Code('} on '),
-        refer('RequestAbortedException', 'package:http/http.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
-        _transportError(
-          refer('V'),
-          refer('_requestAbortErrorType(cancellation)'),
-        ).code,
-        const Code(', null);'),
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        const Code('  return _HttpDispatchResult<V>('),
-        _transportError(
-          refer('V'),
-          refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
-        ).code,
-        const Code(', null);'),
-        const Code('}'),
-        const Code('return _HttpDispatchResult<V>(null, response);'),
+        if (streaming) ...[
+          const Code(
+            'return _HttpStreamingDispatchResult<V>(null, streamedResponse);',
+          ),
+        ] else ...[
+          const Code('final '),
+          _nativeResponse.code,
+          const Code(' response;'),
+          const Code('try {'),
+          const Code('  response = await '),
+          refer(
+            'Response',
+            'package:http/http.dart',
+          ).property('fromStream').call([refer('streamedResponse')]).code,
+          const Code(';'),
+          const Code('} on '),
+          refer('RequestAbortedException', 'package:http/http.dart').code,
+          const Code(' catch (exception, stackTrace) {'),
+          Code(
+            streaming
+                ? '  return _HttpStreamingDispatchResult<V>('
+                : '  return _HttpDispatchResult<V>(',
+          ),
+          _transportError(
+            refer('V'),
+            refer('_requestAbortErrorType(cancellation)'),
+          ).code,
+          const Code(', null);'),
+          const Code('} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch (exception, stackTrace) {'),
+          Code(
+            streaming
+                ? '  return _HttpStreamingDispatchResult<V>('
+                : '  return _HttpDispatchResult<V>(',
+          ),
+          _transportError(
+            refer('V'),
+            refer(
+              'TonikErrorType.network',
+              'package:tonik_util/tonik_util.dart',
+            ),
+          ).code,
+          const Code(', null);'),
+          const Code('}'),
+          Code(
+            streaming
+                ? 'return _HttpStreamingDispatchResult<V>(null, response);'
+                : 'return _HttpDispatchResult<V>(null, response);',
+          ),
+        ],
       ]),
   );
 
@@ -565,6 +659,38 @@ final class const HttpOperationBaseGenerator()
         ).code,
       ]),
   );
+
+  List<Code> _selectResponse(Reference valueType) => [
+    const Code('final streamingBody = isStreaming(response);'),
+    const Code('if (streamingBody == false) {'),
+    const Code('try { response = await '),
+    refer('Response', 'package:http/http.dart').property('fromStream').call([
+      refer('response')
+          .asA(refer('StreamedResponse', 'package:http/http.dart')),
+    ]).code,
+    const Code('; } on '),
+    refer('Object', 'dart:core').code,
+    const Code(' catch (exception, stackTrace) {'),
+    const Code('final type = exception is '),
+    refer('RequestAbortedException', 'package:http/http.dart').code,
+    const Code(' ? _requestAbortErrorType(cancellation) : '),
+    refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart').code,
+    const Code('; cancellation.cancel(exception);'),
+    _tonikError(valueType)
+        .call(
+          [refer('exception')],
+          {
+            'stackTrace': refer('stackTrace'),
+            'type': refer('type'),
+            'response': refer('response'),
+          },
+        )
+        .returned
+        .statement,
+    const Code(
+      '} } else if (streamingBody == null) { cancellation.cancel(); }',
+    ),
+  ];
 
   Class _generateOperationRequest() => Class(
     (builder) => builder
@@ -625,7 +751,9 @@ final class const HttpOperationBaseGenerator()
 
   Class _generateDispatchResult() => Class(
     (builder) => builder
-      ..name = '_HttpDispatchResult'
+      ..name = streaming
+          ? '_HttpStreamingDispatchResult'
+          : '_HttpDispatchResult'
       ..types.add(refer('T'))
       ..fields.addAll([
         _finalField(
@@ -642,7 +770,7 @@ final class const HttpOperationBaseGenerator()
           'response',
           TypeReference(
             (type) => type
-              ..symbol = 'Response'
+              ..symbol = streaming ? 'BaseResponse' : 'Response'
               ..url = 'package:http/http.dart'
               ..isNullable = true,
           ),

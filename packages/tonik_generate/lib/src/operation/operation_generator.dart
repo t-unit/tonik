@@ -126,6 +126,7 @@ class OperationGenerator({
         ..extend = backendGenerator.operationBaseGenerator.baseType(
           package: package,
           valueType: resultValueType,
+          streaming: hasStreamingResponse(operation),
           filename: operationBaseFilename,
         )
         ..fields.addAll(defaults.fields);
@@ -194,6 +195,8 @@ class OperationGenerator({
           ),
           if (operation.responses.isNotEmpty)
             _parseGenerator.generateParseResponseMethod(operation),
+          if (hasStreamingResponse(operation))
+            _parseGenerator.generateResponseSelectionMethod(operation),
         ]);
     });
   }
@@ -288,6 +291,7 @@ class OperationGenerator({
           decode: hasResponses ? refer('_parseResponse') : null,
           isVoid: isVoidReturn,
           isDataAsync: isDataAsync,
+          streaming: hasStreamingResponse(operation),
         );
 
     return Method(
