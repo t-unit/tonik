@@ -264,10 +264,6 @@ melos:
         dart test
       description: Run generated streaming response integration tests
 
-    test-integration-streaming-browser:
-      run: ./scripts/test_streaming_browser.sh
-      description: Run streaming tests in Chrome for the currently generated backend
-
     test-integration-current:
       run: ./scripts/test_current_integration.sh
 

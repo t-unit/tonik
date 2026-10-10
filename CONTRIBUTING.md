@@ -66,23 +66,11 @@ the package ends or the run is cancelled. Fixtures must finish their requests
 before completing a test. Individual `dart test` and VS Code runs continue to
 start their own servers and need no wrapper or extra setup.
 
-Streaming responses also have maintained browser checks. Install Chrome (or set
-`CHROME_EXECUTABLE` to its executable), then run each backend sequentially:
-
-```bash
-./scripts/setup_integration_tests.sh --backend dio
-melos run test-integration-streaming-browser
-./scripts/setup_integration_tests.sh --backend http
-melos run test-integration-streaming-browser
-```
-
-The browser command uses the currently generated backend and starts a temporary
-loopback server with explicit chunk/EOF controls. HTTP's standard Fetch client
-delivers incrementally; Dio's standard XHR adapter returns finite responses after
-EOF. Both are checked through generated public operations and cancellation APIs.
-Browser tests live under the streaming fixture's `browser/` directory, outside
-the native `test/` discovery path. The browser command supplements `melos run test`
-for the final streaming verification gate.
+Streaming integration tests use Imposter for finite NDJSON, JSONL, SSE, and
+complete response alternatives. A small transport suite checks abort forwarding,
+caller-owned clients, and injected errors. Native timing tests use a loopback
+fixture with explicit chunk/EOF controls, since Imposter completes each response
+at once.
 
 ## Architecture
 

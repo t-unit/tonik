@@ -145,4 +145,4 @@ second buffered API. See [HTTP Backends](http_backends.md#native-boundary).
 
 Streamed requests, parameters, headers, multipart streams, JSON Text Sequences
 (`application/json-seq`), and structured streaming suffixes remain unsupported.
-Maintained native/browser checks are described in [Contributing](../CONTRIBUTING.md#common-commands).
+Native integration checks are described in [Contributing](../CONTRIBUTING.md#common-commands).

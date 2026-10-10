@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
@@ -8,14 +6,10 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test('stream items preserve immutable nested collections', () async {
-    final host = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-    addTearDown(() => host.close(force: true));
-    host.listen((request) async {
-      request.response.headers.set('content-type', 'application/x-ndjson');
-      request.response.write('[{"primary":["alpha","beta"]}]\n[]\n');
-      await request.response.close();
-    });
-    final server = CustomServer(baseUrl: 'http://localhost:${host.port}');
+    final imposterServer = await setupImposterServer();
+    final server = CustomServer(
+      baseUrl: 'http://localhost:${imposterServer.port}',
+    );
     addTearDown(server.close);
 
     final result = await ItemsApi(server).getStreamedTagGroups();
