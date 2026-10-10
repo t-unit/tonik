@@ -1,7 +1,7 @@
 # Roadmap
 
 - Proper OpenAPI 3.2 support
-  - Sequential media beyond [typed NDJSON, JSONL, and SSE responses](streaming_responses.md): schema-only buffered sequence-to-array decoding, other formats such as `application/json-seq`, and streamed requests and multipart streams
+  - Sequential media beyond [typed NDJSON, JSONL, and SSE responses](streaming_responses.md): non-streaming array decoding without `itemSchema` using normal `schema` handling, other formats such as `application/json-seq`, and streamed requests and multipart streams
   - Parameter and header encoding/decoding via `content` for supported media types
   - `in: "querystring"` parameter location (entire query string as single parameter)
   - `query` HTTP method on Path Item Object (IETF draft `QUERY` method)
