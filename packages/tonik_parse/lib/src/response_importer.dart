@@ -124,6 +124,8 @@ class ResponseImporter({
                       .toLowerCase()) {
                     'application/x-ndjson' => core.ResponseDelivery.ndjson,
                     'application/jsonl' => core.ResponseDelivery.jsonLines,
+                    'application/json-seq' =>
+                      core.ResponseDelivery.jsonSequence,
                     'text/event-stream' => core.ResponseDelivery.sse,
                     _ => core.ResponseDelivery.complete,
                   };

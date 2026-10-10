@@ -9,7 +9,9 @@ class MediaTypeResolver(final OpenApiObject openApiObject) {
     while (current is Reference<MediaType>) {
       final ref = current.ref;
       if (isExternalReference(ref)) {
-        return MediaType(schema: null, encoding: null);
+        throw UnimplementedError(
+          'Only local media type references are supported, found $ref',
+        );
       }
       final segments = ref.startsWith('#')
           ? Uri.decodeComponent(ref.substring(1))

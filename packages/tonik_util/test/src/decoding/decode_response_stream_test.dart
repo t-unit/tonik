@@ -28,11 +28,13 @@ void main() {
   );
 
   test(
-    'conversion failure is one terminal result retaining cause and stack',
+    'conversion failure retains cause and stack and permits the next item',
     () async {
       final cancellation = TonikCancellation();
-      final stopped = Completer<void>();
-      final source = StreamController<List<int>>(onCancel: stopped.complete);
+      var cancelled = false;
+      final source = StreamController<List<int>>(
+        onCancel: () => cancelled = true,
+      );
       final error = StateError('conversion');
       final stack = StackTrace.current;
       final response = Object();
@@ -42,21 +44,27 @@ void main() {
         decodeNdjson,
         (value) {
           conversions++;
-          Error.throwWithStackTrace(error, stack);
+          if (value == 1) Error.throwWithStackTrace(error, stack);
+          return value! as int;
         },
         cancellation: cancellation,
         response: response,
         sourceErrorType: (_) => TonikErrorType.network,
       ).toList();
       source.add(utf8.encode('1\n2\n'));
-      final failure = (await items).single as TonikError<int, Object>;
-      await stopped.future;
+      await Future<void>.delayed(Duration.zero);
+      expect(cancelled, isFalse);
+      await source.close();
+      final results = await items;
+      expect(results, hasLength(2));
+      final failure = results.first as TonikError<int, Object>;
+      expect((results.last as TonikSuccess<int, Object>).value, 2);
       expect(failure.error, same(error));
       expect(failure.stackTrace, same(stack));
       expect(failure.response, same(response));
       expect(failure.type, TonikErrorType.decoding);
-      expect(conversions, 1);
-      expect(cancellation.reason, same(error));
+      expect(conversions, 2);
+      expect(cancellation.isCancelled, isFalse);
     },
   );
 
@@ -70,13 +78,14 @@ void main() {
       response: 'response',
       sourceErrorType: (_) => TonikErrorType.network,
     ).toList();
-    expect(items, hasLength(2));
+    expect(items, hasLength(3));
     expect((items.first as TonikSuccess<int, String>).value, 1);
-    final failure = items.last as TonikError<int, String>;
+    expect((items.last as TonikSuccess<int, String>).value, 2);
+    final failure = items[1] as TonikError<int, String>;
     expect(failure.error, isA<FormatException>());
     expect(failure.type, TonikErrorType.decoding);
     expect(failure.response, 'response');
-    expect(cancellation.reason, same(failure.error));
+    expect(cancellation.isCancelled, isFalse);
   });
 
   test(
@@ -149,7 +158,7 @@ void main() {
     },
   );
 
-  test('decoding failure survives failing source cleanup', () async {
+  test('transport failure survives failing source cleanup', () async {
     final source = StreamController<List<int>>(
       onCancel: () => Future<void>.error(StateError('cleanup')),
     );
@@ -161,10 +170,10 @@ void main() {
       response: 'response',
       sourceErrorType: (_) => TonikErrorType.network,
     ).toList();
-    source.add(utf8.encode('invalid\n'));
+    source.addError(const FormatException('transport'));
     final failure = (await items).single as TonikError<Object?, String>;
     expect(failure.error, isA<FormatException>());
-    expect(failure.type, TonikErrorType.decoding);
+    expect(failure.type, TonikErrorType.network);
     await source.close();
   });
 

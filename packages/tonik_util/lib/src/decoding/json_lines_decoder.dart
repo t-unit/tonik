@@ -20,6 +20,7 @@ Stream<Object?> _decodeJsonLines(
   Future<void>? failureCancellation;
 
   void fail(Object error, StackTrace stack) {
+    if (stopped) return;
     stopped = true;
     chunk = null;
     record = <int>[];
@@ -49,8 +50,9 @@ Stream<Object?> _decodeJsonLines(
       try {
         value = _decodeRecord(record, rejectRawCarriageReturns);
       } on FormatException catch (error, stack) {
-        fail(error, stack);
-        return;
+        record.clear();
+        controller.addError(error, stack);
+        continue;
       }
       record.clear();
       controller.add(value);
@@ -74,7 +76,9 @@ Stream<Object?> _decodeJsonLines(
             try {
               value = _decodeRecord(record, rejectRawCarriageReturns);
             } on FormatException catch (error, stack) {
-              fail(error, stack);
+              record.clear();
+              controller.addError(error, stack);
+              unawaited(controller.close());
               return;
             }
             record.clear();

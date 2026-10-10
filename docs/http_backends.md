@@ -88,7 +88,7 @@ always be recovered.
 
 ## Streaming and Browsers
 
-Typed NDJSON, JSONL, and SSE response streams require an explicit `itemSchema`.
+Typed NDJSON, JSONL, JSON-seq, and SSE response streams require an explicit `itemSchema`.
 `package:http` supports incremental streaming on native Dart and in browsers.
 Dio streams incrementally on native Dart, but its standard browser adapter
 buffers responses until completion.
