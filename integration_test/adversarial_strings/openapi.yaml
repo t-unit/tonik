@@ -268,6 +268,124 @@ paths:
         '204':
           description: Stored
 
+  /error-cookie:
+    get:
+      operationId: rejectBinaryCookie
+      tags: [adversarial]
+      parameters:
+        - name: 'a$b'
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        '204':
+          description: Empty
+
+  /error-header:
+    get:
+      operationId: rejectComplexHeader
+      tags: [adversarial]
+      parameters:
+        - name: 'X-Foo$hashCode'
+          in: header
+          required: true
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: string
+      responses:
+        '204':
+          description: Empty
+
+  /error-optional-header:
+    get:
+      operationId: rejectOptionalComplexHeader
+      tags: [adversarial]
+      parameters:
+        - name: 'X-Foo$hashCode'
+          in: header
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: string
+      responses:
+        '204':
+          description: Empty
+
+  '/error-path/{path\name}':
+    get:
+      operationId: rejectBinaryPath
+      tags: [adversarial]
+      parameters:
+        - name: 'path\name'
+          in: path
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        '204':
+          description: Empty
+
+  '/error-matrix/{a$b}':
+    get:
+      operationId: rejectNestedMatrix
+      tags: [adversarial]
+      parameters:
+        - name: 'a$b'
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: string
+      responses:
+        '204':
+          description: Empty
+
+  /error-response-header:
+    get:
+      operationId: rejectResponseHeader
+      tags: [adversarial]
+      responses:
+        '204':
+          description: Empty
+          headers:
+            'X-Foo$hashCode':
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: string
+
+  /error-multi-response-header:
+    get:
+      operationId: rejectMultiResponseHeader
+      tags: [adversarial]
+      responses:
+        '204':
+          description: Empty
+          headers:
+            'X-Foo$hashCode':
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: string
+        '400':
+          description: Bad request
+
 components:
   securitySchemes:
     bearerAuth:

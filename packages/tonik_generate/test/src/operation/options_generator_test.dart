@@ -678,7 +678,7 @@ void main() {
       );
     });
 
-    test('handles nested list of class models', () {
+    test('preserves dollar signs in unsupported required header messages', () {
       final innerModel = ClassModel(
         isDeprecated: false,
         context: context,
@@ -698,7 +698,7 @@ void main() {
 
       final headerParam = RequestHeaderObject(
         name: 'X-Matrix',
-        rawName: 'X-Matrix',
+        rawName: r'X-Foo$hashCode',
         description: 'Matrix of items',
         isRequired: true,
         isDeprecated: false,
@@ -732,7 +732,7 @@ void main() {
           Options _options({required List<List<AnonymousModel>> xMatrix}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
-            throw EncodingException('Simple encoding does not support list with complex elements for header X-Matrix');
+            throw EncodingException(r'Simple encoding does not support list with complex elements for header X-Foo$hashCode');
             return Options(
               method: 'GET',
               headers: _$headers,
@@ -1829,10 +1829,10 @@ void main() {
       );
     });
 
-    test('generates throw for NeverModel cookie', () {
+    test('preserves interpolation syntax in NeverModel cookie errors', () {
       final cookieParam = CookieParameterObject(
         name: 'data',
-        rawName: 'data',
+        rawName: r'data${hashCode}',
         description: 'Never data',
         isRequired: true,
         isDeprecated: false,
@@ -1865,23 +1865,35 @@ void main() {
         (normalizedName: 'data', parameter: cookieParam),
       ]);
 
-      final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace('''
-            throw EncodingException(
-              'Cannot encode NeverModel - this type does not permit any value for cookie data',
+      const expectedMethod = r'''
+        Options _options({required Never data}) {
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = r'*/*';
+          final _$cookieParts = <String>[];
+          throw EncodingException(
+              r'Cannot encode NeverModel - this type does not permit any value for cookie data${hashCode}',
             );
-          '''),
-        ),
+          if (_$cookieParts.isNotEmpty) {
+            _$headers[r'Cookie'] = _$cookieParts.join('; ');
+          }
+          return Options(
+            method: 'GET',
+            headers: _$headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
-    test('generates throw for cookie with list of complex content', () {
+    test('preserves quotes and backslashes in complex cookie errors', () {
       final cookieParam = CookieParameterObject(
         name: 'data',
-        rawName: 'data',
+        rawName: r'''it's "data"$hashCode\value''',
         description: 'List of objects',
         isRequired: true,
         isDeprecated: false,
@@ -1924,16 +1936,28 @@ void main() {
         (normalizedName: 'data', parameter: cookieParam),
       ]);
 
-      final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace('''
-            throw EncodingException(
-              'Unsupported model type for form-encoded cookie data',
+      const expectedMethod = r'''
+        Options _options({required List<Item> data}) {
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = r'*/*';
+          final _$cookieParts = <String>[];
+          throw EncodingException(
+              r"""Unsupported model type for form-encoded cookie it's "data"$hashCode\value""",
             );
-          '''),
-        ),
+          if (_$cookieParts.isNotEmpty) {
+            _$headers[r'Cookie'] = _$cookieParts.join('; ');
+          }
+          return Options(
+            method: 'GET',
+            headers: _$headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2278,7 +2302,7 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             throw EncodingException(
-              'Binary data cannot be form-encoded for cookie token',
+              r'Binary data cannot be form-encoded for cookie token',
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2433,7 +2457,7 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             throw EncodingException(
-              'Binary data cannot be form-encoded for cookie files',
+              r'Binary data cannot be form-encoded for cookie files',
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2577,7 +2601,7 @@ void main() {
             final _$cookieParts = <String>[];
             if (token != null) {
               throw EncodingException(
-                'Binary data cannot be form-encoded for cookie token',
+                r'Binary data cannot be form-encoded for cookie token',
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -2736,7 +2760,7 @@ void main() {
             final _$cookieParts = <String>[];
             if (files != null) {
               throw EncodingException(
-                'Binary data cannot be form-encoded for cookie files',
+                r'Binary data cannot be form-encoded for cookie files',
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -2819,7 +2843,7 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             throw EncodingException(
-              'Binary data cannot be form-encoded for cookie binaryData',
+              r'Binary data cannot be form-encoded for cookie binaryData',
             );
             _$cookieParts.addAll(
   tracker
@@ -3930,7 +3954,7 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               throw EncodingException(
-                'Binary data cannot be form-encoded for cookie blob',
+                r'Binary data cannot be form-encoded for cookie blob',
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -4095,7 +4119,7 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               throw EncodingException(
-                'Binary data cannot be form-encoded for cookie blobs',
+                r'Binary data cannot be form-encoded for cookie blobs',
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -4253,7 +4277,7 @@ void main() {
               final _$cookieParts = <String>[];
               if (blob != null) {
                 throw EncodingException(
-                  'Binary data cannot be form-encoded for cookie blob',
+                  r'Binary data cannot be form-encoded for cookie blob',
                 );
               }
               if (_$cookieParts.isNotEmpty) {
@@ -4423,7 +4447,7 @@ void main() {
               final _$cookieParts = <String>[];
               if (blobs != null) {
                 throw EncodingException(
-                  'Binary data cannot be form-encoded for cookie blobs',
+                  r'Binary data cannot be form-encoded for cookie blobs',
                 );
               }
               if (_$cookieParts.isNotEmpty) {
