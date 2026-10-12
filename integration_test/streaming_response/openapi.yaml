@@ -5,6 +5,49 @@ info:
 servers:
   - url: http://localhost:8080
 paths:
+  /custom-ndjson:
+    get:
+      operationId: getCustomNdjson
+      tags: [streaming]
+      responses:
+        '200':
+          description: Configured NDJSON items
+          content:
+            Application/Vnd.Example.Ndjson; charset=utf-8:
+              $ref: '#/components/mediaTypes/ItemAlias'
+  /custom-jsonl:
+    get:
+      operationId: getCustomJsonLines
+      tags: [streaming]
+      responses:
+        '200':
+          description: Configured JSON Lines items
+          content:
+            application/vnd.example.lines; profile=records:
+              itemSchema:
+                $ref: '#/components/schemas/StreamItem'
+  /custom-json-seq:
+    get:
+      operationId: getCustomJsonSequence
+      tags: [streaming]
+      responses:
+        '200':
+          description: Configured JSON text sequence items
+          content:
+            application/geo+json-seq:
+              itemSchema:
+                $ref: '#/components/schemas/StreamItem'
+  /custom-sse:
+    get:
+      operationId: getCustomSse
+      tags: [streaming]
+      responses:
+        '200':
+          description: Configured SSE envelopes
+          content:
+            application/vnd.example.events:
+              itemSchema:
+                $ref: '#/components/schemas/SseData'
   /items:
     get:
       operationId: getItems

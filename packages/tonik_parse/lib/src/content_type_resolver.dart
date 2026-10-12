@@ -1,13 +1,22 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 
-/// Resolves media types to [core.ContentType] values.
-///
-/// This resolver handles standard OpenAPI 3.x media types and allows
-/// for custom overrides via configuration.
 core.ContentType resolveContentType(
   String mediaType, {
-  required Map<String, core.ContentType> contentTypes,
+  required Map<String, core.ContentTypeMapping> contentTypes,
+  required Logger log,
+}) => switch (resolveContentTypeMapping(
+  mediaType,
+  contentTypes: contentTypes,
+  log: log,
+)) {
+  final core.ContentType contentType => contentType,
+  core.StreamingContentType() => core.ContentType.bytes,
+};
+
+core.ContentTypeMapping resolveContentTypeMapping(
+  String mediaType, {
+  required Map<String, core.ContentTypeMapping> contentTypes,
   required Logger log,
 }) {
   final lowerMediaType = mediaType.toLowerCase().split(';').first.trim();
@@ -21,6 +30,14 @@ core.ContentType resolveContentType(
     return contentTypes[lowerMediaType]!;
   }
   switch (lowerMediaType) {
+    case 'application/x-ndjson':
+      return core.StreamingContentType.ndjson;
+    case 'application/jsonl':
+      return core.StreamingContentType.jsonLines;
+    case 'application/json-seq':
+      return core.StreamingContentType.jsonSequence;
+    case 'text/event-stream':
+      return core.StreamingContentType.sse;
     case 'application/json':
       return core.ContentType.json;
     case 'text/plain':

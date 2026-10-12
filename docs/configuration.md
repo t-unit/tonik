@@ -272,7 +272,7 @@ This controls the file and class names for the generated API clients.
 
 ## Content Type Mapping
 
-Map custom content types to built-in serialization:
+Map custom content types to built-in serialization or response streaming formats:
 
 ```yaml
 contentTypes:
@@ -282,9 +282,16 @@ contentTypes:
   "text/csv": text
   "application/pdf": bytes
   "multipart/mixed": multipart
+  "application/geo+json-seq": json-seq
+  "application/vnd.example.events": sse
 ```
 
-Supported targets: `json`, `form`, `text`, `bytes`, `multipart`.
+Supported targets: `json`, `form`, `text`, `bytes`, `multipart`, `ndjson`, `jsonl`,
+`json-seq`, `sse`.
+
+Mappings override built-in defaults. Streaming targets require a usable response
+`itemSchema`; otherwise bodies use complete bytes. See
+[Streaming Responses](streaming_responses.md) for details.
 
 ## Schema Content Media Type Mapping
 

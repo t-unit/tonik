@@ -4,12 +4,27 @@ Tonik generates a single-subscription `Stream<TonikResult<T, R>>` for these resp
 media types with an explicit, usable `itemSchema`, regardless of OpenAPI version.
 `T` is the item model; `R` is the backend-native response type:
 
-| Media type | Item decoding |
+| Default media type | Item decoding |
 |---|---|
 | `application/x-ndjson` | One JSON value per record |
 | `application/jsonl` | One JSON value per record |
 | `application/json-seq` | RS-prefixed JSON values, including multiline values |
 | `text/event-stream` | SSE event map converted to the item model |
+
+Use `contentTypes` in `tonik.yaml` to select these formats for custom media types:
+
+```yaml
+contentTypes:
+  application/vnd.example.ndjson: ndjson
+  application/vnd.example.lines: jsonl
+  application/geo+json-seq: json-seq
+  application/vnd.example.events: sse
+```
+
+Each custom response media entry still needs its own usable `itemSchema`.
+These mappings select the decoder while preserving the actual response media
+name. See [Content Type Mapping](configuration.md#content-type-mapping) for
+all supported targets.
 
 ## Describe the Items
 
@@ -30,17 +45,13 @@ including immutable collections. The item type can be nullable; `itemSchema: tru
 uses `Object?`, and `false` uses `Never`, allowing an empty stream but rejecting
 every item. The stream and result themselves are nonnullable.
 
-`itemSchema` takes precedence over `schema` and `contentTypes` mappings. Items
-are converted independently, without complete-schema or whole-sequence validation.
-Missing, null, or non-parsable `itemSchema` keeps ordinary complete-body defaults
-or configured handling. A media name or array `schema` alone enables neither
-streaming nor buffered sequence-to-array decoding.
+Streaming uses `itemSchema` instead of `schema` and decodes items independently.
+Without a usable `itemSchema`, streaming formats fall back to complete bytes.
+Explicit `contentTypes` mappings can instead select complete-body handling.
 
-Media references support `#/components/mediaTypes/Name` and chains there, not
-other target locations. Media `$ref` siblings are ignored; applicable siblings
-on an item-schema `$ref` use normal schema handling. Missing internal targets
-fail when resolved. Consumed external media and schema references, including item
-schemas, throw `UnimplementedError`. External example references are omitted.
+Media `$ref`s resolve within `#/components/mediaTypes` and ignore siblings.
+Missing internal targets and consumed external references throw;
+external examples are omitted.
 
 ## Consume and Cancel
 
@@ -155,6 +166,7 @@ The typed stream and native body share one consumption. Use `.response` for
 metadata, without also reading its raw stream. There is no replayable copy or
 second buffered API. See [HTTP Backends](http_backends.md#native-boundary).
 
-Streamed requests, parameters, headers, multipart streams, and structured
-streaming suffixes remain unsupported.
+Streamed requests, parameters, headers, and multipart streams remain unsupported.
+Streaming mappings on request bodies and multipart parts use complete bytes.
+Custom media names and suffixes require explicit `contentTypes` mappings.
 Native integration checks are described in [Contributing](../CONTRIBUTING.md#common-commands).

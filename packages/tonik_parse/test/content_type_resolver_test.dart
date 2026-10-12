@@ -6,6 +6,96 @@ import 'package:tonik_parse/src/content_type_resolver.dart';
 void main() {
   final log = Logger('test');
 
+  test('recognizes standard streaming mappings without unknown warnings', () {
+    final records = <LogRecord>[];
+    final subscription = log.onRecord.listen(records.add);
+    addTearDown(subscription.cancel);
+
+    expect(
+      resolveContentTypeMapping(
+        'Application/X-Ndjson; charset=utf-8',
+        contentTypes: {},
+        log: log,
+      ),
+      core.StreamingContentType.ndjson,
+    );
+    expect(
+      resolveContentTypeMapping(
+        'application/jsonl',
+        contentTypes: {},
+        log: log,
+      ),
+      core.StreamingContentType.jsonLines,
+    );
+    expect(
+      resolveContentTypeMapping(
+        'application/json-seq',
+        contentTypes: {},
+        log: log,
+      ),
+      core.StreamingContentType.jsonSequence,
+    );
+    expect(
+      resolveContentTypeMapping(
+        'text/event-stream',
+        contentTypes: {},
+        log: log,
+      ),
+      core.StreamingContentType.sse,
+    );
+    expect(records, isEmpty);
+  });
+
+  test('raw streaming override wins over the normalized override', () {
+    final mapping = resolveContentTypeMapping(
+      'Application/Example; profile=records',
+      contentTypes: {
+        'Application/Example; profile=records':
+            core.StreamingContentType.jsonLines,
+        'application/example': core.StreamingContentType.ndjson,
+      },
+      log: log,
+    );
+
+    expect(mapping, core.StreamingContentType.jsonLines);
+  });
+
+  test('normalized override selects a custom streaming format', () {
+    final mapping = resolveContentTypeMapping(
+      ' Application/Geo+Json-Seq; charset=utf-8',
+      contentTypes: {
+        'application/geo+json-seq': core.StreamingContentType.jsonSequence,
+      },
+      log: log,
+    );
+
+    expect(mapping, core.StreamingContentType.jsonSequence);
+  });
+
+  test('streaming mappings use byte serialization outside item streams', () {
+    expect(
+      resolveContentType(
+        'application/vnd.example.events',
+        contentTypes: {
+          'application/vnd.example.events': core.StreamingContentType.sse,
+        },
+        log: log,
+      ),
+      core.ContentType.bytes,
+    );
+  });
+
+  test('unconfigured streaming suffix keeps the ordinary byte fallback', () {
+    expect(
+      resolveContentTypeMapping(
+        'application/geo+json-seq',
+        contentTypes: {},
+        log: log,
+      ),
+      core.ContentType.bytes,
+    );
+  });
+
   group('resolveContentType', () {
     test('resolves application/json with charset parameter', () {
       final result = resolveContentType(

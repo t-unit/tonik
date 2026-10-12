@@ -166,7 +166,7 @@ extension ConfigLoader on CliConfig {
     );
   }
 
-  static Map<String, ContentType> _parseContentTypes(dynamic value) {
+  static Map<String, ContentTypeMapping> _parseContentTypes(dynamic value) {
     if (value == null) {
       return const {};
     }
@@ -185,7 +185,7 @@ extension ConfigLoader on CliConfig {
     );
   }
 
-  static ContentType _parseContentType(dynamic value, String key) {
+  static ContentTypeMapping _parseContentType(dynamic value, String key) {
     if (value == null) {
       throw ConfigLoaderException(
         'Invalid config: contentTypes["$key"] cannot be null',
@@ -199,9 +199,14 @@ extension ConfigLoader on CliConfig {
       'bytes' => ContentType.bytes,
       'form' => ContentType.form,
       'multipart' => ContentType.multipart,
+      'ndjson' => StreamingContentType.ndjson,
+      'jsonl' => StreamingContentType.jsonLines,
+      'json-seq' => StreamingContentType.jsonSequence,
+      'sse' => StreamingContentType.sse,
       _ => throw ConfigLoaderException(
         'Invalid content type for "$key": $stringValue. '
-        'Must be one of: json, text, bytes, form, multipart',
+        'Must be one of: json, text, bytes, form, multipart, '
+        'ndjson, jsonl, json-seq, sse',
       ),
     };
   }

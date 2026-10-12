@@ -15,7 +15,7 @@ import 'package:tonik_parse/src/response_header_importer.dart';
 class RequestBodyImporter({
   required final OpenApiObject openApiObject,
   required final ModelImporter modelImporter,
-  required final Map<String, core.ContentType> contentTypes,
+  required final Map<String, core.ContentTypeMapping> contentTypes,
   required final ResponseHeaderImporter responseHeaderImporter,
   required final ExampleImporter exampleImporter,
   required final MediaTypeResolver mediaTypeResolver,

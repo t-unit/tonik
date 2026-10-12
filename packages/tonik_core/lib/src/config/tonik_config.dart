@@ -12,7 +12,7 @@ import 'package:tonik_core/src/model/content_type.dart';
 @immutable
 class const TonikConfig({
   final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
-  final Map<String, ContentType> contentTypes = const {},
+  final Map<String, ContentTypeMapping> contentTypes = const {},
   final Map<String, SchemaContentType> contentMediaTypes = const {},
   final FilterConfig filter = const FilterConfig(),
   final DeprecatedConfig deprecated = const DeprecatedConfig(),
@@ -40,7 +40,7 @@ class const TonikConfig({
 
   @override
   bool operator ==(Object other) {
-    const contentTypeEquality = MapEquality<String, ContentType>();
+    const contentTypeEquality = MapEquality<String, ContentTypeMapping>();
     const schemaContentTypeEquality = MapEquality<String, SchemaContentType>();
     return identical(this, other) ||
         other is TonikConfig &&
@@ -61,7 +61,7 @@ class const TonikConfig({
 
   @override
   int get hashCode {
-    const contentTypeEquality = MapEquality<String, ContentType>();
+    const contentTypeEquality = MapEquality<String, ContentTypeMapping>();
     const schemaContentTypeEquality = MapEquality<String, SchemaContentType>();
     return Object.hash(
       nameOverrides,

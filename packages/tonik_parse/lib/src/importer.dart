@@ -16,10 +16,7 @@ import 'package:tonik_parse/src/security_scheme_importer.dart';
 import 'package:tonik_parse/src/server_importer.dart';
 
 class Importer({
-  /// Maps media type strings to ContentType for parsing request/response bodies.
-  /// Default includes 'application/json' only. Add custom JSON-like media types
-  /// (e.g., 'application/hal+json': ContentType.json) via configuration.
-  final Map<String, core.ContentType> contentTypes = const {},
+  final Map<String, core.ContentTypeMapping> contentTypes = const {},
 
   /// Maps contentMediaType values to SchemaContentType for content-encoded
   /// string schemas. When a schema has contentEncoding set, this config
