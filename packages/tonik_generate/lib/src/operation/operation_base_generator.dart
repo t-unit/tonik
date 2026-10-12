@@ -16,6 +16,7 @@ abstract interface class const OperationBaseGenerator() {
     required String package,
     required Reference valueType,
     String? filename,
+    bool streaming = false,
   });
 
   Expression executionInvocation({
@@ -29,5 +30,6 @@ abstract interface class const OperationBaseGenerator() {
     required Expression? decode,
     required bool isVoid,
     required bool isDataAsync,
+    bool streaming = false,
   });
 }

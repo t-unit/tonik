@@ -1,4 +1,5 @@
 import 'package:tonik_parse/src/model/discriminator.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 
 class Schema({
   required final String? ref,
@@ -96,7 +97,7 @@ class Schema({
         rawDefault: null,
       ),
       final Map<String, dynamic> map => Schema(
-        ref: map[r'$ref'] as String?,
+        ref: map[r'$ref'] == null ? null : parseReference(map[r'$ref']),
         type: const _SchemaTypeConverter().fromJson(map['type']),
         format: map['format'] as String?,
         required: (map['required'] as List<dynamic>?)

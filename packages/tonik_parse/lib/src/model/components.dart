@@ -1,5 +1,6 @@
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
+import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -17,10 +18,14 @@ class Components({
   required final Map<String, ReferenceWrapper<SecurityScheme>>? securitySchemes,
   required final Map<String, ReferenceWrapper<PathItem>>? pathItems,
   required final Map<String, ReferenceWrapper<Example>>? examples,
+  final Map<String, ReferenceWrapper<MediaType>>? mediaTypes,
 }) {
   factory fromJson(Map<String, dynamic> json) => Components(
     schemas: const SchemaMapConverter().fromJson(
       json['schemas'] as Map<String, dynamic>?,
+    ),
+    mediaTypes: (json['mediaTypes'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
     ),
     responses: (json['responses'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),
@@ -49,7 +54,8 @@ class Components({
 
   @override
   String toString() =>
-      'Components{schemas: $schemas, responses: $responses, '
+      'Components{schemas: $schemas, mediaTypes: $mediaTypes, '
+      'responses: $responses, '
       'parameters: $parameters, requestBodies: $requestBodies, '
       'headers: $headers, securitySchemes: $securitySchemes, '
       'pathItems: $pathItems, examples: $examples}';

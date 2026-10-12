@@ -93,6 +93,7 @@ class ExampleImporter({required final OpenApiObject openApiObject}) {
             ? wrapper.description
             : null;
         final resolved = _resolveExample(wrapper, <String>[]);
+        if (resolved == null) continue;
         final converted = _convert(
           name: entry.key,
           example: resolved,
@@ -107,12 +108,13 @@ class ExampleImporter({required final OpenApiObject openApiObject}) {
     return result;
   }
 
-  Example _resolveExample(
+  Example? _resolveExample(
     ReferenceWrapper<Example> wrapper,
     List<String> chain,
   ) {
     switch (wrapper) {
       case Reference<Example>():
+        if (isExternalReference(wrapper.ref)) return null;
         if (!wrapper.ref.startsWith('#/components/examples/')) {
           throw UnimplementedError(
             'Only local example references are supported, '

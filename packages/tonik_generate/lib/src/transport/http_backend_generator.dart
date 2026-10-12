@@ -9,13 +9,16 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-final class const HttpBackendGenerator() implements TransportBackendGenerator {
+final class const HttpBackendGenerator({
+  @override
+  final OperationBaseGenerator operationBaseGenerator =
+      const HttpOperationBaseGenerator(),
+  @override
+  final OperationBaseGenerator streamingOperationBaseGenerator =
+      const HttpOperationBaseGenerator(streaming: true),
+}) implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.http;
-
-  @override
-  OperationBaseGenerator get operationBaseGenerator =>
-      const HttpOperationBaseGenerator();
 
   @override
   List<DependencyDescriptor> get dependencies => const [
@@ -29,6 +32,13 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
   TypeReference get nativeResponseType => TypeReference(
     (builder) => builder
       ..symbol = 'Response'
+      ..url = 'package:http/http.dart',
+  );
+
+  @override
+  TypeReference get streamingNativeResponseType => TypeReference(
+    (builder) => builder
+      ..symbol = 'BaseResponse'
       ..url = 'package:http/http.dart',
   );
 
@@ -77,8 +87,31 @@ final class const HttpBackendGenerator() implements TransportBackendGenerator {
       response.property('headers').index(literalString('content-type'));
 
   @override
-  Expression responseBodyBytes(Expression response) =>
-      response.property('bodyBytes');
+  Expression responseBodyBytes(Expression response, {bool streaming = false}) =>
+      (streaming
+              ? response
+                    .asA(refer('Response', 'package:http/http.dart'))
+                    .parenthesized
+              : response)
+          .property('bodyBytes');
+
+  @override
+  Expression responseBodyStream(Expression response) => response
+      .asA(refer('StreamedResponse', 'package:http/http.dart'))
+      .parenthesized
+      .property('stream');
+
+  @override
+  Expression streamSourceErrorType(
+    Expression error,
+    Expression cancellation,
+  ) => error
+      .isA(refer('RequestAbortedException', 'package:http/http.dart'))
+      .and(cancellation.property('isCancelled'))
+      .conditional(
+        refer('TonikErrorType.cancelled', 'package:tonik_util/tonik_util.dart'),
+        refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
+      );
 
   @override
   Expression responseHeaderValues(Expression response, String name) => response

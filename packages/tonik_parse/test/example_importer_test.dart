@@ -267,19 +267,19 @@ void main() {
       ]);
     });
 
-    test(r'throws UnimplementedError on non-local example $ref', () {
+    test(r'omits an external example $ref', () {
       final api = loadApi();
       final importer = ExampleImporter(openApiObject: api);
 
       expect(
-        () => importer.fromMediaType(
+        importer.fromMediaType(
           media({
             'examples': {
               'remote': {r'$ref': 'https://example.com/examples.json#/x'},
             },
           }),
         ),
-        throwsUnimplementedError,
+        isEmpty,
       );
     });
 

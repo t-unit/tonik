@@ -1,0 +1,138 @@
+{
+  "plugin": "rest",
+  "resources": [
+    {
+      "path": "/items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/jsonl",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/sse-data",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/sse-fields",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/sse-required-event",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/ordinary",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/mixed",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/aliased-stream",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/profiles",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/referenced-stream",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/referenced-mixed",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/schema-only",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/referenced-request",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "POST"
+    },
+    {
+      "path": "/nullable-items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/any-items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/never-items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/nested-items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/events",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
+      "path": "/alternative-items",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    }
+  ]
+}

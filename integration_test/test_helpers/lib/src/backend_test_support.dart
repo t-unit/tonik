@@ -55,7 +55,7 @@ TestResponse _testResponse(Object response) {
   if (response is dio.Response<Object?>) {
     return dio_backend.dioTestResponse(response);
   }
-  if (response is http.Response) {
+  if (response is http.BaseResponse) {
     return http_backend.httpTestResponse(response);
   }
   throw UnsupportedError(

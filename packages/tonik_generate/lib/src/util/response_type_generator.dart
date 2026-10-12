@@ -20,7 +20,10 @@ TypeReference resultTypeForOperation(
   final hasHeaders = response?.hasHeaders ?? false;
   final bodyCount = response?.bodyCount ?? 0;
   final hasMultipleResponses = responses.length > 1;
-  final nativeResponseType = backendGenerator.nativeResponseType;
+  final nativeResponseType = nativeResponseTypeForOperation(
+    operation,
+    backendGenerator,
+  );
   return switch ((hasHeaders, bodyCount, hasMultipleResponses)) {
     (_, _, true) => TypeReference(
       (b) => b
@@ -51,10 +54,11 @@ TypeReference resultTypeForOperation(
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
         ..types.addAll([
-          typeReference(
-            response!.resolved.bodies.first.model,
+          responseBodyType(
+            response!.resolved.bodies.first,
             nameManager,
             package,
+            backendGenerator,
             useImmutableCollections: useImmutableCollections,
           ),
           nativeResponseType,
@@ -78,4 +82,51 @@ TypeReference resultTypeForOperation(
         ]),
     ),
   };
+}
+
+bool hasStreamingResponse(Operation operation) =>
+    operation.responses.values.any(
+      (response) => response.resolved.bodies.any(
+        (body) => body.delivery != ResponseDelivery.complete,
+      ),
+    );
+
+TypeReference nativeResponseTypeForOperation(
+  Operation operation,
+  TransportBackendGenerator backend,
+) => hasStreamingResponse(operation)
+    ? backend.streamingNativeResponseType
+    : backend.nativeResponseType;
+
+TypeReference responseBodyType(
+  ResponseBody body,
+  NameManager nameManager,
+  String package,
+  TransportBackendGenerator backendGenerator, {
+  bool useImmutableCollections = false,
+}) {
+  final itemType = typeReference(
+    body.model,
+    nameManager,
+    package,
+    useImmutableCollections: useImmutableCollections,
+  );
+  return body.delivery == ResponseDelivery.complete
+      ? itemType
+      : TypeReference(
+          (b) => b
+            ..symbol = 'Stream'
+            ..url = 'dart:async'
+            ..types.add(
+              TypeReference(
+                (b) => b
+                  ..symbol = 'TonikResult'
+                  ..url = 'package:tonik_util/tonik_util.dart'
+                  ..types.addAll([
+                    itemType,
+                    backendGenerator.streamingNativeResponseType,
+                  ]),
+              ),
+            ),
+        );
 }

@@ -18,6 +18,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_base_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
+import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
 import 'package:tonik_generate/src/request/request_body_file_generator.dart';
 import 'package:tonik_generate/src/request/request_body_generator.dart';
@@ -30,6 +31,7 @@ import 'package:tonik_generate/src/server/server_generator.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator_factory.dart';
 import 'package:tonik_generate/src/util/model_worker_pool.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 
 class const Generator() {
   /// Below this model count, isolate setup outweighs the parallel speedup.
@@ -127,11 +129,19 @@ class const Generator() {
       package: package,
     );
 
+    final parseGenerator = ParseGenerator(
+      nameManager: nameManager,
+      package: package,
+      backendGenerator: backendGenerator,
+      useImmutableCollections: useImmutableCollections,
+    );
+
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
       package: package,
       defaultsCache: defaultsCache,
       backendGenerator: backendGenerator,
+      parseGenerator: parseGenerator,
       operationBaseFilename: resolvedOperationBaseFilename,
       useImmutableCollections: useImmutableCollections,
     );
@@ -141,6 +151,8 @@ class const Generator() {
     );
     final operationBaseFileGenerator = OperationBaseFileGenerator(
       operationBaseGenerator: backendGenerator.operationBaseGenerator,
+      streamingOperationBaseGenerator:
+          backendGenerator.streamingOperationBaseGenerator,
       operationBaseFilename: resolvedOperationBaseFilename,
       nameManager: nameManager,
     );
@@ -157,6 +169,7 @@ class const Generator() {
     );
 
     final responseGenerator = ResponseGenerator(
+      backendGenerator: backendGenerator,
       nameManager: nameManager,
       package: package,
       useImmutableCollections: useImmutableCollections,
@@ -167,6 +180,7 @@ class const Generator() {
     );
 
     final responseWrapperGenerator = ResponseWrapperGenerator(
+      backendGenerator: backendGenerator,
       nameManager: nameManager,
       package: package,
       useImmutableCollections: useImmutableCollections,
@@ -253,6 +267,7 @@ class const Generator() {
     publicArtifacts.addAll(responseWrapperFiles);
 
     operationBaseFileGenerator.writeFile(
+      includeStreaming: apiDocument.operations.any(hasStreamingResponse),
       outputDirectory: outputDirectory,
       package: package,
     );

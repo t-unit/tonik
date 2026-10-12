@@ -397,6 +397,20 @@ paths:
                 nullable: true
                 items: false
 
+  /streamed-tag-groups:
+    get:
+      operationId: getStreamedTagGroups
+      tags: [items]
+      responses:
+        '200':
+          description: Immutable nested collection items
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagGroups'
+
 components:
   schemas:
     # Simple list property + map property + list of objects

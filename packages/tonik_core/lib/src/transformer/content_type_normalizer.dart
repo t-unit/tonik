@@ -143,6 +143,8 @@ class const ContentTypeNormalizer() {
   }
 
   ResponseBody _normalizeResponseBody(ResponseBody body, Context context) {
+    if (body.delivery != ResponseDelivery.complete) return body;
+
     final normalizedModel = _normalizeModel(
       body.model,
       body.contentType,

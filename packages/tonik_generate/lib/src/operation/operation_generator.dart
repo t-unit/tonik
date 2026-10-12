@@ -25,6 +25,7 @@ class OperationGenerator({
   required final String package,
   required final OperationDefaultsCache defaultsCache,
   required final TransportBackendGenerator backendGenerator,
+  required final ParseGenerator parseGenerator,
   required final String operationBaseFilename,
   final bool useImmutableCollections = false,
 }) {
@@ -36,12 +37,6 @@ class OperationGenerator({
   final PathGenerator _pathGenerator = PathGenerator(
     nameManager: nameManager,
     package: package,
-    useImmutableCollections: useImmutableCollections,
-  );
-  final ParseGenerator _parseGenerator = ParseGenerator(
-    nameManager: nameManager,
-    package: package,
-    backendGenerator: backendGenerator,
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -126,6 +121,7 @@ class OperationGenerator({
         ..extend = backendGenerator.operationBaseGenerator.baseType(
           package: package,
           valueType: resultValueType,
+          streaming: hasStreamingResponse(operation),
           filename: operationBaseFilename,
         )
         ..fields.addAll(defaults.fields);
@@ -193,7 +189,9 @@ class OperationGenerator({
             cookies: normalizedParams.cookieParameters,
           ),
           if (operation.responses.isNotEmpty)
-            _parseGenerator.generateParseResponseMethod(operation),
+            parseGenerator.generateParseResponseMethod(operation),
+          if (hasStreamingResponse(operation))
+            parseGenerator.generateResponseSelectionMethod(operation),
         ]);
     });
   }
@@ -288,6 +286,7 @@ class OperationGenerator({
           decode: hasResponses ? refer('_parseResponse') : null,
           isVoid: isVoidReturn,
           isDataAsync: isDataAsync,
+          streaming: hasStreamingResponse(operation),
         );
 
     return Method(

@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/encoding.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
@@ -17,6 +18,7 @@ class RequestBodyImporter({
   required final Map<String, core.ContentType> contentTypes,
   required final ResponseHeaderImporter responseHeaderImporter,
   required final ExampleImporter exampleImporter,
+  required final MediaTypeResolver mediaTypeResolver,
 }) {
   final log = Logger('RequestBodyImporter');
 
@@ -96,7 +98,7 @@ class RequestBodyImporter({
 
         for (final entry in requestBody.content.entries) {
           final rawContentType = entry.key;
-          final mediaType = entry.value;
+          final mediaType = mediaTypeResolver.resolve(entry.value);
           final contentType = resolveContentType(
             rawContentType,
             contentTypes: contentTypes,

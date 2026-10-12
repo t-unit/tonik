@@ -1,11 +1,12 @@
 # Roadmap
 
 - Proper OpenAPI 3.2 support
-  - [Sequential/streaming media types](https://spec.openapis.org/oas/v3.2.0.html#complete-vs-streaming-content) (`itemSchema` for JSON Lines, NDJSON, SSE, `json-seq`)
+  - Sequential media beyond [typed NDJSON, JSONL, and SSE responses](streaming_responses.md): non-streaming array decoding without `itemSchema` using normal `schema` handling, other formats such as `application/json-seq`, and streamed requests and multipart streams
+  - Parameter and header encoding/decoding via `content` for supported media types
   - `in: "querystring"` parameter location (entire query string as single parameter)
   - `query` HTTP method on Path Item Object (IETF draft `QUERY` method)
   - `additionalOperations` map for non-standard HTTP methods (e.g., `COPY`, `MOVE`)
-  - Reusable `mediaTypes` in Components Object
+  - Media Type Object reference targets outside `components.mediaTypes`
   - `prefixEncoding` / `itemEncoding` for positional multipart encoding
   - `defaultMapping` on Discriminator for unknown discriminator values
   - `deviceAuthorization` OAuth2 flow (RFC 8628)
@@ -30,7 +31,6 @@
 - `contains`, `minContains`, `maxContains`
 
 **Encoding & Content:**
-- Parameter encoding via content - only `schema` supported (see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content))
 - XML de- and encoding
 
 **References:**

@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart' as tonik_util;
 
 class const ParseGenerator({
@@ -26,7 +27,11 @@ class const ParseGenerator({
   static final log = Logger('ParseGenerator');
 
   /// Generates the _parseResponse method for the operation.
-  Method generateParseResponseMethod(Operation operation) {
+  Method generateParseResponseMethod(
+    Operation operation, {
+    bool selectionOnly = false,
+  }) {
+    final streaming = hasStreamingResponse(operation);
     final responses = operation.responses;
     final responseType = resultTypeForOperation(
       operation,
@@ -53,12 +58,22 @@ class const ParseGenerator({
 
       for (final contentType in contentTypes) {
         final casePattern = _casePattern(status, contentType);
-        final caseBody = _caseBody(
-          operation,
-          status,
-          response.resolved,
-          contentType,
-        );
+        final selectedBody = response.resolved.bodies
+            .where((body) => body.rawContentType == contentType)
+            .firstOrNull;
+        final caseBody = selectionOnly
+            ? literal(
+                selectedBody == null
+                    ? null
+                    : selectedBody.delivery != ResponseDelivery.complete,
+              ).returned.statement
+            : _caseBody(
+                operation,
+                status,
+                response.resolved,
+                contentType,
+                streaming: streaming,
+              );
         cases
           ..add(casePattern)
           ..add(caseBody);
@@ -124,19 +139,35 @@ class const ParseGenerator({
 
     return Method(
       (b) => b
-        ..name = '_parseResponse'
-        ..returns = responseType
+        ..name = selectionOnly ? '_isStreamingResponse' : '_parseResponse'
+        ..returns = selectionOnly ? refer('bool?', 'dart:core') : responseType
         ..requiredParameters.add(
           Parameter(
             (b) => b
               ..name = 'response'
-              ..type = backendGenerator.operationResponseType,
+              ..type = streaming
+                  ? nativeResponseTypeForOperation(operation, backendGenerator)
+                  : backendGenerator.operationResponseType,
           ),
         )
+        ..requiredParameters.addAll([
+          if (streaming && !selectionOnly)
+            Parameter(
+              (b) => b
+                ..name = 'cancellation'
+                ..type = refer(
+                  'TonikCancellation',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+            ),
+        ])
         ..lambda = false
         ..body = switchBody,
     );
   }
+
+  Method generateResponseSelectionMethod(Operation operation) =>
+      generateParseResponseMethod(operation, selectionOnly: true);
 
   Code _casePattern(ResponseStatus status, String? contentType) {
     // Normalize spec keys with the same helper the generated code uses at
@@ -209,8 +240,9 @@ class const ParseGenerator({
     Operation operation,
     ResponseStatus status,
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     // Multipart response decoding is not supported; generate a runtime error.
     if (_isMultipartResponseBody(response, contentType)) {
       return generateResponseDecodingExceptionExpression(
@@ -224,9 +256,14 @@ class const ParseGenerator({
         status,
         response,
         contentType,
+        streaming: streaming,
       );
     } else {
-      return _generateSingleResponseCase(response, contentType);
+      return _generateSingleResponseCase(
+        response,
+        contentType,
+        streaming: streaming,
+      );
     }
   }
 
@@ -238,13 +275,16 @@ class const ParseGenerator({
           )
         : response.bodies.firstOrNull;
 
-    return responseBody?.contentType == ContentType.multipart;
+    return responseBody != null &&
+        responseBody.delivery == ResponseDelivery.complete &&
+        responseBody.contentType == ContentType.multipart;
   }
 
   ({List<Code> statements, String? varName})? _createBodyDecode(
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     final hasBody = response.bodyCount > 0;
     if (!hasBody) return null;
 
@@ -257,13 +297,23 @@ class const ParseGenerator({
 
     if (responseBody == null) return null;
 
+    if (responseBody.delivery != ResponseDelivery.complete) {
+      return _createStreamBodyDecode(responseBody);
+    }
+
     final contentTypeEnum = responseBody.contentType;
 
     return switch (contentTypeEnum) {
-      ContentType.json => _createJsonBodyDecode(responseBody),
-      ContentType.text => _createTextBodyDecode(),
-      ContentType.bytes => _createBytesBodyDecode(),
-      ContentType.form => _createFormBodyDecode(responseBody),
+      ContentType.json => _createJsonBodyDecode(
+        responseBody,
+        streaming: streaming,
+      ),
+      ContentType.text => _createTextBodyDecode(streaming: streaming),
+      ContentType.bytes => _createBytesBodyDecode(streaming: streaming),
+      ContentType.form => _createFormBodyDecode(
+        responseBody,
+        streaming: streaming,
+      ),
       ContentType.multipart => (
         statements: [
           generateResponseDecodingExceptionExpression(
@@ -275,9 +325,84 @@ class const ParseGenerator({
     };
   }
 
-  ({List<Code> statements, String? varName}) _createJsonBodyDecode(
-    ResponseBody responseBody,
+  ({List<Code> statements, String varName}) _createStreamBodyDecode(
+    ResponseBody body,
   ) {
+    final built = buildFromJsonValueExpression(
+      r'_$json',
+      model: body.model,
+      nameManager: nameManager,
+      package: package,
+      helperContext: InlineHelperContext(nameManager: nameManager),
+      useImmutableCollections: useImmutableCollections,
+    );
+    final bytes = backendGenerator.responseBodyStream(refer('response'));
+    final decoder = Method(
+      (b) => b
+        ..requiredParameters.add(Parameter((p) => p..name = r'_$json'))
+        ..body = Block.of([
+          ...spliceInlineHelpers(built.inlineFunctions),
+          built.unsafeRawBody.returned.statement,
+        ]),
+    ).closure;
+    return (
+      statements: [
+        declareFinal(r'_$body')
+            .assign(
+              refer(
+                'decodeResponseStream',
+                'package:tonik_util/tonik_util.dart',
+              ).call(
+                [
+                  bytes,
+                  refer(switch (body.delivery) {
+                    ResponseDelivery.ndjson => 'decodeNdjson',
+                    ResponseDelivery.jsonLines => 'decodeJsonLines',
+                    ResponseDelivery.sse => 'decodeSse',
+                    ResponseDelivery.complete => throw StateError(
+                      'Complete responses cannot use stream decoding.',
+                    ),
+                  }, 'package:tonik_util/tonik_util.dart'),
+                  decoder,
+                ],
+                {
+                  'cancellation': refer('cancellation'),
+                  'response': refer('response'),
+                  'sourceErrorType': Method(
+                    (b) => b
+                      ..requiredParameters.add(
+                        Parameter((p) => p..name = 'error'),
+                      )
+                      ..lambda = true
+                      ..body = backendGenerator
+                          .streamSourceErrorType(
+                            refer('error'),
+                            refer('cancellation'),
+                          )
+                          .code,
+                  ).closure,
+                },
+                [
+                  typeReference(
+                    body.model,
+                    nameManager,
+                    package,
+                    useImmutableCollections: useImmutableCollections,
+                  ),
+                  backendGenerator.streamingNativeResponseType,
+                ],
+              ),
+            )
+            .statement,
+      ],
+      varName: r'_$body',
+    );
+  }
+
+  ({List<Code> statements, String? varName}) _createJsonBodyDecode(
+    ResponseBody responseBody, {
+    required bool streaming,
+  }) {
     if (_isJsonBodyPureThrow(responseBody.model)) {
       return (
         statements: [
@@ -300,7 +425,12 @@ class const ParseGenerator({
               'decodeResponseJson',
               'package:tonik_util/tonik_util.dart',
             ).call(
-              [backendGenerator.responseBodyBytes(refer('response'))],
+              [
+                backendGenerator.responseBodyBytes(
+                  refer('response'),
+                  streaming: streaming,
+                ),
+              ],
               {},
               [refer('Object?', 'dart:core')],
             ),
@@ -324,7 +454,9 @@ class const ParseGenerator({
     return (statements: statements, varName: bodyVar);
   }
 
-  ({List<Code> statements, String varName}) _createTextBodyDecode() {
+  ({List<Code> statements, String varName}) _createTextBodyDecode({
+    required bool streaming,
+  }) {
     const bodyVar = r'_$body';
     return (
       statements: [
@@ -334,7 +466,12 @@ class const ParseGenerator({
                 'decodeResponseText',
                 'package:tonik_util/tonik_util.dart',
               ).call(
-                [backendGenerator.responseBodyBytes(refer('response'))],
+                [
+                  backendGenerator.responseBodyBytes(
+                    refer('response'),
+                    streaming: streaming,
+                  ),
+                ],
                 {
                   'contentType': backendGenerator.responseContentType(
                     refer('response'),
@@ -348,7 +485,9 @@ class const ParseGenerator({
     );
   }
 
-  ({List<Code> statements, String varName}) _createBytesBodyDecode() {
+  ({List<Code> statements, String varName}) _createBytesBodyDecode({
+    required bool streaming,
+  }) {
     const bodyVar = r'_$body';
     return (
       statements: [
@@ -361,7 +500,12 @@ class const ParseGenerator({
                 refer(
                   'decodeResponseBytes',
                   'package:tonik_util/tonik_util.dart',
-                ).call([backendGenerator.responseBodyBytes(refer('response'))]),
+                ).call([
+                  backendGenerator.responseBodyBytes(
+                    refer('response'),
+                    streaming: streaming,
+                  ),
+                ]),
               ]),
             )
             .statement,
@@ -371,8 +515,9 @@ class const ParseGenerator({
   }
 
   ({List<Code> statements, String? varName}) _createFormBodyDecode(
-    ResponseBody responseBody,
-  ) {
+    ResponseBody responseBody, {
+    required bool streaming,
+  }) {
     final pureThrowMessage = formDecodingPureThrowMessage(responseBody.model);
     if (pureThrowMessage != null) {
       return (
@@ -393,7 +538,12 @@ class const ParseGenerator({
             refer(
               'decodeResponseText',
               'package:tonik_util/tonik_util.dart',
-            ).call([backendGenerator.responseBodyBytes(refer('response'))]),
+            ).call([
+              backendGenerator.responseBodyBytes(
+                refer('response'),
+                streaming: streaming,
+              ),
+            ]),
           )
           .statement,
     );
@@ -442,8 +592,9 @@ class const ParseGenerator({
     Operation operation,
     ResponseStatus status,
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     final wrapperName = nameManager.responseWrapperNames(operation).$2[status]!;
     final wrapperBaseName = nameManager.responseWrapperNames(operation).$1;
     final wrapperUrl = sourceFileUrl(
@@ -451,7 +602,11 @@ class const ParseGenerator({
       'response_wrapper',
       wrapperBaseName,
     );
-    final bodyDecode = _createBodyDecode(response, contentType);
+    final bodyDecode = _createBodyDecode(
+      response,
+      contentType,
+      streaming: streaming,
+    );
 
     if (response.hasHeaders || response.bodyCount > 1) {
       return _generateMultiResponseWithHeaders(
@@ -474,9 +629,14 @@ class const ParseGenerator({
 
   Code _generateSingleResponseCase(
     ResponseObject response,
-    String? contentType,
-  ) {
-    final bodyDecode = _createBodyDecode(response, contentType);
+    String? contentType, {
+    required bool streaming,
+  }) {
+    final bodyDecode = _createBodyDecode(
+      response,
+      contentType,
+      streaming: streaming,
+    );
 
     if (response.hasHeaders || response.bodyCount > 1) {
       return _generateSingleResponseWithHeaders(

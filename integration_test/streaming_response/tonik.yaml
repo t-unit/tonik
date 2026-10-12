@@ -1,0 +1,6 @@
+spec: streaming_response/openapi.yaml
+packageName: streaming_response_api
+outputDir: streaming_response
+
+contentTypes:
+  'application/x-ndjson; profile=detail': multipart

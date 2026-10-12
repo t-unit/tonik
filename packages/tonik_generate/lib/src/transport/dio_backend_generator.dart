@@ -9,13 +9,16 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-final class const DioBackendGenerator() implements TransportBackendGenerator {
+final class const DioBackendGenerator({
+  @override
+  final OperationBaseGenerator operationBaseGenerator =
+      const DioOperationBaseGenerator(),
+  @override
+  final OperationBaseGenerator streamingOperationBaseGenerator =
+      const DioOperationBaseGenerator(streaming: true),
+}) implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.dio;
-
-  @override
-  OperationBaseGenerator get operationBaseGenerator =>
-      const DioOperationBaseGenerator();
 
   @override
   List<DependencyDescriptor> get dependencies => const [
@@ -39,6 +42,9 @@ final class const DioBackendGenerator() implements TransportBackendGenerator {
         ),
       ),
   );
+
+  @override
+  TypeReference get streamingNativeResponseType => nativeResponseType;
 
   @override
   TypeReference get operationResponseType => TypeReference(
@@ -89,8 +95,43 @@ final class const DioBackendGenerator() implements TransportBackendGenerator {
       .call([literalString('content-type')]);
 
   @override
-  Expression responseBodyBytes(Expression response) =>
-      response.property('data');
+  Expression responseBodyBytes(Expression response, {bool streaming = false}) =>
+      streaming
+      ? response
+            .property('data')
+            .asA(
+              TypeReference(
+                (b) => b
+                  ..symbol = 'List'
+                  ..url = 'dart:core'
+                  ..types.add(refer('int', 'dart:core'))
+                  ..isNullable = true,
+              ),
+            )
+      : response.property('data');
+
+  @override
+  Expression responseBodyStream(Expression response) => response
+      .property('data')
+      .asA(refer('ResponseBody', 'package:dio/dio.dart'))
+      .parenthesized
+      .property('stream');
+
+  @override
+  Expression streamSourceErrorType(
+    Expression error,
+    Expression cancellation,
+  ) => error
+      .isA(refer('DioException', 'package:dio/dio.dart'))
+      .and(
+        error
+            .property('type')
+            .equalTo(refer('DioExceptionType.cancel', 'package:dio/dio.dart')),
+      )
+      .conditional(
+        refer('TonikErrorType.cancelled', 'package:tonik_util/tonik_util.dart'),
+        refer('TonikErrorType.network', 'package:tonik_util/tonik_util.dart'),
+      );
 
   @override
   Expression responseHeaderValues(Expression response, String name) =>

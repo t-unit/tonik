@@ -11,10 +11,15 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 
 class const OperationBaseFileGenerator({
   required final OperationBaseGenerator operationBaseGenerator,
+  required final OperationBaseGenerator streamingOperationBaseGenerator,
   required final String operationBaseFilename,
   required final NameManager nameManager,
 }) {
-  String writeFile({required String outputDirectory, required String package}) {
+  String writeFile({
+    required String outputDirectory,
+    required String package,
+    bool includeStreaming = false,
+  }) {
     final operationDirectory = Directory(
       path.join(outputDirectory, package, 'lib', 'src', 'operation'),
     );
@@ -36,7 +41,10 @@ class const OperationBaseFileGenerator({
     }
 
     final library = Library(
-      (builder) => builder.body.addAll(operationBaseGenerator.generate()),
+      (builder) => builder.body.addAll([
+        ...operationBaseGenerator.generate(),
+        if (includeStreaming) ...streamingOperationBaseGenerator.generate(),
+      ]),
     );
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),

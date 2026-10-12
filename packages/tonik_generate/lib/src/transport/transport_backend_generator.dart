@@ -29,9 +29,13 @@ abstract interface class const TransportBackendGenerator() {
 
   OperationBaseGenerator get operationBaseGenerator;
 
+  OperationBaseGenerator get streamingOperationBaseGenerator;
+
   Reference get nativeClientType;
 
   TypeReference get nativeResponseType;
+
+  TypeReference get streamingNativeResponseType;
 
   /// Response type used while buffering and parsing a completed operation.
   TypeReference get operationResponseType;
@@ -46,7 +50,11 @@ abstract interface class const TransportBackendGenerator() {
 
   Expression responseContentType(Expression response);
 
-  Expression responseBodyBytes(Expression response);
+  Expression responseBodyBytes(Expression response, {bool streaming = false});
+
+  Expression responseBodyStream(Expression response);
+
+  Expression streamSourceErrorType(Expression error, Expression cancellation);
 
   Expression responseHeaderValues(Expression response, String name);
 
