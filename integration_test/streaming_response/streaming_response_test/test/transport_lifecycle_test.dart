@@ -11,6 +11,125 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test(
+    'configured NDJSON selects normalized custom media before EOF',
+    () async {
+      final probe = BackendProbe(
+        contentType: 'application/vnd.example.ndjson; charset=UTF-8',
+      );
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getCustomNdjson()
+          .timeout(const Duration(seconds: 5));
+      final first = requireSuccess(result).value.first;
+      probe.bytes.add(utf8.encode('{"value":21}\n'));
+
+      expect(
+        requireSuccess(await first.timeout(const Duration(seconds: 5))).value,
+        const StreamItem(value: 21),
+      );
+      expect(probe.bytes.isClosed, isFalse);
+    },
+  );
+
+  test(
+    'configured JSONL selects a parameter-specific custom media type',
+    () async {
+      final probe = BackendProbe(
+        contentType:
+            'Application/Vnd.Example.Lines; charset=utf-8; profile="records"',
+      );
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getCustomJsonLines()
+          .timeout(const Duration(seconds: 5));
+      final first = requireSuccess(result).value.first;
+      probe.bytes.add(utf8.encode('{"value":22}\r \n'));
+
+      expect(
+        requireSuccess(await first.timeout(const Duration(seconds: 5))).value,
+        const StreamItem(value: 22),
+      );
+      expect(probe.bytes.isClosed, isFalse);
+    },
+  );
+
+  test(
+    'configured JSON sequence selects custom suffix media before EOF',
+    () async {
+      final probe = BackendProbe(contentType: 'application/geo+json-seq');
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getCustomJsonSequence()
+          .timeout(const Duration(seconds: 5));
+      final first = requireSuccess(result).value.first;
+      probe.bytes.add(utf8.encode('\u001e{\n"value":23\n}\n'));
+
+      expect(
+        requireSuccess(await first.timeout(const Duration(seconds: 5))).value,
+        const StreamItem(value: 23),
+      );
+      expect(probe.bytes.isClosed, isFalse);
+    },
+  );
+
+  test(
+    'configured SSE selects custom media and decodes event envelopes',
+    () async {
+      final probe = BackendProbe(contentType: 'application/vnd.example.events');
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getCustomSse()
+          .timeout(const Duration(seconds: 5));
+      final first = requireSuccess(result).value.first;
+      probe.bytes.add(utf8.encode('data: custom\ndata: event\n\n'));
+
+      expect(
+        requireSuccess(await first.timeout(const Duration(seconds: 5))).value,
+        const SseData(data: 'custom\nevent'),
+      );
+      expect(probe.bytes.isClosed, isFalse);
+    },
+  );
+
+  test('custom SSE response does not accept the standard media name', () async {
+    final probe = BackendProbe(contentType: 'text/event-stream');
+    final server = CustomServer(
+      baseUrl: 'http://example.test',
+      serverConfig: probe.config(),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server)
+        .getCustomSse()
+        .timeout(const Duration(seconds: 5));
+
+    final error = requireError(result);
+    expect(error.type, TonikErrorType.decoding);
+    expect(error.error, isA<ResponseDecodingException>());
+    await probe.aborted.future.timeout(const Duration(seconds: 5));
+  });
+
+  test(
     'cancellation before listening yields one cancelled item result',
     () async {
       final probe = BackendProbe(failOnAbort: true);

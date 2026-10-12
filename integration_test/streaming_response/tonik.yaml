@@ -3,4 +3,8 @@ packageName: streaming_response_api
 outputDir: streaming_response
 
 contentTypes:
-  'application/x-ndjson; profile=detail': multipart
+  'application/x-ndjson; profile=detail': ndjson
+  application/vnd.example.ndjson: ndjson
+  'application/vnd.example.lines; profile=records': jsonl
+  application/geo+json-seq: json-seq
+  application/vnd.example.events: sse

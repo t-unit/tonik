@@ -20,8 +20,7 @@ class const CliConfig({
   final LogLevel? logLevel,
   final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
 
-  /// Custom content type mappings: `contentType -> serializationFormat`.
-  final Map<String, ContentType> contentTypes = const {},
+  final Map<String, ContentTypeMapping> contentTypes = const {},
 
   /// Schema-level contentMediaType mappings for encoded content.
   final Map<String, SchemaContentType> contentMediaTypes = const {},
@@ -50,7 +49,7 @@ class const CliConfig({
     workerCount: workerCount,
   );
 
-  static const _contentTypeEquality = MapEquality<String, ContentType>();
+  static const _contentTypeEquality = MapEquality<String, ContentTypeMapping>();
   static const _schemaContentTypeEquality =
       MapEquality<String, SchemaContentType>();
 

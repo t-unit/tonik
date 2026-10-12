@@ -15,7 +15,7 @@ class ResponseImporter({
   required final ResponseHeaderImporter headerImporter,
   required final ExampleImporter exampleImporter,
   required final MediaTypeResolver mediaTypeResolver,
-  final Map<String, core.ContentType> contentTypes = const {},
+  final Map<String, core.ContentTypeMapping> contentTypes = const {},
 }) {
   final log = Logger('ResponseImporter');
 
@@ -109,25 +109,27 @@ class ResponseImporter({
           for (final entry in mediaTypes.entries) {
             final rawContentType = entry.key;
             final mediaType = mediaTypeResolver.resolve(entry.value);
-            final contentType = resolveContentType(
+            final mapping = resolveContentTypeMapping(
               rawContentType,
               contentTypes: contentTypes,
               log: log,
             );
 
+            final contentType = switch (mapping) {
+              final core.ContentType type => type,
+              core.StreamingContentType() => core.ContentType.bytes,
+            };
             final delivery = mediaType.itemSchema == null
                 ? core.ResponseDelivery.complete
-                : switch (rawContentType
-                      .split(';')
-                      .first
-                      .trim()
-                      .toLowerCase()) {
-                    'application/x-ndjson' => core.ResponseDelivery.ndjson,
-                    'application/jsonl' => core.ResponseDelivery.jsonLines,
-                    'application/json-seq' =>
+                : switch (mapping) {
+                    core.ContentType() => core.ResponseDelivery.complete,
+                    core.StreamingContentType.ndjson =>
+                      core.ResponseDelivery.ndjson,
+                    core.StreamingContentType.jsonLines =>
+                      core.ResponseDelivery.jsonLines,
+                    core.StreamingContentType.jsonSequence =>
                       core.ResponseDelivery.jsonSequence,
-                    'text/event-stream' => core.ResponseDelivery.sse,
-                    _ => core.ResponseDelivery.complete,
+                    core.StreamingContentType.sse => core.ResponseDelivery.sse,
                   };
             final schema = delivery == core.ResponseDelivery.complete
                 ? mediaType.schema

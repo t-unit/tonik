@@ -3,6 +3,41 @@ import 'package:tonik_core/tonik_core.dart';
 
 void main() {
   group('TonikConfig', () {
+    test('accepts existing typed serialization maps', () {
+      const types = <String, ContentType>{
+        'application/example': ContentType.json,
+      };
+      const config = TonikConfig(contentTypes: types);
+
+      expect(config.contentTypes, {'application/example': ContentType.json});
+    });
+
+    test('streaming mappings participate in value semantics', () {
+      const config = TonikConfig(
+        contentTypes: {
+          'application/example': StreamingContentType.jsonSequence,
+        },
+      );
+      const sameConfig = TonikConfig(
+        contentTypes: {
+          'application/example': StreamingContentType.jsonSequence,
+        },
+      );
+      const otherFormat = TonikConfig(
+        contentTypes: {'application/example': ContentType.json},
+      );
+
+      expect(config, sameConfig);
+      expect(config.hashCode, sameConfig.hashCode);
+      expect(config == otherFormat, isFalse);
+      expect(
+        config.toString(),
+        contains(
+          'contentTypes: {application/example: StreamingContentType.jsonSequence}',
+        ),
+      );
+    });
+
     test('defaults to empty nested configs', () {
       const config = TonikConfig();
 
