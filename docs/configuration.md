@@ -282,8 +282,6 @@ contentTypes:
   "text/csv": text
   "application/pdf": bytes
   "multipart/mixed": multipart
-  "application/vnd.example.ndjson": ndjson
-  "application/vnd.example.lines": jsonl
   "application/geo+json-seq": json-seq
   "application/vnd.example.events": sse
 ```
@@ -291,41 +289,9 @@ contentTypes:
 Supported targets: `json`, `form`, `text`, `bytes`, `multipart`, `ndjson`, `jsonl`,
 `json-seq`, `sse`.
 
-Streaming targets require a usable response `itemSchema`. They use the selected
-framing format and decode each item using that schema. Without a usable
-`itemSchema`, they use ordinary complete byte handling. Request bodies and
-multipart parts also use complete bytes for streaming targets; these mappings
-do not enable streamed requests.
-
-Mappings take precedence over built-in media defaults. For example,
-`"application/jsonl": json-seq` selects JSON-seq framing, while
-`"application/jsonl": json` selects complete JSON handling and uses `schema`,
-ignoring `itemSchema`. Standard NDJSON, JSONL, JSON-seq, and SSE media types work
-without configuration. Custom names, including `+json-seq` suffixes, need explicit
-mappings.
-
-Matching first checks the exact media key from the specification, including its
-parameters and case, then its lowercase, trimmed name without parameters.
-Prefer lowercase, parameter-free configuration keys unless a mapping should
-apply only to one exact media entry. The generated client still matches the
-actual custom `Content-Type` on the response; mappings do not rename media types.
-
-For programmatic configuration, existing `ContentType` values and
-`StreamingContentType` values share the `ContentTypeMapping` type:
-
-```dart
-const config = TonikConfig(
-  contentTypes: {
-    'application/vnd.example.json': ContentType.json,
-    'application/vnd.example.ndjson': StreamingContentType.ndjson,
-    'application/vnd.example.lines': StreamingContentType.jsonLines,
-    'application/geo+json-seq': StreamingContentType.jsonSequence,
-    'application/vnd.example.events': StreamingContentType.sse,
-  },
-);
-```
-
-See [Streaming Responses](streaming_responses.md) for item schemas and framing.
+Mappings override built-in defaults. Streaming targets require a usable response
+`itemSchema`; otherwise bodies use complete bytes. See
+[Streaming Responses](streaming_responses.md) for details.
 
 ## Schema Content Media Type Mapping
 

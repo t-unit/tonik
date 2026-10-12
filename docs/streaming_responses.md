@@ -24,7 +24,7 @@ contentTypes:
 Each custom response media entry still needs its own usable `itemSchema`.
 These mappings select the decoder while preserving the actual response media
 name. See [Content Type Mapping](configuration.md#content-type-mapping) for
-matching rules and programmatic configuration.
+all supported targets.
 
 ## Describe the Items
 
