@@ -45,21 +45,13 @@ including immutable collections. The item type can be nullable; `itemSchema: tru
 uses `Object?`, and `false` uses `Never`, allowing an empty stream but rejecting
 every item. The stream and result themselves are nonnullable.
 
-For a selected streaming format, `itemSchema` takes precedence over `schema`.
-Items are converted independently, without complete-schema or whole-sequence
-validation. Explicit `contentTypes` mappings override built-in media defaults:
-mapping a standard streaming media type to `json`, `text`, `bytes`, `form`, or
-`multipart` selects complete-body handling and ignores `itemSchema`.
-Missing, null, or non-parsable `itemSchema` keeps complete byte handling for
-streaming formats, or the configured complete serialization handling. A media
-name or array `schema` alone enables neither streaming nor buffered
-sequence-to-array decoding.
+Streaming uses `itemSchema` instead of `schema` and decodes items independently.
+Without a usable `itemSchema`, streaming formats fall back to complete bytes.
+Explicit `contentTypes` mappings can instead select complete-body handling.
 
-Media references support `#/components/mediaTypes/Name` and chains there, not
-other target locations. Media `$ref` siblings are ignored; applicable siblings
-on an item-schema `$ref` use normal schema handling. Missing internal targets
-fail when resolved. Consumed external media and schema references, including item
-schemas, throw `UnimplementedError`. External example references are omitted.
+Media `$ref`s resolve within `#/components/mediaTypes` and ignore siblings.
+Missing internal targets and consumed external references throw;
+external examples are omitted.
 
 ## Consume and Cancel
 
