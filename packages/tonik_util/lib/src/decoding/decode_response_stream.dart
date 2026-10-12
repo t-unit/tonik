@@ -14,11 +14,9 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
   late final StreamController<TonikResult<T, R>> controller;
   StreamSubscription<Object?>? subscription;
   var finished = false;
-  Future<void>? cleanup;
 
-  Future<void> cancelSource() =>
-      cleanup ??= Future<void>.sync(() => subscription?.cancel())
-          .onError<Object>((_, _) {});
+  Future<void>? cancelSource() =>
+      subscription?.cancel().onError<Object>((_, _) {});
 
   void fail(Object error, StackTrace stack, TonikErrorType type) {
     if (finished) return;
