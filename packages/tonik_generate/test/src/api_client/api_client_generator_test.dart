@@ -1176,6 +1176,96 @@ void main() {
     });
 
     group('body examples in method docs', () {
+      test('comments multiline media headings and example summaries', () {
+        final operation = Operation(
+          operationId: 'createUser',
+          context: testContext,
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBody: RequestBodyObject(
+            description: null,
+            isRequired: true,
+            name: 'createUser',
+            content: {
+              ModelRequestContent(
+                contentType: ContentType.json,
+                rawContentType: 'application/json\nclass Injected {}',
+                model: StringModel(context: testContext),
+                examples: const [
+                  Example(
+                    name: 'request\nname',
+                    summary: 'Request\n',
+                    description: null,
+                    value: 'alice',
+                  ),
+                ],
+              ),
+            },
+            context: testContext,
+          ),
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: testContext,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: testContext),
+                  rawContentType: 'application/json\r\nresponse\rmedia',
+                  contentType: ContentType.json,
+                  examples: const [
+                    Example(
+                      name: null,
+                      summary: 'Response\r\ncontinued',
+                      description: null,
+                      value: 'bob',
+                    ),
+                  ],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        expect(klass.methods.first.docs, [
+          '///',
+          '/// Request body (application/json',
+          '/// class Injected {}):',
+          '/// **Example** "request',
+          '/// name" — Request',
+          '/// :',
+          '/// ```',
+          '/// alice',
+          '/// ```',
+          '///',
+          '/// Response 200 (application/json',
+          '/// responsemedia):',
+          '/// **Example** — Response',
+          '/// continued:',
+          '/// ```',
+          '/// bob',
+          '/// ```',
+        ]);
+        expect(
+          () =>
+              generator.generate({operation}, Tag(name: 'users'), testServers),
+          returnsNormally,
+        );
+      });
+
       test('renders request body examples under a Request body heading', () {
         final operation = Operation(
           operationId: 'createUser',

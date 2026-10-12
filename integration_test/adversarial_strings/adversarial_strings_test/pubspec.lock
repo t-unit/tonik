@@ -15,7 +15,7 @@ packages:
       path: "../adversarial_strings_api"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "0.0.1-1.0.0-class-VersionDocumentation"
   analyzer:
     dependency: transitive
     description:

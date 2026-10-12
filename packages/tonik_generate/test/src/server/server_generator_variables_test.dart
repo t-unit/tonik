@@ -28,6 +28,29 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('comments multiline server variable names in enum documentation', () {
+    const servers = [
+      Server(
+        url: 'https://example.com/{region\r\nclass Injected {}\n}',
+        variables: [
+          ServerVariable(
+            name: 'region\r\nclass Injected {}\n',
+            defaultValue: 'eu',
+            enumValues: ['eu'],
+          ),
+        ],
+      ),
+    ];
+
+    final generatedEnum = generator.generateEnums(servers).single;
+    expect(generatedEnum.docs, [
+      '/// Allowed values for the region',
+      '/// class Injected {}',
+      '///  variable.',
+    ]);
+    expect(() => generator.generate(servers), returnsNormally);
+  });
+
   group('ServerGenerator templated URLs with enum variables', () {
     late List<Server> servers;
     late List<Class> classes;

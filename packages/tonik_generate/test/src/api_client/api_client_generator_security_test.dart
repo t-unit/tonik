@@ -37,6 +37,82 @@ void main() {
   });
 
   group('ApiClientGenerator Security Information', () {
+    test('comments multiline security names, scopes and discovery URLs', () {
+      final operation = Operation(
+        operationId: 'getSecureData',
+        context: testContext,
+        tags: {Tag(name: 'secure')},
+        isDeprecated: false,
+        path: '/secure/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {
+          HttpSecurityScheme(
+            type: SecuritySchemeType.http,
+            description: null,
+            scheme: 'custom\nsecond',
+            bearerFormat: null,
+          ),
+          HttpSecurityScheme(
+            type: SecuritySchemeType.http,
+            description: 'Details\ncontinued',
+            scheme: 'other\r\nkind',
+            bearerFormat: null,
+          ),
+          OAuth2SecurityScheme(
+            type: SecuritySchemeType.oauth2,
+            description: null,
+            flows: OAuth2Flows(
+              authorizationCode: OAuth2Flow(
+                authorizationUrl: 'https://example.com/auth',
+                tokenUrl: 'https://example.com/token',
+                scopes: {'read\nclass Injected {}\n': 'Access'},
+                refreshUrl: null,
+              ),
+              implicit: null,
+              password: null,
+              clientCredentials: null,
+            ),
+          ),
+          OpenIdConnectSecurityScheme(
+            type: SecuritySchemeType.openIdConnect,
+            description: null,
+            openIdConnectUrl: 'https://example.com\rdiscovery\r\ncontinued',
+          ),
+        },
+      );
+
+      final generatedClass = generator.generateClass(
+        {operation},
+        Tag(name: 'secure'),
+        testServers,
+      );
+      expect(generatedClass.methods.first.docs, [
+        '///',
+        '/// Security:',
+        '/// - HTTP CUSTOM',
+        '/// SECOND',
+        '/// - HTTP OTHER',
+        '/// KIND: Details',
+        '/// continued',
+        '/// - OAuth2',
+        '///   Required scopes: read',
+        '/// class Injected {}',
+        '/// ',
+        '/// - OpenID Connect',
+        '///   Discovery URL: https://example.comdiscovery',
+        '/// continued',
+      ]);
+      expect(
+        () => generator.generate({operation}, Tag(name: 'secure'), testServers),
+        returnsNormally,
+      );
+    });
+
     test('includes security information in method documentation', () {
       final operation = Operation(
         operationId: 'getSecureData',

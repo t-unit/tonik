@@ -62,7 +62,7 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   }
 
   if (apiDocument.version.isNotEmpty) {
-    lines.add('/// Version ${apiDocument.version}');
+    lines.addAll(formatDocComment('Version ${apiDocument.version}'));
   }
 
   if (apiDocument.summary != null && apiDocument.summary!.isNotEmpty) {
@@ -84,11 +84,11 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
       );
 
     if (apiDocument.contact!.email != null) {
-      lines.add('/// Email: ${apiDocument.contact!.email}');
+      lines.addAll(formatDocComment('Email: ${apiDocument.contact!.email}'));
     }
 
     if (apiDocument.contact!.url != null) {
-      lines.add('/// URL: ${apiDocument.contact!.url}');
+      lines.addAll(formatDocComment('URL: ${apiDocument.contact!.url}'));
     }
   }
 
@@ -103,11 +103,15 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
       );
 
     if (apiDocument.license!.url != null) {
-      lines.add('/// License URL: ${apiDocument.license!.url}');
+      lines.addAll(
+        formatDocComment('License URL: ${apiDocument.license!.url}'),
+      );
     }
 
     if (apiDocument.license!.identifier != null) {
-      lines.add('/// SPDX Identifier: ${apiDocument.license!.identifier}');
+      lines.addAll(
+        formatDocComment('SPDX Identifier: ${apiDocument.license!.identifier}'),
+      );
     }
   }
 
@@ -133,7 +137,9 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
       );
 
     if (apiDocument.externalDocs!.url.isNotEmpty) {
-      lines.add('/// Documentation URL: ${apiDocument.externalDocs!.url}');
+      lines.addAll(
+        formatDocComment('Documentation URL: ${apiDocument.externalDocs!.url}'),
+      );
     }
   }
 
@@ -187,10 +193,10 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
           ),
         );
       } else {
-        lines.add('/// - HTTP $schemeName');
+        lines.addAll(formatDocComment('- HTTP $schemeName'));
       }
       if (scheme.bearerFormat != null) {
-        lines.add('///   Format: ${scheme.bearerFormat}');
+        lines.addAll(formatDocComment('  Format: ${scheme.bearerFormat}'));
       }
 
     case OAuth2SecurityScheme():
@@ -206,28 +212,40 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
       if (flows.authorizationCode != null) {
         final flow = flows.authorizationCode!;
         lines
-          ..add('///   Authorization URL: ${flow.authorizationUrl}')
-          ..add('///   Token URL: ${flow.tokenUrl}');
+          ..addAll(
+            formatDocComment('  Authorization URL: ${flow.authorizationUrl}'),
+          )
+          ..addAll(formatDocComment('  Token URL: ${flow.tokenUrl}'));
         if (flow.scopes.isNotEmpty) {
-          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+          lines.addAll(
+            formatDocComment('  Scopes: ${flow.scopes.keys.join(', ')}'),
+          );
         }
       } else if (flows.implicit != null) {
         final flow = flows.implicit!;
-        lines.add('///   Authorization URL: ${flow.authorizationUrl}');
+        lines.addAll(
+          formatDocComment('  Authorization URL: ${flow.authorizationUrl}'),
+        );
         if (flow.scopes.isNotEmpty) {
-          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+          lines.addAll(
+            formatDocComment('  Scopes: ${flow.scopes.keys.join(', ')}'),
+          );
         }
       } else if (flows.clientCredentials != null) {
         final flow = flows.clientCredentials!;
-        lines.add('///   Token URL: ${flow.tokenUrl}');
+        lines.addAll(formatDocComment('  Token URL: ${flow.tokenUrl}'));
         if (flow.scopes.isNotEmpty) {
-          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+          lines.addAll(
+            formatDocComment('  Scopes: ${flow.scopes.keys.join(', ')}'),
+          );
         }
       } else if (flows.password != null) {
         final flow = flows.password!;
-        lines.add('///   Token URL: ${flow.tokenUrl}');
+        lines.addAll(formatDocComment('  Token URL: ${flow.tokenUrl}'));
         if (flow.scopes.isNotEmpty) {
-          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+          lines.addAll(
+            formatDocComment('  Scopes: ${flow.scopes.keys.join(', ')}'),
+          );
         }
       }
 
@@ -239,7 +257,9 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
       } else {
         lines.add('/// - OpenID Connect');
       }
-      lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+      lines.addAll(
+        formatDocComment('  Discovery URL: ${scheme.openIdConnectUrl}'),
+      );
 
     case MutualTlsSecurityScheme():
       if (scheme.description != null && scheme.description!.isNotEmpty) {
