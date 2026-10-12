@@ -18,6 +18,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_base_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
+import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
 import 'package:tonik_generate/src/request/request_body_file_generator.dart';
 import 'package:tonik_generate/src/request/request_body_generator.dart';
@@ -128,11 +129,19 @@ class const Generator() {
       package: package,
     );
 
+    final parseGenerator = ParseGenerator(
+      nameManager: nameManager,
+      package: package,
+      backendGenerator: backendGenerator,
+      useImmutableCollections: useImmutableCollections,
+    );
+
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
       package: package,
       defaultsCache: defaultsCache,
       backendGenerator: backendGenerator,
+      parseGenerator: parseGenerator,
       operationBaseFilename: resolvedOperationBaseFilename,
       useImmutableCollections: useImmutableCollections,
     );
@@ -142,6 +151,8 @@ class const Generator() {
     );
     final operationBaseFileGenerator = OperationBaseFileGenerator(
       operationBaseGenerator: backendGenerator.operationBaseGenerator,
+      streamingOperationBaseGenerator:
+          backendGenerator.streamingOperationBaseGenerator,
       operationBaseFilename: resolvedOperationBaseFilename,
       nameManager: nameManager,
     );

@@ -70,16 +70,13 @@ final class const HttpOperationBaseGenerator({final bool streaming = false})
   }
 
   @override
-  Iterable<Spec> generate({bool includeStreaming = false}) => [
+  Iterable<Spec> generate() => [
     _generateBase(),
-    _generateOperationRequest(),
-    _generatePreparedRequest(),
-    _generateDispatchResult(),
-    if (includeStreaming) ...[
-      const HttpOperationBaseGenerator(streaming: true)._generateBase(),
-      const HttpOperationBaseGenerator(streaming: true)
-          ._generateDispatchResult(),
+    if (!streaming) ...[
+      _generateOperationRequest(),
+      _generatePreparedRequest(),
     ],
+    _generateDispatchResult(),
   ];
 
   Class _generateBase() => Class(

@@ -23,7 +23,6 @@ class const ParseGenerator({
   required final String package,
   required final TransportBackendGenerator backendGenerator,
   final bool useImmutableCollections = false,
-  final bool streaming = false,
 }) {
   static final log = Logger('ParseGenerator');
 
@@ -32,15 +31,7 @@ class const ParseGenerator({
     Operation operation, {
     bool selectionOnly = false,
   }) {
-    if (hasStreamingResponse(operation) && !streaming) {
-      return ParseGenerator(
-        nameManager: nameManager,
-        package: package,
-        backendGenerator: backendGenerator,
-        useImmutableCollections: useImmutableCollections,
-        streaming: true,
-      ).generateParseResponseMethod(operation, selectionOnly: selectionOnly);
-    }
+    final streaming = hasStreamingResponse(operation);
     final responses = operation.responses;
     final responseType = resultTypeForOperation(
       operation,
@@ -76,7 +67,13 @@ class const ParseGenerator({
                     ? null
                     : selectedBody.delivery != ResponseDelivery.complete,
               ).returned.statement
-            : _caseBody(operation, status, response.resolved, contentType);
+            : _caseBody(
+                operation,
+                status,
+                response.resolved,
+                contentType,
+                streaming: streaming,
+              );
         cases
           ..add(casePattern)
           ..add(caseBody);
@@ -243,8 +240,9 @@ class const ParseGenerator({
     Operation operation,
     ResponseStatus status,
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     // Multipart response decoding is not supported; generate a runtime error.
     if (_isMultipartResponseBody(response, contentType)) {
       return generateResponseDecodingExceptionExpression(
@@ -258,9 +256,14 @@ class const ParseGenerator({
         status,
         response,
         contentType,
+        streaming: streaming,
       );
     } else {
-      return _generateSingleResponseCase(response, contentType);
+      return _generateSingleResponseCase(
+        response,
+        contentType,
+        streaming: streaming,
+      );
     }
   }
 
@@ -279,8 +282,9 @@ class const ParseGenerator({
 
   ({List<Code> statements, String? varName})? _createBodyDecode(
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     final hasBody = response.bodyCount > 0;
     if (!hasBody) return null;
 
@@ -300,10 +304,16 @@ class const ParseGenerator({
     final contentTypeEnum = responseBody.contentType;
 
     return switch (contentTypeEnum) {
-      ContentType.json => _createJsonBodyDecode(responseBody),
-      ContentType.text => _createTextBodyDecode(),
-      ContentType.bytes => _createBytesBodyDecode(),
-      ContentType.form => _createFormBodyDecode(responseBody),
+      ContentType.json => _createJsonBodyDecode(
+        responseBody,
+        streaming: streaming,
+      ),
+      ContentType.text => _createTextBodyDecode(streaming: streaming),
+      ContentType.bytes => _createBytesBodyDecode(streaming: streaming),
+      ContentType.form => _createFormBodyDecode(
+        responseBody,
+        streaming: streaming,
+      ),
       ContentType.multipart => (
         statements: [
           generateResponseDecodingExceptionExpression(
@@ -390,8 +400,9 @@ class const ParseGenerator({
   }
 
   ({List<Code> statements, String? varName}) _createJsonBodyDecode(
-    ResponseBody responseBody,
-  ) {
+    ResponseBody responseBody, {
+    required bool streaming,
+  }) {
     if (_isJsonBodyPureThrow(responseBody.model)) {
       return (
         statements: [
@@ -443,7 +454,9 @@ class const ParseGenerator({
     return (statements: statements, varName: bodyVar);
   }
 
-  ({List<Code> statements, String varName}) _createTextBodyDecode() {
+  ({List<Code> statements, String varName}) _createTextBodyDecode({
+    required bool streaming,
+  }) {
     const bodyVar = r'_$body';
     return (
       statements: [
@@ -472,7 +485,9 @@ class const ParseGenerator({
     );
   }
 
-  ({List<Code> statements, String varName}) _createBytesBodyDecode() {
+  ({List<Code> statements, String varName}) _createBytesBodyDecode({
+    required bool streaming,
+  }) {
     const bodyVar = r'_$body';
     return (
       statements: [
@@ -500,8 +515,9 @@ class const ParseGenerator({
   }
 
   ({List<Code> statements, String? varName}) _createFormBodyDecode(
-    ResponseBody responseBody,
-  ) {
+    ResponseBody responseBody, {
+    required bool streaming,
+  }) {
     final pureThrowMessage = formDecodingPureThrowMessage(responseBody.model);
     if (pureThrowMessage != null) {
       return (
@@ -576,8 +592,9 @@ class const ParseGenerator({
     Operation operation,
     ResponseStatus status,
     ResponseObject response,
-    String? contentType,
-  ) {
+    String? contentType, {
+    required bool streaming,
+  }) {
     final wrapperName = nameManager.responseWrapperNames(operation).$2[status]!;
     final wrapperBaseName = nameManager.responseWrapperNames(operation).$1;
     final wrapperUrl = sourceFileUrl(
@@ -585,7 +602,11 @@ class const ParseGenerator({
       'response_wrapper',
       wrapperBaseName,
     );
-    final bodyDecode = _createBodyDecode(response, contentType);
+    final bodyDecode = _createBodyDecode(
+      response,
+      contentType,
+      streaming: streaming,
+    );
 
     if (response.hasHeaders || response.bodyCount > 1) {
       return _generateMultiResponseWithHeaders(
@@ -608,9 +629,14 @@ class const ParseGenerator({
 
   Code _generateSingleResponseCase(
     ResponseObject response,
-    String? contentType,
-  ) {
-    final bodyDecode = _createBodyDecode(response, contentType);
+    String? contentType, {
+    required bool streaming,
+  }) {
+    final bodyDecode = _createBodyDecode(
+      response,
+      contentType,
+      streaming: streaming,
+    );
 
     if (response.hasHeaders || response.bodyCount > 1) {
       return _generateSingleResponseWithHeaders(

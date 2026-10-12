@@ -10,7 +10,7 @@ abstract interface class const OperationBaseGenerator() {
 
   String get clientConstructorParameterName;
 
-  Iterable<Spec> generate({bool includeStreaming = false});
+  Iterable<Spec> generate();
 
   Reference baseType({
     required String package,

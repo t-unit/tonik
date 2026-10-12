@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
+import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
@@ -69,6 +70,12 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           backendGenerator: const DioBackendGenerator(),
+          parseGenerator: ParseGenerator(
+            nameManager: nameManager,
+            package: 'api',
+            backendGenerator: const DioBackendGenerator(),
+            useImmutableCollections: true,
+          ),
           defaultsCache: defaultsCache,
           operationBaseFilename: 'dio_operation.dart',
           useImmutableCollections: true,

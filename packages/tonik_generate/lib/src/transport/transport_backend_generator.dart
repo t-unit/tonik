@@ -29,6 +29,8 @@ abstract interface class const TransportBackendGenerator() {
 
   OperationBaseGenerator get operationBaseGenerator;
 
+  OperationBaseGenerator get streamingOperationBaseGenerator;
+
   Reference get nativeClientType;
 
   TypeReference get nativeResponseType;

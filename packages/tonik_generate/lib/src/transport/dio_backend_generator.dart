@@ -9,13 +9,16 @@ import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-final class const DioBackendGenerator() implements TransportBackendGenerator {
+final class const DioBackendGenerator({
+  @override
+  final OperationBaseGenerator operationBaseGenerator =
+      const DioOperationBaseGenerator(),
+  @override
+  final OperationBaseGenerator streamingOperationBaseGenerator =
+      const DioOperationBaseGenerator(streaming: true),
+}) implements TransportBackendGenerator {
   @override
   TransportBackend get backend => TransportBackend.dio;
-
-  @override
-  OperationBaseGenerator get operationBaseGenerator =>
-      const DioOperationBaseGenerator();
 
   @override
   List<DependencyDescriptor> get dependencies => const [

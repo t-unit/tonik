@@ -11,6 +11,7 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 
 class const OperationBaseFileGenerator({
   required final OperationBaseGenerator operationBaseGenerator,
+  required final OperationBaseGenerator streamingOperationBaseGenerator,
   required final String operationBaseFilename,
   required final NameManager nameManager,
 }) {
@@ -40,9 +41,10 @@ class const OperationBaseFileGenerator({
     }
 
     final library = Library(
-      (builder) => builder.body.addAll(
-        operationBaseGenerator.generate(includeStreaming: includeStreaming),
-      ),
+      (builder) => builder.body.addAll([
+        ...operationBaseGenerator.generate(),
+        if (includeStreaming) ...streamingOperationBaseGenerator.generate(),
+      ]),
     );
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),
