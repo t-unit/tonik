@@ -56,7 +56,7 @@ List<String>? _formatExample(Example example) {
     return null;
   }
 
-  final lines = <String>[_heading(name: name, summary: summary)];
+  final lines = formatDocComment(_heading(name: name, summary: summary));
 
   if (description != null) {
     for (final line in description.split('\n')) {
@@ -77,7 +77,7 @@ List<String>? _formatExample(Example example) {
 }
 
 String _heading({required String? name, required String? summary}) {
-  final buf = StringBuffer('/// **Example**');
+  final buf = StringBuffer('**Example**');
   if (name != null) {
     buf.write(' "$name"');
   }

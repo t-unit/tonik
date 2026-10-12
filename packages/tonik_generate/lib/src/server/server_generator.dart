@@ -90,7 +90,9 @@ class const ServerGenerator({
     return Enum(
       (b) => b
         ..name = enumName
-        ..docs.add('/// Allowed values for the ${variable.name} variable.')
+        ..docs.addAll(
+          formatDocComment('Allowed values for the ${variable.name} variable.'),
+        )
         ..fields.add(
           Field(
             (f) => f

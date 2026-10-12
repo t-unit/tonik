@@ -166,6 +166,29 @@ void main() {
       expect(result, isEmpty);
     });
 
+    test('comments multiline prefixes and trailing newlines', () {
+      final result = formatDocCommentWithPrefix(
+        'Security\nclass Injected {}\n',
+        'description\n',
+      );
+
+      expect(result, [
+        '/// Security',
+        '/// class Injected {}',
+        '/// description',
+        '/// ',
+      ]);
+    });
+
+    test('normalizes CRLF and lone CR in prefixes', () {
+      final result = formatDocCommentWithPrefix(
+        'first\r\nsecond\rthird: ',
+        'description',
+      );
+
+      expect(result, ['/// first', '/// secondthird: description']);
+    });
+
     test('handles text with empty continuation lines', () {
       final result = formatDocCommentWithPrefix(
         '[param] ',

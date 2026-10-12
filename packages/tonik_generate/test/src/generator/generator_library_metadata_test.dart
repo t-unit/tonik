@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generator.dart';
+import 'package:tonik_generate/src/library_generator.dart';
 
 void main() {
   group('Generator library metadata', () {
@@ -112,6 +114,147 @@ void main() {
         contains('/// Documentation: Find out more about Swagger'),
       );
       expect(content, contains('/// Documentation URL: https://swagger.io'));
+    });
+
+    test('keeps multiline metadata and security fields in doc comments', () {
+      final apiDoc = ApiDocument(
+        title: 'Metadata',
+        version: '1.0\nclass Injected {}\n',
+        contact: const Contact(
+          name: 'Support',
+          email: 'support@example.com\r\nemail continuation',
+          url: 'https://example.com\ncontact continuation',
+        ),
+        license: const License(
+          name: 'License',
+          url: 'https://example.com/license\nlicense continuation',
+          identifier: 'MIT\ridentifier\n',
+        ),
+        externalDocs: const ExternalDocumentation(
+          description: 'Documentation',
+          url: 'https://example.com/docs\ndocs continuation',
+        ),
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: {
+          Operation(
+            operationId: 'getData',
+            context: ctx,
+            tags: const {},
+            isDeprecated: false,
+            path: '/data',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {
+              HttpSecurityScheme(
+                type: SecuritySchemeType.http,
+                description: null,
+                scheme: 'custom\nsecond',
+                bearerFormat: 'JWT\r\nclass BearerDocumentation {}\n',
+              ),
+              HttpSecurityScheme(
+                type: SecuritySchemeType.http,
+                description: 'Details\ncontinued',
+                scheme: 'other\r\nkind',
+                bearerFormat: null,
+              ),
+              OAuth2SecurityScheme(
+                type: SecuritySchemeType.oauth2,
+                description: null,
+                flows: OAuth2Flows(
+                  authorizationCode: OAuth2Flow(
+                    authorizationUrl: 'https://example.com/auth\nauth',
+                    tokenUrl: 'https://example.com/token\rtoken\n',
+                    scopes: {'read\nwrite': 'Access'},
+                    refreshUrl: null,
+                  ),
+                  implicit: null,
+                  password: null,
+                  clientCredentials: null,
+                ),
+              ),
+              OpenIdConnectSecurityScheme(
+                type: SecuritySchemeType.openIdConnect,
+                description: null,
+                openIdConnectUrl: 'https://example.com/discovery\ndiscovery',
+              ),
+            },
+          ),
+        },
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generateLibraryFile(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'metadata_api',
+        publicArtifacts: const [],
+      );
+      final content = File(
+        path.join(tempDir.path, 'metadata_api', 'lib', 'metadata_api.dart'),
+      ).readAsStringSync();
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
+
+      const expected = '''
+// Generated code - do not modify by hand
+// ignore_for_file: lines_longer_than_80_chars
+
+/// Metadata
+/// Version 1.0
+/// class Injected {}
+///
+///
+/// Contact: Support
+/// Email: support@example.com
+/// email continuation
+/// URL: https://example.com
+/// contact continuation
+///
+/// License: License
+/// License URL: https://example.com/license
+/// license continuation
+/// SPDX Identifier: MITidentifier
+///
+///
+/// Documentation: Documentation
+/// Documentation URL: https://example.com/docs
+/// docs continuation
+///
+/// Security Schemes:
+/// - HTTP CUSTOM
+/// SECOND
+///   Format: JWT
+/// class BearerDocumentation {}
+///
+/// - HTTP OTHER
+/// KIND: Details
+/// continued
+/// - OAuth2
+///   Authorization URL: https://example.com/auth
+/// auth
+///   Token URL: https://example.com/tokentoken
+///
+///   Scopes: read
+/// write
+/// - OpenID Connect
+///   Discovery URL: https://example.com/discovery
+/// discovery
+
+library;
+''';
+      expect(format(content), format(expected));
     });
 
     test('handles missing optional metadata gracefully', () async {

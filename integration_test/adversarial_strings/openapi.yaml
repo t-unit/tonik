@@ -7,7 +7,9 @@ info:
     Tests that spec-derived strings containing special characters
     (single quotes, double quotes, dollar signs, backslashes) produce
     valid generated Dart code.
-  version: 1.0.0
+  version: |
+    1.0.0
+    class VersionDocumentation {}
 
 servers:
   # 1a. Static server URL with single quote
@@ -33,6 +35,8 @@ paths:
       tags:
         - adversarial
       summary: Health check
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -51,6 +55,13 @@ paths:
             "application/vnd.o'reilly+json":
               schema:
                 $ref: '#/components/schemas/BasicObject'
+              examples:
+                multiline:
+                  summary: |
+                    Response example
+                    class ResponseDocumentation {}
+                  value:
+                    name: sample
 
   # 1i. Multipart with adversarial field name
   /upload:
@@ -199,6 +210,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RootStringAlias'
+            examples:
+              multiline:
+                summary: |
+                  Request example
+                  class RequestDocumentation {}
+                value: sample
       responses:
         '204':
           description: Stored
@@ -252,6 +269,13 @@ paths:
           description: Stored
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: |
+        JWT
+        class BearerDocumentation {}
   schemas:
     RootStringAlias:
       type: string

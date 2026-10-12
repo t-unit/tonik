@@ -224,7 +224,9 @@ class ApiClientGenerator({
         if (exampleDocs.isEmpty) continue;
         docs
           ..add('///')
-          ..add('/// Request body (${content.rawContentType}):')
+          ..addAll(
+            formatDocComment('Request body (${content.rawContentType}):'),
+          )
           ..addAll(exampleDocs);
       }
     }
@@ -238,9 +240,11 @@ class ApiClientGenerator({
         if (exampleDocs.isEmpty) continue;
         docs
           ..add('///')
-          ..add(
-            '/// Response ${_formatStatus(entry.key)} '
-            '(${body.rawContentType}):',
+          ..addAll(
+            formatDocComment(
+              'Response ${_formatStatus(entry.key)} '
+              '(${body.rawContentType}):',
+            ),
           )
           ..addAll(exampleDocs);
       }
@@ -313,7 +317,7 @@ class ApiClientGenerator({
             ),
           );
         } else {
-          lines.add('/// - HTTP $schemeName');
+          lines.addAll(formatDocComment('- HTTP $schemeName'));
         }
 
       case OAuth2SecurityScheme():
@@ -339,8 +343,10 @@ class ApiClientGenerator({
         }
 
         if (activeFlow != null && activeFlow.scopes.isNotEmpty) {
-          lines.add(
-            '///   Required scopes: ${activeFlow.scopes.keys.join(', ')}',
+          lines.addAll(
+            formatDocComment(
+              '  Required scopes: ${activeFlow.scopes.keys.join(', ')}',
+            ),
           );
         }
 
@@ -355,7 +361,9 @@ class ApiClientGenerator({
         } else {
           lines.add('/// - OpenID Connect');
         }
-        lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+        lines.addAll(
+          formatDocComment('  Discovery URL: ${scheme.openIdConnectUrl}'),
+        );
 
       case MutualTlsSecurityScheme():
         if (scheme.description != null && scheme.description!.isNotEmpty) {

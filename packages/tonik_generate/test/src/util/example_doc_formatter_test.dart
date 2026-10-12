@@ -1,3 +1,4 @@
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
@@ -90,6 +91,54 @@ void main() {
         ]);
 
         expect(result.first, '/// **Example** "admin" — an adminuser:');
+      });
+
+      test('comments multiline names and trailing summary newlines', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: 'admin\nclass Injected {}',
+            summary: 'first\nsecond\n',
+            description: null,
+            value: 1,
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example** "admin',
+          '/// class Injected {}" — first',
+          '/// second',
+          '/// :',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+        final formatter = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        );
+        expect(
+          () => formatter.format('${result.join('\n')}\nclass Example {}'),
+          returnsNormally,
+        );
+      });
+
+      test('normalizes CRLF and trailing newlines in example names', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: 'admin\r\n',
+            summary: 'first\r\nsecond',
+            description: null,
+            value: 1,
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example** "admin',
+          '/// " — first',
+          '/// second:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
       });
 
       test('passes through markdown-special chars in name and summary', () {

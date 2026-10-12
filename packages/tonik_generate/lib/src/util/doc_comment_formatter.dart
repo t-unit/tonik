@@ -21,11 +21,7 @@ List<String> formatDocComment(String? text) {
 List<String> formatDocCommentWithPrefix(String prefix, String? text) {
   final normalized = text?.replaceAll('\r', '');
   if (normalized == null || normalized.isEmpty) return [];
-  final lines = normalized.split('\n');
-  return [
-    '/// $prefix${lines.first}',
-    for (var i = 1; i < lines.length; i++) '/// ${lines[i]}',
-  ];
+  return formatDocComment('$prefix$normalized');
 }
 
 /// Formats a list of strings as doc comments.
