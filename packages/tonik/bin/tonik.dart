@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as path;
 import 'package:tonik/src/config/cli_config.dart';
 import 'package:tonik/src/config/cli_parser.dart';
 import 'package:tonik/src/config/config_loader.dart';
@@ -73,6 +74,26 @@ Future<void> main(List<String> arguments) async {
     print('Error: --spec is required (or specify in tonik.yaml)');
     printUsage(argParser);
     exit(128);
+  }
+
+  if (!results.flag('overwrite')) {
+    final destination = Directory(path.join(outputDir ?? '.', packageName));
+    try {
+      if (destination.existsSync() &&
+          !await destination.list(followLinks: false).isEmpty) {
+        stderr.writeln(
+          'Error: Destination directory "${destination.path}" is not empty. '
+          'Use --overwrite to allow generation into this directory.',
+        );
+        exit(1);
+      }
+    } on FileSystemException catch (e) {
+      stderr.writeln(
+        'Error: Cannot inspect destination directory '
+        '"${destination.path}": ${e.message}',
+      );
+      exit(1);
+    }
   }
 
   Logger.root.level = switch (logLevel) {

@@ -119,11 +119,15 @@ tonik --output-dir ./other-location
 |----------|------------|-------------|
 | `--spec`, `-s` | `spec` | Path to OpenAPI document (required) |
 | `--output-dir`, `-o` | `outputDir` | Directory for generated code (defaults to `.`) |
+| `--overwrite` | — | Allow generation into a non-empty package directory (CLI only) |
 | `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
 | `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
 | `--backend` | `transport.backend` | Generated HTTP backend: `dio` or `http` (defaults to `dio`) |
 | `--immutable-collections` | `immutableCollections` | Use `IList`/`IMap` instead of `List`/`Map` (defaults to `false`) |
 | `--workers` | `workerCount` | Number of worker isolates for parallel model file generation (defaults to auto) |
+
+The destination `<output-dir>/<package-name>` must be missing or empty.
+Pass `--overwrite` to regenerate an existing package without clearing the directory.
 
 ## HTTP Backend
 

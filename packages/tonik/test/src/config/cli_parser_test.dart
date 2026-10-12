@@ -4,6 +4,20 @@ import 'package:tonik/src/config/cli_parser.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 void main() {
+  group('CLI overwrite parser', () {
+    test('defaults to disabled', () {
+      final arguments = buildCliParser().parse([]);
+
+      expect(arguments.flag('overwrite'), isFalse);
+    });
+
+    test('accepts explicit overwrite', () {
+      final arguments = buildCliParser().parse(['--overwrite']);
+
+      expect(arguments.flag('overwrite'), isTrue);
+    });
+  });
+
   group('CLI backend parser', () {
     test('accepts Dio', () {
       final arguments = buildCliParser().parse(['--backend', 'dio']);

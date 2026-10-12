@@ -25,6 +25,11 @@ ArgParser buildCliParser() {
       help: 'Directory where generated project will be placed.',
       valueHelp: 'path',
     )
+    ..addFlag(
+      'overwrite',
+      negatable: false,
+      help: 'Allow generation into a non-empty package directory.',
+    )
     ..addOption(
       'package-name',
       abbr: 'p',
