@@ -1,6 +1,7 @@
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 final _semverRegExp = RegExp(
   r'^\d+\.\d+\.\d+'
@@ -38,38 +39,28 @@ void generatePubspec({
   required TransportBackendGenerator backendGenerator,
   bool useImmutableCollections = false,
 }) {
-  final version = sanitizeVersion(apiDocument.version);
-  final ficDependency = useImmutableCollections
-      ? '\n  fast_immutable_collections: ^11.2.0'
-      : '';
-  final transportDependencies = backendGenerator.dependencies
-      .map(
-        (dependency) => '  ${dependency.name}: ${dependency.versionConstraint}',
-      )
-      .join('\n');
-  final content =
-      '''
-name: $package
-description: Generated API client for ${apiDocument.title}
-version: $version
-environment:
-  sdk: '>=3.13.0 <4.0.0'
-
-dependencies:
-  big_decimal: ^0.7.0
-  collection: ^1.19.1
-$transportDependencies$ficDependency
-  meta: ^1.19.0
-  tonik_util: ^0.10.0
-
-dev_dependencies:
-  lints: ^6.1.0
-''';
+  final pubspec = YamlEditor('')
+    ..update([], {
+      'name': package,
+      'description': 'Generated API client for ${apiDocument.title}',
+      'version': sanitizeVersion(apiDocument.version),
+      'environment': {'sdk': '>=3.13.0 <4.0.0'},
+      'dependencies': {
+        'big_decimal': '^0.7.0',
+        'collection': '^1.19.1',
+        for (final dependency in backendGenerator.dependencies)
+          dependency.name: dependency.versionConstraint,
+        if (useImmutableCollections) 'fast_immutable_collections': '^11.2.0',
+        'meta': '^1.19.0',
+        'tonik_util': '^0.10.0',
+      },
+      'dev_dependencies': {'lints': '^6.1.0'},
+    });
 
   writeGeneratedArtifact(
     outputDirectory: outputDirectory,
     package: package,
     relativePath: 'pubspec.yaml',
-    content: content,
+    content: pubspec.toString(),
   );
 }
