@@ -61,6 +61,11 @@ void main() {
       package: 'api',
       defaultsCache: OperationDefaultsCache(nameManager: names, package: 'api'),
       backendGenerator: const DioBackendGenerator(),
+      parseGenerator: ParseGenerator(
+        nameManager: names,
+        package: 'api',
+        backendGenerator: const DioBackendGenerator(),
+      ),
       operationBaseFilename: 'dio_operation.dart',
     );
     final generated = generator.generateClass(operation, 'GetItems');
@@ -96,6 +101,11 @@ void main() {
       package: 'api',
       defaultsCache: OperationDefaultsCache(nameManager: names, package: 'api'),
       backendGenerator: const HttpBackendGenerator(),
+      parseGenerator: ParseGenerator(
+        nameManager: names,
+        package: 'api',
+        backendGenerator: const HttpBackendGenerator(),
+      ),
       operationBaseFilename: 'http_operation.dart',
     );
     final generated = generator.generateClass(operation, 'GetItems');
@@ -124,6 +134,114 @@ void main() {
     );
     expect(selection.returns!.symbol, 'bool?');
     expect(selection.requiredParameters.single.type!.symbol, 'BaseResponse');
+  });
+
+  test('HTTP parser can serve mixed streaming and ordinary operations', () {
+    final context = Context.initial();
+    final parser = ParseGenerator(
+      nameManager: names,
+      package: 'api',
+      backendGenerator: const HttpBackendGenerator(),
+    );
+    operation.responses[const ExplicitResponseStatus(
+      statusCode: 400,
+    )] = ResponseObject(
+      name: 'Error',
+      context: context,
+      description: '',
+      headers: const {},
+      bodies: {
+        ResponseBody(
+          model: StringModel(context: context),
+          rawContentType: 'text/plain',
+          contentType: ContentType.text,
+          examples: const [],
+        ),
+      },
+    );
+    final mixed = parser.generateParseResponseMethod(operation);
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+    expect(
+      collapseWhitespace(format(mixed.accept(emitter).toString())),
+      collapseWhitespace(
+        format(r'''
+        GetItemsResponse _parseResponse(BaseResponse response, TonikCancellation cancellation) {
+          final _$mediaType = extractMediaType(response.headers['content-type']);
+          switch ((response.statusCode, _$mediaType)) {
+            case (200, r'application/x-ndjson'):
+              final _$body = decodeResponseStream<int, BaseResponse>(
+                ((response as StreamedResponse)).stream, decodeNdjson,
+                (_$json) { return _$json.decodeJsonInt(); },
+                cancellation: cancellation, response: response,
+                sourceErrorType: (error) => error is RequestAbortedException && cancellation.isCancelled ? TonikErrorType.cancelled : TonikErrorType.network);
+              return GetItemsResponse200(body: _$body);
+            case (400, r'text/plain'):
+              final _$body = decodeResponseText(((response as Response)).bodyBytes, contentType: response.headers['content-type']);
+              return GetItemsResponse400(body: _$body);
+            default:
+              final _$content = response.headers['content-type'] ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+          }
+        }
+      '''),
+      ),
+    );
+
+    final ordinaryOperation = Operation(
+      operationId: 'getItem',
+      context: context,
+      tags: const {},
+      isDeprecated: false,
+      path: '/item',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: const {},
+      cookieParameters: const {},
+      securitySchemes: const {},
+      responses: {
+        const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+          name: 'Item',
+          context: context,
+          headers: const {},
+          description: '',
+          bodies: {
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+        ),
+      },
+    );
+    final ordinary = parser.generateParseResponseMethod(ordinaryOperation);
+    expect(
+      collapseWhitespace(format(ordinary.accept(emitter).toString())),
+      collapseWhitespace(
+        format(r'''
+        int _parseResponse(Response response) {
+          final _$mediaType = extractMediaType(response.headers['content-type']);
+          switch ((response.statusCode, _$mediaType)) {
+            case (200, r'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.bodyBytes);
+              final _$body = _$json.decodeJsonInt();
+              return _$body;
+            default:
+              final _$content = response.headers['content-type'] ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+          }
+        }
+      '''),
+      ),
+    );
   });
 
   test(

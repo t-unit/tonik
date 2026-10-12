@@ -25,6 +25,7 @@ class OperationGenerator({
   required final String package,
   required final OperationDefaultsCache defaultsCache,
   required final TransportBackendGenerator backendGenerator,
+  required final ParseGenerator parseGenerator,
   required final String operationBaseFilename,
   final bool useImmutableCollections = false,
 }) {
@@ -36,12 +37,6 @@ class OperationGenerator({
   final PathGenerator _pathGenerator = PathGenerator(
     nameManager: nameManager,
     package: package,
-    useImmutableCollections: useImmutableCollections,
-  );
-  final ParseGenerator _parseGenerator = ParseGenerator(
-    nameManager: nameManager,
-    package: package,
-    backendGenerator: backendGenerator,
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -194,9 +189,9 @@ class OperationGenerator({
             cookies: normalizedParams.cookieParameters,
           ),
           if (operation.responses.isNotEmpty)
-            _parseGenerator.generateParseResponseMethod(operation),
+            parseGenerator.generateParseResponseMethod(operation),
           if (hasStreamingResponse(operation))
-            _parseGenerator.generateResponseSelectionMethod(operation),
+            parseGenerator.generateResponseSelectionMethod(operation),
         ]);
     });
   }
