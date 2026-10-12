@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/transport/http_backend_generator.dart';
+import 'package:yaml/yaml.dart';
 
 void main() {
   group('sanitizeVersion', () {
@@ -115,8 +116,20 @@ void main() {
       final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
           .readAsStringSync();
 
-      expect(content, contains('version: 0.0.1-2026-02-25.clover'));
-      expect(content, contains("sdk: '>=3.13.0 <4.0.0'"));
+      expect(loadYaml(content), {
+        'name': 'test_pkg',
+        'description': 'Generated API client for Test API',
+        'version': '0.0.1-2026-02-25.clover',
+        'environment': {'sdk': '>=3.13.0 <4.0.0'},
+        'dependencies': {
+          'big_decimal': '^0.7.0',
+          'collection': '^1.19.1',
+          'dio': '^5.11.1',
+          'meta': '^1.19.0',
+          'tonik_util': '^0.10.0',
+        },
+        'dev_dependencies': {'lints': '^6.1.0'},
+      });
     });
 
     test('keeps valid semver version in generated pubspec', () {
@@ -146,7 +159,8 @@ void main() {
       final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
           .readAsStringSync();
 
-      expect(content, contains('version: 1.0.0'));
+      final pubspec = loadYaml(content) as YamlMap;
+      expect(pubspec['version'], '1.0.0');
     });
     test('includes fast_immutable_collections when enabled', () {
       final apiDoc = ApiDocument(
@@ -176,7 +190,9 @@ void main() {
       final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
           .readAsStringSync();
 
-      expect(content, contains('fast_immutable_collections: ^11.2.0'));
+      final pubspec = loadYaml(content) as YamlMap;
+      final dependencies = pubspec['dependencies'] as YamlMap;
+      expect(dependencies['fast_immutable_collections'], '^11.2.0');
     });
 
     test('does not include fast_immutable_collections when disabled', () {
@@ -206,7 +222,9 @@ void main() {
       final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
           .readAsStringSync();
 
-      expect(content, isNot(contains('fast_immutable_collections')));
+      final pubspec = loadYaml(content) as YamlMap;
+      final dependencies = pubspec['dependencies'] as YamlMap;
+      expect(dependencies.containsKey('fast_immutable_collections'), isFalse);
     });
 
     test('writes exactly the selected transport dependency', () {
@@ -243,12 +261,218 @@ void main() {
       final http = File(path.join(tempDir.path, 'http_pkg', 'pubspec.yaml'))
           .readAsStringSync();
 
-      expect(dio, contains('dio: ^5.11.1'));
-      expect(dio, isNot(contains('http:')));
-      expect(dio, isNot(contains('dio_web_adapter:')));
-      expect(http, contains('http: ^1.6.0'));
-      expect(http, isNot(contains('dio:')));
-      expect(http, isNot(contains('dio_web_adapter:')));
+      final dioPubspec = loadYaml(dio) as YamlMap;
+      final httpPubspec = loadYaml(http) as YamlMap;
+      expect(dioPubspec['dependencies'], {
+        'big_decimal': '^0.7.0',
+        'collection': '^1.19.1',
+        'dio': '^5.11.1',
+        'meta': '^1.19.0',
+        'tonik_util': '^0.10.0',
+      });
+      expect(httpPubspec['dependencies'], {
+        'big_decimal': '^0.7.0',
+        'collection': '^1.19.1',
+        'http': '^1.6.0',
+        'meta': '^1.19.0',
+        'tonik_util': '^0.10.0',
+      });
+    });
+
+    test('preserves colon-space in the title', () {
+      final apiDoc = ApiDocument(
+        title: 'Acme: Orders API',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(
+        pubspec['description'],
+        'Generated API client for Acme: Orders API',
+      );
+    });
+
+    test('preserves hash comments in the title', () {
+      final apiDoc = ApiDocument(
+        title: 'Pet Store API #2',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(
+        pubspec['description'],
+        'Generated API client for Pet Store API #2',
+      );
+    });
+
+    test('preserves line feeds in the title', () {
+      final apiDoc = ApiDocument(
+        title: 'Pet Store\nAPI',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(pubspec['description'], 'Generated API client for Pet Store\nAPI');
+    });
+
+    test('preserves carriage returns and line feeds in the title', () {
+      final apiDoc = ApiDocument(
+        title: 'Pet Store\r\nAPI',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const HttpBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(
+        pubspec['description'],
+        'Generated API client for Pet Store\r\nAPI',
+      );
+    });
+
+    test('preserves quotes and backslashes in the title', () {
+      final apiDoc = ApiDocument(
+        title: r'''Pet's "Store" \ API''',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(
+        pubspec['description'],
+        r'''Generated API client for Pet's "Store" \ API''',
+      );
+    });
+
+    test('keeps YAML-looking lines inside the description', () {
+      final apiDoc = ApiDocument(
+        title: 'Pet Store\npublish_to: https://example.com',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+
+      final content = File(path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'))
+          .readAsStringSync();
+      final pubspec = loadYaml(content) as YamlMap;
+
+      expect(
+        pubspec['description'],
+        'Generated API client for Pet Store\npublish_to: https://example.com',
+      );
+      expect(pubspec.containsKey('publish_to'), isFalse);
     });
   });
 }

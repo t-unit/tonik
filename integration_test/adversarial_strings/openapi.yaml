@@ -1,6 +1,8 @@
 openapi: 3.0.4
 info:
-  title: Adversarial Strings API
+  title: |-
+    Adversarial Strings: API #2
+    Client generation
   description: >-
     Tests that spec-derived strings containing special characters
     (single quotes, double quotes, dollar signs, backslashes) produce
