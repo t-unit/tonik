@@ -3,28 +3,28 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
-  test('query-only external media reference keeps complete fallback', () {
-    final document = Importer().import({
-      'openapi': '3.2.0',
-      'info': {'title': 'Media', 'version': '1'},
-      'paths': <String, dynamic>{},
-      'components': {
-        'responses': {
-          'Items': {
-            'description': 'Items',
-            'content': {
-              'application/x-ndjson': {
-                r'$ref': '?revision=2#/components/mediaTypes/Items',
-                'itemSchema': {'type': 'integer'},
+  test('query-only external media reference throws when consumed', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.2.0',
+        'info': {'title': 'Media', 'version': '1'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'Items': {
+              'description': 'Items',
+              'content': {
+                'application/x-ndjson': {
+                  r'$ref': '?revision=2#/components/mediaTypes/Items',
+                  'itemSchema': {'type': 'integer'},
+                },
               },
             },
           },
         },
-      },
-    });
-    final body = document.responses.single.resolved.bodies.single;
-    expect(body.delivery, ResponseDelivery.complete);
-    expect(body.model, isA<BinaryModel>());
+      }),
+      throwsA(isA<UnimplementedError>()),
+    );
   });
 
   test('query-only external item schema throws when consumed', () {

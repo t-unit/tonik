@@ -42,7 +42,7 @@ void main() {
     expect(request.headers['x-configured'], 'kept');
   });
 
-  test('malformed NDJSON yields one decoding error', () async {
+  test('malformed NDJSON yields a decoding error and continues', () async {
     final server = CustomServer(
       baseUrl: baseUrl,
       serverConfig: testServerConfig(headers: {'X-Response-Case': 'malformed'}),
@@ -50,7 +50,12 @@ void main() {
     addTearDown(server.close);
     final result = await StreamingApi(server).getItems();
     final items = await requireSuccess(result).value.toList();
-    final error = items.single as TonikError<ItemsGet200BodyModel, Object>;
+    expect(items, hasLength(2));
+    expect(
+      requireSuccess(items.last).value,
+      const ItemsGet200BodyModel(value: 2),
+    );
+    final error = items.first as TonikError<ItemsGet200BodyModel, Object>;
     expect(error.error, isA<FormatException>());
     expect(error.type, TonikErrorType.decoding);
   });
@@ -72,20 +77,24 @@ void main() {
     },
   );
 
-  test('SSE item conversion failure terminates the stream', () async {
+  test('SSE item conversion failure permits later valid events', () async {
     final server = CustomServer(baseUrl: baseUrl);
     addTearDown(server.close);
     final result = await StreamingApi(server).getSseRequiredEvent();
     final events = await requireSuccess(result).value.toList();
-    expect(events, hasLength(2));
+    expect(events, hasLength(3));
     expect(
       requireSuccess(events.first as TonikResult<SseRequiredEvent, Object>)
           .value,
       const SseRequiredEvent(data: 'first', event: 'ready'),
     );
-    final failure = events.last as TonikError<SseRequiredEvent, Object>;
+    final failure = events[1] as TonikError<SseRequiredEvent, Object>;
     expect(failure.error, isA<InvalidTypeException>());
     expect(failure.type, TonikErrorType.decoding);
+    expect(
+      requireSuccess(events.last).value,
+      const SseRequiredEvent(data: 'third', event: 'later'),
+    );
   });
 
   test('finite JSONL permits raw CR whitespace', () async {
@@ -99,6 +108,68 @@ void main() {
       const JsonlGet200BodyModel(value: 3),
       const JsonlGet200BodyModel(value: 4),
     ]);
+  });
+
+  test(
+    'JSON sequence decodes multiline typed items through reusable media',
+    () async {
+      final server = CustomServer(baseUrl: baseUrl);
+      addTearDown(server.close);
+      final result = await StreamingApi(server).getJsonSequence();
+      final Stream<TonikResult<StreamItem, Object>> items = requireSuccess(
+        result,
+      ).value;
+      expect(await items.map((item) => requireSuccess(item).value).toList(), [
+        const StreamItem(value: 5),
+        const StreamItem(value: 6),
+      ]);
+    },
+  );
+
+  test(
+    'JSON sequence recovers after framing and typed conversion errors',
+    () async {
+      final server = CustomServer(
+        baseUrl: baseUrl,
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Case': 'malformed'},
+        ),
+      );
+      addTearDown(server.close);
+      final cancellation = TonikCancellation();
+      final result = await StreamingApi(server)
+          .getJsonSequence(cancellation: cancellation);
+      final events = await requireSuccess(result).value.toList();
+      expect(events, hasLength(3));
+      final malformed = events[0] as TonikError<StreamItem, Object>;
+      expect(malformed.error, isA<FormatException>());
+      expect(malformed.type, TonikErrorType.decoding);
+      expect(malformed.response, same((result as TonikSuccess).response));
+      final wrongModel = events[1] as TonikError<StreamItem, Object>;
+      expect(wrongModel.error, isA<InvalidTypeException>());
+      expect(wrongModel.type, TonikErrorType.decoding);
+      expect(wrongModel.response, same((result as TonikSuccess).response));
+      expect(requireSuccess(events.last).value, const StreamItem(value: 7));
+      expect(cancellation.isCancelled, isFalse);
+    },
+  );
+
+  test('JSONL recovers after a malformed record', () async {
+    final server = CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(headers: {'X-Response-Case': 'malformed'}),
+    );
+    addTearDown(server.close);
+    final result = await StreamingApi(server).getJsonLines();
+    final events = await requireSuccess(result).value.toList();
+    expect(events, hasLength(2));
+    final failure = events.first as TonikError<JsonlGet200BodyModel, Object>;
+    expect(failure.error, isA<FormatException>());
+    expect(failure.type, TonikErrorType.decoding);
+    expect(
+      requireSuccess(events.last).value,
+      const JsonlGet200BodyModel(value: 4),
+    );
   });
 
   test('ordinary JSON retains its completed response', () async {
@@ -121,7 +192,7 @@ void main() {
     }
   });
 
-  test('model conversion failure terminates the stream', () async {
+  test('model conversion failure permits later valid items', () async {
     final server = CustomServer(
       baseUrl: baseUrl,
       serverConfig: testServerConfig(
@@ -131,10 +202,14 @@ void main() {
     addTearDown(server.close);
     final result = await StreamingApi(server).getItems();
     final events = await requireSuccess(result).value.toList();
-    expect(events, hasLength(1));
-    final failure = events.single as TonikError<ItemsGet200BodyModel, Object>;
+    expect(events, hasLength(2));
+    final failure = events.first as TonikError<ItemsGet200BodyModel, Object>;
     expect(failure.error, isA<InvalidTypeException>());
     expect(failure.type, TonikErrorType.decoding);
+    expect(
+      requireSuccess(events.last).value,
+      const ItemsGet200BodyModel(value: 2),
+    );
   });
 
   test(
@@ -333,7 +408,7 @@ void main() {
   });
 
   test(
-    'malformed mixed stream terminates without selecting complete JSON',
+    'malformed mixed stream continues with the selected item model',
     () async {
       final server = CustomServer(
         baseUrl: baseUrl,
@@ -346,10 +421,11 @@ void main() {
       final status = requireSuccess(result).value as GetMixedResponse200;
       final response = status.body as MixedGet200ResponseXNdjson;
       final events = await response.body.toList();
-      expect(events, hasLength(1));
-      final failure = events.single as TonikError<Object?, Object>;
+      expect(events, hasLength(2));
+      final failure = events.first as TonikError<Object?, Object>;
       expect(failure.error, isA<FormatException>());
       expect(failure.type, TonikErrorType.decoding);
+      expect(requireSuccess(events.last).value, const StreamItem(value: 2));
     },
   );
 
@@ -392,10 +468,12 @@ void main() {
     if (native is http.BaseResponse) expect(native, isA<http.Response>());
   });
 
-  test('external media alternative keeps complete byte fallback', () async {
+  test('schema-less media alternative keeps complete byte fallback', () async {
     final server = CustomServer(
       baseUrl: baseUrl,
-      serverConfig: testServerConfig(headers: {'X-Response-Case': 'external'}),
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Case': 'schema-less'},
+      ),
     );
     addTearDown(server.close);
     final result = await StreamingApi(server).getReferencedMixed();
@@ -480,7 +558,7 @@ void main() {
     expect(await values, isEmpty);
   });
 
-  test('an impossible item terminates conversion', () async {
+  test('each impossible item produces a conversion error', () async {
     final server = CustomServer(
       baseUrl: baseUrl,
       serverConfig: testServerConfig(
@@ -490,10 +568,15 @@ void main() {
     addTearDown(server.close);
     final result = await StreamingApi(server).getNeverItems();
     final events = await requireSuccess(result).value.toList();
-    expect(events, hasLength(1));
-    final failure = events.single as TonikError<Never, Object>;
+    expect(events, hasLength(2));
+    final failure = events.first as TonikError<Never, Object>;
     expect(failure.error, isA<JsonDecodingException>());
     expect(failure.type, TonikErrorType.decoding);
+    expect(failure.response, same((result as TonikSuccess).response));
+    final second = events.last as TonikError<Never, Object>;
+    expect(second.error, isA<JsonDecodingException>());
+    expect(second.type, TonikErrorType.decoding);
+    expect(second.response, same((result as TonikSuccess).response));
   });
 
   test('referenced item aliases preserve nested normalized models', () async {
@@ -548,7 +631,7 @@ void main() {
     expect(cancellation.isCancelled, isFalse);
   });
 
-  test('a real union conversion failure ends consumption', () async {
+  test('a union conversion failure permits later valid variants', () async {
     final server = CustomServer(
       baseUrl: baseUrl,
       serverConfig: testServerConfig(
@@ -560,16 +643,22 @@ void main() {
     final response =
         requireSuccess(result).value as EventsGet200ResponseXNdjson;
     final events = await response.body.toList();
-    expect(events, hasLength(2));
+    expect(events, hasLength(3));
     expect(
       requireSuccess(events.first as TonikResult<StreamEvent, Object>).value,
       const StreamEventStateEvent(
         StateEvent(kind: StateEventKindModel.state, progress: 25),
       ),
     );
-    final failure = events.last as TonikError<StreamEvent, Object>;
+    final failure = events[1] as TonikError<StreamEvent, Object>;
     expect(failure.error, isA<InvalidTypeException>());
     expect(failure.type, TonikErrorType.decoding);
+    expect(
+      requireSuccess(events.last).value,
+      const StreamEventResultEvent(
+        ResultEvent(kind: ResultEventKindModel.result, result: 'recovered'),
+      ),
+    );
   });
 
   test('the event operation retains its complete JSON model', () async {

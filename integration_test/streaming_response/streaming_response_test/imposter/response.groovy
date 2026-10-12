@@ -25,7 +25,15 @@ switch (context.request.path) {
         break
     case '/jsonl':
         contentType = 'application/jsonl'
-        body = '{"value":3}\r \n{"value":4}'
+        body = responseCase == 'malformed' ? 'invalid\n{"value":4}\n' : '{"value":3}\r \n{"value":4}'
+        break
+    case '/json-seq':
+        contentType = 'Application/Json-Seq; charset=utf-8'
+        if (responseCase == 'malformed') {
+            body = '\u001e{broken}\n\u001e{"value":"bad"}\n\u001e{"value":7}\n'
+        } else {
+            body = '\u001e{\n"value":5\n}\n\u001e{"value":6}\n'
+        }
         break
     case '/sse-data':
         contentType = 'text/event-stream; charset=utf-8'
@@ -95,7 +103,7 @@ switch (context.request.path) {
         if (responseCase == 'json') {
             contentType = 'application/json'
             body = '{"value":14}'
-        } else if (responseCase == 'external') {
+        } else if (responseCase == 'schema-less') {
             contentType = 'application/jsonl'
             body = '1\n2\n'
         } else {
@@ -126,7 +134,7 @@ switch (context.request.path) {
             contentType = 'application/json'
             body = '{"total":3}'
         } else if (responseCase == 'invalid-union') {
-            body = '{"kind":"state","progress":25}\n{"kind":"result","result":42}\n{"kind":"result","result":"unreachable"}\n'
+            body = '{"kind":"state","progress":25}\n{"kind":"result","result":42}\n{"kind":"result","result":"recovered"}\n'
         } else {
             body = '{"kind":"state","progress":25}\n{"kind":"error","message":"try again"}\n{"kind":"result","result":"finished"}\n'
         }

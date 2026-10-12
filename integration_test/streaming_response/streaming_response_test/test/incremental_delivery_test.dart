@@ -85,6 +85,44 @@ void main() {
   );
 
   test(
+    'JSON sequence emits a multiline item before another RS or EOF',
+    () async {
+      final control = await ControlledResponse.bind(
+        contentType: 'Application/Json-Seq; charset=utf-8',
+        initial: '\x1e',
+      );
+      addTearDown(control.close);
+      final server = CustomServer(baseUrl: control.baseUrl);
+      addTearDown(server.close);
+      final result = await StreamingApi(server)
+          .getJsonSequence()
+          .timeout(const Duration(seconds: 5));
+      final Stream<TonikResult<StreamItem, Object>> items = requireSuccess(
+        result,
+      ).value;
+      final first = Completer<StreamItem>();
+      final done = Completer<void>();
+      final values = <StreamItem>[];
+      final subscription = items.listen((event) {
+        final item = requireSuccess(event).value;
+        values.add(item);
+        if (!first.isCompleted) first.complete(item);
+      }, onDone: done.complete);
+      addTearDown(subscription.cancel);
+      await control.write('{\n"value":1\n}\n');
+      expect(
+        await first.future.timeout(const Duration(seconds: 5)),
+        const StreamItem(value: 1),
+      );
+      expect(done.isCompleted, isFalse);
+      await control.write('\x1e{"value":2}\n');
+      await control.finish();
+      await done.future.timeout(const Duration(seconds: 5));
+      expect(values, [const StreamItem(value: 1), const StreamItem(value: 2)]);
+    },
+  );
+
+  test(
     'SSE returns before data and preserves string data before EOF',
     () async {
       final control = await ControlledResponse.bind(

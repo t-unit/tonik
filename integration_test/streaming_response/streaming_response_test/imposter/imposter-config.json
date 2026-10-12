@@ -16,6 +16,13 @@
       "method": "GET"
     },
     {
+      "path": "/json-seq",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
       "path": "/sse-data",
       "response": {
         "scriptFile": "response.groovy"

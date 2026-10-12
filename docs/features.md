@@ -7,7 +7,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | Capability | What Tonik Does |
 |------------|-----------------|
 | **Multiple response types** | Generates a sealed class with a variant per status code and content type — the compiler enforces exhaustive handling, unlike generators that pick one success/error type and discard the rest |
-| **Streaming responses** | Typed NDJSON, JSONL, and SSE response streams with explicit `itemSchema` |
+| **Streaming responses** | Typed NDJSON, JSONL, JSON-seq, and SSE response streams with explicit `itemSchema` |
 | **Type composition** | `oneOf` → sealed class (switch on variants), `anyOf` → nullable fields, `allOf` → fields per member |
 | **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
 | **Integer enums** | Full support, with optional unknown-value handling |
@@ -338,7 +338,7 @@ Each operation generates a sealed response class. Every status code and content 
 | Range codes (`2XX`, `4XX`) | ✅ |
 | `default` response | ✅ |
 | Response headers | ✅ |
-| Streaming response bodies | ✅ NDJSON, JSONL, and SSE with explicit usable `itemSchema` |
+| Streaming response bodies | ✅ NDJSON, JSONL, JSON-seq, and SSE with explicit usable `itemSchema` |
 
 See [Streaming Responses](streaming_responses.md) for usage and limitations.
 

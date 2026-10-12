@@ -100,7 +100,7 @@ native Dart and browsers.
 
 - [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md) – Complete feature reference
 - [HTTP Backends](https://github.com/t-unit/tonik/blob/main/docs/http_backends.md) – Backend selection, client ownership, and migration
-- [Streaming Responses](https://github.com/t-unit/tonik/blob/main/docs/streaming_responses.md) – Typed NDJSON, JSONL, and SSE streams, cancellation, and browser behavior
+- [Streaming Responses](https://github.com/t-unit/tonik/blob/main/docs/streaming_responses.md) – Typed NDJSON, JSONL, JSON-seq, and SSE streams, cancellation, and browser behavior
 - [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md) – `tonik.yaml` options, name overrides, filtering
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md) – OpenAPI to Dart type mappings
 - [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) – `oneOf`, `anyOf`, `allOf` usage
@@ -158,7 +158,7 @@ for Dart clients using FastAPI, NestJS, Fastify, Spring Boot, and Rails APIs.
 | Category | What's Supported |
 |----------|------------------|
 | **Responses** | Multiple status codes, multiple content types and media-type ranges (`type/*`, `*/*`), response headers, `default` and range codes (`2XX`) |
-| **Streaming Responses** | Typed NDJSON, JSONL, and SSE response streams with explicit `itemSchema` |
+| **Streaming Responses** | Typed NDJSON, JSONL, JSON-seq, and SSE response streams with explicit `itemSchema` |
 | **Composition** | `oneOf` (sealed classes), `anyOf`, `allOf`, discriminators, nested composition |
 | **Types** | Integer/string enums, `date`, `date-time` with timezone, `decimal`/`BigDecimal`, `uri`, `binary` |
 | **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |

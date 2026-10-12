@@ -114,6 +114,7 @@ enum ResponseDelivery() {
   complete,
   ndjson,
   jsonLines,
+  jsonSequence,
   sse,
 }
 

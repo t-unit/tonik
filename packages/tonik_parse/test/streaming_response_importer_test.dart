@@ -187,6 +187,139 @@ void main() {
     expect(body.model, isA<AnyModel>());
   });
 
+  test('JSON sequence imports normalized media and prefers itemSchema', () {
+    final document = Importer().import({
+      'openapi': '3.0.3',
+      'info': {'title': 'Stream', 'version': '1'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'responses': {
+          'Items': {
+            'description': 'Items',
+            'content': {
+              'Application/Json-Seq; charset=utf-8': {
+                'schema': {'type': 'string'},
+                'itemSchema': {'type': 'integer'},
+              },
+            },
+          },
+        },
+      },
+    });
+    final body = const ContentTypeNormalizer()
+        .apply(document)
+        .responses
+        .single
+        .resolved
+        .bodies
+        .single;
+    expect(body.delivery, ResponseDelivery.jsonSequence);
+    expect(body.contentType, ContentType.bytes);
+    expect(body.model, isA<IntegerModel>());
+  });
+
+  test('JSON sequence resolves reusable media on an unknown version', () {
+    final document = Importer().import({
+      'openapi': 'unknown',
+      'info': {'title': 'Stream', 'version': '1'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'mediaTypes': {
+          'Alias': {r'$ref': '#/components/mediaTypes/Items'},
+          'Items': {'itemSchema': true},
+        },
+        'responses': {
+          'Items': {
+            'description': 'Items',
+            'content': {
+              'application/json-seq': {
+                r'$ref': '#/components/mediaTypes/Alias',
+              },
+            },
+          },
+        },
+      },
+    });
+    final body = const ContentTypeNormalizer()
+        .apply(document)
+        .responses
+        .single
+        .resolved
+        .bodies
+        .single;
+    expect(body.delivery, ResponseDelivery.jsonSequence);
+    expect(body.model, isA<AnyModel>());
+  });
+
+  test('consumed external JSON sequence item schema throws', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.0.3',
+        'info': {'title': 'Stream', 'version': '1'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'Items': {
+              'description': 'Items',
+              'content': {
+                'application/json-seq': {
+                  'itemSchema': {r'$ref': 'other.yaml#/Value'},
+                },
+                'application/json': {
+                  'schema': {'type': 'integer'},
+                },
+              },
+            },
+          },
+        },
+      }),
+      throwsA(isA<UnimplementedError>()),
+    );
+  });
+
+  test(
+    'JSON sequence without a usable item schema keeps ordinary defaults',
+    () {
+      final document = Importer().import({
+        'openapi': '3.2.0',
+        'info': {'title': 'Stream', 'version': '1'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'Items': {
+              'description': 'Items',
+              'content': {
+                'application/json-seq': {
+                  'schema': {'type': 'string'},
+                  'itemSchema': {'properties': 3},
+                },
+                'application/json': {
+                  'schema': {'type': 'integer'},
+                },
+              },
+            },
+          },
+        },
+      });
+      final bodies = const ContentTypeNormalizer()
+          .apply(document)
+          .responses
+          .single
+          .resolved
+          .bodies;
+      final sequence = bodies.singleWhere(
+        (body) => body.rawContentType == 'application/json-seq',
+      );
+      final json = bodies.singleWhere(
+        (body) => body.rawContentType == 'application/json',
+      );
+      expect(sequence.delivery, ResponseDelivery.complete);
+      expect(sequence.model, isA<BinaryModel>());
+      expect(json.delivery, ResponseDelivery.complete);
+      expect(json.model, isA<IntegerModel>());
+    },
+  );
+
   test('SSE schema-only media preserves configured complete handling', () {
     final document =
         Importer(contentTypes: {'text/event-stream': ContentType.text}).import({

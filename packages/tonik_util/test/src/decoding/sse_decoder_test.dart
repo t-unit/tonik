@@ -214,7 +214,11 @@ void main() {
           utf8.encode('retry: 9007199254740992\ndata: x\n\ndata: later\n\n'),
         ),
       ),
-      emitsInOrder([emitsError(isA<FormatException>()), emitsDone]),
+      emitsInOrder([
+        emitsError(isA<FormatException>()),
+        {'data': 'later'},
+        emitsDone,
+      ]),
     );
   });
 
@@ -327,7 +331,7 @@ void main() {
     },
   );
 
-  test('defers parsing while paused and stops on failure', () async {
+  test('defers parsing while paused and recovers after failure', () async {
     var cancelled = false;
     final source = StreamController<List<int>>(
       onCancel: () => cancelled = true,
@@ -340,8 +344,10 @@ void main() {
     subscription = decodeSse(source.stream).listen(
       (event) {
         events.add(event);
-        subscription.pause();
-        first.complete();
+        if (event['data'] == 'first') {
+          subscription.pause();
+          first.complete();
+        }
       },
       onError: events.add,
       onDone: done.complete,
@@ -359,10 +365,12 @@ void main() {
     ]);
     expect(cancelled, isFalse);
     subscription.resume();
+    await source.close();
     await done.future;
     expect(events, [
       {'data': 'first'},
       isA<FormatException>(),
+      {'data': 'later'},
     ]);
     expect(cancelled, isTrue);
     await subscription.cancel();
@@ -404,7 +412,7 @@ void main() {
     },
   );
 
-  test('contains cleanup rejection after a decoding failure', () async {
+  test('contains cleanup rejection after a source failure', () async {
     final cleanupError = StateError('cleanup failed');
     final errors = <Object>[];
     final zoneErrors = <Object>[];
@@ -420,7 +428,7 @@ void main() {
         onDone: done.complete,
         cancelOnError: false,
       );
-      source.add(utf8.encode('retry: 9007199254740993\ndata: x\n\n'));
+      source.addError(const FormatException('transport'));
     }, (error, stack) => zoneErrors.add(error));
     await done.future;
     await Future<void>.delayed(Duration.zero);

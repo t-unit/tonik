@@ -95,7 +95,7 @@ void main() {
     expect(probe.clientClosed, isFalse);
   });
 
-  test('malformed record terminates and forwards public abort', () async {
+  test('malformed record continues without aborting the request', () async {
     final probe = BackendProbe();
     final server = CustomServer(
       baseUrl: 'http://example.test',
@@ -107,12 +107,20 @@ void main() {
     final done = Completer<void>();
     requireSuccess(result).value.listen(events.add, onDone: done.complete);
     probe.bytes.add(utf8.encode('invalid\n{"value":2}\n'));
+    await Future<void>.delayed(Duration.zero);
+    expect(probe.aborted.isCompleted, isFalse);
+    await probe.bytes.close();
     await done.future.timeout(const Duration(seconds: 5));
-    await probe.aborted.future.timeout(const Duration(seconds: 5));
-    expect(events, hasLength(1));
-    final failure = events.single as TonikError<Object?, Object>;
+    expect(events, hasLength(2));
+    final failure = events.first as TonikError<Object?, Object>;
     expect(failure.error, isA<FormatException>());
     expect(failure.type, TonikErrorType.decoding);
+    expect(
+      requireSuccess(events.last as TonikResult<ItemsGet200BodyModel, Object>)
+          .value,
+      const ItemsGet200BodyModel(value: 2),
+    );
+    expect(probe.aborted.isCompleted, isFalse);
   });
 
   test(

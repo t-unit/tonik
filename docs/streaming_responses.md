@@ -8,6 +8,7 @@ media types with an explicit, usable `itemSchema`, regardless of OpenAPI version
 |---|---|
 | `application/x-ndjson` | One JSON value per record |
 | `application/jsonl` | One JSON value per record |
+| `application/json-seq` | RS-prefixed JSON values, including multiline values |
 | `text/event-stream` | SSE event map converted to the item model |
 
 ## Describe the Items
@@ -38,8 +39,8 @@ streaming nor buffered sequence-to-array decoding.
 Media references support `#/components/mediaTypes/Name` and chains there, not
 other target locations. Media `$ref` siblings are ignored; applicable siblings
 on an item-schema `$ref` use normal schema handling. Missing internal targets
-fail when resolved. External media uses defaults or omission; resolved external
-schemas, including item schemas, throw `UnimplementedError`.
+fail when resolved. Consumed external media and schema references, including item
+schemas, throw `UnimplementedError`. External example references are omitted.
 
 ## Consume and Cancel
 
@@ -61,7 +62,7 @@ Future<void> main() async {
           case TonikSuccess(:final value):
             print(value.value);
           case TonikError(:final error, :final type):
-            print('Stream failed ($type): $error');
+            print('Item error ($type): $error');
         }
       }
     case TonikError(:final error):
@@ -84,12 +85,14 @@ use `listen()` and its subscription's `pause()`, `resume()`, or `cancel()`;
 Signals are forwarded to the backend; network buffering still applies.
 [Client ownership](http_backends.md#client-configuration-and-ownership) is unchanged.
 
-Pre-return failures use the outer `TonikError`. Each streamed item is a
-`TonikSuccess`; the first failure is a `TonikError` data event, then the stream
-ends. Error results retain the native response, cause, stack trace, and error type:
-framing/conversion failures are `decoding`, transport failures are `network`,
-and backend abort events are `cancelled` when applicable. No error catch is
-needed for these failures. Subscription cancellation emits no further results.
+Pre-return failures use the outer `TonikError`. Valid streamed items are
+`TonikSuccess` data events. A malformed record or item-conversion failure emits
+a `TonikError` with type `decoding`, then consumption continues at the next record.
+Transport failures emit one terminal error with type `network`; backend abort
+events use `cancelled` when applicable. Error results retain the native response,
+cause, and stack trace. No error catch is needed for these failures. Subscription
+cancellation emits no further results. To stop after an item error, break from
+the loop or cancel the subscription.
 
 ## Framing
 
@@ -99,6 +102,15 @@ without a newline are accepted. Skipping empty JSONL records and accepting
 unterminated NDJSON records are fixed, non-configurable receive leniencies.
 NDJSON allows raw CR only before a delimiting LF; JSONL also permits it as JSON
 whitespace outside strings, never as a record separator.
+
+**JSON-seq:** strict UTF-8 with each record prefixed by RS (`0x1E`). Multiline
+JSON is accepted, and complete values followed by LF are delivered immediately.
+Consecutive RS bytes are ignored. Invalid or incomplete records produce decoding
+errors; parsing resumes at the next RS. At RS or EOF, objects, arrays, and strings
+can finish without LF, while numbers, booleans, and `null` require trailing JSON
+whitespace to rule out truncation. Unframed input, BOMs, whitespace-only records,
+and non-whitespace after an already delivered value produce decoding errors.
+See [RFC 7464](https://www.rfc-editor.org/rfc/rfc7464.html).
 
 **SSE:** replacement UTF-8 decoding, one initial BOM removed, and LF/CRLF/CR
 boundaries. A blank line dispatches a block containing `data`, including empty
@@ -143,6 +155,6 @@ The typed stream and native body share one consumption. Use `.response` for
 metadata, without also reading its raw stream. There is no replayable copy or
 second buffered API. See [HTTP Backends](http_backends.md#native-boundary).
 
-Streamed requests, parameters, headers, multipart streams, JSON Text Sequences
-(`application/json-seq`), and structured streaming suffixes remain unsupported.
+Streamed requests, parameters, headers, multipart streams, and structured
+streaming suffixes remain unsupported.
 Native integration checks are described in [Contributing](../CONTRIBUTING.md#common-commands).

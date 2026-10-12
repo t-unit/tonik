@@ -65,7 +65,7 @@ void main() {
     test('rejects whitespace-only records', () async {
       await expectLater(
         decodeNdjson(Stream.value(utf8.encode(' \t\n2\n'))),
-        emitsInOrder([emitsError(isA<FormatException>()), emitsDone]),
+        emitsInOrder([emitsError(isA<FormatException>()), 2, emitsDone]),
       );
     });
 
@@ -95,7 +95,7 @@ void main() {
     test('rejects malformed UTF-8 before a valid record', () async {
       await expectLater(
         decodeNdjson(Stream.value([0x22, 0xff, 0x22, 0x0a, 0x31, 0x0a])),
-        emitsInOrder([emitsError(isA<FormatException>()), emitsDone]),
+        emitsInOrder([emitsError(isA<FormatException>()), 1, emitsDone]),
       );
     });
 
@@ -162,7 +162,7 @@ void main() {
     test('skips empty records but rejects whitespace-only records', () async {
       await expectLater(
         decodeJsonLines(Stream.value(utf8.encode('\n\r\n1\n \t\n2\n'))),
-        emitsInOrder([1, emitsError(isA<FormatException>()), emitsDone]),
+        emitsInOrder([1, emitsError(isA<FormatException>()), 2, emitsDone]),
       );
     });
 
@@ -217,7 +217,7 @@ void main() {
       expect(cancelled, isTrue);
     });
 
-    test('stops after invalid JSON and cancels upstream', () async {
+    test('recovers after invalid JSON without cancelling upstream', () async {
       var cancelled = false;
       final source = StreamController<List<int>>(
         onCancel: () => cancelled = true,
@@ -240,9 +240,12 @@ void main() {
       source
         ..add(utf8.encode('1\n{broken}\n2\n'))
         ..add(utf8.encode('3\n'));
+      await Future<void>.delayed(Duration.zero);
+      expect(cancelled, isFalse);
+      await source.close();
       await done.future;
 
-      expect(values, [1]);
+      expect(values, [1, 2, 3]);
       expect(errors, hasLength(1));
       expect(
         errors.single,
@@ -290,7 +293,7 @@ void main() {
       expect(cancelled, isTrue);
     });
 
-    test('contains cleanup rejection after a decoding failure', () async {
+    test('contains cleanup rejection after a source failure', () async {
       final cleanupError = StateError('cleanup failed');
       final values = <Object?>[];
       final errors = <Object>[];
@@ -312,7 +315,13 @@ void main() {
           onDone: done.complete,
           cancelOnError: false,
         );
-        source.add(utf8.encode('1\n{broken}\n2\n'));
+        source
+          ..add(utf8.encode('1\n'))
+          ..addError(
+            const FormatException('transport', '{broken}'),
+            StackTrace.current,
+          )
+          ..add(utf8.encode('2\n'));
       }, (error, stack) => zoneErrors.add(error));
       await done.future;
       await Future<void>.delayed(Duration.zero);
@@ -387,8 +396,10 @@ void main() {
       subscription = decodeJsonLines(source.stream).listen(
         (value) {
           values.add(value);
-          subscription.pause();
-          first.complete();
+          if (value == 1) {
+            subscription.pause();
+            first.complete();
+          }
         },
         onError: errors.add,
         onDone: done.complete,
@@ -403,9 +414,10 @@ void main() {
       expect(errors, isEmpty);
       expect(cancelled, isFalse);
       subscription.resume();
+      await source.close();
       await done.future;
 
-      expect(values, [1]);
+      expect(values, [1, 2]);
       expect(errors, [isA<FormatException>()]);
       expect(cancelled, isTrue);
       await subscription.cancel();

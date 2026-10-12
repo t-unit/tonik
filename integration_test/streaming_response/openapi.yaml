@@ -44,6 +44,16 @@ paths:
                 properties:
                   value:
                     type: integer
+  /json-seq:
+    get:
+      operationId: getJsonSequence
+      tags: [streaming]
+      responses:
+        '200':
+          description: JSON text sequence items
+          content:
+            application/json-seq:
+              $ref: '#/components/mediaTypes/ItemAlias'
   /sse-data:
     get:
       operationId: getSseData
@@ -171,16 +181,13 @@ paths:
       tags: [streaming]
       responses:
         '200':
-          description: Reusable media and external fallback
+          description: Reusable media and complete byte fallback
           content:
             application/json:
               $ref: '#/components/mediaTypes/CompleteItem'
             application/x-ndjson:
               $ref: '#/components/mediaTypes/ItemAlias'
-            application/jsonl:
-              $ref: '?revision=2#/components/mediaTypes/Unknown'
-              itemSchema:
-                type: integer
+            application/jsonl: {}
   /schema-only:
     get:
       operationId: getSchemaOnly
@@ -320,6 +327,8 @@ components:
         $ref: '#/components/schemas/StreamItem'
       itemSchema:
         $ref: '#/components/schemas/UnconsumedItem'
+    UnusedExternalMedia:
+      $ref: '?revision=2#/components/mediaTypes/Unknown'
     UnusedAlias:
       $ref: '#/components/mediaTypes/Absent'
       description: 42
