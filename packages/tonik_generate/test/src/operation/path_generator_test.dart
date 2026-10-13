@@ -1029,7 +1029,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<List<AnonymousModel>> matrix}) {
-          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter matrix');
+          throw EncodingException(r'Simple encoding does not support lists with unsupported element types for path parameter matrix');
           return [r'data'];
         }
       ''';
@@ -1420,7 +1420,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<List<String>> matrix}) {
-          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter matrix');
+          throw EncodingException(r'Matrix encoding does not support arrays of objects or nested arrays for path parameter matrix');
           return [];
         }
       ''';
@@ -2306,7 +2306,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, AnonymousModel> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2368,7 +2368,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, List<String>> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2452,7 +2452,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, StringOrInt> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2532,7 +2532,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, CombinedObject> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2747,7 +2747,7 @@ void main() {
 
         const expectedMethod = '''
         List<String> _path({required Map<String, StringOrIntSimple> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2823,7 +2823,7 @@ void main() {
 
         const expectedMethod = '''
         List<String> _path({required Map<String, StringOnly> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2903,7 +2903,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required MyMap m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -2981,7 +2981,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required MyList l}) {
-          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter l');
+          throw EncodingException(r'Simple encoding does not support lists with unsupported element types for path parameter l');
           return [r'r'];
         }
       ''';
@@ -3043,7 +3043,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<List<String>> m}) {
-          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          throw EncodingException(r'Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
           return [r'r'];
         }
       ''';
@@ -3112,7 +3112,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required NestedListAlias m}) {
-          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          throw EncodingException(r'Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
           return [r'r'];
         }
       ''';
@@ -3181,7 +3181,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<InnerListAlias> m}) {
-          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          throw EncodingException(r'Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
           return [r'r'];
         }
       ''';
@@ -3244,7 +3244,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, AnonymousModel> m}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
@@ -3295,7 +3295,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Never p}) {
-          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          throw EncodingException(r'Simple encoding does not support never-typed values for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3346,7 +3346,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required TonikFile p}) {
-          throw EncodingException('Simple encoding does not support binary values for path parameter p');
+          throw EncodingException(r'Simple encoding does not support binary values for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3403,7 +3403,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<Never> p}) {
-          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter p');
+          throw EncodingException(r'Simple encoding does not support lists with unsupported element types for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3460,7 +3460,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<TonikFile> p}) {
-          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter p');
+          throw EncodingException(r'Simple encoding does not support lists with unsupported element types for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3528,7 +3528,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required NeverAlias p}) {
-          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          throw EncodingException(r'Simple encoding does not support never-typed values for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3603,7 +3603,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required NeverOuter p}) {
-          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          throw EncodingException(r'Simple encoding does not support never-typed values for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3689,7 +3689,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required MapOuter p}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter p');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter p');
           return [r'r'];
         }
       ''';
@@ -3769,7 +3769,7 @@ void main() {
           required String good,
           required Map<String, AnonymousModel> badMap,
         }) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter badMap');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter badMap');
           return [r'r'];
         }
       ''';
@@ -3785,7 +3785,7 @@ void main() {
       expectMethodMatches(method, expectedMethod);
     });
 
-    test('rawName != name divergence uses rawName in error message', () {
+    test('preserves dollars and backslashes in rawName errors', () {
       final classModel = ClassModel(
         isDeprecated: false,
         context: context,
@@ -3800,7 +3800,7 @@ void main() {
 
       final pathParam = PathParameterObject(
         name: 'mNorm',
-        rawName: 'M-RAW',
+        rawName: r'M-$value\name',
         description: 'Map parameter with divergent rawName',
         isRequired: true,
         isDeprecated: false,
@@ -3820,7 +3820,7 @@ void main() {
         description: 'rawName divergence test',
         tags: const {},
         isDeprecated: false,
-        path: '/r/{M-RAW}.json',
+        path: r'/r/{M-$value\name}.json',
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
@@ -3830,9 +3830,9 @@ void main() {
         cookieParameters: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         List<String> _path({required Map<String, AnonymousModel> mNorm}) {
-          throw EncodingException('Simple encoding does not support map with complex value types for path parameter M-RAW');
+          throw EncodingException(r'Simple encoding does not support map with complex value types for path parameter M-$value\name');
           return [r'r'];
         }
       ''';

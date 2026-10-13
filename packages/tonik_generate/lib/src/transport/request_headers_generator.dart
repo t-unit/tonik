@@ -272,6 +272,7 @@ class const RequestHeadersGenerator({
             generateEncodingExceptionExpression(
               'Simple encoding does not support list with complex elements for'
               ' header ${resolvedParam.rawName}',
+              raw: true,
             ).statement,
           );
         } else {
@@ -282,6 +283,7 @@ class const RequestHeadersGenerator({
               generateEncodingExceptionExpression(
                 'Simple encoding does not support list with complex elements'
                 ' for header ${resolvedParam.rawName}',
+                raw: true,
               ).statement,
               const Code('}'),
             ]),
@@ -405,6 +407,7 @@ class const RequestHeadersGenerator({
       bodyStatements.add(
         generateEncodingExceptionExpression(
           'Binary data cannot be form-encoded for cookie $rawName',
+          raw: true,
         ).statement,
       );
       return;
@@ -415,6 +418,7 @@ class const RequestHeadersGenerator({
         generateEncodingExceptionExpression(
           'Cannot encode NeverModel - this type does not permit any value '
           'for cookie $rawName',
+          raw: true,
         ).statement,
       );
       return;
@@ -473,6 +477,7 @@ class const RequestHeadersGenerator({
       bodyStatements.add(
         generateEncodingExceptionExpression(
           'Unsupported model type for form-encoded cookie $rawName',
+          raw: true,
         ).statement,
       );
       return;

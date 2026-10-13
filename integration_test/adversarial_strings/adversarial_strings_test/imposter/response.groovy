@@ -6,6 +6,13 @@ def tonikRecordedRequest = [
 ]
 stores.open('tonik').save('last', tonikRecordedRequest)
 
-respond()
-    .withStatusCode(204)
-    .skipDefaultBehaviour()
+if (context.request.uri.endsWith('/quoted-content-type')) {
+    respond()
+        .withStatusCode(418)
+        .withHeader('Content-Type', 'text/plain; charset=utf-8')
+        .skipDefaultBehaviour()
+} else {
+    respond()
+        .withStatusCode(204)
+        .skipDefaultBehaviour()
+}

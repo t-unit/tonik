@@ -671,6 +671,7 @@ class const ParseGenerator({
       final unsupported = headerResult.unsupported.first;
       return generateSimpleDecodingExceptionExpression(
         '${unsupported.reason} at ${unsupported.headerName}',
+        raw: true,
       ).statement;
     }
 
@@ -742,6 +743,7 @@ class const ParseGenerator({
       final unsupported = headerResult.unsupported.first;
       return generateSimpleDecodingExceptionExpression(
         '${unsupported.reason} at ${unsupported.headerName}',
+        raw: true,
       ).statement;
     }
 

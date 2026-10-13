@@ -156,6 +156,7 @@ class const PathGenerator({
               generateEncodingExceptionExpression(
                 'Simple encoding does not support $throwReason '
                 'for path parameter ${param.parameter.rawName}',
+                raw: true,
               ).statement,
             );
             return;
@@ -186,6 +187,7 @@ class const PathGenerator({
                 'Matrix encoding does not support arrays of objects or '
                 'nested arrays for path parameter '
                 '${param.parameter.rawName}',
+                raw: true,
               ).statement,
             );
             return;
