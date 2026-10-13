@@ -764,7 +764,7 @@ void main() {
       const expectedHashCode = r'''
           @override
           int get hashCode {
-            return Object.hashAll([$base, $mixin]);
+            return Object.hashAll([this.$base, this.$mixin]);
           }
         ''';
 
@@ -909,7 +909,7 @@ void main() {
       const expectedHashCode = '''
           @override
           int get hashCode {
-            return Object.hashAll([status, string]);
+            return Object.hashAll([this.status, this.string]);
           }
         ''';
 

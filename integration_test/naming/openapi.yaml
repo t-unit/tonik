@@ -1483,6 +1483,42 @@ components:
         dynamicValue:
           $ref: '#/components/schemas/dynamic'
 
+    SingleCollectionHashCollision:
+      type: object
+      required:
+        - deepEquals
+      properties:
+        deepEquals:
+          type: array
+          items:
+            type: integer
+
+    ScalarHashCollision:
+      type: object
+      required:
+        - deepEquals
+        - items
+      properties:
+        deepEquals:
+          type: integer
+        items:
+          type: array
+          items:
+            type: integer
+
+    CollectionHashCollision:
+      type: object
+      required:
+        - deepEquals
+        - name
+      properties:
+        deepEquals:
+          type: array
+          items:
+            type: integer
+        name:
+          type: string
+
     GeneratedMethodCollider:
       type: object
       properties:

@@ -135,7 +135,7 @@ bool operator ==(Object other) {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = '''
-int get hashCode => tags.hashCode;
+int get hashCode => this.tags.hashCode;
 ''';
         expect(
           collapseWhitespace(code),

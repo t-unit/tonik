@@ -28,14 +28,16 @@ void main() {
     test('generates hash code method for class without properties', () {
       final method = generateHashCodeMethod(properties: const []);
 
-      const expectedMethod = '''
-        @override
-        int get hashCode => runtimeType.hashCode;
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode => runtimeType.hashCode;
+        }
       ''';
 
       expect(
         collapseWhitespace(formatMethod(method)),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format(expectedClass)),
       );
     });
 
@@ -46,14 +48,16 @@ void main() {
           properties: [(normalizedName: 'value', hasCollectionValue: false)],
         );
 
-        const expectedMethod = '''
-        @override
-        int get hashCode => value.hashCode;
-      ''';
+        const expectedClass = '''
+          class Temp {
+            @override
+            int get hashCode => this.value.hashCode;
+          }
+        ''';
 
         expect(
           collapseWhitespace(formatMethod(method)),
-          contains(collapseWhitespace(expectedMethod)),
+          collapseWhitespace(format(expectedClass)),
         );
       },
     );
@@ -65,20 +69,91 @@ void main() {
           properties: [(normalizedName: 'values', hasCollectionValue: true)],
         );
 
-        const expectedMethod = '''
-        @override
-        int get hashCode {
-          const deepEquals = DeepCollectionEquality();
-          return deepEquals.hash(values);
-        }
-      ''';
+        const expectedClass = '''
+          class Temp {
+            @override
+            int get hashCode {
+              const deepEquals = DeepCollectionEquality();
+              return deepEquals.hash(this.values);
+            }
+          }
+        ''';
 
         expect(
           collapseWhitespace(formatMethod(method)),
-          contains(collapseWhitespace(expectedMethod)),
+          collapseWhitespace(format(expectedClass)),
         );
       },
     );
+
+    test('qualifies a single collection named deepEquals', () {
+      final method = generateHashCodeMethod(
+        properties: [(normalizedName: 'deepEquals', hasCollectionValue: true)],
+      );
+
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return deepEquals.hash(this.deepEquals);
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(formatMethod(method)),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
+
+    test('qualifies a scalar named deepEquals alongside a collection', () {
+      final method = generateHashCodeMethod(
+        properties: [
+          (normalizedName: 'deepEquals', hasCollectionValue: false),
+          (normalizedName: 'items', hasCollectionValue: true),
+        ],
+      );
+
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return Object.hashAll([this.deepEquals, deepEquals.hash(this.items)]);
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(formatMethod(method)),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
+
+    test('qualifies a collection named deepEquals alongside a scalar', () {
+      final method = generateHashCodeMethod(
+        properties: [
+          (normalizedName: 'deepEquals', hasCollectionValue: true),
+          (normalizedName: 'name', hasCollectionValue: false),
+        ],
+      );
+
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return Object.hashAll([deepEquals.hash(this.deepEquals), this.name]);
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(formatMethod(method)),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
 
     test('generates hash code method for class with mixed properties', () {
       final method = generateHashCodeMethod(
@@ -89,65 +164,92 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
-        @override
-        int get hashCode {
-          const deepEquals = DeepCollectionEquality();
-          return Object.hashAll([id, deepEquals.hash(items), name]);
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return Object.hashAll([this.id, deepEquals.hash(this.items), this.name]);
+          }
         }
       ''';
 
       expect(
         collapseWhitespace(formatMethod(method)),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format(expectedClass)),
       );
     });
 
     test('generates hash code method for class with many properties', () {
       final method = generateHashCodeMethod(
-        properties: List.generate(
-          25,
-          (i) => (normalizedName: 'prop$i', hasCollectionValue: i.isEven),
-        ),
+        properties: [
+          (normalizedName: 'prop0', hasCollectionValue: true),
+          (normalizedName: 'prop1', hasCollectionValue: false),
+          (normalizedName: 'prop2', hasCollectionValue: true),
+          (normalizedName: 'prop3', hasCollectionValue: false),
+          (normalizedName: 'prop4', hasCollectionValue: true),
+          (normalizedName: 'prop5', hasCollectionValue: false),
+          (normalizedName: 'prop6', hasCollectionValue: true),
+          (normalizedName: 'prop7', hasCollectionValue: false),
+          (normalizedName: 'prop8', hasCollectionValue: true),
+          (normalizedName: 'prop9', hasCollectionValue: false),
+          (normalizedName: 'prop10', hasCollectionValue: true),
+          (normalizedName: 'prop11', hasCollectionValue: false),
+          (normalizedName: 'prop12', hasCollectionValue: true),
+          (normalizedName: 'prop13', hasCollectionValue: false),
+          (normalizedName: 'prop14', hasCollectionValue: true),
+          (normalizedName: 'prop15', hasCollectionValue: false),
+          (normalizedName: 'prop16', hasCollectionValue: true),
+          (normalizedName: 'prop17', hasCollectionValue: false),
+          (normalizedName: 'prop18', hasCollectionValue: true),
+          (normalizedName: 'prop19', hasCollectionValue: false),
+          (normalizedName: 'prop20', hasCollectionValue: true),
+          (normalizedName: 'prop21', hasCollectionValue: false),
+          (normalizedName: 'prop22', hasCollectionValue: true),
+          (normalizedName: 'prop23', hasCollectionValue: false),
+          (normalizedName: 'prop24', hasCollectionValue: true),
+        ],
       );
 
-      const expectedMethod = '''
-        @override
-        int get hashCode {
-          const deepEquals = DeepCollectionEquality();
-          return Object.hashAll([
-            deepEquals.hash(prop0),
-            prop1,
-            deepEquals.hash(prop2),
-            prop3,
-            deepEquals.hash(prop4),
-            prop5,
-            deepEquals.hash(prop6),
-            prop7,
-            deepEquals.hash(prop8),
-            prop9,
-            deepEquals.hash(prop10),
-            prop11,
-            deepEquals.hash(prop12),
-            prop13,
-            deepEquals.hash(prop14),
-            prop15,
-            deepEquals.hash(prop16),
-            prop17,
-            deepEquals.hash(prop18),
-            prop19,
-            deepEquals.hash(prop20),
-            prop21,
-            deepEquals.hash(prop22),
-            prop23,
-            deepEquals.hash(prop24),
-          ]);
+      const expectedClass = '''
+        class Temp {
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return Object.hashAll([
+              deepEquals.hash(this.prop0),
+              this.prop1,
+              deepEquals.hash(this.prop2),
+              this.prop3,
+              deepEquals.hash(this.prop4),
+              this.prop5,
+              deepEquals.hash(this.prop6),
+              this.prop7,
+              deepEquals.hash(this.prop8),
+              this.prop9,
+              deepEquals.hash(this.prop10),
+              this.prop11,
+              deepEquals.hash(this.prop12),
+              this.prop13,
+              deepEquals.hash(this.prop14),
+              this.prop15,
+              deepEquals.hash(this.prop16),
+              this.prop17,
+              deepEquals.hash(this.prop18),
+              this.prop19,
+              deepEquals.hash(this.prop20),
+              this.prop21,
+              deepEquals.hash(this.prop22),
+              this.prop23,
+              deepEquals.hash(this.prop24),
+            ]);
+          }
         }
       ''';
 
       expect(
         collapseWhitespace(formatMethod(method)),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format(expectedClass)),
       );
     });
   });
