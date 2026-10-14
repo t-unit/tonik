@@ -262,9 +262,9 @@ class NameGenerator() {
     final subclassNames = <String, String>{};
     if (requestBody is RequestBodyObject && requestBody.contentCount > 1) {
       for (final content in requestBody.resolvedContent) {
-        final suffix =
-            content.rawContentType.split('/').lastOrNull?.toPascalCase() ??
-            'Default';
+        final suffix = _sanitizeContentTypeSuffix(
+          content.rawContentType.split('/').lastOrNull ?? 'Default',
+        );
         final subclassBaseName = '$uniqueBaseName$suffix';
         subclassNames[content.rawContentType] = _makeUnique(
           subclassBaseName,
@@ -343,12 +343,17 @@ class NameGenerator() {
     final baseContentType = parts.first;
     final version = parts.length > 1 ? parts.last : null;
 
-    final suffix = baseContentType.toPascalCase();
-    final versionSuffix = version != null ? version.toPascalCase() : '';
+    final suffix = _sanitizeContentTypeSuffix(baseContentType);
+    final versionSuffix = version != null
+        ? _sanitizeContentTypeSuffix(version)
+        : '';
     final fullSuffix = '$suffix$versionSuffix';
 
     return _makeUnique(baseName, fullSuffix, usedFileNames);
   }
+
+  String _sanitizeContentTypeSuffix(String value) =>
+      value.toPascalCase().replaceAll(RegExp(r'[^\w$]'), '');
 
   /// Generates a base name using the following priority:
   /// 1. Explicit name if available

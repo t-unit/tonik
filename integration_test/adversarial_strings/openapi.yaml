@@ -63,6 +63,16 @@ paths:
                   value:
                     name: sample
 
+  /quoted-media-alternatives:
+    post:
+      operationId: echoQuotedMedia
+      tags: [adversarial]
+      requestBody:
+        $ref: '#/components/requestBodies/QuotedMediaBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/QuotedMediaResponse'
+
   # 1i. Multipart with adversarial field name
   /upload:
     post:
@@ -387,6 +397,26 @@ paths:
           description: Bad request
 
 components:
+  requestBodies:
+    QuotedMediaBody:
+      required: true
+      content:
+        "application/it's+json":
+          schema:
+            $ref: '#/components/schemas/BasicObject'
+        application/its+json:
+          schema:
+            $ref: '#/components/schemas/BasicObject'
+  responses:
+    QuotedMediaResponse:
+      description: Echoed media alternative
+      content:
+        "application/it's+json":
+          schema:
+            $ref: '#/components/schemas/BasicObject'
+        application/its+json:
+          schema:
+            $ref: '#/components/schemas/BasicObject'
   securitySchemes:
     bearerAuth:
       type: http

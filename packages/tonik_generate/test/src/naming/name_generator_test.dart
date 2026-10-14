@@ -995,6 +995,103 @@ void main() {
         });
       });
 
+      test('sanitizes apostrophes and keeps colliding media types unique', () {
+        final requestBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: "application/it's",
+              examples: const [],
+            ),
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/its',
+              examples: const [],
+            ),
+          },
+        );
+
+        final (baseName, subclassNames) = nameGenerator
+            .generateRequestBodyNames(requestBody, usedNames);
+
+        expect(baseName, 'User');
+        expect(subclassNames, {
+          "application/it's": 'UserIts',
+          'application/its': 'UserItsModel',
+        });
+      });
+
+      test('sanitizes apostrophes after plus and preserves leading digits', () {
+        final requestBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: "application/json+v'2",
+              examples: const [],
+            ),
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/3gpp',
+              examples: const [],
+            ),
+          },
+        );
+
+        final (_, subclassNames) = nameGenerator.generateRequestBodyNames(
+          requestBody,
+          usedNames,
+        );
+
+        expect(subclassNames, {
+          "application/json+v'2": 'UserJsonV2',
+          'application/3gpp': 'User3gpp',
+        });
+      });
+
+      test('keeps punctuation-only media suffixes unique against the base', () {
+        final requestBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: "application/'",
+              examples: const [],
+            ),
+            ModelRequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: "application/''",
+              examples: const [],
+            ),
+          },
+        );
+
+        final (baseName, subclassNames) = nameGenerator
+            .generateRequestBodyNames(requestBody, usedNames);
+
+        expect(baseName, 'User');
+        expect(subclassNames, {
+          "application/'": 'UserModel',
+          "application/''": 'UserModel2',
+        });
+      });
+
       test('handles request body aliases', () {
         final originalBody = RequestBodyObject(
           name: 'user',
@@ -1381,6 +1478,100 @@ void main() {
         );
 
         expect(name, 'UserResponseJsonV2');
+      });
+
+      test('sanitizes apostrophes and keeps colliding media types unique', () {
+        final quotedName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: "application/it's",
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+        final plainName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/its',
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+
+        expect(quotedName, 'UserResponseIts');
+        expect(plainName, 'UserResponseIts2');
+      });
+
+      test('sanitizes apostrophes after plus', () {
+        final name = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: "application/json+v'2",
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+
+        expect(name, 'UserResponseJsonV2');
+      });
+
+      test('preserves form-urlencoded and digit-leading suffixes', () {
+        final formName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/x-www-form-urlencoded',
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+        final digitName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/3gpp',
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+
+        expect(formName, 'UserResponseXWwwFormUrlencoded');
+        expect(digitName, 'UserResponse3gpp');
+      });
+
+      test('keeps punctuation-only media suffixes unique against the base', () {
+        usedNames.add('user_response.dart');
+        final firstName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: "application/'",
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+        final secondName = nameGenerator.generateResponseImplementationName(
+          'UserResponse',
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: "application/''",
+            contentType: ContentType.json,
+            examples: const [],
+          ),
+          usedNames,
+        );
+
+        expect(firstName, 'UserResponseModel');
+        expect(secondName, 'UserResponseModel2');
       });
 
       test('handles content types with no subtype', () {
