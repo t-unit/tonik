@@ -17,6 +17,7 @@ class NameManager({
 
   final _schemaNames = <(Context, String), String>{};
   final _rawObjectNames = <String, String>{};
+  final _rawModelNames = <Model, String>{};
 
   final operationNames = <Operation, String>{};
   final _operationFilenames = <String>{};
@@ -153,6 +154,33 @@ class NameManager({
         _logRequestBodyNames(requestBody);
       }
     }
+
+    // Match serial model generation order so every isolate shares the same
+    // claims, including names needed by response wrappers generated later.
+    for (final model in models) {
+      switch (model) {
+        case ClassModel(isNullable: true):
+          rawObjectName(modelName(model));
+        case OneOfModel():
+          final parentClassName = model.isNullable
+              ? rawModelName(model)
+              : modelName(model);
+          for (final member in model.models) {
+            generateVariantName(
+              parentClassName: parentClassName,
+              model: member.model,
+              discriminatorValue: member.discriminatorValue,
+            );
+          }
+        case AnyOfModel(isNullable: true) ||
+            AllOfModel(isNullable: true) ||
+            EnumModel<String>(isNullable: true) ||
+            EnumModel<int>(isNullable: true):
+          rawModelName(model);
+        default:
+          break;
+      }
+    }
   }
 
   /// Gets a cached or generates a new unique class name for a model.
@@ -172,6 +200,19 @@ class NameManager({
       name: '\$Raw$name',
       context: Context.initial(),
       usedFileNames: _usedFileNames,
+    ),
+  );
+
+  String rawModelName(Model model) => _rawModelNames.putIfAbsent(
+    model,
+    () => modelName(
+      AliasModel(
+        name: '\$Raw${modelName(model)}',
+        model: model,
+        context: model.context,
+        defaultValue: null,
+        examples: const [],
+      ),
     ),
   );
 

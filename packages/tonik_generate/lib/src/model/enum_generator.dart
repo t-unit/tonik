@@ -67,15 +67,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
     // Nullable enums need a Raw-prefixed concrete enum so a typedef can
     // express the nullable public type.
     final actualEnumName = model.isNullable
-        ? nameManager.modelName(
-            AliasModel(
-              name: '\$Raw$enumName',
-              model: model,
-              context: model.context,
-              defaultValue: null,
-              examples: const [],
-            ),
-          )
+        ? nameManager.rawModelName(model)
         : enumName;
 
     final enumValue = Enum((b) {

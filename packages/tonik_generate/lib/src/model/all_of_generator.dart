@@ -93,17 +93,7 @@ class const AllOfGenerator({
     // Nullable public aliases need a Raw-prefixed concrete class.
     final actualClassName =
         className ??
-        (model.isNullable
-            ? nameManager.modelName(
-                AliasModel(
-                  name: '\$Raw$publicClassName',
-                  model: model,
-                  context: model.context,
-                  defaultValue: null,
-                  examples: const [],
-                ),
-              )
-            : publicClassName);
+        (model.isNullable ? nameManager.rawModelName(model) : publicClassName);
 
     final models = model.models;
 
