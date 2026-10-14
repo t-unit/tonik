@@ -15,6 +15,30 @@ servers:
   - url: https://api.example.com/v1
 
 paths:
+  /multiline-defaults:
+    get:
+      operationId: getMultilineDefaults
+      parameters:
+        - name: line
+          in: query
+          schema:
+            type: string
+            default: "\n"
+        - name: padded
+          in: query
+          schema:
+            type: string
+            default: "  \nabc"
+        - name: object
+          in: query
+          schema:
+            $ref: '#/components/schemas/MultilineDefaultObject'
+            default:
+              value: "\n"
+              "\nk": "  \nabc"
+      responses:
+        '204':
+          description: OK
   /health:
     get:
       operationId: healthCheck
@@ -145,6 +169,47 @@ paths:
 
 components:
   schemas:
+    MultilineDefaults:
+      type: object
+      required: [line, padded, tabbed, blankLines, mixed]
+      properties:
+        line:
+          type: string
+          default: "\n"
+        padded:
+          type: string
+          default: "  \nabc"
+        tabbed:
+          type: string
+          default: "\t\nabc"
+        blankLines:
+          type: string
+          default: "\n\nabc"
+        mixed:
+          type: string
+          default: "\n$5\\it's \"here\"\r\n"
+        typed:
+          type: object
+          additionalProperties:
+            type: string
+          default:
+            "\nk": "  \nabc"
+        raw:
+          default:
+            "\nk": "\n"
+        object:
+          $ref: '#/components/schemas/MultilineDefaultObject'
+          default:
+            value: "\n"
+            "\nk": "  \nabc"
+    MultilineDefaultObject:
+      type: object
+      required: [value]
+      properties:
+        value:
+          type: string
+      additionalProperties:
+        type: string
     DefaultedPrimitives:
       type: object
       required:

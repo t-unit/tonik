@@ -425,6 +425,14 @@ components:
         JWT
         class BearerDocumentation {}
   schemas:
+    ObjectWithNewlineProp:
+      type: object
+      required: ["\nk"]
+      properties:
+        "\nk":
+          type: string
+      additionalProperties:
+        type: string
     RootStringAlias:
       type: string
 
