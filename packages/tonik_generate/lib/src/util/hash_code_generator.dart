@@ -40,14 +40,17 @@ Method generateHashCodeMethod({
         ..add(
           refer('deepEquals')
               .property('hash')
-              .call([refer(prop.normalizedName)])
+              .call([refer('this').property(prop.normalizedName)])
               .returned
               .statement,
         );
     } else {
       methodBuilder
         ..lambda = true
-        ..body = refer(prop.normalizedName).property('hashCode').code;
+        ..body = refer('this')
+            .property(prop.normalizedName)
+            .property('hashCode')
+            .code;
       return methodBuilder.build();
     }
   } else {
@@ -68,9 +71,9 @@ Method generateHashCodeMethod({
       if (prop.hasCollectionValue) {
         return refer('deepEquals')
             .property('hash')
-            .call([refer(prop.normalizedName)]);
+            .call([refer('this').property(prop.normalizedName)]);
       } else {
-        return refer(prop.normalizedName);
+        return refer('this').property(prop.normalizedName);
       }
     }).toList();
 

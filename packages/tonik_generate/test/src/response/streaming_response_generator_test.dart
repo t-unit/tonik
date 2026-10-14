@@ -117,7 +117,7 @@ void main() {
         formatter.format('''
         class Lists {
         @override
-        int get hashCode => body.hashCode;
+        int get hashCode => this.body.hashCode;
         }
       '''),
       ),

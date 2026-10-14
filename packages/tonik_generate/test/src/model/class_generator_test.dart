@@ -2686,19 +2686,28 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             examples: const [],
           );
 
-          const expectedMethod = '''
-  @override
-  int get hashCode {
-    const deepEquals = DeepCollectionEquality();
-    return Object.hashAll([name, deepEquals.hash(additionalProperties)]);
-  }''';
+          const expectedClass = '''
+            class Temp {
+              @override
+              int get hashCode {
+                const deepEquals = DeepCollectionEquality();
+                return Object.hashAll([
+                  this.name,
+                  deepEquals.hash(this.additionalProperties),
+                ]);
+              }
+            }
+          ''';
 
           final generatedClass = generator.generateClass(model);
+          final hashCode = generatedClass.methods.singleWhere(
+            (method) => method.name == 'hashCode',
+          );
           expect(
             collapseWhitespace(
-              format(generatedClass.accept(emitter).toString()),
+              format('class Temp { ${hashCode.accept(emitter)} }'),
             ),
-            contains(collapseWhitespace(expectedMethod)),
+            collapseWhitespace(format(expectedClass)),
           );
         });
 
@@ -2761,7 +2770,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
           const expectedMethod = '''
   @override
-  int get hashCode => name.hashCode;''';
+  int get hashCode => this.name.hashCode;''';
 
           final generatedClass = generator.generateClass(model);
           expect(

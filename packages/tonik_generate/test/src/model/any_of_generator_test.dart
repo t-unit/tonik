@@ -432,7 +432,7 @@ void main() {
       const expectedHash = '''
         @override
         int get hashCode {
-          return Object.hashAll([string, int]);
+          return Object.hashAll([this.string, this.int]);
         }
       ''';
 

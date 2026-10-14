@@ -334,7 +334,7 @@ void main() {
 
           const expectedMethod = '''
             @override
-            int get hashCode => value.hashCode;
+            int get hashCode => this.value.hashCode;
           ''';
 
           final (name, _) = nameManager.requestBodyNames(requestBody);
@@ -376,7 +376,7 @@ void main() {
             @override
             int get hashCode {
               const deepEquals = DeepCollectionEquality();
-              return deepEquals.hash(value);
+              return deepEquals.hash(this.value);
             }
           ''';
 

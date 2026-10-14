@@ -59,7 +59,7 @@ void main() {
 
       const expectedMethod = '''
         @override
-        int get hashCode { return Object.hashAll([name, age]); }
+        int get hashCode { return Object.hashAll([this.name, this.age]); }
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -117,7 +117,7 @@ void main() {
 
       const expectedMethod = '''
         @override
-        int get hashCode { return Object.hashAll([id, name, email, age]); }
+        int get hashCode { return Object.hashAll([this.id, this.name, this.email, this.age]); }
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -157,7 +157,7 @@ void main() {
 
       const expectedMethod = '''
         @override
-        int get hashCode { return Object.hashAll([name, bio]); }
+        int get hashCode { return Object.hashAll([this.name, this.bio]); }
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -197,7 +197,7 @@ void main() {
 
       const expectedMethod = '''
         @override
-        int get hashCode { return Object.hashAll([firstName, lastName]); }
+        int get hashCode { return Object.hashAll([this.firstName, this.lastName]); }
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -243,7 +243,7 @@ void main() {
         @override
         int get hashCode {
           const deepEquals = DeepCollectionEquality();
-          return Object.hashAll([name, deepEquals.hash(tags)]);
+          return Object.hashAll([this.name, deepEquals.hash(this.tags)]);
         }
         ''';
 
@@ -294,7 +294,7 @@ void main() {
         @override
         int get hashCode {
           const deepEquals = DeepCollectionEquality();
-          return Object.hashAll([name, deepEquals.hash(nestedList)]);
+          return Object.hashAll([this.name, deepEquals.hash(this.nestedList)]);
         }
         ''';
 
