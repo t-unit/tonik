@@ -75,22 +75,22 @@ void main() {
       final dioGetter = dioAdapter.methods.firstWhere((m) => m.name == 'dio');
 
       const expectedBody = r'''
-        if (_$isClosed) {
-          throw _$closedError;
+        if (this._$isClosed) {
+          throw this._$closedError;
         }
 
-        final cachedDio = _$dio;
+        final cachedDio = this._$dio;
         if (cachedDio != null) {
           return cachedDio;
         }
 
-        final client = serverConfig.client;
-        final clientFactory = serverConfig.clientFactory;
+        final client = this.serverConfig.client;
+        final clientFactory = this.serverConfig.clientFactory;
 
         final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
-        _$ownsDio = client == null;
-        resolvedDio.options.baseUrl = baseUrl;
-        return _$dio = resolvedDio;
+        this._$ownsDio = client == null;
+        resolvedDio.options.baseUrl = this.baseUrl;
+        return this._$dio = resolvedDio;
       ''';
 
       expect(
@@ -158,7 +158,7 @@ void main() {
       final bodyCode = dioGetter.body!.accept(emitter).toString();
       expect(
         collapseWhitespace(bodyCode),
-        collapseWhitespace(r'_$dioAdapter.dio'),
+        collapseWhitespace(r'this._$dioAdapter.dio'),
       );
     });
 
@@ -169,7 +169,7 @@ void main() {
       expect(close.lambda, isTrue);
       expect(
         collapseWhitespace(close.body!.accept(emitter).toString()),
-        collapseWhitespace(r'_$dioAdapter.close()'),
+        collapseWhitespace(r'this._$dioAdapter.close()'),
       );
     });
   });
@@ -402,32 +402,32 @@ void main() {
           );
 
           _i3.Dio get dio {
-            if (_$isClosed) {
-              throw _$closedError;
+            if (this._$isClosed) {
+              throw this._$closedError;
             }
 
-            final cachedDio = _$dio;
+            final cachedDio = this._$dio;
             if (cachedDio != null) {
               return cachedDio;
             }
 
-            final client = serverConfig.client;
-            final clientFactory = serverConfig.clientFactory;
+            final client = this.serverConfig.client;
+            final clientFactory = this.serverConfig.clientFactory;
             final resolvedDio =
                 client ?? clientFactory?.call() ?? _i3.Dio();
-            _$ownsDio = client == null;
-            resolvedDio.options.baseUrl = baseUrl;
-            return _$dio = resolvedDio;
+            this._$ownsDio = client == null;
+            resolvedDio.options.baseUrl = this.baseUrl;
+            return this._$dio = resolvedDio;
           }
 
           void close() {
-            if (_$isClosed) {
+            if (this._$isClosed) {
               return;
             }
 
-            _$isClosed = true;
-            if (_$ownsDio) {
-              _$dio?.close();
+            this._$isClosed = true;
+            if (this._$ownsDio) {
+              this._$dio?.close();
             }
           }
         }
@@ -442,9 +442,9 @@ void main() {
 
           final _DioClientAdapter _$dioAdapter;
 
-          _i3.Dio get dio => _$dioAdapter.dio;
+          _i3.Dio get dio => this._$dioAdapter.dio;
 
-          void close() => _$dioAdapter.close();
+          void close() => this._$dioAdapter.close();
         }
 
         /// Production server - https://production.example.com
@@ -514,32 +514,32 @@ void main() {
           );
 
           _i2.Client get client {
-            if (_$isClosed) {
-              throw _$closedError;
+            if (this._$isClosed) {
+              throw this._$closedError;
             }
 
-            final cachedClient = _$client;
+            final cachedClient = this._$client;
             if (cachedClient != null) {
               return cachedClient;
             }
 
-            final configuredClient = serverConfig.client;
+            final configuredClient = this.serverConfig.client;
             final resolvedClient =
                 configuredClient ??
-                serverConfig.clientFactory?.call() ??
+                this.serverConfig.clientFactory?.call() ??
                 _i2.Client();
-            _$ownsClient = configuredClient == null;
-            return _$client = resolvedClient;
+            this._$ownsClient = configuredClient == null;
+            return this._$client = resolvedClient;
           }
 
           void close() {
-            if (_$isClosed) {
+            if (this._$isClosed) {
               return;
             }
 
-            _$isClosed = true;
-            if (_$ownsClient) {
-              _$client?.close();
+            this._$isClosed = true;
+            if (this._$ownsClient) {
+              this._$client?.close();
             }
           }
         }
@@ -554,9 +554,9 @@ void main() {
 
           final _HttpClientAdapter _$httpClientAdapter;
 
-          _i2.Client get client => _$httpClientAdapter.client;
+          _i2.Client get client => this._$httpClientAdapter.client;
 
-          void close() => _$httpClientAdapter.close();
+          void close() => this._$httpClientAdapter.close();
         }
 
         /// Custom server with user-defined base URL

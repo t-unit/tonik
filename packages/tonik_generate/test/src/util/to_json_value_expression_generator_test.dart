@@ -46,7 +46,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'testName',
+            refer('testName'),
             property,
             nameManager: nameManager,
           ),
@@ -68,7 +68,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'testName',
+            refer('testName'),
             property,
             nameManager: nameManager,
           ),
@@ -90,7 +90,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'testAge',
+            refer('testAge'),
             property,
             nameManager: nameManager,
           ),
@@ -112,7 +112,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'startTime',
+            refer('startTime'),
             property,
             nameManager: nameManager,
           ),
@@ -134,7 +134,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'dueDate',
+            refer('dueDate'),
             property,
             nameManager: nameManager,
           ),
@@ -156,7 +156,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'price',
+            refer('price'),
             property,
             nameManager: nameManager,
           ),
@@ -178,7 +178,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'discountPrice',
+            refer('discountPrice'),
             property,
             nameManager: nameManager,
           ),
@@ -201,7 +201,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'thumbnail',
+            refer('thumbnail'),
             property,
             nameManager: nameManager,
           ),
@@ -223,7 +223,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'data',
+            refer('data'),
             property,
             nameManager: nameManager,
           ),
@@ -246,7 +246,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'thumbnail',
+            refer('thumbnail'),
             property,
             nameManager: nameManager,
           ),
@@ -268,7 +268,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'data',
+            refer('data'),
             property,
             nameManager: nameManager,
           ),
@@ -301,7 +301,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'status',
+            refer('status'),
             property,
             nameManager: nameManager,
           ),
@@ -334,7 +334,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'priority',
+            refer('priority'),
             property,
             nameManager: nameManager,
           ),
@@ -368,7 +368,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'priority',
+            refer('priority'),
             property,
             nameManager: nameManager,
           ),
@@ -399,7 +399,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'metadata',
+            refer('metadata'),
             property,
             nameManager: nameManager,
           ),
@@ -430,7 +430,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'combined',
+            refer('combined'),
             property,
             nameManager: nameManager,
           ),
@@ -462,7 +462,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'pet',
+            refer('pet'),
             property,
             nameManager: nameManager,
           ),
@@ -494,7 +494,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'content',
+            refer('content'),
             property,
             nameManager: nameManager,
           ),
@@ -521,7 +521,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
           ),
@@ -547,7 +547,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'meetingTimes',
+            refer('meetingTimes'),
             property,
             nameManager: nameManager,
           ),
@@ -574,7 +574,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'images',
+            refer('images'),
             property,
             nameManager: nameManager,
           ),
@@ -601,7 +601,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'images',
+            refer('images'),
             property,
             nameManager: nameManager,
           ),
@@ -634,7 +634,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addresses',
+            refer('addresses'),
             property,
             nameManager: nameManager,
           ),
@@ -654,7 +654,7 @@ void main() {
 
       String encode(Model itemModel) => emit(
         buildToJsonPropertyExpression(
-          'items',
+          refer('items'),
           Property(
             name: 'items',
             model: ListModel(
@@ -738,7 +738,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'lineItems',
+            refer('lineItems'),
             property,
             nameManager: nameManager,
           ),
@@ -767,7 +767,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'id',
+            refer('id'),
             property,
             nameManager: nameManager,
           ),
@@ -796,7 +796,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'createdAt',
+            refer('createdAt'),
             property,
             nameManager: nameManager,
           ),
@@ -825,7 +825,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'updatedAt',
+            refer('updatedAt'),
             property,
             nameManager: nameManager,
           ),
@@ -861,7 +861,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'address',
+            refer('address'),
             property,
             nameManager: nameManager,
           ),
@@ -897,7 +897,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'address',
+            refer('address'),
             property,
             nameManager: nameManager,
           ),
@@ -926,7 +926,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'homeAddress',
+            refer('homeAddress'),
             property,
             nameManager: nameManager,
           ),
@@ -955,7 +955,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'workAddress',
+            refer('workAddress'),
             property,
             nameManager: nameManager,
           ),
@@ -984,7 +984,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'combinedData',
+            refer('combinedData'),
             property,
             nameManager: nameManager,
           ),
@@ -1013,7 +1013,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'combinedData',
+            refer('combinedData'),
             property,
             nameManager: nameManager,
           ),
@@ -1043,7 +1043,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'pet',
+            refer('pet'),
             property,
             nameManager: nameManager,
           ),
@@ -1073,7 +1073,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'pet',
+            refer('pet'),
             property,
             nameManager: nameManager,
           ),
@@ -1103,7 +1103,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'content',
+            refer('content'),
             property,
             nameManager: nameManager,
           ),
@@ -1132,7 +1132,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'content',
+            refer('content'),
             property,
             nameManager: nameManager,
           ),
@@ -1170,7 +1170,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'address',
+            refer('address'),
             property,
             nameManager: nameManager,
           ),
@@ -1201,7 +1201,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'createdAt',
+            refer('createdAt'),
             property,
             nameManager: nameManager,
           ),
@@ -1234,7 +1234,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'meetingTimes',
+            refer('meetingTimes'),
             property,
             nameManager: nameManager,
           ),
@@ -1267,7 +1267,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'meetingTimes',
+            refer('meetingTimes'),
             property,
             nameManager: nameManager,
           ),
@@ -1307,7 +1307,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addresses',
+            refer('addresses'),
             property,
             nameManager: nameManager,
           ),
@@ -1347,7 +1347,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addresses',
+            refer('addresses'),
             property,
             nameManager: nameManager,
           ),
@@ -1376,7 +1376,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'metadata',
+            refer('metadata'),
             property,
             nameManager: nameManager,
           ),
@@ -1403,7 +1403,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'counts',
+            refer('counts'),
             property,
             nameManager: nameManager,
           ),
@@ -1436,7 +1436,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'addresses',
+          refer('addresses'),
           property,
           nameManager: nameManager,
         ),
@@ -1468,7 +1468,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'addresses',
+          refer('addresses'),
           property,
           nameManager: nameManager,
         ),
@@ -1501,7 +1501,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'addresses',
+          refer('addresses'),
           property,
           nameManager: nameManager,
         ),
@@ -1526,7 +1526,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'timestamps',
+          refer('timestamps'),
           property,
           nameManager: nameManager,
         ),
@@ -1566,7 +1566,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'statuses',
+          refer('statuses'),
           property,
           nameManager: nameManager,
         ),
@@ -1598,7 +1598,7 @@ void main() {
       );
       final result = emit(
         buildToJsonPropertyExpression(
-          'addresses',
+          refer('addresses'),
           property,
           nameManager: nameManager,
           forceNonNullReceiver: true,
@@ -1868,7 +1868,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbidden',
+            refer('forbidden'),
             property,
             nameManager: nameManager,
           ),
@@ -1890,7 +1890,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbidden',
+            refer('forbidden'),
             property,
             nameManager: nameManager,
           ),
@@ -1913,7 +1913,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbidden',
+            refer('forbidden'),
             property,
             nameManager: nameManager,
           ),
@@ -1940,7 +1940,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbiddenList',
+            refer('forbiddenList'),
             property,
             nameManager: nameManager,
           ),
@@ -1968,7 +1968,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbiddenList',
+            refer('forbiddenList'),
             property,
             nameManager: nameManager,
           ),
@@ -1997,7 +1997,7 @@ void main() {
       expect(
         scopedEmit(
           buildToJsonPropertyExpression(
-            'forbiddenAlias',
+            refer('forbiddenAlias'),
             property,
             nameManager: nameManager,
           ),
@@ -2080,7 +2080,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'avatar',
+            refer('avatar'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2105,7 +2105,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'avatar',
+            refer('avatar'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2130,7 +2130,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'data',
+            refer('data'),
             property,
             nameManager: nameManager,
           ),
@@ -2152,7 +2152,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'data',
+            refer('data'),
             property,
             nameManager: nameManager,
           ),
@@ -2180,7 +2180,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'items',
+            refer('items'),
             property,
             nameManager: nameManager,
           ),
@@ -2206,7 +2206,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'items',
+            refer('items'),
             property,
             nameManager: nameManager,
           ),
@@ -2232,7 +2232,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'lookup',
+            refer('lookup'),
             property,
             nameManager: nameManager,
           ),
@@ -2260,7 +2260,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2287,7 +2287,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2314,7 +2314,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'meetingTimes',
+            refer('meetingTimes'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2341,7 +2341,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'metadata',
+            refer('metadata'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2368,7 +2368,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'metadata',
+            refer('metadata'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2402,7 +2402,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addresses',
+            refer('addresses'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2434,7 +2434,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'matrix',
+            refer('matrix'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2461,7 +2461,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
           ),
@@ -2488,7 +2488,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2518,7 +2518,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'times',
+            refer('times'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2546,7 +2546,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'times',
+            refer('times'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2574,7 +2574,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'meta',
+            refer('meta'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2611,7 +2611,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addrs',
+            refer('addrs'),
             property,
             nameManager: nameManager,
             forceNonNullReceiver: true,
@@ -2646,7 +2646,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'addrs',
+            refer('addrs'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,
@@ -2680,7 +2680,7 @@ void main() {
       expect(
         emit(
           buildToJsonPropertyExpression(
-            'tags',
+            refer('tags'),
             property,
             nameManager: nameManager,
             useImmutableCollections: true,

@@ -150,7 +150,7 @@ void main() {
           knownWireKeys: const {'name'},
         ),
         targetMapVar: r'_$map',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         nameManager: nameManager,
         package: 'package:example/api.dart',
         contextClass: 'Order',
@@ -183,7 +183,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetMapVar: r'_$map',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         nameManager: nameManager,
         package: 'package:example/api.dart',
         contextClass: 'Order',
@@ -215,7 +215,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetMapVar: r'_$map',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         nameManager: nameManager,
         package: 'package:example/api.dart',
         contextClass: 'Order',
@@ -452,7 +452,7 @@ void main() {
           knownWireKeys: const {'name'},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 
@@ -484,7 +484,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 
@@ -524,7 +524,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 
@@ -551,7 +551,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 
@@ -580,7 +580,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 
@@ -610,7 +610,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
         useImmutableCollections: true,
       );
@@ -643,7 +643,7 @@ void main() {
           knownWireKeys: const {},
         ),
         targetVar: r'_$result',
-        apAccess: 'additionalProperties',
+        apAccess: refer('additionalProperties'),
         contextClass: 'Order',
       );
 

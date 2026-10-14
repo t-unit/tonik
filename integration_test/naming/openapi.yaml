@@ -2014,3 +2014,83 @@ components:
       properties:
         value:
           type: string
+
+    BooleanEncodingOption:
+      type: object
+      required: [allowEmpty]
+      properties:
+        allowEmpty:
+          type: boolean
+
+    OptionalEncodingOption:
+      type: object
+      properties:
+        allowEmpty:
+          type: string
+
+    ListEncodingOption:
+      type: object
+      required: [allowEmpty]
+      properties:
+        allowEmpty:
+          type: array
+          items:
+            type: string
+
+    MixedEncodingOption:
+      type: object
+      properties:
+        allowEmpty: {}
+
+    AllowEmpty:
+      type: object
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+
+    Explode:
+      type: string
+      enum: [sample]
+
+    ParamName:
+      type: string
+      enum: [sample]
+
+    TextEncoding:
+      type: string
+      enum: [sample]
+
+    EncodingOptionAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/Explode'
+        - $ref: '#/components/schemas/ParamName'
+        - $ref: '#/components/schemas/TextEncoding'
+        - $ref: '#/components/schemas/AllowEmpty'
+
+    EncodingOptionAllOf:
+      allOf:
+        - $ref: '#/components/schemas/Explode'
+        - $ref: '#/components/schemas/ParamName'
+        - $ref: '#/components/schemas/TextEncoding'
+
+    EncodingObjectAllOf:
+      allOf:
+        - $ref: '#/components/schemas/AllowEmpty'
+        - $ref: '#/components/schemas/EncodingLabel'
+
+    EncodingLabel:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string
+
+    Json:
+      type: string
+      enum: [sample]
+
+    JsonInputChoice:
+      anyOf:
+        - $ref: '#/components/schemas/Json'
+        - $ref: '#/components/schemas/AllowEmpty'

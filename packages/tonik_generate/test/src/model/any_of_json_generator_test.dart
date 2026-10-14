@@ -74,43 +74,49 @@ void main() {
       final format = DartFormatter(
         languageVersion: DartFormatter.latestLanguageVersion,
       ).format;
-      final generated = format(klass.accept(emitter).toString());
+      final generated = format(
+        Class(
+          (b) => b
+            ..name = 'Flexible'
+            ..constructors.add(fromJson),
+        ).accept(emitter).toString(),
+      );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory Flexible.fromJson(Object? json) {
-          User? user;
+          User? _$decodeduser;
           try {
-            user = User.fromJson(json);
+            _$decodeduser = User.fromJson(json);
           } on Object catch (_) {
-            user = null;
+            _$decodeduser = null;
           }
 
-          int? int;
+          int? _$decodedint;
           try {
-            int = json.decodeJsonInt(context: r'Flexible');
+            _$decodedint = json.decodeJsonInt(context: r'Flexible');
           } on Object catch (_) {
-            int = null;
+            _$decodedint = null;
           }
 
-          String? string;
+          String? _$decodedstring;
           try {
-            string = json.decodeJsonString(context: r'Flexible');
+            _$decodedstring = json.decodeJsonString(context: r'Flexible');
           } on Object catch (_) {
-            string = null;
+            _$decodedstring = null;
           }
 
-          if (user == null && int == null && string == null) {
+          if (_$decodeduser == null && _$decodedint == null && _$decodedstring == null) {
             throw JsonDecodingException(
               r'Invalid JSON for Flexible: all variants failed to decode',
             );
           }
-          return Flexible(user: user, int: int, string: string);
+          return Flexible(user: _$decodeduser, int: _$decodedint, string: _$decodedstring);
         }
       ''';
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format('class Flexible {$expectedMethod}')),
       );
     });
   });
@@ -179,8 +185,8 @@ void main() {
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
 
-        if (a != null) {
-          final Object? _$aJson = a!.toJson();
+        if (this.a != null) {
+          final Object? _$aJson = this.a!.toJson();
           if (_$aJson is Map<String, Object?>) {
             _$mapValues.add(_$aJson);
               _$discriminatorValue ??= r'a';
@@ -188,8 +194,8 @@ void main() {
             _$values.add(_$aJson);
           }
         }
-        if (b != null) {
-          final Object? _$bJson = b!.toJson();
+        if (this.b != null) {
+          final Object? _$bJson = this.b!.toJson();
           if (_$bJson is Map<String, Object?>) {
             _$mapValues.add(_$bJson);
               _$discriminatorValue ??= r'b';
@@ -295,16 +301,16 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
 
-        if (a != null) {
-          final Object? _$aJson = a!.toJson();
+        if (this.a != null) {
+          final Object? _$aJson = this.a!.toJson();
           if (_$aJson is Map<String, Object?>) {
             _$mapValues.add(_$aJson);
           } else {
             _$values.add(_$aJson);
           }
         }
-        if (b != null) {
-          final Object? _$bJson = b!.toJson();
+        if (this.b != null) {
+          final Object? _$bJson = this.b!.toJson();
           if (_$bJson is Map<String, Object?>) {
             _$mapValues.add(_$bJson);
           } else {
@@ -369,24 +375,24 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-        if (bool != null) {
-          final Object? _$boolJson = bool!;
+        if (this.bool != null) {
+          final Object? _$boolJson = this.bool!;
           if (_$boolJson is Map<String, Object?>) {
             _$mapValues.add(_$boolJson);
           } else {
             _$values.add(_$boolJson);
           }
         }
-        if (int != null) {
-          final Object? _$intJson = int!;
+        if (this.int != null) {
+          final Object? _$intJson = this.int!;
           if (_$intJson is Map<String, Object?>) {
             _$mapValues.add(_$intJson);
           } else {
             _$values.add(_$intJson);
           }
         }
-        if (string != null) {
-          final Object? _$stringJson = string!;
+        if (this.string != null) {
+          final Object? _$stringJson = this.string!;
           if (_$stringJson is Map<String, Object?>) {
             _$mapValues.add(_$stringJson);
           } else {
@@ -468,8 +474,8 @@ void main() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
         String? _$discriminatorValue;
-        if (user != null) {
-          final Object? _$userJson = user!.toJson();
+        if (this.user != null) {
+          final Object? _$userJson = this.user!.toJson();
           if (_$userJson is Map<String, Object?>) {
             _$mapValues.add(_$userJson);
             _$discriminatorValue ??= r'user';
@@ -477,8 +483,8 @@ void main() {
             _$values.add(_$userJson);
           }
         }
-        if (string != null) {
-          final Object? _$stringJson = string!;
+        if (this.string != null) {
+          final Object? _$stringJson = this.string!;
           if (_$stringJson is Map<String, Object?>) {
             _$mapValues.add(_$stringJson);
             _$discriminatorValue ??= r'str';
@@ -539,17 +545,17 @@ void main() {
       Object? toJson() {
         final _$values = <Object?>{};
         final _$mapValues = <Map<String, Object?>>[];
-        if (dateTime != null) {
+        if (this.dateTime != null) {
           final Object? _$dateTimeJson =
-              dateTime!.toTimeZonedIso8601String();
+              this.dateTime!.toTimeZonedIso8601String();
           if (_$dateTimeJson is Map<String, Object?>) {
             _$mapValues.add(_$dateTimeJson);
           } else {
             _$values.add(_$dateTimeJson);
           }
         }
-        if (string != null) {
-          final Object? _$stringJson = string!;
+        if (this.string != null) {
+          final Object? _$stringJson = this.string!;
           if (_$stringJson is Map<String, Object?>) {
             _$mapValues.add(_$stringJson);
           } else {

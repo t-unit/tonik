@@ -215,24 +215,26 @@ final class const HttpBackendGenerator({
               ..type = MethodType.getter
               ..returns = clientType
               ..body = Block.of([
-                const Code(r'if (_$isClosed) {'),
-                const Code(r'  throw _$closedError;'),
+                const Code(r'if (this._$isClosed) {'),
+                const Code(r'  throw this._$closedError;'),
                 const Code('}'),
                 const Code(''),
-                const Code(r'final cachedClient = _$client;'),
+                const Code(r'final cachedClient = this._$client;'),
                 const Code('if (cachedClient != null) {'),
                 const Code('  return cachedClient;'),
                 const Code('}'),
                 const Code(''),
-                const Code('final configuredClient = serverConfig.client;'),
+                const Code(
+                  'final configuredClient = this.serverConfig.client;',
+                ),
                 const Code(
                   'final resolvedClient = configuredClient ?? '
-                  'serverConfig.clientFactory?.call() ?? ',
+                  'this.serverConfig.clientFactory?.call() ?? ',
                 ),
                 clientType.newInstance([]).code,
                 const Code(';'),
-                const Code(r'_$ownsClient = configuredClient == null;'),
-                const Code(r'return _$client = resolvedClient;'),
+                const Code(r'this._$ownsClient = configuredClient == null;'),
+                const Code(r'return this._$client = resolvedClient;'),
               ]),
           ),
           Method(
@@ -240,13 +242,13 @@ final class const HttpBackendGenerator({
               ..name = 'close'
               ..returns = refer('void')
               ..body = Block.of([
-                const Code(r'if (_$isClosed) {'),
+                const Code(r'if (this._$isClosed) {'),
                 const Code('  return;'),
                 const Code('}'),
                 const Code(''),
-                const Code(r'_$isClosed = true;'),
-                const Code(r'if (_$ownsClient) {'),
-                const Code(r'  _$client?.close();'),
+                const Code(r'this._$isClosed = true;'),
+                const Code(r'if (this._$ownsClient) {'),
+                const Code(r'  this._$client?.close();'),
                 const Code('}'),
               ]),
           ),

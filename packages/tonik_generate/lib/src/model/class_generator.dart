@@ -851,7 +851,7 @@ class const ClassGenerator({
           property.isWriteOnly && requiredInRequest && !property.isNullable;
 
       final valueBuilt = buildToJsonPropertyExpression(
-        name,
+        refer('this').property(name),
         property,
         nameManager: nameManager,
         package: package,
@@ -866,7 +866,7 @@ class const ClassGenerator({
       final keyLiteral = specLiteralStringCode(property.name);
       if (!requiredInRequest && !property.isNullable) {
         mapEntries
-          ..add(Code('if ($name != null) $keyLiteral: '))
+          ..add(Code('if (this.$name != null) $keyLiteral: '))
           ..add(valueBuilt.unsafeRawBody.code)
           ..add(const Code(','));
       } else {
@@ -890,7 +890,7 @@ class const ClassGenerator({
           knownWireKeys: model.properties.map((p) => p.name).toSet(),
         ),
         targetMapVar: r'_$map',
-        apAccess: apFieldName,
+        apAccess: refer('this').property(apFieldName),
         nameManager: nameManager,
         package: package,
         contextClass: className,
@@ -907,7 +907,7 @@ class const ClassGenerator({
       final nullChecks = <Code>[];
       for (final prop in requiredWriteOnlyNonNullable) {
         nullChecks
-          ..add(Code('if (${prop.normalizedName} == null) {'))
+          ..add(Code('if (this.${prop.normalizedName} == null) {'))
           ..add(
             generateEncodingExceptionExpression(
               'Required property ${prop.property.name} is null.',
@@ -970,7 +970,7 @@ class const ClassGenerator({
     final nullChecks = <Code>[];
     for (final prop in requiredWriteOnlyNonNullable) {
       nullChecks
-        ..add(Code('if (${prop.normalizedName} == null) {'))
+        ..add(Code('if (this.${prop.normalizedName} == null) {'))
         ..add(
           generateEncodingExceptionExpression(
             'Required property ${prop.property.name} is null.',
@@ -1147,7 +1147,7 @@ class const ClassGenerator({
         knownWireKeys: model.properties.map((p) => p.name).toSet(),
       ),
       targetVar: r'_$result',
-      apAccess: apFieldName,
+      apAccess: refer('this').property(apFieldName),
       contextClass: className,
       useImmutableCollections: useImmutableCollections,
     ).codes;
@@ -1190,13 +1190,13 @@ class const ClassGenerator({
     );
 
     if (isRequired && !isNullable && !isFieldNullable) {
-      return [assign(refer(name))];
+      return [assign(refer('this').property(name))];
     }
 
-    final checked = refer(name).nullChecked;
+    final checked = refer('this').property(name).nullChecked;
     if (isRequired && !isNullable) {
       return [
-        Code('if ($name == null) {'),
+        Code('if (this.$name == null) {'),
         generateEncodingExceptionExpression(
           'Required property $propertyName is null.',
           raw: true,
@@ -1206,7 +1206,11 @@ class const ClassGenerator({
       ];
     }
 
-    return [Code('if ($name != null) {'), assign(checked), const Code('}')];
+    return [
+      Code('if (this.$name != null) {'),
+      assign(checked),
+      const Code('}'),
+    ];
   }
 
   Method _buildSimpleParameterPropertiesMethod(
@@ -1322,8 +1326,10 @@ class const ClassGenerator({
         );
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         final valueRef = (isRequired && !isNullable)
-            ? (isFieldNullable ? refer(name).nullChecked : refer(name))
-            : refer(name).nullChecked;
+            ? (isFieldNullable
+                  ? refer('this').property(name).nullChecked
+                  : refer('this').property(name))
+            : refer('this').property(name).nullChecked;
         final rawList = buildRawStringListExpression(
           valueRef,
           fieldModel.content,
@@ -1340,7 +1346,7 @@ class const ClassGenerator({
         if (isRequired && !isNullable) {
           if (isFieldNullable) {
             propertyAssignments
-              ..add(Code('if ($name == null) {'))
+              ..add(Code('if (this.$name == null) {'))
               ..add(
                 generateEncodingExceptionExpression(
                   'Required property $propertyName is null.',
@@ -1352,7 +1358,7 @@ class const ClassGenerator({
           propertyAssignments.add(assignmentExpr.statement);
         } else {
           propertyAssignments
-            ..add(Code('if ($name != null) {'))
+            ..add(Code('if (this.$name != null) {'))
             ..add(assignmentExpr.statement)
             ..add(const Code('}'));
         }
@@ -1414,14 +1420,14 @@ class const ClassGenerator({
 
       if (resolvedModel is AnyModel) {
         propertyAssignments.addAll([
-          Code('if ($name != null) {'),
+          Code('if (this.$name != null) {'),
           _scalarPropertyAssignment(
             propertyName,
             refer(
               'encodeUnknownFlatScalar',
               'package:tonik_util/tonik_util.dart',
             ).call(
-              [refer(name).nullChecked],
+              [refer('this').property(name).nullChecked],
               {'context': specLiteralString('$className.$propertyName')},
             ),
           ),
@@ -1474,11 +1480,11 @@ class const ClassGenerator({
 
         if (isFieldNullable) {
           propertyAssignments.addAll([
-            Code('if ($name != null) {'),
-            Code('  if ($name!.currentEncodingShape == '),
+            Code('if (this.$name != null) {'),
+            Code('  if (this.$name!.currentEncodingShape == '),
             encodingShapeRef.property('simple').code,
             const Code(') {'),
-            mixedScalarAssign(refer(name).nullChecked),
+            mixedScalarAssign(refer('this').property(name).nullChecked),
             const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1489,10 +1495,10 @@ class const ClassGenerator({
           ]);
         } else {
           propertyAssignments.addAll([
-            Code('if ($name.currentEncodingShape == '),
+            Code('if (this.$name.currentEncodingShape == '),
             encodingShapeRef.property('simple').code,
             const Code(') {'),
-            mixedScalarAssign(refer(name)),
+            mixedScalarAssign(refer('this').property(name)),
             const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '

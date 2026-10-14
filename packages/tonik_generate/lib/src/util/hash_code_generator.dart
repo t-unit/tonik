@@ -19,7 +19,7 @@ Method generateHashCodeMethod({
   if (properties.isEmpty) {
     methodBuilder
       ..lambda = true
-      ..body = refer('runtimeType').property('hashCode').code;
+      ..body = refer('this').property('runtimeType').property('hashCode').code;
     return methodBuilder.build();
   }
 

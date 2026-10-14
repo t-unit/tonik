@@ -408,8 +408,8 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          _$shapes.add(int.currentEncodingShape);
-          _$shapes.add(value.currentEncodingShape);
+          _$shapes.add(this.int.currentEncodingShape);
+          _$shapes.add(this.value.currentEncodingShape);
           if (_$shapes.length > 1) return EncodingShape.mixed;
           return _$shapes.first;
         }
@@ -536,14 +536,14 @@ void main() {
       const expectedMethod = r'''
           Object? toJson() {
             final _$map = <String, Object?>{};
-            final _$$baseJson = $base.toJson();
+            final _$$baseJson = this.$base.toJson();
             if (_$$baseJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
             _$map.addAll(_$$baseJson);
-            final _$$mixinJson = $mixin.toJson();
+            final _$$mixinJson = this.$mixin.toJson();
             if (_$$mixinJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected \$mixin.toJson() to return Map<String, Object?>, got ${_$$mixinJson.runtimeType}',
@@ -556,7 +556,7 @@ void main() {
 
       expect(
         collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -810,12 +810,12 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-          Object? toJson() => bigDecimal.toString();
+          Object? toJson() => this.bigDecimal.toString();
         ''';
 
       expect(
         collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
 
       const expectedFromJson = '''
@@ -874,12 +874,12 @@ void main() {
       expect(stringField.type?.accept(emitter).toString(), 'String');
 
       const expectedToJson = '''
-          Object? toJson() => status.toJson();
+          Object? toJson() => this.status.toJson();
         ''';
 
       expect(
         collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
 
       const expectedFromJson = '''
@@ -953,12 +953,12 @@ void main() {
       expect(stringField.type?.accept(emitter).toString(), 'String');
 
       const expectedToJson = '''
-          Object? toJson() => date.toJson();
+          Object? toJson() => this.date.toJson();
         ''';
 
       expect(
         collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
 
       const expectedFromJson = '''
@@ -1015,12 +1015,12 @@ void main() {
         expect(integerField.type?.accept(emitter).toString(), 'int');
 
         const expectedToJson = '''
-          Object? toJson() => double;
+          Object? toJson() => this.double;
         ''';
 
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToJson)),
+          contains(collapseWhitespace(format(expectedToJson))),
         );
 
         const expectedFromJson = '''
@@ -1106,12 +1106,12 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToJson = '''
-          Object? toJson() => date.toJson();
+          Object? toJson() => this.date.toJson();
         ''';
 
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToJson)),
+          contains(collapseWhitespace(format(expectedToJson))),
         );
       },
     );
@@ -1276,7 +1276,7 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToLabel = r'''
-        final _$listLabel = list
+        final _$listLabel = this.list
           .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
           .toList()
           .toLabel(
@@ -1316,7 +1316,7 @@ void main() {
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          final _$listMatrix = list
+          final _$listMatrix = this.list
               .map<String>(
                 (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
               )
@@ -1364,7 +1364,7 @@ void main() {
 
       const expectedToSimple = r'''
 @override
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; if (list != null) { final _$listSimple = list! .map( (e) => e.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$listSimple); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( 'Cannot encode to simple: all properties are null', ); } return _$values.first; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; if (this.list != null) { final _$listSimple = this.list! .map( (e) => e.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$listSimple); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( 'Cannot encode to simple: all properties are null', ); } return _$values.first; }
 ''';
 
       expect(
@@ -1405,8 +1405,8 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
-          if (list != null) {
-            final _$listForm = list!
+          if (this.list != null) {
+            final _$listForm = this.list!
                 .map(
                   (e) => e.uriEncode(
                     allowEmpty: allowEmpty,
@@ -1469,8 +1469,8 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         @override
         String toLabel({required bool explode, required bool allowEmpty}) {
           final _$values = <String>{};
-          if (list != null) {
-            final _$listLabel = list!
+          if (this.list != null) {
+            final _$listLabel = this.list!
                 .map((e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8))
                 .toList()
                 .toLabel(
@@ -1527,8 +1527,8 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (list != null) {
-            final _$listMatrix = list!
+          if (this.list != null) {
+            final _$listMatrix = this.list!
                 .map<String>(
                   (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                 )
@@ -1577,12 +1577,17 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       );
 
       final combinedClass = generator.generateClass(model);
-      final generated = format(combinedClass.accept(emitter).toString());
+      final generated = format(
+        combinedClass.methods
+            .firstWhere((m) => m.name == 'toJson')
+            .accept(emitter)
+            .toString(),
+      );
 
       const expectedToJson = r'''
         Object? toJson() {
           final _$values = <Object?>[];
-          final _$listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          final _$listJson = this.list.map((e) => e.toTimeZonedIso8601String()).toList();
           _$values.add(_$listJson);
           const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < _$values.length; i++) {
@@ -1598,7 +1603,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -1630,14 +1635,19 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       );
 
       final combinedClass = generator.generateClass(model);
-      final generated = format(combinedClass.accept(emitter).toString());
+      final generated = format(
+        combinedClass.methods
+            .firstWhere((m) => m.name == 'toJson')
+            .accept(emitter)
+            .toString(),
+      );
 
       const expectedToJson = r'''
         Object? toJson() {
           final _$values = <Object?>[];
-          final _$listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          final _$listJson = this.list.map((e) => e.toTimeZonedIso8601String()).toList();
           _$values.add(_$listJson);
-          final _$list2Json = list2.map((e) => e.toJson()).toList();
+          final _$list2Json = this.list2.map((e) => e.toJson()).toList();
           _$values.add(_$list2Json);
           const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < _$values.length; i++) {
@@ -1653,7 +1663,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -1735,7 +1745,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
       expect(
         collapseWhitespace(generated),
@@ -1775,7 +1785,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
       expect(
         collapseWhitespace(generated),
@@ -1834,7 +1844,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -1890,10 +1900,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             final _$mergedProperties = <String, PropertyValue>{};
             _$mergedProperties.addAll(
-              testClass1.parameterProperties(allowEmpty: allowEmpty),
+              this.testClass1.parameterProperties(allowEmpty: allowEmpty),
             );
             _$mergedProperties.addAll(
-              testClass2.parameterProperties(allowEmpty: allowEmpty),
+              this.testClass2.parameterProperties(allowEmpty: allowEmpty),
             );
             return _$mergedProperties;
           }
@@ -2049,8 +2059,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (nullableInt != null) {
-            final _$nullableIntMatrix = nullableInt!.toMatrix(
+          if (this.nullableInt != null) {
+            final _$nullableIntMatrix = this.nullableInt!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -2363,8 +2373,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             bool allowReserved = false,
           }) {
             final _$values = <String>{};
-            if (nullableInt != null) {
-              final _$nullableIntEncoded = nullableInt!.uriEncode(
+            if (this.nullableInt != null) {
+              final _$nullableIntEncoded = this.nullableInt!.uriEncode(
                 allowEmpty: allowEmpty,
                 textEncoding: textEncoding,
                 useQueryComponent: useQueryComponent,
@@ -2431,8 +2441,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             bool allowReserved = false,
           }) {
             final _$values = <String>{};
-            if (signature != null) {
-              final _$signatureEncoded = signature!.toBase64String().uriEncode(
+            if (this.signature != null) {
+              final _$signatureEncoded = this.signature!.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
                 textEncoding: textEncoding,
                 useQueryComponent: useQueryComponent,
@@ -2521,12 +2531,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             bool useQueryComponent = false,
             bool allowReserved = false,
           }) {
-            if (currentEncodingShape != EncodingShape.simple) {
+            if (this.currentEncodingShape != EncodingShape.simple) {
               throw EncodingException(
                 r'Cannot uriEncode DynamicByte: contains complex types',
               );
             }
-            return signature!.toBase64String().uriEncode(
+            return this.signature!.toBase64String().uriEncode(
               allowEmpty: allowEmpty,
               textEncoding: textEncoding,
               useQueryComponent: useQueryComponent,
@@ -2603,7 +2613,7 @@ String toSimple({
   required bool allowEmpty,
   bool literal = false,
 }) {
-  return signature!.toBase64String().toSimple(
+  return this.signature!.toBase64String().toSimple(
     explode: explode,
     allowEmpty: allowEmpty,
     literal: literal,
@@ -2627,7 +2637,7 @@ List<ParameterEntry> toForm(
   required Encoding textEncoding,bool useQueryComponent = false,
   bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
-  return signature!.toBase64String().toForm(
+  return this.signature!.toBase64String().toForm(
     paramName,
     explode: explode,
     allowEmpty: allowEmpty,
@@ -2647,7 +2657,7 @@ List<ParameterEntry> toForm(
       const expected = '''
 @override
 String toLabel({required bool explode, required bool allowEmpty}) {
-  return signature!.toBase64String().toLabel(
+  return this.signature!.toBase64String().toLabel(
     explode: explode,
     allowEmpty: allowEmpty,
   );
@@ -2669,8 +2679,8 @@ String toMatrix(
   required bool allowEmpty,
 }) {
   final _$values = <String>{};
-  if (signature != null) {
-    final _$signatureMatrix = signature!.toBase64String().toMatrix(
+  if (this.signature != null) {
+    final _$signatureMatrix = this.signature!.toBase64String().toMatrix(
       paramName,
       explode: explode,
       allowEmpty: allowEmpty,
@@ -2889,15 +2899,15 @@ String toLabel({required bool explode, required bool allowEmpty}) {
             bool allowReserved = false,
             Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
-            if (currentEncodingShape == EncodingShape.mixed) {
+            if (this.currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
                 r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
               );
             }
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
-            if (status != null) {
-              final _$statusForm = status!.toForm(
+            if (this.status != null) {
+              final _$statusForm = this.status!.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -2908,7 +2918,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
               _$entryLists.add(_$statusForm);
               _$values.add(_$statusForm.map((e) => e.value).join(','));
             }
-            final _$stringForm = string.toForm(
+            final _$stringForm = this.string.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -3014,10 +3024,10 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      expect(generated, contains('if (nullableClass != null) {'));
+      expect(generated, contains('if (this.nullableClass != null) {'));
       expect(
         generated,
-        contains('shapes.add(nullableClass!.currentEncodingShape);'),
+        contains('shapes.add(this.nullableClass!.currentEncodingShape);'),
       );
     });
 
@@ -3125,7 +3135,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
   @override
   Object? toJson() {
     final _$map = <String, Object?>{};
-    final _$$baseJson = $base.toJson();
+    final _$$baseJson = this.$base.toJson();
     if (_$$baseJson is! Map<String, Object?>) {
       throw EncodingException(
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
@@ -3133,7 +3143,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     }
     _$map.addAll(_$$baseJson);
     const _$knownKeys = {r'id'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of ExtendedConfig',
@@ -3141,7 +3151,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       }
     }
     _$map.addAll(
-      additionalProperties.map(
+      this.additionalProperties.map(
         (k, v) => MapEntry(
           k,
           encodeUnknownJson(v, context: r'ExtendedConfig.additionalProperties'),
@@ -3154,7 +3164,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         final combinedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });
@@ -3289,7 +3299,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
   @override
   Object? toJson() {
     final _$map = <String, Object?>{};
-    final _$$baseJson = $base.toJson();
+    final _$$baseJson = this.$base.toJson();
     if (_$$baseJson is! Map<String, Object?>) {
       throw EncodingException(
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
@@ -3297,21 +3307,21 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     }
     _$map.addAll(_$$baseJson);
     const _$knownKeys = {r'id'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of ComplexExtended',
         );
       }
     }
-    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
+    _$map.addAll(this.additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
     return _$map;
   }''';
 
         final combinedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });
@@ -3484,13 +3494,13 @@ class Holder {
       final v = raw;
       return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
     };
-    if (currentEncodingShape == EncodingShape.mixed) {
+    if (this.currentEncodingShape == EncodingShape.mixed) {
       throw EncodingException(
         r'Cannot encode DynamicTreeBag: mixing simple values (primitives/enums) and complex types is not supported',
       );
     }
     final _$map = <String, Object?>{};
-    final _$idOrUserJson = idOrUser.toJson();
+    final _$idOrUserJson = this.idOrUser.toJson();
     if (_$idOrUserJson is! Map<String, Object?>) {
       throw EncodingException(
         'Expected idOrUser.toJson() to return Map<String, Object?>, got ${_$idOrUserJson.runtimeType}',
@@ -3498,7 +3508,7 @@ class Holder {
     }
     _$map.addAll(_$idOrUserJson);
     _$map.addAll(
-      additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
+      this.additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
     );
     return _$map;
   }
@@ -3533,7 +3543,7 @@ class Holder {
       return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
     };
     final _$map = <String, Object?>{};
-    final _$$baseJson = $base.toJson();
+    final _$$baseJson = this.$base.toJson();
     if (_$$baseJson is! Map<String, Object?>) {
       throw EncodingException(
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
@@ -3541,7 +3551,7 @@ class Holder {
     }
     _$map.addAll(_$$baseJson);
     const _$knownKeys = {r'id'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of TreeBag',
@@ -3549,7 +3559,7 @@ class Holder {
       }
     }
     _$map.addAll(
-      additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
+      this.additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
     );
     return _$map;
   }
@@ -4129,13 +4139,13 @@ class Holder {
         );
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'id'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of ExtendedConfig', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar( _$v, context: r'ExtendedConfig.additionalProperties', ), ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( this.$base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'id'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of ExtendedConfig', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar( _$v, context: r'ExtendedConfig.additionalProperties', ), ); } return _$mergedProperties; }
 ''';
 
         final combinedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -4172,7 +4182,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar(_$e.value); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( this.$base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar(_$e.value); } return _$mergedProperties; }
 ''';
 
           final combinedClass = generator.generateClass(model);
@@ -4180,7 +4190,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             collapseWhitespace(
               format(combinedClass.accept(emitter).toString()),
             ),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         },
       );
@@ -4217,13 +4227,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedByteExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( this.$base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedByteExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
 ''';
 
         final combinedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -4278,7 +4288,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of NullableByteExtended', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar(_$v.toBase64String()); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( this.$base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of NullableByteExtended', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar(_$v.toBase64String()); } return _$mergedProperties; }
 ''';
 
           final combinedClass = generator.generateClass(model);
@@ -4286,7 +4296,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             collapseWhitespace(
               format(combinedClass.accept(emitter).toString()),
             ),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         },
       );
@@ -4331,9 +4341,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
   Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     final _$mergedProperties = <String, PropertyValue>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty),
+      this.$base.parameterProperties(allowEmpty: allowEmpty),
     );
-    if (additionalProperties.isNotEmpty) {
+    if (this.additionalProperties.isNotEmpty) {
       throw EncodingException(
         r'ClassModel values have no flat representation at ComplexExtended.additionalProperties',
       );
@@ -4344,7 +4354,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final combinedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });
@@ -4489,7 +4499,7 @@ factory ExtendedImmutable.fromJson(Object? json) {
       const expectedToJson = r'''
 Object? toJson() {
   final _$map = <String, Object?>{};
-  final _$$baseJson = $base.toJson();
+  final _$$baseJson = this.$base.toJson();
   if (_$$baseJson is! Map<String, Object?>) {
     throw EncodingException(
       'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
@@ -4497,7 +4507,7 @@ Object? toJson() {
   }
   _$map.addAll(_$$baseJson);
   const _$knownKeys = {r'id'};
-  for (final _$k in additionalProperties.keys) {
+  for (final _$k in this.additionalProperties.keys) {
     if (_$knownKeys.contains(_$k)) {
       throw EncodingException(
         r'Additional property keys must not collide with declared wire keys of ExtendedImmutable',
@@ -4505,7 +4515,7 @@ Object? toJson() {
     }
   }
   _$map.addAll(
-    additionalProperties.unlock.map(
+    this.additionalProperties.unlock.map(
       (k, v) => MapEntry(
         k,
         encodeUnknownJson(
@@ -4520,7 +4530,7 @@ Object? toJson() {
 ''';
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -4631,14 +4641,14 @@ factory ExtendedItem.fromJson(Object? json) {
       const expectedToJson = r'''
           Object? toJson() {
             final _$map = <String, Object?>{};
-            final _$$baseJson = $base.toJson();
+            final _$$baseJson = this.$base.toJson();
             if (_$$baseJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
             _$map.addAll(_$$baseJson);
-            final _$mapJson = map;
+            final _$mapJson = this.map;
             _$map.addAll(_$mapJson);
             return _$map;
           }
@@ -4646,7 +4656,7 @@ factory ExtendedItem.fromJson(Object? json) {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -4691,15 +4701,15 @@ factory ExtendedItem.fromJson(Object? json) {
       const expectedToJson = r'''
           Object? toJson() {
             final _$map = <String, Object?>{};
-            final _$$baseJson = $base.toJson();
+            final _$$baseJson = this.$base.toJson();
             if (_$$baseJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
             _$map.addAll(_$$baseJson);
-            if (map != null) {
-              final _$mapJson = map!;
+            if (this.map != null) {
+              final _$mapJson = this.map!;
               _$map.addAll(_$mapJson);
             }
             return _$map;
@@ -4708,7 +4718,7 @@ factory ExtendedItem.fromJson(Object? json) {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
 
@@ -4764,15 +4774,15 @@ factory ExtendedItem.fromJson(Object? json) {
 
       const expectedToJson = r'''
           Object? toJson() {
-            if (currentEncodingShape == EncodingShape.mixed) {
+            if (this.currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
                 r'Cannot encode DynamicWithMap: mixing simple values (primitives/enums) and complex types is not supported',
               );
             }
             final _$map = <String, Object?>{};
-            final _$mapJson = map;
+            final _$mapJson = this.map;
             _$map.addAll(_$mapJson);
-            final _$statusJson = status.toJson();
+            final _$statusJson = this.status.toJson();
             if (_$statusJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected status.toJson() to return Map<String, Object?>, got ${_$statusJson.runtimeType}',
@@ -4785,7 +4795,7 @@ factory ExtendedItem.fromJson(Object? json) {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedToJson)),
+        contains(collapseWhitespace(format(expectedToJson))),
       );
     });
   });

@@ -38,7 +38,7 @@ BuiltExpression buildToJsonModelExpression(
 /// recursive encode helpers so the runtime `EncodingException` message
 /// identifies the failing class+property when a typedef cast fails.
 BuiltExpression buildToJsonPropertyExpression(
-  String propertyName,
+  Expression receiver,
   Property property, {
   required NameManager nameManager,
   String? package,
@@ -52,7 +52,7 @@ BuiltExpression buildToJsonPropertyExpression(
   final model = property.model;
   final isNullable = property.isNullable || !property.isRequired;
   return _buildSerializationExpression(
-    refer(propertyName),
+    receiver,
     model,
     isNullable,
     nameManager: nameManager,
@@ -115,7 +115,7 @@ BuiltExpression buildToJsonQueryParameterExpression(
 /// (class generator) or passing to `addAll` (allOf generator). Handles
 /// unlock for immutable collections internally.
 BuiltExpression buildToJsonAdditionalPropertiesExpression(
-  String fieldName,
+  Expression field,
   Model valueModel, {
   required NameManager nameManager,
   String? package,
@@ -124,9 +124,7 @@ BuiltExpression buildToJsonAdditionalPropertiesExpression(
   bool useImmutableCollections = false,
 }) {
   final ctx = helperContext ?? InlineHelperContext(nameManager: nameManager);
-  final receiver = useImmutableCollections
-      ? refer(fieldName).property('unlock')
-      : refer(fieldName);
+  final receiver = useImmutableCollections ? field.property('unlock') : field;
 
   if (!_needsTransformation(
     valueModel,

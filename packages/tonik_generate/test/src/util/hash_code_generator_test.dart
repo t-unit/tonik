@@ -31,7 +31,7 @@ void main() {
       const expectedClass = '''
         class Temp {
           @override
-          int get hashCode => runtimeType.hashCode;
+          int get hashCode => this.runtimeType.hashCode;
         }
       ''';
 

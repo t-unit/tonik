@@ -135,7 +135,7 @@ ApBuilderResult buildApJsonCaptureLoop(
 ApBuilderResult buildApJsonEncode(
   AdditionalPropertiesPlan plan, {
   required String targetMapVar,
-  required String apAccess,
+  required Expression apAccess,
   required NameManager nameManager,
   required String package,
   required String contextClass,
@@ -244,7 +244,7 @@ ApFlatCaptureResult buildApFlatCaptureLoop(
 ApBuilderResult buildApPropertyValueEntries(
   AdditionalPropertiesPlan plan, {
   required String targetVar,
-  required String apAccess,
+  required Expression apAccess,
   required String contextClass,
   bool useImmutableCollections = false,
 }) {
@@ -265,7 +265,9 @@ ApBuilderResult buildApPropertyValueEntries(
     case UnsupportedFlatEncodePlan(:final reason):
       return ApBuilderResult(
         codes: [
-          Code('if ($apAccess.isNotEmpty) {'),
+          const Code('if ('),
+          apAccess.property('isNotEmpty').code,
+          const Code(') {'),
           generateEncodingExceptionExpression(
             '$reason at $context',
             raw: true,
@@ -297,14 +299,16 @@ ApBuilderResult buildApPropertyValueEntries(
 ApBuilderResult _propertyValueEntriesLoop(
   AdditionalPropertiesPlan plan, {
   required String targetVar,
-  required String apAccess,
+  required Expression apAccess,
   required String contextClass,
   required bool omitsNull,
   required Expression entryValue,
 }) => ApBuilderResult(
   codes: [
     ..._knownKeysConst(plan),
-    Code('for (final _\$e in $apAccess.entries) {'),
+    const Code(r'for (final _$e in '),
+    apAccess.property('entries').code,
+    const Code(') {'),
     ..._collisionThrowInLoop(plan, contextClass: contextClass),
     if (omitsNull) ...[
       declareFinal(r'_$v').assign(refer(r'_$e').property('value')).statement,
@@ -336,13 +340,15 @@ List<Code> _exclusionClose(AdditionalPropertiesPlan plan) {
 
 List<Code> _collisionGuard(
   AdditionalPropertiesPlan plan, {
-  required String apAccess,
+  required Expression apAccess,
   required String contextClass,
 }) {
   if (plan.knownWireKeys.isEmpty) return const [];
   return [
     ..._knownKeysConst(plan),
-    Code('for (final _\$k in $apAccess.keys) {'),
+    const Code(r'for (final _$k in '),
+    apAccess.property('keys').code,
+    const Code(') {'),
     const Code(r'if (_$knownKeys.contains(_$k)) {'),
     generateEncodingExceptionExpression(
       _collisionMessage(contextClass),

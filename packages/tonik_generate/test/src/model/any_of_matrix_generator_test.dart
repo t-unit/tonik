@@ -88,24 +88,24 @@ void main() {
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (bool != null) {
-            final _$boolMatrix = bool!.toMatrix(
+          if (this.bool != null) {
+            final _$boolMatrix = this.bool!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
             _$values.add(_$boolMatrix);
           }
-          if (int != null) {
-            final _$intMatrix = int!.toMatrix(
+          if (this.int != null) {
+            final _$intMatrix = this.int!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
             _$values.add(_$intMatrix);
           }
-          if (string != null) {
-            final _$stringMatrix = string!.toMatrix(
+          if (this.string != null) {
+            final _$stringMatrix = this.string!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -119,7 +119,7 @@ void main() {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -176,12 +176,12 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (class1 != null) { final _$class1Matrix = class1!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class1Matrix); _$discriminatorValue ??= r'class1'; } if (class2 != null) { final _$class2Matrix = class2!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class2Matrix); _$discriminatorValue ??= r'class2'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (this.class1 != null) { final _$class1Matrix = this.class1!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class1Matrix); _$discriminatorValue ??= r'class1'; } if (this.class2 != null) { final _$class2Matrix = this.class2!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class2Matrix); _$discriminatorValue ??= r'class2'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -223,15 +223,20 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         );
 
         final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+        final classCode = format(
+          generatedClass.methods
+              .firstWhere((m) => m.name == 'toMatrix')
+              .accept(emitter)
+              .toString(),
+        );
 
         const expectedMethod = r'''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { final _$dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataMatrix); _$discriminatorValue ??= r'data'; } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (this.data != null) { final _$dataMatrix = this.data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataMatrix); _$discriminatorValue ??= r'data'; } if (this.string != null) { final _$stringMatrix = this.string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
 ''';
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -270,16 +275,16 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (status != null) {
-            final _$statusMatrix = status!.toMatrix(
+          if (this.status != null) {
+            final _$statusMatrix = this.status!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
             _$values.add(_$statusMatrix);
           }
-          if (string != null) {
-            final _$stringMatrix = string!.toMatrix(
+          if (this.string != null) {
+            final _$stringMatrix = this.string!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -293,7 +298,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -321,7 +326,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -358,16 +363,16 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          if (bool != null) {
-            final _$boolMatrix = bool!.toMatrix(
+          if (this.bool != null) {
+            final _$boolMatrix = this.bool!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
             _$values.add(_$boolMatrix);
           }
-          if (oneOfType != null) {
-            final _$oneOfTypeMatrix = oneOfType!.toMatrix(
+          if (this.oneOfType != null) {
+            final _$oneOfTypeMatrix = this.oneOfType!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -381,7 +386,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -439,11 +444,11 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         }) {
           final _$values = <String>{};
           final _$mapValues = <Map<String, PropertyValue>>[];
-          if (innerChoice != null) {
-            switch (innerChoice!.currentEncodingShape) {
+          if (this.innerChoice != null) {
+            switch (this.innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
                 _$values.add(
-                  innerChoice!.toMatrix(
+                  this.innerChoice!.toMatrix(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
@@ -451,7 +456,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                 );
                 break;
               case EncodingShape.complex:
-                final _$innerChoiceMatrix = innerChoice!.parameterProperties(
+                final _$innerChoiceMatrix = this.innerChoice!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
                 _$mapValues.add(_$innerChoiceMatrix);
@@ -462,8 +467,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                 );
             }
           }
-          if (string != null) {
-            final _$stringMatrix = string!.toMatrix(
+          if (this.string != null) {
+            final _$stringMatrix = this.string!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -527,16 +532,16 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!.toMatrix(
+            if (this.list != null) {
+              final _$listMatrix = this.list!.toMatrix(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
               );
               _$values.add(_$listMatrix);
             }
-            if (string != null) {
-              final _$stringMatrix = string!.toMatrix(
+            if (this.string != null) {
+              final _$stringMatrix = this.string!.toMatrix(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -549,7 +554,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ''';
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -581,8 +586,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!
+            if (this.list != null) {
+              final _$listMatrix = this.list!
                   .map<String>(
                     (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                   )
@@ -595,8 +600,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   );
               _$values.add(_$listMatrix);
             }
-            if (string != null) {
-              final _$stringMatrix = string!.toMatrix(
+            if (this.string != null) {
+              final _$stringMatrix = this.string!.toMatrix(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -609,7 +614,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ''';
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -646,8 +651,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            if (list2 != null) {
-              final _$list2Matrix = list2!
+            if (this.list2 != null) {
+              final _$list2Matrix = this.list2!
                   .map<String>(
                     (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                   )
@@ -660,8 +665,8 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   );
               _$values.add(_$list2Matrix);
             }
-            if (list != null) {
-              final _$listMatrix = list!.toMatrix(
+            if (this.list != null) {
+              final _$listMatrix = this.list!.toMatrix(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -674,7 +679,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ''';
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -723,7 +728,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                'if (list != null) { throw EncodingException('
+                'if (this.list != null) { throw EncodingException('
                 " 'Lists with complex content are not supported"
                 " for encoding', ); }",
               ),

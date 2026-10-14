@@ -551,15 +551,22 @@ class const AllOfGenerator({
             prop.property.model.isEffectivelyNullable;
         if (isFieldNullable) {
           bodyCode.addAll([
-            Code('if (${prop.normalizedName} != null) {'),
-            Code(
-              '  _\$shapes.add(${prop.normalizedName}!.currentEncodingShape);',
-            ),
+            Code('if (this.${prop.normalizedName} != null) {'),
+            refer(r'_$shapes').property('add').call([
+              refer('this')
+                  .property(prop.normalizedName)
+                  .nullChecked
+                  .property('currentEncodingShape'),
+            ]).statement,
             const Code('}'),
           ]);
         } else {
           bodyCode.add(
-            Code('_\$shapes.add(${prop.normalizedName}.currentEncodingShape);'),
+            refer(r'_$shapes').property('add').call([
+              refer('this')
+                  .property(prop.normalizedName)
+                  .property('currentEncodingShape'),
+            ]).statement,
           );
         }
       }
@@ -656,7 +663,7 @@ class const AllOfGenerator({
         final fieldName = normalized.normalizedName;
         final fieldNameJson = '_\$${fieldName}Json';
         final built = buildToJsonPropertyExpression(
-          fieldName,
+          refer('this').property(fieldName),
           normalized.property,
           nameManager: nameManager,
           package: package,
@@ -731,7 +738,7 @@ class const AllOfGenerator({
       );
 
       final bodyCode = <Code>[
-        const Code('if (currentEncodingShape == '),
+        const Code('if (this.currentEncodingShape == '),
         encodingShapeType.property('mixed').code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -750,11 +757,11 @@ class const AllOfGenerator({
         final isNullable = normalized.property.model.isEffectivelyNullable;
 
         if (isNullable) {
-          bodyCode.add(Code('if ($fieldName != null) {'));
+          bodyCode.add(Code('if (this.$fieldName != null) {'));
         }
 
         final toJsonBuilt = buildToJsonPropertyExpression(
-          fieldName,
+          refer('this').property(fieldName),
           normalized.property,
           nameManager: nameManager,
           package: package,
@@ -815,7 +822,7 @@ class const AllOfGenerator({
             knownWireKeys: collectKnownKeys(model),
           ),
           targetMapVar: r'_$map',
-          apAccess: apFieldName,
+          apAccess: refer('this').property(apFieldName),
           nameManager: nameManager,
           package: package,
           contextClass: className,
@@ -860,7 +867,7 @@ class const AllOfGenerator({
         final firstModel = primaryProperty.property.model;
         final firstFieldName = primaryProperty.normalizedName;
         final simpleBuilt = buildToJsonPropertyExpression(
-          firstFieldName,
+          refer('this').property(firstFieldName),
           Property(
             name: firstFieldName,
             model: firstModel,
@@ -917,11 +924,11 @@ class const AllOfGenerator({
           final isNullable = normalized.property.model.isEffectivelyNullable;
 
           if (isNullable) {
-            mapParts.add(Code('if ($fieldName != null) {'));
+            mapParts.add(Code('if (this.$fieldName != null) {'));
           }
 
           final toJsonBuilt = buildToJsonPropertyExpression(
-            fieldName,
+            refer('this').property(fieldName),
             normalized.property,
             nameManager: nameManager,
             package: package,
@@ -984,7 +991,7 @@ class const AllOfGenerator({
               knownWireKeys: collectKnownKeys(model),
             ),
             targetMapVar: r'_$map',
-            apAccess: apFieldName,
+            apAccess: refer('this').property(apFieldName),
             nameManager: nameManager,
             package: package,
             contextClass: className,
@@ -1254,9 +1261,11 @@ class const AllOfGenerator({
       final isNullable = normalized.property.model.isEffectivelyNullable;
       if (isNullable) {
         propertyMergingLines.addAll([
-          Code('if (${normalized.normalizedName} != null) {'),
+          Code('if (this.${normalized.normalizedName} != null) {'),
           refer(r'_$mergedProperties').property('addAll').call([
-            refer(normalized.normalizedName).nullChecked
+            refer('this')
+                .property(normalized.normalizedName)
+                .nullChecked
                 .property('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
@@ -1265,7 +1274,8 @@ class const AllOfGenerator({
       } else {
         propertyMergingLines.add(
           refer(r'_$mergedProperties').property('addAll').call([
-            refer(normalized.normalizedName)
+            refer('this')
+                .property(normalized.normalizedName)
                 .property('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
@@ -1307,7 +1317,7 @@ class const AllOfGenerator({
         knownWireKeys: collectKnownKeys(model),
       ),
       targetVar: r'_$mergedProperties',
-      apAccess: apFieldName,
+      apAccess: refer('this').property(apFieldName),
       contextClass: className,
       useImmutableCollections: useImmutableCollections,
     ).codes;
@@ -1330,7 +1340,7 @@ class const AllOfGenerator({
       );
 
       final bodyCode = <Code>[
-        const Code('if (currentEncodingShape == '),
+        const Code('if (this.currentEncodingShape == '),
         encodingShapeType.property('mixed').code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -1398,10 +1408,11 @@ class const AllOfGenerator({
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
-              ? refer(prop.normalizedName).nullChecked
-              : refer(prop.normalizedName);
+              ? refer('this').property(prop.normalizedName).nullChecked
+              : refer('this').property(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable)
+              Code('if (this.${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Simple')
                 .assign(
                   buildSimpleParameterExpression(
@@ -1490,8 +1501,8 @@ class const AllOfGenerator({
         !primaryField.property.isRequired ||
         primaryField.property.model.isEffectivelyNullable;
     final primarySimpleReceiver = isPrimaryFieldNullable
-        ? refer(primaryField.normalizedName).nullChecked
-        : refer(primaryField.normalizedName);
+        ? refer('this').property(primaryField.normalizedName).nullChecked
+        : refer('this').property(primaryField.normalizedName);
     final primaryResolved = primaryField.property.model.resolved;
 
     final Code simpleBody;
@@ -1568,7 +1579,7 @@ class const AllOfGenerator({
         prop.property.model.isEffectivelyNullable;
 
     final mixedGuard = <Code>[
-      const Code('if (currentEncodingShape == '),
+      const Code('if (this.currentEncodingShape == '),
       refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
@@ -1652,11 +1663,11 @@ class const AllOfGenerator({
       for (final prop in props) {
         final nullable = isNullableProp(prop);
         final receiver = nullable
-            ? refer(prop.normalizedName).nullChecked
-            : refer(prop.normalizedName);
+            ? refer('this').property(prop.normalizedName).nullChecked
+            : refer('this').property(prop.normalizedName);
         final entries = propFormEntries(receiver, prop.property.model);
         code.addAll([
-          if (nullable) Code('if (${prop.normalizedName} != null) {'),
+          if (nullable) Code('if (this.${prop.normalizedName} != null) {'),
           declareFinal('_\$${prop.normalizedName}Form')
               .assign(entries)
               .statement,
@@ -1780,8 +1791,8 @@ class const AllOfGenerator({
 
     final primaryField = _semanticProperties(normalizedProperties).first;
     final primaryReceiver = isNullableProp(primaryField)
-        ? refer(primaryField.normalizedName).nullChecked
-        : refer(primaryField.normalizedName);
+        ? refer('this').property(primaryField.normalizedName).nullChecked
+        : refer('this').property(primaryField.normalizedName);
 
     return form([
       propFormEntries(
@@ -1808,7 +1819,7 @@ class const AllOfGenerator({
       );
 
       final bodyCode = <Code>[
-        const Code('if (currentEncodingShape == '),
+        const Code('if (this.currentEncodingShape == '),
         encodingShapeType.property('mixed').code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -1851,7 +1862,7 @@ class const AllOfGenerator({
 
       for (final prop in dynamicModels) {
         validationCode.addAll([
-          Code('if (${prop.normalizedName}.currentEncodingShape != '),
+          Code('if (this.${prop.normalizedName}.currentEncodingShape != '),
           encodingShapeType.property('simple').code,
           const Code(') {'),
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
@@ -1873,8 +1884,8 @@ class const AllOfGenerator({
           !primaryField.property.isRequired ||
           primaryField.property.model.isEffectivelyNullable;
       final primaryLabelRtReceiver = isPrimaryFieldNullable
-          ? refer(primaryField.normalizedName).nullChecked
-          : refer(primaryField.normalizedName);
+          ? refer('this').property(primaryField.normalizedName).nullChecked
+          : refer('this').property(primaryField.normalizedName);
       validationCode.addAll([
         primaryLabelRtReceiver
             .property('toLabel')
@@ -1939,10 +1950,11 @@ class const AllOfGenerator({
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
-              ? refer(prop.normalizedName).nullChecked
-              : refer(prop.normalizedName);
+              ? refer('this').property(prop.normalizedName).nullChecked
+              : refer('this').property(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable)
+              Code('if (this.${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Label')
                 .assign(
                   buildLabelParameterExpression(
@@ -2028,8 +2040,8 @@ class const AllOfGenerator({
         !primaryField.property.isRequired ||
         primaryField.property.model.isEffectivelyNullable;
     final primaryLabelReceiver = isPrimaryFieldNullable
-        ? refer(primaryField.normalizedName).nullChecked
-        : refer(primaryField.normalizedName);
+        ? refer('this').property(primaryField.normalizedName).nullChecked
+        : refer('this').property(primaryField.normalizedName);
     final primaryResolved = primaryField.property.model.resolved;
 
     final Code labelBody;
@@ -2086,7 +2098,7 @@ class const AllOfGenerator({
       );
 
       final bodyCode = <Code>[
-        const Code('if (currentEncodingShape == '),
+        const Code('if (this.currentEncodingShape == '),
         encodingShapeType.property('mixed').code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -2171,10 +2183,11 @@ class const AllOfGenerator({
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
-              ? refer(prop.normalizedName).nullChecked
-              : refer(prop.normalizedName);
+              ? refer('this').property(prop.normalizedName).nullChecked
+              : refer('this').property(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable)
+              Code('if (this.${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Matrix')
                 .assign(
                   buildMatrixParameterExpression(
@@ -2308,10 +2321,10 @@ class const AllOfGenerator({
           !prop.property.isRequired ||
           prop.property.model.isEffectivelyNullable;
       final receiver = isFieldNullable
-          ? refer(prop.normalizedName).nullChecked
-          : refer(prop.normalizedName);
+          ? refer('this').property(prop.normalizedName).nullChecked
+          : refer('this').property(prop.normalizedName);
       valueCollectionCode.addAll([
-        if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
+        if (isFieldNullable) Code('if (this.${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Matrix')
             .assign(
               buildMatrixParameterExpression(
@@ -2384,7 +2397,7 @@ class const AllOfGenerator({
       );
 
       final bodyCode = <Code>[
-        const Code('if (currentEncodingShape != '),
+        const Code('if (this.currentEncodingShape != '),
         encodingShapeType.property('simple').code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -2407,8 +2420,8 @@ class const AllOfGenerator({
             !simpleProp.property.isRequired ||
             simpleProp.property.model.isEffectivelyNullable;
         final receiver = isSimplePropNullable
-            ? refer(simpleProp.normalizedName).nullChecked
-            : refer(simpleProp.normalizedName);
+            ? refer('this').property(simpleProp.normalizedName).nullChecked
+            : refer('this').property(simpleProp.normalizedName);
         bodyCode.add(
           uriEncodeReceiverExpression(simpleProp.property.model, receiver)
               .property('uriEncode')
@@ -2486,10 +2499,10 @@ class const AllOfGenerator({
           !prop.property.isRequired ||
           prop.property.model.isEffectivelyNullable;
       final receiver = isNullable
-          ? refer(prop.normalizedName).nullChecked
-          : refer(prop.normalizedName);
+          ? refer('this').property(prop.normalizedName).nullChecked
+          : refer('this').property(prop.normalizedName);
       valueCollectionCode.addAll([
-        if (isNullable) Code('if (${prop.normalizedName} != null) {'),
+        if (isNullable) Code('if (this.${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Encoded')
             .assign(
               uriEncodeReceiverExpression(

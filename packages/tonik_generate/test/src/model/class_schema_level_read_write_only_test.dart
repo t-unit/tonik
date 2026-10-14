@@ -237,11 +237,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       // (sent to server).
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace("r'newPassword': newPassword")),
+        contains(collapseWhitespace("r'newPassword': this.newPassword")),
       );
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace("r'confirmPassword': confirmPassword")),
+        contains(
+          collapseWhitespace("r'confirmPassword': this.confirmPassword"),
+        ),
       );
     });
   });

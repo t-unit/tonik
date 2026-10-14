@@ -105,7 +105,7 @@ factory User.fromJson(Object? json) {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = '''
-Object? toJson() => {r'tags': tags.unlock};
+Object? toJson() => {r'tags': this.tags.unlock};
 ''';
         expect(
           collapseWhitespace(code),
@@ -220,7 +220,7 @@ factory Config.fromJson(Object? json) {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = '''
-Object? toJson() => {r'settings': settings.unlock};
+Object? toJson() => {r'settings': this.settings.unlock};
 ''';
         expect(
           collapseWhitespace(code),
@@ -297,7 +297,7 @@ factory Matrix.fromJson(Object? json) {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = '''
-Object? toJson() => {r'rows': rows.unlock.map((e) => e.unlock).toList()};
+Object? toJson() => {r'rows': this.rows.unlock.map((e) => e.unlock).toList()};
 ''';
         expect(
           collapseWhitespace(code),
@@ -390,7 +390,7 @@ factory Lookup.fromJson(Object? json) {
         final code = _formatClass(generatedClass);
         const expectedBody = '''
 Object? toJson() => {
-  r'data': data.unlock.map((k, v) => MapEntry(k, v.unlock)),
+  r'data': this.data.unlock.map((k, v) => MapEntry(k, v.unlock)),
 };
 ''';
         expect(
@@ -540,7 +540,7 @@ factory User.fromJson(Object? json) {
         final generatedClass = disabledGenerator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = '''
-Object? toJson() => {r'tags': tags};
+Object? toJson() => {r'tags': this.tags};
 ''';
         expect(
           collapseWhitespace(code),
@@ -643,9 +643,9 @@ factory Flexible.fromJson(Object? json) {
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
 Object? toJson() {
-  final _$map = <String, Object?>{r'name': name};
+  final _$map = <String, Object?>{r'name': this.name};
   const _$knownKeys = {r'name'};
-  for (final _$k in additionalProperties.keys) {
+  for (final _$k in this.additionalProperties.keys) {
     if (_$knownKeys.contains(_$k)) {
       throw EncodingException(
         r'Additional property keys must not collide with declared wire keys of Flexible',
@@ -653,7 +653,7 @@ Object? toJson() {
     }
   }
   _$map.addAll(
-    additionalProperties.unlock.map(
+    this.additionalProperties.unlock.map(
       (k, v) => MapEntry(
         k,
         encodeUnknownJson(v, context: r'Flexible.additionalProperties'),

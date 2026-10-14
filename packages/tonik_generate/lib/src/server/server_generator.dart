@@ -205,7 +205,8 @@ class const ServerGenerator({
               ..type = MethodType.getter
               ..returns = clientType
               ..lambda = true
-              ..body = refer(backendGenerator.clientAdapterFieldName)
+              ..body = refer('this')
+                  .property(backendGenerator.clientAdapterFieldName)
                   .property(backendGenerator.clientGetterName)
                   .code,
           ),
@@ -214,7 +215,8 @@ class const ServerGenerator({
               ..name = 'close'
               ..returns = refer('void')
               ..lambda = true
-              ..body = refer(backendGenerator.clientAdapterFieldName)
+              ..body = refer('this')
+                  .property(backendGenerator.clientAdapterFieldName)
                   .property('close')
                   .call([])
                   .code,

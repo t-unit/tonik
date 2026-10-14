@@ -243,20 +243,20 @@ List<Object?> responseInputs(Response response) {
 
         const expectedMethod = r'''
 Client client() {
-  if (_$isClosed) {
-    throw _$closedError;
+  if (this._$isClosed) {
+    throw this._$closedError;
   }
 
-  final cachedClient = _$client;
+  final cachedClient = this._$client;
   if (cachedClient != null) {
     return cachedClient;
   }
 
-  final configuredClient = serverConfig.client;
+  final configuredClient = this.serverConfig.client;
   final resolvedClient =
-      configuredClient ?? serverConfig.clientFactory?.call() ?? Client();
-  _$ownsClient = configuredClient == null;
-  return _$client = resolvedClient;
+      configuredClient ?? this.serverConfig.clientFactory?.call() ?? Client();
+  this._$ownsClient = configuredClient == null;
+  return this._$client = resolvedClient;
 }
 ''';
 
@@ -284,13 +284,13 @@ Client client() {
 
         const expectedMethod = r'''
 void close() {
-  if (_$isClosed) {
+  if (this._$isClosed) {
     return;
   }
 
-  _$isClosed = true;
-  if (_$ownsClient) {
-    _$client?.close();
+  this._$isClosed = true;
+  if (this._$ownsClient) {
+    this._$client?.close();
   }
 }
 ''';

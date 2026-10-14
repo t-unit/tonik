@@ -110,7 +110,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    $base.parameterProperties(allowEmpty: allowEmpty),
+    this.$base.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -188,10 +188,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    firstModel.parameterProperties(allowEmpty: allowEmpty),
+    this.firstModel.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    secondModel.parameterProperties(allowEmpty: allowEmpty),
+    this.secondModel.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -261,10 +261,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    arrayMember.parameterProperties(allowEmpty: allowEmpty),
+    this.arrayMember.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    scalarMember.parameterProperties(allowEmpty: allowEmpty),
+    this.scalarMember.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -344,10 +344,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
+    this.stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    simpleModel.parameterProperties(allowEmpty: allowEmpty),
+    this.simpleModel.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
