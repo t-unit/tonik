@@ -263,6 +263,47 @@ void main() {
     });
   });
 
+  group('quoted media alternatives', () {
+    test(
+      'preserves quoted media type and selects its response subclass',
+      () async {
+        final result = await _api(baseUrl).echoQuotedMedia(
+          body: const QuotedMediaBodyItsJson(BasicObject(name: 'quoted')),
+        );
+
+        expect(result, isTonikSuccess);
+        final success = requireSuccess(result);
+        expect(success.value, isA<QuotedMediaResponseItsJson>());
+        expect(
+          (success.value as QuotedMediaResponseItsJson).body.name,
+          'quoted',
+        );
+
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(
+          recordedRequest.headers['content-type'],
+          "application/it's+json",
+        );
+        expect(jsonDecode(recordedRequest.body!), {'name': 'quoted'});
+      },
+    );
+
+    test('keeps the colliding unquoted media alternative usable', () async {
+      final result = await _api(baseUrl).echoQuotedMedia(
+        body: const QuotedMediaBodyItsJsonModel(BasicObject(name: 'plain')),
+      );
+
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
+      expect(success.value, isA<QuotedMediaResponseItsJson2>());
+      expect((success.value as QuotedMediaResponseItsJson2).body.name, 'plain');
+
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.headers['content-type'], 'application/its+json');
+      expect(jsonDecode(recordedRequest.body!), {'name': 'plain'});
+    });
+  });
+
   group('root JSON string request bodies', () {
     test('alias body is sent as a quoted JSON string', () async {
       await _api(baseUrl).sendRootAlias(body: 'alias-body');
