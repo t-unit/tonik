@@ -119,7 +119,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return int.toLabel(explode: explode, allowEmpty: allowEmpty);
+          return this.int.toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(
@@ -190,7 +190,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          if (currentEncodingShape == EncodingShape.mixed) {
+          if (this.currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException('Simple encoding not supported: contains complex types');
           }
           return parameterProperties(

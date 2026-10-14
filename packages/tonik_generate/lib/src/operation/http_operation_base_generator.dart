@@ -207,7 +207,7 @@ final class const HttpOperationBaseGenerator({final bool streaming = false})
           refer(
             'Uri',
             'dart:core',
-          ).property('parse').call([refer('baseUrl')]).code,
+          ).property('parse').call([refer('this').property('baseUrl')]).code,
           const Code(';'),
           const Code('  final pathResult = request.path;'),
           const Code(r"""
@@ -390,7 +390,7 @@ final class const HttpOperationBaseGenerator({final bool streaming = false})
         refer('Client', 'package:http/http.dart').code,
         const Code(' resolvedClient;'),
         const Code('try {'),
-        const Code('  resolvedClient = clientAccessor();'),
+        const Code('  resolvedClient = this.clientAccessor();'),
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),

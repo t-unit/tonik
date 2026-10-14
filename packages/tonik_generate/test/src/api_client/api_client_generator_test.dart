@@ -106,7 +106,7 @@ void main() {
         );
         expect(
           method.body?.accept(emitter).toString(),
-          '_getUser(cancellation: cancellation)',
+          'this._getUser(cancellation: cancellation)',
         );
       });
 
@@ -315,7 +315,7 @@ void main() {
           const expectedMethod = '''
             Future<TonikResult<void, Response<Object?>>> getUser({
               TonikCancellation? cancellation,
-            }) async => _getUser(cancellation: cancellation);
+            }) async => this._getUser(cancellation: cancellation);
           ''';
 
           expect(
@@ -398,7 +398,7 @@ void main() {
             Future<TonikResult<void, Response<Object?>>> getUser({
               required String id,
               TonikCancellation? cancellation,
-            }) async => _getUser(id: id, cancellation: cancellation);
+            }) async => this._getUser(id: id, cancellation: cancellation);
           ''';
 
           expect(
@@ -495,7 +495,7 @@ void main() {
               int? limit,
               int? offset,
               TonikCancellation? cancellation,
-            }) async => _getUsers(
+            }) async => this._getUsers(
               limit: limit,
               offset: offset,
               cancellation: cancellation,
@@ -589,7 +589,7 @@ void main() {
             Future<TonikResult<void, Response<Object?>>> createUser({
               required CreateUserRequestBody body,
               TonikCancellation? cancellation,
-            }) async => _createUser(
+            }) async => this._createUser(
               body: body,
               cancellation: cancellation,
             );
@@ -671,7 +671,7 @@ void main() {
             Future<TonikResult<void, Response<Object?>>> getUser({
               required String userId,
               TonikCancellation? cancellation,
-            }) async => _getUser(
+            }) async => this._getUser(
               userId: userId,
               cancellation: cancellation,
             );
@@ -2018,7 +2018,7 @@ _i3.Future<_i4.TonikResult<void, _i5.Response<_i3.Object?>>>
 getUser({
   _i4.TonikCancellation? cancellation,
 }) async =>
-    _getUser(cancellation: cancellation);
+    this._getUser(cancellation: cancellation);
 ''';
       expect(
         collapseWhitespace(result.code),
@@ -2235,7 +2235,7 @@ getUser({
 Future<TonikResult<void, Response<Object?>>> listThings({
   String region = ListThings.regionDefault,
   TonikCancellation? cancellation,
-}) async => _listThings(region: region, cancellation: cancellation);
+}) async => this._listThings(region: region, cancellation: cancellation);
 ''';
 
         expect(
@@ -2303,7 +2303,7 @@ Future<TonikResult<void, Response<Object?>>> listThings({
           const expectedMethod =
               'Future<TonikResult<void,Response<Object?>>> '
               'listThings({DateTime? since, TonikCancellation? cancellation}) '
-              'async => _listThings( '
+              'async => this._listThings( '
               'since: since, cancellation: cancellation);';
           expect(
             collapseWhitespace(generatedCode),

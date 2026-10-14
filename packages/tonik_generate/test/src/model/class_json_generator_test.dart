@@ -49,13 +49,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'name': name};
+        Object? toJson() => {r'name': this.name};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -75,7 +75,7 @@ void main() {
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -117,13 +117,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'name': name, r'age': age, r'isActive': isActive};
+        Object? toJson() => {r'name': this.name, r'age': this.age, r'isActive': this.isActive};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -156,13 +156,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'name': name, r'bio': bio};
+        Object? toJson() => {r'name': this.name, r'bio': this.bio};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -196,15 +196,15 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'name': name,
-          if (nickname != null) r'nickname': nickname,
+          r'name': this.name,
+          if (this.nickname != null) r'nickname': this.nickname,
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -237,13 +237,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'_id': id, r'user-name': userName};
+        Object? toJson() => {r'_id': this.id, r'user-name': this.userName};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -325,17 +325,17 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'name': name,
-          r'createdAt': createdAt.toTimeZonedIso8601String(),
-          r'status': status.toJson(),
-          r'homeAddress': homeAddress?.toJson(),
+          r'name': this.name,
+          r'createdAt': this.createdAt.toTimeZonedIso8601String(),
+          r'status': this.status.toJson(),
+          r'homeAddress': this.homeAddress?.toJson(),
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -408,18 +408,18 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'tags': tags,
-          r'meetingTimes': meetingTimes
+          r'tags': this.tags,
+          r'meetingTimes': this.meetingTimes
               .map((e) => e.toTimeZonedIso8601String())
               .toList(),
-          r'addresses': addresses?.map((e) => e.toJson()).toList(),
+          r'addresses': this.addresses?.map((e) => e.toJson()).toList(),
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -448,13 +448,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'nicknames': nicknames};
+        Object? toJson() => {r'nicknames': this.nicknames};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -538,15 +538,15 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'combinedData': combinedData.toJson(),
-          r'pet': pet?.toJson(),
+          r'combinedData': this.combinedData.toJson(),
+          r'pet': this.pet?.toJson(),
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -630,15 +630,15 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'combinedData': combinedData.toJson(),
-          r'pet': pet?.toJson(),
+          r'combinedData': this.combinedData.toJson(),
+          r'pet': this.pet?.toJson(),
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -662,13 +662,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'endpoint': endpoint.toString()};
+        Object? toJson() => {r'endpoint': this.endpoint.toString()};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -692,13 +692,13 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? toJson() => {r'callback': callback?.toString()};
+        Object? toJson() => {r'callback': this.callback?.toString()};
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -741,16 +741,16 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() => {
-          r'endpoint': endpoint.toString(),
-          r'callback': callback?.toString(),
-          r'webhook': webhook.toString(),
+          r'endpoint': this.endpoint.toString(),
+          r'callback': this.callback?.toString(),
+          r'webhook': this.webhook.toString(),
         };
         ''';
 
       final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
   });
@@ -1215,9 +1215,9 @@ void main() {
           'encoding', () {
         const expectedMethod = r'''
   Object? toJson() {
-    final _$map = <String, Object?>{r'name': name};
+    final _$map = <String, Object?>{r'name': this.name};
     const _$knownKeys = {r'name'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of Config',
@@ -1225,7 +1225,7 @@ void main() {
       }
     }
     _$map.addAll(
-      additionalProperties.map(
+      this.additionalProperties.map(
         (k, v) => MapEntry(
           k,
           encodeUnknownJson(v, context: r'Config.additionalProperties'),
@@ -1238,7 +1238,7 @@ void main() {
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -1268,12 +1268,12 @@ void main() {
 
         const expectedMethod = r'''
   Object? toJson() {
-    if (secret == null) {
+    if (this.secret == null) {
       throw EncodingException(r'Required property secret is null.');
     }
-    final _$map = <String, Object?>{r'secret': secret!};
+    final _$map = <String, Object?>{r'secret': this.secret!};
     const _$knownKeys = {r'secret'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of Draft',
@@ -1281,7 +1281,7 @@ void main() {
       }
     }
     _$map.addAll(
-      additionalProperties.map(
+      this.additionalProperties.map(
         (k, v) => MapEntry(
           k,
           encodeUnknownJson(v, context: r'Draft.additionalProperties'),
@@ -1294,7 +1294,7 @@ void main() {
         final generatedClass = generator.generateClass(writeOnlyModel);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -1365,13 +1365,13 @@ void main() {
       test('generates parameterProperties with AP loop', () {
         const expectedMethod = r'''
 @override
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Config', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar(_$v, context: r'Config.additionalProperties'), ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(this.name); const _$knownKeys = {r'name'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Config', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar(_$v, context: r'Config.additionalProperties'), ); } return _$result; }
 ''';
 
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });
@@ -1431,23 +1431,23 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       test('generates toJson adding typed AP after collision rejection', () {
         const expectedMethod = r'''
   Object? toJson() {
-    final _$map = <String, Object?>{r'id': id};
+    final _$map = <String, Object?>{r'id': this.id};
     const _$knownKeys = {r'id'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of Labels',
         );
       }
     }
-    _$map.addAll(additionalProperties);
+    _$map.addAll(this.additionalProperties);
     return _$map;
   }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -1577,23 +1577,23 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       test('generates toJson encoding complex AP values', () {
         const expectedMethod = r'''
   Object? toJson() {
-    final _$map = <String, Object?>{r'version': version};
+    final _$map = <String, Object?>{r'version': this.version};
     const _$knownKeys = {r'version'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of WidgetMap',
         );
       }
     }
-    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
+    _$map.addAll(this.additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
     return _$map;
   }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
 
@@ -1670,26 +1670,26 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         const expectedMethod = r'''
   Object? toJson() {
     final _$map = <String, Object?>{
-      r'timestamps': timestamps
+      r'timestamps': this.timestamps
           .map((e) => e.toTimeZonedIso8601String())
           .toList(),
     };
     const _$knownKeys = {r'timestamps'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of Serie0',
         );
       }
     }
-    _$map.addAll(additionalProperties);
+    _$map.addAll(this.additionalProperties);
     return _$map;
   }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });
@@ -1733,9 +1733,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       test('generates toJson mapping list-of-complex AP values', () {
         const expectedMethod = r'''
   Object? toJson() {
-    final _$map = <String, Object?>{r'version': version};
+    final _$map = <String, Object?>{r'version': this.version};
     const _$knownKeys = {r'version'};
-    for (final _$k in additionalProperties.keys) {
+    for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
         throw EncodingException(
           r'Additional property keys must not collide with declared wire keys of WidgetGroups',
@@ -1743,7 +1743,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       }
     }
     _$map.addAll(
-      additionalProperties.map(
+      this.additionalProperties.map(
         (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
       ),
     );
@@ -1753,7 +1753,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final generatedClass = generator.generateClass(model);
         expect(
           collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       });
     });

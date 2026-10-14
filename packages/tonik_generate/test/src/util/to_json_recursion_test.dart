@@ -59,7 +59,7 @@ void main() {
         defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
-        'body',
+        refer('body'),
         property,
         nameManager: nameManager,
         package: 'pkg',
@@ -110,7 +110,7 @@ void main() {
           defaultValue: null,
         );
         final built = buildToJsonPropertyExpression(
-          'subtree',
+          refer('subtree'),
           property,
           nameManager: nameManager,
           package: 'pkg',
@@ -163,7 +163,7 @@ void main() {
         defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
-        'subtree',
+        refer('subtree'),
         property,
         nameManager: nameManager,
         package: 'pkg',
@@ -212,14 +212,14 @@ void main() {
       );
 
       final first = buildToJsonPropertyExpression(
-        'a',
+        refer('a'),
         property,
         nameManager: nameManager,
         package: 'pkg',
         helperContext: ctx,
       );
       final second = buildToJsonPropertyExpression(
-        'b',
+        refer('b'),
         property,
         nameManager: nameManager,
         package: 'pkg',
@@ -259,7 +259,7 @@ void main() {
         defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
-        'body',
+        refer('body'),
         property,
         nameManager: nameManager,
         package: 'pkg',
@@ -324,7 +324,7 @@ void main() {
         defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
-        'body',
+        refer('body'),
         property,
         nameManager: nameManager,
         package: 'pkg',
@@ -403,7 +403,7 @@ void main() {
         defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
-        'body',
+        refer('body'),
         property,
         nameManager: nameManager,
         package: 'pkg',

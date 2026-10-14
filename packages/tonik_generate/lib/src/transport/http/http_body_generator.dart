@@ -176,7 +176,7 @@ class const HttpBodyGenerator({
     switch (content.contentType) {
       case ContentType.json:
         final json = buildToJsonPropertyExpression(
-          valueName,
+          refer(valueName),
           Property(
             name: 'body',
             model: content.model,

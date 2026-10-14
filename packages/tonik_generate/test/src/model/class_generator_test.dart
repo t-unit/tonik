@@ -1478,7 +1478,7 @@ factory ModelWithSimpleListRoundtrip.fromForm(
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'tags'] = PropertyValue.array(tags);
+  _$result[r'tags'] = PropertyValue.array(this.tags);
   return _$result;
 }
           ''';
@@ -2807,7 +2807,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
           const expectedMethod = r'''
 @override
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Counts', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toString()); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(this.name); const _$knownKeys = {r'name'}; for (final _$e in this.additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Counts', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toString()); } return _$result; }
 ''';
 
           final generatedClass = generator.generateClass(model);
@@ -2853,8 +2853,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
   @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     final _$result = <String, PropertyValue>{};
-    _$result[r'version'] = PropertyValue.scalar(version.toString());
-    if (additionalProperties.isNotEmpty) {
+    _$result[r'version'] = PropertyValue.scalar(this.version.toString());
+    if (this.additionalProperties.isNotEmpty) {
       throw EncodingException(
         r'ClassModel values have no flat representation at WidgetMap.additionalProperties',
       );
@@ -3204,9 +3204,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         const expectedToJson = '''
             Object? toJson() => {
-              r'id': id,
+              r'id': this.id,
               r"it's-field": encodeUnknownJson(
-                itsField,
+                this.itsField,
                 context: r"FlexibleData.it's-field",
               ),
             };''';
@@ -3383,7 +3383,7 @@ factory TaggedItem.fromJson(Object? json) {
                 final v = raw;
                 return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
               };
-              return {r'left': _$encodeTree(left), r'right': _$encodeTree(right)};
+              return {r'left': _$encodeTree(this.left), r'right': _$encodeTree(this.right)};
             }
           ''';
 

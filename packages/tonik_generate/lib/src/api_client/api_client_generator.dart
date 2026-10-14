@@ -277,7 +277,10 @@ class ApiClientGenerator({
         ])
         ..modifier = MethodModifier.async
         ..lambda = true
-        ..body = refer(operationFieldName).call([], paramMap).code;
+        ..body = refer('this')
+            .property(operationFieldName)
+            .call([], paramMap)
+            .code;
     });
   }
 

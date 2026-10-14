@@ -107,9 +107,9 @@ void main() {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'id'] = PropertyValue.scalar(id.toString());
-  if (name != null) {
-    _$result[r'name'] = PropertyValue.scalar(name!);
+  _$result[r'id'] = PropertyValue.scalar(this.id.toString());
+  if (this.name != null) {
+    _$result[r'name'] = PropertyValue.scalar(this.name!);
   }
   return _$result;
 }
@@ -117,7 +117,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -140,7 +140,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -179,12 +179,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (nullableName != null) {
-    _$result[r'nullable_name'] = PropertyValue.scalar(nullableName!);
+  if (this.nullableName != null) {
+    _$result[r'nullable_name'] = PropertyValue.scalar(this.nullableName!);
   }
-  if (nullableCount != null) {
+  if (this.nullableCount != null) {
     _$result[r'nullable_count'] = PropertyValue.scalar(
-      nullableCount!.toString(),
+      this.nullableCount!.toString(),
     );
   }
   return _$result;
@@ -193,7 +193,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -238,7 +238,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
   });
@@ -300,9 +300,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (value.currentEncodingShape == EncodingShape.simple) {
+  if (this.value.currentEncodingShape == EncodingShape.simple) {
     _$result[r'value'] = PropertyValue.scalar(
-      encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty),
+      encodeAnyValueToString(this.value.toJson(), allowEmpty: allowEmpty),
     );
   } else {
     throw EncodingException(
@@ -315,7 +315,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -375,9 +375,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (data.currentEncodingShape == EncodingShape.simple) {
+  if (this.data.currentEncodingShape == EncodingShape.simple) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeAnyValueToString(data.toJson(), allowEmpty: allowEmpty),
+      encodeAnyValueToString(this.data.toJson(), allowEmpty: allowEmpty),
     );
   } else {
     throw EncodingException(
@@ -390,7 +390,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -447,9 +447,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (combined.currentEncodingShape == EncodingShape.simple) {
+  if (this.combined.currentEncodingShape == EncodingShape.simple) {
     _$result[r'combined'] = PropertyValue.scalar(
-      encodeAnyValueToString(combined.toJson(), allowEmpty: allowEmpty),
+      encodeAnyValueToString(this.combined.toJson(), allowEmpty: allowEmpty),
     );
   } else {
     throw EncodingException(
@@ -462,7 +462,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -503,9 +503,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
-  if (count != null) {
-    _$result[r'count'] = PropertyValue.scalar(count!.toString());
+  _$result[r'name'] = PropertyValue.scalar(this.name);
+  if (this.count != null) {
+    _$result[r'count'] = PropertyValue.scalar(this.count!.toString());
   }
   return _$result;
 }
@@ -513,7 +513,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -566,7 +566,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -626,10 +626,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (value != null) {
-    if (value!.currentEncodingShape == EncodingShape.simple) {
+  if (this.value != null) {
+    if (this.value!.currentEncodingShape == EncodingShape.simple) {
       _$result[r'value'] = PropertyValue.scalar(
-        encodeAnyValueToString(value!.toJson(), allowEmpty: allowEmpty),
+        encodeAnyValueToString(this.value!.toJson(), allowEmpty: allowEmpty),
       );
     } else {
       throw EncodingException(
@@ -643,7 +643,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -812,24 +812,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
-  if (count != null) {
-    _$result[r'count'] = PropertyValue.scalar(count!.toString());
+  _$result[r'name'] = PropertyValue.scalar(this.name);
+  if (this.count != null) {
+    _$result[r'count'] = PropertyValue.scalar(this.count!.toString());
   }
-  _$result[r'active'] = PropertyValue.scalar(active.toString());
-  if (data1.currentEncodingShape == EncodingShape.simple) {
+  _$result[r'active'] = PropertyValue.scalar(this.active.toString());
+  if (this.data1.currentEncodingShape == EncodingShape.simple) {
     _$result[r'data1'] = PropertyValue.scalar(
-      encodeAnyValueToString(data1.toJson(), allowEmpty: allowEmpty),
+      encodeAnyValueToString(this.data1.toJson(), allowEmpty: allowEmpty),
     );
   } else {
     throw EncodingException(
       r'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
-  if (data2 != null) {
-    if (data2!.currentEncodingShape == EncodingShape.simple) {
+  if (this.data2 != null) {
+    if (this.data2!.currentEncodingShape == EncodingShape.simple) {
       _$result[r'data2'] = PropertyValue.scalar(
-        encodeAnyValueToString(data2!.toJson(), allowEmpty: allowEmpty),
+        encodeAnyValueToString(this.data2!.toJson(), allowEmpty: allowEmpty),
       );
     } else {
       throw EncodingException(
@@ -837,9 +837,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
     }
   }
-  if (flexible.currentEncodingShape == EncodingShape.simple) {
+  if (this.flexible.currentEncodingShape == EncodingShape.simple) {
     _$result[r'flexible'] = PropertyValue.scalar(
-      encodeAnyValueToString(flexible.toJson(), allowEmpty: allowEmpty),
+      encodeAnyValueToString(this.flexible.toJson(), allowEmpty: allowEmpty),
     );
   } else {
     throw EncodingException(
@@ -852,7 +852,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -895,8 +895,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -904,7 +904,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -959,13 +959,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (ids != null) {
+  if (this.ids != null) {
     _$result[r'ids'] = PropertyValue.array(
-      ids!.map((e) => e.toString()).toList(),
+      this.ids!.map((e) => e.toString()).toList(),
     );
   }
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -973,7 +973,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1014,14 +1014,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'tags'] = PropertyValue.array(tags);
+  _$result[r'tags'] = PropertyValue.array(this.tags);
   return _$result;
 }
 ''';
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1071,9 +1071,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'id'] = PropertyValue.scalar(id.toString());
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  _$result[r'id'] = PropertyValue.scalar(this.id.toString());
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -1081,7 +1081,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1145,7 +1145,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1197,9 +1197,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (statuses != null) {
+  if (this.statuses != null) {
     _$result[r'statuses'] = PropertyValue.array(
-      statuses!.map((e) => e.toJson()).toList(),
+      this.statuses!.map((e) => e.toJson()).toList(),
     );
   }
   return _$result;
@@ -1208,7 +1208,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1254,9 +1254,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (items != null) {
+  if (this.items != null) {
     _$result[r'items'] = PropertyValue.array(
-      items!
+      this.items!
           .map(
             (e) => encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty),
           )
@@ -1269,7 +1269,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1306,14 +1306,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'tags'] = PropertyValue.array(tags);
+  _$result[r'tags'] = PropertyValue.array(this.tags);
   return _$result;
 }
 ''';
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -1351,8 +1351,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -1360,7 +1360,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -1405,9 +1405,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  _$result[r'name'] = PropertyValue.scalar(this.name);
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -1415,7 +1415,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1455,15 +1455,15 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
-  _$result[r'age'] = PropertyValue.scalar(age.toString());
+  _$result[r'name'] = PropertyValue.scalar(this.name);
+  _$result[r'age'] = PropertyValue.scalar(this.age.toString());
   return _$result;
 }
 ''';
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1579,24 +1579,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'ratio'] = PropertyValue.scalar(ratio.toString());
-  _$result[r'quantity'] = PropertyValue.scalar(quantity.toString());
+  _$result[r'ratio'] = PropertyValue.scalar(this.ratio.toString());
+  _$result[r'quantity'] = PropertyValue.scalar(this.quantity.toString());
   _$result[r'createdAt'] = PropertyValue.scalar(
-    createdAt.toTimeZonedIso8601String(),
+    this.createdAt.toTimeZonedIso8601String(),
   );
-  _$result[r'birthday'] = PropertyValue.scalar(birthday.toString());
-  _$result[r'price'] = PropertyValue.scalar(price.toString());
-  _$result[r'link'] = PropertyValue.scalar(link.toString());
-  _$result[r'status'] = PropertyValue.scalar(status.toJson());
-  _$result[r'level'] = PropertyValue.scalar(level.toJson().toString());
-  _$result[r'blob'] = PropertyValue.scalar(blob.toBytes().decodeToString());
+  _$result[r'birthday'] = PropertyValue.scalar(this.birthday.toString());
+  _$result[r'price'] = PropertyValue.scalar(this.price.toString());
+  _$result[r'link'] = PropertyValue.scalar(this.link.toString());
+  _$result[r'status'] = PropertyValue.scalar(this.status.toJson());
+  _$result[r'level'] = PropertyValue.scalar(this.level.toJson().toString());
+  _$result[r'blob'] = PropertyValue.scalar(this.blob.toBytes().decodeToString());
   return _$result;
 }
 ''';
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1627,9 +1627,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (data != null) {
+  if (this.data != null) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeUnknownFlatScalar(data!, context: r'DynamicContainer.data'),
+      encodeUnknownFlatScalar(this.data!, context: r'DynamicContainer.data'),
     );
   }
   return _$result;
@@ -1638,7 +1638,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -1669,10 +1669,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (parameter != null) {
+  if (this.parameter != null) {
     _$result[r'Parameter'] = PropertyValue.scalar(
       encodeUnknownFlatScalar(
-        parameter!,
+        this.parameter!,
         context: r'$20100401Payments.Parameter',
       ),
     );
@@ -1722,7 +1722,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
+  _$result[r'name'] = PropertyValue.scalar(this.name);
   return _$result;
 }
 ''';
@@ -1778,7 +1778,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'tags'] = PropertyValue.array(tags);
+  _$result[r'tags'] = PropertyValue.array(this.tags);
   return _$result;
 }
 ''';
@@ -1824,9 +1824,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (data != null) {
+  if (this.data != null) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeUnknownFlatScalar(data!, context: r'ProfileMixedFilter.data'),
+      encodeUnknownFlatScalar(this.data!, context: r'ProfileMixedFilter.data'),
     );
   }
   return _$result;
@@ -1879,7 +1879,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'tags'] = PropertyValue.array(tags);
+  _$result[r'tags'] = PropertyValue.array(this.tags);
   throw EncodingException(
     r'Cannot encode NeverModel property password: this type does not permit any value',
   );
@@ -1923,15 +1923,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         );
 
         final generatedClass = generator.generateClass(model);
-        final classCode = format(generatedClass.accept(emitter).toString());
+        final classCode = format(
+          generatedClass.methods
+              .firstWhere((m) => m.name == 'parameterProperties')
+              .accept(emitter)
+              .toString(),
+        );
 
         const expectedMethod = r'''
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (data != null) {
+  if (this.data != null) {
     _$result[r'data'] = PropertyValue.scalar(
-      encodeUnknownFlatScalar(data!, context: r'ForbiddenContainer.data'),
+      encodeUnknownFlatScalar(this.data!, context: r'ForbiddenContainer.data'),
     );
   }
   throw EncodingException(
@@ -1943,7 +1948,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -1985,7 +1990,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'label'] = PropertyValue.scalar(label);
+  _$result[r'label'] = PropertyValue.scalar(this.label);
   throw EncodingException(
     r'Cannot encode NeverModel property forbidden: this type does not permit any value',
   );
@@ -1995,7 +2000,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2042,8 +2047,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (description != null) {
-    _$result[r'description'] = PropertyValue.scalar(description!);
+  if (this.description != null) {
+    _$result[r'description'] = PropertyValue.scalar(this.description!);
   }
   return _$result;
 }
@@ -2051,7 +2056,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2107,8 +2112,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         collapseWhitespace(classCode),
         contains(
           collapseWhitespace(r'''
-if (description != null) {
-  _$result[r'description'] = PropertyValue.scalar(description!);
+if (this.description != null) {
+  _$result[r'description'] = PropertyValue.scalar(this.description!);
 }'''),
         ),
       );
@@ -2147,8 +2152,8 @@ if (description != null) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (items != null) {
-    _$result[r'items'] = PropertyValue.array(items!);
+  if (this.items != null) {
+    _$result[r'items'] = PropertyValue.array(this.items!);
   }
   return _$result;
 }
@@ -2156,7 +2161,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2249,7 +2254,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       // is nullable via typedef chain
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace("r'inner': inner?.toJson()")),
+        contains(collapseWhitespace("r'inner': this.inner?.toJson()")),
       );
 
       // fromJson should use null-safe decoding
@@ -2315,8 +2320,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (label != null) {
-    _$result[r'label'] = PropertyValue.scalar(label!);
+  if (this.label != null) {
+    _$result[r'label'] = PropertyValue.scalar(this.label!);
   }
   return _$result;
 }
@@ -2324,7 +2329,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2357,14 +2362,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
+  _$result[r'signature'] = PropertyValue.scalar(this.signature.toBase64String());
   return _$result;
 }
 ''';
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2397,9 +2402,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (signature != null) {
+  if (this.signature != null) {
     _$result[r'signature'] = PropertyValue.scalar(
-      signature!.toBase64String(),
+      this.signature!.toBase64String(),
     );
   }
   return _$result;
@@ -2408,7 +2413,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2439,9 +2444,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (signature != null) {
+  if (this.signature != null) {
     _$result[r'signature'] = PropertyValue.scalar(
-      signature!.toBase64String(),
+      this.signature!.toBase64String(),
     );
   }
   return _$result;
@@ -2450,7 +2455,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -2486,9 +2491,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'declared'] = PropertyValue.scalar(declared);
+  _$result[r'declared'] = PropertyValue.scalar(this.declared);
   const _$knownKeys = {r'declared'};
-  for (final _$e in additionalProperties.entries) {
+  for (final _$e in this.additionalProperties.entries) {
     if (_$knownKeys.contains(_$e.key)) {
       throw EncodingException(
         r'Additional property keys must not collide with declared wire keys of Bag',
@@ -2502,7 +2507,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -2537,9 +2542,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
+  _$result[r'name'] = PropertyValue.scalar(this.name);
   const _$knownKeys = {r'name'};
-  for (final _$e in additionalProperties.entries) {
+  for (final _$e in this.additionalProperties.entries) {
     if (_$knownKeys.contains(_$e.key)) {
       throw EncodingException(
         r'Additional property keys must not collide with declared wire keys of Filter',
@@ -2553,7 +2558,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -2599,9 +2604,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
-  if (tags != null) {
-    _$result[r'tags'] = PropertyValue.array(tags!);
+  _$result[r'signature'] = PropertyValue.scalar(this.signature.toBase64String());
+  if (this.tags != null) {
+    _$result[r'tags'] = PropertyValue.array(this.tags!);
   }
   return _$result;
 }
@@ -2681,9 +2686,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
-  if (value.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'value'] = PropertyValue.scalar(encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty));
+  _$result[r'signature'] = PropertyValue.scalar(this.signature.toBase64String());
+  if (this.value.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'value'] = PropertyValue.scalar(encodeAnyValueToString(this.value.toJson(), allowEmpty: allowEmpty));
   } else {
     throw EncodingException(
       r'parameterProperties not supported for ByteMixedContainer: contains complex types',
@@ -2741,9 +2746,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  _$result[r'name'] = PropertyValue.scalar(name);
+  _$result[r'name'] = PropertyValue.scalar(this.name);
   const _$knownKeys = {r'name'};
-  for (final _$e in additionalProperties.entries) {
+  for (final _$e in this.additionalProperties.entries) {
     if (_$knownKeys.contains(_$e.key)) {
       throw EncodingException(
         r'Additional property keys must not collide with declared wire keys of Filter',

@@ -349,7 +349,8 @@ class const AnyOfGenerator({
     if (fieldModel.resolved is Base64Model) {
       codes.add(
         Code(
-          'final $tmpVarName = $fieldName!.toBase64String().$toMethodName( '
+          'final $tmpVarName = '
+          'this.$fieldName!.toBase64String().$toMethodName( '
           'explode: explode, allowEmpty: allowEmpty, literal: literal);',
         ),
       );
@@ -365,7 +366,7 @@ class const AnyOfGenerator({
     } else if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
         Code(
-          'final $tmpVarName = $fieldName!.$toMethodName( '
+          'final $tmpVarName = this.$fieldName!.$toMethodName( '
           'explode: explode, allowEmpty: allowEmpty, literal: literal);',
         ),
       );
@@ -378,7 +379,7 @@ class const AnyOfGenerator({
           Block.of([
             Code('final $tmpVarName = '),
             buildSimpleParameterExpression(
-              refer(fieldName).nullChecked,
+              refer('this').property(fieldName).nullChecked,
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
@@ -410,7 +411,7 @@ class const AnyOfGenerator({
         codes.add(
           Code(
             'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -433,14 +434,14 @@ class const AnyOfGenerator({
       );
 
       codes
-        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(Code('switch (this.$fieldName!.currentEncodingShape) {'))
         ..add(const Code('case '))
         ..add(encodingShapeRef.property('simple').code)
         ..add(const Code(':'));
       if (needsValues) {
         codes.add(
           Code(
-            '_\$values.add($fieldName!.$toMethodName('
+            '_\$values.add(this.$fieldName!.$toMethodName('
             'explode: explode, allowEmpty: allowEmpty, literal: literal));',
           ),
         );
@@ -453,7 +454,7 @@ class const AnyOfGenerator({
         ..add(
           Code(
             'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
       if (needsMapValues) {
@@ -509,7 +510,7 @@ class const AnyOfGenerator({
     if (fieldModel.resolved is Base64Model) {
       codes.add(
         Code(
-          'final $tmpVarName = $fieldName!.toBase64String().toLabel( '
+          'final $tmpVarName = this.$fieldName!.toBase64String().toLabel( '
           'explode: explode, allowEmpty: allowEmpty);',
         ),
       );
@@ -525,7 +526,7 @@ class const AnyOfGenerator({
     } else if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
         Code(
-          'final $tmpVarName = $fieldName!.toLabel( '
+          'final $tmpVarName = this.$fieldName!.toLabel( '
           'explode: explode, allowEmpty: allowEmpty);',
         ),
       );
@@ -538,7 +539,7 @@ class const AnyOfGenerator({
           Block.of([
             Code('final $tmpVarName = '),
             buildLabelParameterExpression(
-              refer(fieldName).nullChecked,
+              refer('this').property(fieldName).nullChecked,
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
@@ -569,7 +570,7 @@ class const AnyOfGenerator({
         codes.add(
           Code(
             'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -592,14 +593,14 @@ class const AnyOfGenerator({
       );
 
       codes
-        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(Code('switch (this.$fieldName!.currentEncodingShape) {'))
         ..add(const Code('case '))
         ..add(encodingShapeRef.property('simple').code)
         ..add(const Code(':'));
       if (needsValues) {
         codes.add(
           Code(
-            '_\$values.add($fieldName!.toLabel('
+            '_\$values.add(this.$fieldName!.toLabel('
             'explode: explode, allowEmpty: allowEmpty));',
           ),
         );
@@ -612,7 +613,7 @@ class const AnyOfGenerator({
         ..add(
           Code(
             'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
       if (needsMapValues) {
@@ -688,7 +689,7 @@ class const AnyOfGenerator({
 
     for (final n in typedProperties) {
       final modelType = n.property.model;
-      final varName = n.normalizedName;
+      final varName = '_\$decoded${n.normalizedName}';
 
       final decodeBuilt = buildFromJsonValueExpression(
         'json',
@@ -713,7 +714,7 @@ class const AnyOfGenerator({
     // AnyModel is the catch-all: assigned only when no typed variant decodes.
     for (final n in anyProperties) {
       final modelType = n.property.model;
-      final varName = n.normalizedName;
+      final varName = '_\$decoded${n.normalizedName}';
 
       localDecls.addAll([
         _nullableTypeReference(modelType).code,
@@ -725,7 +726,7 @@ class const AnyOfGenerator({
         localDecls.add(Code('$varName = json;'));
       } else {
         final typedNullChecks = typedProperties
-            .map((t) => '${t.normalizedName} == null')
+            .map((t) => '_\$decoded${t.normalizedName} == null')
             .join(' && ');
         localDecls.addAll([
           Code('if ($typedNullChecks) {'),
@@ -737,7 +738,7 @@ class const AnyOfGenerator({
 
     final ctorArgs = {
       for (final n in normalizedProperties)
-        n.normalizedName: refer(n.normalizedName),
+        n.normalizedName: refer('_\$decoded${n.normalizedName}'),
     };
 
     final decodableProperties = [...typedProperties, ...anyProperties];
@@ -806,7 +807,7 @@ class const AnyOfGenerator({
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final valueBuilt = buildToJsonPropertyExpression(
-        name,
+        refer('this').property(name),
         n.property,
         nameManager: nameManager,
         package: package,
@@ -820,7 +821,7 @@ class const AnyOfGenerator({
 
       final discValue = discMap[n.property.model];
 
-      final openIf = Code('if ($name != null) {');
+      final openIf = Code('if (this.$name != null) {');
       final decl = Block.of([
         const Code('final '),
         refer('Object?', 'dart:core').code,
@@ -999,7 +1000,7 @@ class const AnyOfGenerator({
       final discValue = discMap[n.property.model];
 
       body
-        ..add(Code('if ($name != null) {'))
+        ..add(Code('if (this.$name != null) {'))
         ..addAll(
           _generateFieldEncoding(
             fieldName: name,
@@ -1163,7 +1164,7 @@ class const AnyOfGenerator({
       final discValue = discMap[n.property.model];
 
       body
-        ..add(Code('if ($name != null) {'))
+        ..add(Code('if (this.$name != null) {'))
         ..addAll(
           _generateFieldFormEncoding(
             fieldName: name,
@@ -1309,7 +1310,9 @@ class const AnyOfGenerator({
 
     if (fieldModel.resolved is Base64Model) {
       addSimpleEntries(
-        refer(fieldName).nullChecked
+        refer('this')
+            .property(fieldName)
+            .nullChecked
             .property('toBase64String')
             .call([])
             .property('toForm')
@@ -1332,7 +1335,9 @@ class const AnyOfGenerator({
       );
     } else if (fieldModel.encodingShape == EncodingShape.simple) {
       addSimpleEntries(
-        refer(fieldName).nullChecked
+        refer('this')
+            .property(fieldName)
+            .nullChecked
             .property('toForm')
             .call(
               [refer('paramName')],
@@ -1348,7 +1353,7 @@ class const AnyOfGenerator({
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
       final listEntries = fieldModel is ListModel && fieldModel.hasSimpleContent
           ? buildFormEntriesValueExpression(
-              refer(fieldName).nullChecked,
+              refer('this').property(fieldName).nullChecked,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
@@ -1380,7 +1385,7 @@ class const AnyOfGenerator({
         codes.add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -1402,12 +1407,14 @@ class const AnyOfGenerator({
       );
 
       codes
-        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(Code('switch (this.$fieldName!.currentEncodingShape) {'))
         ..add(const Code('case '))
         ..add(encodingShapeRef.property('simple').code)
         ..add(const Code(':'));
       addSimpleEntries(
-        refer(fieldName).nullChecked
+        refer('this')
+            .property(fieldName)
+            .nullChecked
             .property('toForm')
             .call(
               [refer('paramName')],
@@ -1428,7 +1435,7 @@ class const AnyOfGenerator({
         ..add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
       if (needsMapValues) {
@@ -1475,7 +1482,7 @@ class const AnyOfGenerator({
 
     for (final n in normalizedProperties) {
       final modelType = n.property.model;
-      final varName = n.normalizedName;
+      final varName = '_\$decoded${n.normalizedName}';
 
       if (modelType.resolved is AnyModel) {
         // AnyModel has no parameter-string decoding; the field stays null.
@@ -1540,7 +1547,7 @@ class const AnyOfGenerator({
       for (final n in normalizedProperties)
         n.normalizedName: nonDecodableProperties.contains(n)
             ? literalNull
-            : refer(n.normalizedName),
+            : refer('_\$decoded${n.normalizedName}'),
     };
 
     final validationCheck = _buildAllNullValidation(
@@ -1596,7 +1603,7 @@ class const AnyOfGenerator({
       final isList = fieldModel is ListModel;
       final isMap = fieldModel is MapModel;
 
-      body.add(Code('if ($name != null) {'));
+      body.add(Code('if (this.$name != null) {'));
       if (isAnyModel) {
         body.add(
           generateEncodingExceptionExpression(
@@ -1617,7 +1624,7 @@ class const AnyOfGenerator({
           const Code(');'),
         ]);
       } else {
-        body.add(Code('  _\$shapes.add($name!.currentEncodingShape);'));
+        body.add(Code('  _\$shapes.add(this.$name!.currentEncodingShape);'));
       }
       body.add(const Code('}'));
     }
@@ -1715,7 +1722,7 @@ class const AnyOfGenerator({
 
       if (isAnyModel) {
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..add(
             generateEncodingExceptionExpression(
               'AnyModel variant of $className cannot be parameter encoded',
@@ -1733,7 +1740,7 @@ class const AnyOfGenerator({
 
       if (needsProcessing) {
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..addAll(
             _generateFieldParameterPropertiesEncoding(
               fieldName: name,
@@ -1745,7 +1752,7 @@ class const AnyOfGenerator({
           ..add(const Code('}'));
       } else if (fieldModel is ListModel) {
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..add(
             generateEncodingExceptionExpression(
               'Lists are not supported in parameterProperties',
@@ -1764,7 +1771,7 @@ class const AnyOfGenerator({
 
         if (fieldModel.encodingShape == EncodingShape.simple) {
           body.addAll([
-            Code('if ($name != null) {'),
+            Code('if (this.$name != null) {'),
             generateEncodingExceptionExpression(
               'Cannot encode anyOf with simple type to map in '
               'parameterProperties',
@@ -1846,7 +1853,7 @@ class const AnyOfGenerator({
         codes.add(
           Code(
             r'_$mapValues.add('
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
           ),
         );
 
@@ -1877,7 +1884,7 @@ class const AnyOfGenerator({
         const Code(':'),
         Code(
           r'_$mapValues.add('
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+          'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
         ),
       ];
 
@@ -1901,7 +1908,7 @@ class const AnyOfGenerator({
       ]);
 
       codes
-        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(Code('switch (this.$fieldName!.currentEncodingShape) {'))
         ..addAll(switchBody)
         ..add(const Code('}'));
     }
@@ -1975,7 +1982,7 @@ class const AnyOfGenerator({
       final discValue = discMap[n.property.model];
 
       body
-        ..add(Code('if ($name != null) {'))
+        ..add(Code('if (this.$name != null) {'))
         ..addAll(
           _generateFieldEncodingLabel(
             fieldName: name,
@@ -2126,7 +2133,7 @@ class const AnyOfGenerator({
       final discValue = discMap[n.property.model];
 
       body
-        ..add(Code('if ($name != null) {'))
+        ..add(Code('if (this.$name != null) {'))
         ..addAll(
           _generateFieldEncodingMatrix(
             fieldName: name,
@@ -2231,7 +2238,7 @@ class const AnyOfGenerator({
       final propertyModel = n.property.model;
       if (propertyModel.resolved is AnyModel) {
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..add(
             generateEncodingExceptionExpression(
               'AnyModel variant of $className cannot be URI encoded',
@@ -2241,7 +2248,7 @@ class const AnyOfGenerator({
           ..add(const Code('}'));
       } else if (propertyModel.encodingShape == EncodingShape.complex) {
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..add(
             generateEncodingExceptionExpression(
               'Cannot uriEncode $className: contains complex type',
@@ -2250,9 +2257,9 @@ class const AnyOfGenerator({
           )
           ..add(const Code('}'));
       } else {
-        final receiver = uriEncodeReceiver(propertyModel, '$name!');
+        final receiver = uriEncodeReceiver(propertyModel, 'this.$name!');
         body
-          ..add(Code('if ($name != null) {'))
+          ..add(Code('if (this.$name != null) {'))
           ..add(
             Code(
               'return $receiver.uriEncode(allowEmpty: allowEmpty, '
@@ -2309,7 +2316,7 @@ class const AnyOfGenerator({
         Block.of([
           Code('final $tmpVarName = '),
           buildMatrixParameterExpression(
-            refer(fieldName).nullChecked,
+            refer('this').property(fieldName).nullChecked,
             fieldModel,
             paramName: refer('paramName'),
             explode: refer('explode'),
@@ -2326,7 +2333,7 @@ class const AnyOfGenerator({
           Block.of([
             Code('final $tmpVarName = '),
             buildMatrixParameterExpression(
-              refer(fieldName).nullChecked,
+              refer('this').property(fieldName).nullChecked,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
@@ -2358,7 +2365,7 @@ class const AnyOfGenerator({
         codes.add(
           Code(
             'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -2386,7 +2393,7 @@ class const AnyOfGenerator({
           Block.of([
             Code('final $tmpVarName = '),
             buildMatrixParameterExpression(
-              refer(fieldName).nullChecked,
+              refer('this').property(fieldName).nullChecked,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
@@ -2399,7 +2406,7 @@ class const AnyOfGenerator({
         }
       } else {
         codes
-          ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+          ..add(Code('switch (this.$fieldName!.currentEncodingShape) {'))
           ..add(const Code('case '))
           ..add(encodingShapeRef.property('simple').code)
           ..add(const Code(':'));
@@ -2407,7 +2414,7 @@ class const AnyOfGenerator({
           codes.add(
             refer(r'_$values').property('add').call([
               buildMatrixParameterExpression(
-                refer(fieldName).nullChecked,
+                refer('this').property(fieldName).nullChecked,
                 fieldModel,
                 paramName: refer('paramName'),
                 explode: refer('explode'),
@@ -2424,7 +2431,7 @@ class const AnyOfGenerator({
           ..add(
             Code(
               'final $tmpVarName = '
-              '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+              'this.$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
             ),
           );
         if (needsMapValues) {
@@ -2468,7 +2475,7 @@ class const AnyOfGenerator({
     }
 
     final nullChecks = normalizedProperties
-        .map((n) => '${n.normalizedName} == null')
+        .map((n) => '_\$decoded${n.normalizedName} == null')
         .join(' && ');
 
     return Block.of([

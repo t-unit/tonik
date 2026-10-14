@@ -91,7 +91,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        return {r'name': name, r'password': password!};
+        return {r'name': this.name, r'password': this.password!};
       ''';
 
       expect(
@@ -107,10 +107,10 @@ void main() {
 
       const expectedMethod = '''
         Object? toJson() {
-          if (password == null) {
+          if (this.password == null) {
             throw EncodingException(r'Required property password is null.');
           }
-          return {r'name': name, r'password': password!};
+          return {r'name': this.name, r'password': this.password!};
         }
       ''';
 
@@ -383,7 +383,7 @@ void main() {
 
       const expectedMethod = r'''
 @override
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (password == null) { throw EncodingException(r'Required property password is null.'); } _$result[r'password'] = PropertyValue.scalar(password!); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(this.name); if (this.password == null) { throw EncodingException(r'Required property password is null.'); } _$result[r'password'] = PropertyValue.scalar(this.password!); return _$result; }
 ''';
 
       expect(
@@ -538,7 +538,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedToJson = '''
-        Object? toJson() => {r'name': name, r'age': age};
+        Object? toJson() => {r'name': this.name, r'age': this.age};
       ''';
 
         const expectedFromJson = r'''

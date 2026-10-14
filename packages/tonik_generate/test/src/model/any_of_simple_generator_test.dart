@@ -80,43 +80,49 @@ void main() {
       final format = DartFormatter(
         languageVersion: DartFormatter.latestLanguageVersion,
       ).format;
-      final generated = format(klass.accept(emitter).toString());
+      final generated = format(
+        Class(
+          (b) => b
+            ..name = 'Flexible'
+            ..constructors.add(fromSimple),
+        ).accept(emitter).toString(),
+      );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           factory Flexible.fromSimple(String? value, {required bool explode}) {
-            User? user;
+            User? _$decodeduser;
             try {
-              user = User.fromSimple(value, explode: explode);
+              _$decodeduser = User.fromSimple(value, explode: explode);
             } on Object catch (_) {
-              user = null;
+              _$decodeduser = null;
             }
 
-            int? int;
+            int? _$decodedint;
             try {
-              int = value.decodeSimpleInt(context: r'Flexible');
+              _$decodedint = value.decodeSimpleInt(context: r'Flexible');
             } on Object catch (_) {
-              int = null;
+              _$decodedint = null;
             }
 
-            String? string;
+            String? _$decodedstring;
             try {
-              string = value.decodeSimpleString(context: r'Flexible');
+              _$decodedstring = value.decodeSimpleString(context: r'Flexible');
             } on Object catch (_) {
-              string = null;
+              _$decodedstring = null;
             }
 
-            if (user == null && int == null && string == null) {
+            if (_$decodeduser == null && _$decodedint == null && _$decodedstring == null) {
               throw SimpleDecodingException(
                 r'Invalid simple value for Flexible: all variants failed to decode',
               );
             }
-            return Flexible(user: user, int: int, string: string);
+            return Flexible(user: _$decodeduser, int: _$decodedint, string: _$decodedstring);
           }
         ''';
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        collapseWhitespace(format('class Flexible {$expectedMethod}')),
       );
     });
 
@@ -190,21 +196,21 @@ void main() {
         ).format;
         final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
       factory MixedAnyOf.fromSimple(String? value, {required bool explode}) {
-        String? string;
+        String? _$decodedstring;
         try {
-          string = value.decodeSimpleString(context: r'MixedAnyOf');
+          _$decodedstring = value.decodeSimpleString(context: r'MixedAnyOf');
         } on Object catch (_) {
-          string = null;
+          _$decodedstring = null;
         }
 
-        if (string == null) {
+        if (_$decodedstring == null) {
           throw SimpleDecodingException(
             r'Invalid simple value for MixedAnyOf: all variants failed to decode',
           );
         }
-        return MixedAnyOf(list: null, list2: null, string: string);
+        return MixedAnyOf(list: null, list2: null, string: _$decodedstring);
       }
     ''';
 
@@ -274,12 +280,12 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); _$discriminatorValue ??= r'a'; } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); _$discriminatorValue ??= r'b'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (this.a != null) { final _$aSimple = this.a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); _$discriminatorValue ??= r'a'; } if (this.b != null) { final _$bSimple = this.b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); _$discriminatorValue ??= r'b'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
 ''';
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -340,12 +346,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; if (this.a != null) { final _$aSimple = this.a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); } if (this.b != null) { final _$bSimple = this.b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
 ''';
 
         expect(
           collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );
@@ -377,20 +383,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           bool literal = false,
         }) {
           final _$values = <String>{};
-          if (bool != null) {
-            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+          if (this.bool != null) {
+            final _$boolSimple = this.bool!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
             _$values.add(_$boolSimple);
           }
-          if (int != null) {
-            final _$intSimple = int!.toSimple(
+          if (this.int != null) {
+            final _$intSimple = this.int!.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
             );
             _$values.add(_$intSimple);
           }
-          if (string != null) {
-            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
+          if (this.string != null) {
+            final _$stringSimple = this.string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
             _$values.add(_$stringSimple);
           }
           if (_$values.isEmpty) return '';
@@ -400,7 +406,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -441,7 +447,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final format = DartFormatter(
           languageVersion: DartFormatter.latestLanguageVersion,
         ).format;
-        final generated = format(klass.accept(emitter).toString());
+        final generated = format(
+          klass.methods
+              .firstWhere((m) => m.name == 'toSimple')
+              .accept(emitter)
+              .toString(),
+        );
 
         const expectedMethod = r'''
           String toSimple({
@@ -452,14 +463,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
             String? _$discriminatorValue;
-            if (user != null) {
+            if (this.user != null) {
               final _$userSimple =
-                  user!.parameterProperties(allowEmpty: allowEmpty);
+                  this.user!.parameterProperties(allowEmpty: allowEmpty);
               _$mapValues.add(_$userSimple);
               _$discriminatorValue ??= r'user';
             }
-            if (string != null) {
-              final _$stringSimple = string!.toSimple(
+            if (this.string != null) {
+              final _$stringSimple = this.string!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
@@ -495,7 +506,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
 
         expect(
           collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );

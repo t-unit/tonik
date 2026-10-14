@@ -172,7 +172,7 @@ class const DioDataGenerator({
     switch (content.contentType) {
       case ContentType.json:
         final json = buildToJsonPropertyExpression(
-          valueName,
+          refer(valueName),
           Property(
             name: propertyName,
             model: content.model,

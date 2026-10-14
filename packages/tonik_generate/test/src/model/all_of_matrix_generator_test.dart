@@ -145,13 +145,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          final _$intMatrix = int.toMatrix(
+          final _$intMatrix = this.int.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
           _$values.add(_$intMatrix);
-          final _$stringMatrix = string.toMatrix(
+          final _$stringMatrix = this.string.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -239,7 +239,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool explode,
           required bool allowEmpty,
         }) {
-          if (currentEncodingShape == EncodingShape.mixed) {
+          if (this.currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               'Simple encoding not supported: contains complex types',
             );
@@ -320,13 +320,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          final _$statusMatrix = status.toMatrix(
+          final _$statusMatrix = this.status.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
           _$values.add(_$statusMatrix);
-          final _$stringMatrix = string.toMatrix(
+          final _$stringMatrix = this.string.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -488,7 +488,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            final _$listMatrix = list.toMatrix(
+            final _$listMatrix = this.list.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -533,7 +533,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            final _$listMatrix = list
+            final _$listMatrix = this.list
                 .map<String>(
                   (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                 )
@@ -663,7 +663,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             required bool allowEmpty,
           }) {
             final _$values = <String>{};
-            final _$list2Matrix = list2
+            final _$list2Matrix = this.list2
                 .map<String>(
                   (e) => e.uriEncode(allowEmpty: allowEmpty, textEncoding: utf8),
                 )
@@ -675,7 +675,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   alreadyEncoded: true,
                 );
             _$values.add(_$list2Matrix);
-            final _$listMatrix = list.toMatrix(
+            final _$listMatrix = this.list.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,

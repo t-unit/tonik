@@ -238,7 +238,7 @@ void main() {
         bool allowReserved = false,
         Map<String, FormFieldEncoding> fieldEncodings = const {},
       }) {
-        if (currentEncodingShape == EncodingShape.mixed) {
+        if (this.currentEncodingShape == EncodingShape.mixed) {
           throw EncodingException(
             r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
           );
@@ -286,7 +286,7 @@ void main() {
           bool allowReserved = false,
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
-          return bigDecimal.toForm(
+          return this.bigDecimal.toForm(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -373,7 +373,7 @@ void main() {
             bool allowReserved = false,
             Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
-            return status.toForm(
+            return this.status.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -578,14 +578,14 @@ void main() {
         bool allowReserved = false,
         Map<String, FormFieldEncoding> fieldEncodings = const {},
       }) {
-        if (currentEncodingShape == EncodingShape.mixed) {
+        if (this.currentEncodingShape == EncodingShape.mixed) {
           throw EncodingException(
             r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
           );
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$intForm = int.toForm(
+        final _$intForm = this.int.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -595,7 +595,7 @@ void main() {
         );
         _$entryLists.add(_$intForm);
         _$values.add(_$intForm.map((e) => e.value).join(','));
-        final _$choiceForm = choice.toForm(
+        final _$choiceForm = this.choice.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -766,14 +766,14 @@ void main() {
         bool allowReserved = false,
         Map<String, FormFieldEncoding> fieldEncodings = const {},
       }) {
-        if (currentEncodingShape == EncodingShape.mixed) {
+        if (this.currentEncodingShape == EncodingShape.mixed) {
           throw EncodingException(
             r'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
           );
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$flexibleAForm = flexibleA.toForm(
+        final _$flexibleAForm = this.flexibleA.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -783,7 +783,7 @@ void main() {
         );
         _$entryLists.add(_$flexibleAForm);
         _$values.add(_$flexibleAForm.map((e) => e.value).join(','));
-        final _$flexibleBForm = flexibleB.toForm(
+        final _$flexibleBForm = this.flexibleB.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -793,7 +793,7 @@ void main() {
         );
         _$entryLists.add(_$flexibleBForm);
         _$values.add(_$flexibleBForm.map((e) => e.value).join(','));
-        final _$stringForm = string.toForm(
+        final _$stringForm = this.string.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -906,14 +906,14 @@ void main() {
         bool allowReserved = false,
         Map<String, FormFieldEncoding> fieldEncodings = const {},
       }) {
-        if (currentEncodingShape == EncodingShape.mixed) {
+        if (this.currentEncodingShape == EncodingShape.mixed) {
           throw EncodingException(
             r'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
           );
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$flexibleValueForm = flexibleValue.toForm(
+        final _$flexibleValueForm = this.flexibleValue.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -923,7 +923,7 @@ void main() {
         );
         _$entryLists.add(_$flexibleValueForm);
         _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
-        final _$bigDecimalForm = bigDecimal.toForm(
+        final _$bigDecimalForm = this.bigDecimal.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -933,7 +933,7 @@ void main() {
         );
         _$entryLists.add(_$bigDecimalForm);
         _$values.add(_$bigDecimalForm.map((e) => e.value).join(','));
-        final _$choiceForm = choice.toForm(
+        final _$choiceForm = this.choice.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -943,7 +943,7 @@ void main() {
         );
         _$entryLists.add(_$choiceForm);
         _$values.add(_$choiceForm.map((e) => e.value).join(','));
-        final _$stringForm = string.toForm(
+        final _$stringForm = this.string.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -998,7 +998,7 @@ void main() {
       }) {
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$listForm = list
+        final _$listForm = this.list
             .map(
               (e) => e.uriEncode(
                 allowEmpty: allowEmpty,
@@ -1062,7 +1062,7 @@ void main() {
       }) {
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$listForm = list
+        final _$listForm = this.list
             .map(
               (e) => e.uriEncode(
                 allowEmpty: allowEmpty,
@@ -1151,14 +1151,14 @@ void main() {
         bool allowReserved = false,
         Map<String, FormFieldEncoding> fieldEncodings = const {},
       }) {
-        if (currentEncodingShape == EncodingShape.mixed) {
+        if (this.currentEncodingShape == EncodingShape.mixed) {
           throw EncodingException(
             r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
           );
         }
         final _$entryLists = <List<ParameterEntry>>[];
         final _$values = <String>{};
-        final _$flexibleValueForm = flexibleValue.toForm(
+        final _$flexibleValueForm = this.flexibleValue.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,
@@ -1168,7 +1168,7 @@ void main() {
         );
         _$entryLists.add(_$flexibleValueForm);
         _$values.add(_$flexibleValueForm.map((e) => e.value).join(','));
-        final _$intForm = int.toForm(
+        final _$intForm = this.int.toForm(
           paramName,
           explode: explode,
           allowEmpty: allowEmpty,

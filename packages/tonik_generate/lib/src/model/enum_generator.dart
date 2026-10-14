@@ -412,7 +412,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ],
           refer('OffsetDateTime', 'package:tonik_util/tonik_util.dart')
               .property('parse')
-              .call([refer(_rawValueFieldName)])
+              .call([refer('this').property(_rawValueFieldName)])
               .returned
               .statement,
         ]),
@@ -430,7 +430,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ..name = 'toJson'
           ..returns = refer(T.toString(), 'dart:core')
           ..lambda = true
-          ..body = refer(_rawValueFieldName).code,
+          ..body = refer('this').property(_rawValueFieldName).code,
       );
     }
 
@@ -447,7 +447,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
             raw: true,
           ).statement,
           const Code('}'),
-          refer(_rawValueFieldName).returned.statement,
+          refer('this').property(_rawValueFieldName).returned.statement,
         ]),
     );
   }
@@ -465,7 +465,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ..lambda = true
           ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..body = const Code(
-            '$_rawValueFieldName.toSimple(explode: explode, '
+            'this.$_rawValueFieldName.toSimple(explode: explode, '
             'allowEmpty: allowEmpty, '
             'literal: literal)',
           ),
@@ -487,7 +487,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).statement,
           const Code('}'),
           const Code(
-            'return $_rawValueFieldName.toSimple(explode: explode, '
+            'return this.$_rawValueFieldName.toSimple(explode: explode, '
             'allowEmpty: allowEmpty, literal: literal);',
           ),
         ]),
@@ -514,7 +514,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           )
           ..optionalParameters.addAll(buildFormEncodingParameters())
           ..body = const Code(
-            '$_rawValueFieldName.toForm(paramName, explode: explode, '
+            'this.$_rawValueFieldName.toForm(paramName, explode: explode, '
             'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved, textEncoding: textEncoding)',
           ),
@@ -543,7 +543,8 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).statement,
           const Code('}'),
           const Code(
-            'return $_rawValueFieldName.toForm(paramName, explode: explode, '
+            'return this.$_rawValueFieldName.toForm(paramName, '
+            'explode: explode, '
             'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved, textEncoding: textEncoding);',
           ),
@@ -564,7 +565,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ..lambda = true
           ..optionalParameters.addAll(buildEncodingParameters())
           ..body = const Code(
-            '$_rawValueFieldName.toLabel(explode: explode, '
+            'this.$_rawValueFieldName.toLabel(explode: explode, '
             'allowEmpty: allowEmpty)',
           ),
       );
@@ -585,7 +586,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).statement,
           const Code('}'),
           const Code(
-            'return $_rawValueFieldName.toLabel(explode: explode, '
+            'return this.$_rawValueFieldName.toLabel(explode: explode, '
             'allowEmpty: allowEmpty);',
           ),
         ]),
@@ -605,7 +606,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ..lambda = true
           ..optionalParameters.addAll(buildUriEncodeParameters())
           ..body = const Code(
-            '$_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
+            'this.$_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
             'textEncoding: textEncoding, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved)',
@@ -628,7 +629,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).statement,
           const Code('}'),
           const Code(
-            'return $_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
+            'return this.$_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
             'textEncoding: textEncoding, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved);',
@@ -657,7 +658,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           )
           ..optionalParameters.addAll(buildEncodingParameters())
           ..body = const Code(
-            '$_rawValueFieldName.toMatrix(paramName, explode: explode, '
+            'this.$_rawValueFieldName.toMatrix(paramName, explode: explode, '
             'allowEmpty: allowEmpty)',
           ),
       );
@@ -685,7 +686,7 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).statement,
           const Code('}'),
           const Code(
-            'return $_rawValueFieldName.toMatrix(paramName, '
+            'return this.$_rawValueFieldName.toMatrix(paramName, '
             'explode: explode, allowEmpty: allowEmpty);',
           ),
         ]),

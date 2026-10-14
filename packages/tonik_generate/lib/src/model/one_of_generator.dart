@@ -331,7 +331,7 @@ class const OneOfGenerator({
           defaultValue: null,
         );
         final jsonValueBuilt = buildToJsonPropertyExpression(
-          'value',
+          refer('value'),
           property,
           nameManager: nameManager,
           package: package,

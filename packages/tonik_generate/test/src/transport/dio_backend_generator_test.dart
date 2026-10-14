@@ -175,21 +175,21 @@ Object? test() {
 
         const expectedMethod = r'''
 Dio dio() {
-  if (_$isClosed) {
-    throw _$closedError;
+  if (this._$isClosed) {
+    throw this._$closedError;
   }
 
-  final cachedDio = _$dio;
+  final cachedDio = this._$dio;
   if (cachedDio != null) {
     return cachedDio;
   }
 
-  final client = serverConfig.client;
-  final clientFactory = serverConfig.clientFactory;
+  final client = this.serverConfig.client;
+  final clientFactory = this.serverConfig.clientFactory;
   final resolvedDio = client ?? clientFactory?.call() ?? Dio();
-  _$ownsDio = client == null;
-  resolvedDio.options.baseUrl = baseUrl;
-  return _$dio = resolvedDio;
+  this._$ownsDio = client == null;
+  resolvedDio.options.baseUrl = this.baseUrl;
+  return this._$dio = resolvedDio;
 }
 ''';
 
@@ -209,13 +209,13 @@ Dio dio() {
 
       const expectedMethod = r'''
 void close() {
-  if (_$isClosed) {
+  if (this._$isClosed) {
     return;
   }
 
-  _$isClosed = true;
-  if (_$ownsDio) {
-    _$dio?.close();
+  this._$isClosed = true;
+  if (this._$ownsDio) {
+    this._$dio?.close();
   }
 }
 ''';

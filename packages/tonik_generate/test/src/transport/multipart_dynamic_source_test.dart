@@ -98,7 +98,7 @@ void main() {
 Future<TonikResult<void, Response<Object?>>> upload({
         required IMap<String, String> body,
         TonikCancellation? cancellation,
-      }) async => _upload(body: body, cancellation: cancellation);
+      }) async => this._upload(body: body, cancellation: cancellation);
       '''),
     );
     expect(

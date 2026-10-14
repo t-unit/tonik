@@ -274,26 +274,28 @@ final class const DioBackendGenerator({
               ..type = MethodType.getter
               ..returns = dioType
               ..body = Block.of([
-                const Code(r'if (_$isClosed) {'),
-                const Code(r'  throw _$closedError;'),
+                const Code(r'if (this._$isClosed) {'),
+                const Code(r'  throw this._$closedError;'),
                 const Code('}'),
                 const Code(''),
-                const Code(r'final cachedDio = _$dio;'),
+                const Code(r'final cachedDio = this._$dio;'),
                 const Code('if (cachedDio != null) {'),
                 const Code('  return cachedDio;'),
                 const Code('}'),
                 const Code(''),
-                const Code('final client = serverConfig.client;'),
-                const Code('final clientFactory = serverConfig.clientFactory;'),
+                const Code('final client = this.serverConfig.client;'),
+                const Code(
+                  'final clientFactory = this.serverConfig.clientFactory;',
+                ),
                 const Code(
                   'final resolvedDio = '
                   'client ?? clientFactory?.call() ?? ',
                 ),
                 dioType.newInstance([]).code,
                 const Code(';'),
-                const Code(r'_$ownsDio = client == null;'),
-                const Code('resolvedDio.options.baseUrl = baseUrl;'),
-                const Code(r'return _$dio = resolvedDio;'),
+                const Code(r'this._$ownsDio = client == null;'),
+                const Code('resolvedDio.options.baseUrl = this.baseUrl;'),
+                const Code(r'return this._$dio = resolvedDio;'),
               ]),
           ),
           Method(
@@ -301,13 +303,13 @@ final class const DioBackendGenerator({
               ..name = 'close'
               ..returns = refer('void')
               ..body = Block.of([
-                const Code(r'if (_$isClosed) {'),
+                const Code(r'if (this._$isClosed) {'),
                 const Code('  return;'),
                 const Code('}'),
                 const Code(''),
-                const Code(r'_$isClosed = true;'),
-                const Code(r'if (_$ownsDio) {'),
-                const Code(r'  _$dio?.close();'),
+                const Code(r'this._$isClosed = true;'),
+                const Code(r'if (this._$ownsDio) {'),
+                const Code(r'  this._$dio?.close();'),
                 const Code('}'),
               ]),
           ),

@@ -147,10 +147,10 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (int != null) {
+          if (this.int != null) {
             _$shapes.add(EncodingShape.simple);
           }
-          if (string != null) {
+          if (this.string != null) {
             _$shapes.add(EncodingShape.simple);
           }
           if (_$shapes.isEmpty) {
@@ -200,11 +200,11 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (a != null) {
-            _$shapes.add(a!.currentEncodingShape);
+          if (this.a != null) {
+            _$shapes.add(this.a!.currentEncodingShape);
           }
-          if (b != null) {
-            _$shapes.add(b!.currentEncodingShape);
+          if (this.b != null) {
+            _$shapes.add(this.b!.currentEncodingShape);
           }
           if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -256,10 +256,10 @@ void main() {
       const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
           final _$shapes = <EncodingShape>{};
-          if (data != null) {
-            _$shapes.add(data!.currentEncodingShape);
+          if (this.data != null) {
+            _$shapes.add(this.data!.currentEncodingShape);
           }
-          if (string != null) {
+          if (this.string != null) {
             _$shapes.add(EncodingShape.simple);
           }
           if (_$shapes.isEmpty) {
@@ -293,28 +293,28 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory Flexible.fromForm(String? value, {required bool explode}) {
-          int? int;
+          int? _$decodedint;
           try {
-            int = value.decodeFormInt(context: r'Flexible');
+            _$decodedint = value.decodeFormInt(context: r'Flexible');
           } on Object catch (_) {
-            int = null;
+            _$decodedint = null;
           }
 
-          String? string;
+          String? _$decodedstring;
           try {
-            string = value.decodeFormString(context: r'Flexible');
+            _$decodedstring = value.decodeFormString(context: r'Flexible');
           } on Object catch (_) {
-            string = null;
+            _$decodedstring = null;
           }
 
-          if (int == null && string == null) {
+          if (_$decodedint == null && _$decodedstring == null) {
             throw FormDecodingException(
               r'Invalid form value for Flexible: all variants failed to decode',
             );
           }
-          return Flexible(int: int, string: string);
+          return Flexible(int: _$decodedint, string: _$decodedstring);
         }
       ''';
 
@@ -375,28 +375,28 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory Choice.fromForm(String? value, {required bool explode}) {
-          A? a;
+          A? _$decodeda;
           try {
-            a = A.fromForm(value, explode: explode);
+            _$decodeda = A.fromForm(value, explode: explode);
           } on Object catch (_) {
-            a = null;
+            _$decodeda = null;
           }
 
-          B? b;
+          B? _$decodedb;
           try {
-            b = B.fromForm(value, explode: explode);
+            _$decodedb = B.fromForm(value, explode: explode);
           } on Object catch (_) {
-            b = null;
+            _$decodedb = null;
           }
 
-          if (a == null && b == null) {
+          if (_$decodeda == null && _$decodedb == null) {
             throw FormDecodingException(
               r'Invalid form value for Choice: all variants failed to decode',
             );
           }
-          return Choice(a: a, b: b);
+          return Choice(a: _$decodeda, b: _$decodedb);
         }
       ''';
 
@@ -439,28 +439,28 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory SearchKey.fromForm(String? value, {required bool explode}) {
-          User? user;
+          User? _$decodeduser;
           try {
-            user = User.fromForm(value, explode: explode);
+            _$decodeduser = User.fromForm(value, explode: explode);
           } on Object catch (_) {
-            user = null;
+            _$decodeduser = null;
           }
 
-          String? string;
+          String? _$decodedstring;
           try {
-            string = value.decodeFormString(context: r'SearchKey');
+            _$decodedstring = value.decodeFormString(context: r'SearchKey');
           } on Object catch (_) {
-            string = null;
+            _$decodedstring = null;
           }
 
-          if (user == null && string == null) {
+          if (_$decodeduser == null && _$decodedstring == null) {
             throw FormDecodingException(
               r'Invalid form value for SearchKey: all variants failed to decode',
             );
           }
-          return SearchKey(user: user, string: string);
+          return SearchKey(user: _$decodeduser, string: _$decodedstring);
         }
       ''';
 
@@ -536,21 +536,21 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
       factory MixedAnyOf.fromForm(String? value, {required bool explode}) {
-        String? string;
+        String? _$decodedstring;
         try {
-          string = value.decodeFormString(context: r'MixedAnyOf');
+          _$decodedstring = value.decodeFormString(context: r'MixedAnyOf');
         } on Object catch (_) {
-          string = null;
+          _$decodedstring = null;
         }
 
-        if (string == null) {
+        if (_$decodedstring == null) {
           throw FormDecodingException(
             r'Invalid form value for MixedAnyOf: all variants failed to decode',
           );
         }
-        return MixedAnyOf(list: null, list2: null, string: string);
+        return MixedAnyOf(list: null, list2: null, string: _$decodedstring);
       }
     ''';
 
@@ -590,8 +590,8 @@ void main() {
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
-          if (int != null) {
-            final _$intForm = int!.toForm(
+          if (this.int != null) {
+            final _$intForm = this.int!.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -602,8 +602,8 @@ void main() {
             _$entryLists.add(_$intForm);
             _$values.add(_$intForm.map((e) => e.value).join(','));
           }
-          if (string != null) {
-            final _$stringForm = string!.toForm(
+          if (this.string != null) {
+            final _$stringForm = this.string!.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -623,7 +623,7 @@ void main() {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -668,8 +668,8 @@ void main() {
           Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$mapValues = <Map<String, PropertyValue>>[];
-          if (a != null) {
-            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+          if (this.a != null) {
+            final _$aForm = this.a!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$aForm);
           }
           final _$map = <String, PropertyValue>{};
@@ -690,7 +690,7 @@ void main() {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -758,13 +758,13 @@ void main() {
         }) {
           final _$mapValues = <Map<String, PropertyValue>>[];
           String? _$discriminatorValue;
-          if (a != null) {
-            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+          if (this.a != null) {
+            final _$aForm = this.a!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$aForm);
             _$discriminatorValue ??= r'a';
           }
-          if (b != null) {
-            final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty);
+          if (this.b != null) {
+            final _$bForm = this.b!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$bForm);
             _$discriminatorValue ??= r'b';
           }
@@ -790,7 +790,7 @@ void main() {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -840,12 +840,12 @@ void main() {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, PropertyValue>>[];
-          if (data != null) {
-            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+          if (this.data != null) {
+            final _$dataForm = this.data!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$dataForm);
           }
-          if (string != null) {
-            final _$stringForm = string!.toForm(
+          if (this.string != null) {
+            final _$stringForm = this.string!.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -886,7 +886,7 @@ void main() {
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
   });
@@ -918,28 +918,28 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory Outer.fromForm(String? value, {required bool explode}) {
-          Inner? inner;
+          Inner? _$decodedinner;
           try {
-            inner = Inner.fromForm(value, explode: explode);
+            _$decodedinner = Inner.fromForm(value, explode: explode);
           } on Object catch (_) {
-            inner = null;
+            _$decodedinner = null;
           }
 
-          String? string;
+          String? _$decodedstring;
           try {
-            string = value.decodeFormString(context: r'Outer');
+            _$decodedstring = value.decodeFormString(context: r'Outer');
           } on Object catch (_) {
-            string = null;
+            _$decodedstring = null;
           }
 
-          if (inner == null && string == null) {
+          if (_$decodedinner == null && _$decodedstring == null) {
             throw FormDecodingException(
               r'Invalid form value for Outer: all variants failed to decode',
             );
           }
-          return Outer(inner: inner, string: string);
+          return Outer(inner: _$decodedinner, string: _$decodedstring);
         }
       ''';
 
@@ -1011,10 +1011,10 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
-            if (innerChoice != null) {
-              switch (innerChoice!.currentEncodingShape) {
+            if (this.innerChoice != null) {
+              switch (this.innerChoice!.currentEncodingShape) {
                 case EncodingShape.simple:
-                  final _$innerChoiceForm = innerChoice!.toForm(
+                  final _$innerChoiceForm = this.innerChoice!.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
@@ -1026,7 +1026,7 @@ void main() {
                   _$values.add(_$innerChoiceForm.map((e) => e.value).join(','));
                   break;
                 case EncodingShape.complex:
-                  final _$innerChoiceForm = innerChoice!.parameterProperties(
+                  final _$innerChoiceForm = this.innerChoice!.parameterProperties(
                     allowEmpty: allowEmpty,
                   );
                   _$mapValues.add(_$innerChoiceForm);
@@ -1037,8 +1037,8 @@ void main() {
                   );
               }
             }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
+            if (this.string != null) {
+              final _$stringForm = this.string!.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -1141,10 +1141,10 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
-            if (innerAnyOf != null) {
-              switch (innerAnyOf!.currentEncodingShape) {
+            if (this.innerAnyOf != null) {
+              switch (this.innerAnyOf!.currentEncodingShape) {
                 case EncodingShape.simple:
-                  final _$innerAnyOfForm = innerAnyOf!.toForm(
+                  final _$innerAnyOfForm = this.innerAnyOf!.toForm(
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
@@ -1156,7 +1156,7 @@ void main() {
                   _$values.add(_$innerAnyOfForm.map((e) => e.value).join(','));
                   break;
                 case EncodingShape.complex:
-                  final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
+                  final _$innerAnyOfForm = this.innerAnyOf!.parameterProperties(
                     allowEmpty: allowEmpty,
                   );
                   _$mapValues.add(_$innerAnyOfForm);
@@ -1167,8 +1167,8 @@ void main() {
                   );
               }
             }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
+            if (this.string != null) {
+              final _$stringForm = this.string!.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -1261,12 +1261,12 @@ void main() {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, PropertyValue>>[];
-            if (myClass != null) {
-              final _$myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
+            if (this.myClass != null) {
+              final _$myClassForm = this.myClass!.parameterProperties(allowEmpty: allowEmpty);
               _$mapValues.add(_$myClassForm);
             }
-            if (int != null) {
-              final _$intForm = int!.toForm(
+            if (this.int != null) {
+              final _$intForm = this.int!.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -1277,8 +1277,8 @@ void main() {
               _$entryLists.add(_$intForm);
               _$values.add(_$intForm.map((e) => e.value).join(','));
             }
-            if (string != null) {
-              final _$stringForm = string!.toForm(
+            if (this.string != null) {
+              final _$stringForm = this.string!.toForm(
                 paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
@@ -1431,11 +1431,11 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-          if (innerChoice != null) {
-            switch (innerChoice!.currentEncodingShape) {
+          if (this.innerChoice != null) {
+            switch (this.innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
                 _$values.add(
-                  innerChoice!.toSimple(
+                  this.innerChoice!.toSimple(
                     explode: explode,
                     allowEmpty: allowEmpty,
                     literal: literal,
@@ -1443,7 +1443,7 @@ void main() {
                 );
                 break;
               case EncodingShape.complex:
-                final _$innerChoiceSimple = innerChoice!.parameterProperties(
+                final _$innerChoiceSimple = this.innerChoice!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
                 _$mapValues.add(_$innerChoiceSimple);
@@ -1484,16 +1484,16 @@ void main() {
             bool literal = false,
           }) {
             final _$values = <String>{};
-            if (int != null) {
-              final _$intSimple = int!.toSimple(
+            if (this.int != null) {
+              final _$intSimple = this.int!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
               );
               _$values.add(_$intSimple);
             }
-            if (string != null) {
-              final _$stringSimple = string!.toSimple(
+            if (this.string != null) {
+              final _$stringSimple = this.string!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
@@ -1543,15 +1543,20 @@ void main() {
       );
 
       final klass = generator.generateClass(model);
-      final generated = format(klass.accept(emitter).toString());
+      final generated = format(
+        klass.methods
+            .firstWhere((m) => m.name == 'parameterProperties')
+            .accept(emitter)
+            .toString(),
+      );
 
       const expected = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (myClass != null) { _$mapValues.add(myClass!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (this.myClass != null) { _$mapValues.add(this.myClass!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expected)),
+        contains(collapseWhitespace(format(expected))),
       );
     });
   });
@@ -1582,11 +1587,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
-          if (tonikFile != null) {
+          if (this.tonikFile != null) {
             throw EncodingException('Binary data cannot be form-encoded');
           }
-          if (string != null) {
-            final _$stringForm = string!.toForm(
+          if (this.string != null) {
+            final _$stringForm = this.string!.toForm(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -1605,7 +1610,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
       expect(
         collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
   });

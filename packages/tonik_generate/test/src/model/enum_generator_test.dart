@@ -169,7 +169,7 @@ void main() {
       final toJson = generated.enumValue.methods.firstWhere(
         (method) => method.name == 'toJson',
       );
-      expect(toJson.body?.accept(DartEmitter()).toString(), r'_$rawValue');
+      expect(toJson.body?.accept(DartEmitter()).toString(), r'this._$rawValue');
     });
 
     test(
@@ -214,7 +214,7 @@ void main() {
           format(r'''
         class Timestamp {
           DateTime toDateTime() {
-            return OffsetDateTime.parse(_$rawValue);
+            return OffsetDateTime.parse(this._$rawValue);
           }
         }'''),
         );
@@ -267,7 +267,7 @@ void main() {
             if (this == Timestamp.$toDateTime) {
               throw StateError('Cannot convert unknown enum value to DateTime');
             }
-            return OffsetDateTime.parse(_$rawValue);
+            return OffsetDateTime.parse(this._$rawValue);
           }
         }'''),
         );
@@ -753,7 +753,7 @@ void main() {
         );
 
         final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
-        expect(body, r'_$rawValue');
+        expect(body, r'this._$rawValue');
         expect(toJson.returns?.accept(DartEmitter()).toString(), 'String');
       });
 
@@ -1175,7 +1175,7 @@ void main() {
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => _$rawValue.toSimple(
+            }) => this._$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1218,7 +1218,7 @@ void main() {
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => _$rawValue.toSimple(
+            }) => this._$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1260,7 +1260,7 @@ void main() {
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => _$rawValue.toSimple(
+            }) => this._$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1303,7 +1303,7 @@ void main() {
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => _$rawValue.toSimple(
+            }) => this._$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1539,7 +1539,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toForm(paramName, explode: explode, '
+          r'this._$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
@@ -1575,7 +1575,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toForm(paramName, explode: explode, '
+          r'this._$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
@@ -1610,7 +1610,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toForm(paramName, explode: explode, '
+          r'this._$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
@@ -1646,7 +1646,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toForm(paramName, explode: explode, '
+          r'this._$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved, textEncoding: textEncoding)',
         );
@@ -1694,7 +1694,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'this._$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -1723,7 +1723,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'this._$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -1752,7 +1752,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'this._$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
     });
@@ -1805,7 +1805,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toMatrix(paramName, explode: explode, '
+          r'this._$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1844,7 +1844,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toMatrix(paramName, explode: explode, '
+          r'this._$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1882,7 +1882,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toMatrix(paramName, explode: explode, '
+          r'this._$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1921,7 +1921,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.toMatrix(paramName, explode: explode, '
+          r'this._$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1985,7 +1985,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'this._$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
@@ -2031,7 +2031,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'this._$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
@@ -2076,7 +2076,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'this._$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'textEncoding: textEncoding, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
@@ -2281,7 +2281,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue;
+          return this._$rawValue;
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2320,7 +2320,7 @@ void main() {
               if (this == Status.unknown) {
                 throw EncodingException(r'Cannot encode unknown enum value');
               }
-              return _$rawValue.toSimple(
+              return this._$rawValue.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
@@ -2366,7 +2366,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.toForm(
+          return this._$rawValue.toForm(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -2455,7 +2455,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+          return this._$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2509,7 +2509,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.uriEncode(
+          return this._$rawValue.uriEncode(
             allowEmpty: allowEmpty,
             textEncoding: textEncoding,
             useQueryComponent: useQueryComponent,
@@ -2551,7 +2551,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return _$rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+          return this._$rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2827,7 +2827,7 @@ void main() {
             if (this == Status.unknown2) {
               throw EncodingException(r'Cannot encode unknown enum value');
             }
-            return _$rawValue;
+            return this._$rawValue;
           ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -3042,7 +3042,7 @@ void main() {
             if (this == Status.unKnown) {
               throw EncodingException(r'Cannot encode unknown enum value');
             }
-            return _$rawValue;
+            return this._$rawValue;
           ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
