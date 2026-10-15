@@ -18,6 +18,14 @@ Map<String, String> _readModelTree(String root, String package) {
   return result;
 }
 
+Map<String, List<int>> _readGeneratedTree(String root) {
+  final entries = Directory(root).listSync(recursive: true).whereType<File>();
+  return {
+    for (final file in entries)
+      path.relative(file.path, from: root): file.readAsBytesSync(),
+  };
+}
+
 ApiDocument _modelsDocument(int count, Context ctx) {
   final models = <Model>{};
   for (var i = 0; i < count; i++) {
@@ -109,6 +117,139 @@ void main() {
 
         expect(parallelTree, isNotEmpty);
         expect(parallelTree.length, apiDoc.models.length);
+        expect(parallelTree, serialTree);
+      },
+    );
+
+    test(
+      'colliding model names produce identical complete output across workers',
+      () async {
+        final barBaz = ClassModel(
+          name: 'BarBaz',
+          isDeprecated: false,
+          properties: const [],
+          context: ctx,
+          examples: const [],
+        );
+        final baz = ClassModel(
+          name: 'Baz',
+          isDeprecated: false,
+          properties: const [],
+          context: ctx,
+          examples: const [],
+        );
+        final foo = OneOfModel(
+          name: 'Foo',
+          models: [(model: barBaz, discriminatorValue: null)],
+          context: ctx,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final fooBar = OneOfModel(
+          name: 'FooBar',
+          models: [(model: baz, discriminatorValue: null)],
+          context: ctx,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final nullableChoice = OneOfModel(
+          name: 'NullableChoice',
+          isNullable: true,
+          models: [(model: baz, discriminatorValue: null)],
+          context: ctx,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final nullableObject = ClassModel(
+          name: 'NullableChoiceBaz',
+          isNullable: true,
+          isDeprecated: false,
+          properties: const [],
+          context: ctx,
+          examples: const [],
+        );
+        final nullableEnum = EnumModel<String>(
+          name: 'NullableChoiceBazModel',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: true,
+          context: ctx,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final resultResponse = ClassModel(
+          name: 'ResultResponse',
+          isDeprecated: false,
+          properties: const [],
+          context: ctx,
+          examples: const [],
+        );
+        final get = OneOfModel(
+          name: 'Get',
+          models: [(model: resultResponse, discriminatorValue: null)],
+          context: ctx,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final response = ResponseObject(
+          name: null,
+          context: ctx,
+          headers: const {},
+          description: 'OK',
+          bodies: const {},
+        );
+        final operation = Operation(
+          operationId: 'getResult',
+          context: ctx,
+          tags: const {},
+          isDeprecated: false,
+          path: '/result',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {const ExplicitResponseStatus(statusCode: 204): response},
+          securitySchemes: const {},
+        );
+        final apiDoc = _modelsDocument(Generator.parallelThreshold, ctx);
+        apiDoc.models = {
+          foo,
+          fooBar,
+          nullableChoice,
+          nullableObject,
+          nullableEnum,
+          get,
+          resultResponse,
+          barBaz,
+          baz,
+          ...apiDoc.models,
+        };
+        apiDoc
+          ..operations = {operation}
+          ..responses = {response};
+        final parallelRoot = path.join(tempDir.path, 'parallel');
+        final serialRoot = path.join(tempDir.path, 'serial');
+        final pool = ModelWorkerPool();
+
+        await const Generator().generate(
+          apiDocument: apiDoc,
+          outputDirectory: parallelRoot,
+          package: 'collision_api',
+          config: const TonikConfig(workerCount: 2),
+          workerPoolFactory: () => pool,
+        );
+        await const Generator().generate(
+          apiDocument: apiDoc,
+          outputDirectory: serialRoot,
+          package: 'collision_api',
+          config: const TonikConfig(workerCount: 1),
+        );
+
+        expect(pool.spawnedWorkers, 2);
+        expect(pool.exitedWorkers, 2);
+        final parallelTree = _readGeneratedTree(parallelRoot);
+        final serialTree = _readGeneratedTree(serialRoot);
+        expect(parallelTree, isNotEmpty);
         expect(parallelTree, serialTree);
       },
     );

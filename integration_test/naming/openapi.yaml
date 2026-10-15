@@ -2094,3 +2094,43 @@ components:
       anyOf:
         - $ref: '#/components/schemas/Json'
         - $ref: '#/components/schemas/AllowEmpty'
+
+    Foo:
+      oneOf:
+        - $ref: '#/components/schemas/BarBaz'
+
+    FooBar:
+      oneOf:
+        - $ref: '#/components/schemas/Baz'
+
+    BarBaz:
+      type: object
+      required: [barBaz]
+      properties:
+        barBaz:
+          type: string
+
+    Baz:
+      type: object
+      required: [baz]
+      properties:
+        baz:
+          type: string
+
+    NullableVariant:
+      nullable: true
+      oneOf:
+        - $ref: '#/components/schemas/Baz'
+
+    NullableVariantBaz:
+      type: object
+      nullable: true
+      required: [value]
+      properties:
+        value:
+          type: string
+
+    NullableVariantBazModel:
+      type: string
+      nullable: true
+      enum: [active, inactive]

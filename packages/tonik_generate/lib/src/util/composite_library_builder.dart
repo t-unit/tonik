@@ -25,15 +25,7 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
   final fileName = nameManager.fileNameForClass(publicClassName);
 
   final actualClassName = isNullable
-      ? nameManager.modelName(
-          AliasModel(
-            name: '\$Raw$publicClassName',
-            model: model,
-            context: model.context,
-            defaultValue: null,
-            examples: const [],
-          ),
-        )
+      ? nameManager.rawModelName(model)
       : publicClassName;
 
   final generatedClasses = generateClasses(actualClassName);
