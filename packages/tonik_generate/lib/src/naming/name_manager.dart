@@ -155,8 +155,6 @@ class NameManager({
       }
     }
 
-    // Match serial model generation order so every isolate shares the same
-    // claims, including names needed by response wrappers generated later.
     for (final model in models) {
       switch (model) {
         case ClassModel(isNullable: true):
