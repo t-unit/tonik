@@ -12,6 +12,107 @@ tags:
   - name: widgets
     description: Widget operations
 paths:
+  /mapped/object:
+    post:
+      tags: [widgets]
+      operationId: postMappedObject
+      requestBody:
+        required: true
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              $ref: '#/components/schemas/JsonPayload'
+      responses:
+        '204':
+          description: Body received
+  /mapped/list:
+    post:
+      tags: [widgets]
+      operationId: postMappedList
+      requestBody:
+        required: true
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '204':
+          description: Body received
+  /mapped/string:
+    post:
+      tags: [widgets]
+      operationId: postMappedString
+      requestBody:
+        required: true
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: Body received
+  /mapped/optional:
+    post:
+      tags: [widgets]
+      operationId: postMappedOptional
+      requestBody:
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              $ref: '#/components/schemas/NullableJsonPayload'
+      responses:
+        '204':
+          description: Body received
+  /mapped/nullable:
+    post:
+      tags: [widgets]
+      operationId: postMappedNullable
+      requestBody:
+        required: true
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              $ref: '#/components/schemas/NullableJsonPayload'
+      responses:
+        '204':
+          description: Body received
+  /mapped/choice:
+    post:
+      tags: [widgets]
+      operationId: postMappedChoice
+      requestBody:
+        $ref: '#/components/requestBodies/JsonChoice'
+      responses:
+        '204':
+          description: Body received
+  /mapped/number:
+    post:
+      tags: [widgets]
+      operationId: postMappedNumber
+      requestBody:
+        required: true
+        content:
+          application/x-amz-json-1.1:
+            schema:
+              type: number
+      responses:
+        '204':
+          description: Body received
+  /standard/object:
+    post:
+      tags: [widgets]
+      operationId: postStandardObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonPayload'
+      responses:
+        '204':
+          description: Body received
   /document:
     get:
       tags: [widgets]
@@ -105,7 +206,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/Widget'
 components:
+  requestBodies:
+    JsonChoice:
+      content:
+        application/x-amz-json-1.1:
+          schema:
+            $ref: '#/components/schemas/NullableJsonPayload'
+        text/plain:
+          schema:
+            type: string
   schemas:
+    JsonPayload:
+      type: object
+      additionalProperties: false
+      required: [name, count]
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+    NullableJsonPayload:
+      type: [object, 'null']
+      additionalProperties: false
+      required: [name, count]
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
     Widget:
       type: object
       required:

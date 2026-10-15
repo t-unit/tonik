@@ -135,8 +135,7 @@ class const DioDataGenerator({
     final guardNull =
         !isRequired &&
         switch (item.contentType) {
-          ContentType.text || ContentType.form => true,
-          ContentType.json => _encodesJsonRoot(item.model),
+          ContentType.text || ContentType.form || ContentType.json => true,
           ContentType.bytes => item.model is BinaryModel,
           _ => false,
         };
@@ -191,13 +190,10 @@ class const DioDataGenerator({
           useImmutableCollections: useImmutableCollections,
           contextClass: operation.operationId,
           contextProperty: 'body',
+          receiverIsPromotedNonNull: receiverIsPromotedNonNull,
         );
         return BuiltExpression(
-          body: _encodesJsonRoot(content.model)
-              ? refer('jsonEncode', 'dart:convert').call([json.unsafeRawBody])
-              : isRequired && content.model.isEffectivelyNullable
-              ? json.unsafeRawBody.ifNullThen(literalString('null'))
-              : json.unsafeRawBody,
+          body: refer('jsonEncode', 'dart:convert').call([json.unsafeRawBody]),
           inlineFunctions: json.inlineFunctions,
         );
       case ContentType.text:
@@ -229,21 +225,4 @@ class const DioDataGenerator({
         throw StateError('Multipart content must own parts.');
     }
   }
-}
-
-bool _encodesJsonRoot(Model model) {
-  final resolved = model.resolved;
-  return switch (resolved) {
-    StringModel() ||
-    DateTimeModel() ||
-    DateModel() ||
-    DecimalModel() ||
-    UriModel() ||
-    BinaryModel() ||
-    Base64Model() ||
-    EnumModel<String>() ||
-    AnyModel() => true,
-    final CompositeModel model => model.containedModels.any(_encodesJsonRoot),
-    _ => false,
-  };
 }

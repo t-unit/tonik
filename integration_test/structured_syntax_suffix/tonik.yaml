@@ -1,0 +1,6 @@
+spec: structured_syntax_suffix/openapi.yaml
+packageName: structured_syntax_suffix_api
+outputDir: structured_syntax_suffix
+
+contentTypes:
+  application/x-amz-json-1.1: json

@@ -131,7 +131,7 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p allow_reserved_api -s allow_reserved/openapi.yaml -o allow_reserved --backend $BACKEND"
   "$TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding --backend $BACKEND"
   "$TONIK_BINARY --config binary_models/tonik.yaml -p binary_models_api -s binary_models/openapi.yaml -o binary_models --backend $BACKEND"
-  "$TONIK_BINARY -p structured_syntax_suffix_api -s structured_syntax_suffix/openapi.yaml -o structured_syntax_suffix --backend $BACKEND"
+  "$TONIK_BINARY --config structured_syntax_suffix/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config form_urlencoded/tonik_custom.yaml --backend $BACKEND"
   "$TONIK_BINARY -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas --backend $BACKEND"
   "$TONIK_BINARY -p type_arrays_api -s type_arrays/openapi.yaml -o type_arrays --backend $BACKEND"
