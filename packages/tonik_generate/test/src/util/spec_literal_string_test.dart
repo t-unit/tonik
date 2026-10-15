@@ -1,209 +1,194 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 void main() {
-  group('specLiteralString', () {
-    late DartEmitter emitter;
+  final formatter = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  );
 
-    setUp(() {
-      emitter = DartEmitter(useNullSafetySyntax: true);
-    });
-
-    String emit(Expression expr) => expr.accept(emitter).toString();
-
-    test('emits raw single-quoted string for plain value', () {
-      expect(emit(specLiteralString('hello')), "r'hello'");
-    });
-
-    test('emits raw single-quoted string for value with dollar sign', () {
-      expect(emit(specLiteralString(r'price$5')), r"r'price$5'");
-    });
-
-    test('emits raw double-quoted string for value with single quote', () {
-      expect(emit(specLiteralString("it's")), 'r"it\'s"');
-    });
-
-    test(
-      'emits raw double-quoted string for value with single quote and dollar',
-      () {
-        expect(emit(specLiteralString(r"it's $5")), r'''r"it's $5"''');
-      },
+  String render(Code code) {
+    final method = Method(
+      (b) => b
+        ..name = 'value'
+        ..lambda = true
+        ..body = code,
     );
+    return collapseWhitespace(
+      formatter.format('${method.accept(DartEmitter())};'),
+    );
+  }
 
-    test('emits raw triple-quoted string for value with both quotes '
-        'not ending in double quote', () {
+  String expected(String source) =>
+      collapseWhitespace(formatter.format(source));
+
+  group('specLiteralString', () {
+    test('uses raw single quotes for a plain value', () {
       expect(
-        emit(specLiteralString('it\'s "here" ok')),
-        'r"""it\'s "here" ok"""',
+        render(specLiteralString('hello').code),
+        expected("value() => r'hello';"),
       );
     });
 
-    test('falls back to escaped string when value with both quotes '
-        'ends in double quote', () {
-      // r"""...""" is invalid Dart when content ends with "
-      // so we must use escaped single-quoted string
-      expect(emit(specLiteralString('it\'s "here"')), "'it\\'s \"here\"'");
+    test('preserves a dollar sign in a raw string', () {
+      expect(
+        render(specLiteralString(r'price$5').code),
+        expected(r"value() => r'price$5';"),
+      );
     });
 
-    test('emits raw single-quoted string for empty value', () {
-      expect(emit(specLiteralString('')), "r''");
+    test('uses raw double quotes for a value with a single quote', () {
+      expect(
+        render(specLiteralString(r"it's $5").code),
+        expected(r'''value() => r"it's $5";'''),
+      );
+    });
+
+    test('uses raw triple quotes for both quotes on one line', () {
+      expect(
+        render(specLiteralString('it\'s "here" ok').code),
+        expected('value() => r"""it\'s "here" ok""";'),
+      );
+    });
+
+    test('escapes both quotes when the value ends in a double quote', () {
+      expect(
+        render(specLiteralString('it\'s "here"').code),
+        expected(r'''value() => 'it\'s "here"';'''),
+      );
+    });
+
+    test('preserves an empty value', () {
+      expect(render(specLiteralString('').code), expected("value() => r'';"));
+    });
+
+    test('escapes a lone newline', () {
+      expect(
+        render(specLiteralString('\n').code),
+        expected(r"value() => '\n';"),
+      );
+    });
+
+    test('preserves spaces before a leading newline', () {
+      expect(
+        render(specLiteralString('  \nabc').code),
+        expected(r"value() => '  \nabc';"),
+      );
+    });
+
+    test('preserves a tab before a leading newline', () {
+      expect(
+        render(specLiteralString('\t\nabc').code),
+        expected("value() => '\t\\nabc';"),
+      );
+    });
+
+    test('preserves multiple leading newlines', () {
+      expect(
+        render(specLiteralString('\n\nabc').code),
+        expected(r"value() => '\n\nabc';"),
+      );
+    });
+
+    test('escapes newlines with dollars, backslashes, and quotes', () {
+      expect(
+        render(specLiteralString('\n\$5\\it\'s "here"\r\n').code),
+        expected(r'''value() => '\n\$5\\it\'s "here"\r\n';'''),
+      );
     });
   });
 
   group('specLiteralStringCode', () {
-    test('path 1: no quotes uses raw single-quoted string', () {
-      expect(specLiteralStringCode('hello'), "r'hello'");
-    });
-
-    test('path 2: single quote uses raw double-quoted string', () {
-      expect(specLiteralStringCode("it's"), 'r"it\'s"');
-    });
-
-    test('path 3: both quotes uses raw triple-double-quoted string', () {
+    test('uses raw single quotes for a plain value', () {
       expect(
-        specLiteralStringCode('it\'s "here" ok'),
-        'r"""it\'s "here" ok"""',
+        render(Code(specLiteralStringCode('hello'))),
+        expected("value() => r'hello';"),
       );
     });
 
-    test('path 3 skipped: both quotes but ends with double quote falls '
-        'through to path 4', () {
-      // Ending with " would produce r"""..."""" which is invalid Dart
-      final result = specLiteralStringCode('it\'s "here"');
-      expect(result, isNot(startsWith('r"""')));
-      expect(result, "'it\\'s \"here\"'");
-    });
-
-    test('path 4: triple-double-quotes uses escaped single-quoted string', () {
-      // Build a string containing ', ", and """
-      const value =
-          "it's"
-          '"""'
-          'test';
-      final result = specLiteralStringCode(value);
-      expect(result, isNot(startsWith('r')));
-      expect(result, startsWith("'"));
-      expect(result, endsWith("'"));
-      expect(result, contains(r"\'"));
-    });
-
-    test('escapes backslash in fallback path', () {
-      // Build a string with ', ", and """ plus backslash
-      const value =
-          "it's"
-          '"""'
-          r'te\st';
-      final result = specLiteralStringCode(value);
-      expect(result, contains(r'\\'));
-    });
-
-    test('escapes dollar sign in fallback path', () {
-      // Build a string with ', ", and """ plus dollar
-      const value =
-          "it's"
-          '"""'
-          r'te$st';
-      final result = specLiteralStringCode(value);
-      expect(result, contains(r'\$'));
-    });
-
-    group('newline handling', () {
-      test('multiline value uses raw triple-quoted string', () {
-        const value = '''
-hello
-world''';
-        final result = specLiteralStringCode(value);
-        expect(result, startsWith('r"""'));
-        expect(result, endsWith('"""'));
-        expect(result, 'r"""hello\nworld"""');
-      });
-
-      test(r'value with \r uses escaped fallback to avoid literal CR', () {
-        final result = specLiteralStringCode('hello\rworld');
-        expect(result, isNot(startsWith('r')));
-        expect(result, startsWith("'"));
-        expect(result, endsWith("'"));
-        expect(result, r"'hello\rworld'");
-      });
-
-      test(r'value with \r\n uses escaped fallback to avoid literal CR', () {
-        final result = specLiteralStringCode('hello\r\nworld');
-        expect(result, isNot(startsWith('r')));
-        expect(result, r"'hello\r\nworld'");
-      });
-
-      test(
-        'multiline value with single quotes uses raw triple-quoted string',
-        () {
-          const value = '''
-it's
-new''';
-          final result = specLiteralStringCode(value);
-          expect(result, startsWith('r"""'));
-          expect(result, endsWith('"""'));
-          expect(result, 'r"""it\'s\nnew"""');
-        },
+    test('uses raw double quotes for a value with a single quote', () {
+      expect(
+        render(Code(specLiteralStringCode("it's"))),
+        expected('value() => r"it\'s";'),
       );
+    });
 
-      test(
-        'multiline value with double quotes uses raw triple-quoted string',
-        () {
-          const value = '''
-say "hi"
-there''';
-          final result = specLiteralStringCode(value);
-          expect(result, startsWith('r"""'));
-          expect(result, endsWith('"""'));
-          expect(result, 'r"""say "hi"\nthere"""');
-        },
+    test('uses raw triple quotes for both quotes on one line', () {
+      expect(
+        render(Code(specLiteralStringCode('it\'s "here" ok'))),
+        expected('value() => r"""it\'s "here" ok""";'),
       );
+    });
 
-      test(
-        'multiline value with both quotes uses raw triple-quoted string',
-        () {
-          const value = '''
-it's "here"
-ok''';
-          final result = specLiteralStringCode(value);
-          expect(result, startsWith('r"""'));
-          expect(result, endsWith('"""'));
-          expect(result, 'r"""it\'s "here"\nok"""');
-        },
+    test('escapes both quotes when the value ends in a double quote', () {
+      expect(
+        render(Code(specLiteralStringCode('it\'s "here"'))),
+        expected(r'''value() => 'it\'s "here"';'''),
       );
+    });
 
-      test('multiline value with triple-double-quotes falls back to escaped '
-          'single-quoted string with escaped newline', () {
-        // Contains ', ", """, and a newline — must use escaped fallback
-        const value = "it's\"\"\"\ntest";
-        final result = specLiteralStringCode(value);
-        expect(result, isNot(startsWith('r')));
-        expect(result, startsWith("'"));
-        expect(result, endsWith("'"));
-        expect(result, contains(r'\n'));
-        expect(result, contains(r"\'"));
-      });
+    test('escapes triple quotes, backslashes, and dollars', () {
+      expect(
+        render(Code(specLiteralStringCode('it\'s"""te\\\$st'))),
+        expected(r'''value() => 'it\'s"""te\\\$st';'''),
+      );
+    });
 
-      test(r'value with \r in fallback path is escaped as literal \r', () {
-        // Contains ', ", """, and \r — must use escaped fallback
-        const value = "it's\"\"\"\rtest";
-        final result = specLiteralStringCode(value);
-        expect(result, isNot(startsWith('r')));
-        expect(result, contains(r'\r'));
-      });
+    test('escapes a lone newline', () {
+      expect(
+        render(Code(specLiteralStringCode('\n'))),
+        expected(r"value() => '\n';"),
+      );
+    });
 
-      test('multiline value ending in double quote uses escaped '
-          'single-quoted string', () {
-        // Has both quotes, ends in ", and has a newline
-        const value = '''
-it's "here"
-"end"''';
-        final result = specLiteralStringCode(value);
-        expect(result, isNot(startsWith('r')));
-        expect(result, startsWith("'"));
-        expect(result, endsWith("'"));
-        expect(result, contains(r'\n'));
-      });
+    test('preserves spaces before a leading newline', () {
+      expect(
+        render(Code(specLiteralStringCode('  \nabc'))),
+        expected(r"value() => '  \nabc';"),
+      );
+    });
+
+    test('preserves a tab before a leading newline', () {
+      expect(
+        render(Code(specLiteralStringCode('\t\nabc'))),
+        expected("value() => '\t\\nabc';"),
+      );
+    });
+
+    test('preserves multiple leading newlines', () {
+      expect(
+        render(Code(specLiteralStringCode('\n\nabc'))),
+        expected(r"value() => '\n\nabc';"),
+      );
+    });
+
+    test('escapes a newline between nonempty lines', () {
+      expect(
+        render(Code(specLiteralStringCode('hello\nworld'))),
+        expected(r"value() => 'hello\nworld';"),
+      );
+    });
+
+    test('escapes a carriage return', () {
+      expect(
+        render(Code(specLiteralStringCode('hello\rworld'))),
+        expected(r"value() => 'hello\rworld';"),
+      );
+    });
+
+    test('escapes a carriage return and newline', () {
+      expect(
+        render(Code(specLiteralStringCode('hello\r\nworld'))),
+        expected(r"value() => 'hello\r\nworld';"),
+      );
+    });
+
+    test('escapes newlines with dollars, backslashes, and quotes', () {
+      expect(
+        render(Code(specLiteralStringCode('\n\$5\\it\'s "here"\r\n'))),
+        expected(r'''value() => '\n\$5\\it\'s "here"\r\n';'''),
+      );
     });
   });
 }
