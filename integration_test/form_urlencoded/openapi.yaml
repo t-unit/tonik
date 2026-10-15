@@ -18,6 +18,39 @@ tags:
     description: Operations with custom content type
 
 paths:
+  /form/nullable:
+    post:
+      operationId: postNullableForm
+      tags:
+        - form
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NullableForm'
+      responses:
+        '204':
+          description: Form accepted
+
+  /form/nullable-multi:
+    post:
+      operationId: postNullableMultiForm
+      tags:
+        - form
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NullableTypeArrayForm'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleForm'
+      responses:
+        '204':
+          description: Form accepted
+
   /form/latin1:
     post:
       operationId: postLatin1Form
@@ -781,6 +814,23 @@ paths:
 
 components:
   schemas:
+    NullableForm:
+      type: object
+      nullable: true
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    NullableTypeArrayForm:
+      type: [object, 'null']
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
     SimpleForm:
       type: object
       required:

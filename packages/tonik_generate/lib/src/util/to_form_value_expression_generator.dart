@@ -13,6 +13,7 @@ BuiltExpression buildToFormValueExpression(
   required TextEncoding textEncoding,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
+  bool receiverIsPromotedNonNull = false,
   Map<Property, FieldEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
@@ -48,8 +49,9 @@ BuiltExpression buildToFormValueExpression(
     );
   }
 
+  final guardNull = model.isEffectivelyNullable && !receiverIsPromotedNonNull;
   final entries = buildFormEntriesValueExpression(
-    receiver,
+    guardNull ? refer('formValue') : receiver,
     model,
     paramName: literalString(''),
     explode: literalBool(explodeLiteral),
@@ -67,7 +69,22 @@ BuiltExpression buildToFormValueExpression(
     );
   }
 
-  return BuiltExpression.simple(_entriesToBody(entries));
+  final body = _entriesToBody(entries);
+  return BuiltExpression.simple(
+    guardNull
+        ? Method(
+            (b) => b
+              ..lambda = false
+              ..body = Block.of([
+                const Code('final formValue = '),
+                receiver.code,
+                const Code("; if (formValue == null) return ''; return "),
+                body.code,
+                const Code(';'),
+              ]),
+          ).closure.call([])
+        : body,
+  );
 }
 
 /// Builds a `<String, FormFieldEncoding>` map literal for the object `toForm`

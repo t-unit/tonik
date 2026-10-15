@@ -66,6 +66,7 @@ class const DioDataGenerator({
               valueName: 'value.value',
               propertyName: 'value',
               isRequired: true,
+              receiverIsPromotedNonNull: false,
               helperContext: helperContext,
             );
             bindsValue =
@@ -145,6 +146,7 @@ class const DioDataGenerator({
       valueName: 'body',
       propertyName: 'body',
       isRequired: isRequired || guardNull,
+      receiverIsPromotedNonNull: guardNull,
       helperContext: helperContext,
     );
     return buildDataMethod(
@@ -166,6 +168,7 @@ class const DioDataGenerator({
     required String valueName,
     required String propertyName,
     required bool isRequired,
+    required bool receiverIsPromotedNonNull,
     required InlineHelperContext helperContext,
   }) {
     final value = refer(valueName);
@@ -220,6 +223,7 @@ class const DioDataGenerator({
           useQueryComponent: true,
           textEncoding: content.textEncoding,
           encoding: content.formEncoding,
+          receiverIsPromotedNonNull: receiverIsPromotedNonNull,
         );
       case ContentType.multipart:
         throw StateError('Multipart content must own parts.');

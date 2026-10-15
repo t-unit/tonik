@@ -431,6 +431,189 @@ Object? _data({NullablePayload? body}) {
   });
 
   group('form-urlencoded bodies', () {
+    test('encodes a required nullable object on both transports', () {
+      final operation = _operation(
+        context,
+        requestBody: _body(
+          context,
+          model: ClassModel(
+            name: 'Form',
+            isNullable: true,
+            isDeprecated: false,
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+      final http = generator.generateBodyMethod(operation);
+      final dio = DioDataGenerator(
+        nameManager: generator.nameManager,
+        package: 'test_package',
+      ).generateDataMethod(operation);
+      const expectedHttp = r"""
+Object? _data({required Form body}) {
+  return utf8.encode(() {
+    final formValue = body;
+    if (formValue == null) return '';
+    return formValue
+        .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&');
+  }());
+}
+""";
+      const expectedDio = r"""
+Object? _data({required Form body}) {
+  return () {
+    final formValue = body;
+    if (formValue == null) return '';
+    return formValue
+        .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&');
+  }();
+}
+""";
+      expect(
+        collapseWhitespace(format(http.accept(emitter).toString())),
+        collapseWhitespace(format(expectedHttp)),
+      );
+      expect(
+        collapseWhitespace(format(dio.accept(emitter).toString())),
+        collapseWhitespace(format(expectedDio)),
+      );
+    });
+
+    test('checks nullable form variant values on both transports', () {
+      final operation = _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: ClassModel(
+                name: 'Form',
+                isNullable: true,
+                isDeprecated: false,
+                properties: const [],
+                context: context,
+                examples: const [],
+              ),
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              examples: const [],
+            ),
+            ModelRequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              examples: const [],
+            ),
+          },
+        ),
+      );
+      final http = generator.generateBodyMethod(operation);
+      final dio = DioDataGenerator(
+        nameManager: generator.nameManager,
+        package: 'test_package',
+      ).generateDataMethod(operation);
+      const expectedHttp = r"""
+Object? _data({required Payload body}) {
+  return switch (body) {
+    final PayloadXWwwFormUrlencoded value => utf8.encode(() {
+      final formValue = value.value;
+      if (formValue == null) return '';
+      return formValue
+          .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+          .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+          .join('&');
+    }()),
+    final PayloadPlain value => utf8.encode(value.value),
+  };
+}
+""";
+      const expectedDio = r"""
+Object? _data({required Payload body}) {
+  return switch (body) {
+    final PayloadXWwwFormUrlencoded value => () {
+      final formValue = value.value;
+      if (formValue == null) return '';
+      return formValue
+          .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+          .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+          .join('&');
+    }(),
+    final PayloadPlain value => utf8.encode(value.value),
+  };
+}
+""";
+      expect(
+        collapseWhitespace(format(http.accept(emitter).toString())),
+        collapseWhitespace(format(expectedHttp)),
+      );
+      expect(
+        collapseWhitespace(format(dio.accept(emitter).toString())),
+        collapseWhitespace(format(expectedDio)),
+      );
+    });
+
+    test('retains optional nullable form omission on both transports', () {
+      final operation = _operation(
+        context,
+        requestBody: _body(
+          context,
+          model: ClassModel(
+            name: 'Form',
+            isNullable: true,
+            isDeprecated: false,
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+          isRequired: false,
+        ),
+      );
+      final http = generator.generateBodyMethod(operation);
+      final dio = DioDataGenerator(
+        nameManager: generator.nameManager,
+        package: 'test_package',
+      ).generateDataMethod(operation);
+      const expectedHttp = r"""
+Object? _data({Form? body}) {
+  if (body == null) return null;
+  return utf8.encode(body
+      .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+      .join('&'));
+}
+""";
+      const expectedDio = r"""
+Object? _data({Form? body}) {
+  if (body == null) return null;
+  return body
+      .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: utf8,)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+      .join('&');
+}
+""";
+      expect(
+        collapseWhitespace(format(http.accept(emitter).toString())),
+        collapseWhitespace(format(expectedHttp)),
+      );
+      expect(
+        collapseWhitespace(format(dio.accept(emitter).toString())),
+        collapseWhitespace(format(expectedDio)),
+      );
+    });
+
     test('UTF-8 encodes a scalar without inventing a field name', () {
       final method = generator.generateBodyMethod(
         _operation(

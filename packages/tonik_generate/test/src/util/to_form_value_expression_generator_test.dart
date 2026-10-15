@@ -32,6 +32,123 @@ void main() {
   }
 
   group('buildToFormValueExpression', () {
+    test('nullable object body binds a non-null receiver before encoding', () {
+      final model = ClassModel(
+        name: 'Form',
+        isNullable: true,
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final result = buildToFormValueExpression(
+        'value.value',
+        model,
+        useQueryComponent: true,
+        textEncoding: TextEncoding.latin1,
+        explodeLiteral: false,
+        allowEmptyLiteral: false,
+      );
+      final expected = format(r"""
+        test() {
+          () {
+            final formValue = value.value;
+            if (formValue == null) return '';
+            return formValue
+              .toForm('', explode: false, allowEmpty: false, useQueryComponent: true, textEncoding: _i1.latin1,)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+          }();
+        }
+      """);
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('alias inherits nullability from its object model', () {
+      final model = AliasModel(
+        name: 'FormAlias',
+        model: ClassModel(
+          name: 'Form',
+          isNullable: true,
+          isDeprecated: false,
+          properties: const [],
+          context: context,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
+      );
+      final expected = format(r"""
+        test() {
+          () {
+            final formValue = body;
+            if (formValue == null) return '';
+            return formValue
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+          }();
+        }
+      """);
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('promoted nullable object uses the existing non-null receiver', () {
+      final model = ClassModel(
+        name: 'Form',
+        isNullable: true,
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
+        receiverIsPromotedNonNull: true,
+      );
+      final expected = format(r"""
+        test() {
+          body
+            .toForm('', explode: true, allowEmpty: true, useQueryComponent: true, textEncoding: _i1.utf8,)
+            .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+            .join('&');
+        }
+      """);
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('nullable unsupported binary body preserves its encoding error', () {
+      final result = buildToFormValueExpression(
+        'body',
+        AliasModel(
+          name: 'NullableBinary',
+          model: BinaryModel(context: context),
+          isNullable: true,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        ),
+        useQueryComponent: true,
+        textEncoding: TextEncoding.utf8,
+      );
+      final expected = format("""
+        test() {
+          throw _i1.EncodingException('Binary data cannot be form-encoded.');
+        }
+      """);
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('ClassModel body expands entries to a joined key=value string', () {
       final model = ClassModel(
         name: 'Form',

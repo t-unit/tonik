@@ -224,6 +224,7 @@ class const HttpBodyGenerator({
           useQueryComponent: true,
           textEncoding: content.textEncoding,
           encoding: content.formEncoding,
+          receiverIsPromotedNonNull: receiverIsPromotedNonNull,
         );
         return BuiltExpression(
           body: refer(
