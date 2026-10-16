@@ -54,7 +54,7 @@ class const Generator() {
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
-    TonikConfig config = const TonikConfig(),
+    TonikConfig config = TonikConfig.defaults,
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
   }) async {
     const AllOfNormalizer(normalizeSingleMembers: false).apply(apiDocument);

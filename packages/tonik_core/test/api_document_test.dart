@@ -17,14 +17,20 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       expect(document.operationsByTag, isEmpty);
     });
 
     test('returns operations grouped by tag', () {
-      final fooTag = Tag(name: 'foo');
-      final barTag = Tag(name: 'bar');
+      final fooTag = Tag(name: 'foo', description: null, nameOverride: null);
+      final barTag = Tag(name: 'bar', description: null, nameOverride: null);
 
       final fooOperation = Operation(
         operationId: 'test',
@@ -39,6 +45,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final barOperation = Operation(
@@ -54,6 +64,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final document = ApiDocument(
@@ -69,6 +83,12 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[fooTag];
@@ -79,8 +99,8 @@ void main() {
     });
 
     test('duplicates operations in different tags', () {
-      final fooTag = Tag(name: 'foo');
-      final barTag = Tag(name: 'bar');
+      final fooTag = Tag(name: 'foo', description: null, nameOverride: null);
+      final barTag = Tag(name: 'bar', description: null, nameOverride: null);
 
       final twoTagOperation = Operation(
         operationId: 'test',
@@ -95,6 +115,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final document = ApiDocument(
@@ -118,6 +142,10 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -126,6 +154,12 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[fooTag];

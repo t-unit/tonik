@@ -11,8 +11,14 @@ void main() {
   group('AdditionalPropertiesPolicy equality', () {
     test('allowed policies with same value model and origin are equal', () {
       final valueModel = StringModel(context: context);
-      final a = AllowedAdditionalProperties(valueModel: valueModel);
-      final b = AllowedAdditionalProperties(valueModel: valueModel);
+      final a = AllowedAdditionalProperties(
+        valueModel: valueModel,
+        origin: AdditionalPropertiesOrigin.explicit,
+      );
+      final b = AllowedAdditionalProperties(
+        valueModel: valueModel,
+        origin: AdditionalPropertiesOrigin.explicit,
+      );
 
       expect(a, b);
       expect(a.hashCode, b.hashCode);
@@ -24,7 +30,10 @@ void main() {
         valueModel: valueModel,
         origin: AdditionalPropertiesOrigin.implicitDefault,
       );
-      final explicit = AllowedAdditionalProperties(valueModel: valueModel);
+      final explicit = AllowedAdditionalProperties(
+        valueModel: valueModel,
+        origin: AdditionalPropertiesOrigin.explicit,
+      );
 
       expect(implicit, isNot(explicit));
     });
@@ -40,7 +49,10 @@ void main() {
       expect(
         const ForbiddenAdditionalProperties(),
         isNot(
-          AllowedAdditionalProperties(valueModel: AnyModel(context: context)),
+          AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+            origin: AdditionalPropertiesOrigin.explicit,
+          ),
         ),
       );
     });
@@ -55,9 +67,15 @@ void main() {
       isDeprecated: false,
       examples: const [],
       additionalPropertiesPolicy: additionalPropertiesPolicy,
+      name: null,
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
-    test('an omitted policy defaults to the implicit Any policy', () {
+    test('a null policy resolves to the implicit Any policy', () {
       final model = classModel();
 
       final policy =
@@ -69,6 +87,7 @@ void main() {
     test('an explicit policy is stored as given', () {
       final policy = AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       final model = classModel(additionalPropertiesPolicy: policy);
 
@@ -95,9 +114,16 @@ void main() {
       isDeprecated: false,
       examples: const [],
       additionalPropertiesPolicy: additionalPropertiesPolicy,
+      name: null,
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
-    test('an omitted policy defaults to the implicit Any policy', () {
+    test('a null policy resolves to the implicit Any policy', () {
       final model = allOfModel();
 
       final policy =
@@ -109,6 +135,7 @@ void main() {
     test('an explicit policy is stored as given', () {
       final policy = AllowedAdditionalProperties(
         valueModel: IntegerModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       final model = allOfModel(additionalPropertiesPolicy: policy);
 

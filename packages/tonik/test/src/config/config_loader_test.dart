@@ -130,12 +130,47 @@ packageName: partial_api
         expect(config.packageName, 'partial_api');
         expect(config.logLevel, isNull);
 
-        expect(config.nameOverrides, const NameOverridesConfig());
+        expect(
+          config.nameOverrides,
+          const NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+        );
         expect(config.contentTypes, isEmpty);
-        expect(config.filter, const FilterConfig());
-        expect(config.deprecated, const DeprecatedConfig());
-        expect(config.enums, const EnumConfig());
-        expect(config.transport, const TransportConfig());
+        expect(
+          config.filter,
+          const FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+        );
+        expect(
+          config.deprecated,
+          const DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+        );
+        expect(
+          config.enums,
+          const EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+        );
+        expect(
+          config.transport,
+          const TransportConfig(backend: TransportBackend.dio),
+        );
       });
 
       group('transport', () {
@@ -846,11 +881,31 @@ nameOverrides:
       test('merge preserves non-CLI config properties', () {
         const config = CliConfig(
           spec: './config-spec.yaml',
-          nameOverrides: NameOverridesConfig(schemas: {'OldName': 'NewName'}),
+          nameOverrides: NameOverridesConfig(
+            schemas: {'OldName': 'NewName'},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
           contentTypes: {'application/problem+json': ContentType.json},
-          filter: FilterConfig(includeTags: ['Api']),
-          deprecated: DeprecatedConfig(operations: DeprecatedHandling.exclude),
-          enums: EnumConfig(generateUnknownCase: true),
+          filter: FilterConfig(
+            includeTags: ['Api'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.exclude,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: true,
+            unknownCaseName: 'unknown',
+          ),
         );
 
         final merged = config.merge(spec: './cli-spec.yaml');

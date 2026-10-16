@@ -210,6 +210,12 @@ class NameManager({
         context: model.context,
         defaultValue: null,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     ),
   );

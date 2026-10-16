@@ -20,7 +20,7 @@ class const RequestBodyAlias({
   required super.name,
   required final RequestBody requestBody,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends RequestBody {
   @override
   int get contentCount => requestBody.contentCount;
@@ -100,8 +100,8 @@ sealed class RequestContent._({
   new({
     required String rawContentType,
     required List<Example> examples,
-    String? wireContentType,
-    TextEncoding textEncoding = TextEncoding.utf8,
+    required String? wireContentType,
+    required TextEncoding textEncoding,
   }) : this._(
          rawContentType: rawContentType,
          examples: examples,
@@ -117,13 +117,13 @@ final class ModelRequestContent({
   @override required final ContentType contentType,
   required super.rawContentType,
   required super.examples,
-  super.wireContentType,
-  super.textEncoding,
+  required super.wireContentType,
+  required super.textEncoding,
 
   /// Per-property encoding for application/x-www-form-urlencoded bodies, keyed
   /// by identity on [model]'s resolved [Property] instances — transformers must
   /// mutate those in place, never rebuild, or lookups silently miss.
-  var Map<Property, FieldEncoding>? formEncoding,
+  required var Map<Property, FieldEncoding>? formEncoding,
 }) extends RequestContent {
   this {
     if (contentType == ContentType.multipart) {
@@ -146,8 +146,8 @@ final class MultipartRequestContent({
   required final Map<String, PartEncoding> encoding,
   required super.rawContentType,
   required super.examples,
-  super.wireContentType,
-  super.textEncoding,
+  required super.wireContentType,
+  required super.textEncoding,
 }) extends RequestContent {
   @override
   ContentType get contentType => ContentType.multipart;

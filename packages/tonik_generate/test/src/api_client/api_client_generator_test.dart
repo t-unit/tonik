@@ -41,6 +41,7 @@ void main() {
       const Server(
         url: 'https://api.example.com',
         description: 'Production server',
+        variables: [],
       ),
     ];
   });
@@ -53,7 +54,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -63,11 +64,13 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         expect(generatedClass.name, 'UsersApi');
@@ -116,7 +119,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -126,11 +129,13 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         expect(generatedClass.name, 'UsersApi');
@@ -173,7 +178,7 @@ void main() {
         final operation = Operation(
           operationId: 'getUser',
           context: testContext,
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -183,11 +188,15 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = httpGenerator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final initializer =
@@ -207,7 +216,13 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {Tag(name: 'users', description: 'User management API')},
+            tags: {
+              Tag(
+                name: 'users',
+                description: 'User management API',
+                nameOverride: null,
+              ),
+            },
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -217,11 +232,17 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users', description: 'User management API'),
+            Tag(
+              name: 'users',
+              description: 'User management API',
+              nameOverride: null,
+            ),
             testServers,
           );
           expect(generatedClass.docs, isNotEmpty);
@@ -239,6 +260,7 @@ void main() {
             Tag(
               name: 'users',
               description: 'User management API\nWith multiple lines',
+              nameOverride: null,
             ),
           },
           isDeprecated: false,
@@ -250,6 +272,8 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
@@ -257,6 +281,7 @@ void main() {
           Tag(
             name: 'users',
             description: 'User management API\nWith multiple lines',
+            nameOverride: null,
           ),
           testServers,
         );
@@ -278,7 +303,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -288,11 +313,13 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
         });
@@ -343,7 +370,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -363,16 +390,19 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
             },
             responses: const {},
             securitySchemes: const {},
             cookieParameters: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
         });
@@ -418,7 +448,7 @@ void main() {
             context: testContext,
             summary: 'Get users',
             description: 'Get users with filters',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users',
             method: HttpMethod.get,
@@ -438,6 +468,7 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
               QueryParameterObject(
                 name: 'offset',
@@ -453,17 +484,20 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
             },
             pathParameters: const {},
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
         });
@@ -519,7 +553,7 @@ void main() {
             context: testContext,
             summary: 'Create user',
             description: 'Create a new user',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users',
             method: HttpMethod.post,
@@ -548,22 +582,36 @@ void main() {
                         isDeprecated: false,
                         examples: const [],
                         defaultValue: null,
+                        isReadOnly: false,
+                        isWriteOnly: false,
+                        nameOverride: null,
+                        description: null,
                       ),
                     ],
                     context: testContext,
                     examples: const [],
+                    nameOverride: null,
+                    description: null,
+                    additionalPropertiesPolicy: null,
+                    isNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   examples: const [],
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
+                  formEncoding: null,
                 ),
               },
               context: testContext,
             ),
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
         });
@@ -612,7 +660,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{user_id}',
             method: HttpMethod.get,
@@ -634,18 +682,22 @@ void main() {
                   context: testContext,
                   examples: const [],
                   defaultValue: null,
+                  nameOverride: null,
                 ),
                 context: testContext,
+                description: null,
               ),
             },
             responses: const {},
             securitySchemes: const {},
             cookieParameters: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
         });
@@ -690,7 +742,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             summary: 'Get user',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -700,11 +752,14 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            description: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -719,7 +774,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             description: 'Get user by ID',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -729,11 +784,14 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -749,7 +807,7 @@ void main() {
             context: testContext,
             summary: 'Get user\ndetails',
             description: 'Get user by ID\nand return profile data',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -759,11 +817,13 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -785,7 +845,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -795,11 +855,13 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -817,7 +879,7 @@ void main() {
             context: testContext,
             summary: 'Get user\nwith details',
             description: 'Get user by ID\nand return profile data',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -827,11 +889,13 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -854,7 +918,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -874,6 +938,7 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           pathParameters: {
@@ -890,6 +955,7 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           responses: const {},
@@ -907,13 +973,16 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -933,7 +1002,7 @@ void main() {
           operationId: 'listAlerts',
           context: testContext,
           summary: 'List alerts',
-          tags: {Tag(name: 'alerts')},
+          tags: {Tag(name: 'alerts', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/alerts',
           method: HttpMethod.get,
@@ -954,17 +1023,21 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           pathParameters: const {},
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'alerts'),
+          Tag(name: 'alerts', description: null, nameOverride: null),
           testServers,
         );
 
@@ -982,7 +1055,7 @@ void main() {
           operationId: 'getItem',
           context: testContext,
           summary: 'Get item',
-          tags: {Tag(name: 'items')},
+          tags: {Tag(name: 'items', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/items/{id}',
           method: HttpMethod.get,
@@ -1002,16 +1075,20 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'items'),
+          Tag(name: 'items', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1029,7 +1106,7 @@ void main() {
           operationId: 'getStuff',
           context: testContext,
           summary: 'Get stuff',
-          tags: {Tag(name: 'stuff')},
+          tags: {Tag(name: 'stuff', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/stuff',
           method: HttpMethod.get,
@@ -1047,6 +1124,7 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           queryParameters: const {},
@@ -1054,11 +1132,14 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'stuff'),
+          Tag(name: 'stuff', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1086,6 +1167,7 @@ void main() {
           context: testContext,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final aliasParam = QueryParameterAlias(
@@ -1099,7 +1181,7 @@ void main() {
           operationId: 'listUsers',
           context: testContext,
           summary: 'List users',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.get,
@@ -1109,11 +1191,14 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1131,7 +1216,7 @@ void main() {
             operationId: 'getA',
             context: testContext,
             summary: 'Get A',
-            tags: {Tag(name: 'a')},
+            tags: {Tag(name: 'a', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/a',
             method: HttpMethod.get,
@@ -1151,17 +1236,21 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
             },
             pathParameters: const {},
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            description: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'a'),
+            Tag(name: 'a', description: null, nameOverride: null),
             testServers,
           );
 
@@ -1180,7 +1269,7 @@ void main() {
         final operation = Operation(
           operationId: 'createUser',
           context: testContext,
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.post,
@@ -1205,6 +1294,9 @@ void main() {
                     value: 'alice',
                   ),
                 ],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
             context: testContext,
@@ -1228,16 +1320,20 @@ void main() {
                       value: 'bob',
                     ),
                   ],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         expect(klass.methods.first.docs, [
@@ -1260,8 +1356,11 @@ void main() {
           '/// ```',
         ]);
         expect(
-          () =>
-              generator.generate({operation}, Tag(name: 'users'), testServers),
+          () => generator.generate(
+            {operation},
+            Tag(name: 'users', description: null, nameOverride: null),
+            testServers,
+          ),
           returnsNormally,
         );
       });
@@ -1271,7 +1370,7 @@ void main() {
           operationId: 'createUser',
           context: testContext,
           summary: 'Create user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.post,
@@ -1294,6 +1393,12 @@ void main() {
                   properties: const [],
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 examples: const [
                   Example(
@@ -1303,16 +1408,21 @@ void main() {
                     value: {'name': 'alice'},
                   ),
                 ],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
             context: testContext,
           ),
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1335,7 +1445,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1362,16 +1472,20 @@ void main() {
                       value: {'id': 1, 'name': 'alice'},
                     ),
                   ],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1395,7 +1509,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1422,6 +1536,7 @@ void main() {
                       value: 'fallback',
                     ),
                   ],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1443,6 +1558,7 @@ void main() {
                       value: 'server-error',
                     ),
                   ],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1464,16 +1580,20 @@ void main() {
                       value: 'ok',
                     ),
                   ],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1493,7 +1613,7 @@ void main() {
           operationId: 'createUser',
           context: testContext,
           summary: 'Create user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.post,
@@ -1519,6 +1639,9 @@ void main() {
                     value: 'json-form',
                   ),
                 ],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 contentType: ContentType.json,
@@ -1532,16 +1655,21 @@ void main() {
                     value: 'hal-form',
                   ),
                 ],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
             context: testContext,
           ),
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1560,7 +1688,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{userId}',
           method: HttpMethod.get,
@@ -1587,6 +1715,7 @@ void main() {
                 ),
               ],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           pathParameters: {
@@ -1610,16 +1739,20 @@ void main() {
                 ),
               ],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1651,7 +1784,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             summary: 'Get user',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{userId}',
             method: HttpMethod.get,
@@ -1678,16 +1811,20 @@ void main() {
                   ),
                 ],
                 defaultValue: null,
+                nameOverride: null,
               ),
             },
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            description: null,
+            requestBody: null,
           );
 
           final klass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
           final method = klass.methods.first;
@@ -1712,7 +1849,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             summary: 'Get user',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{userId}',
             method: HttpMethod.get,
@@ -1732,16 +1869,20 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
             },
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            description: null,
+            requestBody: null,
           );
 
           final klass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
           final method = klass.methods.first;
@@ -1758,7 +1899,7 @@ void main() {
           operationId: 'createUser',
           context: testContext,
           summary: 'Create user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.post,
@@ -1781,18 +1922,29 @@ void main() {
                   properties: const [],
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
             context: testContext,
           ),
           securitySchemes: const {},
+          nameOverride: null,
+          description: null,
         );
 
         final klass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
         final method = klass.methods.first;
@@ -1808,7 +1960,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1825,11 +1977,14 @@ void main() {
                   "The API key.\nMust be a valid key from the admin's panel.",
             ),
           },
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1851,7 +2006,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             summary: 'Get user',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -1868,11 +2023,14 @@ void main() {
                 description: 'Bearer token auth.\nUse the /login endpoint.',
               ),
             },
+            nameOverride: null,
+            description: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'users'),
+            Tag(name: 'users', description: null, nameOverride: null),
             testServers,
           );
 
@@ -1893,7 +2051,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1914,11 +2072,14 @@ void main() {
               ),
             ),
           },
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1939,7 +2100,7 @@ void main() {
           operationId: 'getUser',
           context: testContext,
           summary: 'Get user',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1960,6 +2121,7 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           pathParameters: const {},
@@ -1973,13 +2135,16 @@ void main() {
                   "The API key.\nMust be a valid key from admin's panel.",
             ),
           },
+          nameOverride: null,
+          description: null,
+          requestBody: null,
         );
 
         // This should not throw - the bug was that DartFormatter would
         // crash with "Unterminated string literal" on multi-line descriptions
         final result = generator.generate(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -1993,7 +2158,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -2003,11 +2168,13 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final result = generator.generate(
         {operation},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -2031,7 +2198,7 @@ getUser({
         final operation = Operation(
           operationId: 'switch',
           context: testContext,
-          tags: {Tag(name: 'keywords')},
+          tags: {Tag(name: 'keywords', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/keyword/switch',
           method: HttpMethod.get,
@@ -2041,11 +2208,15 @@ getUser({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'keywords'),
+          Tag(name: 'keywords', description: null, nameOverride: null),
           testServers,
         );
 
@@ -2057,7 +2228,7 @@ getUser({
         final operation = Operation(
           operationId: 'return',
           context: testContext,
-          tags: {Tag(name: 'keywords')},
+          tags: {Tag(name: 'keywords', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/keyword/return',
           method: HttpMethod.get,
@@ -2067,11 +2238,15 @@ getUser({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'keywords'),
+          Tag(name: 'keywords', description: null, nameOverride: null),
           testServers,
         );
 
@@ -2083,7 +2258,7 @@ getUser({
         final operation = Operation(
           operationId: 'getUser',
           context: testContext,
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -2093,11 +2268,15 @@ getUser({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -2109,7 +2288,7 @@ getUser({
         final operation = Operation(
           operationId: 'class',
           context: testContext,
-          tags: {Tag(name: 'keywords')},
+          tags: {Tag(name: 'keywords', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/keyword/class',
           method: HttpMethod.get,
@@ -2119,11 +2298,15 @@ getUser({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'keywords'),
+          Tag(name: 'keywords', description: null, nameOverride: null),
           testServers,
         );
 
@@ -2151,12 +2334,13 @@ getUser({
             context: testContext,
             examples: const [],
             defaultValue: 'us',
+            nameOverride: null,
           );
 
           final operation = Operation(
             operationId: 'listThings',
             context: testContext,
-            tags: {Tag(name: 'things')},
+            tags: {Tag(name: 'things', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/things',
             method: HttpMethod.get,
@@ -2166,11 +2350,15 @@ getUser({
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'things'),
+            Tag(name: 'things', description: null, nameOverride: null),
             testServers,
           );
 
@@ -2206,12 +2394,13 @@ getUser({
           context: testContext,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
         );
 
         final operation = Operation(
           operationId: 'listThings',
           context: testContext,
-          tags: {Tag(name: 'things')},
+          tags: {Tag(name: 'things', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/things',
           method: HttpMethod.get,
@@ -2221,11 +2410,15 @@ getUser({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          Tag(name: 'things'),
+          Tag(name: 'things', description: null, nameOverride: null),
           testServers,
         );
 
@@ -2263,12 +2456,13 @@ Future<TonikResult<void, Response<Object?>>> listThings({
             context: testContext,
             examples: const [],
             defaultValue: '2024-01-01T00:00:00Z',
+            nameOverride: null,
           );
 
           final operation = Operation(
             operationId: 'listThings',
             context: testContext,
-            tags: {Tag(name: 'things')},
+            tags: {Tag(name: 'things', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/things',
             method: HttpMethod.get,
@@ -2278,11 +2472,15 @@ Future<TonikResult<void, Response<Object?>>> listThings({
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
+            requestBody: null,
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            Tag(name: 'things'),
+            Tag(name: 'things', description: null, nameOverride: null),
             testServers,
           );
 

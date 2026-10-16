@@ -31,6 +31,12 @@ void main() {
             properties: const [],
             context: ctx,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         };
 
@@ -187,6 +193,10 @@ export 'src/server/server.dart';
                 openIdConnectUrl: 'https://example.com/discovery\ndiscovery',
               ),
             },
+            nameOverride: null,
+            summary: null,
+            description: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -194,6 +204,9 @@ export 'src/server/server.dart';
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        termsOfService: null,
       );
 
       generateLibraryFile(
@@ -267,6 +280,12 @@ library;
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -284,6 +303,11 @@ library;
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'simple_api';
@@ -319,6 +343,12 @@ library;
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -337,6 +367,10 @@ library;
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'petstore_summary_api';
@@ -364,13 +398,23 @@ library;
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
       final apiDoc = ApiDocument(
         title: 'API with SPDX License',
         version: '1.0.0',
-        license: const License(name: 'Apache 2.0', identifier: 'Apache-2.0'),
+        license: const License(
+          name: 'Apache 2.0',
+          identifier: 'Apache-2.0',
+          url: null,
+        ),
         models: models,
         responseHeaders: const {},
         requestHeaders: const {},
@@ -381,6 +425,11 @@ library;
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'spdx_license_api';

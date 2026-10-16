@@ -18,16 +18,38 @@ class const CliConfig({
   /// Name of the generated package.
   final String? packageName,
   final LogLevel? logLevel,
-  final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
+  final NameOverridesConfig nameOverrides = const NameOverridesConfig(
+    schemas: {},
+    properties: {},
+    operations: {},
+    parameters: {},
+    enums: {},
+    tags: {},
+  ),
 
   final Map<String, ContentTypeMapping> contentTypes = const {},
 
   /// Schema-level contentMediaType mappings for encoded content.
   final Map<String, SchemaContentType> contentMediaTypes = const {},
-  final FilterConfig filter = const FilterConfig(),
-  final DeprecatedConfig deprecated = const DeprecatedConfig(),
-  final EnumConfig enums = const EnumConfig(),
-  final TransportConfig transport = const TransportConfig(),
+  final FilterConfig filter = const FilterConfig(
+    includeTags: [],
+    excludeTags: [],
+    excludeOperations: [],
+    excludeSchemas: [],
+  ),
+  final DeprecatedConfig deprecated = const DeprecatedConfig(
+    operations: DeprecatedHandling.annotate,
+    schemas: DeprecatedHandling.annotate,
+    parameters: DeprecatedHandling.annotate,
+    properties: DeprecatedHandling.annotate,
+  ),
+  final EnumConfig enums = const EnumConfig(
+    generateUnknownCase: false,
+    unknownCaseName: 'unknown',
+  ),
+  final TransportConfig transport = const TransportConfig(
+    backend: TransportBackend.dio,
+  ),
 
   /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
   /// `package:fast_immutable_collections` instead of `List<T>` and

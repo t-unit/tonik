@@ -32,6 +32,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateAlias(model);
@@ -51,6 +57,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final typedef = generator.generateAliasTypedef(model);
@@ -68,6 +80,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final typedef = generator.generateAliasTypedef(model);
@@ -85,10 +103,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateAlias(model);
@@ -108,6 +138,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = AliasModel(
@@ -116,6 +152,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateAlias(model);
@@ -136,13 +178,31 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateAlias(model);
@@ -175,6 +235,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -193,6 +259,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateAlias(model);
@@ -212,6 +284,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -229,10 +307,22 @@ void main() {
             content: UriModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateAlias(model);
@@ -253,13 +343,31 @@ void main() {
               content: UriModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateAlias(model);
@@ -280,6 +388,11 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateList(model);
@@ -299,9 +412,20 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateList(model);
@@ -321,6 +445,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = ListModel(
@@ -328,6 +458,11 @@ void main() {
           content: userModel,
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateList(model);
@@ -345,6 +480,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateList(model);
@@ -363,6 +504,11 @@ void main() {
           content: UriModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateList(model);
@@ -385,6 +531,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -402,6 +553,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -419,6 +576,10 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateListTypedef(model);
@@ -435,6 +596,11 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateListTypedef(model);
@@ -466,6 +632,11 @@ void main() {
             isNullable: true,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final typedef = generator.generateAliasTypedef(model);
@@ -485,6 +656,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateAlias(model);
@@ -502,12 +678,24 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ],
           context: context,
           isDeprecated: false,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -517,6 +705,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -537,11 +730,24 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ],
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -550,6 +756,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -572,6 +784,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
             (
@@ -582,6 +800,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
@@ -589,6 +813,12 @@ void main() {
           isDeprecated: false,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -598,6 +828,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -620,6 +855,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
             (
@@ -630,12 +871,25 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -644,6 +898,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -666,6 +926,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
             (
@@ -676,6 +942,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
@@ -683,6 +955,12 @@ void main() {
           isDeprecated: false,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -692,6 +970,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -714,6 +997,12 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
             (
@@ -724,12 +1013,25 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = AliasModel(
@@ -738,6 +1040,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -756,6 +1064,11 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -772,6 +1085,11 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -789,6 +1107,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = MapModel(
@@ -796,6 +1120,11 @@ void main() {
           valueModel: userModel,
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -813,6 +1142,10 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -829,6 +1162,11 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -845,6 +1183,11 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateMap(model);
@@ -856,10 +1199,16 @@ void main() {
         final enumModel = EnumModel(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = MapModel(
@@ -867,6 +1216,11 @@ void main() {
           valueModel: enumModel,
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -884,6 +1238,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = MapModel(
@@ -891,6 +1251,11 @@ void main() {
           valueModel: aliasModel,
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -910,6 +1275,11 @@ void main() {
           description: 'A unique identifier for a user.',
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -928,6 +1298,11 @@ void main() {
           description: 'A unique identifier for a user.\nUsed across the API.',
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -948,6 +1323,11 @@ void main() {
           isDeprecated: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -967,6 +1347,10 @@ void main() {
           isDeprecated: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -985,6 +1369,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -1002,6 +1392,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -1026,6 +1422,12 @@ void main() {
             ),
           ],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -1055,6 +1457,11 @@ void main() {
             ),
           ],
           defaultValue: null,
+          nameOverride: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -1084,6 +1491,11 @@ void main() {
               value: ['red', 'green'],
             ),
           ],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateListTypedef(model);
@@ -1114,6 +1526,11 @@ void main() {
               value: {'a': 1},
             ),
           ],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = generator.generateMapTypedef(model);
@@ -1149,10 +1566,22 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1169,6 +1598,11 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateListTypedef(model);
@@ -1185,6 +1619,11 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateMapTypedef(model);
@@ -1203,13 +1642,31 @@ void main() {
               content: IntegerModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1227,6 +1684,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1244,6 +1707,10 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateListTypedef(model);
@@ -1261,6 +1728,10 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final typedef = immutableGenerator.generateMapTypedef(model);
@@ -1281,6 +1752,11 @@ void main() {
             valueModel: StringModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           tree.valueModel = tree;
 
@@ -1301,6 +1777,11 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           forest.content = forest;
 
@@ -1320,12 +1801,22 @@ void main() {
           valueModel: AnyModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final b = MapModel(
           name: 'BMap',
           valueModel: AnyModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         a.valueModel = b;
         b.valueModel = a;
@@ -1346,12 +1837,22 @@ void main() {
             content: AnyModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final bList = ListModel(
             name: 'BList',
             content: AnyModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           aList.content = bList;
           bList.content = aList;
@@ -1373,6 +1874,11 @@ void main() {
             valueModel: AnyModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           tree.valueModel = tree;
 
@@ -1381,6 +1887,13 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            name: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final alias = AliasModel(
             name: 'MyAlias',
@@ -1388,6 +1901,12 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final outer = MapModel(
@@ -1395,6 +1914,11 @@ void main() {
             valueModel: alias,
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final typedef = generator.generateMapTypedef(outer);
@@ -1414,6 +1938,11 @@ void main() {
             valueModel: AnyModel(context: context),
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           tree.valueModel = tree;
 
@@ -1421,12 +1950,23 @@ void main() {
             valueModel: tree,
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final outer = MapModel(
             name: 'WrappedTree',
             valueModel: wrapped,
             context: context,
             examples: const [],
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final typedef = generator.generateMapTypedef(outer);

@@ -42,6 +42,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     test('toPipeDelimited has the delimited signature', () {

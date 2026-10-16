@@ -20,6 +20,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = header.resolve(name: 'newName');
@@ -53,6 +54,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = header.resolve();
@@ -77,12 +79,14 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final alias = RequestHeaderAlias(
         name: 'aliasName',
         header: originalHeader,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -110,12 +114,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = RequestHeaderAlias(
           name: 'aliasName',
           header: originalHeader,
           context: context,
+          description: null,
         );
 
         final resolved = alias.resolve(name: 'overrideName');
@@ -141,18 +147,21 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final firstAlias = RequestHeaderAlias(
         name: 'firstAliasName',
         header: originalHeader,
         context: context,
+        description: null,
       );
 
       final secondAlias = RequestHeaderAlias(
         name: 'secondAliasName',
         header: firstAlias,
         context: context,
+        description: null,
       );
 
       final resolved = secondAlias.resolve();
@@ -179,6 +188,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = RequestHeaderAlias(
@@ -209,12 +219,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = RequestHeaderAlias(
           name: 'aliasName',
           header: originalHeader,
           context: context,
+          description: null,
         );
 
         expect(alias.description, isNull);

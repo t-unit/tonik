@@ -44,6 +44,8 @@ void main() {
       cookieParameters: const {},
       responses: const {},
       securitySchemes: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -86,6 +88,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -103,6 +106,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     final pathParameters =
@@ -142,11 +147,18 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -164,6 +176,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -208,11 +222,18 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.label,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -230,6 +251,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -274,11 +297,18 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -296,6 +326,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -345,11 +377,17 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: PathParameterEncoding.matrix,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -367,6 +405,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -412,11 +452,19 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -434,6 +482,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -479,11 +529,19 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -501,6 +559,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -546,6 +606,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final labelParam = PathParameterObject(
@@ -561,6 +622,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final matrixParam = PathParameterObject(
@@ -575,11 +637,18 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -597,6 +666,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -635,12 +706,19 @@ void main() {
       isDeprecated: false,
       context: context,
       values: {
-        const EnumEntry(value: 'admin'),
-        const EnumEntry(value: 'user'),
-        const EnumEntry(value: 'guest'),
+        const EnumEntry(value: 'admin', nameOverride: null),
+        const EnumEntry(value: 'user', nameOverride: null),
+        const EnumEntry(value: 'guest', nameOverride: null),
       },
       isNullable: false,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      defaultValue: null,
+      fallbackValue: null,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final classModel = ClassModel(
@@ -648,6 +726,13 @@ void main() {
       context: context,
       properties: const [],
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final oneOfModel = OneOfModel(
@@ -660,6 +745,12 @@ void main() {
       name: 'OneOfValue',
       discriminator: 'type',
       examples: const [],
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final enumParam = PathParameterObject(
@@ -675,6 +766,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final classParam = PathParameterObject(
@@ -690,6 +782,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final oneOfParam = PathParameterObject(
@@ -705,6 +798,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -722,6 +816,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -769,6 +865,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final animalIdParam = PathParameterObject(
@@ -784,6 +881,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -801,6 +899,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -847,6 +947,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -864,6 +965,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -900,18 +1003,31 @@ void main() {
       isDeprecated: false,
       context: context,
       values: {
-        const EnumEntry(value: 'RED'),
-        const EnumEntry(value: 'GREEN'),
-        const EnumEntry(value: 'BLUE'),
+        const EnumEntry(value: 'RED', nameOverride: null),
+        const EnumEntry(value: 'GREEN', nameOverride: null),
+        const EnumEntry(value: 'BLUE', nameOverride: null),
       },
       isNullable: false,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      defaultValue: null,
+      fallbackValue: null,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final listModel = ListModel(
       context: context,
       content: enumModel,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -927,6 +1043,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -944,6 +1061,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -983,16 +1102,35 @@ void main() {
       context: context,
       properties: const [],
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final innerListModel = ListModel(
       context: context,
       content: innerModel,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final outerListModel = ListModel(
       context: context,
       content: innerListModel,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -1008,6 +1146,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1025,6 +1164,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1064,6 +1205,12 @@ void main() {
       context: context,
       content: StringModel(context: context),
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -1079,6 +1226,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1096,6 +1244,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1132,6 +1282,12 @@ void main() {
       context: context,
       content: IntegerModel(context: context),
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -1147,6 +1303,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1164,6 +1321,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1211,18 +1370,31 @@ void main() {
       isDeprecated: false,
       context: context,
       values: {
-        const EnumEntry(value: 'ACTIVE'),
-        const EnumEntry(value: 'INACTIVE'),
-        const EnumEntry(value: 'PENDING'),
+        const EnumEntry(value: 'ACTIVE', nameOverride: null),
+        const EnumEntry(value: 'INACTIVE', nameOverride: null),
+        const EnumEntry(value: 'PENDING', nameOverride: null),
       },
       isNullable: false,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      defaultValue: null,
+      fallbackValue: null,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final listModel = ListModel(
       context: context,
       content: enumModel,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -1238,6 +1410,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1255,6 +1428,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1305,11 +1480,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final listModel = ListModel(
         context: context,
         content: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -1325,6 +1513,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1342,6 +1531,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -1379,11 +1570,23 @@ void main() {
       context: context,
       content: StringModel(context: context),
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final outerListModel = ListModel(
       context: context,
       content: innerListModel,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final pathParam = PathParameterObject(
@@ -1399,6 +1602,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1416,6 +1620,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1462,6 +1668,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final param2 = PathParameterObject(
@@ -1477,6 +1684,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final param3 = PathParameterObject(
@@ -1492,6 +1700,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1509,6 +1718,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1559,6 +1770,8 @@ void main() {
       cookieParameters: const {},
       responses: const {},
       securitySchemes: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1589,6 +1802,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1606,6 +1820,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1642,6 +1858,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1659,6 +1876,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1696,6 +1915,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1713,6 +1933,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1751,6 +1973,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final bParam = PathParameterObject(
@@ -1766,6 +1989,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1783,6 +2007,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -1821,6 +2047,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1838,6 +2065,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1874,6 +2103,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1891,6 +2121,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1927,6 +2159,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1944,6 +2177,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -1980,6 +2215,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -1997,6 +2233,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -2033,6 +2271,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     final operation = Operation(
@@ -2050,6 +2289,8 @@ void main() {
       responses: const {},
       securitySchemes: const {},
       cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     const expectedMethod = '''
@@ -2090,6 +2331,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2122,6 +2365,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2139,6 +2383,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2178,6 +2424,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2210,6 +2458,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2227,6 +2476,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2265,11 +2516,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2285,6 +2549,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2302,6 +2567,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2327,11 +2594,23 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: listValueModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2347,6 +2626,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2364,6 +2644,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2397,16 +2679,36 @@ void main() {
               context: context,
               properties: const [],
               examples: const [],
+              name: null,
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: oneOfModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2422,6 +2724,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2439,6 +2742,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -2478,15 +2783,35 @@ void main() {
             context: context,
             properties: const [],
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: allOfModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2502,6 +2827,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2519,6 +2845,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -2553,6 +2881,12 @@ void main() {
         context: context,
         valueModel: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2568,6 +2902,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2585,6 +2920,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2615,6 +2952,12 @@ void main() {
         context: context,
         valueModel: AnyModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2630,6 +2973,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2647,6 +2991,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -2697,11 +3043,24 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final mapModel = MapModel(
           context: context,
           valueModel: oneOfModel,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final pathParam = PathParameterObject(
@@ -2717,6 +3076,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2734,6 +3094,8 @@ void main() {
           responses: const {},
           securitySchemes: const {},
           cookieParameters: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         nameManager.prime(
@@ -2773,11 +3135,24 @@ void main() {
           models: [StringModel(context: context)],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final mapModel = MapModel(
           context: context,
           valueModel: allOfModel,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final pathParam = PathParameterObject(
@@ -2793,6 +3168,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2810,6 +3186,8 @@ void main() {
           responses: const {},
           securitySchemes: const {},
           cookieParameters: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         nameManager.prime(
@@ -2846,11 +3224,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'MyMap',
@@ -2858,6 +3249,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2873,6 +3270,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2890,6 +3288,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -2924,11 +3324,23 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final listModel = ListModel(
         context: context,
         content: innerListModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'MyList',
@@ -2936,6 +3348,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -2951,6 +3369,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2968,6 +3387,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -3002,11 +3423,23 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3022,6 +3455,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3039,6 +3473,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3064,11 +3500,23 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'NestedListAlias',
@@ -3076,6 +3524,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3091,6 +3545,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3108,6 +3563,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3133,6 +3590,12 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerAlias = AliasModel(
         name: 'InnerListAlias',
@@ -3140,11 +3603,23 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         context: context,
         content: innerAlias,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3160,6 +3635,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3177,6 +3653,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3203,11 +3681,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3223,6 +3714,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3240,6 +3732,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3274,6 +3768,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3291,6 +3786,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3325,6 +3822,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3342,6 +3840,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3367,6 +3867,12 @@ void main() {
         context: context,
         content: NeverModel(context: context, isNullable: false),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3382,6 +3888,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3399,6 +3906,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3424,6 +3933,12 @@ void main() {
         context: context,
         content: BinaryModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3439,6 +3954,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3456,6 +3972,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3483,6 +4001,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3498,6 +4022,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3515,6 +4040,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -3551,6 +4078,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerAlias = AliasModel(
         name: 'NeverOuter',
@@ -3558,6 +4091,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3573,6 +4112,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3590,6 +4130,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -3625,11 +4167,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerAlias = AliasModel(
         name: 'MapInner',
@@ -3637,6 +4192,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerAlias = AliasModel(
         name: 'MapOuter',
@@ -3644,6 +4205,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3659,6 +4226,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3676,6 +4244,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       nameManager.prime(
@@ -3719,6 +4289,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final classModel = ClassModel(
@@ -3726,11 +4297,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final badParam = PathParameterObject(
         name: 'badMap',
@@ -3745,6 +4329,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3762,6 +4347,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -3791,11 +4378,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final pathParam = PathParameterObject(
@@ -3811,6 +4411,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -3828,6 +4429,8 @@ void main() {
         responses: const {},
         securitySchemes: const {},
         cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''

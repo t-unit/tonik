@@ -3,8 +3,13 @@ import 'package:tonik_core/tonik_core.dart';
 
 void main() {
   group('FilterConfig', () {
-    test('defaults to empty lists for all filters', () {
-      const config = FilterConfig();
+    test('retains empty lists for all filters', () {
+      const config = FilterConfig(
+        includeTags: [],
+        excludeTags: [],
+        excludeOperations: [],
+        excludeSchemas: [],
+      );
 
       expect(config.includeTags, isEmpty);
       expect(config.excludeTags, isEmpty);

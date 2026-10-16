@@ -29,6 +29,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final generatedClass = generator.generateClass(model);
       expect(generatedClass.extend?.url, 'package:tonik_util/tonik_util.dart');
@@ -56,6 +62,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'name',
@@ -65,6 +75,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'isActive',
@@ -74,10 +88,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generate(model);

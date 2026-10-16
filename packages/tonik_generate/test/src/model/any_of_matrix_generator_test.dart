@@ -42,6 +42,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -76,6 +83,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -136,10 +150,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final class2 = ClassModel(
@@ -154,10 +178,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = AnyOfModel(
@@ -170,6 +204,12 @@ void main() {
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -210,16 +250,32 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                     isDeprecated: false,
                     examples: const [],
                     defaultValue: null,
+                    isReadOnly: false,
+                    isWriteOnly: false,
+                    nameOverride: null,
+                    description: null,
                   ),
                 ],
                 context: context,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           discriminator: 'type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -246,12 +302,18 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = AnyOfModel(
@@ -263,6 +325,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -309,6 +378,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -340,6 +416,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = AnyOfModel(
@@ -351,6 +434,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -410,16 +500,32 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = AnyOfModel(
@@ -431,6 +537,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final klass = generator.generateClass(model);
@@ -509,6 +622,12 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = AnyOfModel(
@@ -520,6 +639,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -563,6 +689,12 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = AnyOfModel(
@@ -574,6 +706,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -623,11 +762,23 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listIntModel = ListModel(
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = AnyOfModel(
@@ -639,6 +790,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -698,15 +856,31 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final listOfClassModel = ListModel(
             content: classModel,
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final model = AnyOfModel(
@@ -718,6 +892,13 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
             ],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            discriminator: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+            defaultValue: null,
           );
 
           final generatedClass = generator.generateClass(model);

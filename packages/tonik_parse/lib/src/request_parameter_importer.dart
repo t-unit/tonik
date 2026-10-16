@@ -250,6 +250,7 @@ class RequestParameterImporter({
               context: context,
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
+              nameOverride: null,
             );
             if (parameter.xDartName != null) {
               header.nameOverride = parameter.xDartName;
@@ -273,6 +274,7 @@ class RequestParameterImporter({
               context: context,
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
+              nameOverride: null,
             );
             if (parameter.xDartName != null) {
               queryParam.nameOverride = parameter.xDartName;
@@ -293,6 +295,7 @@ class RequestParameterImporter({
               context: context,
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
+              nameOverride: null,
             );
             if (parameter.xDartName != null) {
               pathParam.nameOverride = parameter.xDartName;
@@ -312,6 +315,7 @@ class RequestParameterImporter({
               context: context,
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
+              nameOverride: null,
             );
             if (parameter.xDartName != null) {
               cookieParam.nameOverride = parameter.xDartName;

@@ -37,6 +37,7 @@ void main() {
         const Server(
           url: 'https://api.example.com',
           description: 'Production server',
+          variables: [],
         ),
       };
 
@@ -54,6 +55,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -73,10 +79,12 @@ void main() {
         const Server(
           url: 'https://production.example.com',
           description: 'Production server',
+          variables: [],
         ),
         const Server(
           url: 'https://staging.example.com',
           description: 'Staging server',
+          variables: [],
         ),
       };
 
@@ -94,6 +102,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -137,6 +150,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

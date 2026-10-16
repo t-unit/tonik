@@ -85,6 +85,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(alias.resolved, stringModel);
@@ -99,6 +105,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerAlias = AliasModel(
         name: 'OuterAlias',
@@ -106,6 +118,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(outerAlias.resolved, stringModel);
@@ -120,6 +138,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final level2 = AliasModel(
         name: 'Level2',
@@ -127,6 +151,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final level1 = AliasModel(
         name: 'Level1',
@@ -134,6 +164,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(level1.resolved, stringModel);
@@ -147,6 +183,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = AliasModel(
         name: 'B',
@@ -154,6 +196,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.model = b;
       b.model = a;

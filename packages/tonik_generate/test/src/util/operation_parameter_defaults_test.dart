@@ -45,6 +45,7 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         queryParameters: const {},
@@ -84,6 +85,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -120,6 +122,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'x',
+        nameOverride: null,
       );
       final qRegion = QueryParameterObject(
         name: 'region',
@@ -135,6 +138,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'us',
+        nameOverride: null,
       );
       final hRetries = RequestHeaderObject(
         name: 'retries',
@@ -149,6 +153,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 5,
+        nameOverride: null,
       );
       final cTracking = CookieParameterObject(
         name: 'tracking',
@@ -162,6 +167,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: false,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -227,6 +233,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'not-a-number',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -267,11 +274,18 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -309,11 +323,18 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: 'eu',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -349,6 +370,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'us',
+        nameOverride: null,
       );
       final preExisting = QueryParameterObject(
         name: 'regionDefault',
@@ -364,6 +386,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -409,6 +432,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: '2024-01-01T00:00:00Z',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -457,11 +481,18 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: const <String, Object?>{},
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -511,11 +542,18 @@ void main() {
             properties: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
           defaultValue: const <String, Object?>{},
+          nameOverride: null,
         );
 
         final normalized = normalizeRequestParameters(
@@ -580,11 +618,19 @@ void main() {
             models: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+            defaultValue: null,
           ),
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: const <String, Object?>{},
+          nameOverride: null,
         );
 
         final normalized = normalizeRequestParameters(
@@ -628,6 +674,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 1.5,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -666,6 +713,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 2,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -707,18 +755,25 @@ void main() {
         model: EnumModel<String>(
           name: 'Order',
           values: {
-            const EnumEntry(value: 'asc'),
-            const EnumEntry(value: 'desc'),
+            const EnumEntry(value: 'asc', nameOverride: null),
+            const EnumEntry(value: 'desc', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: 'desc',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -762,18 +817,25 @@ void main() {
         model: EnumModel<String>(
           name: 'Mode',
           values: {
-            const EnumEntry(value: 'fast'),
-            const EnumEntry(value: 'slow'),
+            const EnumEntry(value: 'fast', nameOverride: null),
+            const EnumEntry(value: 'slow', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
         defaultValue: 'slow',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -819,18 +881,25 @@ void main() {
         model: EnumModel<String>(
           name: 'Kind',
           values: {
-            const EnumEntry(value: 'big'),
-            const EnumEntry(value: 'small'),
+            const EnumEntry(value: 'big', nameOverride: null),
+            const EnumEntry(value: 'small', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
         defaultValue: 'big',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -875,18 +944,25 @@ void main() {
         model: EnumModel<String>(
           name: 'Flavor',
           values: {
-            const EnumEntry(value: 'sweet'),
-            const EnumEntry(value: 'salty'),
+            const EnumEntry(value: 'sweet', nameOverride: null),
+            const EnumEntry(value: 'salty', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: 'salty',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -934,19 +1010,26 @@ void main() {
         model: EnumModel<int>(
           name: 'Tier',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: 2,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -993,18 +1076,25 @@ void main() {
         model: EnumModel<String>(
           name: 'Order',
           values: {
-            const EnumEntry(value: 'asc'),
-            const EnumEntry(value: 'desc'),
+            const EnumEntry(value: 'asc', nameOverride: null),
+            const EnumEntry(value: 'desc', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: 'archived',
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -1050,22 +1140,35 @@ void main() {
           model: EnumModel<String>(
             name: 'Status',
             values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'inactive'),
+              const EnumEntry(value: 'active', nameOverride: null),
+              const EnumEntry(value: 'inactive', nameOverride: null),
             },
             isNullable: false,
             isDeprecated: false,
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: 'active',
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(
@@ -1110,6 +1213,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final normalized = normalizeRequestParameters(

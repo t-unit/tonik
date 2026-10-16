@@ -14,6 +14,12 @@ void main() {
           context: ctx.push('Pet'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userModel = ClassModel(
           name: 'User',
@@ -21,6 +27,12 @@ void main() {
           context: ctx.push('User'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final apiDocument = ApiDocument(
@@ -36,10 +48,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          nameOverrides: NameOverridesConfig(schemas: {'Pet': 'Animal'}),
+          nameOverrides: NameOverridesConfig(
+            schemas: {'Pet': 'Animal'},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();

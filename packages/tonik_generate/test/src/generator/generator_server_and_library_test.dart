@@ -21,10 +21,15 @@ void main() {
 
     test('generates server file and library exports', () async {
       final servers = {
-        const Server(url: 'https://api.example.com', description: 'Prod'),
+        const Server(
+          url: 'https://api.example.com',
+          description: 'Prod',
+          variables: [],
+        ),
         const Server(
           url: 'https://staging.example.com',
           description: 'Staging',
+          variables: [],
         ),
       };
 
@@ -35,6 +40,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -52,6 +63,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';

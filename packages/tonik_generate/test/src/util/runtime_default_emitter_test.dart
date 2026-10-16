@@ -111,6 +111,10 @@ static TonikFile get payloadDefault => TonikFileBytes(
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'currency',
@@ -120,10 +124,20 @@ static TonikFile get payloadDefault => TonikFileBytes(
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = resolveRuntimeDefault(
@@ -162,6 +176,11 @@ static Pricing get pricingDefault => Pricing.fromJson(
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
 
@@ -211,6 +230,12 @@ static Tree get treeDefault {
           properties: <Property>[],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         recursive.properties.add(
           Property(
@@ -221,6 +246,10 @@ static Tree get treeDefault {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         );
 
@@ -258,6 +287,12 @@ static Node get nextDefault =>
         content: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = resolveRuntimeDefault(
@@ -298,6 +333,12 @@ static List<DateTime> get windowsDefault =>
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = resolveRuntimeDefault(
@@ -376,6 +417,12 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = resolveRuntimeDefault(
@@ -416,11 +463,17 @@ static Pricing? get pricingDefault =>
           isNullable: true,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = resolveRuntimeDefault(

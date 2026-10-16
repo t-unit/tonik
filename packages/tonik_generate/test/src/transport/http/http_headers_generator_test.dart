@@ -62,6 +62,9 @@ Map<String, String> _options() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -103,12 +106,18 @@ Map<String, String> _options({String? body}) {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/merge-patch+json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -151,6 +160,8 @@ Map<String, String> _options({required Payload body}) {
             rawContentType: 'text/plain; charset=utf-16',
             wireContentType: 'text/plain; charset=utf-8',
             examples: const [],
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -190,6 +201,7 @@ Map<String, String> _options() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
     final firstCookie = _cookie(context, 'session', isRequired: true);
     final secondCookie = _cookie(context, 'theme', isRequired: false);
@@ -273,6 +285,9 @@ Operation _operation(
   context: context,
   tags: const {},
   isDeprecated: false,
+  nameOverride: null,
+  summary: null,
+  description: null,
 );
 
 CookieParameterObject _cookie(
@@ -291,4 +306,5 @@ CookieParameterObject _cookie(
   context: context,
   examples: const [],
   defaultValue: null,
+  nameOverride: null,
 );

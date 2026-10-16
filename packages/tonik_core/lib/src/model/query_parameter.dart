@@ -60,7 +60,7 @@ class const QueryParameterAlias({
   required final String name,
   required final QueryParameter parameter,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends QueryParameter {
   @override
   String toString() =>
@@ -95,7 +95,7 @@ class QueryParameterObject({
   required super.context,
   required var List<Example> examples,
   required var Object? defaultValue,
-  var String? nameOverride,
+  required var String? nameOverride,
 }) extends QueryParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 

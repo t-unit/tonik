@@ -72,6 +72,7 @@ void main() {
         name: 'aliasName',
         header: originalHeader,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -102,6 +103,7 @@ void main() {
           name: 'aliasName',
           header: originalHeader,
           context: context,
+          description: null,
         );
 
         final resolved = alias.resolve(name: 'overrideName');
@@ -130,12 +132,14 @@ void main() {
         name: 'firstAliasName',
         header: originalHeader,
         context: context,
+        description: null,
       );
 
       final secondAlias = ResponseHeaderAlias(
         name: 'secondAliasName',
         header: firstAlias,
         context: context,
+        description: null,
       );
 
       final resolved = secondAlias.resolve();
@@ -192,6 +196,7 @@ void main() {
           name: 'aliasName',
           header: originalHeader,
           context: context,
+          description: null,
         );
 
         expect(alias.description, isNull);

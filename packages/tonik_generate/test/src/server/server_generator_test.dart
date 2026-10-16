@@ -36,10 +36,12 @@ void main() {
       const Server(
         url: 'https://production.example.com',
         description: 'Production server',
+        variables: [],
       ),
       const Server(
         url: 'https://staging.example.com',
         description: 'Staging server',
+        variables: [],
       ),
     ];
 
@@ -317,6 +319,7 @@ void main() {
           const Server(
             url: 'https://api.example.com',
             description: "Production server.\nThe main server's endpoint.",
+            variables: [],
           ),
         ];
 
@@ -342,6 +345,7 @@ void main() {
                 name: 'env',
                 defaultValue: 'prod',
                 description: 'Environment',
+                enumValues: null,
               ),
             ],
           ),
@@ -362,6 +366,7 @@ void main() {
         const Server(
           url: 'https://api.example.com',
           description: "Production server.\nThe main server's endpoint.",
+          variables: [],
         ),
       ];
 
@@ -583,6 +588,7 @@ void main() {
           const Server(
             url: "https://it's-a-server.example.com",
             description: 'Test server',
+            variables: [],
           ),
         ];
 
@@ -602,6 +608,7 @@ void main() {
                 name: 'env',
                 defaultValue: 'prod',
                 description: 'Environment',
+                enumValues: null,
               ),
             ],
           ),

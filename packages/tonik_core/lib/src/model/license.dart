@@ -3,8 +3,8 @@ import 'package:meta/meta.dart';
 @immutable
 class const License({
   required final String? name,
-  final String? identifier,
-  final String? url,
+  required final String? identifier,
+  required final String? url,
 }) {
   @override
   String toString() =>

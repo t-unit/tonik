@@ -152,6 +152,7 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
           CookieParameterObject(
             name: 'optionalCookie',
@@ -165,10 +166,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -214,10 +220,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -265,10 +276,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -329,6 +345,7 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
           CookieParameterObject(
             name: 'userId',
@@ -342,10 +359,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -424,10 +446,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -495,10 +522,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -558,15 +590,26 @@ void main() {
               context: context,
               content: StringModel(context: context),
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -614,6 +657,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'name',
@@ -623,9 +670,19 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final operation = Operation(
@@ -651,10 +708,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -695,6 +757,13 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -720,10 +789,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -761,6 +835,13 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -786,10 +867,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -836,9 +922,19 @@ void main() {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           ClassModel(
             name: 'EntityName',
@@ -853,12 +949,29 @@ void main() {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -884,10 +997,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -935,18 +1053,38 @@ void main() {
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final operation = Operation(
@@ -972,10 +1110,15 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -1026,15 +1169,26 @@ void main() {
               context: context,
               content: IntegerModel(context: context),
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final cookies = operation.cookieParameters
@@ -1090,6 +1244,7 @@ CookieParameterObject createCookieParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -1112,6 +1267,7 @@ PathParameterObject createPathParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -1135,6 +1291,7 @@ QueryParameterObject createQueryParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -1157,5 +1314,6 @@ RequestHeaderObject createHeader(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }

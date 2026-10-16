@@ -70,6 +70,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -84,10 +85,13 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],
@@ -126,6 +130,8 @@ void main() {
             bodies: const {},
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],
@@ -179,10 +185,13 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],
@@ -224,10 +233,13 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],
@@ -289,10 +301,13 @@ Future<TonikResult<Never, Response<Object?>>> call({TonikCancellation? cancellat
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],
@@ -357,10 +372,13 @@ Future<TonikResult<Never?, Response<Object?>>> call({TonikCancellation? cancella
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
       const normalizedParams = NormalizedRequestParameters(
         pathParameters: [],

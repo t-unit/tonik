@@ -172,6 +172,7 @@ class RequestBodyImporter({
                 textEncoding: textEncoding.encoding,
                 contentType: contentType,
                 examples: exampleImporter.fromMediaType(mediaType),
+                formEncoding: null,
               ),
             );
           }
@@ -213,6 +214,8 @@ class RequestBodyImporter({
       encoding: encoding,
       rawContentType: rawContentType,
       examples: exampleImporter.fromMediaType(mediaType),
+      wireContentType: null,
+      textEncoding: core.TextEncoding.utf8,
     );
   }
 

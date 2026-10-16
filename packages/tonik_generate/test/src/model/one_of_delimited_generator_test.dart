@@ -42,6 +42,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     test('toPipeDelimited delegates to the parameterProperties encoder', () {
@@ -81,6 +88,13 @@ List<ParameterEntry> toSpaceDelimited( String paramName, { required bool allowEm
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -104,6 +118,13 @@ List<ParameterEntry> toPipeDelimited( String paramName, { required bool allowEmp
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);

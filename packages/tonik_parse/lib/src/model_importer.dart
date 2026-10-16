@@ -142,6 +142,9 @@ class ModelImporter._(
         isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: const [],
+        nameOverride: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       _logModelAdded(aliasModel);
       _registerModel(aliasModel);
@@ -163,6 +166,7 @@ class ModelImporter._(
         isWriteOnly: schema.isWriteOnly ?? false,
         defaultValue: schema.rawDefault,
         examples: const [],
+        nameOverride: null,
       );
       _logModelAdded(aliasModel);
       _registerModel(aliasModel);
@@ -182,6 +186,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
       );
       _logModelAdded(allOfModel);
       _registerModel(allOfModel);
@@ -200,6 +206,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        discriminator: null,
       );
       _logModelAdded(oneOfModel);
       _registerModel(oneOfModel);
@@ -218,6 +226,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        discriminator: null,
       );
       _logModelAdded(anyOfModel);
       _registerModel(anyOfModel);
@@ -236,6 +246,10 @@ class ModelImporter._(
         isDeprecated: schema.isDeprecated ?? false,
         defaultValue: schema.rawDefault,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       _logModelAdded(aliasModel);
       _registerModel(aliasModel);
@@ -255,6 +269,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        discriminator: null,
       );
       _logModelAdded(oneOfModel);
       _registerModel(oneOfModel);
@@ -270,6 +286,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        isValueNullable: false,
       );
       _logModelAdded(model);
       _registerModel(model);
@@ -291,6 +309,9 @@ class ModelImporter._(
           isWriteOnly: schema.isWriteOnly ?? false,
           defaultValue: schema.rawDefault,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
         );
         _logModelAdded(aliasModel);
         _registerModel(aliasModel);
@@ -317,6 +338,8 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
+        nameOverride: null,
+        isContentNullable: false,
       );
       _logModelAdded(listModel);
       _registerModel(listModel);
@@ -334,6 +357,8 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: const [],
+      nameOverride: null,
+      additionalPropertiesPolicy: null,
     );
     _logModelAdded(model);
     _registerModel(model);
@@ -402,6 +427,12 @@ class ModelImporter._(
           context: context,
           defaultValue: schema.rawDefault,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
       }
 
@@ -948,6 +979,7 @@ class ModelImporter._(
         description: description,
         defaultValue: propertySchema.rawDefault,
         examples: exampleImporter.fromSchema(propertySchema),
+        nameOverride: null,
       );
 
       if (nameOverride != null) {
@@ -974,6 +1006,12 @@ class ModelImporter._(
         isNullable: true,
         defaultValue: schema.rawDefault,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
     }
 
@@ -1017,6 +1055,10 @@ class ModelImporter._(
           isNullable: schema.isNullable ?? schema.hasNullType,
           defaultValue: schema.rawDefault,
           examples: exampleImporter.fromSchema(schema),
+          name: null,
+          nameOverride: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         _addModelToSet(aliasModel);
         return aliasModel;
@@ -1064,6 +1106,13 @@ class ModelImporter._(
       context: modelContext,
       isDeprecated: false,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     _addModelToSet(allOfModel);
@@ -1138,6 +1187,12 @@ class ModelImporter._(
         context: _contextFromDefsPath(ref),
         defaultValue: null,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       _placeholders[ref] = placeholder;
       return placeholder;
@@ -1185,6 +1240,9 @@ class ModelImporter._(
         isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
+        nameOverride: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       _logModelAdded(aliasModel);
@@ -1230,6 +1288,12 @@ class ModelImporter._(
         context: rootContext,
         defaultValue: null,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       _placeholders[refName] = placeholder;
       return placeholder;
@@ -1305,6 +1369,9 @@ class ModelImporter._(
         isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
+        nameOverride: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       _logModelAdded(aliasModel);
@@ -1357,6 +1424,8 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
+      additionalPropertiesPolicy: null,
     );
 
     _addModelToSet(allOfModel);
@@ -1419,6 +1488,7 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: exampleImporter.fromSchema(schema),
+        nameOverride: null,
       );
       if (name != null) {
         _logModelAdded(model);
@@ -1478,6 +1548,9 @@ class ModelImporter._(
         isWriteOnly: schema.isWriteOnly ?? false,
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
       );
       _logModelAdded(model);
       _registerModel(model);
@@ -1563,6 +1636,9 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
+      discriminator: null,
+      isNullable: false,
     );
 
     _addModelToSet(oneOfModel);
@@ -1586,6 +1662,8 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
+      isContentNullable: false,
     );
 
     if (name != null && _findNamedModel(name) == null) {
@@ -1625,6 +1703,7 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
     );
 
     if (name == null || _findNamedModel(name) == null) {
@@ -1677,6 +1756,7 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
     );
 
     if (name == null || _findNamedModel(name) == null) {
@@ -1730,6 +1810,7 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
     );
 
     if (name == null || _findNamedModel(name) == null) {
@@ -1881,9 +1962,18 @@ class ModelImporter._(
           isNullable: true,
           defaultValue: null,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
       }
-      return AllowedAdditionalProperties(valueModel: valueModel);
+      return AllowedAdditionalProperties(
+        valueModel: valueModel,
+        origin: AdditionalPropertiesOrigin.explicit,
+      );
     }
     return AllowedAdditionalProperties(
       valueModel: AnyModel(context: context),
@@ -1928,6 +2018,7 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
     );
 
     if (schema.not != null) {
@@ -1974,6 +2065,7 @@ class ModelImporter._(
         description: description,
         defaultValue: propertySchema.rawDefault,
         examples: exampleImporter.fromSchema(propertySchema),
+        nameOverride: null,
       );
 
       if (nameOverride != null) {
@@ -2002,6 +2094,7 @@ class ModelImporter._(
         : EnumModel<String>.new;
     return createEnum(
       name: name,
+      nameOverride: null,
       values: parsed.values,
       isNullable: parsed.isNullable,
       fallbackValue: parsed.fallbackValue,
@@ -2038,6 +2131,7 @@ class ModelImporter._(
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
     );
   }
 

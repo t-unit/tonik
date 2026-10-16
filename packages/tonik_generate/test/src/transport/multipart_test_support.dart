@@ -11,6 +11,12 @@ MultipartRequestContent multipartContentFixture(
     isDeprecated: false,
     examples: const [],
     properties: [for (final part in parts) part.property],
+    nameOverride: null,
+    description: null,
+    additionalPropertiesPolicy: null,
+    isNullable: false,
+    isReadOnly: false,
+    isWriteOnly: false,
   ),
   encoding: {
     for (final part in parts)
@@ -18,6 +24,8 @@ MultipartRequestContent multipartContentFixture(
   },
   rawContentType: 'multipart/form-data',
   examples: const [],
+  wireContentType: null,
+  textEncoding: TextEncoding.utf8,
 );
 
 final class MultipartPartFixture._({
@@ -88,6 +96,8 @@ MultipartPartFixture multipartPartFixture({
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
   );
 }

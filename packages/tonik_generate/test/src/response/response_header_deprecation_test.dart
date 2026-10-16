@@ -51,6 +51,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -93,6 +94,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -146,6 +148,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -196,12 +199,14 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           ResponseBody(
             model: IntegerModel(context: testContext),
             rawContentType: 'text/plain',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -248,12 +253,14 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           ResponseBody(
             model: IntegerModel(context: testContext),
             rawContentType: 'text/plain',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );

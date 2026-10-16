@@ -39,6 +39,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateClass(model);
@@ -63,6 +69,12 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateClass(model);
@@ -88,12 +100,18 @@ void main() {
         isDeprecated: true,
         name: 'LegacyStatus',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateEnum(model, 'LegacyStatus');
@@ -116,12 +134,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateEnum(model, 'Status');
@@ -156,6 +180,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final result = generator.generateClasses(model);
@@ -184,6 +215,13 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final result = generator.generateClasses(model);
@@ -219,6 +257,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final result = generator.generateClass(model);
@@ -246,6 +291,13 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final result = generator.generateClass(model);
@@ -277,6 +329,13 @@ void main() {
         models: [StringModel(context: context)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final result = generator.generateClass(model);
@@ -301,6 +360,13 @@ void main() {
           models: [StringModel(context: context)],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final result = generator.generateClass(model);
@@ -337,6 +403,9 @@ void main() {
               description: 'This field is deprecated',
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
             ),
             Property(
               name: 'newField',
@@ -347,10 +416,19 @@ void main() {
               description: 'This field is current',
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generateClass(model);
@@ -380,10 +458,19 @@ void main() {
             description: 'This field is current',
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generateClass(model);

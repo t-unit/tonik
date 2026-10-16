@@ -5,16 +5,16 @@ import 'package:meta/meta.dart';
 @immutable
 class const FilterConfig({
   /// Tags to include. If empty, all tags are included.
-  final List<String> includeTags = const [],
+  required final List<String> includeTags,
 
   /// Tags to exclude from generation.
-  final List<String> excludeTags = const [],
+  required final List<String> excludeTags,
 
   /// Operation IDs to exclude from generation.
-  final List<String> excludeOperations = const [],
+  required final List<String> excludeOperations,
 
   /// Schema names to exclude from generation.
-  final List<String> excludeSchemas = const [],
+  required final List<String> excludeSchemas,
 }) {
   static const _listEquality = ListEquality<String>();
 

@@ -36,6 +36,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
   QueryParameterObject queryString({
@@ -55,6 +59,7 @@ void main() {
     context: context,
     examples: const [],
     defaultValue: defaultValue,
+    nameOverride: null,
   );
 
   QueryParameterObject queryDateTime({
@@ -74,6 +79,7 @@ void main() {
     context: context,
     examples: const [],
     defaultValue: defaultValue,
+    nameOverride: null,
   );
 
   NormalizedRequestParameters normalizeQuery(

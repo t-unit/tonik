@@ -31,7 +31,37 @@ void main() {
           apiDocument: _document({operation}),
           outputDirectory: tempDirectory.path,
           package: _packageName,
-          config: TonikConfig(transport: TransportConfig(backend: backend)),
+          config: TonikConfig(
+            transport: TransportConfig(backend: backend),
+            nameOverrides: const NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: const {},
+            contentMediaTypes: const {},
+            filter: const FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: const DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: const EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            useImmutableCollections: false,
+            workerCount: 0,
+          ),
         );
 
         final expectedBaseFilename = '${details.filenameStem}_base.dart';
@@ -61,7 +91,37 @@ void main() {
           apiDocument: _document(operations),
           outputDirectory: tempDirectory.path,
           package: _packageName,
-          config: TonikConfig(transport: TransportConfig(backend: backend)),
+          config: TonikConfig(
+            transport: TransportConfig(backend: backend),
+            nameOverrides: const NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: const {},
+            contentMediaTypes: const {},
+            filter: const FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: const DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: const EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            useImmutableCollections: false,
+            workerCount: 0,
+          ),
         );
 
         final expectedBaseFilename =
@@ -89,7 +149,37 @@ void main() {
           apiDocument: _document(const {}),
           outputDirectory: tempDirectory.path,
           package: _packageName,
-          config: TonikConfig(transport: TransportConfig(backend: backend)),
+          config: TonikConfig(
+            transport: TransportConfig(backend: backend),
+            nameOverrides: const NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: const {},
+            contentMediaTypes: const {},
+            filter: const FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: const DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: const EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            useImmutableCollections: false,
+            workerCount: 0,
+          ),
         );
 
         expect(
@@ -135,6 +225,34 @@ void main() {
           package: _packageName,
           config: const TonikConfig(
             transport: TransportConfig(backend: backend),
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            filter: FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            useImmutableCollections: false,
+            workerCount: 0,
           ),
         );
 
@@ -212,6 +330,10 @@ Operation _operation(String operationId) => Operation(
   cookieParameters: const {},
   responses: const {},
   securitySchemes: const {},
+  nameOverride: null,
+  summary: null,
+  description: null,
+  requestBody: null,
 );
 
 ApiDocument _document(Set<Operation> operations) => ApiDocument(
@@ -227,6 +349,12 @@ ApiDocument _document(Set<Operation> operations) => ApiDocument(
   pathParameters: const {},
   cookieParameters: const {},
   requestBodies: const {},
+  summary: null,
+  description: null,
+  contact: null,
+  license: null,
+  termsOfService: null,
+  externalDocs: null,
 );
 
 Directory _operationDirectory(Directory root) =>

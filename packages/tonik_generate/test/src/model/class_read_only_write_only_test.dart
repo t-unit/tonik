@@ -48,6 +48,9 @@ void main() {
           isReadOnly: true,
           examples: const [],
           defaultValue: null,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'name',
@@ -57,6 +60,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'password',
@@ -67,6 +74,9 @@ void main() {
           isWriteOnly: true,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'createdAt',
@@ -77,10 +87,19 @@ void main() {
           isReadOnly: true,
           examples: const [],
           defaultValue: null,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
   }
 
@@ -134,6 +153,9 @@ void main() {
             isReadOnly: true,
             examples: const [],
             defaultValue: null,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'createdAt',
@@ -144,10 +166,19 @@ void main() {
             isReadOnly: true,
             examples: const [],
             defaultValue: null,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -204,6 +235,9 @@ void main() {
             isWriteOnly: true,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'secret',
@@ -214,10 +248,19 @@ void main() {
             isWriteOnly: true,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -284,10 +327,19 @@ void main() {
               isWriteOnly: true,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -353,10 +405,19 @@ void main() {
             isWriteOnly: true,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -519,6 +580,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'age',
@@ -528,10 +593,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generatedClass = generator.generateClass(model);

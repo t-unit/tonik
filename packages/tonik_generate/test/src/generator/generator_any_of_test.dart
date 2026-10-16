@@ -29,6 +29,13 @@ void main() {
         ],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final apiDoc = ApiDocument(
@@ -45,6 +52,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';

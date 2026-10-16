@@ -210,8 +210,35 @@ void main() {
       final transformed = const ConfigTransformer().apply(
         api,
         const TonikConfig(
-          filter: FilterConfig(includeTags: ['Accounts']),
-          nameOverrides: NameOverridesConfig(tags: {'Accounts': 'Customer'}),
+          filter: FilterConfig(
+            includeTags: ['Accounts'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            tags: {'Accounts': 'Customer'},
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         ),
       );
 
@@ -229,7 +256,37 @@ void main() {
     test('excludes operations by newly registered tag', () {
       final transformed = const ConfigTransformer().apply(
         Importer().import(spec()),
-        const TonikConfig(filter: FilterConfig(excludeTags: ['Zone'])),
+        const TonikConfig(
+          filter: FilterConfig(
+            excludeTags: ['Zone'],
+            includeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        ),
       );
       expect(transformed.operations.map((op) => op.operationId), [
         'second',

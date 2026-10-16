@@ -47,6 +47,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -91,6 +93,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -135,6 +139,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -179,6 +185,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -221,6 +229,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -238,6 +247,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -296,6 +307,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       // Required date header that allows empty values
@@ -312,6 +324,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       // Optional boolean header
@@ -328,6 +341,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       // Optional list header
@@ -343,11 +357,18 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -372,6 +393,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final headers =
@@ -463,11 +486,17 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -485,6 +514,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final headers =
@@ -538,6 +569,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -555,6 +587,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -593,18 +627,31 @@ void main() {
         isDeprecated: false,
         context: context,
         values: {
-          const EnumEntry(value: 'RED'),
-          const EnumEntry(value: 'GREEN'),
-          const EnumEntry(value: 'BLUE'),
+          const EnumEntry(value: 'RED', nameOverride: null),
+          const EnumEntry(value: 'GREEN', nameOverride: null),
+          const EnumEntry(value: 'BLUE', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final listModel = ListModel(
         context: context,
         content: enumModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final headerParam = RequestHeaderObject(
@@ -620,6 +667,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -637,6 +685,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -684,16 +734,35 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerListModel = ListModel(
         context: context,
         content: innerModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final headerParam = RequestHeaderObject(
@@ -709,6 +778,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -726,6 +796,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -774,6 +846,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -811,6 +885,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -831,6 +908,7 @@ void main() {
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -868,6 +946,9 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -888,6 +969,7 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -927,12 +1009,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'multipart/form-data',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -953,6 +1041,7 @@ void main() {
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -1008,17 +1097,21 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: StringModel(context: context),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1066,6 +1159,8 @@ void main() {
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1103,6 +1198,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       final operation = Operation(
         operationId: 'explicitAccept',
@@ -1129,11 +1225,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1179,6 +1278,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
         final operation = Operation(
           operationId: 'optionalAccept',
@@ -1205,17 +1305,21 @@ void main() {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'application/xml',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = r'''
@@ -1265,6 +1369,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1282,6 +1387,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1324,6 +1431,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1341,6 +1449,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1385,6 +1495,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final cookie2 = CookieParameterObject(
@@ -1399,6 +1510,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1416,6 +1528,8 @@ void main() {
         cookieParameters: {cookie1, cookie2},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1472,6 +1586,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1489,6 +1604,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1530,11 +1647,18 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1552,6 +1676,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1607,11 +1733,18 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1629,6 +1762,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1686,11 +1821,18 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1708,6 +1850,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1771,14 +1915,27 @@ void main() {
             context: context,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1796,6 +1953,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1842,6 +2001,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1859,6 +2019,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1905,14 +2067,27 @@ void main() {
             context: context,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1930,6 +2105,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -1974,6 +2151,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1991,6 +2169,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2041,11 +2221,18 @@ void main() {
           content: AnyModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2063,6 +2250,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2125,6 +2314,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2142,6 +2332,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2195,6 +2387,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2212,6 +2405,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2267,6 +2462,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2284,6 +2480,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -2338,11 +2536,18 @@ void main() {
             content: Base64Model(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2360,6 +2565,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -2417,11 +2624,18 @@ void main() {
           content: BinaryModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2439,6 +2653,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2491,6 +2707,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2508,6 +2725,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2565,6 +2784,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2582,6 +2802,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -2638,11 +2860,18 @@ void main() {
             content: Base64Model(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2660,6 +2889,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -2719,11 +2950,18 @@ void main() {
           content: BinaryModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2741,6 +2979,8 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2796,6 +3036,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final stringCookie = CookieParameterObject(
@@ -2810,6 +3051,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2827,6 +3069,8 @@ void main() {
         cookieParameters: {binaryCookie, stringCookie},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateOptionsMethod(operation, [], [
@@ -2884,15 +3128,28 @@ void main() {
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2910,6 +3167,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -2967,15 +3226,28 @@ void main() {
                 content: IntegerModel(context: context),
                 context: context,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -2993,6 +3265,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3050,10 +3324,22 @@ void main() {
               content: BooleanModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final flagList = AliasModel(
             name: 'FlagList',
@@ -3061,6 +3347,12 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final cookieParam = CookieParameterObject(
@@ -3075,6 +3367,7 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -3092,6 +3385,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3154,15 +3449,28 @@ void main() {
               content: IntegerModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3180,6 +3488,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3243,15 +3553,28 @@ void main() {
               valueModel: IntegerModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3269,6 +3592,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3328,11 +3653,18 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3350,6 +3682,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3403,15 +3737,28 @@ void main() {
               content: AnyModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3429,6 +3776,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3495,15 +3844,28 @@ void main() {
                 content: StringModel(context: context),
                 context: context,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -3523,6 +3885,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3584,18 +3948,37 @@ void main() {
                   context: context,
                   isDeprecated: false,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 context: context,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isValueNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -3615,6 +3998,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3669,15 +4054,28 @@ void main() {
               valueModel: IntegerModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3695,6 +4093,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3756,11 +4156,18 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -3778,6 +4185,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -3835,11 +4244,18 @@ void main() {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -3857,6 +4273,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3914,11 +4332,18 @@ void main() {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -3936,6 +4361,8 @@ void main() {
             cookieParameters: {cookieParam},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final method = generator.generateOptionsMethod(operation, [], [
@@ -3991,15 +4418,28 @@ void main() {
               content: Base64Model(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4017,6 +4457,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4075,15 +4517,28 @@ void main() {
               content: BinaryModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4101,6 +4556,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4155,11 +4612,18 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4177,6 +4641,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4235,11 +4701,18 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4257,6 +4730,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4314,15 +4789,28 @@ void main() {
               content: Base64Model(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4340,6 +4828,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4401,15 +4891,28 @@ void main() {
               content: BinaryModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -4427,6 +4930,8 @@ void main() {
           cookieParameters: {cookieParam},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateOptionsMethod(operation, [], [
@@ -4496,6 +5001,7 @@ void main() {
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -4545,6 +5051,7 @@ void main() {
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -4583,6 +5090,9 @@ void main() {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               multipartContentFixture(context, [], name: 'FormModel'),
             },
@@ -4604,6 +5114,7 @@ void main() {
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           const expectedMethod = r'''

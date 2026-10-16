@@ -43,6 +43,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -89,10 +96,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -105,6 +122,12 @@ void main() {
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -134,10 +157,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final company = ClassModel(
@@ -152,10 +185,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -168,6 +211,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         discriminator: 'entity_type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -197,10 +246,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -213,6 +272,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -243,10 +308,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final company = ClassModel(
@@ -261,10 +336,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -276,6 +361,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -311,6 +403,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -344,6 +443,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final baseClass = generator
@@ -384,10 +490,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final company = ClassModel(
@@ -402,10 +518,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -418,6 +544,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           discriminator: 'entity_type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -479,10 +611,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -495,6 +637,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           discriminator: 'type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -551,10 +699,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final company = ClassModel(
@@ -569,10 +727,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -584,6 +752,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -620,6 +795,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final company = ClassModel(
         isDeprecated: false,
@@ -627,6 +808,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       model = OneOfModel(
@@ -639,6 +826,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -675,6 +868,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -701,6 +901,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         context: context,
         name: 'Tags',
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -712,6 +917,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -745,10 +957,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final listVariant = ListModel(
@@ -756,6 +978,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         context: context,
         name: 'Items',
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -767,6 +994,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -797,6 +1031,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         name: 'Tags',
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -808,6 +1046,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -846,16 +1091,32 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -914,16 +1175,32 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                     isDeprecated: false,
                     examples: const [],
                     defaultValue: null,
+                    isReadOnly: false,
+                    isWriteOnly: false,
+                    nameOverride: null,
+                    description: null,
                   ),
                 ],
                 context: context,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           discriminator: "it's-type",
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -971,6 +1248,12 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -982,6 +1265,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);

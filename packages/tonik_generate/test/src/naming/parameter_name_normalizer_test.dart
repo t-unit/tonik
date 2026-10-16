@@ -551,6 +551,7 @@ PathParameterObject createPathParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -574,6 +575,7 @@ QueryParameterObject createQueryParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -596,6 +598,7 @@ RequestHeaderObject createHeader(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }
 
@@ -617,5 +620,6 @@ CookieParameterObject createCookieParameter(
     context: context,
     examples: const [],
     defaultValue: null,
+    nameOverride: null,
   );
 }

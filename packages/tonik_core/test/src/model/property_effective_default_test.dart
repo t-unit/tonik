@@ -19,6 +19,10 @@ void main() {
     isDeprecated: false,
     examples: const [],
     defaultValue: defaultValue,
+    isReadOnly: false,
+    isWriteOnly: false,
+    nameOverride: null,
+    description: null,
   );
 
   group('Property.effectiveDefaultValue', () {
@@ -37,6 +41,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'from-alias',
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = propertyWith(defaultValue: null, model: alias);
       expect(property.effectiveDefaultValue, 'from-alias');
@@ -49,6 +59,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'from-alias',
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = propertyWith(defaultValue: 'local', model: alias);
       expect(property.effectiveDefaultValue, 'local');

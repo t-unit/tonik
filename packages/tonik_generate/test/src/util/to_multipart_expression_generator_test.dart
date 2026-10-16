@@ -228,6 +228,12 @@ $expectedPartCode
           content: StringModel(context: testContext),
           context: testContext,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         r'''
   for (final item in body.value) {
@@ -271,6 +277,8 @@ $expectedPartCode
           explode: null,
           allowReserved: null,
           headers: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
         defaultValue: 'fallback',
       );
@@ -289,6 +297,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -334,6 +344,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -377,6 +389,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -442,6 +456,8 @@ $expectedPartCode
           explode: true,
           allowReserved: false,
           headers: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       );
       final content = MultipartRequestContent(
@@ -454,13 +470,27 @@ $expectedPartCode
             properties: [part.property],
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           defaultValue: null,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: {'title': part.encoding},
         rawContentType: 'multipart/form-data',
         examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
       );
 
       final result = buildMultipartBodyStatements(
@@ -503,6 +533,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -543,6 +575,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -587,6 +621,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -626,6 +662,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -667,6 +705,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -710,6 +750,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -749,6 +791,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -788,6 +832,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -827,6 +873,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -866,6 +914,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -905,6 +955,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -944,6 +996,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -985,6 +1039,8 @@ $expectedPartCode
               explode: true,
               allowReserved: false,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1028,6 +1084,8 @@ $expectedPartCode
               explode: true,
               allowReserved: false,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1074,6 +1132,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1114,6 +1174,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1154,6 +1216,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1195,6 +1259,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1243,6 +1309,8 @@ $expectedPartCode
               rawContentType: null,
               headers: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1285,6 +1353,8 @@ $expectedPartCode
               rawContentType: null,
               headers: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1327,6 +1397,8 @@ $expectedPartCode
               headers: null,
               style: null,
               explode: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1369,6 +1441,8 @@ $expectedPartCode
               rawContentType: null,
               headers: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1411,6 +1485,8 @@ $expectedPartCode
               rawContentType: null,
               headers: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1445,13 +1521,19 @@ $expectedPartCode
         final enumModel = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -1465,6 +1547,8 @@ $expectedPartCode
               rawContentType: null,
               headers: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1501,13 +1585,19 @@ $expectedPartCode
         final enumModel = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -1521,6 +1611,8 @@ $expectedPartCode
               explode: true,
               allowReserved: false,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -1552,11 +1644,20 @@ $expectedPartCode
     test('serializes required EnumModel<int> with text/plain via toJson().toString()', () {
       final enumModel = EnumModel<int>(
         name: 'Count',
-        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        values: {
+          const EnumEntry(value: 1, nameOverride: null),
+          const EnumEntry(value: 2, nameOverride: null),
+        },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -1570,6 +1671,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1601,13 +1704,19 @@ $expectedPartCode
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -1621,6 +1730,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1651,11 +1762,20 @@ $expectedPartCode
     test('serializes required EnumModel<int> with application/json via toJson().toString()', () {
       final enumModel = EnumModel<int>(
         name: 'Count',
-        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        values: {
+          const EnumEntry(value: 1, nameOverride: null),
+          const EnumEntry(value: 2, nameOverride: null),
+        },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -1669,6 +1789,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1700,13 +1822,19 @@ $expectedPartCode
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -1721,6 +1849,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1754,13 +1884,19 @@ $expectedPartCode
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -1775,6 +1911,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1821,6 +1959,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1872,6 +2012,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1925,6 +2067,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -1980,6 +2124,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2038,6 +2184,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2090,6 +2238,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -2140,6 +2290,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -2153,6 +2309,8 @@ $expectedPartCode
               explode: null,
               allowReserved: null,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -2194,6 +2352,13 @@ $expectedPartCode
         models: [StringModel(context: testContext)],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2207,6 +2372,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2249,6 +2416,13 @@ $expectedPartCode
         ],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2262,6 +2436,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2304,6 +2480,13 @@ $expectedPartCode
         ],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2317,6 +2500,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2357,6 +2542,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2371,6 +2562,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2413,6 +2606,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2427,6 +2626,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2472,6 +2673,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2485,6 +2692,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2527,6 +2736,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -2540,6 +2755,8 @@ $expectedPartCode
               explode: true,
               allowReserved: false,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -2580,6 +2797,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -2594,6 +2817,8 @@ $expectedPartCode
               explode: true,
               allowReserved: false,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -2634,6 +2859,13 @@ $expectedPartCode
         models: [StringModel(context: testContext)],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2647,6 +2879,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2686,6 +2920,13 @@ $expectedPartCode
         ],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2699,6 +2940,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2738,6 +2981,13 @@ $expectedPartCode
         ],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2751,6 +3001,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2788,6 +3040,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final aliasModel = AliasModel(
@@ -2796,6 +3054,12 @@ $expectedPartCode
         context: testContext,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -2809,6 +3073,8 @@ $expectedPartCode
             explode: null,
             allowReserved: null,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -2852,6 +3118,12 @@ $expectedPartCode
             properties: [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final content = multipartContentFixture(testContext, [
@@ -2865,6 +3137,8 @@ $expectedPartCode
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -2914,6 +3188,13 @@ $expectedPartCode
           models: [StringModel(context: testContext)],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -2927,6 +3208,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -2978,6 +3261,12 @@ $expectedPartCode
             properties: [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final content = multipartContentFixture(testContext, [
@@ -2991,6 +3280,8 @@ $expectedPartCode
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -3041,6 +3332,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3054,6 +3351,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3107,6 +3406,12 @@ $expectedPartCode
             properties: [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final content = multipartContentFixture(testContext, [
@@ -3120,6 +3425,8 @@ $expectedPartCode
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -3169,6 +3476,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3183,6 +3496,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3235,6 +3550,12 @@ $expectedPartCode
             properties: [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final content = multipartContentFixture(testContext, [
@@ -3248,6 +3569,8 @@ $expectedPartCode
                 explode: true,
                 allowReserved: false,
                 headers: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -3290,6 +3613,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3315,6 +3644,8 @@ $expectedPartCode
                   examples: const [],
                 ),
               },
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3367,6 +3698,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3380,6 +3717,8 @@ $expectedPartCode
               explode: true,
               allowReserved: null,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3416,6 +3755,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3429,6 +3774,8 @@ $expectedPartCode
               explode: false,
               allowReserved: null,
               headers: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3471,6 +3818,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3496,6 +3849,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3568,6 +3923,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -3598,6 +3955,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3611,6 +3974,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -3649,6 +4014,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3663,6 +4034,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -3705,6 +4078,12 @@ $expectedPartCode
           valueModel: StringModel(context: testContext),
           context: testContext,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -3746,6 +4125,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3759,6 +4144,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -3794,6 +4181,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3807,6 +4200,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -3841,6 +4236,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3854,6 +4255,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -3922,6 +4325,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -3936,6 +4345,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4007,6 +4418,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4020,6 +4437,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4089,6 +4508,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4102,6 +4527,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4171,6 +4598,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4184,6 +4617,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4252,6 +4687,12 @@ $expectedPartCode
         valueModel: StringModel(context: testContext),
         context: testContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final aliasModel = AliasModel(
@@ -4260,6 +4701,12 @@ $expectedPartCode
         context: testContext,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4273,6 +4720,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4318,6 +4767,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4326,6 +4781,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4363,6 +4820,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4371,6 +4834,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4408,6 +4873,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4416,6 +4887,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4460,6 +4933,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4468,6 +4947,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4505,6 +4986,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4513,6 +5000,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4551,6 +5040,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4559,6 +5054,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4597,6 +5094,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4605,6 +5108,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4640,13 +5145,19 @@ $expectedPartCode
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4656,6 +5167,12 @@ $expectedPartCode
             content: enumModel,
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4664,6 +5181,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4701,11 +5220,20 @@ $expectedPartCode
     test('list of int enums, explode: false, style: form', () {
       final enumModel = EnumModel<int>(
         name: 'Code',
-        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        values: {
+          const EnumEntry(value: 1, nameOverride: null),
+          const EnumEntry(value: 2, nameOverride: null),
+        },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -4715,6 +5243,12 @@ $expectedPartCode
             content: enumModel,
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4723,6 +5257,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4772,6 +5308,12 @@ $expectedPartCode
             content: IntegerModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4780,6 +5322,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4817,6 +5361,12 @@ $expectedPartCode
             content: IntegerModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.json,
@@ -4825,6 +5375,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4862,6 +5414,12 @@ $expectedPartCode
             content: IntegerModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.json,
@@ -4870,6 +5428,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4917,6 +5477,12 @@ $expectedPartCode
             content: DateTimeModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.text,
@@ -4925,6 +5491,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -4962,6 +5530,12 @@ $expectedPartCode
             content: DateTimeModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.json,
@@ -4970,6 +5544,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5009,6 +5585,12 @@ $expectedPartCode
             content: BinaryModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.bytes,
@@ -5017,6 +5599,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5059,6 +5643,12 @@ $expectedPartCode
             content: BinaryModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.bytes,
@@ -5067,6 +5657,8 @@ $expectedPartCode
             explode: false,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5110,6 +5702,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -5119,6 +5717,12 @@ $expectedPartCode
             content: innerClass,
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.json,
@@ -5127,6 +5731,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5163,6 +5769,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -5172,6 +5784,12 @@ $expectedPartCode
             content: innerClass,
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const PartEncoding(
             contentType: ContentType.json,
@@ -5180,6 +5798,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5219,6 +5839,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           isRequired: false,
           encoding: const PartEncoding(
@@ -5228,6 +5854,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5267,6 +5895,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           isNullable: true,
           encoding: const PartEncoding(
@@ -5276,6 +5910,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -5319,6 +5955,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5327,6 +5969,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5362,6 +6006,12 @@ $expectedPartCode
               content: IntegerModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5370,6 +6020,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5407,6 +6059,12 @@ $expectedPartCode
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ]);
@@ -5444,6 +6102,12 @@ $expectedPartCode
           properties: [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -5453,6 +6117,12 @@ $expectedPartCode
               content: innerClass,
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5461,6 +6131,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5498,6 +6170,12 @@ $expectedPartCode
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5506,6 +6184,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5541,6 +6221,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: false,
             encoding: const PartEncoding(
@@ -5550,6 +6236,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5592,6 +6280,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.text,
@@ -5600,6 +6294,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5639,6 +6335,12 @@ $expectedPartCode
                 content: IntegerModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               encoding: const PartEncoding(
                 contentType: ContentType.text,
@@ -5647,6 +6349,8 @@ $expectedPartCode
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -5685,6 +6389,12 @@ $expectedPartCode
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.text,
@@ -5693,6 +6403,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5730,11 +6442,17 @@ $expectedPartCode
             isNullable: false,
             isDeprecated: false,
             values: {
-              const EnumEntry(value: 'high'),
-              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'high', nameOverride: null),
+              const EnumEntry(value: 'low', nameOverride: null),
             },
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final content = multipartContentFixture(testContext, [
@@ -5744,6 +6462,12 @@ $expectedPartCode
                 content: enumModel,
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               encoding: const PartEncoding(
                 contentType: ContentType.text,
@@ -5752,6 +6476,8 @@ $expectedPartCode
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             ),
           ]);
@@ -5795,6 +6521,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: false,
           ),
@@ -5833,11 +6565,17 @@ $expectedPartCode
           isNullable: false,
           isDeprecated: false,
           values: {
-            const EnumEntry(value: 'high'),
-            const EnumEntry(value: 'low'),
+            const EnumEntry(value: 'high', nameOverride: null),
+            const EnumEntry(value: 'low', nameOverride: null),
           },
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final content = multipartContentFixture(testContext, [
@@ -5847,6 +6585,12 @@ $expectedPartCode
               content: enumModel,
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5855,6 +6599,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5895,6 +6641,12 @@ $expectedPartCode
               content: BinaryModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.bytes,
@@ -5903,6 +6655,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5947,9 +6701,21 @@ $expectedPartCode
                 content: IntegerModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -5958,6 +6724,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -5997,9 +6765,21 @@ $expectedPartCode
                 content: IntegerModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.json,
@@ -6008,6 +6788,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -6046,6 +6828,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.form,
@@ -6054,6 +6842,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -6092,6 +6882,12 @@ $expectedPartCode
               content: StringModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.form,
@@ -6100,6 +6896,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -6144,6 +6942,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6200,6 +7000,8 @@ $expectedPartCode
                 examples: const [],
               ),
             },
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6264,6 +7066,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6313,6 +7117,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -6338,6 +7148,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6398,6 +7210,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6456,6 +7270,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -6493,13 +7309,19 @@ $expectedPartCode
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -6525,6 +7347,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6581,6 +7405,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6655,6 +7481,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6710,6 +7538,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6757,6 +7587,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: PartEncoding(
             contentType: ContentType.text,
@@ -6777,6 +7613,8 @@ $expectedPartCode
               ),
             },
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6817,6 +7655,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: PartEncoding(
             contentType: ContentType.text,
@@ -6837,6 +7681,8 @@ $expectedPartCode
               ),
             },
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6889,6 +7735,12 @@ $expectedPartCode
             content: StringModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: PartEncoding(
             contentType: ContentType.text,
@@ -6909,6 +7761,8 @@ $expectedPartCode
               ),
             },
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -6951,6 +7805,12 @@ $expectedPartCode
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: PartEncoding(
               contentType: ContentType.text,
@@ -6971,6 +7831,8 @@ $expectedPartCode
                 ),
               },
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -7012,6 +7874,12 @@ $expectedPartCode
             content: BinaryModel(context: testContext),
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: PartEncoding(
             contentType: ContentType.bytes,
@@ -7032,6 +7900,8 @@ $expectedPartCode
               ),
             },
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7076,6 +7946,12 @@ $expectedPartCode
         properties: [],
         context: testContext,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final content = multipartContentFixture(testContext, [
@@ -7085,6 +7961,12 @@ $expectedPartCode
             content: innerClass,
             context: testContext,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: PartEncoding(
             contentType: ContentType.json,
@@ -7105,6 +7987,8 @@ $expectedPartCode
               ),
             },
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7161,6 +8045,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7232,6 +8118,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -7304,6 +8192,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -7362,6 +8252,8 @@ $expectedPartCode
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7421,6 +8313,8 @@ $expectedPartCode
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -7464,6 +8358,12 @@ $expectedPartCode
               content: DateTimeModel(context: testContext),
               context: testContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: PartEncoding(
               contentType: ContentType.text,
@@ -7484,6 +8384,8 @@ $expectedPartCode
                 ),
               },
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -7557,11 +8459,14 @@ $expectedPartCode
                 name: 'X-Trace-Id',
                 context: testContext,
                 header: underlyingHeader,
+                description: null,
               ),
             },
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7617,6 +8522,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7656,6 +8563,8 @@ $expectedPartCode
             explode: true,
             allowReserved: false,
             headers: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -7702,13 +8611,25 @@ ClassModel _testClassModel(Context context) => ClassModel(
   context: context,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  additionalPropertiesPolicy: null,
+  isNullable: false,
+  isReadOnly: false,
+  isWriteOnly: false,
 );
 
 EnumModel<String> _testStringEnum(Context context) => EnumModel(
   name: 'TextValue',
-  values: {const EnumEntry(value: 'value')},
+  values: {const EnumEntry(value: 'value', nameOverride: null)},
   isNullable: false,
   context: context,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  defaultValue: null,
+  fallbackValue: null,
+  isReadOnly: false,
+  isWriteOnly: false,
 );

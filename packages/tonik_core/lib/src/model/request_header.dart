@@ -46,7 +46,7 @@ class const RequestHeaderAlias({
   required final String name,
   required final RequestHeader header,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends RequestHeader {
   @override
   String toString() =>
@@ -82,7 +82,7 @@ class RequestHeaderObject({
   required super.context,
   required var List<Example> examples,
   required var Object? defaultValue,
-  var String? nameOverride,
+  required var String? nameOverride,
 }) extends RequestHeader {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 

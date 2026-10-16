@@ -42,6 +42,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -70,6 +77,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final classB = ClassModel(
       isDeprecated: false,
@@ -77,6 +90,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final model = OneOfModel(
@@ -88,6 +107,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -121,6 +147,12 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -142,6 +174,12 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -165,6 +203,13 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -187,6 +232,12 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -208,6 +259,13 @@ void main() {
         examples: const [
           Example(name: null, summary: null, description: null, value: 1),
         ],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -234,6 +292,12 @@ void main() {
         examples: const [
           Example(name: null, summary: null, description: null, value: 1),
         ],
+        nameOverride: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -262,6 +326,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -282,6 +353,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     final model = OneOfModel(
@@ -293,6 +370,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -323,6 +407,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -379,6 +470,13 @@ void main() {
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -426,6 +524,12 @@ void main() {
             properties: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ),
         (
@@ -436,11 +540,24 @@ void main() {
             properties: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -475,11 +592,24 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -520,11 +650,24 @@ void main() {
             properties: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -550,6 +693,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -590,11 +740,24 @@ void main() {
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -641,6 +804,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -659,6 +829,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final allOfModel = AllOfModel(
         isDeprecated: false,
@@ -666,6 +842,13 @@ void main() {
         models: [classA],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = OneOfModel(
@@ -677,6 +860,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -693,6 +883,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -701,6 +897,13 @@ void main() {
         models: [(discriminatorValue: null, model: aliasModel)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -720,6 +923,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -756,6 +966,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -778,6 +995,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -789,6 +1012,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -817,10 +1047,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -829,6 +1069,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         models: [(discriminatorValue: null, model: userModel)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -857,10 +1104,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final companyModel = ClassModel(
@@ -875,10 +1132,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -891,6 +1158,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -921,10 +1194,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -936,6 +1219,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -967,10 +1257,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -986,6 +1286,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           discriminator: 'type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -1023,15 +1329,32 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = OneOfModel(
@@ -1040,6 +1363,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         models: [(discriminatorValue: null, model: innerOneOf)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1084,15 +1414,32 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = OneOfModel(
@@ -1102,6 +1449,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1141,6 +1494,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       discriminator: 'type',
       context: context.push('TestOneOf'),
       examples: const [],
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     nameManager.prime(
@@ -1180,6 +1539,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (
@@ -1190,12 +1555,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -1227,6 +1604,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (
@@ -1237,11 +1620,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -1271,6 +1667,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -1301,6 +1703,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -1328,6 +1737,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     final classes = generator.generateClasses(model);
@@ -1369,6 +1785,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       nameManager.prime(
@@ -1427,6 +1850,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1492,12 +1922,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1531,12 +1974,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1575,12 +2031,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1619,12 +2088,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1664,15 +2146,35 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1705,12 +2207,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1750,12 +2265,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1797,12 +2324,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1842,12 +2381,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1897,15 +2448,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -1951,12 +2521,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2015,15 +2597,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2076,12 +2677,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2125,15 +2738,34 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2174,12 +2806,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: 'str', model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2221,11 +2865,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -2237,6 +2890,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2273,11 +2933,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -2289,6 +2958,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2321,11 +2997,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -2334,6 +3019,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         models: [(discriminatorValue: null, model: nullableClass)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2363,11 +3055,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -2379,6 +3080,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2396,6 +3104,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         context: context,
         isNullable: true,
         examples: const [],
+        nameOverride: null,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -2407,6 +3119,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2434,10 +3153,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -2449,6 +3178,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -2474,12 +3210,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2513,12 +3261,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2549,12 +3309,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2603,12 +3375,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2639,12 +3423,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2675,12 +3471,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               valueModel: StringModel(context: context),
               context: context,
               examples: const [],
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: StringModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2717,12 +3525,25 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
               content: StringModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = immutableGenerator.generateClasses(model);
@@ -2766,6 +3587,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2788,6 +3616,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2816,6 +3651,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2844,6 +3686,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2890,6 +3739,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2918,6 +3774,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2946,6 +3809,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -2978,11 +3848,24 @@ bool operator ==(Object other) {
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3011,6 +3894,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3037,6 +3927,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3067,6 +3964,12 @@ bool operator ==(Object other) {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3078,6 +3981,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3111,6 +4021,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3150,6 +4067,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3194,6 +4118,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3219,6 +4150,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3250,6 +4188,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3282,6 +4227,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3320,6 +4272,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3351,6 +4310,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3395,10 +4361,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3410,6 +4386,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3460,10 +4443,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3480,11 +4473,23 @@ bool operator ==(Object other) {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3538,10 +4543,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3553,6 +4568,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3615,10 +4637,20 @@ bool operator ==(Object other) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -3635,11 +4667,23 @@ bool operator ==(Object other) {
                 context: context,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
+                description: null,
+                isDeprecated: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -3704,10 +4748,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3719,6 +4773,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3763,10 +4824,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3783,11 +4854,23 @@ bool operator ==(Object other) {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3835,10 +4918,20 @@ bool operator ==(Object other) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -3850,6 +4943,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3895,6 +4995,11 @@ bool operator ==(Object other) {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
       final classA = ClassModel(
@@ -3903,6 +5008,12 @@ bool operator ==(Object other) {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = OneOfModel(
         isDeprecated: false,
@@ -3913,6 +5024,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -3952,6 +5070,11 @@ bool operator ==(Object other) {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
       final classA = ClassModel(
@@ -3960,6 +5083,12 @@ bool operator ==(Object other) {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = OneOfModel(
         isDeprecated: false,
@@ -3970,6 +5099,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4014,12 +5150,22 @@ bool operator ==(Object other) {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.valueModel = b;
       b.valueModel = a;
@@ -4033,6 +5179,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4089,6 +5242,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4128,11 +5288,24 @@ bool operator ==(Object other) {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4167,6 +5340,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4201,6 +5381,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4235,6 +5422,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4271,6 +5465,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4313,6 +5514,13 @@ bool operator ==(Object other) {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -4357,6 +5565,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4397,6 +5612,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4433,6 +5655,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4469,6 +5698,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -4507,6 +5743,13 @@ bool operator ==(Object other) {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);

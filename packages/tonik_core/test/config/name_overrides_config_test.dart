@@ -3,8 +3,15 @@ import 'package:tonik_core/tonik_core.dart';
 
 void main() {
   group('NameOverridesConfig', () {
-    test('defaults to empty maps for all overrides', () {
-      const config = NameOverridesConfig();
+    test('retains empty maps for all overrides', () {
+      const config = NameOverridesConfig(
+        schemas: {},
+        properties: {},
+        operations: {},
+        parameters: {},
+        enums: {},
+        tags: {},
+      );
 
       expect(config.schemas, isEmpty);
       expect(config.properties, isEmpty);

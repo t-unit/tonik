@@ -45,6 +45,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -85,6 +87,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -102,6 +105,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final queryParameters =
@@ -138,10 +143,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -159,6 +172,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -217,10 +232,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -238,6 +261,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -286,10 +311,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -307,6 +340,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -354,10 +389,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -375,6 +418,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -424,10 +469,17 @@ void main() {
           context: context,
           content: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -445,6 +497,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -498,10 +552,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -519,6 +581,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -569,10 +633,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final tagsParam = QueryParameterObject(
@@ -589,10 +661,17 @@ void main() {
           context: context,
           content: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final sortParam = QueryParameterObject(
@@ -609,10 +688,17 @@ void main() {
           context: context,
           content: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -630,6 +716,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -702,10 +790,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final tagsParam = QueryParameterObject(
@@ -722,10 +818,17 @@ void main() {
           context: context,
           content: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -743,6 +846,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -809,10 +914,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -830,6 +943,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -885,10 +1000,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -906,6 +1029,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -962,6 +1087,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final listParam = QueryParameterObject(
@@ -978,10 +1104,17 @@ void main() {
           context: context,
           content: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final numberParam = QueryParameterObject(
@@ -998,6 +1131,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final boolParam = QueryParameterObject(
@@ -1014,6 +1148,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1031,6 +1166,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1121,10 +1258,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final classWithNumberParam = QueryParameterObject(
@@ -1142,10 +1287,18 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1163,6 +1316,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1220,12 +1375,19 @@ void main() {
         isDeprecated: false,
         context: context,
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
-          const EnumEntry(value: 'blue'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
+          const EnumEntry(value: 'blue', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final stringModel = StringModel(context: context);
@@ -1241,12 +1403,24 @@ void main() {
         name: 'OneOfValue',
         discriminator: 'type',
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final intListModel = ListModel(
         context: context,
         content: IntegerModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final enumListModel = ListModel(
@@ -1255,14 +1429,27 @@ void main() {
           isDeprecated: false,
           context: context,
           values: {
-            const EnumEntry(value: 'A'),
-            const EnumEntry(value: 'B'),
-            const EnumEntry(value: 'C'),
+            const EnumEntry(value: 'A', nameOverride: null),
+            const EnumEntry(value: 'B', nameOverride: null),
+            const EnumEntry(value: 'C', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final enumParam = QueryParameterObject(
@@ -1279,6 +1466,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final oneOfParam = QueryParameterObject(
@@ -1295,6 +1483,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final intListParam = QueryParameterObject(
@@ -1311,6 +1500,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final enumListParam = QueryParameterObject(
@@ -1327,6 +1517,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1344,6 +1535,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1425,18 +1618,31 @@ void main() {
         isDeprecated: false,
         context: context,
         values: {
-          const EnumEntry(value: 'RED'),
-          const EnumEntry(value: 'GREEN'),
-          const EnumEntry(value: 'BLUE'),
+          const EnumEntry(value: 'RED', nameOverride: null),
+          const EnumEntry(value: 'GREEN', nameOverride: null),
+          const EnumEntry(value: 'BLUE', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final listModel = ListModel(
         context: context,
         content: enumModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final queryParam = QueryParameterObject(
@@ -1453,6 +1659,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1470,6 +1677,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1521,16 +1730,35 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerListModel = ListModel(
         context: context,
         content: innerModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final queryParam = QueryParameterObject(
@@ -1547,6 +1775,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1564,6 +1793,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final queryParameters =
@@ -1616,6 +1847,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1633,6 +1865,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1675,6 +1909,13 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final oneOfModel = OneOfModel(
@@ -1687,12 +1928,24 @@ void main() {
         name: 'MixedOneOf',
         discriminator: 'type',
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final oneOfListModel = ListModel(
         context: context,
         content: oneOfModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final oneOfListParam = QueryParameterObject(
@@ -1709,6 +1962,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1726,6 +1980,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1791,12 +2047,24 @@ void main() {
         name: 'SimpleOneOf',
         discriminator: 'type',
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final oneOfListModel = ListModel(
         context: context,
         content: oneOfModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final oneOfListParam = QueryParameterObject(
@@ -1813,6 +2081,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1830,6 +2099,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1881,11 +2152,24 @@ void main() {
         context: context,
         properties: const [],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final classListModel = ListModel(
         context: context,
         content: classModel,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final classListParam = QueryParameterObject(
@@ -1902,6 +2186,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1919,6 +2204,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1961,6 +2248,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isDeprecated: false,
@@ -1972,6 +2265,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1989,6 +2283,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -2035,15 +2331,28 @@ void main() {
           content: EnumModel(
             isDeprecated: false,
             values: {
-              const EnumEntry(value: 'a'),
-              const EnumEntry(value: 'b'),
+              const EnumEntry(value: 'a', nameOverride: null),
+              const EnumEntry(value: 'b', nameOverride: null),
             },
             isNullable: false,
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isDeprecated: false,
@@ -2055,6 +2364,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2072,6 +2382,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -2129,6 +2441,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2146,6 +2459,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -2190,9 +2505,21 @@ void main() {
             properties: const [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isDeprecated: false,
@@ -2204,6 +2531,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2221,6 +2549,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -2262,6 +2592,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isDeprecated: false,
@@ -2273,6 +2609,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -2290,6 +2627,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -2341,6 +2680,8 @@ void main() {
       cookieParameters: const {},
       responses: const {},
       securitySchemes: const {},
+      nameOverride: null,
+      requestBody: null,
     );
 
     test('emits allowReserved: true for form string parameter when set', () {
@@ -2358,6 +2699,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2404,6 +2746,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2446,10 +2789,16 @@ void main() {
           content: StringModel(context: context),
           isContentNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2503,6 +2852,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2552,10 +2902,17 @@ void main() {
             context: context,
             content: StringModel(context: context),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -2608,10 +2965,17 @@ void main() {
             context: context,
             content: StringModel(context: context),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         const expectedMethod = r'''
@@ -2654,10 +3018,17 @@ void main() {
           context: context,
           valueModel: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2706,10 +3077,17 @@ void main() {
           context: context,
           valueModel: StringModel(context: context),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       const expectedMethod = r'''
@@ -2755,10 +3133,17 @@ void main() {
         context: context,
         content: StringModel(context: context),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     test('emits allowReserved for spaceDelimited string list when set', () {
@@ -2919,10 +3304,17 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     test('emits allowReserved for deepObject Map when set', () {
@@ -3007,6 +3399,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
     test('emits allowReserved for deepObject AnyModel when set', () {
@@ -3094,6 +3487,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
 
     test('encodes pipeDelimited AnyModel via encodeAnyToPipeDelimited', () {

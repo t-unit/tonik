@@ -166,6 +166,7 @@ class const ContentTypeNormalizer() {
       rawContentType: body.rawContentType,
       contentType: body.contentType,
       examples: body.examples,
+      delivery: body.delivery,
     );
   }
 

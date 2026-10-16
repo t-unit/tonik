@@ -74,6 +74,12 @@ void main() {
         properties: const [],
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -91,10 +97,19 @@ void main() {
       final model = EnumModel<int>(
         isDeprecated: false,
         name: 'Priority',
-        values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+        values: {
+          const EnumEntry(value: 1, nameOverride: null),
+          const EnumEntry(value: 2, nameOverride: null),
+        },
         isNullable: false,
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -113,12 +128,18 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'blue'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'blue', nameOverride: null),
         },
         isNullable: false,
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -142,6 +163,13 @@ void main() {
         ],
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       generator.writeOne(
@@ -167,6 +195,13 @@ void main() {
         ],
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       generator.writeOne(
@@ -190,6 +225,13 @@ void main() {
         ],
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       generator.writeOne(
@@ -210,6 +252,12 @@ void main() {
         context: ctx,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -232,9 +280,20 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -257,9 +316,20 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       generator.writeOne(
@@ -315,6 +385,12 @@ void main() {
             properties: const [],
             context: ctx,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           AliasModel(
             name: 'UserId',
@@ -322,6 +398,12 @@ void main() {
             context: ctx,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         },
         responseHeaders: const {},
@@ -333,6 +415,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

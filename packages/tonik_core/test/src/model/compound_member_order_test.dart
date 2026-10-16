@@ -10,6 +10,12 @@ void main() {
       properties: const [],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final alpha = ClassModel(
       name: 'Alpha',
@@ -17,6 +23,12 @@ void main() {
       properties: const [],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final wrapped = AllOfModel(
       name: 'Wrapped',
@@ -24,6 +36,13 @@ void main() {
       models: [zebra],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final allOf = AllOfModel(
       name: 'All',
@@ -31,6 +50,13 @@ void main() {
       models: [wrapped, alpha, zebra, zebra],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final oneOf = OneOfModel(
       name: 'One',
@@ -43,6 +69,13 @@ void main() {
       ],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final anyOf = AnyOfModel(
       name: 'Any',
@@ -55,6 +88,13 @@ void main() {
       ],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     expect(allOf.models, isA<List<Model>>());
     expect(oneOf.models, isA<List<DiscriminatedModel>>());
@@ -86,8 +126,14 @@ void main() {
       queryParameters: const {},
       pathParameters: const {},
       cookieParameters: const {},
+      summary: null,
+      description: null,
+      contact: null,
+      license: null,
+      termsOfService: null,
+      externalDocs: null,
     );
-    const AllOfNormalizer().apply(document);
+    const AllOfNormalizer(normalizeSingleMembers: true).apply(document);
     final normalized = document.models.whereType<AliasModel>().singleWhere(
       (m) => m.name == 'Wrapped',
     );

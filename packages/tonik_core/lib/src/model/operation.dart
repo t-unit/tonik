@@ -13,11 +13,11 @@ class Operation({
   required var Set<CookieParameter> cookieParameters,
   required var Map<ResponseStatus, Response> responses,
   required var Set<SecurityScheme> securitySchemes,
-  final String? operationId,
-  var String? nameOverride,
-  var String? summary,
-  var String? description,
-  var RequestBody? requestBody,
+  required final String? operationId,
+  required var String? nameOverride,
+  required var String? summary,
+  required var String? description,
+  required var RequestBody? requestBody,
 });
 
 sealed class const ResponseStatus() implements Comparable<ResponseStatus> {

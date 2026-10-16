@@ -52,6 +52,8 @@ void main() {
           },
         ),
       },
+      nameOverride: null,
+      requestBody: null,
     );
   });
 
@@ -156,6 +158,7 @@ void main() {
           rawContentType: 'text/plain',
           contentType: ContentType.text,
           examples: const [],
+          delivery: ResponseDelivery.complete,
         ),
       },
     );
@@ -215,10 +218,15 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
       },
+      nameOverride: null,
+      summary: null,
+      description: null,
+      requestBody: null,
     );
     final ordinary = parser.generateParseResponseMethod(ordinaryOperation);
     expect(

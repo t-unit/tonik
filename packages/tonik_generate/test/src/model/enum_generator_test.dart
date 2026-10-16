@@ -56,13 +56,19 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
-          const EnumEntry(value: 'blue'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
+          const EnumEntry(value: 'blue', nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Color');
@@ -83,13 +89,19 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
-          const EnumEntry(value: 'blue'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
+          const EnumEntry(value: 'blue', nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generate(model);
@@ -145,10 +157,16 @@ void main() {
       final model = EnumModel<String>(
         isDeprecated: false,
         name: 'Status',
-        values: {const EnumEntry(value: 'rawValue')},
+        values: {const EnumEntry(value: 'rawValue', nameOverride: null)},
         isNullable: false,
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Status');
@@ -191,6 +209,12 @@ void main() {
           isDeprecated: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Timestamp').enumValue;
@@ -224,11 +248,17 @@ void main() {
     test('plain string enum may retain a toDateTime member', () {
       final model = EnumModel<String>(
         name: 'Plain',
-        values: {const EnumEntry(value: 'toDateTime')},
+        values: {const EnumEntry(value: 'toDateTime', nameOverride: null)},
         isNullable: false,
         isDeprecated: false,
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Plain').enumValue;
@@ -242,7 +272,12 @@ void main() {
       () {
         final model = DateTimeEnumModel(
           name: 'Timestamp',
-          values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+          values: {
+            const EnumEntry(
+              value: '2026-09-06T12:00:00.1000+02:00',
+              nameOverride: null,
+            ),
+          },
           fallbackValue: const EnumEntry(
             value: '2026-01-01T00:00:00Z',
             nameOverride: 'toDateTime',
@@ -251,6 +286,11 @@ void main() {
           isDeprecated: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Timestamp').enumValue;
@@ -279,12 +319,18 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: true,
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generate(model);
@@ -314,12 +360,18 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: true,
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Status');
@@ -341,13 +393,19 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
-          const EnumEntry(value: 'blue'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
+          const EnumEntry(value: 'blue', nameOverride: null),
         },
         isNullable: false,
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generate(model);
@@ -372,13 +430,19 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 1),
-          const EnumEntry(value: 2),
-          const EnumEntry(value: 3),
+          const EnumEntry(value: 1, nameOverride: null),
+          const EnumEntry(value: 2, nameOverride: null),
+          const EnumEntry(value: 3, nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = generator.generate(model);
@@ -437,13 +501,19 @@ void main() {
           isDeprecated: false,
           name: 'Placeholder',
           values: {
-            const EnumEntry(value: '_'),
-            const EnumEntry(value: '__'),
-            const EnumEntry(value: '___'),
+            const EnumEntry(value: '_', nameOverride: null),
+            const EnumEntry(value: '__', nameOverride: null),
+            const EnumEntry(value: '___', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Placeholder');
@@ -500,13 +570,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 100),
-            const EnumEntry(value: 200),
-            const EnumEntry(value: 404),
+            const EnumEntry(value: 100, nameOverride: null),
+            const EnumEntry(value: 200, nameOverride: null),
+            const EnumEntry(value: 404, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = generator.generate(model);
@@ -527,13 +603,19 @@ void main() {
         isDeprecated: false,
         name: 'Rate',
         values: {
-          const EnumEntry(value: 0.5),
-          const EnumEntry(value: 1.5),
-          const EnumEntry(value: 2.5),
+          const EnumEntry(value: 0.5, nameOverride: null),
+          const EnumEntry(value: 1.5, nameOverride: null),
+          const EnumEntry(value: 2.5, nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(() => generator.generate(model), throwsA(isA<ArgumentError>()));
@@ -545,10 +627,19 @@ void main() {
         final model = EnumModel<double>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+          values: {
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -565,13 +656,18 @@ void main() {
           description: 'The color options available',
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -585,12 +681,17 @@ void main() {
           description: 'The status of an order.\nCan change over time.',
           name: 'Status',
           values: {
-            const EnumEntry(value: 'pending'),
-            const EnumEntry(value: 'complete'),
+            const EnumEntry(value: 'pending', nameOverride: null),
+            const EnumEntry(value: 'complete', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -606,13 +707,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -626,13 +733,18 @@ void main() {
           description: '',
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -645,15 +757,21 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [
             Example(name: null, summary: null, description: null, value: 'red'),
           ],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -671,12 +789,17 @@ void main() {
           isDeprecated: false,
           description: 'A color',
           name: 'Color',
-          values: {const EnumEntry(value: 'red')},
+          values: {const EnumEntry(value: 'red', nameOverride: null)},
           isNullable: false,
           context: Context.initial(),
           examples: const [
             Example(name: null, summary: null, description: null, value: 'red'),
           ],
+          nameOverride: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -698,12 +821,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -716,13 +845,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -738,13 +873,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -762,13 +903,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -810,13 +957,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 200),
-            const EnumEntry(value: 404),
-            const EnumEntry(value: 500),
+            const EnumEntry(value: 200, nameOverride: null),
+            const EnumEntry(value: 404, nameOverride: null),
+            const EnumEntry(value: 500, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -855,12 +1008,18 @@ void main() {
           isDeprecated: false,
           name: r'$2fa',
           values: {
-            const EnumEntry(value: 'sms'),
-            const EnumEntry(value: 'app'),
+            const EnumEntry(value: 'sms', nameOverride: null),
+            const EnumEntry(value: 'app', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, r'$2fa');
@@ -893,10 +1052,19 @@ void main() {
         final model = EnumModel<int>(
           isDeprecated: false,
           name: r'$2fa',
-          values: {const EnumEntry(value: 1), const EnumEntry(value: 2)},
+          values: {
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, r'$2fa');
@@ -926,12 +1094,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -975,13 +1149,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1025,13 +1205,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1075,12 +1261,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1100,13 +1292,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1137,13 +1335,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1194,13 +1398,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1237,12 +1447,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1279,13 +1495,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 100),
-            const EnumEntry(value: 200),
-            const EnumEntry(value: 300),
+            const EnumEntry(value: 100, nameOverride: null),
+            const EnumEntry(value: 200, nameOverride: null),
+            const EnumEntry(value: 300, nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1324,13 +1546,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1374,13 +1602,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1424,12 +1658,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1449,13 +1689,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1486,13 +1732,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1551,13 +1803,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1587,12 +1845,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1622,13 +1886,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 100),
-            const EnumEntry(value: 200),
-            const EnumEntry(value: 300),
+            const EnumEntry(value: 100, nameOverride: null),
+            const EnumEntry(value: 200, nameOverride: null),
+            const EnumEntry(value: 300, nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1660,13 +1930,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1703,13 +1979,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1732,13 +2014,19 @@ void main() {
           isDeprecated: false,
           name: 'Priority',
           values: {
-            const EnumEntry(value: 'low'),
-            const EnumEntry(value: 'medium'),
-            const EnumEntry(value: 'high'),
+            const EnumEntry(value: 'low', nameOverride: null),
+            const EnumEntry(value: 'medium', nameOverride: null),
+            const EnumEntry(value: 'high', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Priority');
@@ -1763,13 +2051,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1816,13 +2110,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1855,12 +2155,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1893,13 +2199,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 100),
-            const EnumEntry(value: 200),
-            const EnumEntry(value: 300),
+            const EnumEntry(value: 100, nameOverride: null),
+            const EnumEntry(value: 200, nameOverride: null),
+            const EnumEntry(value: 300, nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1934,13 +2246,19 @@ void main() {
           isDeprecated: false,
           name: 'Color',
           values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
+            const EnumEntry(value: 'red', nameOverride: null),
+            const EnumEntry(value: 'green', nameOverride: null),
+            const EnumEntry(value: 'blue', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1997,13 +2315,19 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
+            const EnumEntry(value: 1, nameOverride: null),
+            const EnumEntry(value: 2, nameOverride: null),
+            const EnumEntry(value: 3, nameOverride: null),
           },
           isNullable: false,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2043,12 +2367,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2097,6 +2427,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2137,8 +2472,8 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
@@ -2147,6 +2482,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2169,8 +2509,8 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
@@ -2179,6 +2519,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2218,11 +2563,19 @@ void main() {
         final model = EnumModel<int>(
           isDeprecated: false,
           name: 'Code',
-          values: {const EnumEntry(value: 0), const EnumEntry(value: 1)},
+          values: {
+            const EnumEntry(value: 0, nameOverride: null),
+            const EnumEntry(value: 1, nameOverride: null),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(value: -1, nameOverride: 'unknown'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Code');
@@ -2258,7 +2611,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2266,6 +2619,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2290,7 +2648,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2298,6 +2656,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2338,7 +2701,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2346,6 +2709,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2385,7 +2753,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2393,6 +2761,11 @@ void main() {
             nameOverride: 'fallback',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2412,12 +2785,18 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2431,7 +2810,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2439,6 +2818,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2464,7 +2848,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2472,6 +2856,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2526,7 +2915,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2534,6 +2923,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2560,10 +2954,16 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2596,7 +2996,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: true,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2604,6 +3004,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2619,8 +3024,8 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
@@ -2629,6 +3034,11 @@ void main() {
             nameOverride: 'fallback',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2659,8 +3069,8 @@ void main() {
             isDeprecated: false,
             name: 'Status',
             values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'unknown'),
+              const EnumEntry(value: 'active', nameOverride: null),
+              const EnumEntry(value: 'unknown', nameOverride: null),
             },
             isNullable: false,
             context: Context.initial().push('test'),
@@ -2669,6 +3079,11 @@ void main() {
               nameOverride: 'unknown',
             ),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2699,8 +3114,8 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'unknown'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'unknown', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
@@ -2709,6 +3124,11 @@ void main() {
             nameOverride: 'fallback',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2743,8 +3163,8 @@ void main() {
             isDeprecated: false,
             name: 'Status',
             values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'unknown'),
+              const EnumEntry(value: 'active', nameOverride: null),
+              const EnumEntry(value: 'unknown', nameOverride: null),
             },
             isNullable: false,
             context: Context.initial().push('test'),
@@ -2753,6 +3173,11 @@ void main() {
               nameOverride: 'fallbackUnknown',
             ),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2805,8 +3230,8 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'unknown'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'unknown', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
@@ -2815,6 +3240,11 @@ void main() {
             nameOverride: 'unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2837,13 +3267,18 @@ void main() {
           isDeprecated: false,
           name: 'Type',
           values: {
-            const EnumEntry(value: 'class'),
-            const EnumEntry(value: 'struct'),
+            const EnumEntry(value: 'class', nameOverride: null),
+            const EnumEntry(value: 'struct', nameOverride: null),
           },
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(value: 'enum', nameOverride: 'enum'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Type');
@@ -2863,7 +3298,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2871,6 +3306,11 @@ void main() {
             nameOverride: r'$unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2890,7 +3330,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2898,6 +3338,11 @@ void main() {
             nameOverride: '123unknown',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2917,7 +3362,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2925,6 +3370,11 @@ void main() {
             nameOverride: 'un-known',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2944,7 +3394,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2952,6 +3402,11 @@ void main() {
             nameOverride: 'un known',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2971,7 +3426,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -2979,6 +3434,11 @@ void main() {
             nameOverride: 'un.known',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2998,11 +3458,16 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(value: '', nameOverride: 'empty'),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -3022,7 +3487,7 @@ void main() {
         final model = EnumModel<String>(
           isDeprecated: false,
           name: 'Status',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           context: Context.initial().push('test'),
           fallbackValue: const EnumEntry(
@@ -3030,6 +3495,11 @@ void main() {
             nameOverride: 'un-known',
           ),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -3054,12 +3524,18 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Color');
@@ -3084,12 +3560,18 @@ void main() {
         isDeprecated: false,
         name: 'Color',
         values: {
-          const EnumEntry(value: 'red'),
-          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'red', nameOverride: null),
+          const EnumEntry(value: 'green', nameOverride: null),
         },
         isNullable: false,
         context: Context.initial().push('test'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final generated = generator.generateEnum(model, 'Color');

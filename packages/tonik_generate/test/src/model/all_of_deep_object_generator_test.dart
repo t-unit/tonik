@@ -43,6 +43,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -79,6 +86,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -113,10 +127,20 @@ void main() {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           ClassModel(
             isDeprecated: false,
@@ -130,14 +154,31 @@ void main() {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -162,6 +203,13 @@ void main() {
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -189,6 +237,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -213,6 +268,13 @@ void main() {
         models: [StringModel(context: context)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final generatedClass = generator.generateClass(model);

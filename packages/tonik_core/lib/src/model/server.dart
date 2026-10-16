@@ -5,8 +5,8 @@ import 'package:tonik_core/src/model/server_variable.dart';
 @immutable
 class const Server({
   required final String url,
-  final String? description,
-  final List<ServerVariable> variables = const [],
+  required final String? description,
+  required final List<ServerVariable> variables,
 }) {
   @override
   String toString() =>

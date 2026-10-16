@@ -65,6 +65,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -147,6 +148,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -210,6 +212,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -247,6 +250,12 @@ void main() {
                   content: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
+                  name: null,
+                  nameOverride: null,
+                  isNullable: false,
+                  isContentNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 isRequired: true,
                 isDeprecated: false,
@@ -261,6 +270,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           );
@@ -310,6 +320,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -363,6 +374,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -396,6 +408,12 @@ void main() {
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               isRequired: true,
               isDeprecated: false,
@@ -410,6 +428,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -466,6 +485,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -514,6 +534,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );

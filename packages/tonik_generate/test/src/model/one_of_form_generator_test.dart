@@ -43,6 +43,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -98,10 +105,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -114,6 +131,12 @@ void main() {
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -170,6 +193,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -213,6 +243,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -251,6 +288,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -287,10 +331,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -302,6 +356,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -342,10 +403,20 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final classB = ClassModel(
@@ -360,10 +431,20 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -376,6 +457,12 @@ void main() {
           discriminator: 'type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -440,15 +527,32 @@ void main() {
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = OneOfModel(
@@ -457,6 +561,13 @@ void main() {
         models: [(discriminatorValue: null, model: innerOneOf)],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -511,15 +622,32 @@ void main() {
                   isDeprecated: false,
                   examples: const [],
                   defaultValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  nameOverride: null,
+                  description: null,
                 ),
               ],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model = OneOfModel(
@@ -529,6 +657,12 @@ void main() {
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -599,15 +733,32 @@ void main() {
                     isDeprecated: false,
                     examples: const [],
                     defaultValue: null,
+                    isReadOnly: false,
+                    isWriteOnly: false,
+                    nameOverride: null,
+                    description: null,
                   ),
                 ],
                 context: context,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final innerOneOfB = OneOfModel(
@@ -629,15 +780,32 @@ void main() {
                     isDeprecated: false,
                     examples: const [],
                     defaultValue: null,
+                    isReadOnly: false,
+                    isWriteOnly: false,
+                    nameOverride: null,
+                    description: null,
                   ),
                 ],
                 context: context,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model = OneOfModel(
@@ -650,6 +818,12 @@ void main() {
           discriminator: 'type',
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -736,6 +910,13 @@ void main() {
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -784,6 +965,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model = OneOfModel(
@@ -795,6 +982,13 @@ void main() {
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final classes = generator.generateClasses(model);

@@ -60,12 +60,14 @@ void main() {
           rawContentType: 'text/plain',
           contentType: ContentType.json,
           examples: const [],
+          delivery: ResponseDelivery.complete,
         ),
         ResponseBody(
           model: IntegerModel(context: testContext),
           rawContentType: 'application/json',
           contentType: ContentType.json,
           examples: const [],
+          delivery: ResponseDelivery.complete,
         ),
       },
     );
@@ -85,12 +87,14 @@ void main() {
           rawContentType: 'application/json',
           contentType: ContentType.json,
           examples: const [],
+          delivery: ResponseDelivery.complete,
         ),
         ResponseBody(
           model: StringModel(context: testContext),
           rawContentType: 'application/problem+json',
           contentType: ContentType.json,
           examples: const [],
+          delivery: ResponseDelivery.complete,
         ),
       },
     );

@@ -115,15 +115,15 @@ class MapModel({
   required var Model valueModel,
   required super.context,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var bool isNullable = false,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var bool isNullable,
 
   /// Describes the value, not the map itself, so it does not affect
   /// [isEffectivelyNullable] — mirrors [Property.isNullable].
-  var bool isValueNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
+  required var bool isValueNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
 }) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -140,26 +140,26 @@ class AliasModel._({
   required super.context,
   required var List<Example> examples,
   required final Object? _localDefault,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
-  var bool isDeprecated = false,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
+  required var bool isDeprecated,
+  required var bool isNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
 }) extends Model with NamedModel {
   new({
     required Model model,
     required Context context,
     required List<Example> examples,
     required Object? defaultValue,
-    String? name,
-    String? nameOverride,
-    String? description,
-    bool isDeprecated = false,
-    bool isNullable = false,
-    bool isReadOnly = false,
-    bool isWriteOnly = false,
+    required String? name,
+    required String? nameOverride,
+    required String? description,
+    required bool isDeprecated,
+    required bool isNullable,
+    required bool isReadOnly,
+    required bool isWriteOnly,
   }) : this._(
          model: model,
          context: context,
@@ -223,15 +223,15 @@ class ListModel({
   required var Model content,
   required super.context,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var bool isNullable = false,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var bool isNullable,
 
   /// Describes the item, not the list itself, so it does not affect
   /// [isEffectivelyNullable] — mirrors [Property.isNullable].
-  var bool isContentNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
+  required var bool isContentNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
 }) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -250,13 +250,13 @@ class ClassModel({
   required super.context,
   required var bool isDeprecated,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
-  AdditionalPropertiesPolicy? additionalPropertiesPolicy,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
+  required AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+  required var bool isNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
 }) extends Model with NamedModel {
   this {
     this.additionalPropertiesPolicy =
@@ -282,7 +282,10 @@ class ClassModel({
 
 /// Represents an individual value within an enum, with optional name override.
 @immutable
-class const EnumEntry<T>({required final T value, final String? nameOverride}) {
+class const EnumEntry<T>({
+  required final T value,
+  required final String? nameOverride,
+}) {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -305,17 +308,17 @@ class EnumModel<T>({
   required super.context,
   required var bool isDeprecated,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
 
   /// The enclosing schema's raw default, validated during generation.
-  final Object? defaultValue,
+  required final Object? defaultValue,
 
   /// Optional fallback value if no other value matches.
-  var EnumEntry<T>? fallbackValue,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
+  required var EnumEntry<T>? fallbackValue,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
 }) extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
@@ -338,13 +341,13 @@ class DateTimeEnumModel({
   required super.context,
   required super.isDeprecated,
   required super.examples,
-  super.name,
-  super.nameOverride,
-  super.description,
-  super.defaultValue,
-  super.fallbackValue,
-  super.isReadOnly,
-  super.isWriteOnly,
+  required super.name,
+  required super.nameOverride,
+  required super.description,
+  required super.defaultValue,
+  required super.fallbackValue,
+  required super.isReadOnly,
+  required super.isWriteOnly,
 }) extends EnumModel<String> {
   @override
   String toString() =>
@@ -359,14 +362,14 @@ class AllOfModel({
   required super.context,
   required var bool isDeprecated,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
-  AdditionalPropertiesPolicy? additionalPropertiesPolicy,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
-  @override var Object? defaultValue,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
+  required AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+  required var bool isNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
+  @override required var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   this {
     this.additionalPropertiesPolicy =
@@ -397,14 +400,14 @@ class OneOfModel({
   required super.context,
   required var bool isDeprecated,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
-  var String? discriminator,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
-  @override var Object? defaultValue,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
+  required var String? discriminator,
+  required var bool isNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
+  @override required var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
@@ -422,14 +425,14 @@ class AnyOfModel({
   required super.context,
   required var bool isDeprecated,
   required var List<Example> examples,
-  @override final String? name,
-  @override var String? nameOverride,
-  var String? description,
-  var String? discriminator,
-  var bool isNullable = false,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
-  @override var Object? defaultValue,
+  @override required final String? name,
+  @override required var String? nameOverride,
+  required var String? description,
+  required var String? discriminator,
+  required var bool isNullable,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
+  @override required var Object? defaultValue,
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
@@ -527,10 +530,10 @@ class Property({
   required var bool isDeprecated,
   required var List<Example> examples,
   required var Object? defaultValue,
-  var bool isReadOnly = false,
-  var bool isWriteOnly = false,
-  var String? nameOverride,
-  var String? description,
+  required var bool isReadOnly,
+  required var bool isWriteOnly,
+  required var String? nameOverride,
+  required var String? description,
 }) {
   /// The property's own [defaultValue] when set, otherwise the default
   /// carried by its [model], following aliases to an enclosing schema default.

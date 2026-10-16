@@ -48,6 +48,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -72,6 +77,7 @@ void main() {
             rawContentType: 'text/plain',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
         headers: const {},
@@ -90,6 +96,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -115,6 +126,7 @@ void main() {
             rawContentType: 'text/plain',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
         headers: {
@@ -145,6 +157,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -170,12 +187,14 @@ void main() {
             rawContentType: 'text/plain',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           ResponseBody(
             model: IntegerModel(context: testContext),
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
         headers: const {},
@@ -194,6 +213,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

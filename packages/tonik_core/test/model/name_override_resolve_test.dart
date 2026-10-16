@@ -80,6 +80,7 @@ void main() {
         name: 'aliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -102,12 +103,14 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final alias = QueryParameterAlias(
         name: 'aliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve(nameOverride: 'newOverride');
@@ -185,6 +188,7 @@ void main() {
         name: 'aliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -259,6 +263,7 @@ void main() {
         name: 'aliasName',
         header: originalHeader,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();

@@ -25,6 +25,10 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'name',
@@ -34,6 +38,10 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'email',
@@ -43,9 +51,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(collectKnownKeys(model), {'id', 'name', 'email'});
@@ -58,6 +76,12 @@ void main() {
           context: context,
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -79,9 +103,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final extModel = ClassModel(
@@ -97,9 +131,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOf = AllOfModel(
@@ -108,6 +152,13 @@ void main() {
           context: context,
           models: [baseModel, extModel],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(allOf), {'id', 'extra'});
@@ -127,9 +178,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final innerAllOf = AllOfModel(
@@ -138,6 +199,13 @@ void main() {
           context: context,
           models: [innerClass],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final outerClass = ClassModel(
@@ -153,9 +221,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final outerAllOf = AllOfModel(
@@ -164,6 +242,13 @@ void main() {
           context: context,
           models: [innerAllOf, outerClass],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(outerAllOf), {'a', 'b'});
@@ -176,6 +261,13 @@ void main() {
           context: context,
           models: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(allOf), <String>{});
@@ -191,6 +283,12 @@ void main() {
           models: const [],
           discriminator: 'petType',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {'petType'});
@@ -203,6 +301,13 @@ void main() {
           context: context,
           models: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -222,9 +327,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final dog = ClassModel(
@@ -240,9 +355,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -255,6 +380,12 @@ void main() {
           ],
           discriminator: 'petType',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {
@@ -278,9 +409,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = OneOfModel(
@@ -289,6 +430,13 @@ void main() {
           context: context,
           models: [(discriminatorValue: null, model: cat)],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {'whiskerLength'});
@@ -304,6 +452,12 @@ void main() {
           models: const [],
           discriminator: 'contentType',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {'contentType'});
@@ -316,6 +470,13 @@ void main() {
           context: context,
           models: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -335,9 +496,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final image = ClassModel(
@@ -353,9 +524,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = AnyOfModel(
@@ -368,6 +549,12 @@ void main() {
           ],
           discriminator: 'kind',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {'kind', 'body', 'url'});
@@ -387,9 +574,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model = AnyOfModel(
@@ -398,6 +595,13 @@ void main() {
           context: context,
           models: [(discriminatorValue: null, model: text)],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(model), {'body'});
@@ -419,9 +623,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final alias = AliasModel(
@@ -430,6 +644,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(collectKnownKeys(alias), {'name'});
@@ -449,9 +669,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final innerAlias = AliasModel(
@@ -460,6 +690,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final outerAlias = AliasModel(
@@ -468,6 +704,12 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(collectKnownKeys(outerAlias), {'id'});
@@ -488,6 +730,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -497,6 +745,12 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -506,9 +760,15 @@ void main() {
           isDeprecated: false,
           name: 'Status',
           context: context,
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -529,9 +789,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final oneOfModel = OneOfModel(
@@ -541,6 +811,12 @@ void main() {
           models: const [],
           discriminator: 'type',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final allOf = AllOfModel(
@@ -549,6 +825,13 @@ void main() {
           context: context,
           models: [classModel, oneOfModel],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(allOf), {'id', 'type'});
@@ -568,9 +851,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final anyOfModel = AnyOfModel(
@@ -580,6 +873,12 @@ void main() {
           models: const [],
           discriminator: 'kind',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final allOf = AllOfModel(
@@ -588,6 +887,13 @@ void main() {
           context: context,
           models: [classModel, anyOfModel],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(allOf), {'name', 'kind'});
@@ -607,9 +913,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final dog = ClassModel(
@@ -625,9 +941,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final oneOfModel = OneOfModel(
@@ -639,6 +965,13 @@ void main() {
             (discriminatorValue: 'dog', model: dog),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final baseModel = ClassModel(
@@ -654,9 +987,19 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOf = AllOfModel(
@@ -665,6 +1008,13 @@ void main() {
           context: context,
           models: [oneOfModel, baseModel],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(collectKnownKeys(allOf), {

@@ -24,7 +24,7 @@ final class const ForbiddenAdditionalProperties()
 @immutable
 final class const AllowedAdditionalProperties({
   required final Model valueModel,
-  final AdditionalPropertiesOrigin origin = AdditionalPropertiesOrigin.explicit,
+  required final AdditionalPropertiesOrigin origin,
 }) extends AdditionalPropertiesPolicy {
   @override
   bool operator ==(Object other) =>

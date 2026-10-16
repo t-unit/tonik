@@ -49,6 +49,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -84,9 +85,11 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
+          description: null,
         );
 
         final result = generator.generate(aliasResponse);
@@ -118,6 +121,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -187,12 +191,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: IntegerModel(context: testContext),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           );
@@ -229,15 +235,18 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: StringModel(context: testContext),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
+          description: null,
         );
 
         final name = nameManager.responseNames(aliasResponse).baseName;

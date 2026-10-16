@@ -29,15 +29,29 @@ void main() {
             properties: const [],
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           defaultValue: null,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final content = MultipartRequestContent(
           model: model,
           encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
 
         final type = requestContentTypeReference(content, manager, 'example');
@@ -57,16 +71,29 @@ void main() {
             properties: const [],
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           isNullable: true,
           defaultValue: null,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final content = MultipartRequestContent(
           model: model,
           encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
 
         final type = requestContentTypeReference(content, manager, 'example');
@@ -86,12 +113,19 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final content = MultipartRequestContent(
             model: model,
             encoding: const {},
             rawContentType: 'multipart/form-data',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           );
 
           final type = requestContentTypeReference(content, manager, 'example');
@@ -252,6 +286,12 @@ void main() {
           content: binaryModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -272,6 +312,11 @@ void main() {
           isContentNullable: true,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -340,6 +385,12 @@ void main() {
           content: base64Model,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -361,6 +412,11 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -377,11 +433,22 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model = MapModel(
           valueModel: listModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -403,6 +470,11 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -434,6 +506,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -456,6 +534,11 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -475,6 +558,12 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -498,6 +587,11 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -517,11 +611,23 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model = ListModel(
           content: nestedList,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -543,11 +649,23 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model = MapModel(
           valueModel: listModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -569,6 +687,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);
@@ -582,12 +706,25 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final alias = AliasModel(
           model: listModel,
           context: context,
           examples: const [],
           defaultValue: null,
+          name: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(
@@ -663,6 +800,12 @@ void main() {
           content: anyModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = typeReference(model, nameManager, package);

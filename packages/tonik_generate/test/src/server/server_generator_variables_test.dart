@@ -37,8 +37,10 @@ void main() {
             name: 'region\r\nclass Injected {}\n',
             defaultValue: 'eu',
             enumValues: ['eu'],
+            description: null,
           ),
         ],
+        description: null,
       ),
     ];
 
@@ -68,6 +70,7 @@ void main() {
               name: 'region',
               defaultValue: 'us-east',
               enumValues: ['us-east', 'us-west', 'eu-central'],
+              description: null,
             ),
           ],
         ),
@@ -191,7 +194,14 @@ void main() {
         const Server(
           url: 'https://environment.example.com/{env}',
           description: 'Environment server',
-          variables: [ServerVariable(name: 'env', defaultValue: 'prod')],
+          variables: [
+            ServerVariable(
+              name: 'env',
+              defaultValue: 'prod',
+              enumValues: null,
+              description: null,
+            ),
+          ],
         ),
       ];
 
@@ -263,11 +273,17 @@ void main() {
           url: 'https://configurable.example.com/{host}:{port}/api',
           description: 'Configurable server',
           variables: [
-            ServerVariable(name: 'host', defaultValue: 'localhost'),
+            ServerVariable(
+              name: 'host',
+              defaultValue: 'localhost',
+              enumValues: null,
+              description: null,
+            ),
             ServerVariable(
               name: 'port',
               defaultValue: '8080',
               enumValues: ['8080', '8443'],
+              description: null,
             ),
           ],
         ),
@@ -372,6 +388,7 @@ void main() {
               name: 'region',
               defaultValue: 'staging',
               enumValues: ['us-east', 'us-west', 'eu-central'],
+              description: null,
             ),
           ],
         ),
@@ -432,11 +449,13 @@ void main() {
               name: 'region',
               defaultValue: 'staging',
               enumValues: ['us-east', 'us-west'],
+              description: null,
             ),
             ServerVariable(
               name: 'port',
               defaultValue: '443',
               enumValues: ['443', '8443'],
+              description: null,
             ),
           ],
         ),
@@ -476,11 +495,19 @@ void main() {
         const Server(
           url: 'https://production.example.com',
           description: 'Production',
+          variables: [],
         ),
         const Server(
           url: 'https://dynamic.example.com/{env}',
           description: 'Dynamic',
-          variables: [ServerVariable(name: 'env', defaultValue: 'staging')],
+          variables: [
+            ServerVariable(
+              name: 'env',
+              defaultValue: 'staging',
+              enumValues: null,
+              description: null,
+            ),
+          ],
         ),
       ];
 
@@ -529,8 +556,14 @@ void main() {
               name: 'region',
               defaultValue: 'us-east',
               enumValues: ['us-east', 'us-west', 'eu-central'],
+              description: null,
             ),
-            ServerVariable(name: 'port', defaultValue: '443'),
+            ServerVariable(
+              name: 'port',
+              defaultValue: '443',
+              enumValues: null,
+              description: null,
+            ),
           ],
         ),
       ];
@@ -577,6 +610,7 @@ void main() {
               name: 'class',
               defaultValue: 'prod',
               enumValues: ['prod', 'staging'],
+              description: null,
             ),
           ],
         ),
@@ -596,7 +630,14 @@ void main() {
         const Server(
           url: 'https://api.example.com/{default}',
           description: 'Default server',
-          variables: [ServerVariable(name: 'default', defaultValue: 'v1')],
+          variables: [
+            ServerVariable(
+              name: 'default',
+              defaultValue: 'v1',
+              enumValues: null,
+              description: null,
+            ),
+          ],
         ),
       ];
 
@@ -617,10 +658,30 @@ void main() {
           url: 'https://{_}.{❤️}.example.com/{api-version}/{api_version}',
           description: 'Hostile variable server',
           variables: [
-            ServerVariable(name: '_', defaultValue: 'one'),
-            ServerVariable(name: '❤️', defaultValue: 'two'),
-            ServerVariable(name: 'api-version', defaultValue: 'v1'),
-            ServerVariable(name: 'api_version', defaultValue: 'v2'),
+            ServerVariable(
+              name: '_',
+              defaultValue: 'one',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: '❤️',
+              defaultValue: 'two',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: 'api-version',
+              defaultValue: 'v1',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: 'api_version',
+              defaultValue: 'v2',
+              enumValues: null,
+              description: null,
+            ),
           ],
         ),
       ];
@@ -643,10 +704,30 @@ void main() {
           url: 'https://{baseUrl}.{serverConfig}.example.com/{dio}/{close}',
           description: 'Inherited member collision server',
           variables: [
-            ServerVariable(name: 'baseUrl', defaultValue: 'base'),
-            ServerVariable(name: 'serverConfig', defaultValue: 'config'),
-            ServerVariable(name: 'dio', defaultValue: 'client'),
-            ServerVariable(name: 'close', defaultValue: 'shutdown'),
+            ServerVariable(
+              name: 'baseUrl',
+              defaultValue: 'base',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: 'serverConfig',
+              defaultValue: 'config',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: 'dio',
+              defaultValue: 'client',
+              enumValues: null,
+              description: null,
+            ),
+            ServerVariable(
+              name: 'close',
+              defaultValue: 'shutdown',
+              enumValues: null,
+              description: null,
+            ),
           ],
         ),
       ];
@@ -676,7 +757,14 @@ void main() {
         const Server(
           url: '',
           description: 'Empty url',
-          variables: [ServerVariable(name: 'env', defaultValue: 'prod')],
+          variables: [
+            ServerVariable(
+              name: 'env',
+              defaultValue: 'prod',
+              enumValues: null,
+              description: null,
+            ),
+          ],
         ),
       ];
 

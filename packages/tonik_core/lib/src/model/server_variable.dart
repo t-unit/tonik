@@ -6,8 +6,8 @@ import 'package:meta/meta.dart';
 class const ServerVariable({
   required final String name,
   required final String defaultValue,
-  final List<String>? enumValues,
-  final String? description,
+  required final List<String>? enumValues,
+  required final String? description,
 }) {
   @override
   String toString() =>

@@ -13,12 +13,12 @@ class ApiDocument({
   required var Set<PathParameter> pathParameters,
   required var Set<CookieParameter> cookieParameters,
   required var Set<RequestBody> requestBodies,
-  var String? summary,
-  var String? description,
-  var Contact? contact,
-  var License? license,
-  var String? termsOfService,
-  var ExternalDocumentation? externalDocs,
+  required var String? summary,
+  required var String? description,
+  required var Contact? contact,
+  required var License? license,
+  required var String? termsOfService,
+  required var ExternalDocumentation? externalDocs,
 }) {
   Map<Tag, Set<Operation>> get operationsByTag {
     final taggedOperations = <Tag, Set<Operation>>{};

@@ -41,7 +41,7 @@ class const ResponseHeaderAlias({
   required super.name,
   required final ResponseHeader header,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends ResponseHeader {
   @override
   String toString() =>

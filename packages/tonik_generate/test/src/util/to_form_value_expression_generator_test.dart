@@ -40,6 +40,11 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildToFormValueExpression(
         'value.value',
@@ -74,10 +79,21 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildToFormValueExpression(
         'body',
@@ -108,6 +124,11 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildToFormValueExpression(
         'body',
@@ -137,6 +158,11 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         useQueryComponent: true,
         textEncoding: TextEncoding.utf8,
@@ -156,6 +182,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -187,6 +219,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final plain = Property(
         name: 'plain',
@@ -196,6 +232,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -203,6 +243,12 @@ void main() {
         properties: [reserved, plain],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -253,6 +299,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -260,6 +310,12 @@ void main() {
         properties: [plain],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -299,6 +355,9 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -306,6 +365,12 @@ void main() {
         properties: [hidden],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -342,12 +407,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -355,6 +430,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -402,12 +483,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -415,6 +506,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -452,12 +549,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -465,6 +572,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -501,12 +614,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -514,6 +637,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -550,12 +679,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -563,6 +702,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -599,15 +744,35 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final tags = Property(
         name: 'tags',
-        model: ListModel(content: item, context: context, examples: const []),
+        model: ListModel(
+          content: item,
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -615,6 +780,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -645,6 +816,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -652,6 +827,12 @@ void main() {
         properties: [name],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -681,6 +862,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
@@ -688,6 +875,9 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final model = ClassModel(
         name: 'Form',
@@ -695,6 +885,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -725,6 +921,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final tags = Property(
         name: 'tags',
@@ -732,12 +932,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final base = ClassModel(
         name: 'Base',
@@ -745,6 +955,12 @@ void main() {
         properties: [label],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final tagged = ClassModel(
         name: 'Tagged',
@@ -752,6 +968,12 @@ void main() {
         properties: [tags],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = AllOfModel(
         name: 'Form',
@@ -759,6 +981,13 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final result = buildToFormValueExpression(
@@ -832,6 +1061,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -895,9 +1130,21 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -962,13 +1209,19 @@ void main() {
       final model = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry<String>(value: 'active'),
-          const EnumEntry<String>(value: 'inactive'),
+          const EnumEntry<String>(value: 'active', nameOverride: null),
+          const EnumEntry<String>(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
@@ -995,6 +1248,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = buildToFormValueExpression(
