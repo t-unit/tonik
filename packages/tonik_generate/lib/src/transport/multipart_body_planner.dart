@@ -377,7 +377,14 @@ class const MultipartBodyPlanner({
       "Cannot encode NeverModel property '${part.name}' - this type does not "
       'permit any value.',
     ),
-    StringModel() => [_text(part, part.value)],
+    StringModel() => [
+      _text(
+        part,
+        part.encoding.contentType == ContentType.json
+            ? _json(part.value)
+            : part.value,
+      ),
+    ],
     AnyModel() => [
       _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
     ],
@@ -647,7 +654,7 @@ class const MultipartBodyPlanner({
     PartEncoding encoding,
   ) {
     final json = value.property('toJson').call([]);
-    if (!_dio && encoding.contentType == ContentType.json) return _json(json);
+    if (encoding.contentType == ContentType.json) return _json(json);
     return model is EnumModel<String>
         ? json
         : json.property('toString').call([]);

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
@@ -26,6 +27,21 @@ void main() {
             const MultipartBodyPlanner(backend: TransportBackend.http)
                 .plan(content, bodyAccessor: 'body', isRequired: true),
           ),
+        ),
+    );
+    return format('${method.accept(emitter)}');
+  }
+
+  String emitDio(MultipartRequestContent content) {
+    final method = Method(
+      (builder) => builder
+        ..name = 'test'
+        ..returns = refer('Object?', 'dart:core')
+        ..body = Block.of(
+          buildMultipartBodyStatements(
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
+          ).statements,
         ),
     );
     return format('${method.accept(emitter)}');
@@ -538,7 +554,137 @@ Object? test() {
       );
     });
 
-    test('uses plain and JSON encodings for string enums', () {
+    test('HTTP uses plain and JSON encodings for strings', () {
+      final model = StringModel(context: context);
+      expectPropertyCode(model, r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );''');
+      expectPropertyCode(
+        model,
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(body.value)),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('Dio JSON-encodes string parts', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: StringModel(context: context),
+          encoding: _encoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+        ),
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  _$formData.files.add(MapEntry(
+    (r'value').replaceAll(r'\', r'\\'),
+    MultipartFile.fromString(
+      jsonEncode(body.value),
+      contentType: DioMediaType.parse(r'application/json'),
+    ),
+  ));
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+      expect(
+        collapseWhitespace(emitDio(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('Dio JSON-encodes string enum parts', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: _stringEnum(context),
+          encoding: _encoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+        ),
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  _$formData.files.add(MapEntry(
+    (r'value').replaceAll(r'\', r'\\'),
+    MultipartFile.fromString(
+      jsonEncode(body.value.toJson()),
+      contentType: DioMediaType.parse(r'application/json'),
+    ),
+  ));
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+      expect(
+        collapseWhitespace(emitDio(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('Dio leaves plain string and string enum parts unquoted', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'label',
+          model: StringModel(context: context),
+        ),
+        multipartPartFixture(name: 'color', model: _stringEnum(context)),
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  _$formData.files.add(MapEntry(
+    (r'label').replaceAll(r'\', r'\\'),
+    MultipartFile.fromString(
+      body.label,
+      contentType: DioMediaType.parse(r'text/plain'),
+    ),
+  ));
+  _$formData.files.add(MapEntry(
+    (r'color').replaceAll(r'\', r'\\'),
+    MultipartFile.fromString(
+      body.color.toJson(),
+      contentType: DioMediaType.parse(r'text/plain'),
+    ),
+  ));
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+      expect(
+        collapseWhitespace(emitDio(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('HTTP uses plain and JSON encodings for string enums', () {
       final model = _stringEnum(context);
       expectPropertyCode(model, r'''
   _$multipartFiles.add(

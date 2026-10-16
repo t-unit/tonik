@@ -1700,7 +1700,7 @@ $expectedPartCode
       );
     });
 
-    test('serializes required EnumModel<String> with application/json via toJson()', () {
+    test('JSON-encodes required EnumModel<String> with application/json', () {
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
@@ -1748,7 +1748,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.status.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1759,7 +1759,7 @@ $expectedPartCode
       );
     });
 
-    test('serializes required EnumModel<int> with application/json via toJson().toString()', () {
+    test('JSON-encodes required EnumModel<int> with application/json', () {
       final enumModel = EnumModel<int>(
         name: 'Count',
         values: {
@@ -1807,7 +1807,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.count.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }

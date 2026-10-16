@@ -18,6 +18,28 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/json-strings:
+    post:
+      operationId: postJsonStrings
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JsonStringsForm'
+            encoding:
+              label:
+                contentType: application/json
+              color:
+                contentType: application/json
+              plainLabel:
+                contentType: text/plain
+              plainColor:
+                contentType: text/plain
+      responses:
+        '204':
+          description: Accepted
   /multipart/dynamic-primitive-unions:
     post:
       operationId: postDynamicPrimitiveUnions
@@ -1062,6 +1084,23 @@ paths:
 
 components:
   schemas:
+    JsonStringsForm:
+      type: object
+      required: [label, color, plainLabel, plainColor]
+      properties:
+        label:
+          type: string
+        color:
+          $ref: '#/components/schemas/JsonStringColor'
+        plainLabel:
+          type: string
+        plainColor:
+          $ref: '#/components/schemas/JsonStringColor'
+
+    JsonStringColor:
+      type: string
+      enum: [red, blue]
+
     ReadOnlyFields:
       type: object
       required:
