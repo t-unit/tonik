@@ -15,6 +15,143 @@ void main() {
       context = Context.initial();
     });
 
+    test('preserves document metadata without body normalization', () {
+      const contact = Contact(
+        name: 'API Support',
+        url: 'https://example.com/support',
+        email: 'support@example.com',
+      );
+      const license = License(name: 'MIT', identifier: 'MIT');
+      const externalDocs = ExternalDocumentation(
+        description: 'API guide',
+        url: 'https://example.com/docs',
+      );
+      final document = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        summary: 'Summary',
+        description: 'API description',
+        contact: contact,
+        license: license,
+        termsOfService: 'https://example.com/terms',
+        externalDocs: externalDocs,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      final transformed = normalizer.apply(document);
+
+      expect(transformed.summary, 'Summary');
+      expect(transformed.description, 'API description');
+      expect(transformed.contact, same(contact));
+      expect(transformed.license, same(license));
+      expect(transformed.termsOfService, 'https://example.com/terms');
+      expect(transformed.externalDocs, same(externalDocs));
+    });
+
+    test('preserves document metadata while normalizing a response', () {
+      const contact = Contact(
+        name: 'API Support',
+        url: 'https://example.com/support',
+        email: 'support@example.com',
+      );
+      const license = License(name: 'MIT', identifier: 'MIT');
+      const externalDocs = ExternalDocumentation(
+        description: 'API guide',
+        url: 'https://example.com/docs',
+      );
+      final response = ResponseObject(
+        name: 'TextResponse',
+        context: context,
+        description: 'A text response',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: IntegerModel(context: context),
+            rawContentType: 'text/plain',
+            contentType: ContentType.text,
+            examples: const [],
+          ),
+        },
+      );
+      final document = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        summary: 'Summary',
+        description: 'API description',
+        contact: contact,
+        license: license,
+        termsOfService: 'https://example.com/terms',
+        externalDocs: externalDocs,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: {response},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      final transformed = normalizer.apply(document);
+      final transformedResponse =
+          transformed.responses.single as ResponseObject;
+
+      expect(transformed.summary, 'Summary');
+      expect(transformed.description, 'API description');
+      expect(transformed.contact, same(contact));
+      expect(transformed.license, same(license));
+      expect(transformed.termsOfService, 'https://example.com/terms');
+      expect(transformed.externalDocs, same(externalDocs));
+      expect(transformedResponse.bodies.single.model, isA<StringModel>());
+      expect(transformedResponse.bodies.single.rawContentType, 'text/plain');
+    });
+
+    test('preserves empty document metadata', () {
+      const contact = Contact(name: '', url: '', email: '');
+      const license = License(name: '', identifier: '', url: '');
+      const externalDocs = ExternalDocumentation(description: '', url: '');
+      final document = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        summary: '',
+        description: '',
+        contact: contact,
+        license: license,
+        termsOfService: '',
+        externalDocs: externalDocs,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      final transformed = normalizer.apply(document);
+
+      expect(transformed.summary, '');
+      expect(transformed.description, '');
+      expect(transformed.contact, same(contact));
+      expect(transformed.license, same(license));
+      expect(transformed.termsOfService, '');
+      expect(transformed.externalDocs, same(externalDocs));
+    });
+
     test('typed request text encodings survive model normalization', () {
       expect(TextEncoding.values, [
         TextEncoding.utf8,
@@ -1252,6 +1389,12 @@ void main() {
         expect(transformed.responses, isEmpty);
         expect(transformed.requestBodies, isEmpty);
         expect(transformed.title, document.title);
+        expect(transformed.summary, isNull);
+        expect(transformed.description, isNull);
+        expect(transformed.contact, isNull);
+        expect(transformed.license, isNull);
+        expect(transformed.termsOfService, isNull);
+        expect(transformed.externalDocs, isNull);
       });
 
       test('handles multiple bodies in single response', () {

@@ -81,6 +81,12 @@ class const ContentTypeNormalizer() {
     return ApiDocument(
       title: document.title,
       version: document.version,
+      summary: document.summary,
+      description: document.description,
+      contact: document.contact,
+      license: document.license,
+      termsOfService: document.termsOfService,
+      externalDocs: document.externalDocs,
       models: document.models,
       responseHeaders: document.responseHeaders,
       requestHeaders: document.requestHeaders,
