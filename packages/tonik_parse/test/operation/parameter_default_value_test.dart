@@ -136,11 +136,13 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 10,
+        nameOverride: null,
       );
       final alias = QueryParameterAlias(
         name: 'limitAlias',
         parameter: inner,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -162,11 +164,13 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'main',
+        nameOverride: null,
       );
       final alias = PathParameterAlias(
         name: 'idAlias',
         parameter: inner,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -188,11 +192,13 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'en',
+        nameOverride: null,
       );
       final alias = RequestHeaderAlias(
         name: 'LocaleAlias',
         header: inner,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -213,11 +219,13 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'anonymous',
+        nameOverride: null,
       );
       final alias = CookieParameterAlias(
         name: 'sessionAlias',
         parameter: inner,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();

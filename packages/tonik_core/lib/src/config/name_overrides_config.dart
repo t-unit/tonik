@@ -5,22 +5,22 @@ import 'package:meta/meta.dart';
 @immutable
 class const NameOverridesConfig({
   /// Schema name overrides: `originalName -> newName`.
-  final Map<String, String> schemas = const {},
+  required final Map<String, String> schemas,
 
   /// Property name overrides: `"SchemaName.propertyName" -> newName`.
-  final Map<String, String> properties = const {},
+  required final Map<String, String> properties,
 
   /// Operation name overrides: `operationId -> newMethodName`.
-  final Map<String, String> operations = const {},
+  required final Map<String, String> operations,
 
   /// Parameter name overrides: `"operationId.parameterName" -> newName`.
-  final Map<String, String> parameters = const {},
+  required final Map<String, String> parameters,
 
   /// Enum value name overrides: `"EnumName.VALUE" -> newValue`.
-  final Map<String, String> enums = const {},
+  required final Map<String, String> enums,
 
   /// Tag to API class name overrides: `tagName -> ApiClassName`.
-  final Map<String, String> tags = const {},
+  required final Map<String, String> tags,
 }) {
   static const _mapEquality = MapEquality<String, String>();
 

@@ -42,6 +42,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -64,6 +68,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -86,6 +94,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -108,6 +120,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -130,6 +146,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -152,6 +172,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -174,6 +198,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -196,6 +224,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       // Binary data: toBytes() then decode to String for JSON.
       expect(
@@ -219,6 +251,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -241,6 +277,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       // Base64 data: toBytes() then encode to base64 string for JSON.
       expect(
@@ -264,6 +304,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -282,12 +326,18 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'status',
@@ -297,6 +347,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -315,12 +369,18 @@ void main() {
         isDeprecated: false,
         name: 'Priority',
         values: {
-          const EnumEntry(value: 'high'),
-          const EnumEntry(value: 'low'),
+          const EnumEntry(value: 'high', nameOverride: null),
+          const EnumEntry(value: 'low', nameOverride: null),
         },
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'priority',
@@ -330,6 +390,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -348,12 +412,18 @@ void main() {
         isDeprecated: false,
         name: 'Priority',
         values: {
-          const EnumEntry(value: 'high'),
-          const EnumEntry(value: 'low'),
+          const EnumEntry(value: 'high', nameOverride: null),
+          const EnumEntry(value: 'low', nameOverride: null),
         },
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'priority',
@@ -363,6 +433,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -385,6 +459,11 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'metadata',
@@ -394,6 +473,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -416,6 +499,12 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'combined',
@@ -425,6 +514,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -448,6 +541,11 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'pet',
@@ -457,6 +555,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -480,6 +582,11 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'content',
@@ -489,6 +596,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -510,12 +621,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       // List<primitive> is handled directly
       expect(
@@ -537,12 +658,22 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -563,12 +694,22 @@ void main() {
           content: BinaryModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       // List of binary needs each element's bytes decoded to string
       expect(
@@ -590,12 +731,22 @@ void main() {
           content: Base64Model(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       // List of base64 needs each element's bytes base64-encoded
       expect(
@@ -617,6 +768,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -624,12 +781,22 @@ void main() {
           content: addressModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -650,6 +817,12 @@ void main() {
         isNullable: true,
         defaultValue: null,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       String encode(Model itemModel) => emit(
@@ -661,12 +834,22 @@ void main() {
               content: nullableItem(itemModel),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           nameManager: nameManager,
         ),
@@ -691,13 +874,19 @@ void main() {
         final enumModel = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(encode(enumModel), 'items.map((e) => e?.toJson()).toList()');
       });
@@ -716,6 +905,12 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(encode(classModel), 'items.map((e) => e?.toJson()).toList()');
       });
@@ -728,12 +923,22 @@ void main() {
           content: DecimalModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -754,6 +959,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'id',
@@ -763,6 +974,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -783,6 +998,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'createdAt',
@@ -792,6 +1013,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -812,6 +1037,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'updatedAt',
@@ -821,6 +1052,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -841,6 +1076,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
@@ -848,6 +1089,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'address',
@@ -857,6 +1104,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -877,6 +1128,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
@@ -884,6 +1141,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'address',
@@ -893,6 +1156,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -913,6 +1180,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'homeAddress',
@@ -922,6 +1195,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -942,6 +1219,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'workAddress',
@@ -951,6 +1234,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -971,6 +1258,13 @@ void main() {
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'combinedData',
@@ -980,6 +1274,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1000,6 +1298,13 @@ void main() {
         models: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'combinedData',
@@ -1009,6 +1314,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1030,6 +1339,12 @@ void main() {
         discriminator: 'petType',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'pet',
@@ -1039,6 +1354,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1060,6 +1379,12 @@ void main() {
         discriminator: 'petType',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'pet',
@@ -1069,6 +1394,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1090,6 +1419,12 @@ void main() {
         discriminator: 'contentType',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'content',
@@ -1099,6 +1434,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1119,6 +1458,12 @@ void main() {
         discriminator: 'contentType',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final property = Property(
         name: 'content',
@@ -1128,6 +1473,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1148,6 +1497,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
@@ -1156,6 +1511,11 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'address',
@@ -1165,6 +1525,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -1187,6 +1551,11 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'createdAt',
@@ -1196,6 +1565,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       expect(
@@ -1217,10 +1590,22 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1230,6 +1615,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1250,10 +1639,22 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1263,6 +1664,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1283,6 +1688,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
@@ -1290,10 +1701,22 @@ void main() {
           content: addressModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1303,6 +1726,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1323,6 +1750,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
@@ -1330,10 +1763,22 @@ void main() {
           content: addressModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1343,6 +1788,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1363,6 +1812,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'metadata',
@@ -1372,6 +1827,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1390,6 +1849,12 @@ void main() {
         valueModel: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'counts',
@@ -1399,6 +1864,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -1419,11 +1888,23 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1433,6 +1914,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1451,11 +1936,23 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1465,6 +1962,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1483,12 +1984,23 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         isNullable: true,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1498,6 +2010,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1514,6 +2030,12 @@ void main() {
         valueModel: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'timestamps',
@@ -1523,6 +2045,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1543,17 +2069,29 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: enumModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'statuses',
@@ -1563,6 +2101,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1581,11 +2123,23 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -1595,6 +2149,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1623,6 +2181,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1650,6 +2209,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1677,6 +2237,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1695,12 +2256,18 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final parameter = PathParameterObject(
         name: 'status',
@@ -1715,6 +2282,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1745,6 +2313,7 @@ void main() {
         allowReserved: true,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1773,6 +2342,7 @@ void main() {
         allowReserved: true,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1801,6 +2371,7 @@ void main() {
         allowReserved: true,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1819,12 +2390,18 @@ void main() {
         isDeprecated: false,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final parameter = QueryParameterObject(
         name: 'status',
@@ -1840,6 +2417,7 @@ void main() {
         allowReserved: true,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         emit(
@@ -1864,6 +2442,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -1886,6 +2468,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -1909,6 +2495,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -1927,6 +2517,12 @@ void main() {
         content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'forbiddenList',
@@ -1936,6 +2532,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -1955,6 +2555,11 @@ void main() {
         isContentNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'forbiddenList',
@@ -1964,6 +2569,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -1984,6 +2593,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'forbiddenAlias',
@@ -1993,6 +2608,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         scopedEmit(
@@ -2022,6 +2641,7 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         scopedEmit(
@@ -2052,6 +2672,7 @@ void main() {
         allowReserved: true,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
       expect(
         scopedEmit(
@@ -2076,6 +2697,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2101,6 +2726,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2126,6 +2755,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2148,6 +2781,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2170,12 +2807,22 @@ void main() {
           content: AnyModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2196,12 +2843,22 @@ void main() {
           content: AnyModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2222,12 +2879,22 @@ void main() {
           valueModel: AnyModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2250,12 +2917,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2277,12 +2954,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2304,12 +2991,22 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2331,12 +3028,22 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2358,12 +3065,22 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2385,6 +3102,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addresses',
@@ -2392,12 +3115,22 @@ void main() {
           valueModel: classModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2417,6 +3150,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'matrix',
@@ -2424,12 +3163,22 @@ void main() {
           content: innerList,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2451,12 +3200,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2477,6 +3236,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
@@ -2484,6 +3249,9 @@ void main() {
         isWriteOnly: true,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2507,6 +3275,12 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
@@ -2514,6 +3288,9 @@ void main() {
         isWriteOnly: true,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2536,12 +3313,22 @@ void main() {
           content: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2563,6 +3350,12 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
@@ -2570,6 +3363,9 @@ void main() {
         isWriteOnly: true,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2593,6 +3389,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addrs',
@@ -2600,6 +3402,12 @@ void main() {
           valueModel: classModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: true,
         isNullable: false,
@@ -2607,6 +3415,9 @@ void main() {
         isWriteOnly: true,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2629,6 +3440,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'addrs',
@@ -2636,12 +3453,22 @@ void main() {
           valueModel: classModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(
@@ -2663,10 +3490,22 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final property = Property(
         name: 'tags',
@@ -2676,6 +3515,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       expect(
         emit(

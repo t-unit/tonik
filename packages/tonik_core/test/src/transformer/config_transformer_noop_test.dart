@@ -6,7 +6,7 @@ void main() {
     test('preserves identities when config is empty', () {
       final ctx = Context.initial();
 
-      const active = EnumEntry<String>(value: 'active');
+      const active = EnumEntry<String>(value: 'active', nameOverride: null);
       final statusModel = EnumModel<String>(
         name: 'Status',
         values: {active},
@@ -14,6 +14,12 @@ void main() {
         context: ctx.push('Status'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final idProperty = Property(
@@ -24,6 +30,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       final petModel = ClassModel(
@@ -32,9 +42,19 @@ void main() {
         context: ctx.push('Pet'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
-      final petTag = Tag(name: 'pet', description: 'Pet tag');
+      final petTag = Tag(
+        name: 'pet',
+        description: 'Pet tag',
+        nameOverride: null,
+      );
 
       final petIdParam = QueryParameterObject(
         name: 'petId',
@@ -50,6 +70,7 @@ void main() {
         context: ctx.push('components').push('parameters').push('petId'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final getPet = Operation(
@@ -65,6 +86,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final apiDocument = ApiDocument(
@@ -80,10 +105,16 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const transformer = ConfigTransformer();
-      final transformed = transformer.apply(apiDocument, const TonikConfig());
+      final transformed = transformer.apply(apiDocument, TonikConfig.defaults);
 
       final transformedPet = transformed.models
           .whereType<ClassModel>()

@@ -54,6 +54,12 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final operation = Operation(
           operationId: 'mapHeaders',
@@ -99,6 +105,12 @@ void main() {
                     context: context,
                     examples: const [],
                     defaultValue: null,
+                    nameOverride: null,
+                    description: null,
+                    isDeprecated: false,
+                    isNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   explode: false,
                   encoding: ResponseHeaderEncoding.simple,
@@ -107,6 +119,8 @@ void main() {
               },
             ),
           },
+          nameOverride: null,
+          requestBody: null,
         );
         final immutableGenerator = ParseGenerator(
           nameManager: nameManager,
@@ -184,11 +198,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -218,12 +235,19 @@ String _parseResponse(Response<List<int>> response) {
         isDeprecated: false,
         context: context,
         values: {
-          const EnumEntry(value: 'A'),
-          const EnumEntry(value: 'B'),
-          const EnumEntry(value: 'C'),
+          const EnumEntry(value: 'A', nameOverride: null),
+          const EnumEntry(value: 'B', nameOverride: null),
+          const EnumEntry(value: 'C', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final operation = Operation(
         operationId: 'enumOp',
@@ -250,11 +274,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -292,10 +319,20 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final operation = Operation(
         operationId: 'classOp',
@@ -322,11 +359,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -377,15 +417,24 @@ String _parseResponse(Response<List<int>> response) {
                   content: IntegerModel(context: context),
                   context: context,
                   examples: const [],
+                  name: null,
+                  nameOverride: null,
+                  isNullable: false,
+                  isContentNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -423,10 +472,20 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final operation = Operation(
         operationId: 'listClassOp',
@@ -453,15 +512,24 @@ String _parseResponse(Response<List<int>> response) {
                   content: classModel,
                   context: context,
                   examples: const [],
+                  name: null,
+                  nameOverride: null,
+                  isNullable: false,
+                  isContentNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -502,6 +570,12 @@ String _parseResponse(Response<List<int>> response) {
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           (
@@ -512,12 +586,24 @@ String _parseResponse(Response<List<int>> response) {
               properties: const [],
               context: context,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         ],
         discriminator: 'type',
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final operation = Operation(
         operationId: 'oneOfOp',
@@ -544,11 +630,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -599,11 +688,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -654,11 +746,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -696,10 +791,20 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final operation = Operation(
         operationId: 'multiStatusOp',
@@ -726,6 +831,7 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -738,6 +844,8 @@ String _parseResponse(Response<List<int>> response) {
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -777,10 +885,20 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final responseHeaders = {
         'x-rate-limit': ResponseHeaderObject(
@@ -831,11 +949,14 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -881,21 +1002,38 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final enumModel = EnumModel(
         isDeprecated: false,
         context: context,
         values: {
-          const EnumEntry(value: 'A'),
-          const EnumEntry(value: 'B'),
-          const EnumEntry(value: 'C'),
+          const EnumEntry(value: 'A', nameOverride: null),
+          const EnumEntry(value: 'B', nameOverride: null),
+          const EnumEntry(value: 'C', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final operation = Operation(
         operationId: 'combinedOp',
@@ -934,6 +1072,7 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -948,6 +1087,7 @@ String _parseResponse(Response<List<int>> response) {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -960,6 +1100,8 @@ String _parseResponse(Response<List<int>> response) {
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -1006,10 +1148,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final genericModel = ClassModel(
           isDeprecated: false,
@@ -1023,10 +1175,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final operation = Operation(
           operationId: 'getThing',
@@ -1053,6 +1215,7 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1067,11 +1230,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -1119,10 +1285,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final genericModel = ClassModel(
           isDeprecated: false,
@@ -1136,10 +1312,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final operation = Operation(
           operationId: 'getThing',
@@ -1173,6 +1359,7 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1187,11 +1374,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -1234,10 +1424,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final createdModel = ClassModel(
           isDeprecated: false,
@@ -1251,10 +1451,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final operation = Operation(
           operationId: 'getThing',
@@ -1281,6 +1491,7 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1295,11 +1506,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -1344,10 +1558,20 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       // Create the base response object
@@ -1374,6 +1598,7 @@ String _parseResponse(Response<List<int>> response) {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -1383,6 +1608,7 @@ String _parseResponse(Response<List<int>> response) {
         name: 'AliasedResponse',
         context: context,
         response: baseResponse,
+        description: null,
       );
 
       final operation = Operation(
@@ -1390,7 +1616,7 @@ String _parseResponse(Response<List<int>> response) {
         context: context,
         summary: 'Get user with alias',
         description: 'Get user by ID using aliased response',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -1402,6 +1628,8 @@ String _parseResponse(Response<List<int>> response) {
         responses: {
           const ExplicitResponseStatus(statusCode: 200): aliasedResponse,
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -1442,6 +1670,12 @@ String _parseResponse(Response<List<int>> response) {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       // The actual header object
@@ -1462,6 +1696,7 @@ String _parseResponse(Response<List<int>> response) {
         name: 'x-user-id-alias',
         context: context,
         header: headerObject,
+        description: null,
       );
 
       final response = ResponseObject(
@@ -1475,6 +1710,7 @@ String _parseResponse(Response<List<int>> response) {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -1484,7 +1720,7 @@ String _parseResponse(Response<List<int>> response) {
         context: context,
         summary: 'Get user with header alias',
         description: 'Get user by ID using header alias',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -1494,6 +1730,8 @@ String _parseResponse(Response<List<int>> response) {
         cookieParameters: const {},
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -1534,6 +1772,12 @@ String _parseResponse(Response<List<int>> response) {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final response = ResponseObject(
@@ -1559,6 +1803,7 @@ String _parseResponse(Response<List<int>> response) {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -1568,7 +1813,7 @@ String _parseResponse(Response<List<int>> response) {
         context: context,
         summary: 'Get user with body header',
         description: 'Get user by ID with body header',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -1578,6 +1823,8 @@ String _parseResponse(Response<List<int>> response) {
         cookieParameters: const {},
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -1620,6 +1867,12 @@ String _parseResponse(Response<List<int>> response) {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final response = ResponseObject(
           name: 'BodyHeaderResponse',
@@ -1644,6 +1897,7 @@ String _parseResponse(Response<List<int>> response) {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1670,6 +1924,10 @@ String _parseResponse(Response<List<int>> response) {
             const ExplicitResponseStatus(statusCode: 200): response,
             const ExplicitResponseStatus(statusCode: 400): errorResponse,
           },
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -1705,12 +1963,14 @@ String _parseResponse(Response<List<int>> response) {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: IntegerModel(context: context),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1728,6 +1988,10 @@ String _parseResponse(Response<List<int>> response) {
           cookieParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 200): response},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -1788,12 +2052,14 @@ String _parseResponse(Response<List<int>> response) {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: IntegerModel(context: context),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1810,6 +2076,10 @@ String _parseResponse(Response<List<int>> response) {
           cookieParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 200): response},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -1849,6 +2119,7 @@ String _parseResponse(Response<List<int>> response) {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -1864,6 +2135,7 @@ String _parseResponse(Response<List<int>> response) {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -1884,6 +2156,10 @@ String _parseResponse(Response<List<int>> response) {
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
         },
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -1942,6 +2218,8 @@ String _parseResponse(Response<List<int>> response) {
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -1966,7 +2244,7 @@ String _parseResponse(Response<List<int>> response) {
           operationId: 'getUser',
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -1996,6 +2274,8 @@ String _parseResponse(Response<List<int>> response) {
               },
             ),
           },
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -2033,11 +2313,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'text/plain',
                   contentType: ContentType.text,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2092,11 +2375,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2146,11 +2432,14 @@ TonikFile _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/*',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2202,11 +2491,14 @@ TonikFile _parseResponse(Response<List<int>> response) {
                     rawContentType: '*/*',
                     contentType: ContentType.bytes,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -2257,23 +2549,28 @@ TonikFile _parseResponse(Response<List<int>> response) {
                   rawContentType: '*/*',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: BinaryModel(context: context),
                   rawContentType: 'application/*',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -2331,11 +2628,14 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'image/png',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2387,23 +2687,28 @@ TonikFile _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'text/plain',
                   contentType: ContentType.text,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2465,11 +2770,14 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2507,6 +2815,10 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'age',
@@ -2516,10 +2828,20 @@ String _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -2547,11 +2869,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2602,11 +2927,14 @@ FormData _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2657,11 +2985,14 @@ int _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2712,15 +3043,24 @@ DateTime _parseResponse(Response<List<int>> response) {
                     valueModel: StringModel(context: context),
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isValueNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2773,19 +3113,34 @@ Map<String, String> _parseResponse(Response<List<int>> response) {
                         valueModel: StringModel(context: context),
                         context: context,
                         examples: const [],
+                        name: null,
+                        nameOverride: null,
+                        isNullable: false,
+                        isValueNullable: false,
+                        isReadOnly: false,
+                        isWriteOnly: false,
                       ),
                       context: context,
                       examples: const [],
                       defaultValue: null,
+                      nameOverride: null,
+                      description: null,
+                      isDeprecated: false,
+                      isNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -2822,10 +3177,20 @@ SessionMeta _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -2853,15 +3218,24 @@ SessionMeta _parseResponse(Response<List<int>> response) {
                     content: classModel,
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isContentNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2911,18 +3285,33 @@ List<FormItem> _parseResponse(Response<List<int>> response) {
                       valueModel: StringModel(context: context),
                       context: context,
                       examples: const [],
+                      name: null,
+                      nameOverride: null,
+                      isNullable: false,
+                      isValueNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isContentNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -2960,10 +3349,20 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final responseHeaders = {
           'X-Any-Header': ResponseHeaderObject(
@@ -3014,11 +3413,14 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
 
@@ -3069,10 +3471,20 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final responseHeaders = {
           'X-Any-Header': ResponseHeaderObject(
@@ -3098,6 +3510,12 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
@@ -3129,11 +3547,14 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
 
@@ -3184,10 +3605,20 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final responseHeaders = {
             'X-Never-Header': ResponseHeaderObject(
@@ -3227,6 +3658,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
@@ -3241,11 +3673,14 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
 
@@ -3314,15 +3749,24 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
                       content: NeverModel(context: context, isNullable: false),
                       context: context,
                       examples: const [],
+                      name: null,
+                      nameOverride: null,
+                      isNullable: false,
+                      isContentNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -3381,11 +3825,14 @@ List<Never> _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -3440,15 +3887,24 @@ Never _parseResponse(Response<List<int>> response) {
                       context: context,
                       examples: const [],
                       defaultValue: null,
+                      nameOverride: null,
+                      description: null,
+                      isDeprecated: false,
+                      isNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -3500,11 +3956,14 @@ NeverAlias _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -3563,15 +4022,24 @@ Never? _parseResponse(Response<List<int>> response) {
                       context: context,
                       examples: const [],
                       defaultValue: null,
+                      nameOverride: null,
+                      description: null,
+                      isDeprecated: false,
+                      isNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -3630,6 +4098,7 @@ NullType _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
@@ -3644,11 +4113,14 @@ NullType _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -3719,11 +4191,14 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -3795,6 +4270,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -3809,11 +4285,14 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -3878,15 +4357,24 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
                     context: context,
                     examples: const [],
                     defaultValue: null,
+                    nameOverride: null,
+                    description: null,
+                    isDeprecated: false,
+                    isNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -3941,11 +4429,14 @@ NeverFormAlias _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -4000,15 +4491,24 @@ Never _parseResponse(Response<List<int>> response) {
                     content: NeverModel(context: context, isNullable: false),
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isContentNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4070,15 +4570,23 @@ List<Never> _parseResponse(Response<List<int>> response) {
                     isNullable: true,
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isContentNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4141,11 +4649,14 @@ List<Never>? _parseResponse(Response<List<int>> response) {
                   rawContentType: 'multipart/form-data',
                   contentType: ContentType.multipart,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         // Should not throw at generation time.
@@ -4193,11 +4704,14 @@ List<Never>? _parseResponse(Response<List<int>> response) {
                   rawContentType: 'multipart/form-data',
                   contentType: ContentType.multipart,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -4249,6 +4763,7 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'multipart/form-data',
                   contentType: ContentType.multipart,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -4263,11 +4778,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         // Should not throw at generation time.
@@ -4315,11 +4833,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: "application/vnd.it's+json",
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -4374,11 +4895,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'Application/JSON',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4429,11 +4953,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json; charset=utf-8',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4484,11 +5011,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'Application/Problem+JSON',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4539,11 +5069,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/vnd.foo+json; version=1',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4602,11 +5135,14 @@ String _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json; charset=utf-8',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         generator.generateParseResponseMethod(operation);
 
@@ -4654,23 +5190,28 @@ String _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                   ResponseBody(
                     model: IntegerModel(context: context),
                     rawContentType: 'application/JSON',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                   ResponseBody(
                     model: IntegerModel(context: context),
                     rawContentType: 'Application/JSON',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
           final method = generator.generateParseResponseMethod(operation);
           const expectedMethod = r'''
@@ -4742,12 +5283,14 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                   ResponseBody(
                     model: StringModel(context: context),
                     rawContentType: 'application/json; version=2',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                   ResponseBody(
                     model: BooleanModel(context: context),
@@ -4755,6 +5298,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                         'application/json; version=2; charset=UTF-8',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                   ResponseBody(
                     model: DoubleModel(context: context),
@@ -4762,11 +5306,14 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                         'Application/JSON; CHARSET="utf-8"; VERSION="2"',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final generated = generator
@@ -4824,29 +5371,35 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'Application/JSON',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'application/xml',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'Application/XML',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -4922,15 +5475,24 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   context: context,
                   isDeprecated: false,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 rawContentType: 'multipart/form-data',
                 contentType: ContentType.multipart,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
         },
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
       final method = generator.generateParseResponseMethod(operation);
       final generated = format(method.accept(emitter).toString());
@@ -4983,15 +5545,24 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                     content: StringModel(context: context),
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isContentNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = immutableGenerator.generateParseResponseMethod(
           operation,
@@ -5044,15 +5615,24 @@ IList<String> _parseResponse(Response<List<int>> response) {
                     valueModel: IntegerModel(context: context),
                     context: context,
                     examples: const [],
+                    name: null,
+                    nameOverride: null,
+                    isNullable: false,
+                    isValueNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = immutableGenerator.generateParseResponseMethod(
           operation,
@@ -5089,6 +5669,11 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
           valueModel: AnyModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         tree.valueModel = tree;
 
@@ -5117,11 +5702,14 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
@@ -5186,11 +5774,14 @@ Tree _parseResponse(Response<List<int>> response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = httpGenerator.generateParseResponseMethod(operation);
@@ -5246,11 +5837,14 @@ String _parseResponse(Response response) {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = httpGenerator.generateParseResponseMethod(operation);
@@ -5317,6 +5911,8 @@ String _parseResponse(Response response) {
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final method = httpGenerator.generateParseResponseMethod(operation);

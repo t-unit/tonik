@@ -68,6 +68,10 @@ class const AllOfGenerator({
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
     }).toList();
 
@@ -113,6 +117,10 @@ class const AllOfGenerator({
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
     }).toList();
 
@@ -866,6 +874,10 @@ class const AllOfGenerator({
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           nameManager: nameManager,
           package: package,

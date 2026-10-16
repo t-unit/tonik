@@ -54,7 +54,7 @@ class const PathParameterAlias({
   required final String name,
   required final PathParameter parameter,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends PathParameter {
   @override
   String toString() =>
@@ -88,7 +88,7 @@ class PathParameterObject({
   required super.context,
   required var List<Example> examples,
   required var Object? defaultValue,
-  var String? nameOverride,
+  required var String? nameOverride,
 }) extends PathParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 

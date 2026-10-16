@@ -147,7 +147,10 @@ class OperationImporter({
 
     final tags = operation.tags
         ?.map(
-          (name) => _tagsByName.putIfAbsent(name, () => core.Tag(name: name)),
+          (name) => _tagsByName.putIfAbsent(
+            name,
+            () => core.Tag(name: name, description: null, nameOverride: null),
+          ),
         )
         .toSet();
 
@@ -188,6 +191,7 @@ class OperationImporter({
       responses: responses,
       requestBody: requestBody,
       securitySchemes: _importSecuritySchemes(operation.security),
+      nameOverride: null,
     );
 
     if (operation.xDartName != null) {

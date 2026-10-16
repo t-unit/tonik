@@ -23,10 +23,26 @@ void main() {
 
     setUp(() {
       ctx = Context.initial();
-      petTag = Tag(name: 'pet', description: 'Pet operations');
-      userTag = Tag(name: 'user', description: 'User operations');
-      storeTag = Tag(name: 'store', description: 'Store operations');
-      adminTag = Tag(name: 'admin', description: 'Admin operations');
+      petTag = Tag(
+        name: 'pet',
+        description: 'Pet operations',
+        nameOverride: null,
+      );
+      userTag = Tag(
+        name: 'user',
+        description: 'User operations',
+        nameOverride: null,
+      );
+      storeTag = Tag(
+        name: 'store',
+        description: 'Store operations',
+        nameOverride: null,
+      );
+      adminTag = Tag(
+        name: 'admin',
+        description: 'Admin operations',
+        nameOverride: null,
+      );
 
       // Single tag operations
       getPetOp = Operation(
@@ -42,6 +58,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       listPetsOp = Operation(
@@ -57,6 +77,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       getUserOp = Operation(
@@ -72,6 +96,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       getStoreOp = Operation(
@@ -87,6 +115,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       // Two tag operations
@@ -103,6 +135,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       petStoreOp = Operation(
@@ -118,6 +154,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       // Three tag operation
@@ -134,6 +174,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       // No tag operation
@@ -150,6 +194,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       // Models
@@ -159,6 +207,12 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       userModel = ClassModel(
@@ -167,6 +221,12 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       statusEnum = EnumModel<String>(
@@ -176,6 +236,12 @@ void main() {
         isNullable: false,
         values: const {},
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final stringModel = ClassModel(
@@ -184,6 +250,12 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       idAlias = AliasModel(
@@ -192,6 +264,12 @@ void main() {
         model: stringModel,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
     });
 
@@ -210,9 +288,15 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig();
+        const config = TonikConfig.defaults;
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -239,9 +323,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['pet'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -266,10 +386,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(includeTags: ['pet', 'user']),
+          filter: FilterConfig(
+            includeTags: ['pet', 'user'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -298,10 +452,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeTags: ['store']),
+          filter: FilterConfig(
+            excludeTags: ['store'],
+            includeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -329,10 +517,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeTags: ['store', 'user']),
+          filter: FilterConfig(
+            excludeTags: ['store', 'user'],
+            includeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -358,6 +580,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         // Include pet and user, then exclude user
@@ -365,7 +593,32 @@ void main() {
           filter: FilterConfig(
             includeTags: ['pet', 'user'],
             excludeTags: ['user'],
+            excludeOperations: [],
+            excludeSchemas: [],
           ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -392,9 +645,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['pet'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -418,9 +707,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(excludeTags: ['user']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            excludeTags: ['user'],
+            includeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -444,9 +769,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(includeTags: ['user']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['user'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -468,9 +829,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['pet'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -492,10 +889,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(includeTags: ['pet', 'user']),
+          filter: FilterConfig(
+            includeTags: ['pet', 'user'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -521,10 +952,44 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(includeTags: ['user']),
+            filter: FilterConfig(
+              includeTags: ['user'],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+            workerCount: 0,
           );
 
           const transformer = ConfigTransformer();
@@ -551,10 +1016,44 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(includeTags: ['store']),
+            filter: FilterConfig(
+              includeTags: ['store'],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+            workerCount: 0,
           );
 
           const transformer = ConfigTransformer();
@@ -580,10 +1079,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeTags: ['pet', 'user']),
+          filter: FilterConfig(
+            excludeTags: ['pet', 'user'],
+            includeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -610,10 +1143,44 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(excludeTags: ['pet']),
+            filter: FilterConfig(
+              excludeTags: ['pet'],
+              includeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+            workerCount: 0,
           );
 
           const transformer = ConfigTransformer();
@@ -638,13 +1205,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
           filter: FilterConfig(
             includeTags: ['pet', 'user'],
             excludeTags: ['store'],
+            excludeOperations: [],
+            excludeSchemas: [],
           ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -669,12 +1267,46 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         // Include pet (matches both), but exclude admin
         // (only matches tripleTagOp)
         const config = TonikConfig(
-          filter: FilterConfig(includeTags: ['pet'], excludeTags: ['admin']),
+          filter: FilterConfig(
+            includeTags: ['pet'],
+            excludeTags: ['admin'],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -700,9 +1332,45 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig(filter: FilterConfig(includeTags: ['pet']));
+        const config = TonikConfig(
+          filter: FilterConfig(
+            includeTags: ['pet'],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
+        );
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -728,9 +1396,15 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
-          const config = TonikConfig();
+          const config = TonikConfig.defaults;
 
           const transformer = ConfigTransformer();
           final transformed = transformer.apply(document, config);
@@ -756,10 +1430,44 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           const config = TonikConfig(
-            filter: FilterConfig(excludeTags: ['user']),
+            filter: FilterConfig(
+              excludeTags: ['user'],
+              includeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+            workerCount: 0,
           );
 
           const transformer = ConfigTransformer();
@@ -786,9 +1494,15 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig();
+        const config = TonikConfig.defaults;
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -814,10 +1528,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['getPet']),
+          filter: FilterConfig(
+            excludeOperations: ['getPet'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -842,10 +1590,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['getPet', 'listPets']),
+          filter: FilterConfig(
+            excludeOperations: ['getPet', 'listPets'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -871,10 +1653,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['nonExistentOp']),
+          filter: FilterConfig(
+            excludeOperations: ['nonExistentOp'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -898,10 +1714,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['getPet', 'listPets']),
+          filter: FilterConfig(
+            excludeOperations: ['getPet', 'listPets'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -923,6 +1773,11 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          operationId: null,
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final document = ApiDocument(
@@ -938,10 +1793,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['getPet']),
+          filter: FilterConfig(
+            excludeOperations: ['getPet'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -965,10 +1854,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeOperations: ['getPet']),
+          filter: FilterConfig(
+            excludeOperations: ['getPet'],
+            includeTags: [],
+            excludeTags: [],
+            excludeSchemas: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -993,9 +1916,15 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
-        const config = TonikConfig();
+        const config = TonikConfig.defaults;
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(document, config);
@@ -1021,10 +1950,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['Pet']),
+          filter: FilterConfig(
+            excludeSchemas: ['Pet'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -1049,10 +2012,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['Pet', 'Status']),
+          filter: FilterConfig(
+            excludeSchemas: ['Pet', 'Status'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -1078,10 +2075,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['NonExistent']),
+          filter: FilterConfig(
+            excludeSchemas: ['NonExistent'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -1105,10 +2136,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['Pet', 'User']),
+          filter: FilterConfig(
+            excludeSchemas: ['Pet', 'User'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -1131,10 +2196,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['Status']),
+          filter: FilterConfig(
+            excludeSchemas: ['Status'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -1159,10 +2258,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          filter: FilterConfig(excludeSchemas: ['Pet']),
+          filter: FilterConfig(
+            excludeSchemas: ['Pet'],
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();

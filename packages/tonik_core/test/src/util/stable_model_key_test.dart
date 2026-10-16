@@ -20,6 +20,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final modelB = ClassModel(
           name: 'B',
@@ -27,6 +33,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         // A → B → A
         modelA.properties = [
@@ -38,6 +50,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ];
         modelB.properties = [
@@ -49,6 +65,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ];
 
@@ -64,6 +84,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       // A → A
       modelA.properties = [
@@ -75,6 +101,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
 
@@ -89,6 +119,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final modelB = ClassModel(
         name: 'B',
@@ -96,6 +132,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final modelC = ClassModel(
         name: 'C',
@@ -103,6 +145,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       modelA.properties = [
         Property(
@@ -113,6 +161,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
       modelB.properties = [
@@ -124,6 +176,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
       modelC.properties = [
@@ -135,6 +191,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
 
@@ -149,6 +209,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final modelB = ClassModel(
         name: 'B',
@@ -156,6 +222,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       modelA.properties = [
         Property(
@@ -166,6 +238,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
       modelB.properties = [
@@ -177,6 +253,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ];
 
@@ -216,6 +296,14 @@ void main() {
         context: sharedContext,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model2 = AllOfModel(
@@ -227,6 +315,14 @@ void main() {
         context: sharedContext,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final key1 = sorter.stableKeyOf(model1);
@@ -248,6 +344,14 @@ void main() {
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final model2 = AllOfModel(
@@ -255,6 +359,14 @@ void main() {
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
@@ -279,6 +391,13 @@ void main() {
         discriminator: 'type',
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model2 = OneOfModel(
@@ -296,6 +415,13 @@ void main() {
         discriminator: 'type',
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
@@ -318,6 +444,14 @@ void main() {
         ],
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model2 = AnyOfModel(
@@ -334,6 +468,14 @@ void main() {
         ],
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       expect(sorter.stableKeyOf(model1), isNot(sorter.stableKeyOf(model2)));
@@ -345,6 +487,11 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model2 = ListModel(
@@ -352,6 +499,11 @@ void main() {
         content: StringModel(context: context.push('other')),
         context: context.push('different'),
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(sorter.stableKeyOf(model1), sorter.stableKeyOf(model2));
@@ -371,6 +523,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'count',
@@ -380,10 +536,20 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final key = sorter.stableKeyOf(model1);
@@ -395,19 +561,41 @@ void main() {
     test('distinguishes date-time enums from ordinary string enums', () {
       final plain = EnumModel<String>(
         name: 'Timestamp',
-        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        values: {
+          const EnumEntry(
+            value: '2026-09-06T12:00:00.1000+02:00',
+            nameOverride: null,
+          ),
+        },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final dateTime = DateTimeEnumModel(
         name: 'Timestamp',
-        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        values: {
+          const EnumEntry(
+            value: '2026-09-06T12:00:00.1000+02:00',
+            nameOverride: null,
+          ),
+        },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -426,27 +614,39 @@ void main() {
       final model1 = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'zebra'),
-          const EnumEntry(value: 'apple'),
-          const EnumEntry(value: 'banana'),
+          const EnumEntry(value: 'zebra', nameOverride: null),
+          const EnumEntry(value: 'apple', nameOverride: null),
+          const EnumEntry(value: 'banana', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final model2 = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry(value: 'banana'),
-          const EnumEntry(value: 'zebra'),
-          const EnumEntry(value: 'apple'),
+          const EnumEntry(value: 'banana', nameOverride: null),
+          const EnumEntry(value: 'zebra', nameOverride: null),
+          const EnumEntry(value: 'apple', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(sorter.stableKeyOf(model1), sorter.stableKeyOf(model2));
@@ -461,6 +661,14 @@ void main() {
         context: context.push('inner'),
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final outerAllOf = AllOfModel(
@@ -471,6 +679,14 @@ void main() {
         context: context.push('outer'),
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final key = sorter.stableKeyOf(outerAllOf);
@@ -493,6 +709,12 @@ void main() {
             context: sharedContext,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         );
       }
@@ -509,6 +731,10 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
         ];
       }
@@ -592,6 +818,14 @@ void main() {
           ],
           context: sharedContext,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final intThenString = AnyOfModel(
           isDeprecated: false,
@@ -607,6 +841,14 @@ void main() {
           ],
           context: sharedContext,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final numberOnly = AnyOfModel(
           isDeprecated: false,
@@ -618,6 +860,14 @@ void main() {
           ],
           context: sharedContext,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         expect(
@@ -650,6 +900,12 @@ void main() {
             context: sharedContext.push('Model$i'),
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         );
       }
@@ -666,6 +922,10 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
         ];
       }
@@ -714,6 +974,12 @@ void main() {
           context: context.push('Alias$i'),
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         aliases.insert(0, alias);
         current = alias;
@@ -751,6 +1017,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final modelB = ClassModel(
           name: 'B',
@@ -758,6 +1030,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         modelA.properties = [
           Property(
@@ -768,6 +1046,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ];
         modelB.properties = [
@@ -779,6 +1061,10 @@ void main() {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ];
 
@@ -795,6 +1081,11 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final key = sorter.stableKeyOf(mapModel);
@@ -806,6 +1097,12 @@ void main() {
         valueModel: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final key = sorter.stableKeyOf(mapModel);
@@ -820,12 +1117,22 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final intMap = MapModel(
           name: 'IntMap',
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -849,12 +1156,22 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ],
       context: context,
       isDeprecated: false,
       examples: const [],
       additionalPropertiesPolicy: additionalPropertiesPolicy,
+      name: null,
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
 
     test('classes differing only in additional-properties presence get '
@@ -863,6 +1180,7 @@ void main() {
       final open = unnamedClass(
         additionalPropertiesPolicy: AllowedAdditionalProperties(
           valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
       );
 
@@ -874,11 +1192,13 @@ void main() {
       final stringValued = unnamedClass(
         additionalPropertiesPolicy: AllowedAdditionalProperties(
           valueModel: StringModel(context: context),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
       );
       final intValued = unnamedClass(
         additionalPropertiesPolicy: AllowedAdditionalProperties(
           valueModel: IntegerModel(context: context),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
       );
 
@@ -894,6 +1214,7 @@ void main() {
       final explicit = unnamedClass(
         additionalPropertiesPolicy: AllowedAdditionalProperties(
           valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
       );
 
@@ -906,6 +1227,7 @@ void main() {
         final unrestricted = unnamedClass(
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
+            origin: AdditionalPropertiesOrigin.explicit,
           ),
         );
         final forbidden = unnamedClass(
@@ -927,6 +1249,14 @@ void main() {
         context: sharedContext,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final withAp = AllOfModel(
         models: [StringModel(context: sharedContext)],
@@ -935,7 +1265,15 @@ void main() {
         examples: const [],
         additionalPropertiesPolicy: AllowedAdditionalProperties(
           valueModel: StringModel(context: sharedContext),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
+        name: null,
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       expect(sorter.stableKeyOf(withoutAp), isNot(sorter.stableKeyOf(withAp)));

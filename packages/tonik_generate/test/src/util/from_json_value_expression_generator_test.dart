@@ -143,6 +143,12 @@ void main() {
           model: StringModel(context: context),
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -162,6 +168,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userAlias = AliasModel(
           context: context,
@@ -169,6 +181,12 @@ void main() {
           model: userModel,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -186,6 +204,12 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listAlias = AliasModel(
           context: context,
@@ -193,6 +217,12 @@ void main() {
           model: listModel,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -212,6 +242,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userAlias = AliasModel(
           context: context,
@@ -219,6 +255,12 @@ void main() {
           model: userModel,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final nestedAlias = AliasModel(
           context: context,
@@ -226,6 +268,12 @@ void main() {
           model: userAlias,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -245,11 +293,23 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userListModel = ListModel(
           content: userModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userListAlias = AliasModel(
           context: context,
@@ -257,6 +317,12 @@ void main() {
           model: userListModel,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -279,6 +345,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userAlias = AliasModel(
           context: context,
@@ -286,11 +358,23 @@ void main() {
           model: userModel,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final userAliasListModel = ListModel(
           content: userAlias,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -313,11 +397,17 @@ void main() {
         context: context,
         name: 'UserRole',
         values: {
-          const EnumEntry(value: 'admin'),
-          const EnumEntry(value: 'user'),
+          const EnumEntry(value: 'admin', nameOverride: null),
+          const EnumEntry(value: 'user', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -337,6 +427,12 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -354,6 +450,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -368,6 +470,12 @@ void main() {
         content: BooleanModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -382,6 +490,12 @@ void main() {
         content: DateModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -399,6 +513,12 @@ void main() {
         content: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -416,6 +536,12 @@ void main() {
         content: DecimalModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -433,6 +559,12 @@ void main() {
         content: BinaryModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -450,6 +582,12 @@ void main() {
         content: Base64Model(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -470,6 +608,12 @@ void main() {
         content: UriModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -492,6 +636,12 @@ void main() {
         isNullable: true,
         defaultValue: null,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       String decode(Model itemModel) => buildFromJsonValueExpression(
@@ -500,6 +650,12 @@ void main() {
           content: nullableItem(itemModel),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         nameManager: nameManager,
         package: 'my_package',
@@ -595,6 +751,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           decode(classModel),
@@ -609,11 +771,17 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           decode(enumModel),
@@ -629,6 +797,13 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         expect(
           decode(oneOfModel),
@@ -644,11 +819,23 @@ void main() {
           name: 'Address',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final mapModel = MapModel(
           valueModel: addressModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           decode(mapModel),
@@ -665,6 +852,11 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -684,16 +876,34 @@ void main() {
         name: 'Address',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: addressModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final listModel = ListModel(
         content: mapModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -716,11 +926,23 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final listModel = ListModel(
         content: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -743,16 +965,34 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerListModel = ListModel(
         content: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         content: innerListModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -774,21 +1014,45 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final innerListModel = ListModel(
         content: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final middleListModel = ListModel(
         content: innerListModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerListModel = ListModel(
         content: middleListModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -809,16 +1073,28 @@ void main() {
         context: context,
         name: 'UserRole',
         values: {
-          const EnumEntry(value: 'admin'),
-          const EnumEntry(value: 'user'),
+          const EnumEntry(value: 'admin', nameOverride: null),
+          const EnumEntry(value: 'user', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final enumListModel = ListModel(
         content: enumModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -866,6 +1142,12 @@ void main() {
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -885,11 +1167,23 @@ void main() {
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final nestedListModel = ListModel(
           content: intListModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final expression = buildFromJsonValueExpression(
@@ -915,11 +1209,17 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -938,16 +1238,28 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final enumListModel = ListModel(
           content: enumModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1055,6 +1367,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1074,11 +1392,17 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1098,6 +1422,12 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1118,11 +1448,23 @@ void main() {
             name: 'User',
             properties: const [],
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final classListModel = ListModel(
             content: classModel,
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1144,6 +1486,12 @@ void main() {
             content: BinaryModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1165,6 +1513,12 @@ void main() {
             content: Base64Model(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1187,16 +1541,28 @@ void main() {
             context: context,
             name: 'UserRole',
             values: {
-              const EnumEntry(value: 'admin'),
-              const EnumEntry(value: 'user'),
+              const EnumEntry(value: 'admin', nameOverride: null),
+              const EnumEntry(value: 'user', nameOverride: null),
             },
             isNullable: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final enumListModel = ListModel(
             content: enumModel,
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1223,6 +1589,12 @@ void main() {
           name: 'License',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final nullableAlias = AliasModel(
           context: context,
@@ -1231,6 +1603,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1250,6 +1627,12 @@ void main() {
           name: 'License',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final innerAlias = AliasModel(
           context: context,
@@ -1258,6 +1641,11 @@ void main() {
           isNullable: true,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final outerAlias = AliasModel(
           context: context,
@@ -1265,6 +1653,12 @@ void main() {
           model: innerAlias,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1287,6 +1681,11 @@ void main() {
             isNullable: true,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
+            description: null,
+            isDeprecated: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1308,6 +1707,11 @@ void main() {
           properties: const [],
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1326,11 +1730,17 @@ void main() {
           context: context,
           name: 'Status',
           values: {
-            const EnumEntry(value: 'active'),
-            const EnumEntry(value: 'inactive'),
+            const EnumEntry(value: 'active', nameOverride: null),
+            const EnumEntry(value: 'inactive', nameOverride: null),
           },
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(
@@ -1351,6 +1761,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1369,6 +1785,11 @@ void main() {
         context: context,
         isNullable: true,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1386,6 +1807,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1406,11 +1833,23 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1428,6 +1867,12 @@ void main() {
         valueModel: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1445,6 +1890,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1469,16 +1920,28 @@ void main() {
         context: context,
         name: 'Status',
         values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
+          const EnumEntry(value: 'active', nameOverride: null),
+          const EnumEntry(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: enumModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1556,6 +2019,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1574,6 +2043,12 @@ void main() {
         content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1593,6 +2068,11 @@ void main() {
         isContentNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1613,6 +2093,12 @@ void main() {
           content: NeverModel(context: context, isNullable: false),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final result = buildFromJsonValueExpression(
           'value',
@@ -1636,6 +2122,11 @@ void main() {
           isNullable: true,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final result = buildFromJsonValueExpression(
           'value',
@@ -1657,6 +2148,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1675,6 +2172,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1694,6 +2197,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1713,6 +2222,11 @@ void main() {
         context: context,
         isNullable: true,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1731,11 +2245,23 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outerList = ListModel(
         content: innerList,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1756,11 +2282,23 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final mapModel = MapModel(
         valueModel: listModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1781,6 +2319,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1800,6 +2344,11 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1819,6 +2368,12 @@ void main() {
         content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1844,6 +2399,12 @@ void main() {
         model: StringModel(context: context),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1893,6 +2454,12 @@ void main() {
         content: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(
         buildFromJsonValueExpression(
@@ -1916,6 +2483,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildFromJsonValueExpression(

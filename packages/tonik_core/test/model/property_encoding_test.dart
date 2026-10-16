@@ -106,6 +106,8 @@ void main() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(encoding.isStyleBased, isFalse);
       });
@@ -118,6 +120,8 @@ void main() {
           style: EncodingStyle.form,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(encoding.isStyleBased, isTrue);
       });
@@ -130,6 +134,8 @@ void main() {
           style: null,
           explode: false,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(encoding.isStyleBased, isTrue);
       });
@@ -142,6 +148,8 @@ void main() {
           style: null,
           explode: null,
           allowReserved: true,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(encoding.isStyleBased, isTrue);
       });
@@ -156,6 +164,8 @@ void main() {
             style: null,
             explode: null,
             allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           );
           expect(encoding.isStyleBased, isFalse);
         },
@@ -171,6 +181,8 @@ void main() {
           style: EncodingStyle.form,
           explode: true,
           allowReserved: false,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         const b = PartEncoding(
           contentType: ContentType.json,
@@ -179,6 +191,8 @@ void main() {
           style: EncodingStyle.form,
           explode: true,
           allowReserved: false,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(a, b);
         expect(a.hashCode, b.hashCode);
@@ -192,6 +206,8 @@ void main() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         const b = PartEncoding(
           contentType: null,
@@ -200,6 +216,8 @@ void main() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(a, isNot(b));
       });
@@ -212,6 +230,8 @@ void main() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         expect(a, isNot('not an encoding'));
       });
@@ -226,6 +246,8 @@ void main() {
           style: EncodingStyle.form,
           explode: true,
           allowReserved: false,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
         final str = encoding.toString();
         expect(str, contains('PartEncoding'));

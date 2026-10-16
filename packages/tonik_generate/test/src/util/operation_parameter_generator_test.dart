@@ -36,6 +36,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -51,6 +52,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -79,6 +84,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -94,6 +100,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -121,6 +131,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -136,6 +147,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -170,6 +185,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -185,6 +201,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -210,6 +230,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -225,6 +246,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -251,6 +276,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -266,6 +292,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -293,6 +323,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final cookieParam = CookieParameterObject(
@@ -307,6 +338,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -322,6 +354,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -351,6 +387,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final queryParam = QueryParameterObject(
@@ -367,6 +404,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final headerParam = RequestHeaderObject(
@@ -382,6 +420,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final cookieParam = CookieParameterObject(
@@ -396,6 +435,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -411,6 +451,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -475,6 +519,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -494,6 +540,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -568,6 +617,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -587,6 +638,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -658,6 +712,8 @@ void main() {
                 style: null,
                 explode: null,
                 allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             }),
           },
@@ -677,6 +733,9 @@ void main() {
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         final parameters = generateParameters(
@@ -750,6 +809,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -769,6 +830,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -818,6 +882,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -837,6 +903,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -899,6 +968,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -918,6 +989,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -934,6 +1006,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -999,6 +1074,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -1017,6 +1094,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1079,6 +1159,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -1097,6 +1179,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameterNames = generateParameters(
@@ -1158,6 +1243,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -1177,6 +1264,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1240,11 +1330,14 @@ void main() {
                   name: 'X-Trace-Id',
                   context: context,
                   header: underlyingHeader,
+                  description: null,
                 ),
               },
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -1264,6 +1357,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1292,6 +1388,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'static-trace-id',
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final partModel8 = _multipartContent(
@@ -1338,6 +1440,8 @@ void main() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           }),
         },
@@ -1357,6 +1461,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1388,6 +1495,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final requestBody = RequestBodyObject(
@@ -1403,10 +1511,19 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -1425,6 +1542,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1458,6 +1578,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final requestBody = RequestBodyObject(
@@ -1473,10 +1594,19 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -1495,6 +1625,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1527,6 +1660,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final requestBody = RequestBodyObject(
@@ -1542,10 +1676,19 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -1564,6 +1707,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1599,6 +1745,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1614,6 +1761,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final parameters = generateParameters(
@@ -1644,6 +1795,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1659,6 +1811,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1690,6 +1846,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1705,6 +1862,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1736,6 +1897,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1751,6 +1913,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1781,6 +1947,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1796,6 +1963,10 @@ void main() {
         cookieParameters: {cookieParam},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1829,6 +2000,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final requestBody = RequestBodyObject(
@@ -1844,10 +2016,19 @@ void main() {
               context: context,
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -1866,6 +2047,9 @@ void main() {
         responses: const {},
         requestBody: requestBody,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       final parameters = generateParameters(
@@ -1899,6 +2083,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1914,6 +2099,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1943,6 +2132,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = Operation(
@@ -1958,6 +2148,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final parameters = generateParameters(
@@ -1992,6 +2186,10 @@ void main() {
       cookieParameters: cookieParameters,
       responses: const {},
       securitySchemes: const {},
+      nameOverride: null,
+      summary: null,
+      description: null,
+      requestBody: null,
     );
 
     test('optional query string with materialised default becomes non-required '
@@ -2010,6 +2208,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'us',
+        nameOverride: null,
       );
 
       final operation = operationWith(queryParameters: {region});
@@ -2049,6 +2248,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 1,
+        nameOverride: null,
       );
 
       final operation = operationWith(queryParameters: {page});
@@ -2084,6 +2284,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 5,
+        nameOverride: null,
       );
 
       final operation = operationWith(headers: {retries});
@@ -2119,6 +2320,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: false,
+        nameOverride: null,
       );
 
       final operation = operationWith(cookieParameters: {tracking});
@@ -2155,6 +2357,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 'x',
+        nameOverride: null,
       );
 
       final operation = operationWith(
@@ -2192,6 +2395,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final operation = operationWith(queryParameters: {region});
@@ -2223,6 +2427,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: '2024-01-01T00:00:00Z',
+        nameOverride: null,
       );
 
       final operation = operationWith(
@@ -2267,6 +2472,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: '2024-01-01T00:00:00Z',
+          nameOverride: null,
         );
 
         final operation = operationWith(queryParameters: {since});
@@ -2306,10 +2512,18 @@ MultipartRequestContent _multipartContent({
     properties: [for (final part in parts) part.property],
     isDeprecated: false,
     examples: const [],
+    nameOverride: null,
+    description: null,
+    additionalPropertiesPolicy: null,
+    isNullable: false,
+    isReadOnly: false,
+    isWriteOnly: false,
   ),
   encoding: {for (final part in parts) part.property.name: part.encoding},
   rawContentType: rawContentType,
   examples: examples,
+  wireContentType: null,
+  textEncoding: TextEncoding.utf8,
 );
 
 final class MultipartPartFixture._({
@@ -2334,6 +2548,10 @@ final class MultipartPartFixture._({
            isDeprecated: isDeprecated,
            examples: examples,
            defaultValue: defaultValue,
+           isReadOnly: false,
+           isWriteOnly: false,
+           nameOverride: null,
+           description: null,
          ),
          encoding: encoding,
        );
@@ -2358,4 +2576,6 @@ const _binaryEncoding = PartEncoding(
   style: null,
   explode: null,
   allowReserved: null,
+  wireContentType: null,
+  textEncoding: TextEncoding.utf8,
 );

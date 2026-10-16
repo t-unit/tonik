@@ -17,6 +17,9 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           examples: const [],
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
+          formEncoding: null,
         ),
         throwsArgumentError,
       );
@@ -35,12 +38,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/vnd.api+json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -72,6 +81,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -80,6 +92,7 @@ void main() {
           name: 'test',
           context: context,
           requestBody: referencedBody,
+          description: null,
         );
 
         expect(alias.contentCount, 1);
@@ -94,6 +107,9 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         };
 
@@ -115,6 +131,9 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         };
 
@@ -130,6 +149,7 @@ void main() {
           name: 'test',
           context: context,
           requestBody: referencedBody,
+          description: null,
         );
 
         expect(alias.resolvedContent, content);
@@ -169,6 +189,7 @@ void main() {
           name: 'aliased',
           context: context,
           requestBody: referencedBody,
+          description: null,
         );
 
         expect(alias.description, isNull);

@@ -121,6 +121,7 @@ ResponseBody _body(String contentType, Context context) {
         ? ContentType.text
         : ContentType.json,
     examples: const [],
+    delivery: ResponseDelivery.complete,
   );
 }
 

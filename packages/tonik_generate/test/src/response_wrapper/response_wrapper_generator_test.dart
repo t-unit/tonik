@@ -64,6 +64,10 @@ void main() {
             bodies: const {},
           ),
         },
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
       final classes = ResponseWrapperGenerator(
         nameManager: nameManager,
@@ -94,12 +98,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: testContext),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -114,6 +120,7 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -131,6 +138,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
     });
 
@@ -165,12 +176,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: testContext),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -185,6 +198,7 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -202,6 +216,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
@@ -265,6 +283,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
       expect(() => generator.generateClasses(operation), throwsArgumentError);
     });
@@ -282,6 +304,7 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -299,6 +322,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final classes = generator.generateClasses(operation);
@@ -327,6 +354,7 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -344,6 +372,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final classes = generator.generateClasses(operation);
@@ -371,12 +403,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: StringModel(context: testContext),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -394,6 +428,10 @@ void main() {
           cookieParameters: const {},
           responses: responses,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         final classes = generator.generateClasses(operation);
         expect(classes, hasLength(2));
@@ -428,6 +466,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -442,6 +481,7 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -459,6 +499,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
@@ -514,6 +558,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -528,6 +573,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -554,6 +600,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -568,12 +615,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: IntegerModel(context: testContext),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -591,6 +640,10 @@ void main() {
           cookieParameters: const {},
           responses: responses,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         final classes = generator.generateClasses(operation);
         final subclass201 = classes.firstWhere(
@@ -645,6 +698,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -653,6 +707,7 @@ void main() {
           name: 'CreatedAlias',
           response: aliasTarget,
           context: testContext,
+          description: null,
         ),
       };
       final operation = Operation(
@@ -668,6 +723,10 @@ void main() {
         cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
       final classes = generator.generateClasses(operation);
       final subclass201 = classes.firstWhere(

@@ -67,6 +67,8 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -135,6 +137,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -152,6 +155,8 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -232,11 +237,14 @@ Future<TonikResult<void, Response<Object?>>> call({
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           responses: const {},
           securitySchemes: const {},
           cookieParameters: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -274,6 +282,7 @@ Future<TonikResult<void, Response<Object?>>> call({
                 context: context,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
               ),
             ),
           ],
@@ -324,6 +333,8 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -385,6 +396,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           allowReserved: false,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final queryParam2 = QueryParameterObject(
@@ -401,6 +413,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           allowReserved: false,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -418,6 +431,8 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -498,6 +513,8 @@ Future<TonikResult<void, Response<Object?>>> call({
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -532,6 +549,9 @@ Future<TonikResult<void, Response<Object?>>> call({
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -552,6 +572,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -586,6 +607,9 @@ Future<TonikResult<void, Response<Object?>>> call({
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -606,6 +630,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         const normalizedParams = NormalizedRequestParameters(
@@ -659,12 +684,18 @@ Future<TonikResult<void, Response<Object?>>> call({
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: IntegerModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/xml',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -685,6 +716,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -727,6 +759,8 @@ Future<TonikResult<void, Response<Object?>>> call({
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
               ], name: 'UploadForm'),
@@ -749,6 +783,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -809,6 +844,8 @@ Future<TonikResult<void, Response<Object?>>> call({
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
               ], name: 'UploadForm'),
@@ -831,6 +868,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            nameOverride: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -885,6 +923,9 @@ Future<TonikResult<void, Response<Object?>>> call({
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -902,6 +943,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final queryParam = QueryParameterObject(
@@ -918,6 +960,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             allowReserved: false,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final pathParam = PathParameterObject(
@@ -933,6 +976,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -951,6 +995,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             requestBody: requestBody,
             securitySchemes: const {},
             cookieParameters: const {},
+            nameOverride: null,
           );
 
           final normalizedParams = NormalizedRequestParameters(
@@ -1016,10 +1061,13 @@ Future<TonikResult<void, Response<Object?>>> call({
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
+          nameOverride: null,
+          requestBody: null,
         );
 
         const normalizedParams = NormalizedRequestParameters(
@@ -1080,6 +1128,8 @@ Future<TonikResult<String, Response<Object?>>> call({TonikCancellation? cancella
               bodies: const {},
             ),
           },
+          nameOverride: null,
+          requestBody: null,
         );
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
@@ -1144,17 +1194,32 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
                         isDeprecated: false,
                         context: context,
                         examples: const [],
+                        nameOverride: null,
+                        description: null,
+                        additionalPropertiesPolicy: null,
+                        isNullable: false,
+                        isReadOnly: false,
+                        isWriteOnly: false,
                       ),
                       context: context,
                       examples: const [],
+                      name: null,
+                      nameOverride: null,
+                      isNullable: false,
+                      isContentNullable: false,
+                      isReadOnly: false,
+                      isWriteOnly: false,
                     ),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
+                    delivery: ResponseDelivery.complete,
                   ),
                 },
               ),
             },
+            nameOverride: null,
+            requestBody: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -1209,6 +1274,8 @@ Future<TonikResult<List<ActivePet>, Response<Object?>>> call({TonikCancellation?
           cookieParameters: const {},
           responses: const {}, // Empty responses map
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const normalizedParams = NormalizedRequestParameters(
@@ -1263,6 +1330,8 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -1304,6 +1373,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -1321,6 +1391,8 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final normalizedParams = NormalizedRequestParameters(
@@ -1357,6 +1429,8 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         const normalizedParams = NormalizedRequestParameters(
@@ -1408,6 +1482,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1423,6 +1498,10 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -1471,6 +1550,9 @@ Future<TonikResult<void, Response<Object?>>> call({
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1489,6 +1571,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1505,6 +1588,9 @@ Future<TonikResult<void, Response<Object?>>> call({
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = '''
@@ -1555,6 +1641,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1570,6 +1657,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -1619,6 +1710,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1634,6 +1726,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -1682,6 +1778,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1697,6 +1794,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: {cookie},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -1747,6 +1848,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1762,6 +1864,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -1812,6 +1918,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1827,6 +1934,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final cls = generator.generateClass(operation, 'GetA');
@@ -1856,6 +1967,8 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1874,6 +1987,9 @@ Future<TonikResult<void, Response<Object?>>> call({
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1891,6 +2007,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final queryParam = QueryParameterObject(
@@ -1907,6 +2024,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           allowReserved: false,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -1925,6 +2043,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1961,8 +2080,10 @@ Future<TonikResult<void, Response<Object?>>> call({
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
           context: context,
+          description: null,
         );
 
         final queryParam = QueryParameterAlias(
@@ -1981,8 +2102,10 @@ Future<TonikResult<void, Response<Object?>>> call({
             allowReserved: false,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
           context: context,
+          description: null,
         );
 
         final headerParam = RequestHeaderAlias(
@@ -2000,8 +2123,10 @@ Future<TonikResult<void, Response<Object?>>> call({
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
           context: context,
+          description: null,
         );
 
         final operation = Operation(
@@ -2019,6 +2144,8 @@ Future<TonikResult<void, Response<Object?>>> call({
           responses: const {},
           securitySchemes: const {},
           cookieParameters: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -2059,6 +2186,8 @@ Future<TonikResult<void, Response<Object?>>> call({
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           );
 
           final result = generator.generateClass(operation, 'GetPets');
@@ -2087,6 +2216,8 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {}, // Empty responses map
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
@@ -2125,11 +2256,14 @@ Future<TonikResult<void, Response<Object?>>> call({
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
@@ -2159,6 +2293,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           allowReserved: false,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2176,6 +2311,8 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final result = generator.generateClass(operation, 'GetPets');
@@ -2200,6 +2337,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'x',
+          nameOverride: null,
         );
         final queryParam = QueryParameterObject(
           name: 'region',
@@ -2215,6 +2353,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
         );
         final header = RequestHeaderObject(
           name: 'retries',
@@ -2229,6 +2368,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 5,
+          nameOverride: null,
         );
         final cookie = CookieParameterObject(
           name: 'tracking',
@@ -2242,6 +2382,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: false,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2257,6 +2398,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: {cookie},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final result = generator.generateClass(operation, 'ListThings');
@@ -2331,6 +2476,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2346,6 +2492,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final result = generator.generateClass(operation, 'NoDefaults');
@@ -2377,6 +2527,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
         );
         final preExisting = QueryParameterObject(
           name: 'regionDefault',
@@ -2392,6 +2543,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2407,6 +2559,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final result = generator.generateClass(operation, 'Collide');
@@ -2435,6 +2591,12 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'static-trace-id',
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final requestBody = RequestBodyObject(
@@ -2466,6 +2628,8 @@ Future<TonikResult<void, Response<Object?>>> call({
                       examples: const [],
                     ),
                   },
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
                 ),
               ),
             ], name: 'UploadForm'),
@@ -2486,6 +2650,9 @@ Future<TonikResult<void, Response<Object?>>> call({
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         final result = generator.generateClass(operation, 'Upload');
@@ -2510,6 +2677,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'us',
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2525,6 +2693,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -2576,6 +2748,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'true',
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2591,6 +2764,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         generator.generateClass(operation, 'ListThings');
@@ -2606,13 +2783,19 @@ Future<TonikResult<void, Response<Object?>>> call({
         final statusEnum = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'active', nameOverride: null),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final queryParam = QueryParameterObject(
@@ -2629,6 +2812,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           defaultValue: 'active',
+          nameOverride: null,
         );
 
         final operation = Operation(
@@ -2644,6 +2828,10 @@ Future<TonikResult<void, Response<Object?>>> call({
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final result = generator.generateClass(operation, 'ListThings');
@@ -2713,6 +2901,7 @@ Future<TonikResult<void, Response<Object?>>> call({
             context: context,
             examples: const [],
             defaultValue: '2024-01-01T00:00:00Z',
+            nameOverride: null,
           );
 
           final operation = Operation(
@@ -2728,6 +2917,10 @@ Future<TonikResult<void, Response<Object?>>> call({
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
+            requestBody: null,
           );
 
           final result = generator.generateClass(operation, 'ListThings');

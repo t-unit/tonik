@@ -6,7 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// This transformer performs in-place replacement throughout the entire
 /// document, ensuring referential consistency by memoizing transformations.
 @immutable
-class const AllOfNormalizer({final bool normalizeSingleMembers = true}) {
+class const AllOfNormalizer({required final bool normalizeSingleMembers}) {
   /// Normalizes allOf schemas, optionally reducing single models to aliases.
   ///
   /// This simplifies patterns like `allOf: [$ref, {description: ...}]` used
@@ -224,6 +224,12 @@ class const AllOfNormalizer({final bool normalizeSingleMembers = true}) {
           : NeverModel(context: model.context, isNullable: false),
       context: model.context,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
   }
 

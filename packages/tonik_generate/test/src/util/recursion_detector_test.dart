@@ -20,6 +20,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(isRecursive(map), isFalse);
     });
@@ -30,6 +36,11 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       expect(isRecursive(map), isFalse);
     });
@@ -40,6 +51,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       treeSelfRef.valueModel = treeSelfRef;
 
@@ -52,6 +68,11 @@ void main() {
         content: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       forest.content = forest;
 
@@ -64,11 +85,22 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = ListModel(
         content: tree,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(isRecursive(tree), isTrue);
@@ -80,12 +112,22 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.valueModel = b;
       b.valueModel = a;
@@ -100,18 +142,33 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final c = MapModel(
         name: 'C',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.valueModel = b;
       b.valueModel = c;
@@ -128,6 +185,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final alias = AliasModel(
         name: 'TreeAlias',
@@ -135,6 +197,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = alias;
 

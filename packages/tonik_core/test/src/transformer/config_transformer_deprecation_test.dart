@@ -13,7 +13,7 @@ void main() {
 
     setUp(() {
       ctx = Context.initial();
-      tag = Tag(name: 'test', description: 'Test tag');
+      tag = Tag(name: 'test', description: 'Test tag', nameOverride: null);
 
       deprecatedOp = Operation(
         operationId: 'deprecatedOp',
@@ -28,6 +28,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       nonDeprecatedOp = Operation(
@@ -43,6 +47,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       document = ApiDocument(
@@ -58,11 +66,17 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
     });
 
     test('annotate mode keeps all operations unchanged', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
       expect(result.operations, hasLength(2));
@@ -86,7 +100,35 @@ void main() {
 
     test('exclude mode removes deprecated operations', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(operations: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.exclude,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -99,7 +141,35 @@ void main() {
 
     test('ignore mode sets isDeprecated to false for all operations', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(operations: DeprecatedHandling.ignore),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.ignore,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -122,7 +192,7 @@ void main() {
     });
 
     test('default config (annotate) does not modify operations', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
       expect(identical(result.operations, document.operations), isTrue);
@@ -144,10 +214,44 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(operations: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.exclude,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(emptyDoc, config);
@@ -169,10 +273,44 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(operations: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.exclude,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(onlyNormalDoc, config);
@@ -200,6 +338,11 @@ void main() {
         isDeprecated: true,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       nonDeprecatedClass = ClassModel(
@@ -209,6 +352,11 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       deprecatedEnum = EnumModel<String>(
@@ -219,6 +367,11 @@ void main() {
         isNullable: false,
         values: const {},
         examples: const [],
+        nameOverride: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       nonDeprecatedEnum = EnumModel<String>(
@@ -229,6 +382,11 @@ void main() {
         isNullable: false,
         values: const {},
         examples: const [],
+        nameOverride: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       document = ApiDocument(
@@ -249,11 +407,17 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
     });
 
     test('annotate mode keeps all schemas unchanged', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
       expect(result.models, hasLength(4));
@@ -272,7 +436,35 @@ void main() {
 
     test('exclude mode removes deprecated schemas', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(schemas: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          schemas: DeprecatedHandling.exclude,
+          operations: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -286,7 +478,35 @@ void main() {
 
     test('ignore mode sets isDeprecated to false for all schemas', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(schemas: DeprecatedHandling.ignore),
+        deprecated: DeprecatedConfig(
+          schemas: DeprecatedHandling.ignore,
+          operations: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -304,7 +524,7 @@ void main() {
     });
 
     test('default config (annotate) does not modify schemas', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
       expect(identical(result.models, document.models), isTrue);
@@ -321,6 +541,13 @@ void main() {
         isDeprecated: true,
         models: [nonDeprecatedClass],
         examples: const [],
+        name: null,
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final docWithComposite = ApiDocument(
@@ -336,10 +563,44 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(schemas: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          schemas: DeprecatedHandling.exclude,
+          operations: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(docWithComposite, config);
@@ -350,7 +611,11 @@ void main() {
     });
 
     test('handles independent operation and schema deprecation modes', () {
-      final tag = Tag(name: 'test', description: 'Test tag');
+      final tag = Tag(
+        name: 'test',
+        description: 'Test tag',
+        nameOverride: null,
+      );
       final deprecatedOp = Operation(
         operationId: 'deprecatedOp',
         context: ctx.push('paths').push('/deprecated').push('get'),
@@ -364,6 +629,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final mixedDoc = ApiDocument(
@@ -379,13 +648,44 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const config = TonikConfig(
         deprecated: DeprecatedConfig(
           operations: DeprecatedHandling.exclude,
           schemas: DeprecatedHandling.ignore,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
         ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(mixedDoc, config);
@@ -412,7 +712,7 @@ void main() {
 
     setUp(() {
       ctx = Context.initial();
-      tag = Tag(name: 'test', description: 'Test tag');
+      tag = Tag(name: 'test', description: 'Test tag', nameOverride: null);
 
       final stringModel = ClassModel(
         name: 'String',
@@ -420,6 +720,12 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       deprecatedQuery = QueryParameterObject(
@@ -436,6 +742,7 @@ void main() {
         context: ctx.push('parameters').push('deprecatedFilter'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       normalQuery = QueryParameterObject(
@@ -452,6 +759,7 @@ void main() {
         context: ctx.push('parameters').push('normalFilter'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       deprecatedPath = PathParameterObject(
@@ -467,6 +775,7 @@ void main() {
         context: ctx.push('parameters').push('deprecatedId'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       normalPath = PathParameterObject(
@@ -482,6 +791,7 @@ void main() {
         context: ctx.push('parameters').push('normalId'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       deprecatedHeader = RequestHeaderObject(
@@ -497,6 +807,7 @@ void main() {
         context: ctx.push('headers').push('X-Deprecated-Header'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       normalHeader = RequestHeaderObject(
@@ -512,6 +823,7 @@ void main() {
         context: ctx.push('headers').push('X-Normal-Header'),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       operation = Operation(
@@ -527,6 +839,10 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       document = ApiDocument(
@@ -542,11 +858,17 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
     });
 
     test('annotate mode keeps all parameters unchanged', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
       final op = result.operations.single;
@@ -566,7 +888,35 @@ void main() {
 
     test('exclude mode removes deprecated parameters', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(parameters: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          parameters: DeprecatedHandling.exclude,
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -588,7 +938,35 @@ void main() {
 
     test('ignore mode sets isDeprecated to false for all parameters', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(parameters: DeprecatedHandling.ignore),
+        deprecated: DeprecatedConfig(
+          parameters: DeprecatedHandling.ignore,
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       final result = transformer.apply(document, config);
@@ -624,6 +1002,12 @@ void main() {
         isDeprecated: false,
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final deprecatedProp = Property(
@@ -635,6 +1019,9 @@ void main() {
         description: 'A deprecated property',
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
       );
 
       final normalProp = Property(
@@ -646,6 +1033,9 @@ void main() {
         description: 'A normal property',
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
       );
 
       final anotherNormalProp = Property(
@@ -656,6 +1046,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       modelWithDeprecatedProps = ClassModel(
@@ -668,6 +1062,11 @@ void main() {
         isDeprecated: false,
         properties: [deprecatedProp, normalProp, anotherNormalProp],
         examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       modelWithoutDeprecatedProps = ClassModel(
@@ -677,6 +1076,11 @@ void main() {
         isDeprecated: false,
         properties: [normalProp],
         examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       document = ApiDocument(
@@ -692,11 +1096,17 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
     });
 
     test('annotate mode keeps all properties unchanged', () {
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
 
       transformer.apply(document, config);
 
@@ -711,7 +1121,35 @@ void main() {
 
     test('exclude mode removes deprecated properties', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(properties: DeprecatedHandling.exclude),
+        deprecated: DeprecatedConfig(
+          properties: DeprecatedHandling.exclude,
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       transformer.apply(document, config);
@@ -739,7 +1177,35 @@ void main() {
 
     test('ignore mode sets isDeprecated to false for all properties', () {
       const config = TonikConfig(
-        deprecated: DeprecatedConfig(properties: DeprecatedHandling.ignore),
+        deprecated: DeprecatedConfig(
+          properties: DeprecatedHandling.ignore,
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        enums: EnumConfig(
+          generateUnknownCase: false,
+          unknownCaseName: 'unknown',
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       transformer.apply(document, config);

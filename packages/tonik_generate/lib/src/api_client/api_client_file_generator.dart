@@ -10,7 +10,11 @@ class ApiClientFileGenerator({
   final log = Logger('ApiClientFileGenerator');
 
   /// Tag used for operations without any tags.
-  static final defaultTag = Tag(name: 'default');
+  static final defaultTag = Tag(
+    name: 'default',
+    description: null,
+    nameOverride: null,
+  );
 
   List<String> writeFiles({
     required ApiDocument apiDocument,

@@ -375,5 +375,9 @@ Property createProperty(String name, {bool isDeprecated = false}) {
     isDeprecated: isDeprecated,
     examples: const [],
     defaultValue: null,
+    isReadOnly: false,
+    isWriteOnly: false,
+    nameOverride: null,
+    description: null,
   );
 }

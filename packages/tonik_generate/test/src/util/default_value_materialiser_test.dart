@@ -208,6 +208,11 @@ void main() {
         examples: const [],
         defaultValue: null,
         isNullable: true,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -229,6 +234,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -252,6 +263,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outer = AliasModel(
         name: 'OuterAlias',
@@ -259,6 +276,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -286,6 +309,12 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         nameManager: nameManager,
         package: package,
@@ -326,8 +355,8 @@ void main() {
       final entries =
           values ??
           [
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'active', nameOverride: null),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           ];
       return EnumModel<String>(
         name: name,
@@ -337,6 +366,11 @@ void main() {
         isDeprecated: false,
         examples: const [],
         fallbackValue: fallbackValue,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
     }
 
@@ -348,9 +382,9 @@ void main() {
       final entries =
           values ??
           [
-            const EnumEntry<int>(value: 1),
-            const EnumEntry<int>(value: 2),
-            const EnumEntry<int>(value: 3),
+            const EnumEntry<int>(value: 1, nameOverride: null),
+            const EnumEntry<int>(value: 2, nameOverride: null),
+            const EnumEntry<int>(value: 3, nameOverride: null),
           ];
       return EnumModel<int>(
         name: name,
@@ -360,6 +394,11 @@ void main() {
         isDeprecated: false,
         examples: const [],
         fallbackValue: fallbackValue,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
     }
 
@@ -420,7 +459,10 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'unknown',
         targetModel: stringEnum(
-          fallbackValue: const EnumEntry<String>(value: 'unknown'),
+          fallbackValue: const EnumEntry<String>(
+            value: 'unknown',
+            nameOverride: null,
+          ),
         ),
         nameManager: nameManager,
         package: package,
@@ -456,7 +498,7 @@ void main() {
         targetModel: stringEnum(
           values: const [
             EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
-            EnumEntry<String>(value: 'inactive'),
+            EnumEntry<String>(value: 'inactive', nameOverride: null),
           ],
           fallbackValue: const EnumEntry<String>(
             value: 'unknown',
@@ -482,6 +524,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outer = AliasModel(
         name: 'StatusOuter',
@@ -489,6 +537,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -510,7 +564,10 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'inactive',
         targetModel: stringEnum(
-          fallbackValue: const EnumEntry<String>(value: 'inactive'),
+          fallbackValue: const EnumEntry<String>(
+            value: 'inactive',
+            nameOverride: null,
+          ),
         ),
         nameManager: nameManager,
         package: package,
@@ -528,13 +585,19 @@ void main() {
       final nullableStatus = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry<String>(value: 'active'),
-          const EnumEntry<String>(value: 'inactive'),
+          const EnumEntry<String>(value: 'active', nameOverride: null),
+          const EnumEntry<String>(value: 'inactive', nameOverride: null),
         },
         isNullable: true,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -549,11 +612,29 @@ void main() {
   });
 
   group('materialiseConstDefault — collections', () {
-    ListModel listOf(Model content) =>
-        ListModel(content: content, context: context, examples: const []);
+    ListModel listOf(Model content) => ListModel(
+      content: content,
+      context: context,
+      examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
 
-    MapModel mapOf(Model valueModel) =>
-        MapModel(valueModel: valueModel, context: context, examples: const []);
+    MapModel mapOf(Model valueModel) => MapModel(
+      valueModel: valueModel,
+      context: context,
+      examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
 
     test('ListModel<StringModel> + list of strings yields const list', () {
       final result = materialiseConstDefault(
@@ -589,13 +670,19 @@ void main() {
       final statusEnum = EnumModel<String>(
         name: 'Status',
         values: {
-          const EnumEntry<String>(value: 'active'),
-          const EnumEntry<String>(value: 'inactive'),
+          const EnumEntry<String>(value: 'active', nameOverride: null),
+          const EnumEntry<String>(value: 'inactive', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -633,6 +720,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(
@@ -693,6 +786,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final result = materialiseConstDefault(

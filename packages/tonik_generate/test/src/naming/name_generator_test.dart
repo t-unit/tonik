@@ -27,6 +27,13 @@ void main() {
               'content',
             ]),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -47,6 +54,13 @@ void main() {
               'content',
             ]),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -67,6 +81,13 @@ void main() {
               'content',
             ]),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -84,6 +105,13 @@ void main() {
               'Blub',
             ]),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final oneOfModel = OneOfModel(
@@ -92,6 +120,13 @@ void main() {
             models: [(discriminatorValue: null, model: inlineClassModel)],
             context: Context.initial().pushAll(['components', 'schemas']),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            discriminator: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+            defaultValue: null,
           );
 
           // First name the oneOf model
@@ -113,9 +148,9 @@ void main() {
           final enumModel = EnumModel<String>(
             isDeprecated: false,
             values: {
-              const EnumEntry(value: 'available'),
-              const EnumEntry(value: 'pending'),
-              const EnumEntry(value: 'sold'),
+              const EnumEntry(value: 'available', nameOverride: null),
+              const EnumEntry(value: 'pending', nameOverride: null),
+              const EnumEntry(value: 'sold', nameOverride: null),
             },
             isNullable: false,
             context: Context.initial().pushAll([
@@ -124,6 +159,13 @@ void main() {
               'parameter',
             ]),
             examples: const [],
+            name: null,
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           expect(
@@ -140,6 +182,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           nameGenerator.generateModelName(model, usedNames),
@@ -154,6 +202,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           nameGenerator.generateModelName(model, usedNames),
@@ -168,6 +222,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -175,6 +235,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model3 = ClassModel(
           isDeprecated: false,
@@ -182,6 +248,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name1 = nameGenerator.generateModelName(model1, usedNames);
@@ -200,6 +272,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           nameGenerator.generateModelName(model, usedNames),
@@ -214,6 +292,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           nameGenerator.generateModelName(model, usedNames),
@@ -228,6 +312,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           nameGenerator.generateModelName(model, usedNames),
@@ -242,6 +332,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -249,6 +345,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(nameGenerator.generateModelName(model1, usedNames), r'$User');
@@ -265,6 +367,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -272,6 +380,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(nameGenerator.generateModelName(model1, usedNames), r'$FooBar');
@@ -288,6 +402,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -295,6 +415,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(nameGenerator.generateModelName(model1, usedNames), 'User');
@@ -310,6 +436,13 @@ void main() {
           properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -327,6 +460,12 @@ void main() {
             'active_users',
           ]),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -342,6 +481,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -357,6 +502,12 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -371,6 +522,13 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -385,18 +543,39 @@ void main() {
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model3 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name1 = nameGenerator.generateModelName(model1, usedNames);
@@ -416,6 +595,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(nameGenerator.generateModelName(model, usedNames), 'Model23');
         });
@@ -427,6 +612,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(nameGenerator.generateModelName(model, usedNames), 'Model');
         });
@@ -438,6 +629,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -452,6 +649,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -466,6 +669,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -483,6 +692,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -499,6 +714,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -515,6 +736,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -531,6 +758,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -547,6 +780,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -563,6 +802,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -581,6 +826,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -596,6 +847,12 @@ void main() {
               properties: const [],
               context: Context.initial(),
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             usedNames,
           );
@@ -608,6 +865,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -624,6 +887,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             )
@@ -634,6 +903,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             );
@@ -646,6 +921,12 @@ void main() {
                 properties: const [],
                 context: Context.initial(),
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               usedNames,
             ),
@@ -660,6 +941,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final model2 = ClassModel(
             isDeprecated: false,
@@ -667,6 +954,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final name1 = nameGenerator.generateModelName(model1, usedNames);
@@ -825,6 +1118,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           final response = ResponseObject(
             name: 'User',
@@ -860,17 +1159,30 @@ void main() {
           final usedNames = <String>{};
 
           expect(
-            manager.generateTagName(Tag(name: 'pets'), usedNames),
+            manager.generateTagName(
+              Tag(name: 'pets', description: null, nameOverride: null),
+              usedNames,
+            ),
             'PetsApi',
           );
 
           expect(
-            manager.generateTagName(Tag(name: 'pets'), usedNames),
+            manager.generateTagName(
+              Tag(name: 'pets', description: null, nameOverride: null),
+              usedNames,
+            ),
             'PetsApi2',
           );
 
           expect(
-            manager.generateTagName(Tag(name: 'store_inventory'), usedNames),
+            manager.generateTagName(
+              Tag(
+                name: 'store_inventory',
+                description: null,
+                nameOverride: null,
+              ),
+              usedNames,
+            ),
             'StoreInventoryApi',
           );
         });
@@ -880,17 +1192,26 @@ void main() {
           final usedNames = <String>{};
 
           expect(
-            manager.generateTagName(Tag(name: '2pets'), usedNames),
+            manager.generateTagName(
+              Tag(name: '2pets', description: null, nameOverride: null),
+              usedNames,
+            ),
             'PetsApi',
           );
 
           expect(
-            manager.generateTagName(Tag(name: 'pets-v2'), usedNames),
+            manager.generateTagName(
+              Tag(name: 'pets-v2', description: null, nameOverride: null),
+              usedNames,
+            ),
             'PetsV2Api',
           );
 
           expect(
-            manager.generateTagName(Tag(name: '_store_api'), usedNames),
+            manager.generateTagName(
+              Tag(name: '_store_api', description: null, nameOverride: null),
+              usedNames,
+            ),
             'StoreApiApi',
           );
         });
@@ -910,6 +1231,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -934,12 +1258,18 @@ void main() {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: StringModel(context: Context.initial()),
                 contentType: ContentType.json,
                 rawContentType: 'application/x-www-form-urlencoded',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -966,12 +1296,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json+v2',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1007,12 +1343,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: "application/it's",
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/its',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1039,12 +1381,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: "application/json+v'2",
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/3gpp',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1072,12 +1420,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: "application/'",
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: "application/''",
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1104,12 +1458,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/x-www-form-urlencoded',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1118,6 +1478,7 @@ void main() {
           name: 'userAlias',
           context: Context.initial(),
           requestBody: originalBody,
+          description: null,
         );
 
         final (baseName, subclassNames) = nameGenerator
@@ -1141,12 +1502,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -1161,6 +1524,7 @@ void main() {
                 rawContentType: 'text/plain',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -1213,6 +1577,7 @@ void main() {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1227,6 +1592,7 @@ void main() {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -1261,6 +1627,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -1275,6 +1642,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -1313,12 +1681,14 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
               ResponseBody(
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
@@ -1356,12 +1726,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1377,6 +1749,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1387,6 +1760,7 @@ void main() {
             rawContentType: 'application/xml',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1407,12 +1781,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1428,6 +1804,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1438,6 +1815,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1458,6 +1836,7 @@ void main() {
               rawContentType: 'application/json+v2',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1473,6 +1852,7 @@ void main() {
             rawContentType: 'application/json+v2',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1488,6 +1868,7 @@ void main() {
             rawContentType: "application/it's",
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1498,6 +1879,7 @@ void main() {
             rawContentType: 'application/its',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1514,6 +1896,7 @@ void main() {
             rawContentType: "application/json+v'2",
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1529,6 +1912,7 @@ void main() {
             rawContentType: 'application/x-www-form-urlencoded',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1539,6 +1923,7 @@ void main() {
             rawContentType: 'application/3gpp',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1556,6 +1941,7 @@ void main() {
             rawContentType: "application/'",
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1566,6 +1952,7 @@ void main() {
             rawContentType: "application/''",
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1586,6 +1973,7 @@ void main() {
               rawContentType: 'application',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1601,6 +1989,7 @@ void main() {
             rawContentType: 'application',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           usedNames,
         );
@@ -1614,9 +2003,21 @@ void main() {
         final generator = NameGenerator();
         final usedNames = <String>{};
         final servers = [
-          const Server(url: 'https://api.example.com'),
-          const Server(url: 'https://staging.example.com'),
-          const Server(url: 'https://dev.example.com'),
+          const Server(
+            url: 'https://api.example.com',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://staging.example.com',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://dev.example.com',
+            description: null,
+            variables: [],
+          ),
         ];
 
         final result = generator.generateServerNames(servers, usedNames);
@@ -1633,9 +2034,21 @@ void main() {
         final generator = NameGenerator();
         final usedNames = <String>{};
         final servers = [
-          const Server(url: 'https://api.dev.example.com'),
-          const Server(url: 'https://api.staging.example.com'),
-          const Server(url: 'https://api.prod.example.com'),
+          const Server(
+            url: 'https://api.dev.example.com',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.staging.example.com',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.prod.example.com',
+            description: null,
+            variables: [],
+          ),
         ];
 
         final result = generator.generateServerNames(servers, usedNames);
@@ -1654,9 +2067,21 @@ void main() {
           final generator = NameGenerator();
           final usedNames = <String>{};
           final servers = [
-            const Server(url: 'https://api.example.com'),
-            const Server(url: 'https://api.acme.com'),
-            const Server(url: 'https://api.test.com'),
+            const Server(
+              url: 'https://api.example.com',
+              description: null,
+              variables: [],
+            ),
+            const Server(
+              url: 'https://api.acme.com',
+              description: null,
+              variables: [],
+            ),
+            const Server(
+              url: 'https://api.test.com',
+              description: null,
+              variables: [],
+            ),
           ];
 
           final result = generator.generateServerNames(servers, usedNames);
@@ -1675,9 +2100,21 @@ void main() {
         final generator = NameGenerator();
         final usedNames = <String>{};
         final servers = [
-          const Server(url: 'https://api.example.com/v1'),
-          const Server(url: 'https://api.example.com/v2'),
-          const Server(url: 'https://api.example.com/beta'),
+          const Server(
+            url: 'https://api.example.com/v1',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.example.com/v2',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.example.com/beta',
+            description: null,
+            variables: [],
+          ),
         ];
 
         final result = generator.generateServerNames(servers, usedNames);
@@ -1696,9 +2133,21 @@ void main() {
           final generator = NameGenerator();
           final usedNames = <String>{};
           final servers = [
-            const Server(url: 'https://api.example.com', description: 'a'),
-            const Server(url: 'https://api.example.com', description: 'b'),
-            const Server(url: 'https://api.example.com', description: 'c'),
+            const Server(
+              url: 'https://api.example.com',
+              description: 'a',
+              variables: [],
+            ),
+            const Server(
+              url: 'https://api.example.com',
+              description: 'b',
+              variables: [],
+            ),
+            const Server(
+              url: 'https://api.example.com',
+              description: 'c',
+              variables: [],
+            ),
           ];
 
           final result = generator.generateServerNames(servers, usedNames);
@@ -1719,6 +2168,7 @@ void main() {
           const Server(
             url: 'https://custom.server.com',
             description: 'Custom Server',
+            variables: [],
           ),
         ];
 
@@ -1734,10 +2184,26 @@ void main() {
         final generator = NameGenerator();
         final usedNames = <String>{};
         final servers = [
-          const Server(url: 'This is not a URI'),
-          const Server(url: 'https://staging.example.com/v1'),
-          const Server(url: 'https://api.acme.com/v1'),
-          const Server(url: 'https://api.example.com/v2'),
+          const Server(
+            url: 'This is not a URI',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://staging.example.com/v1',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.acme.com/v1',
+            description: null,
+            variables: [],
+          ),
+          const Server(
+            url: 'https://api.example.com/v2',
+            description: null,
+            variables: [],
+          ),
         ];
 
         final result = generator.generateServerNames(servers, usedNames);
@@ -1764,6 +2230,12 @@ void main() {
             'Function',
           ]),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(nameGenerator.generateModelName(model, usedNames), r'$Function');
       });
@@ -1779,6 +2251,12 @@ void main() {
             'function',
           ]),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         // _sanitizeName('function') → 'Function' (PascalCase)
         // ensureValidClassName('Function') matches exactly → '$Function'
@@ -1797,6 +2275,12 @@ void main() {
             'dynamic',
           ]),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         // _sanitizeName('dynamic') → 'Dynamic' (PascalCase)
         // 'Dynamic' is not in allKeywords (only 'dynamic' is)
@@ -1810,6 +2294,12 @@ void main() {
           properties: const [],
           context: Context.initial().pushAll(['components', 'schemas', 'User']),
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(nameGenerator.generateModelName(model, usedNames), 'User');
       });
@@ -1822,6 +2312,12 @@ void main() {
             properties: const [],
             context: Context.initial().pushAll(['components', 'schemas', name]),
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             nameGenerator.generateModelName(model, usedNames),
@@ -1850,6 +2346,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         // PascalCase 'Switch' is a valid Dart class name
         expect(
@@ -1872,6 +2372,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         // PascalCase 'Return' is a valid Dart class name
         expect(
@@ -1894,6 +2398,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         // 'Function' is a built-in identifier (stored with capital F)
         expect(
@@ -1905,13 +2413,21 @@ void main() {
 
     group('keyword tag names', () {
       test('escapes Function tag name with dollar prefix', () {
-        final tag = Tag(name: 'Function');
+        final tag = Tag(
+          name: 'Function',
+          description: null,
+          nameOverride: null,
+        );
         expect(nameGenerator.generateTagName(tag, usedNames), r'$FunctionApi');
       });
 
       test('does not escape PascalCase keyword tag names', () {
         // 'Default' and 'Switch' are valid Dart class names
-        final defaultTag = Tag(name: 'default');
+        final defaultTag = Tag(
+          name: 'default',
+          description: null,
+          nameOverride: null,
+        );
         expect(
           nameGenerator.generateTagName(defaultTag, usedNames),
           'DefaultApi',

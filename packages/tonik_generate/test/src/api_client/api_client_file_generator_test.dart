@@ -57,6 +57,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -76,7 +81,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -86,6 +91,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final apiDoc = ApiDocument(
@@ -102,6 +109,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -123,7 +135,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -133,6 +145,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final petOperation = Operation(
@@ -140,7 +154,7 @@ void main() {
         context: testContext,
         summary: 'Get pet',
         description: 'Get pet by ID',
-        tags: {Tag(name: 'pets')},
+        tags: {Tag(name: 'pets', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/pets/{id}',
         method: HttpMethod.get,
@@ -150,6 +164,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final apiDoc = ApiDocument(
@@ -166,6 +182,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -200,6 +221,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final apiDoc = ApiDocument(
@@ -216,6 +239,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -242,7 +270,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -252,6 +280,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final untaggedOperation = Operation(
@@ -269,6 +299,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final apiDoc = ApiDocument(
@@ -285,6 +317,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

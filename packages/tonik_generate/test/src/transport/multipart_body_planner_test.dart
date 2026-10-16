@@ -99,6 +99,12 @@ Object? test() {
               content: BinaryModel(context: context),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             encoding: const PartEncoding(
               contentType: ContentType.bytes,
@@ -107,6 +113,8 @@ Object? test() {
               style: null,
               explode: null,
               allowReserved: null,
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           ),
         ]);
@@ -179,6 +187,12 @@ Object? test() {
               context: context,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
           encoding: _encoding(
@@ -294,6 +308,8 @@ Object? test() {
                 examples: const [],
               ),
             },
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
         ),
       ]);
@@ -331,6 +347,12 @@ Object? test() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       model.model = model;
 
@@ -366,6 +388,12 @@ Object? test() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         r'''
   _$multipartFiles.add(
@@ -388,6 +416,13 @@ Object? test() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         ),
       ),
       (
@@ -403,6 +438,13 @@ Object? test() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         ),
       ),
       (
@@ -418,6 +460,13 @@ Object? test() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         ),
       ),
     ]) {
@@ -752,6 +801,12 @@ Object? test() {
             valueModel: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         ),
         r'''
@@ -797,9 +852,21 @@ Object? test() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         "  throw EncodingException(r'Arrays of arrays are not supported for "
         "multipart encoding (property: value).');",
@@ -890,6 +957,12 @@ Object? test() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       item.model = item;
 
@@ -912,6 +985,12 @@ Object? test() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encodedItem: 'jsonEncode(item)',
       ),
@@ -1046,6 +1125,12 @@ Object? test() {
         model: _allOf(context, 'Upload', [files, nested]),
         defaultValue: null,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final properties = normalizeMultipartProperties(_content(root))
@@ -1074,6 +1159,12 @@ Object? test() {
         valueModel: BinaryModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final result = normalizeMultipartProperties(_content(model));
       expect(result.runtimeEncodingError, isNull);
@@ -1091,6 +1182,7 @@ Object? test() {
         [_property(context, 'metadata', _classModel(context, 'Metadata'))],
         additionalProperties: AllowedAdditionalProperties(
           valueModel: BinaryModel(context: context),
+          origin: AdditionalPropertiesOrigin.explicit,
         ),
       );
       final result = normalizeMultipartProperties(_content(model));
@@ -1117,6 +1209,12 @@ Object? test() {
         model: StringModel(context: context),
         defaultValue: null,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       alias.model = alias;
       expectRuntimeEncodingError(
@@ -1284,12 +1382,15 @@ Object? test() {
 
       final allowedString = AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       final anotherAllowedString = AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       final allowedInteger = AllowedAdditionalProperties(
         valueModel: IntegerModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
 
       expect(
@@ -1411,6 +1512,12 @@ Object? test() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final root = _allOf(context, 'Collections', [
         _classWithProperties(context, 'First', [
@@ -1476,6 +1583,12 @@ ClassModel _classModel(Context context, String name) => ClassModel(
   context: context,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  additionalPropertiesPolicy: null,
+  isNullable: false,
+  isReadOnly: false,
+  isWriteOnly: false,
 );
 
 ClassModel _classWithProperties(
@@ -1494,6 +1607,9 @@ ClassModel _classWithProperties(
   isReadOnly: isReadOnly,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  isWriteOnly: false,
 );
 
 Property _property(
@@ -1512,6 +1628,9 @@ Property _property(
   isDeprecated: false,
   examples: const [],
   defaultValue: null,
+  isReadOnly: false,
+  nameOverride: null,
+  description: null,
 );
 
 AllOfModel _allOf(
@@ -1526,6 +1645,12 @@ AllOfModel _allOf(
   isNullable: isNullable,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  additionalPropertiesPolicy: null,
+  isReadOnly: false,
+  isWriteOnly: false,
+  defaultValue: null,
 );
 
 MultipartRequestContent _content(
@@ -1536,6 +1661,8 @@ MultipartRequestContent _content(
   encoding: encoding,
   rawContentType: 'multipart/form-data',
   examples: const [],
+  wireContentType: null,
+  textEncoding: TextEncoding.utf8,
 );
 
 AllOfModel _duplicateMetadataRoot(Context context) =>
@@ -1560,25 +1687,46 @@ AllOfModel _duplicateMetadataRoot(Context context) =>
       ]),
     ]);
 
-ListModel _list(Context context, Model content) =>
-    ListModel(content: content, context: context, examples: const []);
+ListModel _list(Context context, Model content) => ListModel(
+  content: content,
+  context: context,
+  examples: const [],
+  name: null,
+  nameOverride: null,
+  isNullable: false,
+  isContentNullable: false,
+  isReadOnly: false,
+  isWriteOnly: false,
+);
 
 EnumModel<String> _stringEnum(Context context) => EnumModel(
   name: 'StringValue',
-  values: {const EnumEntry(value: 'value')},
+  values: {const EnumEntry(value: 'value', nameOverride: null)},
   isNullable: false,
   context: context,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  defaultValue: null,
+  fallbackValue: null,
+  isReadOnly: false,
+  isWriteOnly: false,
 );
 
 EnumModel<int> _integerEnum(Context context) => EnumModel(
   name: 'IntegerValue',
-  values: {const EnumEntry(value: 1)},
+  values: {const EnumEntry(value: 1, nameOverride: null)},
   isNullable: false,
   context: context,
   isDeprecated: false,
   examples: const [],
+  nameOverride: null,
+  description: null,
+  defaultValue: null,
+  fallbackValue: null,
+  isReadOnly: false,
+  isWriteOnly: false,
 );
 
 PartEncoding _encoding({

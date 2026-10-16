@@ -28,7 +28,7 @@ class const ResponseAlias({
   required super.name,
   required final Response response,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends Response {
   @override
   bool get isEmpty => response.isEmpty;
@@ -123,7 +123,7 @@ class ResponseBody({
   required var String rawContentType,
   required var ContentType contentType,
   required var List<Example> examples,
-  final ResponseDelivery delivery = ResponseDelivery.complete,
+  required final ResponseDelivery delivery,
 }) {
   @override
   String toString() =>

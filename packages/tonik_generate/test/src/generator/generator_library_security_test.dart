@@ -29,6 +29,12 @@ void main() {
             properties: const [],
             context: ctx,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
         };
 
@@ -46,7 +52,7 @@ void main() {
               context: ctx,
               summary: 'Get pet',
               description: 'Get pet by ID',
-              tags: {Tag(name: 'pets')},
+              tags: {Tag(name: 'pets', description: null, nameOverride: null)},
               isDeprecated: false,
               path: '/pets/{id}',
               method: HttpMethod.get,
@@ -68,6 +74,8 @@ void main() {
                   bearerFormat: 'JWT',
                 ),
               },
+              nameOverride: null,
+              requestBody: null,
             ),
           },
           responses: const {},
@@ -75,6 +83,11 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const packageName = 'petstore_api';
@@ -112,6 +125,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -129,7 +148,7 @@ void main() {
             context: ctx,
             summary: 'Get user',
             description: 'Get user info',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/me',
             method: HttpMethod.get,
@@ -155,6 +174,8 @@ void main() {
                 ),
               ),
             },
+            nameOverride: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -162,6 +183,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'oauth_api';
@@ -194,6 +220,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -211,7 +243,7 @@ void main() {
             context: ctx,
             summary: 'Get user',
             description: 'Get user info',
-            tags: {Tag(name: 'users')},
+            tags: {Tag(name: 'users', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/users/me',
             method: HttpMethod.get,
@@ -226,6 +258,8 @@ void main() {
                 description: 'Client certificate authentication',
               ),
             },
+            nameOverride: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -233,6 +267,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'mutual_tls_api';
@@ -262,6 +301,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -279,7 +324,7 @@ void main() {
             context: ctx,
             summary: 'Get public data',
             description: 'Get public data',
-            tags: {Tag(name: 'public')},
+            tags: {Tag(name: 'public', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/public',
             method: HttpMethod.get,
@@ -289,6 +334,8 @@ void main() {
             cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -296,6 +343,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'simple_api';
@@ -322,6 +374,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       };
 
@@ -339,7 +397,7 @@ void main() {
             context: ctx,
             summary: 'Get secure data',
             description: 'Get secure data',
-            tags: {Tag(name: 'secure')},
+            tags: {Tag(name: 'secure', description: null, nameOverride: null)},
             isDeprecated: false,
             path: '/secure',
             method: HttpMethod.get,
@@ -361,6 +419,8 @@ void main() {
                 bearerFormat: null,
               ),
             },
+            nameOverride: null,
+            requestBody: null,
           ),
         },
         responses: const {},
@@ -368,6 +428,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'no_desc_api';

@@ -11,24 +11,53 @@ import 'package:tonik_core/src/model/content_type.dart';
 /// Main configuration for Tonik code generation.
 @immutable
 class const TonikConfig({
-  final NameOverridesConfig nameOverrides = const NameOverridesConfig(),
-  final Map<String, ContentTypeMapping> contentTypes = const {},
-  final Map<String, SchemaContentType> contentMediaTypes = const {},
-  final FilterConfig filter = const FilterConfig(),
-  final DeprecatedConfig deprecated = const DeprecatedConfig(),
-  final EnumConfig enums = const EnumConfig(),
-  final TransportConfig transport = const TransportConfig(),
+  required final NameOverridesConfig nameOverrides,
+  required final Map<String, ContentTypeMapping> contentTypes,
+  required final Map<String, SchemaContentType> contentMediaTypes,
+  required final FilterConfig filter,
+  required final DeprecatedConfig deprecated,
+  required final EnumConfig enums,
+  required final TransportConfig transport,
 
   /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
   /// `package:fast_immutable_collections` instead of `List<T>` and
   /// `Map<String, V>` for public-facing model types.
-  final bool useImmutableCollections = false,
+  required final bool useImmutableCollections,
 
   /// Worker isolates for parallel model file generation. `0` = auto, `1` =
   /// serial, `>= 2` = explicit count.
-  final int workerCount = 0,
+  required final int workerCount,
 }) {
   this : assert(workerCount >= 0, 'workerCount must be non-negative');
+
+  static const defaults = TonikConfig(
+    nameOverrides: NameOverridesConfig(
+      schemas: {},
+      properties: {},
+      operations: {},
+      parameters: {},
+      enums: {},
+      tags: {},
+    ),
+    contentTypes: {},
+    contentMediaTypes: {},
+    filter: FilterConfig(
+      includeTags: [],
+      excludeTags: [],
+      excludeOperations: [],
+      excludeSchemas: [],
+    ),
+    deprecated: DeprecatedConfig(
+      operations: DeprecatedHandling.annotate,
+      schemas: DeprecatedHandling.annotate,
+      parameters: DeprecatedHandling.annotate,
+      properties: DeprecatedHandling.annotate,
+    ),
+    enums: EnumConfig(generateUnknownCase: false, unknownCaseName: 'unknown'),
+    transport: TransportConfig(backend: TransportBackend.dio),
+    useImmutableCollections: false,
+    workerCount: 0,
+  );
 
   @override
   String toString() =>

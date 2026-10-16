@@ -74,7 +74,7 @@ extension ConfigLoader on CliConfig {
 
   static TransportConfig _parseTransport(dynamic value) {
     if (value == null) {
-      return const TransportConfig();
+      return const TransportConfig(backend: TransportBackend.dio);
     }
     if (value is! YamlMap) {
       throw _invalidTransportBackend();
@@ -82,7 +82,7 @@ extension ConfigLoader on CliConfig {
 
     final backend = value['backend'];
     if (backend == null) {
-      return const TransportConfig();
+      return const TransportConfig(backend: TransportBackend.dio);
     }
     if (backend is! String) {
       throw _invalidTransportBackend();
@@ -124,7 +124,14 @@ extension ConfigLoader on CliConfig {
 
   static NameOverridesConfig _parseNameOverrides(dynamic value) {
     if (value == null) {
-      return const NameOverridesConfig();
+      return const NameOverridesConfig(
+        schemas: {},
+        properties: {},
+        operations: {},
+        parameters: {},
+        enums: {},
+        tags: {},
+      );
     }
     if (value is! YamlMap) {
       throw ConfigLoaderException(
@@ -250,7 +257,12 @@ extension ConfigLoader on CliConfig {
 
   static FilterConfig _parseFilter(dynamic value) {
     if (value == null) {
-      return const FilterConfig();
+      return const FilterConfig(
+        includeTags: [],
+        excludeTags: [],
+        excludeOperations: [],
+        excludeSchemas: [],
+      );
     }
     if (value is! YamlMap) {
       throw ConfigLoaderException('Invalid config: "filter" must be a map');
@@ -285,7 +297,12 @@ extension ConfigLoader on CliConfig {
 
   static DeprecatedConfig _parseDeprecated(dynamic value) {
     if (value == null) {
-      return const DeprecatedConfig();
+      return const DeprecatedConfig(
+        operations: DeprecatedHandling.annotate,
+        schemas: DeprecatedHandling.annotate,
+        parameters: DeprecatedHandling.annotate,
+        properties: DeprecatedHandling.annotate,
+      );
     }
     if (value is! YamlMap) {
       throw ConfigLoaderException('Invalid config: "deprecated" must be a map');
@@ -333,7 +350,10 @@ extension ConfigLoader on CliConfig {
 
   static EnumConfig _parseEnums(dynamic value) {
     if (value == null) {
-      return const EnumConfig();
+      return const EnumConfig(
+        generateUnknownCase: false,
+        unknownCaseName: 'unknown',
+      );
     }
     if (value is! YamlMap) {
       throw ConfigLoaderException('Invalid config: "enums" must be a map');

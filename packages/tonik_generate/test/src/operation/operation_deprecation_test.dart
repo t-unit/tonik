@@ -27,6 +27,7 @@ void main() {
       const Server(
         url: 'https://api.example.com',
         description: 'Production server',
+        variables: [],
       ),
     ];
   });
@@ -54,7 +55,7 @@ void main() {
           context: testContext,
           summary: 'Get legacy user',
           description: 'This endpoint is deprecated',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: true,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -64,11 +65,13 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {deprecatedOperation},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 
@@ -91,7 +94,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -101,11 +104,13 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {activeOperation},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -149,7 +154,7 @@ void main() {
         context: testContext,
         summary: 'Get legacy user',
         description: 'This endpoint is deprecated',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: true,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -159,6 +164,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
@@ -180,7 +187,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -190,6 +197,8 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
@@ -228,7 +237,7 @@ void main() {
         context: testContext,
         summary: 'Get users',
         description: 'Get list of users',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users',
         method: HttpMethod.get,
@@ -248,17 +257,20 @@ void main() {
             context: testContext,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         pathParameters: const {},
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operationWithDeprecatedQueryParam},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -283,7 +295,7 @@ void main() {
         context: testContext,
         summary: 'Get user by legacy ID',
         description: 'Get user',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{legacyId}',
         method: HttpMethod.get,
@@ -303,16 +315,19 @@ void main() {
             context: testContext,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operationWithDeprecatedPathParam},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -337,7 +352,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -355,6 +370,7 @@ void main() {
             context: testContext,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           ),
         },
         queryParameters: const {},
@@ -362,11 +378,13 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operationWithDeprecatedHeader},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -393,7 +411,7 @@ void main() {
           context: testContext,
           summary: 'Get users',
           description: 'Get list of users',
-          tags: {Tag(name: 'users')},
+          tags: {Tag(name: 'users', description: null, nameOverride: null)},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.get,
@@ -413,17 +431,20 @@ void main() {
               context: testContext,
               examples: const [],
               defaultValue: null,
+              nameOverride: null,
             ),
           },
           pathParameters: const {},
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          requestBody: null,
         );
 
         final generatedClass = generator.generateClass(
           {operationWithActiveParams},
-          Tag(name: 'users'),
+          Tag(name: 'users', description: null, nameOverride: null),
           testServers,
         );
 

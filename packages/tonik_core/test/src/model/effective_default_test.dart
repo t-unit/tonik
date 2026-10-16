@@ -15,29 +15,60 @@ void main() {
     context: context,
     examples: const [],
     defaultValue: defaultValue,
+    nameOverride: null,
+    description: null,
+    isDeprecated: false,
+    isNullable: false,
+    isReadOnly: false,
+    isWriteOnly: false,
   );
 
   group('effectiveDefault', () {
     test('inherits a date-time enum default through an alias chain', () {
       final model = DateTimeEnumModel(
-        values: {const EnumEntry(value: '2026-09-06T12:00:00.1000+02:00')},
+        values: {
+          const EnumEntry(
+            value: '2026-09-06T12:00:00.1000+02:00',
+            nameOverride: null,
+          ),
+        },
         defaultValue: '2026-09-06T12:00:00.1000+02:00',
         isNullable: false,
         isDeprecated: false,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final inner = AliasModel(
         model: model,
         context: context,
         examples: const [],
         defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outer = AliasModel(
         model: inner,
         context: context,
         examples: const [],
         defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, model), '2026-09-06T12:00:00.1000+02:00');
@@ -84,6 +115,13 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: 0,
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, model), 0);
@@ -98,6 +136,13 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: false,
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, model), isFalse);
@@ -110,6 +155,13 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: const {'key': 'value'},
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, model), {'key': 'value'});
@@ -122,18 +174,39 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: 3,
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final inner = AliasModel(
         model: compound,
         context: context,
         examples: const [],
         defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final outer = AliasModel(
         model: inner,
         context: context,
         examples: const [],
         defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, outer), 3);
@@ -149,12 +222,26 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: 3,
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final alias = AliasModel(
           model: compound,
           context: context,
           examples: const [],
           defaultValue: 2,
+          name: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(effectiveDefault(0, compound), 0);
@@ -169,30 +256,68 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: 7,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final allOf = AllOfModel(
         models: [member],
         context: context,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final oneOf = OneOfModel(
         models: [(discriminatorValue: null, model: member)],
         context: context,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final anyOf = AnyOfModel(
         models: [(discriminatorValue: null, model: member)],
         context: context,
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final alias = AliasModel(
         model: allOf,
         context: context,
         examples: const [],
         defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(effectiveDefault(null, allOf), isNull);

@@ -14,6 +14,12 @@ void main() {
     context: context,
     examples: const [],
     defaultValue: defaultValue,
+    nameOverride: null,
+    description: null,
+    isDeprecated: false,
+    isNullable: false,
+    isReadOnly: false,
+    isWriteOnly: false,
   );
 
   group('QueryParameterObject.effectiveDefaultValue', () {
@@ -34,6 +40,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: defaultValue,
+      nameOverride: null,
     );
 
     test('returns local default when set', () {
@@ -77,6 +84,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: defaultValue,
+      nameOverride: null,
     );
 
     test('returns local default when set', () {
@@ -115,6 +123,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: defaultValue,
+      nameOverride: null,
     );
 
     test('returns local default when set', () {
@@ -149,6 +158,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: defaultValue,
+      nameOverride: null,
     );
 
     test('returns local default when set', () {

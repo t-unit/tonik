@@ -7,8 +7,12 @@ void main() {
 
   group('Multiple tags', () {
     test('isolated overrides', () {
-      final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(name: 'color', description: 'Color tag');
+      final tagA = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
+      final tagB = Tag(
+        name: 'color',
+        description: 'Color tag',
+        nameOverride: null,
+      );
 
       applier.applyTagOverrides(
         {tagA, tagB},
@@ -19,9 +23,17 @@ void main() {
     });
 
     test('multiple tags', () {
-      final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(name: 'color', description: 'Color tag');
-      final tagC = Tag(name: 'size', description: 'Size tag');
+      final tagA = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
+      final tagB = Tag(
+        name: 'color',
+        description: 'Color tag',
+        nameOverride: null,
+      );
+      final tagC = Tag(
+        name: 'size',
+        description: 'Size tag',
+        nameOverride: null,
+      );
 
       applier.applyTagOverrides(
         {tagA, tagB, tagC},
@@ -35,15 +47,19 @@ void main() {
 
   group('Single tag', () {
     test('object is not replaced, only nameOverride is set', () {
-      final tag = Tag(name: 'pet', description: 'Pet tag');
+      final tag = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
 
       applier.applyTagOverrides({tag}, {'pet': 'animal'});
       expect(tag.nameOverride, 'animal');
     });
 
     test('untouched tags remain unchanged', () {
-      final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(name: 'color', description: 'Color tag');
+      final tagA = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
+      final tagB = Tag(
+        name: 'color',
+        description: 'Color tag',
+        nameOverride: null,
+      );
 
       applier.applyTagOverrides({tagA, tagB}, {'pet': 'animal'});
       expect(tagA.nameOverride, 'animal');
@@ -51,8 +67,12 @@ void main() {
     });
 
     test('wrong data (nonexistent tag)', () {
-      final tagA = Tag(name: 'pet', description: 'Pet tag');
-      final tagB = Tag(name: 'color', description: 'Color tag');
+      final tagA = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
+      final tagB = Tag(
+        name: 'color',
+        description: 'Color tag',
+        nameOverride: null,
+      );
 
       applier.applyTagOverrides(
         {tagA, tagB},
@@ -63,7 +83,7 @@ void main() {
     });
 
     test('preserves existing nameOverride if not overridden', () {
-      final tagA = Tag(name: 'pet', description: 'Pet tag');
+      final tagA = Tag(name: 'pet', description: 'Pet tag', nameOverride: null);
       final tagB = Tag(
         name: 'color',
         nameOverride: 'hue',

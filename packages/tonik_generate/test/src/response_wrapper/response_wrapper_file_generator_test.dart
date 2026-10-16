@@ -56,11 +56,16 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
       },
       securitySchemes: const {},
+      nameOverride: null,
+      summary: null,
+      description: null,
+      requestBody: null,
     );
 
     opWithTwoStatuses = Operation(
@@ -86,6 +91,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
@@ -100,11 +106,16 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         ),
       },
       securitySchemes: const {},
+      nameOverride: null,
+      summary: null,
+      description: null,
+      requestBody: null,
     );
 
     apiDocument = ApiDocument(
@@ -120,6 +131,12 @@ void main() {
       pathParameters: const {},
       cookieParameters: const {},
       requestBodies: const {},
+      summary: null,
+      description: null,
+      contact: null,
+      license: null,
+      termsOfService: null,
+      externalDocs: null,
     );
   });
 

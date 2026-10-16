@@ -3,8 +3,8 @@ import 'package:tonik_core/tonik_core.dart';
 
 void main() {
   group('TransportConfig', () {
-    test('defaults to Dio', () {
-      const config = TransportConfig();
+    test('retains the selected Dio backend', () {
+      const config = TransportConfig(backend: TransportBackend.dio);
 
       expect(config.backend, TransportBackend.dio);
     });
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('equality includes backend', () {
-      const dioConfig = TransportConfig();
+      const dioConfig = TransportConfig(backend: TransportBackend.dio);
       final sameDioConfig = TransportConfig(backend: dioConfig.backend);
       const httpConfig = TransportConfig(backend: TransportBackend.http);
 
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('hashCode includes backend', () {
-      const dioConfig = TransportConfig();
+      const dioConfig = TransportConfig(backend: TransportBackend.dio);
       final sameDioConfig = TransportConfig(backend: dioConfig.backend);
       const httpConfig = TransportConfig(backend: TransportBackend.http);
 

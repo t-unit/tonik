@@ -8,9 +8,12 @@ void main() {
       () {
         final ctx = Context.initial();
 
-        const active = EnumEntry<String>(value: 'active');
+        const active = EnumEntry<String>(value: 'active', nameOverride: null);
 
-        const inactive = EnumEntry<String>(value: 'inactive');
+        const inactive = EnumEntry<String>(
+          value: 'inactive',
+          nameOverride: null,
+        );
 
         final statusModel = EnumModel<String>(
           name: 'Status',
@@ -19,6 +22,12 @@ void main() {
           context: ctx.push('Status'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final apiDocument = ApiDocument(
@@ -34,12 +43,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
           nameOverrides: NameOverridesConfig(
             enums: {'Status.active': 'isActive'},
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            tags: {},
           ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -71,8 +112,11 @@ void main() {
       () {
         final ctx = Context.initial();
 
-        const active = EnumEntry<String>(value: 'active');
-        const inactive = EnumEntry<String>(value: 'inactive');
+        const active = EnumEntry<String>(value: 'active', nameOverride: null);
+        const inactive = EnumEntry<String>(
+          value: 'inactive',
+          nameOverride: null,
+        );
 
         final statusModel = EnumModel<String>(
           name: 'Status',
@@ -81,6 +125,12 @@ void main() {
           context: ctx.push('Status'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final apiDocument = ApiDocument(
@@ -96,10 +146,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          enums: EnumConfig(generateUnknownCase: true),
+          enums: EnumConfig(
+            generateUnknownCase: true,
+            unknownCaseName: 'unknown',
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -121,8 +205,8 @@ void main() {
       () {
         final ctx = Context.initial();
 
-        const zero = EnumEntry<int>(value: 0);
-        const one = EnumEntry<int>(value: 1);
+        const zero = EnumEntry<int>(value: 0, nameOverride: null);
+        const one = EnumEntry<int>(value: 1, nameOverride: null);
 
         final codeModel = EnumModel<int>(
           name: 'Code',
@@ -131,6 +215,12 @@ void main() {
           context: ctx.push('Code'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final apiDocument = ApiDocument(
@@ -146,10 +236,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
-          enums: EnumConfig(generateUnknownCase: true),
+          enums: EnumConfig(
+            generateUnknownCase: true,
+            unknownCaseName: 'unknown',
+          ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -169,7 +293,7 @@ void main() {
     test('uses custom unknownCaseName for fallback', () {
       final ctx = Context.initial();
 
-      const active = EnumEntry<String>(value: 'active');
+      const active = EnumEntry<String>(value: 'active', nameOverride: null);
 
       final statusModel = EnumModel<String>(
         name: 'Status',
@@ -178,6 +302,12 @@ void main() {
         context: ctx.push('Status'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final apiDocument = ApiDocument(
@@ -193,6 +323,12 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const config = TonikConfig(
@@ -200,6 +336,31 @@ void main() {
           generateUnknownCase: true,
           unknownCaseName: 'fallback',
         ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
       );
 
       const transformer = ConfigTransformer();
@@ -217,7 +378,7 @@ void main() {
     test('does not add fallback when generateUnknownCase is false', () {
       final ctx = Context.initial();
 
-      const active = EnumEntry<String>(value: 'active');
+      const active = EnumEntry<String>(value: 'active', nameOverride: null);
 
       final statusModel = EnumModel<String>(
         name: 'Status',
@@ -226,6 +387,12 @@ void main() {
         context: ctx.push('Status'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final apiDocument = ApiDocument(
@@ -241,9 +408,15 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
-      const config = TonikConfig();
+      const config = TonikConfig.defaults;
 
       const transformer = ConfigTransformer();
       final transformed = transformer.apply(apiDocument, config);
@@ -260,20 +433,32 @@ void main() {
 
       final statusModel = EnumModel<String>(
         name: 'Status',
-        values: {const EnumEntry<String>(value: 'active')},
+        values: {const EnumEntry<String>(value: 'active', nameOverride: null)},
         isNullable: false,
         context: ctx.push('Status'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final roleModel = EnumModel<String>(
         name: 'Role',
-        values: {const EnumEntry<String>(value: 'admin')},
+        values: {const EnumEntry<String>(value: 'admin', nameOverride: null)},
         isNullable: false,
         context: ctx.push('Role'),
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final apiDocument = ApiDocument(
@@ -289,9 +474,45 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
-      const config = TonikConfig(enums: EnumConfig(generateUnknownCase: true));
+      const config = TonikConfig(
+        enums: EnumConfig(
+          generateUnknownCase: true,
+          unknownCaseName: 'unknown',
+        ),
+        nameOverrides: NameOverridesConfig(
+          schemas: {},
+          properties: {},
+          operations: {},
+          parameters: {},
+          enums: {},
+          tags: {},
+        ),
+        contentTypes: {},
+        contentMediaTypes: {},
+        filter: FilterConfig(
+          includeTags: [],
+          excludeTags: [],
+          excludeOperations: [],
+          excludeSchemas: [],
+        ),
+        deprecated: DeprecatedConfig(
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.annotate,
+        ),
+        transport: TransportConfig(backend: TransportBackend.dio),
+        useImmutableCollections: false,
+        workerCount: 0,
+      );
 
       const transformer = ConfigTransformer();
       final transformed = transformer.apply(apiDocument, config);

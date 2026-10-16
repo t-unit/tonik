@@ -43,6 +43,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'version',
@@ -52,6 +56,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'region',
@@ -61,10 +69,19 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isWriteOnly: false,
     );
   }
 
@@ -83,6 +100,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'confirmPassword',
@@ -92,6 +113,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
         Property(
           name: 'hint',
@@ -101,10 +126,19 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         ),
       ],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
     );
   }
 
@@ -368,6 +402,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           ),
           Property(
             name: 'token',
@@ -378,10 +416,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
             isWriteOnly: true,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            nameOverride: null,
+            description: null,
           ),
         ],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isWriteOnly: false,
       );
 
       final generatedClass = generator.generateClass(model);

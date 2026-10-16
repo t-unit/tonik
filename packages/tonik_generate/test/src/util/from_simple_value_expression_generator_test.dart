@@ -158,11 +158,17 @@ void main() {
         context: context,
         name: 'UserRole',
         values: {
-          const EnumEntry(value: 'admin'),
-          const EnumEntry(value: 'user'),
+          const EnumEntry(value: 'admin', nameOverride: null),
+          const EnumEntry(value: 'user', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -197,11 +203,17 @@ void main() {
         context: context,
         name: 'UserRole',
         values: {
-          const EnumEntry(value: 'admin'),
-          const EnumEntry(value: 'user'),
+          const EnumEntry(value: 'admin', nameOverride: null),
+          const EnumEntry(value: 'user', nameOverride: null),
         },
         isNullable: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -237,6 +249,12 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -272,6 +290,12 @@ void main() {
         name: 'User',
         properties: const [],
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -305,6 +329,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -335,6 +365,12 @@ void main() {
         content: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -371,6 +407,11 @@ void main() {
         context: context,
         examples: const [],
         isContentNullable: true,
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -406,6 +447,12 @@ void main() {
         model: StringModel(context: context),
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -467,6 +514,12 @@ void main() {
         content: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       expect(
@@ -492,11 +545,17 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -520,6 +579,12 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -542,16 +607,28 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listModel = ListModel(
           content: enumModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -578,16 +655,28 @@ void main() {
           context: context,
           name: 'UserRole',
           values: {
-            const EnumEntry(value: 'admin'),
-            const EnumEntry(value: 'user'),
+            const EnumEntry(value: 'admin', nameOverride: null),
+            const EnumEntry(value: 'user', nameOverride: null),
           },
           isNullable: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listModel = ListModel(
           content: enumModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -613,6 +702,12 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(getSimpleDecodingUnsupportedReason(model), isNull);
@@ -634,6 +729,12 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -659,13 +760,33 @@ void main() {
               context: context,
               examples: const [],
               defaultValue: null,
+              name: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
           defaultValue: null,
+          name: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(getSimpleDecodingUnsupportedReason(model), isNull);
@@ -687,6 +808,11 @@ void main() {
           isValueNullable: true,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -708,9 +834,21 @@ void main() {
             valueModel: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -736,9 +874,21 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         expect(
@@ -791,6 +941,12 @@ void main() {
             content: BinaryModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildSimpleValueExpression(
@@ -814,6 +970,12 @@ void main() {
           content: BinaryModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -873,6 +1035,12 @@ void main() {
             content: Base64Model(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
           expect(
             buildSimpleValueExpression(
@@ -896,6 +1064,12 @@ void main() {
           content: Base64Model(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -922,11 +1096,23 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listModel = ListModel(
           content: classModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -950,11 +1136,23 @@ void main() {
           name: 'User',
           properties: const [],
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final listModel = ListModel(
           content: classModel,
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -1010,6 +1208,12 @@ void main() {
               content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: true,
             nameManager: nameManager,
@@ -1029,6 +1233,12 @@ void main() {
               content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             isRequired: false,
             nameManager: nameManager,
@@ -1050,9 +1260,21 @@ void main() {
             context: context,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -1074,9 +1296,21 @@ void main() {
             content: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(
@@ -1098,9 +1332,21 @@ void main() {
             valueModel: StringModel(context: context),
             context: context,
             examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         expect(
           buildSimpleValueExpression(

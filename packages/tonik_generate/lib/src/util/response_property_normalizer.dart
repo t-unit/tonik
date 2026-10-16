@@ -28,6 +28,10 @@ List<NormalizedResponseProperty> normalizeResponseProperties(
       isDeprecated: resolvedHeader.isDeprecated,
       examples: const [],
       defaultValue: null,
+      isReadOnly: false,
+      isWriteOnly: false,
+      nameOverride: null,
+      description: null,
     );
 
     headerMap[property] = header.value;
@@ -47,6 +51,10 @@ List<NormalizedResponseProperty> normalizeResponseProperties(
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       ),
   ];
 

@@ -32,6 +32,7 @@ void main() {
       const Server(
         url: 'https://api.example.com',
         description: 'Production server',
+        variables: [],
       ),
     ];
   });
@@ -41,7 +42,7 @@ void main() {
       final operation = Operation(
         operationId: 'getSecureData',
         context: testContext,
-        tags: {Tag(name: 'secure')},
+        tags: {Tag(name: 'secure', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/secure/data',
         method: HttpMethod.get,
@@ -84,11 +85,15 @@ void main() {
             openIdConnectUrl: 'https://example.com\rdiscovery\r\ncontinued',
           ),
         },
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'secure'),
+        Tag(name: 'secure', description: null, nameOverride: null),
         testServers,
       );
       expect(generatedClass.methods.first.docs, [
@@ -108,7 +113,11 @@ void main() {
         '/// continued',
       ]);
       expect(
-        () => generator.generate({operation}, Tag(name: 'secure'), testServers),
+        () => generator.generate(
+          {operation},
+          Tag(name: 'secure', description: null, nameOverride: null),
+          testServers,
+        ),
         returnsNormally,
       );
     });
@@ -119,7 +128,7 @@ void main() {
         context: testContext,
         summary: 'Get secure data',
         description: 'Get secure data with authentication',
-        tags: {Tag(name: 'secure')},
+        tags: {Tag(name: 'secure', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/secure/data',
         method: HttpMethod.get,
@@ -141,11 +150,13 @@ void main() {
             bearerFormat: 'JWT',
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'secure'),
+        Tag(name: 'secure', description: null, nameOverride: null),
         testServers,
       );
 
@@ -171,7 +182,7 @@ void main() {
         context: testContext,
         summary: 'Get user profile',
         description: 'Get authenticated user profile',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/me',
         method: HttpMethod.get,
@@ -197,11 +208,13 @@ void main() {
             ),
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'users'),
+        Tag(name: 'users', description: null, nameOverride: null),
         testServers,
       );
 
@@ -220,7 +233,7 @@ void main() {
         context: testContext,
         summary: 'Get identity',
         description: 'Get user identity',
-        tags: {Tag(name: 'identity')},
+        tags: {Tag(name: 'identity', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/identity',
         method: HttpMethod.get,
@@ -237,11 +250,13 @@ void main() {
                 'https://example.com/.well-known/openid_configuration',
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'identity'),
+        Tag(name: 'identity', description: null, nameOverride: null),
         testServers,
       );
 
@@ -268,7 +283,7 @@ void main() {
         context: testContext,
         summary: 'Get data with mutual TLS',
         description: 'Get data with client certificate authentication',
-        tags: {Tag(name: 'secure')},
+        tags: {Tag(name: 'secure', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/secure/mtls',
         method: HttpMethod.get,
@@ -283,11 +298,13 @@ void main() {
             description: 'Client certificate authentication',
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'secure'),
+        Tag(name: 'secure', description: null, nameOverride: null),
         testServers,
       );
 
@@ -308,7 +325,7 @@ void main() {
         context: testContext,
         summary: 'Get public data',
         description: 'Get public data without authentication',
-        tags: {Tag(name: 'public')},
+        tags: {Tag(name: 'public', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/public/data',
         method: HttpMethod.get,
@@ -318,11 +335,13 @@ void main() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'public'),
+        Tag(name: 'public', description: null, nameOverride: null),
         testServers,
       );
 
@@ -339,7 +358,7 @@ void main() {
         context: testContext,
         summary: 'Get multi-secure data',
         description: 'Get data with multiple authentication options',
-        tags: {Tag(name: 'secure')},
+        tags: {Tag(name: 'secure', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/multi-secure/data',
         method: HttpMethod.get,
@@ -366,11 +385,13 @@ void main() {
             bearerFormat: null,
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'secure'),
+        Tag(name: 'secure', description: null, nameOverride: null),
         testServers,
       );
 
@@ -390,7 +411,7 @@ void main() {
         context: testContext,
         summary: 'Get data without descriptions',
         description: 'Get data with security schemes without descriptions',
-        tags: {Tag(name: 'noDesc')},
+        tags: {Tag(name: 'noDesc', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/noDesc/data',
         method: HttpMethod.get,
@@ -412,11 +433,13 @@ void main() {
             bearerFormat: null,
           ),
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        Tag(name: 'noDesc'),
+        Tag(name: 'noDesc', description: null, nameOverride: null),
         testServers,
       );
 

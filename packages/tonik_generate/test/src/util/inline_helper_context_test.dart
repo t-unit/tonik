@@ -23,6 +23,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
@@ -35,12 +40,22 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final forest = ListModel(
         name: 'Forest',
         content: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
@@ -55,6 +70,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.isHelperEmitted(tree, r'_$decode'), isFalse);
@@ -66,6 +86,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager)
         ..markHelperEmitted(tree, r'_$decode');
@@ -81,6 +106,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.isOnStack(tree), isFalse);
@@ -92,6 +122,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
 
@@ -110,12 +145,22 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final forest = ListModel(
         name: 'Forest',
         content: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
 

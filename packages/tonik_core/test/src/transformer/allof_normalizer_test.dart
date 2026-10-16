@@ -7,7 +7,7 @@ void main() {
     late Context context;
 
     setUp(() {
-      normalizer = const AllOfNormalizer();
+      normalizer = const AllOfNormalizer(normalizeSingleMembers: true);
       context = Context.initial();
     });
 
@@ -19,6 +19,12 @@ void main() {
           context: context.push('BaseModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -28,6 +34,12 @@ void main() {
           description: 'Additional documentation',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -43,6 +55,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -65,6 +83,13 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: 7,
+          name: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final compound = AllOfModel(
           name: 'RetryCount',
@@ -73,6 +98,12 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: 0,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final document = ApiDocument(
           title: 'Test API',
@@ -87,6 +118,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final alias = normalizer.apply(document).models.single as AliasModel;
@@ -103,6 +140,12 @@ void main() {
           description: 'This is deprecated',
           isDeprecated: true,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -118,6 +161,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -135,6 +184,12 @@ void main() {
           context: context.push('InnerWithDefault'),
           defaultValue: 'hello',
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -144,6 +199,12 @@ void main() {
           description: 'Adds description',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -159,6 +220,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -178,6 +245,12 @@ void main() {
           context: context.push('InnerWithoutDefault'),
           defaultValue: null,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -187,6 +260,12 @@ void main() {
           description: 'Adds description',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -202,6 +281,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -223,6 +308,12 @@ void main() {
           isDeprecated: false,
           isNullable: true,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -238,6 +329,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -254,6 +351,14 @@ void main() {
           context: context.push('allOf'),
           isDeprecated: false,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -269,6 +374,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -288,6 +399,12 @@ void main() {
           context: context.push('Model1'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final model2 = ClassModel(
@@ -296,6 +413,12 @@ void main() {
           context: context.push('Model2'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -304,6 +427,13 @@ void main() {
           context: context.push('CompositeModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -319,6 +449,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -338,6 +474,12 @@ void main() {
           context: context.push('RegularModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final document = ApiDocument(
@@ -353,6 +495,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -371,6 +519,11 @@ void main() {
           description: 'Already an alias',
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final document = ApiDocument(
@@ -386,6 +539,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -409,6 +568,12 @@ void main() {
           context: context.push('InnerAlias'),
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final outerAllOf = AllOfModel(
@@ -418,6 +583,12 @@ void main() {
           description: 'Wraps an alias',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -433,6 +604,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -467,6 +644,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -488,6 +671,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -504,6 +693,12 @@ void main() {
           context: context.push('ExternalUrlObject'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -513,6 +708,12 @@ void main() {
           description: 'Known external URLs for this artist.',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classModel = ClassModel(
@@ -526,11 +727,21 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context.push('ArtistObject'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final document = ApiDocument(
@@ -546,6 +757,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -586,6 +803,12 @@ void main() {
           context: context.push('ItemModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOfModel = AllOfModel(
@@ -595,6 +818,12 @@ void main() {
           description: 'Collection items',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final listModel = ListModel(
@@ -602,6 +831,11 @@ void main() {
           context: context.push('ItemList'),
           name: 'ItemList',
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final document = ApiDocument(
@@ -617,6 +851,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -642,6 +882,12 @@ void main() {
           context: context.push('BaseModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final innerAllOf = AllOfModel(
@@ -651,6 +897,12 @@ void main() {
           description: 'Inner model',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final outerAllOf = AllOfModel(
@@ -660,6 +912,12 @@ void main() {
           description: 'Outer model',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -675,6 +933,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -703,6 +967,12 @@ void main() {
           context: context.push('BaseModel1'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final baseModel2 = ClassModel(
@@ -711,6 +981,12 @@ void main() {
           context: context.push('BaseModel2'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final multiAllOf = AllOfModel(
@@ -720,6 +996,12 @@ void main() {
           description: 'Composition of multiple models',
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final classModel = ClassModel(
@@ -733,11 +1015,21 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: context.push('ContainerModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final document = ApiDocument(
@@ -753,6 +1045,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -775,6 +1073,12 @@ void main() {
           context: context.push('SharedModel'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final allOf1 = AllOfModel(
@@ -783,6 +1087,13 @@ void main() {
           context: context.push('Wrapper1'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final allOf2 = AllOfModel(
@@ -791,6 +1102,13 @@ void main() {
           context: context.push('Wrapper2'),
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -806,6 +1124,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);

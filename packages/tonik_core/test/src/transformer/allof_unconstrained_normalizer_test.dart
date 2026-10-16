@@ -21,6 +21,12 @@ void main() {
       pathParameters: {},
       cookieParameters: {},
       requestBodies: {},
+      summary: null,
+      description: null,
+      contact: null,
+      license: null,
+      termsOfService: null,
+      externalDocs: null,
     );
   });
 
@@ -32,6 +38,12 @@ void main() {
       context: context,
       defaultValue: null,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final compound = AllOfModel(
       name: 'Count',
@@ -45,6 +57,12 @@ void main() {
       description: 'A count.',
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final singleton = AllOfModel(
       name: 'SingleCount',
@@ -52,6 +70,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     document.models = {compound, singleton};
 
@@ -78,22 +103,35 @@ void main() {
       isNullable: true,
       defaultValue: 7,
       examples: const [],
+      additionalPropertiesPolicy: null,
+      isWriteOnly: false,
     );
     final map = MapModel(
       name: 'Values',
       valueModel: compound,
       context: context,
       examples: const [],
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final holder = ClassModel(
       name: 'Holder',
       properties: [],
       additionalPropertiesPolicy: AllowedAdditionalProperties(
         valueModel: compound,
+        origin: AdditionalPropertiesOrigin.explicit,
       ),
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final cookie = CookieParameterObject(
       name: 'ValueCookie',
@@ -107,6 +145,7 @@ void main() {
       context: context,
       examples: const [],
       defaultValue: null,
+      nameOverride: null,
     );
     document.models = {map, holder, compound};
     document.cookieParameters.add(cookie);
@@ -136,6 +175,7 @@ void main() {
     () {
       final policy = AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       final open = AllOfModel(
         name: 'Open',
@@ -144,6 +184,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final closed = AllOfModel(
         name: 'Closed',
@@ -152,6 +198,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       document.models = {open, closed};
 
@@ -175,6 +227,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final anyOf = AnyOfModel(
       name: 'Alternatives',
@@ -182,6 +241,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     document.models = {oneOf, anyOf};
 
@@ -201,9 +267,17 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       recursive.additionalPropertiesPolicy = AllowedAdditionalProperties(
         valueModel: recursive,
+        origin: AdditionalPropertiesOrigin.explicit,
       );
       document.models = {recursive};
 

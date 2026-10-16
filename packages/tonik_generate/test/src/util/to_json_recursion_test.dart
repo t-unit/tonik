@@ -45,6 +45,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
 
@@ -57,6 +62,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final built = buildToJsonPropertyExpression(
         refer('body'),
@@ -96,6 +105,11 @@ void main() {
           valueModel: AnyModel(context: context),
           context: context,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         tree.valueModel = tree;
 
@@ -108,6 +122,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         );
         final built = buildToJsonPropertyExpression(
           refer('subtree'),
@@ -149,6 +167,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
 
@@ -161,6 +184,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final built = buildToJsonPropertyExpression(
         refer('subtree'),
@@ -197,6 +224,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = tree;
 
@@ -209,6 +241,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
 
       final first = buildToJsonPropertyExpression(
@@ -238,6 +274,11 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final alias = AliasModel(
         name: 'TreeAlias',
@@ -245,6 +286,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       tree.valueModel = alias;
 
@@ -257,6 +304,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final built = buildToJsonPropertyExpression(
         refer('body'),
@@ -296,18 +347,33 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final c = MapModel(
         name: 'C',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.valueModel = b;
       b.valueModel = c;
@@ -322,6 +388,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final built = buildToJsonPropertyExpression(
         refer('body'),
@@ -382,12 +452,22 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
         examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       a.valueModel = b;
       b.valueModel = a;
@@ -401,6 +481,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       final built = buildToJsonPropertyExpression(
         refer('body'),

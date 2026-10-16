@@ -28,6 +28,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final baz = ClassModel(
       name: 'Baz',
@@ -35,6 +41,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final foo = OneOfModel(
       name: 'Foo',
@@ -42,6 +54,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final fooBar = OneOfModel(
       name: 'FooBar',
@@ -49,6 +68,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     manager.prime(
@@ -87,6 +113,12 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final choice = OneOfModel(
         name: 'Foo',
@@ -95,6 +127,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
       final nullableObject = ClassModel(
         name: 'FooBar',
@@ -103,6 +141,11 @@ void main() {
         properties: const [],
         context: context,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final generator = OneOfGenerator(
         nameManager: manager,
@@ -147,6 +190,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final anyOf = AnyOfModel(
       name: 'FooBar',
@@ -155,6 +204,12 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final allOf = AllOfModel(
       name: 'FooBarModel',
@@ -163,6 +218,12 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final choice = OneOfModel(
       name: 'Foo',
@@ -171,6 +232,12 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
 
     manager.prime(
@@ -217,14 +284,26 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final enumeration = EnumModel<String>(
       name: 'FooBar',
-      values: {const EnumEntry(value: 'active')},
+      values: {const EnumEntry(value: 'active', nameOverride: null)},
       isNullable: true,
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      defaultValue: null,
+      fallbackValue: null,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final choice = OneOfModel(
       name: 'Foo',
@@ -233,6 +312,12 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final generator = EnumGenerator(nameManager: manager);
 
@@ -268,6 +353,12 @@ void main() {
       properties: const [],
       context: context,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final choice = OneOfModel(
       name: 'Get',
@@ -275,6 +366,13 @@ void main() {
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final operation = Operation(
       operationId: 'getResult',
@@ -289,6 +387,10 @@ void main() {
       cookieParameters: const {},
       responses: const {},
       securitySchemes: const {},
+      nameOverride: null,
+      summary: null,
+      description: null,
+      requestBody: null,
     );
 
     manager.prime(

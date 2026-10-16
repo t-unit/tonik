@@ -57,8 +57,8 @@ class const PartEncoding._({
     required EncodingStyle? style,
     required bool? explode,
     required bool? allowReserved,
-    String? wireContentType,
-    TextEncoding textEncoding = TextEncoding.utf8,
+    required String? wireContentType,
+    required TextEncoding textEncoding,
   }) : this._(
          contentType: contentType,
          rawContentType: rawContentType,

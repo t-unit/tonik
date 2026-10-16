@@ -13,7 +13,7 @@ enum TransportBackend() {
 @immutable
 final class const TransportConfig({
   /// Backend emitted into the generated package.
-  final TransportBackend backend = TransportBackend.dio,
+  required final TransportBackend backend,
 }) {
   @override
   String toString() => 'TransportConfig{backend: $backend}';

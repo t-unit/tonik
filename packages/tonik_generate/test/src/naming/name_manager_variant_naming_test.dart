@@ -21,6 +21,12 @@ void main() {
             .push('schemas')
             .push('User'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -70,6 +76,13 @@ void main() {
             .push('schemas')
             .push('Anonymous'),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -96,6 +109,13 @@ void main() {
             .push('schemas')
             .push('Anonymous'),
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -123,6 +143,12 @@ void main() {
             .push('schemas')
             .push('User'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       // Generate the same variant name twice
@@ -159,6 +185,12 @@ void main() {
             .push('schemas')
             .push('User'),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       // Generate variant names for different parent classes
@@ -250,6 +282,12 @@ class _HashCollidingClassModel({required super.name}) extends ClassModel {
         properties: const [],
         context: Context.initial(),
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
   @override

@@ -20,6 +20,12 @@ ApiDocument _createTestDocument() {
         properties: const [],
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     },
     operations: {
@@ -36,6 +42,10 @@ ApiDocument _createTestDocument() {
         cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       ),
     },
     responseHeaders: const {},
@@ -46,6 +56,12 @@ ApiDocument _createTestDocument() {
     pathParameters: const {},
     cookieParameters: const {},
     requestBodies: const {},
+    summary: null,
+    description: null,
+    contact: null,
+    license: null,
+    termsOfService: null,
+    externalDocs: null,
   );
 }
 
@@ -257,7 +273,32 @@ nameOverrides:
           nameOverrides: NameOverridesConfig(
             schemas: {'UserDTO': 'User'},
             operations: {'getUser': 'fetchUser'},
+            properties: {},
+            parameters: {},
+            enums: {},
+            tags: {},
           ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -282,6 +323,12 @@ nameOverrides:
               properties: const [],
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             ClassModel(
               name: 'Deprecated',
@@ -292,6 +339,12 @@ nameOverrides:
               properties: const [],
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           },
           operations: {
@@ -300,7 +353,7 @@ nameOverrides:
               context: ctx.push('paths').push('/user').push('get'),
               path: '/user',
               method: HttpMethod.get,
-              tags: {Tag(name: 'Users')},
+              tags: {Tag(name: 'Users', description: null, nameOverride: null)},
               isDeprecated: false,
               headers: const {},
               queryParameters: const {},
@@ -308,13 +361,19 @@ nameOverrides:
               cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
+              nameOverride: null,
+              summary: null,
+              description: null,
+              requestBody: null,
             ),
             Operation(
               operationId: 'getInternal',
               context: ctx.push('paths').push('/internal').push('get'),
               path: '/internal',
               method: HttpMethod.get,
-              tags: {Tag(name: 'Internal')},
+              tags: {
+                Tag(name: 'Internal', description: null, nameOverride: null),
+              },
               isDeprecated: false,
               headers: const {},
               queryParameters: const {},
@@ -322,6 +381,10 @@ nameOverrides:
               cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
+              nameOverride: null,
+              summary: null,
+              description: null,
+              requestBody: null,
             ),
           },
           responseHeaders: const {},
@@ -332,13 +395,44 @@ nameOverrides:
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
           filter: FilterConfig(
             includeTags: ['Users'],
             excludeSchemas: ['Deprecated'],
+            excludeTags: [],
+            excludeOperations: [],
           ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -363,6 +457,12 @@ nameOverrides:
               properties: const [],
               isDeprecated: true,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             ClassModel(
               name: 'Active',
@@ -370,6 +470,12 @@ nameOverrides:
               properties: const [],
               isDeprecated: false,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           },
           operations: {
@@ -386,6 +492,10 @@ nameOverrides:
               cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
+              nameOverride: null,
+              summary: null,
+              description: null,
+              requestBody: null,
             ),
             Operation(
               operationId: 'getActive',
@@ -400,6 +510,10 @@ nameOverrides:
               cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
+              nameOverride: null,
+              summary: null,
+              description: null,
+              requestBody: null,
             ),
           },
           responseHeaders: const {},
@@ -410,13 +524,44 @@ nameOverrides:
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
           deprecated: DeprecatedConfig(
             operations: DeprecatedHandling.exclude,
             schemas: DeprecatedHandling.exclude,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
           ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -441,10 +586,16 @@ nameOverrides:
               isNullable: false,
               isDeprecated: false,
               values: {
-                const EnumEntry(value: 'active'),
-                const EnumEntry(value: 'inactive'),
+                const EnumEntry(value: 'active', nameOverride: null),
+                const EnumEntry(value: 'inactive', nameOverride: null),
               },
               examples: const [],
+              nameOverride: null,
+              description: null,
+              defaultValue: null,
+              fallbackValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           },
           operations: const {},
@@ -456,6 +607,12 @@ nameOverrides:
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
@@ -463,6 +620,31 @@ nameOverrides:
             generateUnknownCase: true,
             unknownCaseName: 'unrecognized',
           ),
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();
@@ -476,7 +658,7 @@ nameOverrides:
 
       test('skips transformation when config has no overrides/filters', () {
         final doc = _createTestDocument();
-        const config = TonikConfig();
+        const config = TonikConfig.defaults;
 
         const transformer = ConfigTransformer();
         final transformed = transformer.apply(doc, config);

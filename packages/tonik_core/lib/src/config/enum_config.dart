@@ -4,10 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 class const EnumConfig({
   /// Whether to generate an unknown case for forward compatibility.
-  final bool generateUnknownCase = false,
+  required final bool generateUnknownCase,
 
   /// Name for the unknown case.
-  final String unknownCaseName = 'unknown',
+  required final String unknownCaseName,
 }) {
   @override
   String toString() =>

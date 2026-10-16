@@ -19,6 +19,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -50,6 +51,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = param.resolve();
@@ -73,12 +75,14 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final alias = CookieParameterAlias(
         name: 'aliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -105,12 +109,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = CookieParameterAlias(
           name: 'aliasName',
           parameter: originalParam,
           context: context,
+          description: null,
         );
 
         final resolved = alias.resolve(name: 'overrideName');
@@ -135,18 +141,21 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final firstAlias = CookieParameterAlias(
         name: 'firstAliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final secondAlias = CookieParameterAlias(
         name: 'secondAliasName',
         parameter: firstAlias,
         context: context,
+        description: null,
       );
 
       final resolved = secondAlias.resolve();
@@ -172,6 +181,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = CookieParameterAlias(
@@ -201,12 +211,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = CookieParameterAlias(
           name: 'aliasName',
           parameter: originalParam,
           context: context,
+          description: null,
         );
 
         expect(alias.description, isNull);
@@ -230,6 +242,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias1 = CookieParameterAlias(
@@ -268,6 +281,7 @@ void main() {
             context: context,
             examples: const [],
             defaultValue: null,
+            nameOverride: null,
           );
 
           final alias1 = CookieParameterAlias(

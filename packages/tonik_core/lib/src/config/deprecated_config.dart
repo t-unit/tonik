@@ -16,10 +16,10 @@ enum DeprecatedHandling() {
 /// and properties.
 @immutable
 class const DeprecatedConfig({
-  final DeprecatedHandling operations = DeprecatedHandling.annotate,
-  final DeprecatedHandling schemas = DeprecatedHandling.annotate,
-  final DeprecatedHandling parameters = DeprecatedHandling.annotate,
-  final DeprecatedHandling properties = DeprecatedHandling.annotate,
+  required final DeprecatedHandling operations,
+  required final DeprecatedHandling schemas,
+  required final DeprecatedHandling parameters,
+  required final DeprecatedHandling properties,
 }) {
   @override
   String toString() =>

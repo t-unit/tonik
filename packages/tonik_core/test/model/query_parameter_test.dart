@@ -21,6 +21,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -56,6 +57,7 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final resolved = param.resolve();
@@ -81,12 +83,14 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final alias = QueryParameterAlias(
         name: 'aliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final resolved = alias.resolve();
@@ -115,12 +119,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = QueryParameterAlias(
           name: 'aliasName',
           parameter: originalParam,
           context: context,
+          description: null,
         );
 
         final resolved = alias.resolve(name: 'overrideName');
@@ -147,18 +153,21 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
       );
 
       final firstAlias = QueryParameterAlias(
         name: 'firstAliasName',
         parameter: originalParam,
         context: context,
+        description: null,
       );
 
       final secondAlias = QueryParameterAlias(
         name: 'secondAliasName',
         parameter: firstAlias,
         context: context,
+        description: null,
       );
 
       final resolved = secondAlias.resolve();
@@ -186,6 +195,7 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = QueryParameterAlias(
@@ -217,12 +227,14 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final alias = QueryParameterAlias(
           name: 'aliasName',
           parameter: originalParam,
           context: context,
+          description: null,
         );
 
         expect(alias.description, isNull);

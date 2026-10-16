@@ -45,7 +45,7 @@ class const CookieParameterAlias({
   required final String name,
   required final CookieParameter parameter,
   required super.context,
-  @override final String? description,
+  @override required final String? description,
 }) extends CookieParameter {
   @override
   String toString() =>
@@ -80,7 +80,7 @@ class CookieParameterObject({
   required super.context,
   required var List<Example> examples,
   required var Object? defaultValue,
-  var String? nameOverride,
+  required var String? nameOverride,
 }) extends CookieParameter {
   Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 

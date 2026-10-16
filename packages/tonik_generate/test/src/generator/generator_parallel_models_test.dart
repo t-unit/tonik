@@ -36,6 +36,12 @@ ApiDocument _modelsDocument(int count, Context ctx) {
         properties: const [],
         context: ctx,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
   }
@@ -53,6 +59,11 @@ ApiDocument _modelsDocument(int count, Context ctx) {
     pathParameters: const {},
     cookieParameters: const {},
     requestBodies: const {},
+    summary: null,
+    contact: null,
+    license: null,
+    termsOfService: null,
+    externalDocs: null,
   );
 }
 
@@ -81,7 +92,37 @@ void main() {
           apiDocument: apiDoc,
           outputDirectory: tempDir.path,
           package: parallelPackage,
-          config: const TonikConfig(workerCount: 2),
+          config: const TonikConfig(
+            workerCount: 2,
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            filter: FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+          ),
           workerPoolFactory: () {
             parallelPoolCount++;
             return ModelWorkerPool();
@@ -94,7 +135,37 @@ void main() {
           apiDocument: apiDoc,
           outputDirectory: tempDir.path,
           package: serialPackage,
-          config: const TonikConfig(workerCount: 1),
+          config: const TonikConfig(
+            workerCount: 1,
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            filter: FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+          ),
           workerPoolFactory: () {
             serialPoolCount++;
             return ModelWorkerPool();
@@ -130,6 +201,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final baz = ClassModel(
           name: 'Baz',
@@ -137,6 +214,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final foo = OneOfModel(
           name: 'Foo',
@@ -144,6 +227,13 @@ void main() {
           context: ctx,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final fooBar = OneOfModel(
           name: 'FooBar',
@@ -151,6 +241,13 @@ void main() {
           context: ctx,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final nullableChoice = OneOfModel(
           name: 'NullableChoice',
@@ -159,6 +256,12 @@ void main() {
           context: ctx,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final nullableObject = ClassModel(
           name: 'NullableChoiceBaz',
@@ -167,14 +270,25 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final nullableEnum = EnumModel<String>(
           name: 'NullableChoiceBazModel',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: true,
           context: ctx,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final resultResponse = ClassModel(
           name: 'ResultResponse',
@@ -182,6 +296,12 @@ void main() {
           properties: const [],
           context: ctx,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final get = OneOfModel(
           name: 'Get',
@@ -189,6 +309,13 @@ void main() {
           context: ctx,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          discriminator: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
         );
         final response = ResponseObject(
           name: null,
@@ -210,6 +337,10 @@ void main() {
           cookieParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 204): response},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         final apiDoc = _modelsDocument(Generator.parallelThreshold, ctx);
         apiDoc.models = {
@@ -235,14 +366,74 @@ void main() {
           apiDocument: apiDoc,
           outputDirectory: parallelRoot,
           package: 'collision_api',
-          config: const TonikConfig(workerCount: 2),
+          config: const TonikConfig(
+            workerCount: 2,
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            filter: FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+          ),
           workerPoolFactory: () => pool,
         );
         await const Generator().generate(
           apiDocument: apiDoc,
           outputDirectory: serialRoot,
           package: 'collision_api',
-          config: const TonikConfig(workerCount: 1),
+          config: const TonikConfig(
+            workerCount: 1,
+            nameOverrides: NameOverridesConfig(
+              schemas: {},
+              properties: {},
+              operations: {},
+              parameters: {},
+              enums: {},
+              tags: {},
+            ),
+            contentTypes: {},
+            contentMediaTypes: {},
+            filter: FilterConfig(
+              includeTags: [],
+              excludeTags: [],
+              excludeOperations: [],
+              excludeSchemas: [],
+            ),
+            deprecated: DeprecatedConfig(
+              operations: DeprecatedHandling.annotate,
+              schemas: DeprecatedHandling.annotate,
+              parameters: DeprecatedHandling.annotate,
+              properties: DeprecatedHandling.annotate,
+            ),
+            enums: EnumConfig(
+              generateUnknownCase: false,
+              unknownCaseName: 'unknown',
+            ),
+            transport: TransportConfig(backend: TransportBackend.dio),
+            useImmutableCollections: false,
+          ),
         );
 
         expect(pool.spawnedWorkers, 2);
@@ -262,7 +453,37 @@ void main() {
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: 'below_threshold_pkg',
-        config: const TonikConfig(workerCount: 8),
+        config: const TonikConfig(
+          workerCount: 8,
+          nameOverrides: NameOverridesConfig(
+            schemas: {},
+            properties: {},
+            operations: {},
+            parameters: {},
+            enums: {},
+            tags: {},
+          ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+        ),
         workerPoolFactory: () {
           poolCount++;
           return ModelWorkerPool();

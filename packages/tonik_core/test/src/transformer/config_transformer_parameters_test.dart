@@ -22,6 +22,7 @@ void main() {
           context: ctx.push('components').push('parameters').push('petId'),
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
         final limitParam = QueryParameterObject(
@@ -38,9 +39,14 @@ void main() {
           context: ctx.push('components').push('parameters').push('limit'),
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
 
-        final tag = Tag(name: 'pet', description: 'Pet tag');
+        final tag = Tag(
+          name: 'pet',
+          description: 'Pet tag',
+          nameOverride: null,
+        );
 
         final getPet = Operation(
           operationId: 'getPet',
@@ -55,6 +61,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final apiDocument = ApiDocument(
@@ -70,12 +80,44 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const config = TonikConfig(
           nameOverrides: NameOverridesConfig(
             parameters: {'getPet.petId': 'id'},
+            schemas: {},
+            properties: {},
+            operations: {},
+            enums: {},
+            tags: {},
           ),
+          contentTypes: {},
+          contentMediaTypes: {},
+          filter: FilterConfig(
+            includeTags: [],
+            excludeTags: [],
+            excludeOperations: [],
+            excludeSchemas: [],
+          ),
+          deprecated: DeprecatedConfig(
+            operations: DeprecatedHandling.annotate,
+            schemas: DeprecatedHandling.annotate,
+            parameters: DeprecatedHandling.annotate,
+            properties: DeprecatedHandling.annotate,
+          ),
+          enums: EnumConfig(
+            generateUnknownCase: false,
+            unknownCaseName: 'unknown',
+          ),
+          transport: TransportConfig(backend: TransportBackend.dio),
+          useImmutableCollections: false,
+          workerCount: 0,
         );
 
         const transformer = ConfigTransformer();

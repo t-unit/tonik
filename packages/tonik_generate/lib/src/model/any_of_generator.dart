@@ -66,6 +66,10 @@ class const AnyOfGenerator({
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           );
         })
         .toList();
@@ -136,6 +140,10 @@ class const AnyOfGenerator({
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           );
         })
         .toList();

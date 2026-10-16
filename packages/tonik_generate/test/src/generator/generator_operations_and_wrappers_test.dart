@@ -30,6 +30,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
         headers: const {},
@@ -45,6 +46,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
         headers: const {},
@@ -55,7 +57,7 @@ void main() {
         context: ctx,
         summary: 'get user',
         description: 'get user',
-        tags: {Tag(name: 'users')},
+        tags: {Tag(name: 'users', description: null, nameOverride: null)},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -68,6 +70,8 @@ void main() {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
         },
+        nameOverride: null,
+        requestBody: null,
       );
 
       final opUntagged = Operation(
@@ -85,6 +89,8 @@ void main() {
         cookieParameters: const {},
         securitySchemes: const {},
         responses: const {},
+        nameOverride: null,
+        requestBody: null,
       );
 
       final apiDoc = ApiDocument(
@@ -101,6 +107,11 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: const {},
+        summary: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';

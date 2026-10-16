@@ -45,6 +45,10 @@ void main() {
         context: testContext,
         tags: const {},
         isDeprecated: false,
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -79,10 +83,19 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -95,6 +108,9 @@ void main() {
         tags: const <Tag>{},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -128,10 +144,19 @@ void main() {
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/x-amz-json-1.1',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -144,6 +169,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -178,10 +206,18 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/x-amz-json-1.1',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -194,6 +230,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -228,16 +267,27 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/x-amz-json-1.1',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -250,6 +300,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -287,10 +340,19 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: ClassModel(
@@ -299,10 +361,19 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -315,6 +386,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -351,6 +425,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: testContext),
@@ -359,6 +436,7 @@ void main() {
               wireContentType: 'text/plain',
               textEncoding: TextEncoding.ascii,
               examples: const [],
+              formEncoding: null,
             ),
           },
         ),
@@ -371,6 +449,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -398,6 +479,11 @@ void main() {
           valueModel: AnyModel(context: testContext),
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         tree.valueModel = tree;
 
@@ -416,6 +502,9 @@ void main() {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -428,6 +517,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -464,6 +556,11 @@ void main() {
           valueModel: AnyModel(context: testContext),
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         tree.valueModel = tree;
 
@@ -482,6 +579,9 @@ void main() {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: ClassModel(
@@ -490,10 +590,19 @@ void main() {
                   properties: const [],
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -506,6 +615,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -553,6 +665,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -565,6 +680,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -597,6 +715,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -609,6 +730,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -644,10 +768,19 @@ void main() {
                 context: testContext,
                 examples: const [],
                 defaultValue: null,
+                nameOverride: null,
+                description: null,
+                isDeprecated: false,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -660,6 +793,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -691,17 +827,26 @@ void main() {
               model: EnumModel<String>(
                 name: 'Status',
                 values: {
-                  const EnumEntry(value: 'active'),
-                  const EnumEntry(value: 'inactive'),
+                  const EnumEntry(value: 'active', nameOverride: null),
+                  const EnumEntry(value: 'inactive', nameOverride: null),
                 },
                 isNullable: false,
                 isDeprecated: false,
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                defaultValue: null,
+                fallbackValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -714,6 +859,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -746,6 +894,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -758,6 +909,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -791,6 +945,9 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -803,6 +960,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -836,22 +996,34 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: EnumModel(
                 isDeprecated: false,
                 name: 'TestEnum',
                 values: {
-                  const EnumEntry(value: 'value1'),
-                  const EnumEntry(value: 'value2'),
+                  const EnumEntry(value: 'value1', nameOverride: null),
+                  const EnumEntry(value: 'value2', nameOverride: null),
                 },
                 context: testContext,
                 isNullable: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                defaultValue: null,
+                fallbackValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -864,6 +1036,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -904,10 +1079,18 @@ void main() {
                   properties: const [],
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/x-amz-json-1.1',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -920,6 +1103,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = '''
@@ -956,6 +1142,7 @@ void main() {
               wireContentType: 'text/plain; charset=us-ascii',
               textEncoding: TextEncoding.latin1,
               examples: const [],
+              formEncoding: null,
             ),
           },
         ),
@@ -968,6 +1155,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1002,6 +1192,9 @@ void main() {
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -1014,6 +1207,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         // Note: For binary, the model is StringModel but at runtime
@@ -1049,6 +1245,9 @@ void main() {
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -1061,6 +1260,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1095,6 +1297,9 @@ void main() {
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -1107,6 +1312,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = '''
@@ -1143,10 +1351,19 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: testContext),
@@ -1155,6 +1372,7 @@ void main() {
               wireContentType: 'text/plain; charset=us-ascii',
               textEncoding: TextEncoding.latin1,
               examples: const [],
+              formEncoding: null,
             ),
           },
         ),
@@ -1167,6 +1385,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1204,16 +1425,28 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -1226,6 +1459,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1263,16 +1499,28 @@ void main() {
                 properties: const [],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: BinaryModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         ),
@@ -1285,6 +1533,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1322,6 +1573,7 @@ void main() {
               wireContentType: 'text/plain; charset=iso-8859-1',
               textEncoding: TextEncoding.ascii,
               examples: const [],
+              formEncoding: null,
             ),
           },
         ),
@@ -1334,6 +1586,9 @@ void main() {
         tags: const {},
         isDeprecated: false,
         securitySchemes: const {},
+        nameOverride: null,
+        summary: null,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -1365,6 +1620,10 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'age',
@@ -1374,10 +1633,20 @@ void main() {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -1395,6 +1664,9 @@ void main() {
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -1407,6 +1679,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -1450,6 +1725,8 @@ void main() {
                     'application/x-www-form-urlencoded; charset=iso-8859-1',
                 textEncoding: TextEncoding.latin1,
                 examples: const [],
+                wireContentType: null,
+                formEncoding: null,
               ),
             },
           ),
@@ -1462,6 +1739,9 @@ void main() {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -1499,10 +1779,20 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -1520,6 +1810,9 @@ Object? _data({required String body}) {
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -1532,6 +1825,9 @@ Object? _data({required String body}) {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -1572,6 +1868,10 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'notReserved',
@@ -1581,6 +1881,10 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'optional',
@@ -1590,10 +1894,20 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -1615,6 +1929,8 @@ Object? _data({required String body}) {
                   'reserved': _reserved(true),
                   'notReserved': _reserved(false),
                 }),
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             },
           ),
@@ -1627,6 +1943,9 @@ Object? _data({required String body}) {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -1670,10 +1989,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = Operation(
@@ -1694,6 +2023,8 @@ Object? _data({required String body}) {
                   formEncoding: _formEncodingByName(formModel, {
                     'reserved': _reserved(true),
                   }),
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
                 ),
               },
             ),
@@ -1706,6 +2037,9 @@ Object? _data({required String body}) {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           const expectedMethod = r'''
@@ -1750,10 +2084,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = Operation(
@@ -1774,6 +2118,8 @@ Object? _data({required String body}) {
                   formEncoding: _formEncodingByName(formModel, {
                     'name': _reserved(false),
                   }),
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
                 ),
               },
             ),
@@ -1786,6 +2132,9 @@ Object? _data({required String body}) {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           const expectedMethod = r'''
@@ -1828,6 +2177,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'secret',
@@ -1838,10 +2191,19 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -1893,6 +2255,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'metadata',
@@ -1902,10 +2268,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -1957,6 +2333,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'items',
@@ -1967,19 +2347,41 @@ Object? _data({required String body}) {
                     properties: const [],
                     context: testContext,
                     examples: const [],
+                    nameOverride: null,
+                    description: null,
+                    additionalPropertiesPolicy: null,
+                    isNullable: false,
+                    isReadOnly: false,
+                    isWriteOnly: false,
                   ),
                   context: testContext,
                   examples: const [],
+                  name: null,
+                  nameOverride: null,
+                  isNullable: false,
+                  isContentNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2029,25 +2431,39 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'status',
               model: EnumModel<String>(
                 name: 'Status',
                 values: {
-                  const EnumEntry(value: 'active'),
-                  const EnumEntry(value: 'inactive'),
+                  const EnumEntry(value: 'active', nameOverride: null),
+                  const EnumEntry(value: 'inactive', nameOverride: null),
                 },
                 isNullable: false,
                 isDeprecated: false,
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                defaultValue: null,
+                fallbackValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'choice',
@@ -2066,16 +2482,33 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                discriminator: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
+                defaultValue: null,
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = _formOperation(
@@ -2131,29 +2564,49 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'status',
                 model: EnumModel<String>(
                   name: 'Status',
                   values: {
-                    const EnumEntry(value: 'active'),
-                    const EnumEntry(value: 'inactive'),
+                    const EnumEntry(value: 'active', nameOverride: null),
+                    const EnumEntry(value: 'inactive', nameOverride: null),
                   },
                   isNullable: false,
                   isDeprecated: false,
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  defaultValue: null,
+                  fallbackValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2203,6 +2656,10 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'choice',
@@ -2221,16 +2678,33 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                discriminator: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
+                defaultValue: null,
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = _formOperation(
@@ -2280,6 +2754,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'a b',
@@ -2289,10 +2767,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2342,6 +2830,10 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'tags',
@@ -2349,16 +2841,32 @@ Object? _data({required String body}) {
                 content: StringModel(context: testContext),
                 context: testContext,
                 examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = _formOperation(
@@ -2410,6 +2918,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'meta',
@@ -2417,16 +2929,32 @@ Object? _data({required String body}) {
                   valueModel: StringModel(context: testContext),
                   context: testContext,
                   examples: const [],
+                  name: null,
+                  nameOverride: null,
+                  isNullable: false,
+                  isValueNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2478,6 +3006,10 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'metadata',
@@ -2487,10 +3019,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2540,6 +3082,10 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'hidden',
@@ -2550,10 +3096,19 @@ Object? _data({required String body}) {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = _formOperation(
@@ -2603,6 +3158,9 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
               Property(
                 name: 'user_name',
@@ -2612,10 +3170,20 @@ Object? _data({required String body}) {
                 isDeprecated: false,
                 examples: const [],
                 defaultValue: null,
+                isReadOnly: false,
+                isWriteOnly: false,
+                nameOverride: null,
+                description: null,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = _formOperation(
@@ -2662,6 +3230,10 @@ Object? _data({required String body}) {
             isDeprecated: false,
             examples: const [],
             defaultValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+            nameOverride: null,
+            description: null,
           );
           final formModel = AllOfModel(
             name: 'CompositeForm',
@@ -2673,10 +3245,23 @@ Object? _data({required String body}) {
                 properties: [memberProperty],
                 context: testContext,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
             ],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2695,6 +3280,8 @@ Object? _data({required String body}) {
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
                   formEncoding: {memberProperty: _reserved(true)},
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
                 ),
               },
             ),
@@ -2707,6 +3294,9 @@ Object? _data({required String body}) {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           const expectedMethod = r'''
@@ -2769,6 +3359,9 @@ Object? _data({required String body}) {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = '''
@@ -2810,6 +3403,8 @@ Future<Object?> _data({required Upload body}) async {
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
                 multipartPartFixture(
@@ -2824,6 +3419,8 @@ Future<Object?> _data({required Upload body}) async {
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
               ], name: 'CreateUserForm'),
@@ -2838,6 +3435,9 @@ Future<Object?> _data({required Upload body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -2898,6 +3498,8 @@ Future<Object?> _data({required Upload body}) async {
                           examples: const [],
                         ),
                       },
+                      wireContentType: null,
+                      textEncoding: TextEncoding.utf8,
                     ),
                   ),
                 ], name: 'UploadForm'),
@@ -2912,6 +3514,9 @@ Future<Object?> _data({required Upload body}) async {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           final method = generator.generateDataMethod(operation);
@@ -2944,6 +3549,7 @@ Future<Object?> _data({required Upload body}) async {
           context: testContext,
           examples: const [],
           defaultValue: null,
+          nameOverride: null,
         );
         final operation = Operation(
           operationId: 'uploadFile',
@@ -2978,6 +3584,8 @@ Future<Object?> _data({required Upload body}) async {
                         examples: const [],
                       ),
                     },
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
               ], name: 'UploadForm'),
@@ -2992,6 +3600,9 @@ Future<Object?> _data({required Upload body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         final method = generator.generateDataMethod(operation);
@@ -3028,6 +3639,9 @@ Future<Object?> _data({required Upload body}) async {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               multipartContentFixture(testContext, const []),
             },
@@ -3041,6 +3655,9 @@ Future<Object?> _data({required Upload body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
         const expected = r'''
 Future<Object?> _data({Payload? body}) async {
@@ -3077,10 +3694,20 @@ Future<Object?> _data({Payload? body}) async {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -3098,6 +3725,9 @@ Future<Object?> _data({Payload? body}) async {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               multipartContentFixture(testContext, [
                 multipartPartFixture(
@@ -3110,6 +3740,8 @@ Future<Object?> _data({Payload? body}) async {
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
+                    wireContentType: null,
+                    textEncoding: TextEncoding.utf8,
                   ),
                 ),
               ], name: 'FormPayload'),
@@ -3124,6 +3756,9 @@ Future<Object?> _data({Payload? body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -3156,6 +3791,12 @@ Future<Object?> _data({Payload? body}) async {
           properties: const [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final formModel = ClassModel(
@@ -3170,10 +3811,20 @@ Future<Object?> _data({Payload? body}) async {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -3191,12 +3842,18 @@ Future<Object?> _data({Payload? body}) async {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: formModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -3209,6 +3866,9 @@ Future<Object?> _data({Payload? body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -3247,6 +3907,12 @@ Future<Object?> _data({Payload? body}) async {
             properties: const [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final formModel = ClassModel(
@@ -3255,6 +3921,12 @@ Future<Object?> _data({Payload? body}) async {
             properties: const [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = Operation(
@@ -3272,12 +3944,18 @@ Future<Object?> _data({Payload? body}) async {
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   examples: const [],
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
+                  formEncoding: null,
                 ),
                 ModelRequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
+                  formEncoding: null,
                 ),
               },
             ),
@@ -3290,6 +3968,9 @@ Future<Object?> _data({Payload? body}) async {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           const expectedMethod = r'''
@@ -3329,6 +4010,12 @@ Future<Object?> _data({Payload? body}) async {
           properties: const [],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final formModel = ClassModel(
@@ -3343,6 +4030,10 @@ Future<Object?> _data({Payload? body}) async {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
             Property(
               name: 'plain',
@@ -3352,10 +4043,20 @@ Future<Object?> _data({Payload? body}) async {
               isDeprecated: false,
               examples: const [],
               defaultValue: null,
+              isReadOnly: false,
+              isWriteOnly: false,
+              nameOverride: null,
+              description: null,
             ),
           ],
           context: testContext,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final operation = Operation(
@@ -3373,6 +4074,9 @@ Future<Object?> _data({Payload? body}) async {
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: formModel,
@@ -3383,6 +4087,8 @@ Future<Object?> _data({Payload? body}) async {
                   'reserved': _reserved(true),
                   'plain': _reserved(false),
                 }),
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
               ),
             },
           ),
@@ -3395,6 +4101,9 @@ Future<Object?> _data({Payload? body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = r'''
@@ -3449,6 +4158,8 @@ Future<Object?> _data({Payload? body}) async {
                       style: EncodingStyle.form,
                       explode: true,
                       allowReserved: false,
+                      wireContentType: null,
+                      textEncoding: TextEncoding.utf8,
                     ),
                   ),
                 ], name: 'CreateUserForm'),
@@ -3463,6 +4174,9 @@ Future<Object?> _data({Payload? body}) async {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           const expectedMethod = r'''
@@ -3495,6 +4209,12 @@ Future<Object?> _data({Payload? body}) async {
             properties: const [],
             context: testContext,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           );
 
           final operation = Operation(
@@ -3512,6 +4232,9 @@ Future<Object?> _data({Payload? body}) async {
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   examples: const [],
+                  wireContentType: null,
+                  textEncoding: TextEncoding.utf8,
+                  formEncoding: null,
                 ),
                 multipartContentFixture(testContext, [
                   multipartPartFixture(
@@ -3536,6 +4259,8 @@ Future<Object?> _data({Payload? body}) async {
                           examples: const [],
                         ),
                       },
+                      wireContentType: null,
+                      textEncoding: TextEncoding.utf8,
                     ),
                   ),
                 ], name: 'UploadPayload'),
@@ -3550,6 +4275,9 @@ Future<Object?> _data({Payload? body}) async {
             tags: const {},
             isDeprecated: false,
             securitySchemes: const {},
+            nameOverride: null,
+            summary: null,
+            description: null,
           );
 
           final method = generator.generateDataMethod(operation);
@@ -3592,10 +4320,19 @@ Future<Object?> _data({Payload? body}) async {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  defaultValue: null,
+                  fallbackValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -3608,6 +4345,9 @@ Future<Object?> _data({Payload? body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         final method = generator.generateDataMethod(operation);
@@ -3634,10 +4374,19 @@ Future<Object?> _data({Payload? body}) async {
                   properties: const [],
                   context: testContext,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
               ModelRequestContent(
                 model: EnumModel<String>(
@@ -3647,10 +4396,19 @@ Future<Object?> _data({Payload? body}) async {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  defaultValue: null,
+                  fallbackValue: null,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           ),
@@ -3663,6 +4421,9 @@ Future<Object?> _data({Payload? body}) async {
           tags: const {},
           isDeprecated: false,
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
         );
 
         const expectedMethod = '''
@@ -3720,6 +4481,8 @@ Operation _formOperation({
           rawContentType: 'application/x-www-form-urlencoded',
           examples: const [],
           formEncoding: _formEncodingByName(model, encoding),
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       },
     ),
@@ -3732,5 +4495,8 @@ Operation _formOperation({
     tags: const {},
     isDeprecated: false,
     securitySchemes: const {},
+    nameOverride: null,
+    summary: null,
+    description: null,
   );
 }

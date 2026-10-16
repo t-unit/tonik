@@ -1,8 +1,8 @@
 /// Represents a tag that groups related operations in an API.
 class Tag({
   required final String name,
-  var String? description,
-  var String? nameOverride,
+  required var String? description,
+  required var String? nameOverride,
 }) {
   @override
   String toString() =>

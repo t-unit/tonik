@@ -19,7 +19,7 @@ void main() {
     });
 
     test('caches generated names', () {
-      final tag = Tag(name: 'pets');
+      final tag = Tag(name: 'pets', description: null, nameOverride: null);
 
       final name1 = manager.tagName(tag);
       final name2 = manager.tagName(tag);
@@ -53,6 +53,7 @@ void main() {
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
@@ -67,11 +68,16 @@ void main() {
                   rawContentType: 'text/plain',
                   contentType: ContentType.json,
                   examples: const [],
+                  delivery: ResponseDelivery.complete,
                 ),
               },
             ),
           },
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         final (baseName, subclassNames) = manager.responseWrapperNames(
           operation,
@@ -101,11 +107,23 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         ListModel(
           content: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       ];
       final responses = [
@@ -135,9 +153,11 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           ),
+          description: null,
         ),
         ResponseObject(
           name: 'user',
@@ -159,7 +179,7 @@ void main() {
           bodies: const {},
         ),
       ];
-      final tags = [Tag(name: 'user')];
+      final tags = [Tag(name: 'user', description: null, nameOverride: null)];
 
       manager.prime(
         models: models,
@@ -192,12 +212,18 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
           ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -218,12 +244,18 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
           ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -242,12 +274,18 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
           ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -300,6 +338,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -347,6 +386,7 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -355,6 +395,7 @@ void main() {
         name: 'emptyAlias',
         context: context,
         response: emptyResponse,
+        description: null,
       );
 
       // When: Prime the name manager
@@ -440,6 +481,9 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -455,12 +499,18 @@ void main() {
             contentType: ContentType.json,
             rawContentType: 'application/json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
           ModelRequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
             examples: const [],
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+            formEncoding: null,
           ),
         },
       );
@@ -469,6 +519,7 @@ void main() {
         name: 'alias',
         context: context,
         requestBody: singleContentBody,
+        description: null,
       );
 
       manager.prime(
@@ -539,12 +590,14 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           ResponseBody(
             model: StringModel(context: context),
             rawContentType: 'application/xml',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -574,12 +627,14 @@ void main() {
             rawContentType: 'application/json',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
           ResponseBody(
             model: StringModel(context: context),
             rawContentType: 'application/xml',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -611,6 +666,7 @@ void main() {
             rawContentType: 'application/json+v2',
             contentType: ContentType.json,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -648,12 +704,25 @@ void main() {
               properties: const [],
               context: userContext,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             ClassModel(
               isDeprecated: false,
               properties: const [],
               context: userContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ];
 
@@ -680,6 +749,13 @@ void main() {
               properties: const [],
               context: userContext,
               examples: const [],
+              name: null,
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
             ClassModel(
               isDeprecated: false,
@@ -687,6 +763,12 @@ void main() {
               properties: const [],
               context: userContext,
               examples: const [],
+              nameOverride: null,
+              description: null,
+              additionalPropertiesPolicy: null,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ];
 
@@ -713,6 +795,14 @@ void main() {
         models: [StringModel(context: sharedContext)],
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       final model2 = AllOfModel(
@@ -720,6 +810,14 @@ void main() {
         models: [IntegerModel(context: sharedContext)],
         context: sharedContext,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       );
 
       manager.prime(
@@ -755,9 +853,21 @@ void main() {
 
     test('caches and returns the same result for identical server lists', () {
       final servers = [
-        const Server(url: 'https://api.example.com'),
-        const Server(url: 'https://staging.example.com'),
-        const Server(url: 'https://dev.example.com'),
+        const Server(
+          url: 'https://api.example.com',
+          description: null,
+          variables: [],
+        ),
+        const Server(
+          url: 'https://staging.example.com',
+          description: null,
+          variables: [],
+        ),
+        const Server(
+          url: 'https://dev.example.com',
+          description: null,
+          variables: [],
+        ),
       ];
 
       // First call should generate names
@@ -765,9 +875,21 @@ void main() {
 
       // Generate a new identical list to test content equality
       final identicalContentServers = [
-        const Server(url: 'https://api.example.com'),
-        const Server(url: 'https://staging.example.com'),
-        const Server(url: 'https://dev.example.com'),
+        const Server(
+          url: 'https://api.example.com',
+          description: null,
+          variables: [],
+        ),
+        const Server(
+          url: 'https://staging.example.com',
+          description: null,
+          variables: [],
+        ),
+        const Server(
+          url: 'https://dev.example.com',
+          description: null,
+          variables: [],
+        ),
       ];
 
       // Identity should be different but content equal
@@ -798,8 +920,16 @@ void main() {
 
     test('primes names for a list of servers', () {
       final servers = [
-        const Server(url: 'https://api.example.com'),
-        const Server(url: 'https://staging.example.com'),
+        const Server(
+          url: 'https://api.example.com',
+          description: null,
+          variables: [],
+        ),
+        const Server(
+          url: 'https://staging.example.com',
+          description: null,
+          variables: [],
+        ),
       ];
 
       // Prime the name manager
@@ -867,6 +997,11 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name = manager.modelName(model);
@@ -882,6 +1017,11 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -890,6 +1030,11 @@ void main() {
           properties: const [],
           context: context.push('other'),
           examples: const [],
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name1 = manager.modelName(model1);
@@ -906,6 +1051,12 @@ void main() {
           properties: const [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name = manager.modelName(model);
@@ -917,11 +1068,16 @@ void main() {
         final model = EnumModel(
           name: 'Status',
           nameOverride: 'CustomStatus',
-          values: {const EnumEntry(value: 'active')},
+          values: {const EnumEntry(value: 'active', nameOverride: null)},
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name = manager.modelName(model);
@@ -937,6 +1093,11 @@ void main() {
           context: context,
           examples: const [],
           defaultValue: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name = manager.modelName(model);
@@ -951,6 +1112,10 @@ void main() {
           content: StringModel(context: context),
           context: context,
           examples: const [],
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final name = manager.modelName(model);
@@ -975,6 +1140,9 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final name = manager.operationName(operation);
@@ -997,6 +1165,9 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         final operation2 = Operation(
           operationId: 'updateUser',
@@ -1012,6 +1183,9 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final name1 = manager.operationName(operation1);
@@ -1035,6 +1209,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final name = manager.operationName(operation);
@@ -1056,6 +1234,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
 
         final filenames = manager.operationFilenames;
@@ -1085,6 +1267,10 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
         );
         manager.operationName(operation);
 
@@ -1098,15 +1284,27 @@ void main() {
 
     group('tagName', () {
       test('uses nameOverride when set on Tag', () {
-        final tag = Tag(name: 'users', nameOverride: 'UserManagement');
+        final tag = Tag(
+          name: 'users',
+          nameOverride: 'UserManagement',
+          description: null,
+        );
         final name = manager.tagName(tag);
 
         expect(name, 'UserManagementApi');
       });
 
       test('sanitizes and makes tagName override unique', () {
-        final tag1 = Tag(name: 'users', nameOverride: 'my-api');
-        final tag2 = Tag(name: 'products', nameOverride: 'my_api');
+        final tag1 = Tag(
+          name: 'users',
+          nameOverride: 'my-api',
+          description: null,
+        );
+        final tag2 = Tag(
+          name: 'products',
+          nameOverride: 'my_api',
+          description: null,
+        );
 
         final name1 = manager.tagName(tag1);
         final name2 = manager.tagName(tag2);
@@ -1116,7 +1314,7 @@ void main() {
       });
 
       test('uses generated name when nameOverride is null', () {
-        final tag = Tag(name: 'pets');
+        final tag = Tag(name: 'pets', description: null, nameOverride: null);
         final name = manager.tagName(tag);
 
         expect(name, 'PetsApi');
@@ -1128,13 +1326,19 @@ void main() {
         final model = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'active', nameOverride: null),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = manager.enumVariantNames(model);
@@ -1157,6 +1361,12 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = manager.enumVariantNames(model);
@@ -1169,14 +1379,22 @@ void main() {
         final model = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'active', nameOverride: null),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           },
-          fallbackValue: const EnumEntry<String>(value: 'unknown'),
+          fallbackValue: const EnumEntry<String>(
+            value: 'unknown',
+            nameOverride: null,
+          ),
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = manager.enumVariantNames(model);
@@ -1191,7 +1409,7 @@ void main() {
           name: 'Status',
           values: {
             const EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           },
           fallbackValue: const EnumEntry<String>(
             value: 'unknown',
@@ -1201,6 +1419,11 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final result = manager.enumVariantNames(model);
@@ -1213,13 +1436,19 @@ void main() {
         final model = EnumModel<String>(
           name: 'Status',
           values: {
-            const EnumEntry<String>(value: 'active'),
-            const EnumEntry<String>(value: 'inactive'),
+            const EnumEntry<String>(value: 'active', nameOverride: null),
+            const EnumEntry<String>(value: 'inactive', nameOverride: null),
           },
           isNullable: false,
           isDeprecated: false,
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          defaultValue: null,
+          fallbackValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final first = manager.enumVariantNames(model);

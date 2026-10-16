@@ -37,6 +37,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -83,6 +84,7 @@ void main() {
             name: 'test',
             context: context,
             response: emptyResponse,
+            description: null,
           );
 
           expect(alias.isEmpty, isTrue);
@@ -116,6 +118,7 @@ void main() {
             name: 'test',
             context: context,
             response: nonEmptyResponse,
+            description: null,
           );
 
           expect(alias.isEmpty, isFalse);
@@ -187,6 +190,7 @@ void main() {
             name: 'test',
             context: context,
             response: responseWithHeaders,
+            description: null,
           );
 
           expect(alias.hasHeaders, isTrue);
@@ -208,6 +212,7 @@ void main() {
             name: 'test',
             context: context,
             response: responseWithoutHeaders,
+            description: null,
           );
 
           expect(alias.hasHeaders, isFalse);
@@ -228,12 +233,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: context),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -265,6 +272,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -273,6 +281,7 @@ void main() {
           name: 'test',
           context: context,
           response: referencedResponse,
+          description: null,
         );
 
         expect(alias.bodyCount, 1);
@@ -313,6 +322,7 @@ void main() {
           name: 'aliased',
           context: context,
           response: referencedResponse,
+          description: null,
         );
 
         expect(alias.description, isNull);

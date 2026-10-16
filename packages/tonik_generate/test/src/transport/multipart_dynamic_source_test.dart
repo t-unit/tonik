@@ -53,18 +53,32 @@ void main() {
               context: context,
               valueModel: StringModel(context: context),
               examples: const [],
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isValueNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
           ),
         },
       ),
+      nameOverride: null,
+      summary: null,
+      description: null,
     );
-    final api = ApiClientGenerator(
-      nameManager: nameManager,
-      package: 'api',
-      backendGenerator: const DioBackendGenerator(),
-      defaultsCache: defaultsCache,
-      useImmutableCollections: true,
-    ).generateClass({operation}, Tag(name: 'uploads'), const []);
+    final api =
+        ApiClientGenerator(
+          nameManager: nameManager,
+          package: 'api',
+          backendGenerator: const DioBackendGenerator(),
+          defaultsCache: defaultsCache,
+          useImmutableCollections: true,
+        ).generateClass(
+          {operation},
+          Tag(name: 'uploads', description: null, nameOverride: null),
+          const [],
+        );
     final call =
         OperationGenerator(
           nameManager: nameManager,
@@ -133,6 +147,13 @@ Future<TonikResult<void, Response<Object?>>> call({
       context: context,
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     final content = _content(
       MapModel(
@@ -142,7 +163,19 @@ Future<TonikResult<void, Response<Object?>>> call({
           context: context,
           examples: const [],
           content: union,
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.http, r'''
@@ -175,6 +208,10 @@ Object? encode() {
         isNullable: true,
         isValueNullable: true,
         valueModel: StringModel(context: context),
+        name: null,
+        nameOverride: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.http, r'''
@@ -210,7 +247,19 @@ Object? encode() {
           context: context,
           examples: const [],
           content: IntegerModel(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.dio, r'''
@@ -244,7 +293,19 @@ Object? encode() {
           context: context,
           examples: const [],
           content: Base64Model(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.http, r'''
@@ -288,8 +349,26 @@ Object? encode() {
               context: context,
               examples: const [],
               content: IntegerModel(context: context),
+              name: null,
+              nameOverride: null,
+              isNullable: false,
+              isContentNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
             ),
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       );
       _expectMethod(content, TransportBackend.http, r'''
@@ -318,6 +397,12 @@ Object? encode() {
       context: context,
       examples: const [],
       valueModel: StringModel(context: context),
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final first = multipartContentFixture(context, [
       multipartPartFixture(name: 'metadata', model: map),
@@ -332,6 +417,13 @@ Object? encode() {
         examples: const [],
         isDeprecated: false,
         models: [first, second],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       ),
     );
     _expectMethod(content, TransportBackend.http, r'''
@@ -363,7 +455,18 @@ Object? encode() {
           examples: const [],
           isContentNullable: true,
           content: StringModel(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.http, r'''
@@ -397,6 +500,11 @@ Object? encode() {
       model: BinaryModel(context: context),
       isNullable: true,
       defaultValue: null,
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final content = _content(
       MapModel(
@@ -406,7 +514,19 @@ Object? encode() {
           context: context,
           examples: const [],
           content: nullableFile,
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
     );
     _expectMethod(content, TransportBackend.dio, r'''
@@ -452,6 +572,11 @@ Future<Object?> encode() async {
           examples: const [],
           isContentNullable: true,
           content: UriModel(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: const PartEncoding(
           contentType: ContentType.json,
@@ -460,6 +585,8 @@ Future<Object?> encode() async {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       ),
     ]);
@@ -484,6 +611,12 @@ Object? encode() {
       context: context,
       examples: const [],
       content: IntegerModel(context: context),
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final first = multipartContentFixture(context, [
       multipartPartFixture(name: 'items', model: list),
@@ -498,6 +631,13 @@ Object? encode() {
         examples: const [],
         isDeprecated: false,
         models: [first, second],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
       ),
       encoding: const {
         'items': PartEncoding(
@@ -507,10 +647,14 @@ Object? encode() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       },
       rawContentType: 'multipart/form-data',
       examples: const [],
+      wireContentType: null,
+      textEncoding: TextEncoding.utf8,
     );
     _expectMethod(content, TransportBackend.http, r'''
 Object? encode() {
@@ -540,6 +684,11 @@ Object? encode() {
           examples: const [],
           isContentNullable: true,
           content: StringModel(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: const PartEncoding(
           contentType: null,
@@ -548,6 +697,8 @@ Object? encode() {
           style: EncodingStyle.form,
           explode: false,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       ),
     ]);
@@ -576,6 +727,11 @@ Object? encode() {
       model: StringModel(context: context),
       isNullable: true,
       defaultValue: null,
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final root = AliasModel(
       context: context,
@@ -585,9 +741,20 @@ Object? encode() {
         context: context,
         examples: const [],
         valueModel: nullableValue,
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
       isNullable: true,
       defaultValue: null,
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final result = normalizeMultipartProperties(_content(root));
     expect(result.runtimeEncodingError, isNull);
@@ -615,7 +782,13 @@ Object? encode() {
       properties: [named, readOnly],
       additionalPropertiesPolicy: AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       ),
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final result = normalizeMultipartProperties(
       _content(model),
@@ -643,6 +816,12 @@ Object? encode() {
           context: context,
           examples: const [],
           valueModel: AnyModel(context: context),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       ),
     );
@@ -662,7 +841,19 @@ Object? encode() {
             context: context,
             examples: const [],
             content: AnyModel(context: context),
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       ),
     );
@@ -684,8 +875,20 @@ Object? encode() {
           context: context,
           examples: const [],
           valueModel: StringModel(context: context),
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
       ],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     expect(
       normalizeMultipartProperties(_content(model)).runtimeEncodingError,
@@ -703,7 +906,14 @@ Object? encode() {
       models: [],
       additionalPropertiesPolicy: AllowedAdditionalProperties(
         valueModel: StringModel(context: context),
+        origin: AdditionalPropertiesOrigin.explicit,
       ),
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
     );
     expect(
       normalizeMultipartProperties(_content(model)).runtimeEncodingError,
@@ -717,6 +927,12 @@ Object? encode() {
       context: context,
       examples: const [],
       valueModel: StringModel(context: context),
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final content = MultipartRequestContent(
       model: model,
@@ -730,8 +946,12 @@ Object? encode() {
           style: null,
           explode: null,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       },
+      wireContentType: null,
+      textEncoding: TextEncoding.utf8,
     );
     expect(
       normalizeMultipartProperties(content).runtimeEncodingError,
@@ -746,11 +966,22 @@ Object? encode() {
       context: context,
       valueModel: StringModel(context: context),
       examples: const [],
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     root.valueModel = ListModel(
       context: context,
       content: root,
       examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     _expectMethod(_content(root), TransportBackend.dio, '''
 Object? encode() {
@@ -767,6 +998,11 @@ Object? encode() {
       context: context,
       content: StringModel(context: context),
       examples: const [],
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     recursive.content = recursive;
     final alias = AliasModel(
@@ -775,6 +1011,12 @@ Object? encode() {
       model: recursive,
       defaultValue: null,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final root = MapModel(
       context: context,
@@ -783,7 +1025,19 @@ Object? encode() {
         context: context,
         examples: const [],
         valueModel: alias,
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       ),
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final result = normalizeMultipartProperties(_content(root));
     expect(result.dynamicSource, isNull);
@@ -801,6 +1055,12 @@ Object? encode() {
       properties: [],
       isDeprecated: false,
       examples: const [],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     node.properties = [
       multipartPartFixture(
@@ -814,6 +1074,12 @@ Object? encode() {
       context: context,
       examples: const [],
       valueModel: node,
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     final result = normalizeMultipartProperties(_content(root));
     expect(result.runtimeEncodingError, isNull);
@@ -828,6 +1094,11 @@ Object? encode() {
       examples: const [],
       properties: [],
       additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
     );
     expect(normalizeMultipartProperties(_content(model)).dynamicSource, isNull);
   });
@@ -838,6 +1109,8 @@ MultipartRequestContent _content(Model model) => MultipartRequestContent(
   encoding: const {},
   rawContentType: 'multipart/form-data',
   examples: const [],
+  wireContentType: null,
+  textEncoding: TextEncoding.utf8,
 );
 
 void _expectMethod(

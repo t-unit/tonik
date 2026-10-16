@@ -25,12 +25,21 @@ void main() {
         properties: const [],
         isDeprecated: false,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final content = MultipartRequestContent(
         model: model,
         encoding: const {},
         rawContentType: 'multipart/form-data',
         examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
       );
       final document = ApiDocument(
         title: 'Test',
@@ -53,6 +62,12 @@ void main() {
             content: {content},
           ),
         },
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       await const Generator().generate(
@@ -97,12 +112,18 @@ void main() {
               contentType: ContentType.json,
               rawContentType: 'application/json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
             ModelRequestContent(
               model: StringModel(context: ctx),
               contentType: ContentType.json,
               rawContentType: 'application/problem+json',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -117,12 +138,14 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: ctx),
               rawContentType: 'application/problem+json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
           headers: const {},
@@ -138,6 +161,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
           headers: {
@@ -169,6 +193,11 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {multiBodyRequest},
+          summary: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         const packageName = 'test_package';

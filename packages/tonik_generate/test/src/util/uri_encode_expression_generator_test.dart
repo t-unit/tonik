@@ -73,13 +73,19 @@ void main() {
       final model = EnumModel<String>(
         name: 'Color',
         values: {
-          const EnumEntry<String>(value: 'red'),
-          const EnumEntry<String>(value: 'green'),
+          const EnumEntry<String>(value: 'red', nameOverride: null),
+          const EnumEntry<String>(value: 'green', nameOverride: null),
         },
         isNullable: false,
         isDeprecated: false,
         examples: const [],
         context: context,
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -111,6 +117,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -219,13 +231,19 @@ void main() {
       final model = EnumModel<String>(
         name: 'TestEnum',
         values: {
-          const EnumEntry(value: 'value1'),
-          const EnumEntry(value: 'value2'),
+          const EnumEntry(value: 'value1', nameOverride: null),
+          const EnumEntry(value: 'value2', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -393,6 +411,12 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -419,6 +443,12 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final expression = buildUriEncodeExpression(
@@ -441,6 +471,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -466,6 +502,12 @@ void main() {
         content: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -495,6 +537,12 @@ void main() {
         content: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -523,6 +571,12 @@ void main() {
         content: IntegerModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -557,6 +611,12 @@ void main() {
         content: BooleanModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -584,6 +644,12 @@ void main() {
         content: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -610,18 +676,30 @@ void main() {
       final enumModel = EnumModel<String>(
         name: 'TestEnum',
         values: {
-          const EnumEntry(value: 'value1'),
-          const EnumEntry(value: 'value2'),
+          const EnumEntry(value: 'value1', nameOverride: null),
+          const EnumEntry(value: 'value2', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = ListModel(
         content: enumModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -649,6 +727,12 @@ void main() {
         content: BinaryModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -676,6 +760,12 @@ void main() {
         content: Base64Model(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -703,6 +793,12 @@ void main() {
         content: AnyModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -731,6 +827,12 @@ void main() {
         content: AnyModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -768,6 +870,12 @@ void main() {
           content: AnyModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final expression = buildUriEncodeExpression(
           refer('value'),
@@ -808,11 +916,23 @@ void main() {
         context: context,
         examples: const [],
         defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = ListModel(
         content: aliasModel,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -841,6 +961,11 @@ void main() {
         isContentNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -869,6 +994,11 @@ void main() {
         isContentNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -895,19 +1025,30 @@ void main() {
       final enumModel = EnumModel<String>(
         name: 'TestEnum',
         values: {
-          const EnumEntry(value: 'value1'),
-          const EnumEntry(value: 'value2'),
+          const EnumEntry(value: 'value1', nameOverride: null),
+          const EnumEntry(value: 'value2', nameOverride: null),
         },
         isNullable: false,
         context: context,
         isDeprecated: false,
         examples: const [],
+        nameOverride: null,
+        description: null,
+        defaultValue: null,
+        fallbackValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final model = ListModel(
         content: enumModel,
         isContentNullable: true,
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -938,9 +1079,21 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
 
       final expression = buildUriEncodeExpression(
@@ -963,6 +1116,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -995,6 +1154,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -1030,6 +1195,12 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
         final expression = buildUriEncodeExpression(
           refer('value'),
@@ -1070,9 +1241,21 @@ void main() {
           properties: [],
           context: context,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -1109,9 +1292,21 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -1154,9 +1349,21 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -1203,12 +1410,30 @@ void main() {
             properties: [],
             context: context,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           context: context,
           examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         context: context,
         examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),

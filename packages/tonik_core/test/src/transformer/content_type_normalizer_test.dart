@@ -21,7 +21,7 @@ void main() {
         url: 'https://example.com/support',
         email: 'support@example.com',
       );
-      const license = License(name: 'MIT', identifier: 'MIT');
+      const license = License(name: 'MIT', identifier: 'MIT', url: null);
       const externalDocs = ExternalDocumentation(
         description: 'API guide',
         url: 'https://example.com/docs',
@@ -63,7 +63,7 @@ void main() {
         url: 'https://example.com/support',
         email: 'support@example.com',
       );
-      const license = License(name: 'MIT', identifier: 'MIT');
+      const license = License(name: 'MIT', identifier: 'MIT', url: null);
       const externalDocs = ExternalDocumentation(
         description: 'API guide',
         url: 'https://example.com/docs',
@@ -79,6 +79,7 @@ void main() {
             rawContentType: 'text/plain',
             contentType: ContentType.text,
             examples: const [],
+            delivery: ResponseDelivery.complete,
           ),
         },
       );
@@ -167,6 +168,10 @@ void main() {
         isDeprecated: false,
         examples: const [],
         defaultValue: null,
+        isReadOnly: false,
+        isWriteOnly: false,
+        nameOverride: null,
+        description: null,
       );
       const partEncoding = PartEncoding(
         contentType: ContentType.text,
@@ -185,6 +190,7 @@ void main() {
         wireContentType: 'text/plain; charset=us-ascii',
         textEncoding: TextEncoding.ascii,
         examples: const [],
+        formEncoding: null,
       );
       final multipartContent = MultipartRequestContent(
         model: ClassModel(
@@ -193,10 +199,18 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         ),
         encoding: const {'message': partEncoding},
         rawContentType: 'multipart/form-data',
         examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
       );
       final requestBody = RequestBodyObject(
         name: 'EncodedBody',
@@ -218,6 +232,12 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         requestBodies: {requestBody},
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       final transformed = normalizer.apply(document);
@@ -260,10 +280,17 @@ void main() {
                   context: context,
                   isDeprecated: false,
                   examples: const [],
+                  nameOverride: null,
+                  description: null,
+                  additionalPropertiesPolicy: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
                 ),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             }),
           );
@@ -281,6 +308,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -308,6 +341,7 @@ void main() {
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             }),
           );
@@ -325,6 +359,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -343,6 +383,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final response = ResponseObject(
@@ -356,6 +402,7 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -373,6 +420,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -391,6 +444,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final response = ResponseObject(
@@ -404,6 +463,7 @@ void main() {
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -421,6 +481,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -448,6 +514,7 @@ void main() {
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           );
@@ -465,6 +532,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -490,10 +563,17 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -511,6 +591,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         normalizer.apply(document);
@@ -536,6 +622,7 @@ void main() {
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -544,6 +631,7 @@ void main() {
           name: 'AliasResponse',
           context: context,
           response: referencedResponse,
+          description: null,
         );
 
         final document = ApiDocument(
@@ -559,6 +647,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -583,10 +677,17 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -612,6 +713,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -639,6 +746,7 @@ void main() {
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           );
@@ -664,6 +772,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -694,6 +808,7 @@ void main() {
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
                 examples: const [],
+                delivery: ResponseDelivery.complete,
               ),
             },
           );
@@ -702,12 +817,14 @@ void main() {
             name: 'Alias1',
             context: context.pushAll(['responses', 'Alias1']),
             response: sharedInner,
+            description: null,
           );
 
           final alias2 = ResponseAlias(
             name: 'Alias2',
             context: context.pushAll(['responses', 'Alias2']),
             response: sharedInner,
+            description: null,
           );
 
           final document = ApiDocument(
@@ -723,6 +840,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: const {},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -756,6 +879,9 @@ void main() {
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             }),
           );
@@ -773,6 +899,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: {requestBody},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -798,6 +930,9 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.text,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           }),
         );
@@ -815,6 +950,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -832,6 +973,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final requestBody = RequestBodyObject(
@@ -845,6 +992,9 @@ void main() {
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -862,6 +1012,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -880,6 +1036,12 @@ void main() {
           context: context,
           isDeprecated: false,
           examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
         );
 
         final requestBody = RequestBodyObject(
@@ -893,6 +1055,9 @@ void main() {
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -910,6 +1075,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -935,10 +1106,19 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -964,6 +1144,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {innerBody, alias},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -991,6 +1177,9 @@ void main() {
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -1016,6 +1205,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: {innerBody, alias},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -1050,6 +1245,9 @@ void main() {
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
                 examples: const [],
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+                formEncoding: null,
               ),
             },
           );
@@ -1058,12 +1256,14 @@ void main() {
             name: 'Alias1',
             context: context.pushAll(['requestBodies', 'Alias1']),
             requestBody: sharedInner,
+            description: null,
           );
 
           final alias2 = RequestBodyAlias(
             name: 'Alias2',
             context: context.pushAll(['requestBodies', 'Alias2']),
             requestBody: sharedInner,
+            description: null,
           );
 
           final document = ApiDocument(
@@ -1079,6 +1279,12 @@ void main() {
             pathParameters: const {},
             cookieParameters: const {},
             requestBodies: {sharedInner, alias1, alias2},
+            summary: null,
+            description: null,
+            contact: null,
+            license: null,
+            termsOfService: null,
+            externalDocs: null,
           );
 
           final transformed = normalizer.apply(document);
@@ -1111,6 +1317,9 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.text,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1119,6 +1328,7 @@ void main() {
           name: 'AliasBody',
           context: context,
           requestBody: referencedBody,
+          description: null,
         );
 
         final document = ApiDocument(
@@ -1134,6 +1344,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {referencedBody, aliasBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -1155,10 +1371,18 @@ void main() {
             context: context,
             isDeprecated: false,
             examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
           ),
           encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
 
         final requestBody = RequestBodyObject(
@@ -1182,6 +1406,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -1201,6 +1431,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         );
         const fileEncoding = PartEncoding(
           contentType: ContentType.bytes,
@@ -1209,6 +1443,8 @@ void main() {
           style: EncodingStyle.form,
           explode: true,
           allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         );
 
         final requestBody = RequestBodyObject(
@@ -1224,10 +1460,18 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               encoding: const {'file': fileEncoding},
               rawContentType: 'multipart/form-data',
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           },
         );
@@ -1245,6 +1489,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -1269,6 +1519,10 @@ void main() {
           isDeprecated: false,
           examples: const [],
           defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
         );
         final encoding = {
           nameProperty: const FieldEncoding(
@@ -1291,11 +1545,19 @@ void main() {
                 context: context,
                 isDeprecated: false,
                 examples: const [],
+                nameOverride: null,
+                description: null,
+                additionalPropertiesPolicy: null,
+                isNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
               ),
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
               formEncoding: encoding,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
             ),
           },
         );
@@ -1313,6 +1575,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -1337,6 +1605,9 @@ void main() {
               rawContentType: 'text/plain',
               contentType: ContentType.text,
               examples: const [],
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              formEncoding: null,
             ),
           },
         );
@@ -1354,6 +1625,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: {requestBody},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         normalizer.apply(document);
@@ -1383,6 +1660,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
@@ -1409,18 +1692,21 @@ void main() {
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: BooleanModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
             ResponseBody(
               model: StringModel(context: context),
               rawContentType: 'application/json',
               contentType: ContentType.json,
               examples: const [],
+              delivery: ResponseDelivery.complete,
             ),
           },
         );
@@ -1438,6 +1724,12 @@ void main() {
           pathParameters: const {},
           cookieParameters: const {},
           requestBodies: const {},
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
         );
 
         final transformed = normalizer.apply(document);
