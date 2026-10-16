@@ -21,100 +21,102 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates library with comprehensive API metadata', () async {
-      final models = <Model>{
-        ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: const [],
-          context: ctx,
-          examples: const [],
-        ),
-      };
+    test(
+      'generates library metadata after content type normalization',
+      () async {
+        final models = <Model>{
+          ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: const [],
+            context: ctx,
+            examples: const [],
+          ),
+        };
 
-      final apiDoc = ApiDocument(
-        title: 'Pet Store API',
-        version: '1.0.27-SNAPSHOT',
-        description:
-            'A sample Pet Store Server based on the OpenAPI 3.0 '
-            'specification.',
-        contact: const Contact(
-          name: 'API Support',
-          url: 'https://example.com/support',
-          email: 'apiteam@swagger.io',
-        ),
-        license: const License(
-          name: 'Apache 2.0',
-          url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
-        ),
-        termsOfService: 'https://swagger.io/terms/',
-        externalDocs: const ExternalDocumentation(
-          description: 'Find out more about Swagger',
-          url: 'https://swagger.io',
-        ),
-        models: models,
-        responseHeaders: const {},
-        requestHeaders: const {},
-        servers: const {},
-        operations: const {},
-        responses: const <Response>{},
-        queryParameters: const {},
-        pathParameters: const {},
-        cookieParameters: const {},
-        requestBodies: const {},
-      );
+        final apiDoc = ApiDocument(
+          title: 'Pet Store API',
+          version: '1.0.27-SNAPSHOT',
+          summary: 'A sample API for managing pets.',
+          description:
+              'A sample Pet Store Server based on the OpenAPI 3.0 '
+              'specification.',
+          contact: const Contact(
+            name: 'API Support',
+            url: 'https://example.com/support',
+            email: 'apiteam@swagger.io',
+          ),
+          license: const License(
+            name: 'Apache 2.0',
+            identifier: 'Apache-2.0',
+            url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
+          ),
+          termsOfService: 'https://swagger.io/terms/',
+          externalDocs: const ExternalDocumentation(
+            description: 'Find out more about Swagger',
+            url: 'https://swagger.io',
+          ),
+          models: models,
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const <Response>{},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-      const packageName = 'petstore_api';
-      await const Generator().generate(
-        apiDocument: apiDoc,
-        outputDirectory: tempDir.path,
-        package: packageName,
-      );
+        const packageName = 'petstore_api';
+        await const Generator().generate(
+          apiDocument: const ContentTypeNormalizer().apply(apiDoc),
+          outputDirectory: tempDir.path,
+          package: packageName,
+        );
 
-      final libraryFile = File(
-        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
-      );
-      expect(libraryFile.existsSync(), isTrue);
-      final content = libraryFile.readAsStringSync();
+        final libraryFile = File(
+          path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
+        );
+        expect(libraryFile.existsSync(), isTrue);
+        final content = libraryFile.readAsStringSync();
 
-      // Check that all metadata is included in the generated library
-      expect(content, contains('/// Pet Store API'));
-      expect(content, contains('/// Version 1.0.27-SNAPSHOT'));
-      expect(
-        content,
-        contains(
-          '/// A sample Pet Store Server based on the OpenAPI 3.0 '
-          'specification.',
-        ),
-      );
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
+        const expected = '''
+// Generated code - do not modify by hand
+// ignore_for_file: lines_longer_than_80_chars
 
-      // Contact information
-      expect(content, contains('/// Contact: API Support'));
-      expect(content, contains('/// URL: https://example.com/support'));
-      expect(content, contains('/// Email: apiteam@swagger.io'));
+/// Pet Store API
+/// Version 1.0.27-SNAPSHOT
+/// A sample API for managing pets.
+/// A sample Pet Store Server based on the OpenAPI 3.0 specification.
+///
+/// Contact: API Support
+/// Email: apiteam@swagger.io
+/// URL: https://example.com/support
+///
+/// License: Apache 2.0
+/// License URL: https://www.apache.org/licenses/LICENSE-2.0.html
+/// SPDX Identifier: Apache-2.0
+///
+/// Terms of Service: https://swagger.io/terms/
+///
+/// Documentation: Find out more about Swagger
+/// Documentation URL: https://swagger.io
 
-      // License information
-      expect(content, contains('/// License: Apache 2.0'));
-      expect(
-        content,
-        contains(
-          '/// License URL: https://www.apache.org/licenses/LICENSE-2.0.html',
-        ),
-      );
+library;
 
-      // Terms of Service
-      expect(
-        content,
-        contains('/// Terms of Service: https://swagger.io/terms/'),
-      );
-
-      // External Documentation
-      expect(
-        content,
-        contains('/// Documentation: Find out more about Swagger'),
-      );
-      expect(content, contains('/// Documentation URL: https://swagger.io'));
-    });
+export 'src/model/user.dart';
+export 'src/server/server.dart';
+''';
+        expect(
+          collapseWhitespace(format(content)),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
 
     test('keeps multiline metadata and security fields in doc comments', () {
       final apiDoc = ApiDocument(
