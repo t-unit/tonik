@@ -1,6 +1,5 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
@@ -15,7 +14,8 @@ import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dar
 /// Resolves serialization before native multipart containers are constructed.
 class const MultipartBodyPlanner({
   required final TransportBackend backend,
-  final NameManager? nameManager,
+  required final NameManager nameManager,
+  required final InlineHelperContext helperContext,
   final String? package,
   final bool useImmutableCollections = false,
 }) {
@@ -37,6 +37,7 @@ class const MultipartBodyPlanner({
             .where((parameter) => identical(parameter.content, content))
             .toList();
     final emissions = <MultipartEmission>[];
+    final inlineHelpers = <InlineHelper>[];
     final mergeHelpers = <MultipartMergeHelper>{};
     final normalization = normalizeMultipartProperties(
       content,
@@ -81,15 +82,6 @@ class const MultipartBodyPlanner({
         );
       }
     }
-    final serializationNameManager =
-        nameManager ??
-        NameManager(
-          generator: NameGenerator(),
-          stableModelSorter: StableModelSorter(),
-        );
-    final helperContext = InlineHelperContext(
-      nameManager: serializationNameManager,
-    );
     for (final property in properties) {
       final resolvedEncoding = _resolveEncoding(
         content.encoding[property.rawName],
@@ -142,16 +134,14 @@ class const MultipartBodyPlanner({
           final serialized = buildToJsonPropertyExpression(
             accesses[i],
             property.properties[i],
-            nameManager: serializationNameManager,
+            nameManager: nameManager,
             package: package,
             helperContext: helperContext,
             forceNonNullReceiver: nullableOccurrence,
             receiverIsPromotedNonNull: !nullableOccurrence,
             useImmutableCollections: useImmutableCollections,
           );
-          for (final code in spliceInlineHelpers(serialized.inlineFunctions)) {
-            emissions.add(MultipartCode(code));
-          }
+          inlineHelpers.addAll(serialized.inlineFunctions);
           mergedValues.add(
             nullableOccurrence
                 ? accesses[i]
@@ -272,6 +262,7 @@ class const MultipartBodyPlanner({
             : accessor,
         encoding: resolvedEncoding,
         headers: headers,
+        inlineHelpers: inlineHelpers,
         isMergedObject: mergedObjects,
         isMergedMap: mergedMaps,
         isMergedList: mergedLists,
@@ -297,6 +288,7 @@ class const MultipartBodyPlanner({
         _dynamicParts(
           dynamicSource,
           refer(bodyAccessor),
+          inlineHelpers: inlineHelpers,
           checkCollisions: reservedNames.isNotEmpty,
         ),
       );
@@ -305,7 +297,11 @@ class const MultipartBodyPlanner({
       value: refer(bodyAccessor),
       rawContentType: content.rawContentType,
       isRequired: isRequired,
-      emissions: emissions,
+      emissions: [
+        for (final code in spliceInlineHelpers(inlineHelpers))
+          MultipartCode(code),
+        ...emissions,
+      ],
       usesCustomParts:
           !_dio &&
           (parameters.isNotEmpty ||
@@ -319,6 +315,7 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _dynamicParts(
     MultipartDynamicSource source,
     Expression body, {
+    required List<InlineHelper> inlineHelpers,
     required bool checkCollisions,
   }) {
     final emissions = <MultipartEmission>[
@@ -391,6 +388,7 @@ class const MultipartBodyPlanner({
       value: value,
       encoding: _resolveEncoding(null, itemModel),
       headers: headers,
+      inlineHelpers: inlineHelpers,
       isMergedObject: false,
       isMergedMap: false,
       isMergedList: false,
@@ -734,21 +732,14 @@ class const MultipartBodyPlanner({
     final encoded = buildToJsonModelExpression(
       part.value,
       model,
-      nameManager:
-          nameManager ??
-          NameManager(
-            generator: NameGenerator(),
-            stableModelSorter: StableModelSorter(),
-          ),
+      nameManager: nameManager,
+      helperContext: helperContext,
       package: package,
       useImmutableCollections: immutable,
     );
+    part.inlineHelpers.addAll(encoded.inlineFunctions);
     return [
-      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('{')),
-      for (final code in spliceInlineHelpers(encoded.inlineFunctions))
-        MultipartCode(code),
       _text(part, _json(encoded.unsafeRawBody), fallback: 'application/json'),
-      if (encoded.inlineFunctions.isNotEmpty) const MultipartCode(Code('}')),
     ];
   }
 
@@ -1219,6 +1210,7 @@ typedef _Part = ({
   Expression value,
   PartEncoding encoding,
   Expression? headers,
+  List<InlineHelper> inlineHelpers,
   bool isMergedObject,
   bool isMergedMap,
   bool isMergedList,
@@ -1233,6 +1225,7 @@ _Part _withValue(_Part part, Expression value) => (
   value: value,
   encoding: part.encoding,
   headers: part.headers,
+  inlineHelpers: part.inlineHelpers,
   isMergedObject: part.isMergedObject,
   isMergedMap: part.isMergedMap,
   isMergedList: part.isMergedList,

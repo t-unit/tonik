@@ -2,13 +2,28 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 
 import '../transport/multipart_test_support.dart';
 
 void main() {
+  MultipartBodyPlanner testPlanner() {
+    final nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
+    return MultipartBodyPlanner(
+      backend: TransportBackend.dio,
+      nameManager: nameManager,
+      helperContext: InlineHelperContext(nameManager: nameManager),
+    );
+  }
+
   late Context testContext;
   late DartEmitter emitter;
 
@@ -62,8 +77,7 @@ void main() {
       ),
     ]);
     final result = buildMultipartBodyStatements(
-      const MultipartBodyPlanner(backend: TransportBackend.dio)
-          .plan(content, bodyAccessor: 'body', isRequired: true),
+      testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
     );
     final expected =
         '''
@@ -103,8 +117,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -298,8 +311,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -345,8 +357,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -390,8 +401,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -418,8 +428,7 @@ $expectedPartCode
       final content = multipartContentFixture(testContext, []);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -488,8 +497,7 @@ $expectedPartCode
       );
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -534,8 +542,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -576,8 +583,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -622,8 +628,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -663,8 +668,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -706,8 +710,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -751,8 +754,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -792,8 +794,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -833,8 +834,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -874,8 +874,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -915,8 +914,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -956,8 +954,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -997,8 +994,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1040,8 +1036,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1085,8 +1080,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1132,8 +1126,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1173,8 +1166,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1214,8 +1206,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1256,8 +1247,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1306,8 +1296,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1350,8 +1339,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1394,8 +1382,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1438,8 +1425,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1482,8 +1468,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1544,8 +1529,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1608,8 +1592,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -1668,8 +1651,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1727,8 +1709,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1786,8 +1767,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1846,8 +1826,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1908,8 +1887,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -1956,8 +1934,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2009,8 +1986,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2064,8 +2040,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2121,8 +2096,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2181,8 +2155,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2235,8 +2208,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2306,8 +2278,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2369,8 +2340,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2433,8 +2403,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2497,8 +2466,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2559,8 +2527,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2623,8 +2590,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2689,8 +2655,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2752,8 +2717,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2814,8 +2778,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -2876,8 +2839,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2937,8 +2899,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -2998,8 +2959,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3070,8 +3030,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -3134,8 +3093,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -3205,8 +3163,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3277,8 +3234,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -3348,8 +3304,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3422,8 +3377,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -3493,8 +3447,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3566,8 +3519,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -3641,8 +3593,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3714,8 +3665,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3771,8 +3721,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3846,8 +3795,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -3921,8 +3869,7 @@ $expectedPartCode
 
         final code = emitStatements(
           buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           ),
         );
 
@@ -3971,8 +3918,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4031,8 +3977,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4081,8 +4026,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -4141,8 +4085,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4197,8 +4140,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4252,8 +4194,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4342,8 +4283,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4434,8 +4374,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4524,8 +4463,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4614,8 +4552,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4717,8 +4654,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4778,8 +4714,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4831,8 +4766,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4884,8 +4818,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4944,8 +4877,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -4997,8 +4929,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5051,8 +4982,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5105,8 +5035,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5178,8 +5107,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5254,8 +5182,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5319,8 +5246,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5372,8 +5298,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5425,8 +5350,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5488,8 +5412,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5541,8 +5464,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5596,8 +5518,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5654,8 +5575,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5728,8 +5648,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5795,8 +5714,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5851,8 +5769,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5907,8 +5824,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -5966,8 +5882,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6017,8 +5932,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6060,8 +5974,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -6128,8 +6041,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6181,8 +6093,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6233,8 +6144,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6291,8 +6201,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6346,8 +6255,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -6400,8 +6308,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6473,8 +6380,7 @@ $expectedPartCode
           ]);
 
           final result = buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
+            testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
           );
 
           final code = emitStatements(result);
@@ -6523,8 +6429,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6596,8 +6501,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6652,8 +6556,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6721,8 +6624,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6785,8 +6687,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6839,8 +6740,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6893,8 +6793,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -6939,8 +6838,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyExpression(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitExpressionAsMethod(result);
@@ -6997,8 +6895,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7063,8 +6960,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7145,8 +7041,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7207,8 +7102,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7267,8 +7161,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -7344,8 +7237,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7402,8 +7294,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7478,8 +7369,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7535,8 +7425,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7610,8 +7499,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7678,8 +7566,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7758,8 +7645,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7828,8 +7714,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -7897,8 +7782,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -7984,8 +7868,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8042,8 +7925,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8115,8 +7997,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -8189,8 +8070,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -8249,8 +8129,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8308,8 +8187,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8378,8 +8256,7 @@ $expectedPartCode
         ]);
 
         final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
+          testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
         );
 
         final code = emitStatements(result);
@@ -8459,8 +8336,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8516,8 +8392,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);
@@ -8557,8 +8432,7 @@ $expectedPartCode
       ]);
 
       final result = buildMultipartBodyStatements(
-        const MultipartBodyPlanner(backend: TransportBackend.dio)
-            .plan(content, bodyAccessor: 'body', isRequired: true),
+        testPlanner().plan(content, bodyAccessor: 'body', isRequired: true),
       );
 
       final code = emitStatements(result);

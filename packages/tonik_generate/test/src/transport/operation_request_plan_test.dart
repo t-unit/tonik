@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
@@ -207,7 +209,14 @@ void main() {
   });
 
   group('OperationRequestPlanner', () {
-    const planner = OperationRequestPlanner(backend: TransportBackend.dio);
+    final nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
+    final planner = OperationRequestPlanner(
+      backend: TransportBackend.dio,
+      nameManager: nameManager,
+    );
     const parameters = NormalizedRequestParameters(
       pathParameters: [],
       queryParameters: [],
@@ -342,8 +351,10 @@ void main() {
         ),
       );
 
-      final plan = const OperationRequestPlanner(backend: TransportBackend.http)
-          .plan(operation, parameters);
+      final plan = OperationRequestPlanner(
+        backend: TransportBackend.http,
+        nameManager: nameManager,
+      ).plan(operation, parameters);
       final body = plan.body as MultipartBodyPlan;
 
       expect(body.emissions, isEmpty);

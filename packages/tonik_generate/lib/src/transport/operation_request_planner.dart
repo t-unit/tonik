@@ -6,11 +6,12 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 
 /// Builds backend-neutral request meaning from a normalized operation.
 class const OperationRequestPlanner({
   required final TransportBackend backend,
-  final NameManager? nameManager,
+  required final NameManager nameManager,
   final String? package,
   final bool useImmutableCollections = false,
 }) {
@@ -165,6 +166,7 @@ class const OperationRequestPlanner({
       return MultipartBodyPlanner(
         backend: backend,
         nameManager: nameManager,
+        helperContext: InlineHelperContext(nameManager: nameManager),
         package: package,
         useImmutableCollections: useImmutableCollections,
       ).plan(

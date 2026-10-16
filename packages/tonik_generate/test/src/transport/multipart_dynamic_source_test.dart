@@ -13,6 +13,7 @@ import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 import 'multipart_test_support.dart';
@@ -1120,8 +1121,14 @@ void _expectMethod(
   bool immutable = false,
   bool asynchronous = false,
 }) {
+  final nameManager = NameManager(
+    generator: NameGenerator(),
+    stableModelSorter: StableModelSorter(),
+  );
   final plan = MultipartBodyPlanner(
     backend: backend,
+    nameManager: nameManager,
+    helperContext: InlineHelperContext(nameManager: nameManager),
     useImmutableCollections: immutable,
   ).plan(content, bodyAccessor: 'body', isRequired: true);
   final method = Method(

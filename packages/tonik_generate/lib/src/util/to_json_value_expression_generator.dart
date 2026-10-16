@@ -12,6 +12,7 @@ BuiltExpression buildToJsonModelExpression(
   Expression receiver,
   Model model, {
   required NameManager nameManager,
+  required InlineHelperContext helperContext,
   String? package,
   bool useImmutableCollections = false,
 }) => _buildSerializationExpression(
@@ -20,7 +21,7 @@ BuiltExpression buildToJsonModelExpression(
   false,
   nameManager: nameManager,
   package: package,
-  helperContext: InlineHelperContext(nameManager: nameManager),
+  helperContext: helperContext,
   receiverIsPromotedNonNull: true,
   useImmutableCollections: useImmutableCollections,
 );

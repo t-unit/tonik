@@ -9,10 +9,27 @@ import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart'
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 
 import 'multipart_test_support.dart';
 
 void main() {
+  MultipartBodyPlanner testPlanner({
+    required TransportBackend backend,
+    bool useImmutableCollections = false,
+  }) {
+    final nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
+    return MultipartBodyPlanner(
+      backend: backend,
+      nameManager: nameManager,
+      helperContext: InlineHelperContext(nameManager: nameManager),
+      useImmutableCollections: useImmutableCollections,
+    );
+  }
+
   final context = Context.initial();
   final emitter = DartEmitter(useNullSafetySyntax: true);
   final format = DartFormatter(
@@ -26,7 +43,7 @@ void main() {
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
           buildHttpMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.http)
+            testPlanner(backend: TransportBackend.http)
                 .plan(content, bodyAccessor: 'body', isRequired: true),
           ),
         ),
@@ -41,7 +58,7 @@ void main() {
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
           buildMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.dio)
+            testPlanner(backend: TransportBackend.dio)
                 .plan(content, bodyAccessor: 'body', isRequired: true),
           ).statements,
         ),
@@ -137,7 +154,7 @@ Object? test() {
           ),
         ]);
 
-        final plan = const MultipartBodyPlanner(backend: TransportBackend.dio)
+        final plan = testPlanner(backend: TransportBackend.dio)
             .plan(content, bodyAccessor: 'body', isRequired: true);
         final parts = plan.emissions.whereType<MultipartAppend>().toList();
 
@@ -1668,9 +1685,8 @@ Object? test() {
           'metadata': _encoding(style: EncodingStyle.form, explode: true),
         },
       );
-      final stylePlan = const MultipartBodyPlanner(
-        backend: TransportBackend.http,
-      ).plan(styleContent, bodyAccessor: 'body', isRequired: true);
+      final stylePlan = testPlanner(backend: TransportBackend.http)
+          .plan(styleContent, bodyAccessor: 'body', isRequired: true);
       expect(stylePlan.mergeHelpers, {MultipartMergeHelper.propertyValues});
       final styleCode = emit(styleContent);
       expect(styleCode, contains('body.left.metadata.parameterProperties'));
@@ -1732,9 +1748,8 @@ Object? test() {
         ]),
       ]);
       final mutableContent = _content(root);
-      final mutablePlan = const MultipartBodyPlanner(
-        backend: TransportBackend.http,
-      ).plan(mutableContent, bodyAccessor: 'body', isRequired: true);
+      final mutablePlan = testPlanner(backend: TransportBackend.http)
+          .plan(mutableContent, bodyAccessor: 'body', isRequired: true);
       expect(mutablePlan.mergeHelpers, {
         MultipartMergeHelper.lists,
         MultipartMergeHelper.dynamicValues,
@@ -1758,7 +1773,7 @@ Object? test() {
       expect(nonExploded, contains("propertyName: r'items')!"));
       expect(nonExploded, contains(r'_$itemsMultipartValue.toSimple'));
 
-      const immutablePlanner = MultipartBodyPlanner(
+      final immutablePlanner = testPlanner(
         backend: TransportBackend.http,
         useImmutableCollections: true,
       );
@@ -1777,45 +1792,50 @@ Object? test() {
       expect(immutableCode, contains('body.second.metadata.unlock'));
     });
 
-    test('shares a recursive map encode helper across merged JSON parts', () {
-      final tree = MapModel(
-        name: 'RecursiveValues',
-        valueModel: StringModel(context: context),
-        context: context,
-        examples: const [],
-        nameOverride: null,
-        isNullable: false,
-        isValueNullable: false,
-        isReadOnly: false,
-        isWriteOnly: false,
-      );
-      tree.valueModel = tree;
-      final root = _allOf(context, 'RepeatedMaps', [
-        _classWithProperties(context, 'FirstMaps', [
-          _property(context, 'alpha', tree),
-          _property(context, 'beta', tree),
-        ]),
-        _classWithProperties(context, 'SecondMaps', [
-          _property(context, 'alpha', tree),
-          _property(context, 'beta', tree),
-        ]),
-      ]);
-      final plan = MultipartBodyPlanner(
-        backend: TransportBackend.http,
-        nameManager: NameManager(
+    test(
+      'shares a recursive map helper across merged and ordinary JSON parts',
+      () {
+        final tree = MapModel(
+          name: 'RecursiveValues',
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        );
+        tree.valueModel = tree;
+        final root = _allOf(context, 'RepeatedMaps', [
+          _classWithProperties(context, 'FirstMaps', [
+            _property(context, 'alpha', tree),
+            _property(context, 'beta', tree),
+            _property(context, 'gamma', tree),
+          ]),
+          _classWithProperties(context, 'SecondMaps', [
+            _property(context, 'alpha', tree),
+            _property(context, 'beta', tree),
+          ]),
+        ]);
+        final nameManager = NameManager(
           generator: NameGenerator(),
           stableModelSorter: StableModelSorter(),
-        ),
-        package: 'pkg',
-      ).plan(_content(root), bodyAccessor: 'body', isRequired: true);
-      final method = Method(
-        (builder) => builder
-          ..name = 'test'
-          ..returns = refer('Object?', 'dart:core')
-          ..body = Block.of(buildHttpMultipartBodyStatements(plan)),
-      );
-      final actual = format('${method.accept(emitter)}');
-      final expected = format(r'''
+        );
+        final plan = MultipartBodyPlanner(
+          backend: TransportBackend.http,
+          nameManager: nameManager,
+          helperContext: InlineHelperContext(nameManager: nameManager),
+          package: 'pkg',
+        ).plan(_content(root), bodyAccessor: 'body', isRequired: true);
+        final method = Method(
+          (builder) => builder
+            ..name = 'test'
+            ..returns = refer('Object?', 'dart:core')
+            ..body = Block.of(buildHttpMultipartBodyStatements(plan)),
+        );
+        final actual = format('${method.accept(emitter)}');
+        final expected = format(r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
   late final Object? Function(Object?) _$encodeRecursiveValues;
@@ -1859,6 +1879,13 @@ Object? test() {
       contentType: MediaType.parse(r'application/json'),
     ),
   );
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'gamma').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(_$encodeRecursiveValues(body.firstMaps.gamma))),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );
   if (_$multipartFiles.isEmpty) {
     throw EncodingException(
       r'Multipart request body must contain at least one part.',
@@ -1867,8 +1894,9 @@ Object? test() {
   return _$multipartFiles;
 }
 ''');
-      expect(actual, expected);
-    });
+        expect(actual, expected);
+      },
+    );
   });
 }
 
