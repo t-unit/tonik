@@ -62,12 +62,17 @@ class const DeprecationHandler() {
             !alias.parameter.resolve().isDeprecated,
         };
       }).toSet(),
-      DeprecatedHandling.ignore =>
-        parameters..forEach((param) {
-          if (param case final QueryParameterObject obj) {
+      DeprecatedHandling.ignore => parameters.map((param) {
+        switch (param) {
+          case final QueryParameterObject obj:
             obj.isDeprecated = false;
-          }
-        }),
+            return obj;
+          case final QueryParameterAlias alias:
+            final resolved = alias.resolve();
+            if (!resolved.isDeprecated) return alias;
+            return resolved..isDeprecated = false;
+        }
+      }).toSet(),
     };
   }
 
@@ -84,12 +89,17 @@ class const DeprecationHandler() {
             !alias.parameter.resolve().isDeprecated,
         };
       }).toSet(),
-      DeprecatedHandling.ignore =>
-        parameters..forEach((param) {
-          if (param case final PathParameterObject obj) {
+      DeprecatedHandling.ignore => parameters.map((param) {
+        switch (param) {
+          case final PathParameterObject obj:
             obj.isDeprecated = false;
-          }
-        }),
+            return obj;
+          case final PathParameterAlias alias:
+            final resolved = alias.resolve();
+            if (!resolved.isDeprecated) return alias;
+            return resolved..isDeprecated = false;
+        }
+      }).toSet(),
     };
   }
 
@@ -106,12 +116,17 @@ class const DeprecationHandler() {
             !alias.header.resolve().isDeprecated,
         };
       }).toSet(),
-      DeprecatedHandling.ignore =>
-        headers..forEach((header) {
-          if (header case final RequestHeaderObject obj) {
+      DeprecatedHandling.ignore => headers.map((header) {
+        switch (header) {
+          case final RequestHeaderObject obj:
             obj.isDeprecated = false;
-          }
-        }),
+            return obj;
+          case final RequestHeaderAlias alias:
+            final resolved = alias.resolve();
+            if (!resolved.isDeprecated) return alias;
+            return resolved..isDeprecated = false;
+        }
+      }).toSet(),
     };
   }
 

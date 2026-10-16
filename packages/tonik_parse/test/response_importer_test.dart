@@ -246,8 +246,8 @@ void main() {
     expect((referenceHeaderResponse as ResponseObject?)?.headers, hasLength(1));
 
     final myHeader = referenceHeaderResponse?.headers['X-MyHeader'];
-    expect(myHeader, isA<ResponseHeaderObject>());
-    expect((myHeader as ResponseHeaderObject?)?.name, 'FooBar');
+    expect(myHeader, isA<ResponseHeaderAlias>());
+    expect(myHeader?.resolve().name, 'FooBar');
   });
 
   test('imports response with json-like body', () {

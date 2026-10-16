@@ -16,12 +16,8 @@ sealed class ReferenceWrapper<T>() {
 
     if (map.containsKey(referenceKey)) {
       final ref = parseReference(map[referenceKey]);
-      final description = T == MediaType
-          ? _optionalString(map['description'])
-          : map['description'] as String?;
-      final summary = T == MediaType
-          ? _optionalString(map['summary'])
-          : map['summary'] as String?;
+      final description = _optionalString(map['description']);
+      final summary = _optionalString(map['summary']);
       return Reference(ref, description: description, summary: summary);
     }
 

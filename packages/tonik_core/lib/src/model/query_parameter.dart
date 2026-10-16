@@ -27,14 +27,18 @@ sealed class const QueryParameter({required final Context context}) {
   /// For aliases, this may override the referenced parameter's description.
   String? get description;
 
-  QueryParameterObject resolve({String? name, String? nameOverride}) {
+  QueryParameterObject resolve({
+    String? name,
+    String? nameOverride,
+    String? description,
+  }) {
     switch (this) {
       case final QueryParameterObject param:
         return QueryParameterObject(
           name: name ?? param.name,
           nameOverride: nameOverride ?? param.nameOverride,
           rawName: param.rawName,
-          description: param.description,
+          description: description ?? param.description,
           isRequired: param.isRequired,
           isDeprecated: param.isDeprecated,
           allowEmptyValue: param.allowEmptyValue,
@@ -50,6 +54,7 @@ sealed class const QueryParameter({required final Context context}) {
         return alias.parameter.resolve(
           name: name ?? alias.name,
           nameOverride: nameOverride,
+          description: description ?? alias.description,
         );
     }
   }

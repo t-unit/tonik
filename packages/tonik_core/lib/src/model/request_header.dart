@@ -14,14 +14,18 @@ sealed class const RequestHeader({required final Context context}) {
   /// For aliases, this may override the referenced header's description.
   String? get description;
 
-  RequestHeaderObject resolve({String? name, String? nameOverride}) {
+  RequestHeaderObject resolve({
+    String? name,
+    String? nameOverride,
+    String? description,
+  }) {
     switch (this) {
       case final RequestHeaderObject header:
         return RequestHeaderObject(
           name: name ?? header.name,
           nameOverride: nameOverride ?? header.nameOverride,
           rawName: header.rawName,
-          description: header.description,
+          description: description ?? header.description,
           isRequired: header.isRequired,
           isDeprecated: header.isDeprecated,
           allowEmptyValue: header.allowEmptyValue,
@@ -36,6 +40,7 @@ sealed class const RequestHeader({required final Context context}) {
         return alias.header.resolve(
           name: name ?? alias.name,
           nameOverride: nameOverride,
+          description: description ?? alias.description,
         );
     }
   }

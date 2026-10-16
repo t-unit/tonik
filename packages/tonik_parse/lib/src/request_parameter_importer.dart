@@ -33,6 +33,13 @@ class RequestParameterImporter({
       final name = entry.key;
       final parameter = entry.value;
 
+      // Resolve chained aliases when used so unused cycles stay inert.
+      if (parameter is Reference<Parameter> &&
+          parameter.ref.startsWith('#/components/parameters/') &&
+          parameterMap[parameter.ref.split('/').last] is Reference<Parameter>) {
+        continue;
+      }
+
       final imported = _importParameter(
         name: name,
         wrapper: parameter,
@@ -78,28 +85,28 @@ class RequestParameterImporter({
           headers.add(header);
           localHeaders.add(header);
         } else if (header is core.RequestHeaderAlias) {
-          localHeaders.add(header.header);
+          localHeaders.add(header);
         }
       } else if (imported case final core.QueryParameter query) {
         if (query is core.QueryParameterObject) {
           queryParameters.add(query);
           localQueryParameters.add(query);
         } else if (query is core.QueryParameterAlias) {
-          localQueryParameters.add(query.parameter);
+          localQueryParameters.add(query);
         }
       } else if (imported case final core.PathParameter path) {
         if (path is core.PathParameterObject) {
           pathParameters.add(path);
           localPathParameters.add(path);
         } else if (path is core.PathParameterAlias) {
-          localPathParameters.add(path.parameter);
+          localPathParameters.add(path);
         }
       } else if (imported case final core.CookieParameter cookie) {
         if (cookie is core.CookieParameterObject) {
           cookieParameters.add(cookie);
           localCookieParameters.add(cookie);
         } else if (cookie is core.CookieParameterAlias) {
-          localCookieParameters.add(cookie.parameter);
+          localCookieParameters.add(cookie);
         }
       }
     }
@@ -116,6 +123,7 @@ class RequestParameterImporter({
     required String? name,
     required ReferenceWrapper<Parameter> wrapper,
     required core.Context context,
+    Set<String>? visitedRefs,
   }) {
     switch (wrapper) {
       case Reference<Parameter>():
@@ -126,6 +134,11 @@ class RequestParameterImporter({
           );
         }
 
+        final seen = visitedRefs ?? <String>{};
+        if (!seen.add(wrapper.ref)) {
+          throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
+        }
+
         final refName = wrapper.ref.split('/').last;
         final refParameter = openApiObject.components?.parameters?[refName];
 
@@ -133,89 +146,42 @@ class RequestParameterImporter({
           throw ArgumentError('Parameter $refName not found');
         }
 
-        if (refParameter is InlinedObject<Parameter>) {
-          if (_isReservedHeaderParameter(refParameter.object)) {
-            return null;
-          }
-
-          switch (refParameter.object.location) {
-            case ParameterLocation.header:
-              final existing = headers.firstWhere(
-                (h) =>
-                    (h is core.RequestHeaderAlias && h.name == refName) ||
-                    (h is core.RequestHeaderObject && h.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.RequestHeader,
-              );
-
-              return core.RequestHeaderAlias(
-                name: name ?? refName,
-                header: existing,
-                context: context,
-                description: wrapper.description,
-              );
-
-            case ParameterLocation.query:
-              final existing = queryParameters.firstWhere(
-                (q) =>
-                    (q is core.QueryParameterAlias && q.name == refName) ||
-                    (q is core.QueryParameterObject && q.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.QueryParameter,
-              );
-
-              return core.QueryParameterAlias(
-                name: name ?? refName,
-                parameter: existing,
-                context: context,
-                description: wrapper.description,
-              );
-
-            case ParameterLocation.path:
-              final existing = pathParameters.firstWhere(
-                (p) =>
-                    (p is core.PathParameterAlias && p.name == refName) ||
-                    (p is core.PathParameterObject && p.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.PathParameter,
-              );
-
-              return core.PathParameterAlias(
-                name: name ?? refName,
-                parameter: existing,
-                context: context,
-                description: wrapper.description,
-              );
-
-            case ParameterLocation.cookie:
-              final existing = cookieParameters.firstWhere(
-                (c) =>
-                    (c is core.CookieParameterAlias && c.name == refName) ||
-                    (c is core.CookieParameterObject && c.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.CookieParameter,
-              );
-
-              return core.CookieParameterAlias(
-                name: name ?? refName,
-                parameter: existing,
-                context: context,
-                description: wrapper.description,
-              );
-          }
-        }
+        final existing =
+            _importedComponent(refName) ??
+            _importParameter(
+              name: refName,
+              wrapper: refParameter,
+              context: rootContext.push(refName),
+              visitedRefs: seen,
+            );
+        return switch (existing) {
+          final core.RequestHeader header => core.RequestHeaderAlias(
+            name: name ?? refName,
+            header: header,
+            context: context,
+            description: _referenceDescription(wrapper),
+          ),
+          final core.QueryParameter query => core.QueryParameterAlias(
+            name: name ?? refName,
+            parameter: query,
+            context: context,
+            description: _referenceDescription(wrapper),
+          ),
+          final core.PathParameter path => core.PathParameterAlias(
+            name: name ?? refName,
+            parameter: path,
+            context: context,
+            description: _referenceDescription(wrapper),
+          ),
+          final core.CookieParameter cookie => core.CookieParameterAlias(
+            name: name ?? refName,
+            parameter: cookie,
+            context: context,
+            description: _referenceDescription(wrapper),
+          ),
+          null => null,
+          _ => throw StateError('Unexpected parameter reference target'),
+        };
 
       case InlinedObject<Parameter>():
         final parameter = wrapper.object;
@@ -323,6 +289,43 @@ class RequestParameterImporter({
             return cookieParam;
         }
     }
+  }
+
+  String? _referenceDescription(Reference<Parameter> reference) =>
+      openApiObject.openapi.startsWith('3.0.') ? null : reference.description;
+
+  Object? _importedComponent(String name) {
+    for (final header in headers) {
+      if (header case core.RequestHeaderAlias(name: final aliasName)) {
+        if (aliasName == name) return header;
+      } else if (header case core.RequestHeaderObject(name: final objectName)) {
+        if (objectName == name) return header;
+      }
+    }
+    for (final query in queryParameters) {
+      if (query case core.QueryParameterAlias(name: final aliasName)) {
+        if (aliasName == name) return query;
+      } else if (query case core.QueryParameterObject(name: final objectName)) {
+        if (objectName == name) return query;
+      }
+    }
+    for (final path in pathParameters) {
+      if (path case core.PathParameterAlias(name: final aliasName)) {
+        if (aliasName == name) return path;
+      } else if (path case core.PathParameterObject(name: final objectName)) {
+        if (objectName == name) return path;
+      }
+    }
+    for (final cookie in cookieParameters) {
+      if (cookie case core.CookieParameterAlias(name: final aliasName)) {
+        if (aliasName == name) return cookie;
+      } else if (cookie case core.CookieParameterObject(
+        name: final objectName,
+      )) {
+        if (objectName == name) return cookie;
+      }
+    }
+    return null;
   }
 
   // OpenAPI reserves these headers for media types and security schemes.

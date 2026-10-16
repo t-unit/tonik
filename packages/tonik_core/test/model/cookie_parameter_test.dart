@@ -192,7 +192,21 @@ void main() {
         );
 
         expect(alias.description, 'Overridden description');
-        expect(alias.resolve().description, 'Original description');
+        expect(alias.resolve().description, 'Overridden description');
+        final outer = CookieParameterAlias(
+          name: 'outer',
+          parameter: alias,
+          context: context,
+          description: null,
+        );
+        expect(outer.resolve().description, 'Overridden description');
+        final outerOverride = CookieParameterAlias(
+          name: 'outer',
+          parameter: alias,
+          context: context,
+          description: 'Outermost description',
+        );
+        expect(outerOverride.resolve().description, 'Outermost description');
       });
 
       test('CookieParameterAlias description is null when not overridden', () {
@@ -222,6 +236,7 @@ void main() {
         );
 
         expect(alias.description, isNull);
+        expect(alias.resolve().description, 'Original description');
       });
     });
 

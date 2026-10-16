@@ -193,7 +193,7 @@ void main() {
     );
 
     final params = operation.queryParameters
-        .whereType<QueryParameterObject>()
+        .map((p) => p.resolve())
         .where((p) => p.rawName == 'status')
         .toList();
     expect(params, hasLength(1));
@@ -304,7 +304,7 @@ void main() {
     );
 
     final params = operation.queryParameters
-        .whereType<QueryParameterObject>()
+        .map((p) => p.resolve())
         .where((p) => p.rawName == 'status')
         .toList();
     expect(params, hasLength(1));

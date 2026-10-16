@@ -174,9 +174,10 @@ void main() {
     expect(headers['Accept']?.resolve().model, isA<StringModel>());
     expect(headers['Authorization']?.resolve().model, isA<StringModel>());
     expect(headers['X-Media-Type']?.resolve().model, isA<EnumModel<String>>());
-    expect(headers['X-Media-Type']?.name, 'Content-Type');
+    expect(headers['X-Media-Type'], isA<ResponseHeaderAlias>());
+    expect(headers['X-Media-Type']?.resolve().name, 'Content-Type');
     expect(
-      headers['X-Media-Type']?.description,
+      headers['X-Media-Type']?.resolve().description,
       'A reusable header identifier',
     );
     expect(api.responseHeaders, hasLength(3));
