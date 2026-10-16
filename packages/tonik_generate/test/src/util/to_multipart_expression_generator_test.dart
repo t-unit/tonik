@@ -117,9 +117,9 @@ $expectedPartCode
               _$formData.files.add(
                 MapEntry(
                   (r'name').replaceAll(r'\', r'\\'),
-                  MultipartFile.fromBytes(
-                    latin1.encode(body.name),
-                    contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
+                  MultipartFile.fromString(
+                    body.name,
+                    contentType: DioMediaType.parse(r'text/plain'),
                   ),
                 ),
               );
@@ -237,14 +237,8 @@ $expectedPartCode
         ),
         r'''
   for (final item in body.value) {
-    _$formData.files.add(
-      MapEntry(
-        (r'value').replaceAll(r'\', r'\\'),
-        MultipartFile.fromBytes(
-          latin1.encode(item),
-          contentType: DioMediaType.parse(r'text/plain; charset=us-ascii'),
-        ),
-      ),
+    _$formData.fields.add(
+      MapEntry((r'value').replaceAll(r'\', r'\\'), item),
     );
   }''',
         encoding: const PartEncoding(
@@ -639,7 +633,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'data').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'data').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'application/json'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1119,8 +1113,7 @@ $expectedPartCode
       },
     );
 
-    test('serializes IntegerModel with application/json contentType '
-        'via jsonEncode', () {
+    test('uses form style for integers despite a JSON content type', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'age',
@@ -1150,7 +1143,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'age').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1161,8 +1154,7 @@ $expectedPartCode
       );
     });
 
-    test('serializes DateTimeModel with application/json contentType '
-        'via jsonEncode (not toTimeZonedIso8601String)', () {
+    test('uses form style for DateTime despite a JSON content type', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'createdAt',
@@ -1192,7 +1184,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'createdAt').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1203,8 +1195,7 @@ $expectedPartCode
       );
     });
 
-    test('serializes BooleanModel with application/json contentType '
-        'via jsonEncode', () {
+    test('uses form style for booleans despite a JSON content type', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'active',
@@ -1234,7 +1225,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'active').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1245,8 +1236,7 @@ $expectedPartCode
       );
     });
 
-    test('wraps nullable primitive with null-check when using '
-        'application/json contentType', () {
+    test('guards nullable form-style values with a JSON content type', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'score',
@@ -1281,7 +1271,7 @@ $expectedPartCode
               throw EncodingException(r'Required multipart property "score" is null.');
             }
             if (body.score != null) {
-              _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry((r'score').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.score!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -1700,7 +1690,7 @@ $expectedPartCode
       );
     });
 
-    test('JSON-encodes required EnumModel<String> with application/json', () {
+    test('uses form style for string enums with a JSON content type', () {
       final enumModel = EnumModel<String>(
         name: 'Status',
         values: {
@@ -1748,7 +1738,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.status.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'status').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -1759,7 +1749,7 @@ $expectedPartCode
       );
     });
 
-    test('JSON-encodes required EnumModel<int> with application/json', () {
+    test('uses form style for integer enums with a JSON content type', () {
       final enumModel = EnumModel<int>(
         name: 'Count',
         values: {
@@ -1807,7 +1797,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.count.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+            _$formData.files.add(MapEntry((r'count').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -2112,7 +2102,7 @@ $expectedPartCode
       );
     });
 
-    test('passes explicit contentType encoding to MultipartFile', () {
+    test('ignores a binary content type when form style is explicit', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'image',
@@ -2149,7 +2139,7 @@ $expectedPartCode
                   MultipartFile.fromBytes(
                     bytes,
                     filename: (fileName ?? r'image').replaceAll(r'\', r'\\'),
-                    contentType: DioMediaType.parse(r'image/png'),
+                    contentType: DioMediaType.parse(r'application/octet-stream'),
                   ),
                 ));
               case TonikFilePath(:final path, :final fileName):
@@ -2158,7 +2148,7 @@ $expectedPartCode
                   await MultipartFile.fromFile(
                     path,
                     filename: (fileName ?? r'image').replaceAll(r'\', r'\\'),
-                    contentType: DioMediaType.parse(r'image/png'),
+                    contentType: DioMediaType.parse(r'application/octet-stream'),
                   ),
                 ));
             }
@@ -5394,7 +5384,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), jsonEncode(item)));
+              _$formData.fields.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), item.toString()));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -5450,7 +5440,7 @@ $expectedPartCode
                 MapEntry(
                   (r'scores').replaceAll(r'\', r'\\'),
                   body.scores
-                      .map((item) => jsonEncode(item))
+                      .map((item) => item.toString())
                       .toList()
                       .uriEncode(
                         allowEmpty: true,
@@ -5563,7 +5553,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), jsonEncode(item)));
+              _$formData.fields.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), item.toTimeZonedIso8601String()));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -5762,7 +5752,7 @@ $expectedPartCode
       );
     });
 
-    test('list of ClassModel, custom contentType', () {
+    test('uses default object content type when array style is explicit', () {
       final innerClass = ClassModel(
         name: 'Address',
         isDeprecated: false,
@@ -5817,7 +5807,7 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
+              _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -8286,56 +8276,54 @@ $expectedPartCode
       );
     });
 
-    test(
-      'DateTimeModel field with json contentType and headers uses jsonEncode '
-      'in MultipartFile.fromString',
-      () {
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'createdAt',
-            model: DateTimeModel(context: testContext),
-            encoding: PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: {
-                'X-Source': ResponseHeaderObject(
-                  name: 'X-Source',
-                  context: testContext,
-                  description: null,
-                  explode: false,
-                  model: StringModel(context: testContext),
-                  isRequired: true,
-                  isDeprecated: false,
-                  encoding: ResponseHeaderEncoding.simple,
-                  examples: const [],
-                ),
-              },
-              style: null,
-              explode: null,
-              allowReserved: null,
-              wireContentType: null,
-              textEncoding: TextEncoding.utf8,
-            ),
+    test('DateTime JSON field with headers uses model-aware serialization '
+        'in MultipartFile.fromString', () {
+      final content = multipartContentFixture(testContext, [
+        multipartPartFixture(
+          name: 'createdAt',
+          model: DateTimeModel(context: testContext),
+          encoding: PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            headers: {
+              'X-Source': ResponseHeaderObject(
+                name: 'X-Source',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
           ),
-        ]);
+        ),
+      ]);
 
-        final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
-        );
+      final result = buildMultipartBodyStatements(
+        const MultipartBodyPlanner(backend: TransportBackend.dio)
+            .plan(content, bodyAccessor: 'body', isRequired: true),
+      );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format(r'''
           void test() {
             final _$formData = FormData();
             final _$createdAtHeaders = <String, List<String>>{};
             _$createdAtHeaders[r'X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               (r'createdAt').replaceAll(r'\', r'\\'),
-              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
+              MultipartFile.fromString(jsonEncode(body.createdAt.toTimeZonedIso8601String()), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
             ));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -8343,10 +8331,9 @@ $expectedPartCode
             return _$formData;
           }
         '''),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'non-exploded DateTime list with headers sends one mapped encoded part',
@@ -8510,7 +8497,7 @@ $expectedPartCode
   });
 
   group('special characters in multipart field names and content types', () {
-    test('generates valid code when rawContentType contains single quote', () {
+    test('ignores a quoted content type when form style is explicit', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'name',
@@ -8540,7 +8527,7 @@ $expectedPartCode
           format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
+              _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
               }

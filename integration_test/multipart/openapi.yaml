@@ -18,6 +18,50 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/json-values:
+    post:
+      operationId: postJsonValues
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JsonValuesForm'
+            encoding:
+              timestamp:
+                contentType: application/json
+              amount:
+                contentType: application/json
+              link:
+                contentType: application/json
+              count:
+                contentType: application/json
+              enabled:
+                contentType: application/json
+              schedules:
+                contentType: application/json
+              plain:
+                contentType: text/plain
+      responses:
+        '204':
+          description: Accepted
+  /multipart/json-merged-maps:
+    post:
+      operationId: postJsonMergedMaps
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JsonMergedMapsForm'
+            encoding:
+              dates:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
   /multipart/json-strings:
     post:
       operationId: postJsonStrings
@@ -1084,6 +1128,61 @@ paths:
 
 components:
   schemas:
+    JsonValuesForm:
+      type: object
+      required: [timestamp, amount, link, count, enabled, schedules, plain, file]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        amount:
+          type: string
+          format: decimal
+        link:
+          type: string
+          format: uri
+        count:
+          type: integer
+        enabled:
+          type: boolean
+        schedules:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+                format: date-time
+        plain:
+          type: string
+        file:
+          type: string
+          format: binary
+
+    JsonMergedMapsForm:
+      allOf:
+        - $ref: '#/components/schemas/FirstDates'
+        - $ref: '#/components/schemas/SecondDates'
+    FirstDates:
+      type: object
+      required: [dates]
+      properties:
+        dates:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+    SecondDates:
+      type: object
+      required: [dates]
+      properties:
+        dates:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+
     JsonStringsForm:
       type: object
       required: [label, color, plainLabel, plainColor]

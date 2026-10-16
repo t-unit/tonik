@@ -6,6 +6,7 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -80,6 +81,15 @@ class const MultipartBodyPlanner({
         );
       }
     }
+    final serializationNameManager =
+        nameManager ??
+        NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
+    final helperContext = InlineHelperContext(
+      nameManager: serializationNameManager,
+    );
     for (final property in properties) {
       final resolvedEncoding = _resolveEncoding(
         content.encoding[property.rawName],
@@ -106,6 +116,10 @@ class const MultipartBodyPlanner({
           property.properties.every(
             (candidate) => candidate.model.resolved is ListModel,
           );
+      final mergedJsonMaps =
+          mergedMaps &&
+          !resolvedEncoding.isStyleBased &&
+          resolvedEncoding.contentType != ContentType.form;
       final mergedObjectProperties =
           mergedObjects &&
           (resolvedEncoding.isStyleBased ||
@@ -115,6 +129,37 @@ class const MultipartBodyPlanner({
       if (accesses.length == 1) {
         accessor = accesses.single;
       } else {
+        final mergedValues = <Expression>[];
+        for (var i = 0; i < accesses.length; i++) {
+          if (!mergedJsonMaps) {
+            mergedValues.add(accesses[i]);
+            continue;
+          }
+          final nullableOccurrence = _occurrenceIsNullable(
+            property.accessPaths[i],
+            property.properties[i],
+          );
+          final serialized = buildToJsonPropertyExpression(
+            accesses[i],
+            property.properties[i],
+            nameManager: serializationNameManager,
+            package: package,
+            helperContext: helperContext,
+            forceNonNullReceiver: nullableOccurrence,
+            receiverIsPromotedNonNull: !nullableOccurrence,
+            useImmutableCollections: useImmutableCollections,
+          );
+          for (final code in spliceInlineHelpers(serialized.inlineFunctions)) {
+            emissions.add(MultipartCode(code));
+          }
+          mergedValues.add(
+            nullableOccurrence
+                ? accesses[i]
+                      .equalTo(literalNull)
+                      .conditional(literalNull, serialized.unsafeRawBody)
+                : serialized.unsafeRawBody,
+          );
+        }
         final variable = '_\$${property.normalizedName}MultipartValue';
         final mergeHelper = mergedObjectProperties
             ? MultipartMergeHelper.propertyValues
@@ -142,17 +187,18 @@ class const MultipartBodyPlanner({
                     asProperties: mergedObjectProperties,
                   )
                 else if (useImmutableCollections &&
+                    !mergedJsonMaps &&
                     (property.properties[i].model.resolved is ListModel ||
                         property.properties[i].model.resolved is MapModel))
                   _immutableMergeValue(
-                    accesses[i],
+                    mergedValues[i],
                     nullable: _occurrenceIsNullable(
                       property.accessPaths[i],
                       property.properties[i],
                     ),
                   )
                 else
-                  accesses[i],
+                  mergedValues[i],
             ]),
           ],
           {
@@ -377,23 +423,21 @@ class const MultipartBodyPlanner({
       "Cannot encode NeverModel property '${part.name}' - this type does not "
       'permit any value.',
     ),
-    StringModel() => [
-      _text(
-        part,
-        part.encoding.contentType == ContentType.json
-            ? _json(part.value)
-            : part.value,
-      ),
-    ],
-    AnyModel() => [
-      _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
-    ],
+    StringModel() =>
+      part.encoding.contentType == ContentType.json
+          ? _jsonPart(part, model, immutable: false)
+          : [_text(part, part.value)],
+    AnyModel() => _jsonPart(part, model, immutable: false),
     MapModel() => _map(part, model),
-    ClassModel() || CompositeModel() => _object(part),
-    EnumModel() => [_text(part, _enum(part.value, model, part.encoding))],
-    PrimitiveModel() => [
-      _text(part, _primitive(part.value, model, part.encoding)),
-    ],
+    ClassModel() || CompositeModel() => _object(part, model),
+    EnumModel() =>
+      part.encoding.contentType == ContentType.json
+          ? _jsonPart(part, model, immutable: false)
+          : [_text(part, _enum(part.value, model, part.encoding))],
+    PrimitiveModel() =>
+      part.encoding.contentType == ContentType.json
+          ? _jsonPart(part, model, immutable: false)
+          : [_text(part, _primitive(part.value, model))],
     NamedModel() => _error(
       "Cannot encode cyclic AliasModel property '${part.name}'.",
     ),
@@ -539,13 +583,11 @@ class const MultipartBodyPlanner({
           item is MapModel ||
           (item is CompositeModel &&
               (item.hasComplexTypes || item.hasMixedTypes))) {
-        if (item is MapModel) {
-          return _listItems(part, model, _map(itemPart, item));
-        }
-        final json = itemPart.value.property('toJson').call([]);
-        return _listItems(part, model, [
-          _text(itemPart, _json(json), fallback: 'application/json'),
-        ]);
+        return _listItems(
+          part,
+          model,
+          _jsonPart(itemPart, item, immutable: useImmutableCollections),
+        );
       }
       return _jsonPart(
         part,
@@ -559,13 +601,11 @@ class const MultipartBodyPlanner({
       if (item is MapModel) {
         return _listItems(part, model, _map(itemPart, item));
       }
-      final json = switch (item) {
-        AnyModel() => _anyJson(refer('item')),
-        _ => refer('item').property('toJson').call([]),
-      };
-      return _listItems(part, model, [
-        _text(part, _json(json), fallback: 'application/json'),
-      ]);
+      return _listItems(
+        part,
+        model,
+        _jsonPart(itemPart, item, immutable: useImmutableCollections),
+      );
     }
     final itemText = _itemText(itemPart, item);
     if (encoding.explode ?? true) {
@@ -645,7 +685,7 @@ class const MultipartBodyPlanner({
             })
           : _enum(part.value, model, part.encoding);
     }
-    return _primitive(part.value, model, part.encoding);
+    return _primitive(part.value, model);
   }
 
   Expression _enum(
@@ -660,10 +700,7 @@ class const MultipartBodyPlanner({
         : json.property('toString').call([]);
   }
 
-  Expression _primitive(Expression value, Model model, PartEncoding encoding) {
-    if (encoding.contentType == ContentType.json && model is PrimitiveModel) {
-      return _json(value);
-    }
+  Expression _primitive(Expression value, Model model) {
     return value
         .property(
           model is DateTimeModel ? 'toTimeZonedIso8601String' : 'toString',
@@ -684,10 +721,9 @@ class const MultipartBodyPlanner({
         part.encoding.contentType == ContentType.form) {
       return _urlEncodedMap(part);
     }
-    if (!part.isMergedMap) {
-      return _jsonPart(part, model, immutable: useImmutableCollections);
-    }
-    return [_text(part, _json(part.value), fallback: 'application/json')];
+    return part.isMergedMap
+        ? [_text(part, _json(part.value), fallback: 'application/json')]
+        : _jsonPart(part, model, immutable: useImmutableCollections);
   }
 
   List<MultipartEmission> _jsonPart(
@@ -716,7 +752,7 @@ class const MultipartBodyPlanner({
     ];
   }
 
-  List<MultipartEmission> _object(_Part part) {
+  List<MultipartEmission> _object(_Part part, Model model) {
     final encoding = part.encoding;
     if (encoding.style == EncodingStyle.deepObject) {
       final entries = part.value
@@ -811,17 +847,9 @@ class const MultipartBodyPlanner({
         _text(part, joined, fallback: 'application/x-www-form-urlencoded'),
       ];
     }
-    return [
-      _text(
-        part,
-        _json(
-          part.isMergedObject
-              ? part.value
-              : part.value.property('toJson').call([]),
-        ),
-        fallback: 'application/json',
-      ),
-    ];
+    return part.isMergedObject
+        ? [_text(part, _json(part.value), fallback: 'application/json')]
+        : _jsonPart(part, model, immutable: false);
   }
 
   List<MultipartEmission> _urlEncodedMap(_Part part) {
@@ -984,7 +1012,19 @@ class const MultipartBodyPlanner({
   }
 
   PartEncoding _resolveEncoding(PartEncoding? encoding, Model model) {
-    if (encoding?.isStyleBased ?? false) return encoding!;
+    if (encoding?.isStyleBased ?? false) {
+      final styleEncoding = encoding!;
+      return PartEncoding(
+        contentType: null,
+        rawContentType: null,
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+        headers: styleEncoding.headers,
+        style: styleEncoding.style,
+        explode: styleEncoding.explode,
+        allowReserved: styleEncoding.allowReserved,
+      );
+    }
     final defaultType = _defaultContentType(model, <Model>{});
     final contentType = encoding?.contentType ?? defaultType;
     final rawContentType =
@@ -1239,10 +1279,6 @@ bool _occurrenceIsNullable(
 
 Expression _json(Expression value) =>
     refer('jsonEncode', 'dart:convert').call([value]);
-Expression _anyJson(Expression value) => refer(
-  'encodeAnyToJson',
-  'package:tonik_util/tonik_util.dart',
-).call([value]);
 Expression _mapped(
   Expression value,
   Expression item, {

@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.13.0 <4.0.0'
 
 dependencies:
+  big_decimal: ^0.7.0
   multipart_3_1_api:
     path: ../multipart_3_1_api
   multipart_api:

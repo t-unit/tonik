@@ -2,6 +2,8 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
@@ -738,7 +740,7 @@ Object? test() {
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(jsonEncode(body.value)),
+      utf8.encode(jsonEncode(body.value.toTimeZonedIso8601String())),
       contentType: MediaType.parse(r'application/json'),
     ),
   );''',
@@ -766,6 +768,42 @@ Object? test() {
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
       utf8.encode(jsonEncode(body.value)),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes decimal as a string', () {
+      expectPropertyCode(
+        DecimalModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(body.value.toString())),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes URI as a string', () {
+      expectPropertyCode(
+        UriModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(body.value.toString())),
       contentType: MediaType.parse(r'application/json'),
     ),
   );''',
@@ -887,7 +925,7 @@ Object? test() {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
         (entry.name).replaceAll(r'\', r'\\'),
-        latin1.encode(entry.value),
+        utf8.encode(entry.value),
         contentType: MediaType.parse(r'text/plain'),
       ),
     );
@@ -901,6 +939,24 @@ Object? test() {
           allowReserved: false,
         ),
       );
+
+      expectPropertyCode(
+        StringModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          style: EncodingStyle.form,
+          explode: true,
+        ),
+      );
       expectPropertyCode(
         _list(context, StringModel(context: context)),
         r'''
@@ -908,8 +964,8 @@ Object? test() {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
         (r'value').replaceAll(r'\', r'\\'),
-        latin1.encode(item),
-        contentType: MediaType.parse(r'text/plain; charset=us-ascii'),
+        utf8.encode(item),
+        contentType: MediaType.parse(r'text/plain'),
       ),
     );
   }''',
@@ -1719,6 +1775,99 @@ Object? test() {
       final immutableCode = format('${method.accept(emitter)}');
       expect(immutableCode, contains('body.first.items.unlock'));
       expect(immutableCode, contains('body.second.metadata.unlock'));
+    });
+
+    test('shares a recursive map encode helper across merged JSON parts', () {
+      final tree = MapModel(
+        name: 'RecursiveValues',
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      tree.valueModel = tree;
+      final root = _allOf(context, 'RepeatedMaps', [
+        _classWithProperties(context, 'FirstMaps', [
+          _property(context, 'alpha', tree),
+          _property(context, 'beta', tree),
+        ]),
+        _classWithProperties(context, 'SecondMaps', [
+          _property(context, 'alpha', tree),
+          _property(context, 'beta', tree),
+        ]),
+      ]);
+      final plan = MultipartBodyPlanner(
+        backend: TransportBackend.http,
+        nameManager: NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        ),
+        package: 'pkg',
+      ).plan(_content(root), bodyAccessor: 'body', isRequired: true);
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..returns = refer('Object?', 'dart:core')
+          ..body = Block.of(buildHttpMultipartBodyStatements(plan)),
+      );
+      final actual = format('${method.accept(emitter)}');
+      final expected = format(r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  late final Object? Function(Object?) _$encodeRecursiveValues;
+  _$encodeRecursiveValues = (Object? raw) {
+    if (raw is! RecursiveValues) {
+      throw EncodingException(
+        'Cannot encode value as RecursiveValues; got: '
+        '${raw.runtimeType}',
+      );
+    }
+    final v = raw;
+    return v.map((k, v) => MapEntry(k, _$encodeRecursiveValues(v)));
+  };
+  final _$alphaMultipartValue = _mergeMultipartValues(
+    [
+      _$encodeRecursiveValues(body.firstMaps.alpha),
+      _$encodeRecursiveValues(body.secondMaps.alpha),
+    ],
+    propertyName: r'alpha',
+    mergeObjects: true,
+  );
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'alpha').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(_$alphaMultipartValue)),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );
+  final _$betaMultipartValue = _mergeMultipartValues(
+    [
+      _$encodeRecursiveValues(body.firstMaps.beta),
+      _$encodeRecursiveValues(body.secondMaps.beta),
+    ],
+    propertyName: r'beta',
+    mergeObjects: true,
+  );
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'beta').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(_$betaMultipartValue)),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''');
+      expect(actual, expected);
     });
   });
 }
