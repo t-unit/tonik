@@ -83,7 +83,7 @@ Object? _data({required IMap<String, String> body}) {
       format(dio.accept(emitter).toString()),
       format('''
 Object? _data({required IMap<String, String> body}) {
-  return body.unlock;
+  return jsonEncode(body.unlock);
 }
 '''),
     );
@@ -126,7 +126,7 @@ Object? _data({required IList<int>? body}) {
       format(dio.accept(emitter).toString()),
       format('''
 Object? _data({required IList<int>? body}) {
-  return body?.unlock ?? 'null';
+  return jsonEncode(body?.unlock);
 }
 '''),
     );
@@ -187,7 +187,7 @@ Object? _data({required Payload body}) {
       format('''
 Object? _data({required Payload body}) {
   return switch (body) {
-    final PayloadJson value => value.value?.unlock ?? 'null',
+    final PayloadJson value => jsonEncode(value.value?.unlock),
     final PayloadPlain value => utf8.encode(value.value),
   };
 }

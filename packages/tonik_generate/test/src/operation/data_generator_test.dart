@@ -99,7 +99,8 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({TestModel? body}) {
-          return body?.toJson();
+          if (body == null) return null;
+          return jsonEncode(body.toJson());
         }
       ''';
 
@@ -107,6 +108,163 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('JSON encodes a string list for a mapped custom content type', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/x-amz-json-1.1',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required List<String> body}) {
+          return jsonEncode(body);
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('JSON encodes a required nullable custom object including null', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: ClassModel(
+                name: 'TestModel',
+                isNullable: true,
+                isDeprecated: false,
+                properties: const [],
+                context: testContext,
+                examples: const [],
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/x-amz-json-1.1',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required TestModel body}) {
+          return jsonEncode(body?.toJson());
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('encodes explicit null in an optional custom JSON variant', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: false,
+          content: {
+            ModelRequestContent(
+              model: ClassModel(
+                name: 'TestModel',
+                isNullable: true,
+                isDeprecated: false,
+                properties: const [],
+                context: testContext,
+                examples: const [],
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/x-amz-json-1.1',
+              examples: const [],
+            ),
+            ModelRequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({Test? body}) {
+          if (body == null) return null;
+          return switch (body) {
+            final TestXAmzJson11 value => jsonEncode(value.value?.toJson()),
+            final TestPlain value => utf8.encode(value.value),
+          };
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(format(expectedMethod)),
       );
     });
@@ -163,8 +321,8 @@ void main() {
         Object? _data({Test? body}) {
           if (body == null) return null;
           return switch (body) {
-            final TestJson value => value.value.toJson(),
-            final TestJsonProblem value => value.value.toJson(),
+            final TestJson value => jsonEncode(value.value.toJson()),
+            final TestJsonProblem value => jsonEncode(value.value.toJson()),
           };
         }
       ''';
@@ -285,7 +443,7 @@ void main() {
               final v = raw;
               return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
-            return _$encodeTree(body);
+            return jsonEncode(_$encodeTree(body));
           }
         ''';
 
@@ -364,8 +522,8 @@ void main() {
               return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
             return switch (body) {
-              final RecursiveBodyJson value => _$encodeTree(value.value),
-              final RecursiveBodyJsonProblem value => value.value.toJson(),
+              final RecursiveBodyJson value => jsonEncode(_$encodeTree(value.value)),
+              final RecursiveBodyJsonProblem value => jsonEncode(value.value.toJson()),
             };
           }
         ''';
@@ -711,7 +869,7 @@ void main() {
       const expectedMethod = '''
         Object? _data({required Test body}) {
           return switch (body) {
-            final TestJson value => value.value,
+            final TestJson value => jsonEncode(value.value),
             final TestJsonProblem value => jsonEncode(value.value.toJson()),
           };
         }
@@ -725,55 +883,60 @@ void main() {
       );
     });
 
-    test('handles nullable parameter type for optional request body', () {
-      final operation = Operation(
-        operationId: 'testOp',
-        path: '/test',
-        method: HttpMethod.post,
-        requestBody: RequestBodyObject(
-          name: 'test',
-          context: testContext,
-          description: null,
-          isRequired: false,
-          content: {
-            ModelRequestContent(
-              model: ClassModel(
-                isDeprecated: false,
-                name: 'TestModel',
-                properties: const [],
-                context: testContext,
+    test(
+      'omits an optional nullable object mapped to JSON before encoding',
+      () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
+            context: testContext,
+            description: null,
+            isRequired: false,
+            content: {
+              ModelRequestContent(
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'TestModel',
+                  isNullable: true,
+                  properties: const [],
+                  context: testContext,
+                  examples: const [],
+                ),
+                contentType: ContentType.json,
+                rawContentType: 'application/x-amz-json-1.1',
                 examples: const [],
               ),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              examples: const [],
-            ),
-          },
-        ),
-        responses: const {},
-        pathParameters: const {},
-        cookieParameters: const {},
-        queryParameters: const {},
-        headers: const {},
-        context: testContext,
-        tags: const {},
-        isDeprecated: false,
-        securitySchemes: const {},
-      );
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         Object? _data({TestModel? body}) {
-          return body?.toJson();
+          if (body == null) return null;
+          return jsonEncode(body.toJson());
         }
       ''';
 
-      final method = generator.generateDataMethod(operation);
-      final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        collapseWhitespace(format(expectedMethod)),
-      );
-    });
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
 
     test('semantic encoding selects Dio text bytes for required bodies', () {
       final operation = Operation(
@@ -1009,7 +1172,7 @@ void main() {
       const expectedMethod = '''
         Object? _data({required Test body}) {
           return switch (body) {
-            final TestJson value => value.value.toJson(),
+            final TestJson value => jsonEncode(value.value.toJson()),
             final TestPlainCharsetUsAscii value => latin1.encode(value.value),
           };
         }
@@ -1068,7 +1231,7 @@ void main() {
       const expectedMethod = '''
         Object? _data({required Test body}) {
           return switch (body) {
-            final TestJson value => value.value.toJson(),
+            final TestJson value => jsonEncode(value.value.toJson()),
             final TestOctetStream value => value.value,
           };
         }
@@ -1127,7 +1290,7 @@ void main() {
       const expectedMethod = '''
         Object? _data({required Test body}) {
           return switch (body) {
-            final TestJson value => value.value.toJson(),
+            final TestJson value => jsonEncode(value.value.toJson()),
             final TestOctetStream value => Uint8List.fromList(value.value.toBytes()),
           };
         }
@@ -2966,7 +3129,7 @@ Future<Object?> _data({Payload? body}) async {
         const expectedMethod = r'''
           Future<Object?> _data({required CreateItem body}) async {
             return switch (body) {
-              final CreateItemJson value => value.value.toJson(),
+              final CreateItemJson value => jsonEncode(value.value.toJson()),
               final CreateItemFormData value => await () async {
                 final _$formData = FormData();
                 _$formData.files.add(MapEntry((r'name').replaceAll(r'\', r'\\'), MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse(r'text/plain'))));
@@ -3051,7 +3214,7 @@ Future<Object?> _data({Payload? body}) async {
         const expectedMethod = r'''
           Object? _data({required CreateUser body}) {
             return switch (body) {
-              final CreateUserJson value => value.value.toJson(),
+              final CreateUserJson value => jsonEncode(value.value.toJson()),
               final CreateUserXWwwFormUrlencoded value =>
                 value.value
                     .toForm(
@@ -3133,7 +3296,7 @@ Future<Object?> _data({Payload? body}) async {
             Object? _data({UpdateItem? body}) {
               if (body == null) return null;
               return switch (body) {
-                final UpdateItemJson value => value.value.toJson(),
+                final UpdateItemJson value => jsonEncode(value.value.toJson()),
                 final UpdateItemXWwwFormUrlencoded value =>
                   value.value
                       .toForm(
@@ -3237,7 +3400,7 @@ Future<Object?> _data({Payload? body}) async {
         const expectedMethod = r'''
             Object? _data({required CreateUser body}) {
               return switch (body) {
-                final CreateUserJson value => value.value.toJson(),
+                final CreateUserJson value => jsonEncode(value.value.toJson()),
                 final CreateUserXWwwFormUrlencoded value => value.value
                     .toForm(
                       '',
@@ -3505,7 +3668,7 @@ Future<Object?> _data({Payload? body}) async {
         const expectedMethod = '''
             Object? _data({required Test body}) {
               return switch (body) {
-                final TestJson value => value.value.toJson(),
+                final TestJson value => jsonEncode(value.value.toJson()),
                 final TestOctetStream _ => throw EncodingException('Unsupported model for bytes content type.'),
               };
             }
