@@ -14,14 +14,18 @@ sealed class const CookieParameter({required final Context context}) {
   /// For aliases, this may override the referenced parameter's description.
   String? get description;
 
-  CookieParameterObject resolve({String? name, String? nameOverride}) {
+  CookieParameterObject resolve({
+    String? name,
+    String? nameOverride,
+    String? description,
+  }) {
     switch (this) {
       case final CookieParameterObject param:
         return CookieParameterObject(
           name: name ?? param.name,
           nameOverride: nameOverride ?? param.nameOverride,
           rawName: param.rawName,
-          description: param.description,
+          description: description ?? param.description,
           isRequired: param.isRequired,
           isDeprecated: param.isDeprecated,
           explode: param.explode,
@@ -35,6 +39,7 @@ sealed class const CookieParameter({required final Context context}) {
         return alias.parameter.resolve(
           name: name ?? alias.name,
           nameOverride: nameOverride,
+          description: description ?? alias.description,
         );
     }
   }

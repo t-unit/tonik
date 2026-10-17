@@ -152,6 +152,7 @@ void main() {
     );
 
     final pathParams = operation?.pathParameters
+        .map((p) => p.resolve())
         .whereType<PathParameterObject>()
         .toList();
     expect(pathParams, hasLength(2));
@@ -172,6 +173,7 @@ void main() {
     expect(itemIdParam?.description, 'ID of the item');
 
     final queryParams = operation?.queryParameters
+        .map((p) => p.resolve())
         .whereType<QueryParameterObject>()
         .toList();
     expect(queryParams, hasLength(2));
@@ -192,6 +194,7 @@ void main() {
     expect(fieldsParam?.description, 'Fields to include in response');
 
     final headerParams = operation?.headers
+        .map((p) => p.resolve())
         .whereType<RequestHeaderObject>()
         .toList();
     expect(headerParams, hasLength(2));
@@ -220,24 +223,28 @@ void main() {
     );
 
     final itemIdParam = operation?.pathParameters
+        .map((p) => p.resolve())
         .whereType<PathParameterObject>()
         .firstWhereOrNull((p) => p.rawName == 'itemId');
     expect(itemIdParam?.description, 'ID of the item');
     expect(itemIdParam?.isRequired, true);
 
     final includeDeletedParam = operation?.queryParameters
+        .map((p) => p.resolve())
         .whereType<QueryParameterObject>()
         .firstWhereOrNull((p) => p.rawName == 'include-deleted');
     expect(includeDeletedParam?.description, 'Include deleted items');
     expect(includeDeletedParam?.isRequired, false);
 
     final requestIdHeader = operation?.headers
+        .map((p) => p.resolve())
         .whereType<RequestHeaderObject>()
         .firstWhereOrNull((h) => h.rawName == 'x-request-id');
     expect(requestIdHeader?.description, 'Request identifier');
     expect(requestIdHeader?.isRequired, true);
 
     final apiVersionHeader = operation?.headers
+        .map((p) => p.resolve())
         .whereType<RequestHeaderObject>()
         .firstWhereOrNull((h) => h.rawName == 'api-version');
     expect(apiVersionHeader?.description, 'API Version header');

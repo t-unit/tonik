@@ -16,12 +16,12 @@ sealed class const ResponseHeader({
   /// For aliases, this may override the referenced header's description.
   String? get description;
 
-  ResponseHeaderObject resolve({String? name}) {
+  ResponseHeaderObject resolve({String? name, String? description}) {
     switch (this) {
       case final ResponseHeaderObject header:
         return ResponseHeaderObject(
           name: name ?? header.name,
-          description: header.description,
+          description: description ?? header.description,
           explode: header.explode,
           model: header.model,
           isRequired: header.isRequired,
@@ -31,7 +31,10 @@ sealed class const ResponseHeader({
           examples: header.examples,
         );
       case final ResponseHeaderAlias alias:
-        return alias.header.resolve(name: name ?? alias.name);
+        return alias.header.resolve(
+          name: name ?? alias.name,
+          description: description ?? alias.description,
+        );
     }
   }
 }

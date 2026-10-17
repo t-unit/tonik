@@ -199,7 +199,21 @@ void main() {
         );
 
         expect(alias.description, 'Overridden description');
-        expect(alias.resolve().description, 'Original description');
+        expect(alias.resolve().description, 'Overridden description');
+        final outer = RequestHeaderAlias(
+          name: 'outer',
+          header: alias,
+          context: context,
+          description: null,
+        );
+        expect(outer.resolve().description, 'Overridden description');
+        final outerOverride = RequestHeaderAlias(
+          name: 'outer',
+          header: alias,
+          context: context,
+          description: 'Outermost description',
+        );
+        expect(outerOverride.resolve().description, 'Outermost description');
       });
 
       test('RequestHeaderAlias description is null when not overridden', () {
@@ -230,6 +244,7 @@ void main() {
         );
 
         expect(alias.description, isNull);
+        expect(alias.resolve().description, 'Original description');
       });
     });
   });

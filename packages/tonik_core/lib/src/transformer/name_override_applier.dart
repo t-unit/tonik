@@ -98,8 +98,8 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.paramName".
   /// [overrides] - Map of "operationId.parameterName" to new name.
   ///
-  /// Mutates QueryParameterObject instances in place by setting their
-  /// nameOverride field.
+  /// Resolves aliases into operation-local objects to keep shared targets
+  /// intact.
   void applyQueryParameterOverrides(
     Set<QueryParameter> parameters,
     String? operationId,
@@ -107,15 +107,27 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
+    final replacements = <(QueryParameterAlias, QueryParameterObject)>[];
     for (final param in parameters) {
-      if (param is! QueryParameterObject) continue;
-
-      final name = param.name;
+      final name = switch (param) {
+        QueryParameterAlias(:final name) => name,
+        QueryParameterObject(:final name) => name,
+      };
       final key = name == null ? null : '$operationId.$name';
       final override = key == null ? null : overrides[key];
       if (override != null) {
-        param.nameOverride = override;
+        switch (param) {
+          case final QueryParameterObject object:
+            object.nameOverride = override;
+          case final QueryParameterAlias alias:
+            replacements.add((alias, alias.resolve()..nameOverride = override));
+        }
       }
+    }
+    for (final (alias, resolved) in replacements) {
+      parameters
+        ..remove(alias)
+        ..add(resolved);
     }
   }
 
@@ -125,8 +137,8 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.paramName".
   /// [overrides] - Map of "operationId.parameterName" to new name.
   ///
-  /// Mutates PathParameterObject instances in place by setting their
-  /// nameOverride field.
+  /// Resolves aliases into operation-local objects to keep shared targets
+  /// intact.
   void applyPathParameterOverrides(
     Set<PathParameter> parameters,
     String? operationId,
@@ -134,15 +146,27 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
+    final replacements = <(PathParameterAlias, PathParameterObject)>[];
     for (final param in parameters) {
-      if (param is! PathParameterObject) continue;
-
-      final name = param.name;
+      final name = switch (param) {
+        PathParameterAlias(:final name) => name,
+        PathParameterObject(:final name) => name,
+      };
       final key = name == null ? null : '$operationId.$name';
       final override = key == null ? null : overrides[key];
       if (override != null) {
-        param.nameOverride = override;
+        switch (param) {
+          case final PathParameterObject object:
+            object.nameOverride = override;
+          case final PathParameterAlias alias:
+            replacements.add((alias, alias.resolve()..nameOverride = override));
+        }
       }
+    }
+    for (final (alias, resolved) in replacements) {
+      parameters
+        ..remove(alias)
+        ..add(resolved);
     }
   }
 
@@ -152,8 +176,8 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.headerName".
   /// [overrides] - Map of "operationId.headerName" to new name.
   ///
-  /// Mutates RequestHeaderObject instances in place by setting their
-  /// nameOverride field.
+  /// Resolves aliases into operation-local objects to keep shared targets
+  /// intact.
   void applyHeaderOverrides(
     Set<RequestHeader> headers,
     String? operationId,
@@ -161,15 +185,27 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
+    final replacements = <(RequestHeaderAlias, RequestHeaderObject)>[];
     for (final header in headers) {
-      if (header is! RequestHeaderObject) continue;
-
-      final name = header.name;
+      final name = switch (header) {
+        RequestHeaderAlias(:final name) => name,
+        RequestHeaderObject(:final name) => name,
+      };
       final key = name == null ? null : '$operationId.$name';
       final override = key == null ? null : overrides[key];
       if (override != null) {
-        header.nameOverride = override;
+        switch (header) {
+          case final RequestHeaderObject object:
+            object.nameOverride = override;
+          case final RequestHeaderAlias alias:
+            replacements.add((alias, alias.resolve()..nameOverride = override));
+        }
       }
+    }
+    for (final (alias, resolved) in replacements) {
+      headers
+        ..remove(alias)
+        ..add(resolved);
     }
   }
 

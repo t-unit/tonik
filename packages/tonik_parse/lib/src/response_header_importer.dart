@@ -50,7 +50,7 @@ class ResponseHeaderImporter({
       headers.add(header);
     }
 
-    return header is core.ResponseHeaderAlias ? header.header : header;
+    return header;
   }
 
   core.ResponseHeader _importHeader({
@@ -86,7 +86,9 @@ class ResponseHeaderImporter({
           name: name,
           header: existing,
           context: context,
-          description: wrapper.description,
+          description: openApiObject.openapi.startsWith('3.0.')
+              ? null
+              : wrapper.description,
         );
 
       case InlinedObject<Header>():

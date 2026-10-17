@@ -1203,10 +1203,10 @@ void main() {
         );
 
         final method = generatedClass.methods.first;
-        expect(
-          method.docs,
-          contains('/// [limit] Overridden description from reference'),
-        );
+        expect(method.docs, [
+          '/// List users',
+          '/// [limit] Overridden description from reference',
+        ]);
       });
 
       test(
