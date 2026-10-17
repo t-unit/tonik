@@ -146,12 +146,13 @@ void main() {
           ),
         );
 
-        final part = MultipartWire(await server.takeRequest())
-            .single('categories');
-        expect(part.contentType, startsWith('application/json'));
-        expect(jsonDecode(part.bodyText), ['science & tech', 'arts & crafts']);
-        expect(part.bodyText, isNot(contains('%26')));
-        expect(part.bodyText, isNot(contains('%20')));
+        final parts = MultipartWire(await server.takeRequest())
+            .named('categories');
+        expect(parts, hasLength(2));
+        expect(parts[0].contentType, startsWith('application/json'));
+        expect(parts[0].bodyText, '"science & tech"');
+        expect(parts[1].contentType, startsWith('application/json'));
+        expect(parts[1].bodyText, '"arts & crafts"');
       },
     );
   });
@@ -554,19 +555,24 @@ void main() {
       expect(response.value.success, isTrue);
     });
 
-    test(
-      'returns encoding error when the recursive array field is set',
-      () async {
-        final response = await api.postRecursiveArray(
-          body: const RecursiveArrayForm(name: 'root', tree: [<Object?>[]]),
-        );
+    test('sends recursive array items as JSON parts', () async {
+      const form = RecursiveArrayForm(name: 'root', tree: [<Object?>[]]);
+      final response = requireSuccess(await api.postRecursiveArray(body: form));
 
-        expect(response, isTonikError);
-        final error = requireError(response);
-        expect(error.type, TonikErrorType.encoding);
-        expect(error.error, isA<EncodingException>());
-      },
-    );
+      expect(response.response.headers['x-has-name']?.first, 'true');
+      expect(response.response.headers['x-has-tree']?.first, 'true');
+      expect(response.value.success, isTrue);
+
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postRecursiveArray(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+
+      expect(wire.parts.map((part) => part.name), ['name', 'tree']);
+      expect(wire.single('name').bodyText, 'root');
+      expect(wire.single('name').contentType, startsWith('text/plain'));
+      expect(wire.single('tree').bodyText, '[]');
+      expect(wire.single('tree').contentType, startsWith('application/json'));
+    });
   });
 }
 

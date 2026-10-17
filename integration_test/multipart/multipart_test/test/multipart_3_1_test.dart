@@ -308,6 +308,19 @@ void main() {
       expect(part.bodyBytes, utf8.encode('42'));
     });
   });
+
+  test('untyped default bytes reject a map before sending', () async {
+    final server = await _jsonServer();
+
+    final response = await _api(
+      server,
+    ).postAnyModelDefaultBytes(body: const AnyModelForm(data: {'name': 'Ada'}));
+
+    final error = requireError(response);
+    expect(error.type, TonikErrorType.encoding);
+    expect(error.error, isA<EncodingException>());
+    expect(server.requestCount, 0);
+  });
 }
 
 Multipart31Api _api(RawRequestServer server) => Multipart31Api(

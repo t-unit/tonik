@@ -157,6 +157,12 @@ void main() {
               'AsciiUs': textBody('text/plain; charset = "US-ASCII"'),
               'AsciiAlias': textBody('text/plain; charset=ASCII'),
               'Unsupported': textBody('text/plain; charset=utf-16'),
+              'QuotedProfile': textBody(
+                'text/plain; profile="x;charset=iso-8859-1"; charset=utf-8',
+              ),
+              'QuotedUnsupported': textBody(
+                'text/plain; profile="x;charset=iso-8859-1"; charset=utf-16',
+              ),
               'CustomText': textBody(
                 'application/vnd.custom-text; charset=latin1',
               ),
@@ -228,6 +234,7 @@ void main() {
       'AsciiUs': TextEncoding.ascii,
       'AsciiAlias': TextEncoding.ascii,
       'CustomText': TextEncoding.latin1,
+      'QuotedProfile': TextEncoding.utf8,
     };
     for (final entry in expectedBodies.entries) {
       final content = contentNamed(entry.key);
@@ -239,6 +246,13 @@ void main() {
     expect(unsupported.textEncoding, TextEncoding.utf8);
     expect(unsupported.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupported.wireContentType, 'text/plain; charset=utf-8');
+
+    final quotedUnsupported = contentNamed('QuotedUnsupported');
+    expect(quotedUnsupported.textEncoding, TextEncoding.utf8);
+    expect(
+      quotedUnsupported.wireContentType,
+      'text/plain; profile="x;charset=iso-8859-1"; charset=utf-8',
+    );
 
     final multipart = contentNamed('Multipart') as MultipartRequestContent;
     final expectedParts = <String, TextEncoding>{
@@ -256,7 +270,8 @@ void main() {
         reason: entry.key,
       );
     }
-    expect(multipart.encoding['defaulted'], isNull);
+    expect(multipart.encoding['defaulted']!.contentType, ContentType.text);
+    expect(multipart.encoding['defaulted']!.wireContentType, 'text/plain');
     final unsupportedPart = multipart.encoding['unsupported']!;
     expect(unsupportedPart.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupportedPart.wireContentType, 'text/plain; charset=utf-8');

@@ -463,6 +463,27 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AnyModelForm'
+            encoding:
+              data:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/any-model-default-bytes:
+    post:
+      operationId: postAnyModelDefaultBytes
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnyModelForm'
       responses:
         '200':
           description: Successful response

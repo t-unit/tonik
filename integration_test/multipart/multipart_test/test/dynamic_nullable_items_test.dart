@@ -157,42 +157,47 @@ void main() {
   );
 
   test(
-    'packed JSON arrays retain nulls around transformed date aliases',
+    'named JSON date arrays send non-null items as repeated parts',
     () async {
       expect(
         await api.postNamedNullableJsonArray(
           body: NamedNullableJsonArray(
-            dates: [null, DateTime.utc(2026, 9, 14, 1, 2, 3), null],
+            dates: [
+              DateTime.utc(2026, 9, 14, 1, 2, 3),
+              null,
+              DateTime.utc(2026, 9, 15),
+            ],
           ),
         ),
         isTonikSuccess,
       );
       final wire = MultipartWire(await server.takeRequest());
-      expect(wire.parts.single.name, 'dates');
-      expect(wire.parts.single.contentType, startsWith('application/json'));
-      expect(jsonDecode(wire.parts.single.bodyText), [
-        null,
-        '2026-09-14T01:02:03.000Z',
-        null,
-      ]);
+      expect(wire.parts.map((part) => part.name), ['dates', 'dates']);
+      expect(wire.parts[0].contentType, startsWith('application/json'));
+      expect(wire.parts[0].bodyText, '"2026-09-14T01:02:03.000Z"');
+      expect(wire.parts[1].contentType, startsWith('application/json'));
+      expect(wire.parts[1].bodyText, '"2026-09-15T00:00:00.000Z"');
     },
   );
-  test('packed JSON arrays use the shared nullable URI codec', () async {
+  test('named JSON URI arrays send non-null items as repeated parts', () async {
     expect(
       await api.postNamedNullableUriArray(
         body: NamedNullableUriArray(
-          uris: [null, Uri.parse('https://example.test/a?b=c'), null],
+          uris: [
+            Uri.parse('https://example.test/a?b=c'),
+            null,
+            Uri.parse('https://example.test/d'),
+          ],
         ),
       ),
       isTonikSuccess,
     );
     final wire = MultipartWire(await server.takeRequest());
-    expect(wire.parts.single.name, 'uris');
-    expect(wire.parts.single.contentType, startsWith('application/json'));
-    expect(
-      wire.parts.single.bodyText,
-      '[null,"https://example.test/a?b=c",null]',
-    );
+    expect(wire.parts.map((part) => part.name), ['uris', 'uris']);
+    expect(wire.parts[0].contentType, startsWith('application/json'));
+    expect(wire.parts[0].bodyText, '"https://example.test/a?b=c"');
+    expect(wire.parts[1].contentType, startsWith('application/json'));
+    expect(wire.parts[1].bodyText, '"https://example.test/d"');
   });
 
   test(

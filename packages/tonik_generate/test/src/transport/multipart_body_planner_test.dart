@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
@@ -172,6 +173,149 @@ Object? test() {
       expect(
         collapseWhitespace(emit(content)),
         collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('rejects base64 file content declared as JSON', () {
+      expectPropertyCode(
+        Base64Model(context: context),
+        '''
+  throw EncodingException(
+    r'Multipart property "value" cannot encode base64 file content as application/json.',
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('Dio omits unused headers before a base64 content error', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: Base64Model(context: context),
+          encoding: _encoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+        ),
+      ]);
+      final plan = const MultipartBodyPlanner(backend: TransportBackend.dio)
+          .plan(content, bodyAccessor: 'body', isRequired: true);
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+      );
+      final code = format('${method.accept(emitter)}');
+      final expected = format(r'''
+test() {
+  final _$formData = FormData();
+  throw EncodingException(
+    r'Multipart property "value" cannot encode base64 file content as application/json.',
+  );
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$formData;
+}
+''');
+
+      expect(code, expected);
+    });
+
+    test('rejects AnyModel under form content type', () {
+      expectPropertyCode(
+        AnyModel(context: context),
+        '''
+  throw EncodingException(
+    r'Multipart property "value" cannot be encoded as application/x-www-form-urlencoded from AnyModel.',
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
+    test('rejects untyped values under the default binary media type', () {
+      expectPropertyCode(AnyModel(context: context), '''
+  throw EncodingException(
+    r'Multipart property "value" requires binary input for application/octet-stream.',
+  );''');
+    });
+
+    test('rejects scalar text under form content type', () {
+      expectPropertyCode(
+        StringModel(context: context),
+        '''
+  throw EncodingException(
+    r'Multipart property "value" cannot be encoded as application/x-www-form-urlencoded from StringModel.',
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
+    test('retains opaque binary input under declared form content type', () {
+      expectPropertyCode(
+        BinaryModel(context: context),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      body.value.toBytes(),
+      filename: (body.value.fileName ?? r'value').replaceAll(r'\', r'\\'),
+      contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
+    test('rejects HTTP maps under form content type', () {
+      expectPropertyCode(
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        '''
+  throw EncodingException(
+    r'Multipart property "value" cannot be encoded as application/x-www-form-urlencoded from MapModel.',
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
+    test('rejects nested multipart media on an object part', () {
+      expectPropertyCode(
+        _classModel(context, 'Value'),
+        '''
+  throw EncodingException(
+    r'Multipart property "value" cannot encode multipart/form-data without binary input.',
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+        ),
       );
     });
 
@@ -371,15 +515,30 @@ Object? test() {
       );
     });
 
-    test('JSON encodes unconstrained values', () {
-      expectPropertyCode(AnyModel(context: context), r'''
+    test('requires bytes for an unconstrained value by default', () {
+      expectPropertyCode(
+        AnyModel(context: context),
+        "  throw EncodingException(r'Multipart property \"value\" requires "
+        "binary input for application/octet-stream.');",
+      );
+    });
+
+    test('checks a text AnyModel before appending the part', () {
+      expectPropertyCode(
+        AnyModel(context: context),
+        r'''
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(jsonEncode(encodeAnyToJson(body.value))),
-      contentType: MediaType.parse(r'application/json'),
+      utf8.encode(multipartTextValue(body.value)),
+      contentType: MediaType.parse(r'text/plain'),
     ),
-  );''');
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.text,
+          rawContentType: 'text/plain',
+        ),
+      );
     });
 
     test('JSON encodes maps', () {
@@ -592,7 +751,7 @@ Object? test() {
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(jsonEncode(body.value)),
+      utf8.encode(jsonEncode(body.value.toTimeZonedIso8601String())),
       contentType: MediaType.parse(r'application/json'),
     ),
   );''',
@@ -652,16 +811,9 @@ Object? test() {
     test('semantic encoding reaches every HTTP multipart text path', () {
       expectPropertyCode(
         StringModel(context: context),
-        r'''
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      (r'value').replaceAll(r'\', r'\\'),
-      latin1.encode(body.value),
-      contentType: MediaType.parse(
-        r'application/vnd.example.text; charset=iso-8859-1',
-      ),
-    ),
-  );''',
+        "  throw EncodingException(r'Multipart property \"value\" requires "
+        'binary input for application/vnd.example.text; '
+        "charset=iso-8859-1.');",
         encoding: _encoding(
           contentType: ContentType.bytes,
           rawContentType: 'application/vnd.example.text; charset=iso-8859-1',
@@ -845,7 +997,7 @@ Object? test() {
       );
     });
 
-    test('rejects arrays of arrays', () {
+    test('encodes each nested array as a JSON part', () {
       expectPropertyCode(
         ListModel(
           content: ListModel(
@@ -868,9 +1020,63 @@ Object? test() {
           isReadOnly: false,
           isWriteOnly: false,
         ),
-        "  throw EncodingException(r'Arrays of arrays are not supported for "
-        "multipart encoding (property: value).');",
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }''',
       );
+    });
+
+    test('unlocks immutable nested array items before JSON encoding', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: _list(context, _list(context, IntegerModel(context: context))),
+        ),
+      ]);
+      const planner = MultipartBodyPlanner(
+        backend: TransportBackend.http,
+        useImmutableCollections: true,
+      );
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..body = Block.of(
+            buildHttpMultipartBodyStatements(
+              planner.plan(content, bodyAccessor: 'body', isRequired: true),
+            ),
+          ),
+      );
+
+      final code = format('${method.accept(emitter)}');
+      final expected = format(r'''
+test() {
+  final _$multipartFiles = <MultipartFile>[];
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.unlock)),
+        contentType: MediaType.parse(r'application/json'),
+      ),
+    );
+  }
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''');
+
+      expect(code, expected);
     });
 
     test('rejects unsupported content types', () {
@@ -887,17 +1093,13 @@ Object? test() {
       );
     });
 
-    test('accepts application/octet-stream content encoding', () {
+    test('rejects typed integers under application/octet-stream', () {
       expectPropertyCode(
         _list(context, IntegerModel(context: context)),
-        r'''
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(jsonEncode(body.value)),
-      contentType: MediaType.parse(r'application/octet-stream'),
-    ),
-  );''',
+        '''
+  for (final item in body.value) {
+    throw EncodingException(r'Multipart property "value" requires binary input for application/octet-stream.');
+  }''',
         encoding: _encoding(
           contentType: ContentType.bytes,
           rawContentType: 'application/octet-stream',
@@ -905,48 +1107,85 @@ Object? test() {
       );
     });
 
-    for (final entry in <({String name, Model model, String encodedValue})>[
-      (
-        name: 'enums',
-        model: _stringEnum(context),
-        encodedValue: 'body.value.map((e) => e.toJson()).toList()',
+    test('JSON encodes each enum item', () {
+      expectPropertyCode(
+        _list(context, _stringEnum(context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'dates',
-        model: DateTimeModel(context: context),
-        encodedValue:
-            'body.value.map((e) => '
-            'e.toTimeZonedIso8601String()).toList()',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each date item', () {
+      expectPropertyCode(
+        _list(context, DateTimeModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toTimeZonedIso8601String())),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'unconstrained values',
-        model: AnyModel(context: context),
-        encodedValue: 'body.value.map((e) => encodeAnyToJson(e)).toList()',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each unconstrained item', () {
+      expectPropertyCode(
+        _list(context, AnyModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(encodeAnyToJson(item))),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'integers',
-        model: IntegerModel(context: context),
-        encodedValue: 'body.value',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each integer item', () {
+      expectPropertyCode(
+        _list(context, IntegerModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/json'),
       ),
-    ]) {
-      test('JSON encodes ${entry.name}', () {
-        expectPropertyCode(
-          _list(context, entry.model),
-          '''
-  _\$multipartFiles.add(
-    MultipartFile.fromBytes(
-      (r'value').replaceAll(r'\\', r'\\\\'),
-      utf8.encode(jsonEncode(${entry.encodedValue})),
-      contentType: MediaType.parse(r'application/json'),
-    ),
-  );''',
-          encoding: _encoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-          ),
-        );
-      });
-    }
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
   });
 
   group('repeated and style-based arrays', () {

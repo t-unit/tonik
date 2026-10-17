@@ -108,3 +108,41 @@ class const PartEncoding._({
       'headers: $headers, style: $style, explode: $explode, '
       'allowReserved: $allowReserved)';
 }
+
+PartEncoding resolveNamedMultipartEncoding(
+  Model model,
+  PartEncoding? explicit,
+) {
+  if (explicit?.isStyleBased ?? false) return explicit!;
+  final itemModel = model.resolved is ListModel
+      ? (model.resolved as ListModel).content.resolved
+      : model.resolved;
+  final defaultType = switch (itemModel) {
+    BinaryModel() || Base64Model() || AnyModel() => ContentType.bytes,
+    ClassModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() ||
+    MapModel() ||
+    ListModel() => ContentType.json,
+    _ => ContentType.text,
+  };
+  final contentType = explicit?.contentType ?? defaultType;
+  final rawContentType =
+      explicit?.rawContentType ??
+      switch (contentType) {
+        ContentType.json => 'application/json',
+        ContentType.bytes => 'application/octet-stream',
+        _ => 'text/plain',
+      };
+  return PartEncoding(
+    contentType: contentType,
+    rawContentType: rawContentType,
+    wireContentType: explicit?.wireContentType ?? rawContentType,
+    textEncoding: explicit?.textEncoding ?? TextEncoding.utf8,
+    headers: explicit?.headers,
+    style: null,
+    explode: null,
+    allowReserved: null,
+  );
+}

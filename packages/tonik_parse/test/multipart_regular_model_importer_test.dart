@@ -37,7 +37,229 @@ void main() {
       'label',
     ]);
     expect(model.properties.first.model, isA<BinaryModel>());
+    expect(content.encoding['file']!.contentType, ContentType.bytes);
+    expect(
+      content.encoding['file']!.wireContentType,
+      'application/octet-stream',
+    );
+    expect(content.encoding['label']!.contentType, ContentType.text);
+    expect(content.encoding['label']!.wireContentType, 'text/plain');
+  });
+
+  test('sets named part defaults from each value or array item', () {
+    final api = Importer().import(
+      _document(
+        paths: {
+          '/defaults': {
+            'post': {
+              'operationId': 'defaults',
+              'requestBody': {
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'type': 'object',
+                      'properties': {
+                        'count': {'type': 'integer'},
+                        'active': {'type': 'boolean'},
+                        'object': {
+                          'type': 'object',
+                          'properties': {
+                            'x': {'type': 'string'},
+                          },
+                        },
+                        'items': {
+                          'type': 'array',
+                          'items': {'type': 'object'},
+                        },
+                        'nested': {
+                          'type': 'array',
+                          'items': {
+                            'type': 'array',
+                            'items': {'type': 'integer'},
+                          },
+                        },
+                        'unknown': <String, dynamic>{},
+                        'encoded': {
+                          'type': 'string',
+                          'contentEncoding': 'base64',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              'responses': _responses,
+            },
+          },
+        },
+      ),
+    );
+
+    final encoding = _multipart(api, 'defaults').encoding;
+    expect(encoding['count']!.wireContentType, 'text/plain');
+    expect(encoding['active']!.wireContentType, 'text/plain');
+    expect(encoding['object']!.wireContentType, 'application/json');
+    expect(encoding['items']!.wireContentType, 'application/json');
+    expect(encoding['nested']!.wireContentType, 'application/json');
+    expect(encoding['unknown']!.wireContentType, 'application/octet-stream');
+    expect(encoding['encoded']!.wireContentType, 'application/octet-stream');
+  });
+
+  test('does not default read-only allOf members or property models', () {
+    final api = Importer().import(
+      _document(
+        paths: {
+          '/read-only': {
+            'post': {
+              'operationId': 'readOnly',
+              'requestBody': {
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'allOf': [
+                        {
+                          'type': 'object',
+                          'readOnly': true,
+                          'properties': {
+                            'serverId': {'type': 'string'},
+                          },
+                        },
+                        {
+                          'type': 'object',
+                          'properties': {
+                            'name': {'type': 'string'},
+                            'hidden': {'type': 'string', 'readOnly': true},
+                          },
+                        },
+                      ],
+                    },
+                    'encoding': {
+                      'serverId': {'contentType': 'text/plain'},
+                      'hidden': {'contentType': 'text/plain'},
+                    },
+                  },
+                },
+              },
+              'responses': _responses,
+            },
+          },
+        },
+      ),
+    );
+
+    final encoding = _multipart(api, 'readOnly').encoding;
+    expect(encoding.keys, ['name']);
+    expect(encoding['name']!.wireContentType, 'text/plain');
+  });
+
+  test('ignores unmatched encoding before importing its headers', () {
+    final api = Importer().import(
+      _document(
+        paths: {
+          '/unmatched': {
+            'post': {
+              'operationId': 'unmatched',
+              'requestBody': {
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'type': 'object',
+                      'properties': {
+                        'name': {'type': 'string'},
+                      },
+                    },
+                    'encoding': {
+                      'ghost': {
+                        'contentType': 'text/plain',
+                        'headers': {
+                          'X-Ghost': {r'$ref': '#/components/headers/Missing'},
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              'responses': _responses,
+            },
+          },
+        },
+      ),
+    );
+
+    final encoding = _multipart(api, 'unmatched').encoding;
+    expect(encoding.keys, ['name']);
+    expect(encoding['name']!.wireContentType, 'text/plain');
+  });
+
+  test('ignores encoding keys on a dynamic map root', () {
+    final api = Importer().import(
+      _document(
+        paths: {
+          '/dynamic': {
+            'post': {
+              'operationId': 'dynamic',
+              'requestBody': {
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'type': 'object',
+                      'additionalProperties': {'type': 'string'},
+                    },
+                    'encoding': {
+                      'ghost': {'contentType': 'text/plain'},
+                    },
+                  },
+                },
+              },
+              'responses': _responses,
+            },
+          },
+        },
+      ),
+    );
+
+    final content = _multipart(api, 'dynamic');
+    expect(content.model.resolved, isA<MapModel>());
     expect(content.encoding, isEmpty);
+  });
+
+  test('missing internal header reference on a named part still throws', () {
+    expect(
+      () => Importer().import(
+        _document(
+          paths: {
+            '/used': {
+              'post': {
+                'operationId': 'used',
+                'requestBody': {
+                  'content': {
+                    'multipart/form-data': {
+                      'schema': {
+                        'type': 'object',
+                        'properties': {
+                          'name': {'type': 'string'},
+                        },
+                      },
+                      'encoding': {
+                        'name': {
+                          'headers': {
+                            'X-Required': {
+                              r'$ref': '#/components/headers/Missing',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                'responses': _responses,
+              },
+            },
+          },
+        ),
+      ),
+      throwsArgumentError,
+    );
   });
 
   test('reuses schema models across JSON, multipart, and responses', () {
@@ -132,10 +354,10 @@ void main() {
     final plain = _multipart(api, 'plain');
     final json = _multipart(api, 'json');
     expect(plain.model, same(json.model));
-    expect(plain.encoding.keys, ['label']);
+    expect(plain.encoding.keys.toSet(), {'file', 'label'});
     expect(plain.encoding['label']!.contentType, ContentType.text);
     expect(plain.encoding['label']!.textEncoding, TextEncoding.ascii);
-    expect(json.encoding.keys, ['label']);
+    expect(json.encoding.keys.toSet(), {'file', 'label'});
     expect(json.encoding['label']!.contentType, ContentType.json);
   });
 
@@ -197,7 +419,7 @@ void main() {
     expect(one, same(two));
     expect(one.model, isA<AliasModel>());
     expect((one.model as AliasModel).name, 'SharedAlias');
-    expect(one.encoding.keys, ['label']);
+    expect(one.encoding.keys.toSet(), {'file', 'label'});
 
     final defs = _multipart(api, 'defs').model as ClassModel;
     final local = defs.properties.single.model.resolved as ClassModel;

@@ -16,7 +16,7 @@ void main() {
   });
 
   test(
-    'sends a map typedef in insertion order including an empty string',
+    'sends a map typedef despite unmatched encoding and keeps insertion order',
     () async {
       // The annotation checks the generated typedef remains assignable.
       // ignore: omit_local_variable_types
@@ -454,17 +454,19 @@ void main() {
   });
 
   test(
-    'rejects the exact asset-upload wildcard encoding before sending',
+    'ignores wildcard encoding on a dynamic map and sends string values',
     () async {
-      final error = requireError(
+      expect(
         await api.postDynamicAssetsWildcard(
           base64: true,
           body: {'*': 'AP8=', 'asset': 'AQ=='},
         ),
+        isTonikSuccess,
       );
-      expect(error.type, TonikErrorType.encoding);
-      expect(error.error, isA<EncodingException>());
-      expect(server.requestCount, 0);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), ['*', 'asset']);
+      expect(wire.parts.map((part) => part.bodyText), ['AP8=', 'AQ==']);
+      expect(wire.parts[0].contentType, startsWith('text/plain'));
     },
   );
 

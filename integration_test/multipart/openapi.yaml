@@ -129,6 +129,9 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/DynamicStrings'
+            encoding:
+              ghost:
+                contentType: text/plain
       responses:
         '204':
           description: Accepted
@@ -513,6 +516,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ComplexResponse'
 
+  /multipart/nested-multipart-media:
+    post:
+      operationId: postNestedMultipartMedia
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplexForm'
+            encoding:
+              profile:
+                contentType: multipart/form-data
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/object-arrays:
     post:
       operationId: postObjectArrays
@@ -654,6 +674,158 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/text-any:
+    post:
+      operationId: postTextAny
+      tags:
+        - multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TextAnyForm'
+            encoding:
+              value:
+                contentType: 'text/plain; charset=iso-8859-1; profile=plain'
+              message:
+                contentType: 'text/plain; charset=utf-16; profile=message'
+              quoted:
+                contentType: 'text/plain; profile="x;charset=iso-8859-1"; charset=utf-8'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/form-any:
+    post:
+      operationId: postFormAny
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FormAnyForm'
+            encoding:
+              value:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/form-scalar:
+    post:
+      operationId: postFormScalar
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FormScalarForm'
+            encoding:
+              value:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/unmatched-encoding:
+    post:
+      operationId: postUnmatchedEncoding
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UnmatchedEncodingForm'
+            encoding:
+              ghost:
+                contentType: text/plain
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/json-base64:
+    post:
+      operationId: postJsonBase64
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JsonBase64Form'
+            encoding:
+              file:
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/read-only-all-of:
+    post:
+      operationId: postReadOnlyAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReadOnlyAllOfForm'
+            encoding:
+              serverId:
+                contentType: text/plain
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/nested-array:
+    post:
+      operationId: postNestedArray
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedArrayForm'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/nested-dates:
+    post:
+      operationId: postNestedDates
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedDatesForm'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/nested-array-text:
+    post:
+      operationId: postNestedArrayText
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedArrayForm'
+            encoding:
+              values:
+                contentType: text/plain
+      responses:
+        '204':
+          description: Accepted
 
   /multipart/multiple-files:
     post:
@@ -964,10 +1136,8 @@ paths:
       summary: Post a multipart form with a self-recursive array property
       description: >-
         Tests a property whose schema is a self-recursive array (an array
-        whose items are the array itself). Nested arrays are not supported
-        in multipart encoding, so the generated method throws
-        EncodingException when the property is set and succeeds when it is
-        omitted.
+        whose items are the array itself). Each supplied top-level item is
+        encoded as a separate JSON part.
       requestBody:
         required: true
         content:
@@ -1306,6 +1476,107 @@ components:
         label:
           type: string
           description: Regular string field
+
+    TextAnyForm:
+      type: object
+      required:
+        - value
+        - message
+        - quoted
+      properties:
+        value: {}
+        message:
+          type: string
+        quoted:
+          type: string
+
+    FormAnyForm:
+      type: object
+      required:
+        - value
+        - label
+      properties:
+        value: {}
+        label:
+          type: string
+
+    FormScalarForm:
+      type: object
+      required:
+        - value
+        - label
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+
+    UnmatchedEncodingForm:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    JsonBase64Form:
+      type: object
+      required:
+        - file
+        - label
+      properties:
+        file:
+          type: string
+          format: byte
+        label:
+          type: string
+
+    ReadOnlyAllOfForm:
+      allOf:
+        - $ref: '#/components/schemas/ReadOnlyAllOfServer'
+        - $ref: '#/components/schemas/ReadOnlyAllOfClient'
+
+    ReadOnlyAllOfServer:
+      type: object
+      readOnly: true
+      required:
+        - serverId
+      properties:
+        serverId:
+          type: string
+
+    ReadOnlyAllOfClient:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    NestedArrayForm:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+
+    NestedDatesForm:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              format: date-time
 
     HeaderPartsForm:
       type: object

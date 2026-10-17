@@ -81,10 +81,9 @@ class const MultipartBodyPlanner({
       }
     }
     for (final property in properties) {
-      final resolvedEncoding = _resolveEncoding(
-        content.encoding[property.rawName],
-        property.property.model,
-      );
+      final resolvedEncoding =
+          content.encoding[property.rawName] ??
+          resolveNamedMultipartEncoding(property.property.model, null);
       final accesses = [
         for (final path in property.accessPaths)
           _access(refer(bodyAccessor), path),
@@ -198,6 +197,7 @@ class const MultipartBodyPlanner({
           ),
         );
       }
+      final headerEmissionStart = emissions.length;
       final headers = _headers(
         content.encoding[property.rawName],
         property.normalizedName,
@@ -231,7 +231,11 @@ class const MultipartBodyPlanner({
         isMergedList: mergedLists,
         isMergedObjectProperties: mergedObjectProperties,
       );
-      for (final emission in _part(input, property.property.model.resolved)) {
+      final partEmissions = _part(input, property.property.model.resolved);
+      if (!partEmissions.any((emission) => emission is MultipartAppend)) {
+        emissions.removeRange(headerEmissionStart, emissions.length);
+      }
+      for (final emission in partEmissions) {
         if (reservedNames.isNotEmpty && emission is MultipartAppend) {
           emissions.add(
             MultipartCode(
@@ -343,7 +347,7 @@ class const MultipartBodyPlanner({
       normalizedName: r'_$dynamic',
       preserveOrder: true,
       value: value,
-      encoding: _resolveEncoding(null, itemModel),
+      encoding: resolveNamedMultipartEncoding(itemModel, null),
       headers: headers,
       isMergedObject: false,
       isMergedMap: false,
@@ -369,28 +373,97 @@ class const MultipartBodyPlanner({
     return emissions;
   }
 
-  List<MultipartEmission> _part(_Part part, Model model) => switch (model) {
-    BinaryModel() => _file(part),
-    Base64Model() => [_base64(part)],
-    ListModel() => _list(part, model),
-    NeverModel() => _error(
-      "Cannot encode NeverModel property '${part.name}' - this type does not "
-      'permit any value.',
-    ),
-    StringModel() => [_text(part, part.value)],
-    AnyModel() => [
-      _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
-    ],
-    MapModel() => _map(part, model),
-    ClassModel() || CompositeModel() => _object(part),
-    EnumModel() => [_text(part, _enum(part.value, model, part.encoding))],
-    PrimitiveModel() => [
-      _text(part, _primitive(part.value, model, part.encoding)),
-    ],
-    NamedModel() => _error(
-      "Cannot encode cyclic AliasModel property '${part.name}'.",
-    ),
-  };
+  List<MultipartEmission> _part(_Part part, Model model) {
+    final contentType = part.encoding.contentType;
+    if (!part.encoding.isStyleBased) {
+      if (contentType == ContentType.bytes &&
+          model is! BinaryModel &&
+          model is! Base64Model &&
+          model is! ListModel) {
+        return _error(
+          'Multipart property "${part.name}" requires binary input for '
+          '${part.encoding.wireContentType}.',
+        );
+      }
+      if (model is Base64Model && contentType != ContentType.bytes) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode base64 file '
+          'content as ${part.encoding.wireContentType}.',
+        );
+      }
+      if (contentType == ContentType.multipart &&
+          model is! BinaryModel &&
+          !(model is ListModel && model.content.resolved is BinaryModel)) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode '
+          '${part.encoding.wireContentType} without binary input.',
+        );
+      }
+      if (contentType == ContentType.form &&
+          (model is PrimitiveModel &&
+                  model is! BinaryModel &&
+                  model is! Base64Model ||
+              model is EnumModel ||
+              model is AnyModel ||
+              (!_dio && model is MapModel))) {
+        return _error(
+          'Multipart property "${part.name}" cannot be encoded as '
+          '${part.encoding.wireContentType} from ${model.runtimeType}.',
+        );
+      }
+      if (contentType == ContentType.text) {
+        if (model is AnyModel) {
+          return [
+            _text(
+              part,
+              refer(
+                'multipartTextValue',
+                'package:tonik_util/tonik_util.dart',
+              ).call([part.value]),
+            ),
+          ];
+        }
+        if (model is ClassModel ||
+            model is CompositeModel ||
+            model is MapModel) {
+          return _error(
+            'Multipart property "${part.name}" cannot be encoded as '
+            '${part.encoding.wireContentType}: its value is complex.',
+          );
+        }
+      }
+      if (contentType == ContentType.json) {
+        if (model is StringModel) {
+          return [_text(part, _json(part.value))];
+        }
+        if (model is EnumModel) {
+          return [_text(part, _json(part.value.property('toJson').call([])))];
+        }
+      }
+    }
+    return switch (model) {
+      BinaryModel() => _file(part),
+      Base64Model() => [_base64(part)],
+      ListModel() => _list(part, model),
+      NeverModel() => _error(
+        "Cannot encode NeverModel property '${part.name}' - this type does not "
+        'permit any value.',
+      ),
+      StringModel() => [_text(part, part.value)],
+      AnyModel() => [
+        _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
+      ],
+      MapModel() => _map(part, model),
+      ClassModel() || CompositeModel() => _object(part),
+      EnumModel() => [_text(part, _enum(part.value, model, part.encoding))],
+      PrimitiveModel() => [
+        _text(part, _primitive(part.value, model, part.encoding)),
+      ],
+      NamedModel() => _error(
+        "Cannot encode cyclic AliasModel property '${part.name}'.",
+      ),
+    };
+  }
 
   MultipartAppend _text(
     _Part part,
@@ -500,11 +573,27 @@ class const MultipartBodyPlanner({
         'properties (property: ${part.name}).',
       );
     }
-    if (item is ListModel && (!_dio || contentBased)) {
-      return _error(
-        'Arrays of arrays are not supported for multipart encoding '
-        '(property: ${part.name}).',
-      );
+    final itemPart = _withValue(part, refer('item'));
+    if (item is ListModel) {
+      if (contentBased && encoding.contentType == ContentType.json) {
+        return _listItems(
+          part,
+          model,
+          _jsonPart(itemPart, item, immutable: useImmutableCollections),
+        );
+      }
+      if (!encoding.isStyleBased && encoding.contentType == ContentType.text) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode a nested array '
+          'as ${encoding.wireContentType}.',
+        );
+      }
+      if (!_dio || contentBased) {
+        return _error(
+          'Arrays of arrays are not supported for multipart encoding '
+          '(property: ${part.name}).',
+        );
+      }
     }
     if (item is AliasModel) {
       return _error(
@@ -512,12 +601,25 @@ class const MultipartBodyPlanner({
         "property '${part.name}'.",
       );
     }
-    final itemPart = _withValue(part, refer('item'));
     if (item is Base64Model) {
+      if (!encoding.isStyleBased && encoding.contentType != ContentType.bytes) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode base64 file '
+          'content as ${encoding.wireContentType}.',
+        );
+      }
       return _listItems(part, model, [_base64(itemPart)]);
     }
     if (item is BinaryModel) {
       return _listItems(part, model, _file(itemPart));
+    }
+    if (!encoding.isStyleBased &&
+        encoding.contentType == ContentType.text &&
+        (item is AnyModel ||
+            item is ClassModel ||
+            item is CompositeModel ||
+            item is MapModel)) {
+      return _listItems(part, model, _part(itemPart, item));
     }
     if (contentBased) {
       if (encoding.contentType != ContentType.json &&
@@ -528,23 +630,7 @@ class const MultipartBodyPlanner({
           'is supported for content-based array serialization.',
         );
       }
-      if (item is ClassModel ||
-          item is MapModel ||
-          (item is CompositeModel &&
-              (item.hasComplexTypes || item.hasMixedTypes))) {
-        if (item is MapModel) {
-          return _listItems(part, model, _map(itemPart, item));
-        }
-        final json = itemPart.value.property('toJson').call([]);
-        return _listItems(part, model, [
-          _text(itemPart, _json(json), fallback: 'application/json'),
-        ]);
-      }
-      return _jsonPart(
-        part,
-        model,
-        immutable: useImmutableCollections && !part.isMergedList,
-      );
+      return _listItems(part, model, _part(itemPart, item));
     }
     if (item is ClassModel ||
         item is CompositeModel ||
@@ -619,7 +705,7 @@ class const MultipartBodyPlanner({
   MultipartAppend _listText(_Part part, Expression text) => _text(
     part,
     text,
-    field: _dio,
+    field: _dio && part.encoding.isStyleBased,
     omitContentType:
         _dio &&
         part.encoding.textEncoding == TextEncoding.utf8 &&
@@ -655,7 +741,13 @@ class const MultipartBodyPlanner({
 
   Expression _primitive(Expression value, Model model, PartEncoding encoding) {
     if (encoding.contentType == ContentType.json && model is PrimitiveModel) {
-      return _json(value);
+      final jsonValue = switch (model) {
+        DateTimeModel() => value.property('toTimeZonedIso8601String').call([]),
+        DateModel() => value.property('toJson').call([]),
+        DecimalModel() || UriModel() => value.property('toString').call([]),
+        _ => value,
+      };
+      return _json(jsonValue);
     }
     return value
         .property(
@@ -974,49 +1066,6 @@ class const MultipartBodyPlanner({
       );
     }
     return refer(variable);
-  }
-
-  PartEncoding _resolveEncoding(PartEncoding? encoding, Model model) {
-    if (encoding?.isStyleBased ?? false) return encoding!;
-    final defaultType = _defaultContentType(model, <Model>{});
-    final contentType = encoding?.contentType ?? defaultType;
-    final rawContentType =
-        encoding?.rawContentType ??
-        switch (contentType) {
-          ContentType.json => 'application/json',
-          ContentType.bytes => 'application/octet-stream',
-          _ => 'text/plain',
-        };
-    return PartEncoding(
-      contentType: contentType,
-      rawContentType: rawContentType,
-      wireContentType: encoding?.wireContentType ?? rawContentType,
-      textEncoding: encoding?.textEncoding ?? TextEncoding.utf8,
-      headers: encoding?.headers,
-      style: null,
-      explode: null,
-      allowReserved: null,
-    );
-  }
-
-  ContentType _defaultContentType(Model model, Set<Model> active) {
-    if (!active.add(model)) return ContentType.json;
-    try {
-      return switch (model) {
-        AliasModel() => _defaultContentType(model.model, active),
-        ListModel() => _defaultContentType(model.content, active),
-        BinaryModel() || Base64Model() => ContentType.bytes,
-        ClassModel() ||
-        AllOfModel() ||
-        OneOfModel() ||
-        AnyOfModel() ||
-        AnyModel() ||
-        MapModel() => ContentType.json,
-        _ => ContentType.text,
-      };
-    } finally {
-      active.remove(model);
-    }
   }
 
   String? _incompatibleDefinitionsError(MultipartPropertyPlan property) {
