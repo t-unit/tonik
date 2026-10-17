@@ -563,7 +563,7 @@ Future<Object?> encode() async {
 ''', asynchronous: true);
   });
 
-  test('packs immutable nullable URI items through the shared JSON codec', () {
+  test('serializes non-null immutable URI items as JSON parts', () {
     final content = multipartContentFixture(context, [
       multipartPartFixture(
         name: 'uris',
@@ -593,11 +593,14 @@ Future<Object?> encode() async {
     _expectMethod(content, TransportBackend.http, r'''
 Object? encode() {
   final _$multipartFiles = <MultipartFile>[];
-  _$multipartFiles.add(MultipartFile.fromBytes(
-    (r'uris').replaceAll(r'\', r'\\'),
-    utf8.encode(jsonEncode(body.uris.unlock.map((e) => e?.toString()).toList())),
-    contentType: MediaType.parse(r'application/json'),
-  ));
+  for (final item in body.uris) {
+    if (item == null) continue;
+    _$multipartFiles.add(MultipartFile.fromBytes(
+      (r'uris').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(item.toString())),
+      contentType: MediaType.parse(r'application/json'),
+    ));
+  }
   if (_$multipartFiles.isEmpty) {
     throw EncodingException(r'Multipart request body must contain at least one part.');
   }
@@ -606,7 +609,7 @@ Object? encode() {
 ''', immutable: true);
   });
 
-  test('keeps merged immutable named lists mutable for packed JSON output', () {
+  test('keeps merged immutable named lists ordered across JSON parts', () {
     final list = ListModel(
       context: context,
       examples: const [],
@@ -662,11 +665,13 @@ Object? encode() {
   final _$itemsMultipartValue = _mergeMultipartLists([
     body.first.items.unlock, body.second.items.unlock,
   ], propertyName: r'items')!;
-  _$multipartFiles.add(MultipartFile.fromBytes(
-    (r'items').replaceAll(r'\', r'\\'),
-    utf8.encode(jsonEncode(_$itemsMultipartValue)),
-    contentType: MediaType.parse(r'application/json'),
-  ));
+  for (final item in _$itemsMultipartValue) {
+    _$multipartFiles.add(MultipartFile.fromBytes(
+      (r'items').replaceAll(r'\', r'\\'),
+      utf8.encode(jsonEncode(item)),
+      contentType: MediaType.parse(r'application/json'),
+    ));
+  }
   if (_$multipartFiles.isEmpty) {
     throw EncodingException(r'Multipart request body must contain at least one part.');
   }

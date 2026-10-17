@@ -7,7 +7,7 @@ import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   test(
-    'packs merged immutable URI lists with nulls through the JSON codec',
+    'sends merged immutable URI items as repeated JSON parts',
     () async {
       final server = await RawRequestServer.start();
       final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
@@ -25,12 +25,11 @@ void main() {
         isTonikSuccess,
       );
       final wire = MultipartWire(await server.takeRequest());
-      expect(wire.parts.single.name, 'values');
-      expect(wire.parts.single.contentType, startsWith('application/json'));
-      expect(
-        wire.parts.single.bodyText,
-        '[null,"https://first.test/","https://second.test/",null]',
-      );
+      expect(wire.parts.map((part) => part.name), ['values', 'values']);
+      expect(wire.parts[0].contentType, startsWith('application/json'));
+      expect(wire.parts[0].bodyText, '"https://first.test/"');
+      expect(wire.parts[1].contentType, startsWith('application/json'));
+      expect(wire.parts[1].bodyText, '"https://second.test/"');
     },
   );
 

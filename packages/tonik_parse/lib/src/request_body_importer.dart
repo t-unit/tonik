@@ -199,15 +199,36 @@ class RequestBodyImporter({
     final model = mediaType.schema == null
         ? core.AnyModel(context: bodyContext)
         : modelImporter.importSchema(mediaType.schema!, bodyContext);
+    final properties = _collectWritableMultipartProperties(model);
+    final allProperties = _collectFormProperties(model);
+    final dynamicRoot = model.resolved is core.MapModel;
     final encoding = <String, core.PartEncoding>{};
     for (final entry
         in mediaType.encoding?.entries ??
             const <MapEntry<String, Encoding>>[]) {
+      if (allProperties != null || dynamicRoot) {
+        if (!(allProperties?.containsKey(entry.key) ?? false)) {
+          log.warning(
+            'Encoding key "${entry.key}" does not match any property '
+            'on the multipart schema. Ignoring.',
+          );
+          continue;
+        }
+        if (!(properties?.containsKey(entry.key) ?? false)) continue;
+      }
       encoding[entry.key] = _importPartEncoding(
         entry.value,
         entry.key,
         context,
       );
+    }
+    if (properties != null) {
+      for (final entry in properties.entries) {
+        encoding[entry.key] = core.resolveNamedMultipartEncoding(
+          entry.value.model,
+          encoding[entry.key],
+        );
+      }
     }
     return core.MultipartRequestContent(
       model: model,
@@ -278,6 +299,50 @@ class RequestBodyImporter({
         return byName.isEmpty ? null : byName;
       default:
         return null;
+    }
+  }
+
+  Map<String, core.Property>? _collectWritableMultipartProperties(
+    core.Model model,
+  ) {
+    if (_multipartModelIsReadOnly(model, <core.Model>{})) return null;
+    switch (model.resolved) {
+      case final core.ClassModel resolved:
+        return {
+          for (final property in resolved.properties)
+            if (!property.isReadOnly &&
+                !_multipartModelIsReadOnly(property.model, <core.Model>{}))
+              property.name: property,
+        };
+      case final core.AllOfModel resolved:
+        final byName = <String, core.Property>{};
+        for (final member in resolved.models) {
+          final memberProperties = _collectWritableMultipartProperties(member);
+          if (memberProperties != null) byName.addAll(memberProperties);
+        }
+        return byName.isEmpty ? null : byName;
+      default:
+        return null;
+    }
+  }
+
+  bool _multipartModelIsReadOnly(core.Model model, Set<core.Model> active) {
+    if (!active.add(model)) return false;
+    try {
+      return switch (model) {
+        core.AliasModel(:final isReadOnly, :final model) =>
+          isReadOnly || _multipartModelIsReadOnly(model, active),
+        core.ClassModel(:final isReadOnly) ||
+        core.ListModel(:final isReadOnly) ||
+        core.MapModel(:final isReadOnly) ||
+        core.EnumModel(:final isReadOnly) ||
+        core.AllOfModel(:final isReadOnly) ||
+        core.OneOfModel(:final isReadOnly) ||
+        core.AnyOfModel(:final isReadOnly) => isReadOnly,
+        _ => false,
+      };
+    } finally {
+      active.remove(model);
     }
   }
 
@@ -358,8 +423,8 @@ class RequestBodyImporter({
       );
     }
 
-    final match = _charsetPattern.firstMatch(rawContentType);
-    final charset = match?.group(3)?.toLowerCase();
+    final parameter = _charsetParameter(rawContentType);
+    final charset = parameter?.charset.toLowerCase();
     final encoding = switch (charset) {
       null || 'utf-8' || 'utf8' => core.TextEncoding.utf8,
       'iso-8859-1' || 'latin1' => core.TextEncoding.latin1,
@@ -370,19 +435,61 @@ class RequestBodyImporter({
       return (encoding: encoding, wireContentType: rawContentType);
     }
 
-    final quote = match!.group(2) == '"' ? '"' : '';
     final wireContentType = rawContentType.replaceRange(
-      match.start,
-      match.end,
-      '${match.group(1)}${quote}utf-8$quote',
+      parameter!.start,
+      parameter.end,
+      'utf-8',
     );
     return (encoding: core.TextEncoding.utf8, wireContentType: wireContentType);
   }
 
-  static final _charsetPattern = RegExp(
-    r'((?:^|;)\s*charset\s*=\s*)("?)([^";\s]+)("?)',
-    caseSensitive: false,
-  );
+  ({String charset, int start, int end})? _charsetParameter(String mediaType) {
+    var segmentStart = 0;
+    var quoted = false;
+    var escaped = false;
+    for (var index = 0; index <= mediaType.length; index++) {
+      final atEnd = index == mediaType.length;
+      final char = atEnd ? '' : mediaType[index];
+      if (!atEnd) {
+        if (escaped) {
+          escaped = false;
+        } else if (quoted && char == r'\') {
+          escaped = true;
+        } else if (char == '"') {
+          quoted = !quoted;
+        }
+      }
+      if (!atEnd && (char != ';' || quoted)) continue;
+      if (segmentStart != 0) {
+        final segment = mediaType.substring(segmentStart, index);
+        final equals = segment.indexOf('=');
+        if (equals != -1 &&
+            segment.substring(0, equals).trim().toLowerCase() == 'charset') {
+          var start = segmentStart + equals + 1;
+          var end = index;
+          while (start < end && mediaType[start].trim().isEmpty) {
+            start++;
+          }
+          while (end > start && mediaType[end - 1].trim().isEmpty) {
+            end--;
+          }
+          if (end > start &&
+              mediaType[start] == '"' &&
+              mediaType[end - 1] == '"') {
+            start++;
+            end--;
+          }
+          return (
+            charset: mediaType.substring(start, end),
+            start: start,
+            end: end,
+          );
+        }
+      }
+      segmentStart = index + 1;
+    }
+    return null;
+  }
 
   static core.EncodingStyle? _mapSerializationStyle(SerializationStyle? style) {
     if (style == null) return null;
