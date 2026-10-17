@@ -6,32 +6,29 @@ import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 
 void main() {
-  test(
-    'sends merged immutable URI items as repeated JSON parts',
-    () async {
-      final server = await RawRequestServer.start();
-      final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
-      expect(
-        await api.postPackedMerged(
-          body: PackedMerged(
-            packedFirst: PackedFirst(
-              values: IList([null, Uri.parse('https://first.test/')]),
-            ),
-            packedSecond: PackedSecond(
-              values: IList([Uri.parse('https://second.test/'), null]),
-            ),
+  test('sends merged immutable URI items as repeated JSON parts', () async {
+    final server = await RawRequestServer.start();
+    final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
+    expect(
+      await api.postPackedMerged(
+        body: PackedMerged(
+          packedFirst: PackedFirst(
+            values: IList([null, Uri.parse('https://first.test/')]),
+          ),
+          packedSecond: PackedSecond(
+            values: IList([Uri.parse('https://second.test/'), null]),
           ),
         ),
-        isTonikSuccess,
-      );
-      final wire = MultipartWire(await server.takeRequest());
-      expect(wire.parts.map((part) => part.name), ['values', 'values']);
-      expect(wire.parts[0].contentType, startsWith('application/json'));
-      expect(wire.parts[0].bodyText, '"https://first.test/"');
-      expect(wire.parts[1].contentType, startsWith('application/json'));
-      expect(wire.parts[1].bodyText, '"https://second.test/"');
-    },
-  );
+      ),
+      isTonikSuccess,
+    );
+    final wire = MultipartWire(await server.takeRequest());
+    expect(wire.parts.map((part) => part.name), ['values', 'values']);
+    expect(wire.parts[0].contentType, startsWith('application/json'));
+    expect(wire.parts[0].bodyText, '"https://first.test/"');
+    expect(wire.parts[1].contentType, startsWith('application/json'));
+    expect(wire.parts[1].bodyText, '"https://second.test/"');
+  });
 
   test('sends an inline immutable map through the public API', () async {
     final server = await RawRequestServer.start();
