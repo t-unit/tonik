@@ -32,6 +32,7 @@
 
 **Encoding & Content:**
 - XML de- and encoding
+- Outgoing request media types containing `*`; use a concrete media type in the OpenAPI document instead
 
 **References:**
 - External/remote `$ref` references (to other files or URLs)

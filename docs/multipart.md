@@ -107,9 +107,9 @@ await api.post(body: Form(tags: ['dart', 'flutter', 'openapi']));
 
 Arrays of binary files work the same way — each `TonikFile` becomes its own part.
 
-### Delimited Arrays (OAS 3.1)
+### Delimited Arrays
 
-In OAS 3.1 specs, you can use `encoding` to send an array as a single delimited value:
+You can use `encoding` to send an array as a single delimited value:
 
 ```yaml
 encoding:
@@ -125,13 +125,15 @@ await api.post(body: Form(tags: ['dart', 'flutter']));
 
 Supported styles: `form` (comma-separated), `spaceDelimited`, `pipeDelimited`.
 
-> In OAS 3.0, `style` and `explode` in `encoding` objects are ignored — arrays always use separate parts.
+Explicit `style` and `explode` fields are handled the same way regardless of
+the declared OpenAPI version.
 
 ---
 
 ## Per-Part Headers
 
-Headers defined in `encoding.{field}.headers` become extra parameters on the generated method:
+Headers with simple schemas in `encoding.{field}.headers` become extra
+parameters on the generated method:
 
 ```yaml
 encoding:
@@ -153,6 +155,7 @@ await api.postUpload(
 ```
 
 Parameter names follow the pattern `{fieldName}{HeaderName}` in camelCase.
+Tonik does not interpret `Header.content` or provide custom header serializers.
 
 ---
 
@@ -165,6 +168,17 @@ Map any content type to multipart in [configuration](configuration.md#content-ty
 contentTypes:
   application/vnd.my-form: multipart
 ```
+
+For a named part with multiple concrete `encoding.contentType` values, the
+generated input lets the caller select a media type for each part or repeated
+item. Unknown concrete types use `TonikFile` bytes. Tonik omits outgoing
+media alternatives containing `*` in the type or subtype, keeping concrete
+siblings. If every declared alternative is omitted, the part uses its usual
+schema-based default (for example, `text/plain` for a string). It never sends
+a wildcard part header. To use a concrete type in place of a range, declare it
+in that field's `encoding.contentType` in the OpenAPI document. A
+`contentTypes` configuration mapping selects serialization; it does not replace
+the part header.
 
 ---
 
@@ -179,4 +193,4 @@ contentTypes:
 | Dynamic sources inside `allOf` | Not supported |
 | Unmatched or non-writable encoding keys | Encoding error |
 | `deepObject` style on arrays | Not supported |
-| `style` / `explode` in OAS 3.0 | Ignored — arrays always use separate parts |
+| Outgoing media tokens containing `*` | Omitted; concrete alternatives remain available |

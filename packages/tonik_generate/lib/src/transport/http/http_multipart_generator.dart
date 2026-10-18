@@ -58,7 +58,8 @@ Code _append(MultipartAppend part, String variable, bool custom) {
       'HTTP text and paths must be planned before emission.',
     ),
   };
-  final contentType = part.contentType!;
+  final contentType =
+      part.contentTypeExpression ?? specLiteralString(part.contentType!);
   return refer(variable).property('add').call([
     if (custom)
       refer(
@@ -67,7 +68,7 @@ Code _append(MultipartAppend part, String variable, bool custom) {
       ).newInstance([], {
         'name': part.name,
         'bytes': bytes,
-        'contentType': specLiteralString(contentType),
+        'contentType': contentType,
         'filename': ?part.filename,
         'headers': ?part.headers,
       })
@@ -91,7 +92,7 @@ Code _append(MultipartAppend part, String variable, bool custom) {
               'contentType': refer(
                 'MediaType',
                 'package:http/http.dart',
-              ).property('parse').call([specLiteralString(contentType)]),
+              ).property('parse').call([contentType]),
             },
           ),
   ]).statement;

@@ -281,28 +281,30 @@ test() {
       );
     });
 
-    test('rejects HTTP maps under form content type', () {
-      expectPropertyCode(
-        MapModel(
-          valueModel: StringModel(context: context),
-          context: context,
-          examples: const [],
-          name: null,
-          nameOverride: null,
-          isNullable: false,
-          isValueNullable: false,
-          isReadOnly: false,
-          isWriteOnly: false,
+    test('encodes HTTP maps under form content type', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          encoding: _encoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+          ),
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isValueNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+          ),
         ),
-        '''
-  throw EncodingException(
-    r'Multipart property "value" cannot be encoded as application/x-www-form-urlencoded from MapModel.',
-  );''',
-        encoding: _encoding(
-          contentType: ContentType.form,
-          rawContentType: 'application/x-www-form-urlencoded',
-        ),
-      );
+      ]);
+      final code = emit(content);
+      expect(code, contains('encodeAnyToForm'));
+      expect(code, contains('application/x-www-form-urlencoded'));
     });
 
     test('rejects nested multipart media on an object part', () {
@@ -1601,6 +1603,81 @@ Object? test() {
         _content(root),
         'Multipart property "metadata" has incompatible definitions '
         '(ClassModel and ClassModel).',
+      );
+    });
+
+    test('rejects duplicate choices with incompatible transfer models', () {
+      const choices = [
+        PartEncoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'application/octet-stream',
+          wireContentType: 'application/octet-stream',
+          textEncoding: TextEncoding.utf8,
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
+        PartEncoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'application/xml',
+          wireContentType: 'application/xml',
+          textEncoding: TextEncoding.utf8,
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
+      ];
+      final encoded = MultipartChoiceModel(
+        choices: choices,
+        models: [
+          (discriminatorValue: 'Octet', model: Base64Model(context: context)),
+          (discriminatorValue: 'Xml', model: BinaryModel(context: context)),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+        name: 'EncodedChoice',
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: true,
+        defaultValue: null,
+      );
+      final binary = MultipartChoiceModel(
+        choices: choices,
+        models: [
+          (discriminatorValue: 'Octet', model: BinaryModel(context: context)),
+          (discriminatorValue: 'Xml', model: BinaryModel(context: context)),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+        name: 'BinaryChoice',
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: true,
+        defaultValue: null,
+      );
+      final root = _allOf(context, 'Upload', [
+        _classWithProperties(context, 'Left', [
+          _property(context, 'file', encoded),
+        ]),
+        _classWithProperties(context, 'Right', [
+          _property(context, 'file', binary),
+        ]),
+      ]);
+
+      expectRuntimeEncodingError(
+        _content(root),
+        'Multipart property "file" has incompatible definitions '
+        '(MultipartChoiceModel and MultipartChoiceModel).',
       );
     });
 

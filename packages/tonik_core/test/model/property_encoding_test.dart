@@ -97,6 +97,69 @@ void main() {
   });
 
   group('PartEncoding', () {
+    test('quoted semicolon does not declare a multipart boundary', () {
+      const encoding = PartEncoding(
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data; profile="x;boundary=inner"',
+        headers: null,
+        style: null,
+        explode: null,
+        allowReserved: null,
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+
+      expect(encoding.requiresWireContentType, isTrue);
+    });
+
+    test('nonempty declared multipart boundary is sufficient', () {
+      const encoding = PartEncoding(
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data; profile="x;y"; boundary=inner',
+        headers: null,
+        style: null,
+        explode: null,
+        allowReserved: null,
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+
+      expect(encoding.requiresWireContentType, isFalse);
+    });
+
+    test('opaque multipart mixed requires a caller boundary', () {
+      const encoding = PartEncoding(
+        contentType: ContentType.bytes,
+        rawContentType: 'multipart/mixed',
+        headers: null,
+        style: null,
+        explode: null,
+        allowReserved: null,
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+
+      expect(encoding.requiresWireContentType, isTrue);
+    });
+
+    test(
+      'opaque multipart mixed with a declared boundary needs no caller type',
+      () {
+        const encoding = PartEncoding(
+          contentType: ContentType.bytes,
+          rawContentType: 'multipart/mixed; boundary=inner',
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
+        );
+
+        expect(encoding.requiresWireContentType, isFalse);
+      },
+    );
+
     group('isStyleBased', () {
       test('is false when all style fields are null', () {
         const encoding = PartEncoding(

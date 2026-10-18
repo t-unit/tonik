@@ -2,6 +2,140 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('part selection requires a matching concrete type and parameters', () {
+    expect(matchesConcreteMediaTypeChoice('image/png', 'image/png'), isTrue);
+    expect(matchesConcreteMediaTypeChoice('image/png', 'image/*'), isFalse);
+    expect(
+      matchesConcreteMediaTypeChoice('application/pdf', 'image/png'),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'image/png; profile="one,two"',
+        'image/png; profile="one,two"',
+      ),
+      isTrue,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'image/png',
+        'image/png; profile="one,two"',
+      ),
+      isFalse,
+    );
+  });
+
+  test('part selection checks the charset used for encoded text', () {
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'text/plain; charset=utf-8; profile=alpha',
+        'text/plain; charset=utf-8; profile=alpha',
+        encodedCharset: 'utf-8',
+      ),
+      isTrue,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'text/plain; charset=shift_jis; profile=alpha',
+        'text/plain; charset=utf-8; profile=alpha',
+        encodedCharset: 'utf-8',
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'text/plain; charset=shift_jis',
+        'text/plain',
+        encodedCharset: 'utf-8',
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'text/plain; charset=utf-8; profile=beta',
+        'text/plain; charset=utf-8; profile=alpha',
+        encodedCharset: 'utf-8',
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'text/plain; charset=latin1',
+        'text/plain; charset=latin1',
+        encodedCharset: 'iso-8859-1',
+      ),
+      isTrue,
+    );
+  });
+
+  test('opaque multipart selection requires a concrete boundary', () {
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/form-data; boundary=caller',
+        'multipart/form-data',
+        requireBoundary: true,
+      ),
+      isTrue,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/form-data',
+        'multipart/form-data',
+        requireBoundary: true,
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/form-data; boundary=""',
+        'multipart/form-data',
+        requireBoundary: true,
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/mixed; boundary=caller',
+        'multipart/form-data',
+        requireBoundary: true,
+      ),
+      isFalse,
+    );
+  });
+
+  test('selected concrete multipart types require a boundary', () {
+    expect(
+      matchesConcreteMediaTypeChoice('multipart/mixed', 'multipart/mixed'),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/mixed; boundary=caller',
+        'multipart/mixed',
+      ),
+      isTrue,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice('multipart/related', 'multipart/related'),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice('multipart/form-data', 'multipart/*'),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice(
+        'multipart/form-data; boundary=caller',
+        'multipart/*',
+      ),
+      isFalse,
+    );
+    expect(
+      matchesConcreteMediaTypeChoice('multipart/form-data', '*/*'),
+      isFalse,
+    );
+  });
+
   group('media type parameters', () {
     test('normalizes names and charset while preserving other value case', () {
       expect(

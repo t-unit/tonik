@@ -110,6 +110,51 @@ class ModelImporter._(
     }
   }
 
+  void registerRequestProjections(Iterable<RequestBody> requestBodies) {
+    final visited = <Model>{};
+    for (final pair in multipartRequestProjectionPairs(requestBodies)) {
+      final projection = pair.projection;
+      _registerNestedMultipartChoices(projection, visited);
+      switch (projection) {
+        case AliasModel(:final name) when name != null:
+          _registerModel(projection);
+        case AliasModel():
+          break;
+        case AllOfModel() || ClassModel() || MapModel():
+          _registerModel(projection);
+        default:
+          throw StateError(
+            'Unsupported multipart request projection: '
+            '${projection.runtimeType}',
+          );
+      }
+    }
+  }
+
+  void _registerNestedMultipartChoices(Model model, Set<Model> visited) {
+    if (!visited.add(model)) return;
+    switch (model) {
+      case MultipartChoiceModel():
+        _registerModel(model);
+      case AliasModel(:final model):
+        _registerNestedMultipartChoices(model, visited);
+      case ListModel(:final content):
+        _registerNestedMultipartChoices(content, visited);
+      case MapModel(:final valueModel):
+        _registerNestedMultipartChoices(valueModel, visited);
+      case ClassModel(:final properties):
+        for (final property in properties) {
+          _registerNestedMultipartChoices(property.model, visited);
+        }
+      case AllOfModel(:final models):
+        for (final member in models) {
+          _registerNestedMultipartChoices(member, visited);
+        }
+      default:
+        break;
+    }
+  }
+
   /// Creates an empty model shell for a named schema without resolving refs.
   ///
   /// Determines the model type from the schema structure and creates the

@@ -170,6 +170,7 @@ final class const MultipartAppend({
   required final MultipartValueSource source,
   final Expression? filename,
   final String? contentType,
+  final Expression? contentTypeExpression,
   final Expression? headers,
 }) extends MultipartEmission;
 

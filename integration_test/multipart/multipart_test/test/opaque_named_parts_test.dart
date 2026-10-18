@@ -16,7 +16,7 @@ void main() {
       );
 
       final response = await api.postOpaqueShared(
-        body: const RenamedOpaqueSharedFormMultipart(
+        body: const RenamedOpaqueSharedFormMultipartModel2(
           data: TonikFileBytes([60, 255, 62], fileName: 'raw.xml'),
           label: 'record',
           additionalProperties: {'extra': 'value'},
@@ -55,7 +55,7 @@ void main() {
     );
 
     final response = await api.postOpaqueShared(
-      body: RenamedOpaqueSharedFormMultipart(
+      body: RenamedOpaqueSharedFormMultipartModel2(
         data: TonikFilePath(file.path, fileName: 'chosen.xml'),
         label: 'record',
       ),
@@ -118,7 +118,7 @@ void main() {
     );
 
     final response = await api.postOpaqueCharset(
-      body: const RenamedOpaqueSharedFormMultipartModel2(
+      body: const RenamedOpaqueSharedFormMultipart(
         data: TonikFileBytes([0, 129, 255], fileName: 'legacy.xml'),
         label: 'record',
       ),
@@ -448,7 +448,7 @@ void main() {
     );
 
     final response = await api.postOpaqueShared(
-      body: const RenamedOpaqueSharedFormMultipart(
+      body: const RenamedOpaqueSharedFormMultipartModel2(
         data: TonikFileBytes([1]),
         label: 'record',
         additionalProperties: {'payload': 'collision'},

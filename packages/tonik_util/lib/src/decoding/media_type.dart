@@ -89,6 +89,38 @@ bool matchesMediaTypeRange(String? actual, String declared) {
   return actualMediaType!.startsWith('$declaredType/');
 }
 
+/// Checks a caller-selected wire type against a concrete declared part type.
+bool matchesConcreteMediaTypeChoice(
+  String? actual,
+  String declared, {
+  String? encodedCharset,
+  bool requireBoundary = false,
+}) {
+  if (extractMediaType(declared)?.contains('*') ?? false) return false;
+  if (!matchesMediaTypeRange(actual, declared)) return false;
+  final parameters = parseMediaTypeParameters(declared);
+  if (parameters == null || !matchesMediaTypeParameters(actual, parameters)) {
+    return false;
+  }
+  final actualParameters = parseMediaTypeParameters(actual);
+  if ((requireBoundary ||
+          (extractMediaType(actual)?.startsWith('multipart/') ?? false)) &&
+      (actualParameters?['boundary']?.isEmpty ?? true)) {
+    return false;
+  }
+  final actualCharset = actualParameters?['charset'];
+  return encodedCharset == null ||
+      actualCharset == null ||
+      _canonicalCharset(actualCharset) == _canonicalCharset(encodedCharset);
+}
+
+String _canonicalCharset(String charset) => switch (charset.toLowerCase()) {
+  'utf8' => 'utf-8',
+  'latin1' => 'iso-8859-1',
+  'ascii' => 'us-ascii',
+  final other => other,
+};
+
 bool _hasTypeSubtype(String mediaType) {
   final slashIndex = mediaType.indexOf('/');
   return slashIndex > 0 && slashIndex < mediaType.length - 1;

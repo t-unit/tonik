@@ -18,6 +18,433 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/style-over-media-choices:
+    post:
+      operationId: postStyleOverMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [value]
+              properties:
+                value:
+                  type: string
+            encoding:
+              value:
+                contentType: 'application/json, application/xml'
+                style: form
+                explode: false
+      responses:
+        '204':
+          description: Accepted
+  /multipart/nested-media-text-choices:
+    post:
+      operationId: postNestedMediaTextChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedArrayForm'
+            encoding:
+              values:
+                contentType: 'text/plain, application/json'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/wildcard-text-charset:
+    post:
+      operationId: postWildcardTextCharset
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+            encoding:
+              message:
+                contentType: 'text/*; charset=shift_jis; profile=alpha'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-nested-multipart:
+    post:
+      operationId: postOpaqueNestedMultipart
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [payload]
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+            encoding:
+              payload:
+                contentType: 'application/json, multipart/form-data; boundary=inner'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-nested-multipart-unbound:
+    post:
+      operationId: postOpaqueNestedMultipartUnbound
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [payload]
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+            encoding:
+              payload:
+                contentType: 'application/json, multipart/form-data'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-nested-multipart-quoted-profile:
+    post:
+      operationId: postOpaqueNestedMultipartQuotedProfile
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [payload]
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+            encoding:
+              payload:
+                contentType: 'application/json, multipart/form-data; profile="x;boundary=inner"'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-multipart-subtype-choices:
+    post:
+      operationId: postOpaqueMultipartSubtypeChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                mixed:
+                  type: string
+                related:
+                  type: string
+                range:
+                  type: string
+                declared:
+                  type: string
+            encoding:
+              mixed:
+                contentType: 'application/json, multipart/mixed'
+              related:
+                contentType: 'application/json, multipart/related'
+              range:
+                contentType: 'application/json, multipart/*'
+              declared:
+                contentType: 'application/json, multipart/mixed; boundary=inner'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/base64-json-choices:
+    post:
+      operationId: postBase64JsonChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [data, encoded]
+              properties:
+                data:
+                  type: string
+                  format: byte
+                encoded:
+                  type: string
+                  contentEncoding: base64
+            encoding:
+              data:
+                contentType: 'application/json, application/xml'
+              encoded:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/nested-media-choices:
+    post:
+      operationId: postNestedMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: integer
+            encoding:
+              values:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/base64-media-choices:
+    post:
+      operationId: postBase64MediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [data, files, plain]
+              properties:
+                data:
+                  type: string
+                  format: byte
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: byte
+                plain:
+                  type: string
+            encoding:
+              data:
+                contentType: 'application/octet-stream, application/pdf'
+              files:
+                contentType: 'application/octet-stream, application/pdf'
+              plain:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/map-media-choices:
+    post:
+      operationId: postMapMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [metadata]
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
+            encoding:
+              metadata:
+                contentType: 'application/json, application/x-www-form-urlencoded'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-all-of:
+    post:
+      operationId: postMediaChoicesAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesAllOf'
+            encoding:
+              payload:
+                contentType: 'application/json, application/xml'
+              items:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-date-time-all-of:
+    post:
+      operationId: postMediaChoicesDateTimeAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesDateTimeAllOf'
+            encoding:
+              moment:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-enum-all-of:
+    post:
+      operationId: postMediaChoicesEnumAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesEnumAllOf'
+            encoding:
+              state:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-form-all-of:
+    post:
+      operationId: postMediaChoicesFormAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesFormAllOf'
+            encoding:
+              payload:
+                contentType: 'application/json, application/x-www-form-urlencoded'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-map-all-of:
+    post:
+      operationId: postMediaChoicesMapAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesMapAllOf'
+            encoding:
+              updates:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-mixed-scalar-all-of:
+    post:
+      operationId: postMediaChoicesMixedScalarAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesMixedScalarAllOf'
+            encoding:
+              moment:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices-mixed-text-all-of:
+    post:
+      operationId: postMediaChoicesMixedTextAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaChoicesMixedScalarAllOf'
+            encoding:
+              moment:
+                contentType: 'text/plain, application/xml'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/media-choices:
+    post:
+      operationId: postMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [payload, items]
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            encoding:
+              payload:
+                contentType: 'application/json, application/xml; profile="one,two", image/*'
+              items:
+                contentType: 'application/json, application/xml; profile="one,two", image/*'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/request-range-with-concrete:
+    post:
+      operationId: postRequestRangeWithConcrete
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/*:
+            schema:
+              type: integer
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        '204':
+          description: Accepted
   /multipart/opaque-shared:
     post:
       operationId: postOpaqueShared
@@ -1446,8 +1873,92 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart/nullable-media-choices:
+    post:
+      operationId: postNullableMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [value, values, marker]
+              properties:
+                value:
+                  $ref: '#/components/schemas/MaybeText'
+                values:
+                  $ref: '#/components/schemas/MaybeTexts'
+                marker:
+                  type: string
+            encoding:
+              value:
+                contentType: 'text/plain, application/json'
+              values:
+                contentType: 'text/plain, application/json'
+      responses:
+        '204':
+          description: Accepted
+
+  /multipart/nullable-merged-media-choices:
+    post:
+      operationId: postNullableMergedMediaChoices
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NullableMediaChoicesAllOf'
+            encoding:
+              value:
+                contentType: 'text/plain, application/json'
+              values:
+                contentType: 'text/plain, application/json'
+              payload:
+                contentType: 'application/json, application/xml'
+      responses:
+        '204':
+          description: Accepted
+
 components:
   schemas:
+    MaybeText:
+      type: string
+      nullable: true
+    MaybeTexts:
+      type: array
+      nullable: true
+      items:
+        type: string
+    MaybePayload:
+      type: object
+      nullable: true
+      properties:
+        label:
+          type: string
+    NullableMediaChoicesAllOf:
+      allOf:
+        - $ref: '#/components/schemas/NullableMediaChoicesLeft'
+        - $ref: '#/components/schemas/NullableMediaChoicesRight'
+    NullableMediaChoicesLeft:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/MaybeText'
+        values:
+          $ref: '#/components/schemas/MaybeTexts'
+        payload:
+          $ref: '#/components/schemas/MaybePayload'
+    NullableMediaChoicesRight:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/MaybeText'
+        values:
+          $ref: '#/components/schemas/MaybeTexts'
+        payload:
+          $ref: '#/components/schemas/MaybePayload'
     OpaqueSharedForm:
       type: object
       required: [payload, label]
@@ -1495,6 +2006,127 @@ components:
       additionalProperties:
         type: array
         items: {}
+    MediaChoicesAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesLeft'
+        - $ref: '#/components/schemas/MediaChoicesRight'
+    MediaChoicesDateTimeAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesDateTimeLeft'
+        - $ref: '#/components/schemas/MediaChoicesDateTimeRight'
+    MediaChoicesDateTimeLeft:
+      type: object
+      properties:
+        moment:
+          type: string
+          format: date-time
+    MediaChoicesDateTimeRight:
+      type: object
+      properties:
+        moment:
+          type: string
+          format: date-time
+    MediaChoicesEnumAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesEnumLeft'
+        - $ref: '#/components/schemas/MediaChoicesEnumRight'
+    MediaChoicesEnumLeft:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: [ready, blocked]
+    MediaChoicesEnumRight:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: [ready, blocked]
+    MediaChoicesFormAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesFormLeft'
+        - $ref: '#/components/schemas/MediaChoicesFormRight'
+    MediaChoicesFormLeft:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            left:
+              type: string
+    MediaChoicesFormRight:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            right:
+              type: string
+    MediaChoicesMapAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesMapLeft'
+        - $ref: '#/components/schemas/MediaChoicesMapRight'
+    MediaChoicesMapLeft:
+      type: object
+      properties:
+        updates:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+    MediaChoicesMapRight:
+      type: object
+      properties:
+        updates:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+    MediaChoicesMixedScalarAllOf:
+      allOf:
+        - $ref: '#/components/schemas/MediaChoicesMixedScalarLeft'
+        - $ref: '#/components/schemas/MediaChoicesMixedScalarRight'
+    MediaChoicesMixedScalarLeft:
+      type: object
+      properties:
+        moment:
+          type: string
+          format: date-time
+    MediaChoicesMixedScalarRight:
+      type: object
+      properties:
+        moment:
+          type: string
+    MediaChoicesLeft:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            left:
+              type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              left:
+                type: string
+    MediaChoicesRight:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            right:
+              type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              right:
+                type: string
     OpaqueAbsentForm:
       type: object
       required: [payload]

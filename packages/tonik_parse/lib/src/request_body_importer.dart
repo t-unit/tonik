@@ -99,6 +99,13 @@ class RequestBodyImporter({
 
         for (final entry in requestBody.content.entries) {
           final rawContentType = entry.key;
+          if (_isWildcardMediaType(rawContentType)) {
+            log.warning(
+              'Wildcard request content type "$rawContentType" is not '
+              'supported. Ignoring this request content entry.',
+            );
+            continue;
+          }
           final mediaType = mediaTypeResolver.resolve(entry.value);
           final contentType = resolveContentType(
             rawContentType,
@@ -204,6 +211,7 @@ class RequestBodyImporter({
     final allProperties = _collectFormProperties(model);
     final dynamicRoot = model.resolved is core.MapModel;
     final encoding = <String, core.PartEncoding>{};
+    final mediaAlternatives = <String, List<core.PartEncoding>>{};
     for (final entry
         in mediaType.encoding?.entries ??
             const <MapEntry<String, Encoding>>[]) {
@@ -217,11 +225,52 @@ class RequestBodyImporter({
         }
         if (!(properties?.containsKey(entry.key) ?? false)) continue;
       }
-      encoding[entry.key] = _importPartEncoding(
-        entry.value,
-        entry.key,
-        context,
-      );
+      final declared = entry.value.contentType;
+      final styleBased =
+          entry.value.style != null ||
+          entry.value.explode != null ||
+          entry.value.allowReserved != null;
+      final alternatives = declared == null || styleBased
+          ? const <String>[]
+          : _splitPartMediaTypes(declared)
+                .where((mediaType) => !_isWildcardMediaType(mediaType))
+                .toList();
+      if (alternatives.length > 1) {
+        final choices = [
+          for (final alternative in alternatives)
+            _importPartEncoding(
+              Encoding(
+                contentType: alternative,
+                headers: entry.value.headers,
+                style: entry.value.style,
+                explode: entry.value.explode,
+                allowReserved: entry.value.allowReserved,
+              ),
+              entry.key,
+              context,
+            ),
+        ];
+        mediaAlternatives[entry.key] = choices;
+        encoding[entry.key] = choices.first;
+      } else if (declared != null && !styleBased) {
+        encoding[entry.key] = _importPartEncoding(
+          Encoding(
+            contentType: alternatives.singleOrNull,
+            headers: entry.value.headers,
+            style: null,
+            explode: null,
+            allowReserved: null,
+          ),
+          entry.key,
+          context,
+        );
+      } else {
+        encoding[entry.key] = _importPartEncoding(
+          entry.value,
+          entry.key,
+          context,
+        );
+      }
     }
     if (properties != null) {
       for (final entry in properties.entries) {
@@ -235,6 +284,7 @@ class RequestBodyImporter({
     final requestModel = _projectMultipartModel(
       model,
       encoding,
+      mediaAlternatives,
       requestSources,
       <core.Model, core.Model>{},
     );
@@ -253,6 +303,7 @@ class RequestBodyImporter({
   core.Model _projectMultipartModel(
     core.Model model,
     Map<String, core.PartEncoding> encoding,
+    Map<String, List<core.PartEncoding>> mediaAlternatives,
     Map<core.Property, core.Property> sources,
     Map<core.Model, core.Model> cache,
   ) {
@@ -261,6 +312,7 @@ class RequestBodyImporter({
     final projected = _buildMultipartProjection(
       model,
       encoding,
+      mediaAlternatives,
       sources,
       cache,
     );
@@ -271,6 +323,7 @@ class RequestBodyImporter({
   core.Model _buildMultipartProjection(
     core.Model model,
     Map<String, core.PartEncoding> encoding,
+    Map<String, List<core.PartEncoding>> mediaAlternatives,
     Map<core.Property, core.Property> sources,
     Map<core.Model, core.Model> cache,
   ) {
@@ -279,6 +332,7 @@ class RequestBodyImporter({
         final projected = _projectMultipartModel(
           model.model,
           encoding,
+          mediaAlternatives,
           sources,
           cache,
         );
@@ -323,8 +377,15 @@ class RequestBodyImporter({
           final partEncoding = encoding[property.name];
           final projectedValue =
               !property.isReadOnly &&
-                  partEncoding?.contentType == core.ContentType.bytes &&
-                  !partEncoding!.isStyleBased
+                  mediaAlternatives.containsKey(property.name)
+              ? _choiceMultipartInput(
+                  property.model,
+                  mediaAlternatives[property.name]!,
+                  property.name,
+                )
+              : !property.isReadOnly &&
+                    partEncoding?.contentType == core.ContentType.bytes &&
+                    !partEncoding!.isStyleBased
               ? _binaryMultipartInput(property.model)
               : property.model;
           if (identical(projectedValue, property.model)) {
@@ -337,7 +398,8 @@ class RequestBodyImporter({
             name: property.name,
             model: projectedValue,
             isRequired: property.isRequired,
-            isNullable: property.isNullable,
+            isNullable:
+                property.isNullable || property.model.isEffectivelyNullable,
             isDeprecated: property.isDeprecated,
             examples: const [],
             defaultValue: null,
@@ -385,7 +447,13 @@ class RequestBodyImporter({
       case core.AllOfModel():
         final members = [
           for (final member in model.models)
-            _projectMultipartModel(member, encoding, sources, cache),
+            _projectMultipartModel(
+              member,
+              encoding,
+              mediaAlternatives,
+              sources,
+              cache,
+            ),
         ];
         if (members.indexed.every(
           (entry) => identical(entry.$2, model.models[entry.$1]),
@@ -453,6 +521,103 @@ class RequestBodyImporter({
       );
     }
     return core.BinaryModel(context: model.context.push('multipart'));
+  }
+
+  core.Model _choiceMultipartInput(
+    core.Model model,
+    List<core.PartEncoding> alternatives,
+    String propertyName,
+  ) {
+    final resolved = model.resolved;
+    if (resolved is core.ListModel) {
+      return core.ListModel(
+        content: _choiceMultipartValue(
+          resolved.content,
+          alternatives,
+          propertyName,
+        ),
+        context: model.context.push('multipartChoices'),
+        examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: model.isEffectivelyNullable,
+        isContentNullable: resolved.isContentNullable,
+        isReadOnly: resolved.isReadOnly,
+        isWriteOnly: resolved.isWriteOnly,
+      );
+    }
+    return _choiceMultipartValue(model, alternatives, propertyName);
+  }
+
+  core.Model _choiceMultipartValue(
+    core.Model model,
+    List<core.PartEncoding> alternatives,
+    String propertyName,
+  ) {
+    final models = <core.DiscriminatedModel>[];
+    for (final (index, alternative) in alternatives.indexed) {
+      final inputModel =
+          alternative.contentType == core.ContentType.multipart ||
+              (model.resolved is core.Base64Model &&
+                  alternative.contentType != core.ContentType.bytes)
+          ? core.BinaryModel(context: model.context.push('multipart'))
+          : alternative.contentType == core.ContentType.bytes
+          ? model.resolved is core.ListModel
+                ? core.BinaryModel(context: model.context.push('multipart'))
+                : _binaryMultipartInput(model)
+          : model;
+      final media = alternative.rawContentType ?? 'choice';
+      final base = media.split(';').first.trim();
+      final suffix = base.replaceAll(RegExp('[^a-zA-Z0-9]+'), ' ');
+      models.add((
+        discriminatorValue: '${suffix}Choice${index + 1}',
+        model: inputModel,
+      ));
+    }
+    return core.MultipartChoiceModel(
+      choices: alternatives,
+      models: models,
+      context: model.context.pushAll(['multipartChoices', propertyName]),
+      isDeprecated: false,
+      examples: const [],
+      name: null,
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: model.isEffectivelyNullable,
+      isReadOnly: false,
+      isWriteOnly: true,
+      defaultValue: null,
+    );
+  }
+
+  bool _isWildcardMediaType(String mediaType) {
+    final token = mediaType.split(';').first.trim();
+    return token.contains('*');
+  }
+
+  List<String> _splitPartMediaTypes(String contentType) {
+    final result = <String>[];
+    var start = 0;
+    var quoted = false;
+    var escaped = false;
+    for (var index = 0; index < contentType.length; index++) {
+      final character = contentType[index];
+      if (escaped) {
+        escaped = false;
+      } else if (quoted && character == r'\') {
+        escaped = true;
+      } else if (character == '"') {
+        quoted = !quoted;
+      } else if (character == ',' && !quoted) {
+        final part = contentType.substring(start, index).trim();
+        if (part.isNotEmpty) result.add(part);
+        start = index + 1;
+      }
+    }
+    final last = contentType.substring(start).trim();
+    if (last.isNotEmpty) result.add(last);
+    return result;
   }
 
   bool _hasUntypedMultipartValue(core.Model model) => switch (model.resolved) {
@@ -608,7 +773,6 @@ class RequestBodyImporter({
     String propertyName,
     core.Context context,
   ) {
-    final isOas30 = openApiObject.openapi.startsWith('3.0');
     final headers = _importEncodingHeaders(encoding, propertyName, context);
     final resolvedContentType = encoding.contentType != null
         ? resolveContentType(
@@ -622,8 +786,7 @@ class RequestBodyImporter({
         encoding.style != null ||
         encoding.explode != null ||
         encoding.allowReserved != null;
-    // OAS 3.0: always content-based; OAS 3.1: style-based only if explicit
-    final useStyleMode = !isOas30 && hasExplicitStyleFields;
+    final useStyleMode = hasExplicitStyleFields;
 
     final resolvedStyle = useStyleMode
         ? (_mapSerializationStyle(encoding.style) ?? core.EncodingStyle.form)
