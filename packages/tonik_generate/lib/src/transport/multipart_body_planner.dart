@@ -6,6 +6,7 @@ import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -88,6 +89,30 @@ class const MultipartBodyPlanner({
         for (final path in property.accessPaths)
           _access(refer(bodyAccessor), path),
       ];
+      final choiceModels = [
+        for (final candidate in property.properties)
+          if (candidate.model.resolved case final MultipartChoiceModel choice)
+            choice
+          else if (candidate.model.resolved case ListModel(:final content))
+            if (content.resolved case final MultipartChoiceModel choice) choice,
+      ];
+      if (accesses.length > 1 &&
+          choiceModels.length == accesses.length &&
+          property.properties.every(
+            (candidate) => candidate.model.resolved is MultipartChoiceModel,
+          )) {
+        mergeHelpers.add(MultipartMergeHelper.dynamicValues);
+        _mergedChoiceProperty(
+          content,
+          property,
+          accesses,
+          choiceModels,
+          parameters,
+          reservedNames,
+          emissions,
+        );
+        continue;
+      }
       final mergedObjects =
           accesses.length > 1 &&
           property.properties.every(
@@ -198,18 +223,20 @@ class const MultipartBodyPlanner({
         );
       }
       final headerEmissionStart = emissions.length;
-      final headers = _headers(
-        content.encoding[property.rawName],
-        property.normalizedName,
-        parameters,
-        nullable,
-        emissions,
-        base64: switch (property.property.model.resolved) {
-          Base64Model() => true,
-          ListModel(:final content) => content.resolved is Base64Model,
-          _ => false,
-        },
-      );
+      final headers = choiceModels.isNotEmpty
+          ? null
+          : _headers(
+              content.encoding[property.rawName],
+              property.normalizedName,
+              parameters,
+              nullable,
+              emissions,
+              base64: switch (property.property.model.resolved) {
+                Base64Model() => true,
+                ListModel(:final content) => content.resolved is Base64Model,
+                _ => false,
+              },
+            );
       final hasNullAwareAccess =
           accesses.length == 1 &&
           property.accessPaths.single.any(
@@ -220,12 +247,23 @@ class const MultipartBodyPlanner({
         wireName: specLiteralString(property.rawName),
         preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
-        value: nullable
+        value: nullable && mergedLists && accesses.length > 1
+            ? accessor
+            : nullable
             ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
                   .nullChecked
             : accessor,
         encoding: resolvedEncoding,
         headers: headers,
+        selectedContentType: null,
+        choiceModels: choiceModels,
+        choiceHeaders: choiceModels.isEmpty
+            ? null
+            : (
+                encoding: content.encoding[property.rawName],
+                parameters: parameters,
+                nullable: nullable,
+              ),
         isMergedObject: mergedObjects,
         isMergedMap: mergedMaps,
         isMergedList: mergedLists,
@@ -271,6 +309,264 @@ class const MultipartBodyPlanner({
                 (part) => part.headers != null,
               )),
       mergeHelpers: mergeHelpers,
+    );
+  }
+
+  void _mergedChoiceProperty(
+    MultipartRequestContent content,
+    MultipartPropertyPlan property,
+    List<Expression> accesses,
+    List<MultipartChoiceModel> models,
+    List<MultipartHeaderParamInfo> parameters,
+    Set<String> reservedNames,
+    List<MultipartEmission> emissions,
+  ) {
+    final choicesVariable = '_\$${property.normalizedName}MultipartChoices';
+    final indexVariable = '_\$${property.normalizedName}ChoiceIndex';
+    final wireVariable = '_\$${property.normalizedName}WireType';
+    final valueVariable = '_\$${property.normalizedName}MergedValue';
+    final choices = refer(choicesVariable);
+    final index = refer(indexVariable);
+    final wire = refer(wireVariable);
+    final value = refer(valueVariable);
+    emissions.add(
+      MultipartCode(
+        declareFinal(choicesVariable)
+            .assign(
+              literalList(const <Expression>[], refer('dynamic', 'dart:core')),
+            )
+            .statement,
+      ),
+    );
+    for (final access in accesses) {
+      emissions.add(
+        MultipartCode(
+          Block.of([
+            const Code('if ('),
+            access.code,
+            const Code(' != null) {'),
+            choices.property('add').call([access]).statement,
+            const Code('}'),
+          ]),
+        ),
+      );
+    }
+    if (property.isRequired) {
+      emissions.add(
+        MultipartCode(
+          Block.of([
+            const Code('if ('),
+            choices.property('isEmpty').code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'Required multipart property "${property.rawName}" is null.',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ]),
+        ),
+      );
+    }
+    emissions
+      ..add(
+        MultipartCode(
+          Block.of([
+            const Code('if ('),
+            choices.property('isNotEmpty').code,
+            const Code(') {'),
+          ]),
+        ),
+      )
+      ..add(
+        MultipartCode(
+          declareFinal(indexVariable)
+              .assign(
+                choices.property('first').property('multipartChoiceIndex'),
+              )
+              .statement,
+        ),
+      )
+      ..add(
+        MultipartCode(
+          declareFinal(wireVariable)
+              .assign(choices.property('first').property('multipartWireType'))
+              .statement,
+        ),
+      )
+      ..add(
+        MultipartCode(
+          Block.of([
+            const Code('for (final selected in '),
+            choices.code,
+            const Code(') {'),
+            const Code('if (selected.multipartChoiceIndex != '),
+            index.code,
+            const Code(' || selected.multipartWireType != '),
+            wire.code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'Conflicting media choices for multipart property '
+              '"${property.rawName}".',
+              raw: true,
+            ).statement,
+            const Code('}'),
+            const Code('if (selected.multipartValue == null) {'),
+            generateEncodingExceptionExpression(
+              'Selected media choice for multipart property '
+              '"${property.rawName}" is null.',
+              raw: true,
+            ).statement,
+            const Code('}'),
+            const Code('}'),
+          ]),
+        ),
+      )
+      ..add(
+        MultipartCode(
+          declareFinal(valueVariable)
+              .assign(
+                refer('_mergeMultipartValues').call(
+                  [
+                    CodeExpression(
+                      Block.of([
+                        const Code('[for (final selected in '),
+                        choices.code,
+                        const Code(') selected.multipartValue]'),
+                      ]),
+                    ),
+                  ],
+                  {
+                    'propertyName': specLiteralString(property.rawName),
+                    'mergeObjects': choices
+                        .property('first')
+                        .property('multipartValue')
+                        .isA(refer('Map', 'dart:core')),
+                  },
+                ),
+              )
+              .statement,
+        ),
+      )
+      ..add(
+        MultipartCode(
+          Block.of([const Code('switch ('), index.code, const Code(') {')]),
+        ),
+      );
+    final selectedModel = models.first;
+    for (final (choiceIndex, member) in selectedModel.models.indexed) {
+      final encoding = selectedModel.choices[choiceIndex];
+      emissions.add(MultipartCode(Code('case $choiceIndex:')));
+      final headers = _headers(
+        content.encoding[property.rawName],
+        property.normalizedName,
+        parameters,
+        false,
+        emissions,
+        base64: member.model.resolved is Base64Model,
+        variableSuffix: 'Choice$choiceIndex',
+      );
+      if (encoding.requiresWireContentType) {
+        emissions.add(
+          MultipartCode(
+            Block.of([
+              const Code('if (!'),
+              _matchingMediaChoice(wire, encoding, member.model.resolved).code,
+              const Code(') {'),
+              generateEncodingExceptionExpression(
+                'Multipart property "${property.rawName}" requires a matching '
+                'concrete Content-Type.',
+                raw: true,
+              ).statement,
+              const Code('}'),
+            ]),
+          ),
+        );
+      }
+      final part = (
+        name: property.rawName,
+        wireName: specLiteralString(property.rawName),
+        preserveOrder: false,
+        normalizedName: property.normalizedName,
+        value: value,
+        encoding: encoding,
+        headers: headers,
+        selectedContentType: encoding.requiresWireContentType ? wire : null,
+        choiceModels: const <MultipartChoiceModel>[],
+        choiceHeaders: null,
+        isMergedObject: false,
+        isMergedMap: false,
+        isMergedList: false,
+        isMergedObjectProperties: false,
+      );
+      final partEmissions =
+          encoding.contentType == ContentType.json &&
+              member.model.resolved is! BinaryModel &&
+              member.model.resolved is! Base64Model &&
+              member.model.resolved is! AnyModel &&
+              member.model.resolved is! NeverModel
+          ? <MultipartEmission>[_text(part, _json(value))]
+          : encoding.contentType == ContentType.text &&
+                (member.model.resolved is PrimitiveModel ||
+                    member.model.resolved is EnumModel)
+          ? <MultipartEmission>[
+              _text(part, value.asA(refer('String', 'dart:core'))),
+            ]
+          : encoding.contentType == ContentType.form &&
+                (member.model.resolved is ClassModel ||
+                    member.model.resolved is CompositeModel)
+          ? <MultipartEmission>[
+              _text(
+                part,
+                refer(
+                  'encodeAnyToForm',
+                  'package:tonik_util/tonik_util.dart',
+                ).call(
+                  [value],
+                  {
+                    'explode': literalTrue,
+                    'allowEmpty': literalTrue,
+                    'useQueryComponent': literalTrue,
+                    'textEncoding': textEncodingExpression(
+                      encoding.textEncoding,
+                    ),
+                  },
+                ),
+                fallback: 'application/x-www-form-urlencoded',
+              ),
+            ]
+          : _part(
+              member.model.resolved is DateTimeModel
+                  ? _withValue(part, value.asA(refer('DateTime', 'dart:core')))
+                  : part,
+              member.model.resolved,
+            );
+      for (final emission in partEmissions) {
+        if (reservedNames.isNotEmpty && emission is MultipartAppend) {
+          emissions.add(
+            MultipartCode(
+              refer(r'_$multipartReservedNames')
+                  .property('add')
+                  .call([emission.name])
+                  .statement,
+            ),
+          );
+        }
+        emissions.add(emission);
+      }
+    }
+    emissions.add(
+      MultipartCode(
+        Block.of([
+          const Code('default:'),
+          generateEncodingExceptionExpression(
+            'Multipart property "${property.rawName}" has an '
+            'unrecognized media choice.',
+            raw: true,
+          ).statement,
+          const Code('}'),
+          const Code('}'),
+        ]),
+      ),
     );
   }
 
@@ -349,6 +645,9 @@ class const MultipartBodyPlanner({
       value: value,
       encoding: resolveNamedMultipartEncoding(itemModel, null),
       headers: headers,
+      selectedContentType: null,
+      choiceModels: const <MultipartChoiceModel>[],
+      choiceHeaders: null,
       isMergedObject: false,
       isMergedMap: false,
       isMergedList: false,
@@ -374,6 +673,9 @@ class const MultipartBodyPlanner({
   }
 
   List<MultipartEmission> _part(_Part part, Model model) {
+    if (model is MultipartChoiceModel) {
+      return _choicePart(part, model);
+    }
     final contentType = part.encoding.contentType;
     if (!part.encoding.isStyleBased) {
       if (contentType == ContentType.bytes &&
@@ -404,8 +706,7 @@ class const MultipartBodyPlanner({
                   model is! BinaryModel &&
                   model is! Base64Model ||
               model is EnumModel ||
-              model is AnyModel ||
-              (!_dio && model is MapModel))) {
+              model is AnyModel)) {
         return _error(
           'Multipart property "${part.name}" cannot be encoded as '
           '${part.encoding.wireContentType} from ${model.runtimeType}.',
@@ -465,6 +766,179 @@ class const MultipartBodyPlanner({
     };
   }
 
+  Expression _matchingMediaChoice(
+    Expression selected,
+    PartEncoding encoding,
+    Model model,
+  ) {
+    final textBytes =
+        model is! BinaryModel &&
+        model is! Base64Model &&
+        (encoding.contentType == ContentType.text ||
+            encoding.contentType == ContentType.json ||
+            encoding.contentType == ContentType.form);
+    final charset = switch (encoding.textEncoding) {
+      TextEncoding.utf8 => 'utf-8',
+      TextEncoding.latin1 => 'iso-8859-1',
+      TextEncoding.ascii => 'us-ascii',
+    };
+    return refer(
+      'matchesConcreteMediaTypeChoice',
+      'package:tonik_util/tonik_util.dart',
+    ).call(
+      [
+        selected,
+        specLiteralString(encoding.wireContentType ?? encoding.rawContentType!),
+      ],
+      {
+        if (textBytes) 'encodedCharset': specLiteralString(charset),
+        if (encoding.contentType == ContentType.multipart)
+          'requireBoundary': literalTrue,
+      },
+    );
+  }
+
+  List<MultipartEmission> _choicePart(_Part part, MultipartChoiceModel model) {
+    final manager = nameManager;
+    final packageName = package;
+    if (manager == null || packageName == null) {
+      return _error('Multipart media choices require generated model names.');
+    }
+    final models = {model, ...part.choiceModels};
+    final result = <MultipartEmission>[
+      MultipartCode(
+        Block.of([const Code('switch ('), part.value.code, const Code(') {')]),
+      ),
+    ];
+    for (final (modelIndex, choiceModel) in models.indexed) {
+      final className = manager.modelName(choiceModel);
+      final url = sourceFileUrl(packageName, 'model', className);
+      for (final (index, member) in choiceModel.models.indexed) {
+        final encoding = choiceModel.choices[index];
+        final callerWireType = encoding.requiresWireContentType;
+        final rejectsNestedText =
+            encoding.contentType == ContentType.text &&
+            member.model.resolved is ListModel;
+        final variant = manager.generateVariantName(
+          parentClassName: className,
+          model: member.model,
+          discriminatorValue: member.discriminatorValue,
+        );
+        result.add(
+          MultipartCode(
+            Block.of([
+              const Code('case '),
+              refer(variant, url).code,
+              if (callerWireType && rejectsNestedText)
+                const Code('(:final wireContentType):')
+              else if (callerWireType)
+                const Code('(:final value, :final wireContentType):')
+              else if (rejectsNestedText)
+                const Code('():')
+              else
+                const Code('(:final value):'),
+            ]),
+          ),
+        );
+        final choiceHeaders = part.choiceHeaders;
+        final headers = choiceHeaders == null
+            ? part.headers
+            : _headers(
+                choiceHeaders.encoding,
+                part.normalizedName,
+                choiceHeaders.parameters,
+                choiceHeaders.nullable,
+                result,
+                base64: member.model.resolved is Base64Model,
+                variableSuffix: 'Choice${modelIndex}Variant$index',
+              );
+        if (callerWireType) {
+          result.add(
+            MultipartCode(
+              Block.of([
+                const Code('if (!'),
+                _matchingMediaChoice(
+                  refer('wireContentType'),
+                  encoding,
+                  member.model.resolved,
+                ).code,
+                const Code(') {'),
+                generateEncodingExceptionExpression(
+                  'Multipart property "${part.name}" requires a matching '
+                  'concrete Content-Type.',
+                  raw: true,
+                ).statement,
+                const Code('}'),
+              ]),
+            ),
+          );
+        }
+        if (member.model.isEffectivelyNullable) {
+          result.add(
+            MultipartCode(
+              Block.of([
+                const Code('if (value == null) {'),
+                generateEncodingExceptionExpression(
+                  'Selected media choice for multipart property '
+                  '"${part.name}" is null.',
+                  raw: true,
+                ).statement,
+                const Code('}'),
+              ]),
+            ),
+          );
+        }
+        final selectedPart = (
+          name: part.name,
+          wireName: part.wireName,
+          preserveOrder: part.preserveOrder,
+          normalizedName: part.normalizedName,
+          value: refer('value'),
+          encoding: encoding,
+          headers: headers,
+          selectedContentType: callerWireType ? refer('wireContentType') : null,
+          choiceModels: const <MultipartChoiceModel>[],
+          choiceHeaders: null,
+          isMergedObject: part.isMergedObject,
+          isMergedMap: part.isMergedMap,
+          isMergedList: part.isMergedList,
+          isMergedObjectProperties: part.isMergedObjectProperties,
+        );
+        result.addAll(
+          rejectsNestedText
+              ? _error(
+                  'Multipart property "${part.name}" cannot encode a nested '
+                  'array as ${encoding.wireContentType}.',
+                )
+              : encoding.contentType == ContentType.json &&
+                    member.model.resolved is ListModel
+              ? _jsonPart(
+                  selectedPart,
+                  member.model.resolved,
+                  immutable: useImmutableCollections,
+                )
+              : _part(selectedPart, member.model.resolved),
+        );
+      }
+    }
+    if (models.length > 1) {
+      result.add(
+        MultipartCode(
+          Block.of([
+            const Code('default:'),
+            generateEncodingExceptionExpression(
+              'Multipart property "${part.name}" has an '
+              'unrecognized media choice.',
+              raw: true,
+            ).statement,
+          ]),
+        ),
+      );
+    }
+    result.add(const MultipartCode(Code('}')));
+    return result;
+  }
+
   MultipartAppend _text(
     _Part part,
     Expression text, {
@@ -489,6 +963,7 @@ class const MultipartBodyPlanner({
       contentType: omitContentType
           ? null
           : contentType ?? part.encoding.wireContentType ?? fallback,
+      contentTypeExpression: omitContentType ? null : part.selectedContentType,
       headers: part.headers,
     );
   }
@@ -504,6 +979,7 @@ class const MultipartBodyPlanner({
           source: MultipartValueSource.file,
           filename: part.value.property('fileName').ifNullThen(part.wireName),
           contentType: contentType,
+          contentTypeExpression: part.selectedContentType,
           headers: part.headers,
         ),
       ];
@@ -525,6 +1001,7 @@ class const MultipartBodyPlanner({
         source: MultipartValueSource.bytes,
         filename: filename,
         contentType: contentType,
+        contentTypeExpression: part.selectedContentType,
         headers: part.headers,
       ),
       MultipartCode(
@@ -540,6 +1017,7 @@ class const MultipartBodyPlanner({
         source: MultipartValueSource.path,
         filename: filename,
         contentType: contentType,
+        contentTypeExpression: part.selectedContentType,
         headers: part.headers,
       ),
       const MultipartCode(Code('}')),
@@ -555,6 +1033,7 @@ class const MultipartBodyPlanner({
     source: MultipartValueSource.bytes,
     filename: part.value.property('fileName').ifNullThen(part.wireName),
     contentType: part.encoding.wireContentType ?? 'application/octet-stream',
+    contentTypeExpression: part.selectedContentType,
     headers: part.headers,
   );
 
@@ -574,6 +1053,9 @@ class const MultipartBodyPlanner({
       );
     }
     final itemPart = _withValue(part, refer('item'));
+    if (item is MultipartChoiceModel) {
+      return _listItems(part, model, _part(itemPart, item));
+    }
     if (item is ListModel) {
       if (contentBased && encoding.contentType == ContentType.json) {
         return _listItems(
@@ -764,8 +1246,7 @@ class const MultipartBodyPlanner({
         'Maps do not implement ParameterEncodable.toDeepObject().',
       );
     }
-    if (_dio &&
-        !part.encoding.isStyleBased &&
+    if (!part.encoding.isStyleBased &&
         part.encoding.contentType == ContentType.form) {
       return _urlEncodedMap(part);
     }
@@ -982,12 +1463,13 @@ class const MultipartBodyPlanner({
     bool nullable,
     List<MultipartEmission> emissions, {
     required bool base64,
+    String variableSuffix = '',
   }) {
     final headers = encoding?.headers?.entries
         .where((entry) => entry.key.toLowerCase() != 'content-type')
         .toList();
     if (!base64 && (headers == null || headers.isEmpty)) return null;
-    final variable = '_\$${normalizedName}Headers';
+    final variable = '_\$${normalizedName}Headers$variableSuffix';
     emissions.add(
       MultipartCode(
         declareFinal(variable)
@@ -1091,6 +1573,21 @@ class const MultipartBodyPlanner({
       if (right is AliasModel) {
         return _compatibleModels(left, right.model, active);
       }
+      if (left is MultipartChoiceModel && right is MultipartChoiceModel) {
+        return left.choices.length == right.choices.length &&
+            left.models.length == right.models.length &&
+            left.choices.indexed.every(
+              (entry) => entry.$2 == right.choices[entry.$1],
+            ) &&
+            left.models.indexed.every(
+              (entry) => _compatibleChoiceMembers(
+                entry.$2.model,
+                right.models[entry.$1].model,
+                left.choices[entry.$1].contentType,
+                active,
+              ),
+            );
+      }
       if (left is ListModel && right is ListModel) {
         return left.isContentNullable == right.isContentNullable &&
             _compatibleModels(left.content, right.content, active);
@@ -1141,6 +1638,30 @@ class const MultipartBodyPlanner({
     } finally {
       active.remove(pair);
     }
+  }
+
+  bool _compatibleChoiceMembers(
+    Model left,
+    Model right,
+    ContentType? contentType,
+    Set<(Model, Model)> active,
+  ) {
+    final leftModel = left.resolved;
+    final rightModel = right.resolved;
+    if (leftModel is BinaryModel ||
+        rightModel is BinaryModel ||
+        leftModel is Base64Model ||
+        rightModel is Base64Model) {
+      return leftModel.runtimeType == rightModel.runtimeType;
+    }
+    final leftScalar = leftModel is PrimitiveModel || leftModel is EnumModel;
+    final rightScalar = rightModel is PrimitiveModel || rightModel is EnumModel;
+    if ((contentType == ContentType.json || contentType == ContentType.text) &&
+        leftScalar &&
+        rightScalar) {
+      return true;
+    }
+    return _compatibleModels(left, right, active);
   }
 
   bool _compatibleAdditionalProperties(
@@ -1213,6 +1734,12 @@ Map<String, List<Property>> _objectProperties(Model model, Set<Model> active) {
   }
 }
 
+typedef _ChoiceHeaders = ({
+  PartEncoding? encoding,
+  List<MultipartHeaderParamInfo> parameters,
+  bool nullable,
+});
+
 typedef _Part = ({
   String name,
   Expression wireName,
@@ -1221,6 +1748,9 @@ typedef _Part = ({
   Expression value,
   PartEncoding encoding,
   Expression? headers,
+  Expression? selectedContentType,
+  List<MultipartChoiceModel> choiceModels,
+  _ChoiceHeaders? choiceHeaders,
   bool isMergedObject,
   bool isMergedMap,
   bool isMergedList,
@@ -1235,6 +1765,9 @@ _Part _withValue(_Part part, Expression value) => (
   value: value,
   encoding: part.encoding,
   headers: part.headers,
+  selectedContentType: part.selectedContentType,
+  choiceModels: part.choiceModels,
+  choiceHeaders: part.choiceHeaders,
   isMergedObject: part.isMergedObject,
   isMergedMap: part.isMergedMap,
   isMergedList: part.isMergedList,

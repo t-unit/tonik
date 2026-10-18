@@ -4356,7 +4356,7 @@ Future<Object?> _data({Payload? body}) async {
       });
 
       test('generates runtime throw for EnumModel with bytes in '
-          'multi-content request body using wildcard pattern', () {
+          'multi-content request body', () {
         final operation = Operation(
           operationId: 'testOp',
           path: '/test',

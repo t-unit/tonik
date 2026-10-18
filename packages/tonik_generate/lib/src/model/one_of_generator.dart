@@ -34,6 +34,14 @@ class const OneOfGenerator({
   final bool useImmutableCollections = false,
 }) {
   ({String code, String filename}) generate(OneOfModel model) {
+    if (model is MultipartChoiceModel) {
+      return generateCompositeLibrary(
+        model: model,
+        isNullable: false,
+        nameManager: nameManager,
+        generateClasses: (name) => generateClasses(model, name),
+      );
+    }
     return generateCompositeLibrary(
       model: model,
       isNullable: model.isNullable,
@@ -43,9 +51,231 @@ class const OneOfGenerator({
     );
   }
 
+  List<Class> _generateMultipartChoiceClasses(
+    MultipartChoiceModel model,
+    String name,
+  ) {
+    final classes = <Class>[
+      Class(
+        (b) => b
+          ..name = name
+          ..sealed = true
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..constructors.add(Constructor((b) => b..constant = true))
+          ..constructors.add(buildWriteOnlyFromSimpleConstructor(name))
+          ..constructors.add(buildWriteOnlyFromFormConstructor(name))
+          ..constructors.add(
+            Constructor(
+              (c) => c
+                ..factory = true
+                ..name = 'fromJson'
+                ..requiredParameters.add(
+                  Parameter(
+                    (p) => p
+                      ..name = 'json'
+                      ..type = refer('Object?', 'dart:core'),
+                  ),
+                )
+                ..body = generateJsonDecodingExceptionExpression(
+                  'Multipart media choice requires explicit selection.',
+                  raw: true,
+                ).code,
+            ),
+          )
+          ..methods.add(
+            Method(
+              (m) => m
+                ..name = 'toJson'
+                ..returns = refer('Object?', 'dart:core')
+                ..body = generateEncodingExceptionExpression(
+                  'Multipart media choice cannot be serialized as JSON.',
+                  raw: true,
+                ).code,
+            ),
+          )
+          ..methods.addAll([
+            Method(
+              (m) => m
+                ..name = 'currentEncodingShape'
+                ..type = MethodType.getter
+                ..returns = refer(
+                  'EncodingShape',
+                  'package:tonik_util/tonik_util.dart',
+                )
+                ..lambda = true
+                ..body = generateEncodingExceptionExpression(
+                  'Multipart media choice cannot be encoded as a parameter.',
+                  raw: true,
+                ).code,
+            ),
+            Method(
+              (m) => m
+                ..name = 'multipartChoiceIndex'
+                ..type = MethodType.getter
+                ..returns = refer('int', 'dart:core'),
+            ),
+            Method(
+              (m) => m
+                ..name = 'multipartWireType'
+                ..type = MethodType.getter
+                ..returns = refer('String', 'dart:core'),
+            ),
+            Method(
+              (m) => m
+                ..name = 'multipartValue'
+                ..type = MethodType.getter
+                ..returns = refer('Object?', 'dart:core'),
+            ),
+          ]),
+      ),
+    ];
+    for (final (index, member) in model.models.indexed) {
+      final variant = nameManager.generateVariantName(
+        parentClassName: name,
+        model: member.model,
+        discriminatorValue: member.discriminatorValue,
+      );
+      final callerWireType = model.choices[index].requiresWireContentType;
+      final value = member.model.resolved;
+      final nullableValue = member.model.isEffectivelyNullable;
+      final valueRef = refer(nullableValue ? 'value!' : 'value');
+      final structuredObject = value is ClassModel || value is CompositeModel;
+      final mergedValue =
+          ((model.choices[index].contentType == ContentType.json ||
+                  model.choices[index].contentType == ContentType.form) &&
+              structuredObject) ||
+          (model.choices[index].contentType == ContentType.json &&
+              value is EnumModel);
+      final jsonValue =
+          model.choices[index].contentType == ContentType.json &&
+              value is! BinaryModel &&
+              value is! Base64Model &&
+              value is! AnyModel &&
+              value is! NeverModel
+          ? buildToJsonModelExpression(
+              valueRef,
+              member.model,
+              nameManager: nameManager,
+              package: package,
+              useImmutableCollections: useImmutableCollections,
+            )
+          : null;
+      final textValue = model.choices[index].contentType == ContentType.text
+          ? switch (value) {
+              StringModel() => valueRef,
+              DateTimeModel() =>
+                valueRef.property('toTimeZonedIso8601String').call([]),
+              EnumModel<String>() => valueRef.property('toJson').call([]),
+              EnumModel() =>
+                valueRef
+                    .property('toJson')
+                    .call([])
+                    .property('toString')
+                    .call([]),
+              PrimitiveModel() => valueRef.property('toString').call([]),
+              _ => null,
+            }
+          : null;
+      final multipartValue =
+          jsonValue?.unsafeRawBody ??
+          textValue ??
+          (mergedValue ? valueRef.property('toJson').call([]) : valueRef);
+      classes.add(
+        Class(
+          (b) => b
+            ..name = variant
+            ..extend = refer(name)
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..fields.add(
+              Field(
+                (f) => f
+                  ..name = 'value'
+                  ..modifier = FieldModifier.final$
+                  ..type = typeReference(
+                    member.model,
+                    nameManager,
+                    package,
+                    useImmutableCollections: useImmutableCollections,
+                  ),
+              ),
+            )
+            ..fields.addAll([
+              if (callerWireType)
+                Field(
+                  (f) => f
+                    ..name = 'wireContentType'
+                    ..modifier = FieldModifier.final$
+                    ..type = refer('String', 'dart:core'),
+                ),
+            ])
+            ..constructors.add(
+              Constructor(
+                (c) => c
+                  ..constant = true
+                  ..requiredParameters.add(
+                    Parameter((p) => p..name = 'this.value'),
+                  )
+                  ..requiredParameters.addAll([
+                    if (callerWireType)
+                      Parameter((p) => p..name = 'this.wireContentType'),
+                  ]),
+              ),
+            )
+            ..methods.addAll([
+              Method(
+                (m) => m
+                  ..annotations.add(refer('override', 'dart:core'))
+                  ..name = 'multipartChoiceIndex'
+                  ..type = MethodType.getter
+                  ..returns = refer('int', 'dart:core')
+                  ..lambda = true
+                  ..body = literalNum(index).code,
+              ),
+              Method(
+                (m) => m
+                  ..annotations.add(refer('override', 'dart:core'))
+                  ..name = 'multipartWireType'
+                  ..type = MethodType.getter
+                  ..returns = refer('String', 'dart:core')
+                  ..lambda = true
+                  ..body = callerWireType
+                      ? refer('wireContentType').code
+                      : specLiteralString(
+                          model.choices[index].wireContentType ??
+                              model.choices[index].rawContentType ??
+                              'application/octet-stream',
+                        ).code,
+              ),
+              Method(
+                (m) => m
+                  ..annotations.add(refer('override', 'dart:core'))
+                  ..name = 'multipartValue'
+                  ..type = MethodType.getter
+                  ..returns = refer('Object?', 'dart:core')
+                  ..lambda = jsonValue == null && !nullableValue
+                  ..body = jsonValue == null && !nullableValue
+                      ? multipartValue.code
+                      : Block.of([
+                          if (nullableValue)
+                            const Code('if (value == null) return null;'),
+                          if (jsonValue != null)
+                            ...spliceInlineHelpers(jsonValue.inlineFunctions),
+                          multipartValue.returned.statement,
+                        ]),
+              ),
+            ]),
+        ),
+      );
+    }
+    return classes;
+  }
+
   @visibleForTesting
   List<Class> generateClasses(OneOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
+    if (model is MultipartChoiceModel) {
+      return _generateMultipartChoiceClasses(model, actualClassName);
+    }
 
     final variantNames = _generateVariantNames(model, actualClassName);
     final baseClass = _generateBaseClass(model, actualClassName, variantNames);

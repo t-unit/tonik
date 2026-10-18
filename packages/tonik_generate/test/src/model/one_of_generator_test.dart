@@ -32,6 +32,190 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test(
+    'multipart choice variants expose typed values and boundary wire type',
+    () {
+      final binary = BinaryModel(context: context);
+      final json = StringModel(context: context);
+      final model = MultipartChoiceModel(
+        choices: const [
+          PartEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            wireContentType: 'application/json',
+            textEncoding: TextEncoding.utf8,
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
+          ),
+          PartEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'multipart/mixed',
+            wireContentType: 'multipart/mixed',
+            textEncoding: TextEncoding.utf8,
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
+          ),
+        ],
+        models: [
+          (discriminatorValue: 'Json', model: json),
+          (discriminatorValue: 'Image', model: binary),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+        name: 'PartMediaChoice',
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: true,
+        defaultValue: null,
+      );
+
+      final classes = generator.generateClasses(model);
+      expect(classes.map((c) => c.name), [
+        'PartMediaChoice',
+        'PartMediaChoiceJson',
+        'PartMediaChoiceImage',
+      ]);
+      expect(classes[0].constructors.map((c) => c.name), [
+        null,
+        'fromSimple',
+        'fromForm',
+        'fromJson',
+      ]);
+      expect(
+        classes[0].methods.map((method) => method.name),
+        contains('currentEncodingShape'),
+      );
+      expect(classes[1].fields.map((f) => f.name), ['value']);
+      expect(
+        classes[1].fields.single.type?.accept(emitter).toString(),
+        'String',
+      );
+      expect(classes[2].fields.map((f) => f.name), [
+        'value',
+        'wireContentType',
+      ]);
+      expect(
+        classes[2].fields.first.type?.accept(emitter).toString(),
+        'TonikFile',
+      );
+      expect(
+        classes[2].constructors.single.requiredParameters.map((p) => p.name),
+        ['this.value', 'this.wireContentType'],
+      );
+    },
+  );
+
+  test('multipart JSON map choice converts URI values for merging', () {
+    final uriMap = MapModel(
+      valueModel: UriModel(context: context),
+      context: context,
+      examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isValueNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final model = MultipartChoiceModel(
+      choices: const [
+        PartEncoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          wireContentType: 'application/json',
+          textEncoding: TextEncoding.utf8,
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
+      ],
+      models: [(discriminatorValue: 'Json', model: uriMap)],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      name: 'MapMediaChoice',
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: true,
+      defaultValue: null,
+    );
+
+    final variant = generator.generateClasses(model)[1];
+    final generated = format(variant.accept(emitter).toString());
+    expect(generated, contains('Object? get multipartValue'));
+    expect(
+      generated,
+      contains('value.map((k, v) => MapEntry(k, v.toString()))'),
+    );
+  });
+
+  test('multipart JSON list choice converts nested map values for merging', () {
+    final list = ListModel(
+      content: MapModel(
+        valueModel: UriModel(context: context),
+        context: context,
+        examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      ),
+      context: context,
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      examples: const [],
+    );
+    final model = MultipartChoiceModel(
+      choices: const [
+        PartEncoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          wireContentType: 'application/json',
+          textEncoding: TextEncoding.utf8,
+          headers: null,
+          style: null,
+          explode: null,
+          allowReserved: null,
+        ),
+      ],
+      models: [(discriminatorValue: 'Json', model: list)],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      name: 'ListMediaChoice',
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: true,
+      defaultValue: null,
+    );
+
+    final variant = generator.generateClasses(model)[1];
+    final generated = format(variant.accept(emitter).toString());
+    expect(generated, contains('Object? get multipartValue'));
+    expect(generated, contains('MapEntry(k, v.toString())'));
+  });
+
   test('generates simple encoding shape getter for primitive oneOf', () {
     final model = OneOfModel(
       isDeprecated: false,

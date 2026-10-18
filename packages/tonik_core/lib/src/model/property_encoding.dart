@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// Serialization styles for encoding properties.
 ///
@@ -73,6 +74,10 @@ class const PartEncoding._({
   /// When false, serialization is content-based, driven by [contentType].
   bool get isStyleBased =>
       style != null || explode != null || allowReserved != null;
+
+  bool get requiresWireContentType =>
+      (extractMediaType(rawContentType)?.startsWith('multipart/') ?? false) &&
+      (parseMediaTypeParameters(rawContentType)?['boundary']?.isEmpty ?? true);
 
   @override
   bool operator ==(Object other) =>

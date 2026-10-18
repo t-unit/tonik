@@ -50,11 +50,17 @@ Code _append(MultipartAppend part) {
         specLiteralString(r'\'),
         specLiteralString(r'\\'),
       ]),
-    if (part.contentType case final contentType?)
+    if (part.contentTypeExpression case final expression?)
       'contentType': refer(
         'DioMediaType',
         'package:dio/dio.dart',
-      ).property('parse').call([specLiteralString(contentType)]),
+      ).property('parse').call([expression]),
+    if (part.contentTypeExpression == null)
+      if (part.contentType case final contentType?)
+        'contentType': refer(
+          'DioMediaType',
+          'package:dio/dio.dart',
+        ).property('parse').call([specLiteralString(contentType)]),
     'headers': ?part.headers,
   };
   final constructor = refer('MultipartFile', 'package:dio/dio.dart');

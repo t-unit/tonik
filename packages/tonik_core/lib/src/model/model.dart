@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/additional_properties_policy.dart';
 import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/src/model/example.dart';
+import 'package:tonik_core/src/model/property_encoding.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -419,6 +420,23 @@ class OneOfModel({
       'discriminator: $discriminator, description: $description, '
       'isDeprecated: $isDeprecated, examples: $examples}';
 }
+
+/// A body-local selection between declared media types for one multipart part.
+class MultipartChoiceModel({
+  required final List<PartEncoding> choices,
+  required super.models,
+  required super.context,
+  required super.isDeprecated,
+  required super.examples,
+  required super.name,
+  required super.nameOverride,
+  required super.description,
+  required super.discriminator,
+  required super.isNullable,
+  required super.isReadOnly,
+  required super.isWriteOnly,
+  required super.defaultValue,
+}) extends OneOfModel;
 
 class AnyOfModel({
   required var List<DiscriminatedModel> models,

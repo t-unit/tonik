@@ -297,6 +297,12 @@ Mappings override built-in defaults. Streaming targets require a usable response
 `itemSchema`; otherwise bodies use complete bytes. See
 [Streaming Responses](streaming_responses.md) for details.
 
+For outgoing requests, `contentTypes` chooses how a declared media type is
+serialized. It does not replace the declared `Content-Type` header. Outgoing
+media tokens containing `*`, such as `application/*` and `*/*`, are unsupported
+and omitted; mapping them to `json` or another target does not enable them.
+Concrete sibling media types remain available.
+
 ## Schema Content Media Type Mapping
 
 OpenAPI 3.1 allows schemas with `contentEncoding` (e.g., `base64`) and `contentMediaType` to represent encoded binary content within JSON structures. Use `contentMediaTypes` to control how these schemas map to Dart types:
