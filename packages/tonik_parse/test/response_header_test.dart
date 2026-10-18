@@ -156,4 +156,111 @@ void main() {
     expect(simple, hasLength(1));
     expect(reference, hasLength(1));
   });
+
+  test('omits unusable response headers and keeps siblings and body', () {
+    final document = Importer().import({
+      'openapi': '3.1.0',
+      'info': {'title': 'Responses', 'version': '1.0'},
+      'paths': {
+        '/status': {
+          'get': {
+            'operationId': 'status',
+            'responses': {
+              '200': {
+                'description': 'Status',
+                'headers': {
+                  'X-Scalar': 42,
+                  'X-Empty': <String, dynamic>{},
+                  'X-Bad-Content': {
+                    'required': true,
+                    'content': {'application/xml': 42},
+                  },
+                  'X-Empty-Content': {'content': <String, dynamic>{}},
+                  'X-Bad-Reference': {r'$ref': '#/components/headers/Bad'},
+                  'X-Good-Reference': {r'$ref': '#/components/headers/Good'},
+                  'X-Inline': {
+                    'schema': {'type': 'integer'},
+                  },
+                },
+                'content': {
+                  'application/json': {
+                    'schema': {'type': 'string'},
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      'components': {
+        'headers': {
+          'Bad': {'schema': 42},
+          'Good': {
+            'schema': {'type': 'string'},
+          },
+        },
+      },
+    });
+
+    final response =
+        document.operations.single.responses.values.single.resolved;
+    expect(response.headers.keys, ['X-Good-Reference', 'X-Inline']);
+    expect(
+      response.headers['X-Good-Reference']!.resolve().model,
+      isA<StringModel>(),
+    );
+    expect(response.headers['X-Inline']!.resolve().model, isA<IntegerModel>());
+    expect(response.bodies.single.contentType, ContentType.json);
+    expect(response.bodies.single.model, isA<StringModel>());
+  });
+
+  test('missing response header targets still throw', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Responses', 'version': '1.0'},
+        'paths': {
+          '/status': {
+            'get': {
+              'operationId': 'status',
+              'responses': {
+                '200': {
+                  'description': 'Status',
+                  'headers': {
+                    'X-Missing': {r'$ref': '#/components/headers/Missing'},
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+      throwsArgumentError,
+    );
+  });
+
+  test('malformed response header references still throw', () {
+    expect(
+      () => Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Responses', 'version': '1.0'},
+        'paths': {
+          '/status': {
+            'get': {
+              'operationId': 'status',
+              'responses': {
+                '200': {
+                  'description': 'Status',
+                  'headers': {
+                    'X-Broken': {r'$ref': 42},
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+      throwsA(isA<TypeError>()),
+    );
+  });
 }

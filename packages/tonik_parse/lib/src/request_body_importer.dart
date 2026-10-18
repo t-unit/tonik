@@ -4,6 +4,7 @@ import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/encoding.dart';
+import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -230,8 +231,17 @@ class RequestBodyImporter({
         );
       }
     }
+    final requestSources = <core.Property, core.Property>{};
+    final requestModel = _projectMultipartModel(
+      model,
+      encoding,
+      requestSources,
+      <core.Model, core.Model>{},
+    );
     return core.MultipartRequestContent(
       model: model,
+      requestModel: requestModel,
+      requestSources: Map.unmodifiable(requestSources),
       encoding: encoding,
       rawContentType: rawContentType,
       examples: exampleImporter.fromMediaType(mediaType),
@@ -239,6 +249,217 @@ class RequestBodyImporter({
       textEncoding: core.TextEncoding.utf8,
     );
   }
+
+  core.Model _projectMultipartModel(
+    core.Model model,
+    Map<String, core.PartEncoding> encoding,
+    Map<core.Property, core.Property> sources,
+    Map<core.Model, core.Model> cache,
+  ) {
+    if (cache[model] case final existing?) return existing;
+    cache[model] = model;
+    final projected = _buildMultipartProjection(
+      model,
+      encoding,
+      sources,
+      cache,
+    );
+    cache[model] = projected;
+    return projected;
+  }
+
+  core.Model _buildMultipartProjection(
+    core.Model model,
+    Map<String, core.PartEncoding> encoding,
+    Map<core.Property, core.Property> sources,
+    Map<core.Model, core.Model> cache,
+  ) {
+    switch (model) {
+      case core.AliasModel():
+        final projected = _projectMultipartModel(
+          model.model,
+          encoding,
+          sources,
+          cache,
+        );
+        if (identical(projected, model.model)) return model;
+        final alias = core.AliasModel(
+          model: projected,
+          context: model.context.push('multipart'),
+          examples: model.examples,
+          defaultValue: null,
+          name: model.name == null ? null : '${model.name}Multipart',
+          nameOverride: model.nameOverride == null
+              ? null
+              : '${model.nameOverride}Multipart',
+          description: model.description,
+          isDeprecated: model.isDeprecated,
+          isNullable: model.isNullable,
+          isReadOnly: model.isReadOnly,
+          isWriteOnly: model.isWriteOnly,
+        );
+        return alias;
+      case core.ClassModel():
+        var changed = false;
+        final additionalPropertiesPolicy =
+            switch (model.additionalPropertiesPolicy) {
+              core.AllowedAdditionalProperties(
+                origin: core.AdditionalPropertiesOrigin.explicit,
+                :final valueModel,
+              )
+                  when _hasUntypedMultipartValue(valueModel) =>
+                core.AllowedAdditionalProperties(
+                  valueModel: _binaryMultipartInput(valueModel),
+                  origin: core.AdditionalPropertiesOrigin.explicit,
+                ),
+              _ => model.additionalPropertiesPolicy,
+            };
+        changed = !identical(
+          additionalPropertiesPolicy,
+          model.additionalPropertiesPolicy,
+        );
+        final projectedProperties = <core.Property>[];
+        for (final property in model.properties) {
+          final partEncoding = encoding[property.name];
+          final projectedValue =
+              !property.isReadOnly &&
+                  partEncoding?.contentType == core.ContentType.bytes &&
+                  !partEncoding!.isStyleBased
+              ? _binaryMultipartInput(property.model)
+              : property.model;
+          if (identical(projectedValue, property.model)) {
+            sources[property] = property;
+            projectedProperties.add(property);
+            continue;
+          }
+          changed = true;
+          final projectedProperty = core.Property(
+            name: property.name,
+            model: projectedValue,
+            isRequired: property.isRequired,
+            isNullable: property.isNullable,
+            isDeprecated: property.isDeprecated,
+            examples: const [],
+            defaultValue: null,
+            isReadOnly: property.isReadOnly,
+            isWriteOnly: property.isWriteOnly,
+            nameOverride: property.nameOverride,
+            description: property.description,
+          );
+          sources[projectedProperty] = property;
+          projectedProperties.add(projectedProperty);
+        }
+        if (!changed) return model;
+        final projected = core.ClassModel(
+          properties: projectedProperties,
+          context: model.context.push('multipart'),
+          isDeprecated: model.isDeprecated,
+          examples: const [],
+          name: model.name == null ? null : '${model.name}Multipart',
+          nameOverride: model.nameOverride == null
+              ? null
+              : '${model.nameOverride}Multipart',
+          description: model.description,
+          additionalPropertiesPolicy: additionalPropertiesPolicy,
+          isNullable: model.isNullable,
+          isReadOnly: model.isReadOnly,
+          isWriteOnly: model.isWriteOnly,
+        );
+        return projected;
+      case core.MapModel():
+        if (!_hasUntypedMultipartValue(model.valueModel)) return model;
+        final projected = core.MapModel(
+          valueModel: _binaryMultipartInput(model.valueModel),
+          context: model.context.push('multipart'),
+          examples: const [],
+          name: model.name == null ? null : '${model.name}Multipart',
+          nameOverride: model.nameOverride == null
+              ? null
+              : '${model.nameOverride}Multipart',
+          isNullable: model.isNullable,
+          isValueNullable: model.isValueNullable,
+          isReadOnly: model.isReadOnly,
+          isWriteOnly: model.isWriteOnly,
+        );
+        return projected;
+      case core.AllOfModel():
+        final members = [
+          for (final member in model.models)
+            _projectMultipartModel(member, encoding, sources, cache),
+        ];
+        if (members.indexed.every(
+          (entry) => identical(entry.$2, model.models[entry.$1]),
+        )) {
+          return model;
+        }
+        final projected = core.AllOfModel(
+          models: members,
+          context: model.context.push('multipart'),
+          isDeprecated: model.isDeprecated,
+          examples: const [],
+          name: model.name == null ? null : '${model.name}Multipart',
+          nameOverride: model.nameOverride == null
+              ? null
+              : '${model.nameOverride}Multipart',
+          description: model.description,
+          additionalPropertiesPolicy: model.additionalPropertiesPolicy,
+          isNullable: model.isNullable,
+          isReadOnly: model.isReadOnly,
+          isWriteOnly: model.isWriteOnly,
+          defaultValue: null,
+        );
+        return projected;
+      default:
+        return model;
+    }
+  }
+
+  core.Model _binaryMultipartInput(core.Model model) {
+    if (model.resolved is core.BinaryModel ||
+        model.resolved is core.Base64Model) {
+      return model;
+    }
+    if (model case core.AliasModel()) {
+      final projected = _binaryMultipartInput(model.model);
+      if (identical(projected, model.model)) return model;
+      if (!model.isNullable) return projected;
+      return core.AliasModel(
+        model: projected,
+        context: model.context.push('multipart'),
+        examples: const [],
+        defaultValue: null,
+        name: null,
+        nameOverride: null,
+        description: model.description,
+        isDeprecated: model.isDeprecated,
+        isNullable: model.isNullable,
+        isReadOnly: model.isReadOnly,
+        isWriteOnly: model.isWriteOnly,
+      );
+    }
+    if (model is core.ListModel) {
+      final projectedContent = _binaryMultipartInput(model.content);
+      if (identical(projectedContent, model.content)) return model;
+      return core.ListModel(
+        content: projectedContent,
+        context: model.context.push('multipart'),
+        examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: model.isNullable,
+        isContentNullable: model.isContentNullable,
+        isReadOnly: model.isReadOnly,
+        isWriteOnly: model.isWriteOnly,
+      );
+    }
+    return core.BinaryModel(context: model.context.push('multipart'));
+  }
+
+  bool _hasUntypedMultipartValue(core.Model model) => switch (model.resolved) {
+    core.AnyModel() => true,
+    core.ListModel(:final content) => content.resolved is core.AnyModel,
+    _ => false,
+  };
 
   /// Unmatched keys and read-only properties are dropped: the former have no
   /// field to describe, the latter are never sent. No per-property content-type
@@ -357,6 +578,23 @@ class RequestBodyImporter({
 
     final headers = <String, core.ResponseHeader>{};
     for (final headerEntry in encoding.headers!.entries) {
+      if (headerEntry.value case Reference<Header>(:final ref)
+          when isExternalReference(ref)) {
+        log.warning(
+          'Multipart part header "${headerEntry.key}" has an external '
+          'reference. Ignoring.',
+        );
+        continue;
+      }
+      if (responseHeaderImporter.isUnsupportedHeaderDefinition(
+        headerEntry.value,
+      )) {
+        log.warning(
+          'Multipart part header "${headerEntry.key}" has no usable '
+          'definition. Ignoring.',
+        );
+        continue;
+      }
       headers[headerEntry.key] = responseHeaderImporter.importInlineHeader(
         wrapper: headerEntry.value,
         context: context.pushAll(['encoding', propertyName, headerEntry.key]),
@@ -393,7 +631,11 @@ class RequestBodyImporter({
     final rawContentType = encoding.contentType;
     final textEncoding = _resolveTextEncoding(
       rawContentType ?? '',
-      applicable: !useStyleMode && rawContentType != null,
+      applicable:
+          !useStyleMode &&
+          (resolvedContentType == core.ContentType.text ||
+              resolvedContentType == core.ContentType.json ||
+              resolvedContentType == core.ContentType.form),
     );
 
     return core.PartEncoding(

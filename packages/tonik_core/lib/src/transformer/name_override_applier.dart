@@ -12,16 +12,31 @@ class NameOverrideApplier() {
   /// [overrides] - Map of original schema name to new name.
   ///
   /// Mutates models in place by setting their nameOverride field.
-  void applySchemaOverrides(Set<Model> models, Map<String, String> overrides) {
+  void applySchemaOverrides(
+    Set<Model> models,
+    Map<String, String> overrides, {
+    required Set<RequestBody> requestBodies,
+  }) {
     if (overrides.isEmpty) return;
 
-    for (final model in models) {
-      if (model is! NamedModel) continue;
+    final pairs = multipartRequestProjectionPairs(requestBodies);
+    final projections = {for (final pair in pairs) pair.projection};
+    for (final model in {...models, for (final pair in pairs) pair.source}) {
+      if (projections.contains(model) || model is! NamedModel) continue;
 
       final name = model.name;
       final override = name == null ? null : overrides[name];
       if (override != null) {
         model.nameOverride = override;
+      }
+    }
+
+    for (final pair in pairs) {
+      if (pair.source is NamedModel && pair.projection is NamedModel) {
+        final override = (pair.source as NamedModel).nameOverride;
+        if (override != null) {
+          (pair.projection as NamedModel).nameOverride = '${override}Multipart';
+        }
       }
     }
   }
@@ -34,11 +49,15 @@ class NameOverrideApplier() {
   /// Mutates properties in place by setting their nameOverride field.
   void applyPropertyOverrides(
     Set<Model> models,
-    Map<String, String> overrides,
-  ) {
+    Map<String, String> overrides, {
+    required Set<RequestBody> requestBodies,
+  }) {
     if (overrides.isEmpty) return;
 
-    for (final model in models) {
+    final pairs = multipartRequestProjectionPairs(requestBodies);
+    final projections = {for (final pair in pairs) pair.projection};
+    for (final model in {...models, for (final pair in pairs) pair.source}) {
+      if (projections.contains(model)) continue;
       if (model case final ClassModel classModel) {
         final schemaName = classModel.name;
         if (schemaName == null) continue;
@@ -48,6 +67,16 @@ class NameOverrideApplier() {
           final override = overrides[key];
           if (override != null) {
             prop.nameOverride = override;
+          }
+        }
+      }
+    }
+
+    for (final body in requestBodies) {
+      for (final content in body.resolvedContent) {
+        if (content case final MultipartRequestContent multipart) {
+          for (final entry in multipart.requestSources.entries) {
+            entry.key.nameOverride = entry.value.nameOverride;
           }
         }
       }

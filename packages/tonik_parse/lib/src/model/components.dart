@@ -36,9 +36,7 @@ class Components({
     requestBodies: (json['requestBodies'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, ReferenceWrapper<RequestBody>.fromJson(e)),
     ),
-    headers: (json['headers'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
-    ),
+    headers: _parseHeaders(json['headers']),
     securitySchemes: (json['securitySchemes'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, ReferenceWrapper<SecurityScheme>.fromJson(e)),
     ),
@@ -59,4 +57,20 @@ class Components({
       'parameters: $parameters, requestBodies: $requestBodies, '
       'headers: $headers, securitySchemes: $securitySchemes, '
       'pathItems: $pathItems, examples: $examples}';
+}
+
+Map<String, ReferenceWrapper<Header>>? _parseHeaders(Object? value) {
+  if (value is! Map<String, dynamic>) return null;
+  return value.map((name, definition) {
+    try {
+      return MapEntry(name, ReferenceWrapper<Header>.fromJson(definition));
+      // Header definitions use casts and format checks while parsing JSON.
+      // ignore: avoid_catching_errors
+    } on TypeError catch (error) {
+      if (error is MalformedReferenceError) rethrow;
+      return MapEntry(name, InlinedObject(Header.fromJson({})));
+    } on FormatException {
+      return MapEntry(name, InlinedObject(Header.fromJson({})));
+    }
+  });
 }

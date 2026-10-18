@@ -9,9 +9,7 @@ class Response({
 }) {
   factory fromJson(Map<String, dynamic> json) => Response(
     description: json['description'] as String,
-    headers: (json['headers'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
-    ),
+    headers: _parseHeaders(json['headers']),
     content: (json['content'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
     ),
@@ -23,4 +21,21 @@ class Response({
   String toString() =>
       'Response{description: $description, headers: $headers, '
       'content: $content}';
+}
+
+Map<String, ReferenceWrapper<Header>>? _parseHeaders(Object? value) {
+  if (value is! Map<String, dynamic>) return null;
+  final headers = <String, ReferenceWrapper<Header>>{};
+  for (final entry in value.entries) {
+    try {
+      headers[entry.key] = ReferenceWrapper<Header>.fromJson(entry.value);
+      // Optional header definitions use casts and format checks.
+      // ignore: avoid_catching_errors
+    } on TypeError catch (error) {
+      if (error is MalformedReferenceError) rethrow;
+    } on FormatException {
+      continue;
+    }
+  }
+  return headers;
 }

@@ -21,8 +21,8 @@ TypeReference requestContentTypeReference(
     isNullableOverride: isNullableOverride,
     useImmutableCollections: useImmutableCollections,
   ),
-  MultipartRequestContent(:final model) => typeReference(
-    model,
+  MultipartRequestContent(:final requestModel) => typeReference(
+    requestModel,
     nameManager,
     package,
     isNullableOverride: isNullableOverride,

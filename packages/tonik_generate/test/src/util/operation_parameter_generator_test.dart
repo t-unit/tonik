@@ -2505,8 +2505,8 @@ MultipartRequestContent _multipartContent({
   required List<MultipartPartFixture> parts,
   required Context context,
   required List<Example> examples,
-}) => MultipartRequestContent(
-  model: ClassModel(
+}) {
+  final model = ClassModel(
     name: name,
     context: context,
     properties: [for (final part in parts) part.property],
@@ -2518,13 +2518,18 @@ MultipartRequestContent _multipartContent({
     isNullable: false,
     isReadOnly: false,
     isWriteOnly: false,
-  ),
-  encoding: {for (final part in parts) part.property.name: part.encoding},
-  rawContentType: rawContentType,
-  examples: examples,
-  wireContentType: null,
-  textEncoding: TextEncoding.utf8,
-);
+  );
+  return MultipartRequestContent(
+    model: model,
+    requestModel: model,
+    requestSources: const {},
+    encoding: {for (final part in parts) part.property.name: part.encoding},
+    rawContentType: rawContentType,
+    examples: examples,
+    wireContentType: null,
+    textEncoding: TextEncoding.utf8,
+  );
+}
 
 final class MultipartPartFixture._({
   required final Property property,
@@ -2562,6 +2567,8 @@ MultipartRequestContent _withEncoding(
   Map<String, PartEncoding> byName,
 ) => MultipartRequestContent(
   model: content.model,
+  requestModel: content.model,
+  requestSources: const {},
   encoding: {...content.encoding, ...byName},
   rawContentType: content.rawContentType,
   wireContentType: content.wireContentType,

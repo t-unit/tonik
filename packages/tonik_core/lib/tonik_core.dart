@@ -34,4 +34,5 @@ export 'src/transformer/allof_normalizer.dart';
 export 'src/transformer/config_transformer.dart';
 export 'src/transformer/content_type_normalizer.dart';
 export 'src/util/context.dart';
+export 'src/util/multipart_request_projections.dart';
 export 'src/util/stable_model_key.dart';

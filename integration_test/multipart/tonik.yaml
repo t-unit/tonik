@@ -4,3 +4,10 @@ outputDir: multipart
 
 contentTypes:
   application/vnd.custom-multipart: multipart
+  application/vnd.custom-opaque+json: bytes
+
+nameOverrides:
+  schemas:
+    OpaqueSharedForm: RenamedOpaqueSharedForm
+  properties:
+    "OpaqueSharedForm.payload": data

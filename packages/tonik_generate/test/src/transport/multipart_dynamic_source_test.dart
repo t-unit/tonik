@@ -627,21 +627,24 @@ Object? encode() {
     final second = multipartContentFixture(context, [
       multipartPartFixture(name: 'items', model: list),
     ], name: 'Second').model;
+    final mergedModel = AllOfModel(
+      context: context,
+      name: 'Merged',
+      examples: const [],
+      isDeprecated: false,
+      models: [first, second],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
+    );
     final content = MultipartRequestContent(
-      model: AllOfModel(
-        context: context,
-        name: 'Merged',
-        examples: const [],
-        isDeprecated: false,
-        models: [first, second],
-        nameOverride: null,
-        description: null,
-        additionalPropertiesPolicy: null,
-        isNullable: false,
-        isReadOnly: false,
-        isWriteOnly: false,
-        defaultValue: null,
-      ),
+      model: mergedModel,
+      requestModel: mergedModel,
+      requestSources: const {},
       encoding: const {
         'items': PartEncoding(
           contentType: ContentType.json,
@@ -941,6 +944,8 @@ Object? encode() {
     );
     final content = MultipartRequestContent(
       model: model,
+      requestModel: model,
+      requestSources: const {},
       examples: const [],
       rawContentType: 'multipart/form-data',
       encoding: const {
@@ -1111,6 +1116,8 @@ Object? encode() {
 
 MultipartRequestContent _content(Model model) => MultipartRequestContent(
   model: model,
+  requestModel: model,
+  requestSources: const {},
   encoding: const {},
   rawContentType: 'multipart/form-data',
   examples: const [],

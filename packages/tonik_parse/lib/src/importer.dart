@@ -93,7 +93,10 @@ class Importer({
       termsOfService: openApiObject.info.termsOfService,
       externalDocs: ExternalDocumentationImporter(openApiObject: openApiObject)
           .import(),
-      models: modelImporter.models,
+      models: {
+        ...modelImporter.models,
+        ..._requestProjectionModels(requestBodyImporter.requestBodies),
+      },
       responseHeaders: responseHeaderImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),
       operations: operationImporter.operations,
@@ -104,6 +107,29 @@ class Importer({
       cookieParameters: parameterImporter.cookieParameters,
       requestBodies: requestBodyImporter.requestBodies,
     );
+  }
+
+  static Set<core.Model> _requestProjectionModels(
+    Set<core.RequestBody> requestBodies,
+  ) {
+    final projections = <core.Model>{};
+    for (final pair in core.multipartRequestProjectionPairs(requestBodies)) {
+      final projection = pair.projection;
+      switch (projection) {
+        case core.AliasModel(:final name) when name != null:
+          projections.add(projection);
+        case core.AliasModel():
+          break;
+        case core.AllOfModel() || core.ClassModel() || core.MapModel():
+          projections.add(projection);
+        default:
+          throw StateError(
+            'Unsupported multipart request projection: '
+            '${projection.runtimeType}',
+          );
+      }
+    }
+    return projections;
   }
 
   static void _detectAndLogVersion(String version) {
