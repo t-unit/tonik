@@ -309,17 +309,17 @@ void main() {
     });
   });
 
-  test('untyped default bytes reject a map before sending', () async {
+  test('untyped default bytes accept a file input', () async {
     final server = await _jsonServer();
 
-    final response = await _api(
-      server,
-    ).postAnyModelDefaultBytes(body: const AnyModelForm(data: {'name': 'Ada'}));
+    final response = await _api(server).postAnyModelDefaultBytes(
+      body: const AnyModelFormMultipart(data: TonikFileBytes([1, 2, 3])),
+    );
 
-    final error = requireError(response);
-    expect(error.type, TonikErrorType.encoding);
-    expect(error.error, isA<EncodingException>());
-    expect(server.requestCount, 0);
+    expect(response, isTonikSuccess);
+    final data = MultipartWire(await server.takeRequest()).single('data');
+    expect(data.bodyBytes, [1, 2, 3]);
+    expect(data.contentType, 'application/octet-stream');
   });
 }
 

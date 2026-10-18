@@ -18,6 +18,222 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /multipart/opaque-shared:
+    post:
+      operationId: postOpaqueShared
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueSharedForm'
+            encoding:
+              payload:
+                contentType: 'application/xml; profile="urn:example:v1"'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-shared-json:
+    post:
+      operationId: postOpaqueSharedJson
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpaqueSharedForm'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-absent:
+    post:
+      operationId: postOpaqueAbsent
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueAbsentForm'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-configured:
+    post:
+      operationId: postOpaqueConfigured
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueSharedForm'
+            encoding:
+              payload:
+                contentType: 'application/vnd.custom-opaque+json; version=1'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-all-of:
+    post:
+      operationId: postOpaqueAllOf
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueAllOf'
+            encoding:
+              payload:
+                contentType: application/xml
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-duplicate:
+    post:
+      operationId: postOpaqueDuplicate
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueDuplicate'
+            encoding:
+              payload:
+                contentType: application/xml
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-charset:
+    post:
+      operationId: postOpaqueCharset
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueSharedForm'
+            encoding:
+              payload:
+                contentType: 'application/xml; charset=shift_jis; profile=v1'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-dynamic:
+    post:
+      operationId: postOpaqueDynamic
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueDynamicForm'
+            encoding:
+              payload:
+                contentType: application/xml
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-dynamic-json:
+    post:
+      operationId: postOpaqueDynamicJson
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpaqueDynamicForm'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-root:
+    post:
+      operationId: postOpaqueRoot
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueRootMap'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-root-json:
+    post:
+      operationId: postOpaqueRootJson
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpaqueRootMap'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-array-extras:
+    post:
+      operationId: postOpaqueArrayExtras
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueArrayExtras'
+            encoding:
+              payload:
+                contentType: application/xml
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-array-extras-json:
+    post:
+      operationId: postOpaqueArrayExtrasJson
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpaqueArrayExtras'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-array-root:
+    post:
+      operationId: postOpaqueArrayRoot
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpaqueArrayRoot'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/opaque-array-root-json:
+    post:
+      operationId: postOpaqueArrayRootJson
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpaqueArrayRoot'
+      responses:
+        '204':
+          description: Accepted
   /multipart/dynamic-primitive-unions:
     post:
       operationId: postDynamicPrimitiveUnions
@@ -1232,6 +1448,102 @@ paths:
 
 components:
   schemas:
+    OpaqueSharedForm:
+      type: object
+      required: [payload, label]
+      additionalProperties:
+        type: string
+      properties:
+        payload:
+          type: object
+          required: [value]
+          properties:
+            value:
+              type: string
+        label:
+          type: string
+        internal:
+          type: string
+          readOnly: true
+    OpaqueDynamicForm:
+      type: object
+      required: [payload]
+      additionalProperties: {}
+      properties:
+        payload:
+          type: object
+          properties:
+            value:
+              type: string
+    OpaqueRootMap:
+      type: object
+      additionalProperties: {}
+    OpaqueArrayExtras:
+      type: object
+      required: [payload]
+      additionalProperties:
+        type: array
+        items: {}
+      properties:
+        payload:
+          type: object
+          properties:
+            value:
+              type: string
+    OpaqueArrayRoot:
+      type: object
+      additionalProperties:
+        type: array
+        items: {}
+    OpaqueAbsentForm:
+      type: object
+      required: [payload]
+      properties:
+        payload: {}
+        note:
+          type: string
+    OpaqueAllOf:
+      allOf:
+        - $ref: '#/components/schemas/OpaquePayload'
+        - $ref: '#/components/schemas/OpaqueNote'
+    OpaquePayload:
+      type: object
+      required: [payload]
+      properties:
+        payload:
+          type: object
+          required: [value]
+          properties:
+            value:
+              type: string
+    OpaqueNote:
+      type: object
+      required: [note]
+      properties:
+        note:
+          type: string
+    OpaqueDuplicate:
+      allOf:
+        - $ref: '#/components/schemas/OpaqueDuplicateLeft'
+        - $ref: '#/components/schemas/OpaqueDuplicateRight'
+    OpaqueDuplicateLeft:
+      type: object
+      required: [payload]
+      properties:
+        payload:
+          type: object
+          properties:
+            value:
+              type: string
+    OpaqueDuplicateRight:
+      type: object
+      required: [payload]
+      properties:
+        payload:
+          type: object
+          properties:
+            value:
+              type: string
     ReadOnlyFields:
       type: object
       required:

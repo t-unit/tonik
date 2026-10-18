@@ -1897,6 +1897,8 @@ MultipartRequestContent _content(
   Map<String, PartEncoding> encoding = const {},
 }) => MultipartRequestContent(
   model: model,
+  requestModel: model,
+  requestSources: const {},
   encoding: encoding,
   rawContentType: 'multipart/form-data',
   examples: const [],

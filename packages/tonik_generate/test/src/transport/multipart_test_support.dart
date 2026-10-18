@@ -4,8 +4,8 @@ MultipartRequestContent multipartContentFixture(
   Context context,
   List<MultipartPartFixture> parts, {
   String name = 'MultipartBody',
-}) => MultipartRequestContent(
-  model: ClassModel(
+}) {
+  final model = ClassModel(
     name: name,
     context: context,
     isDeprecated: false,
@@ -17,16 +17,21 @@ MultipartRequestContent multipartContentFixture(
     isNullable: false,
     isReadOnly: false,
     isWriteOnly: false,
-  ),
-  encoding: {
-    for (final part in parts)
-      if (part.hasExplicitEncoding) part.property.name: part.encoding,
-  },
-  rawContentType: 'multipart/form-data',
-  examples: const [],
-  wireContentType: null,
-  textEncoding: TextEncoding.utf8,
-);
+  );
+  return MultipartRequestContent(
+    model: model,
+    requestModel: model,
+    requestSources: const {},
+    encoding: {
+      for (final part in parts)
+        if (part.hasExplicitEncoding) part.property.name: part.encoding,
+    },
+    rawContentType: 'multipart/form-data',
+    examples: const [],
+    wireContentType: null,
+    textEncoding: TextEncoding.utf8,
+  );
+}
 
 final class MultipartPartFixture._({
   required final Property property,

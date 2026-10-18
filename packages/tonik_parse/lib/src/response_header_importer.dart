@@ -26,6 +26,10 @@ class ResponseHeaderImporter({
     for (final entry in headerMap.entries) {
       final name = entry.key;
       final header = entry.value;
+      if (isUnsupportedHeaderDefinition(header)) {
+        log.warning('Header $name has no usable definition. Ignoring.');
+        continue;
+      }
 
       final imported = _importHeader(
         name: name,
@@ -33,6 +37,29 @@ class ResponseHeaderImporter({
         context: rootContext.push(name),
       );
       headers.add(imported);
+    }
+  }
+
+  bool isUnsupportedHeaderDefinition(ReferenceWrapper<Header> wrapper) {
+    final visited = <String>{};
+    var current = wrapper;
+    while (true) {
+      switch (current) {
+        case InlinedObject<Header>(:final object):
+          return (object.schema == null && (object.content?.isEmpty ?? true)) ||
+              (object.schema != null &&
+                  (object.style ?? SerializationStyle.simple) !=
+                      SerializationStyle.simple);
+        case Reference<Header>(:final ref):
+          if (isExternalReference(ref)) return true;
+          if (!ref.startsWith('#/components/headers/') || !visited.add(ref)) {
+            return false;
+          }
+          final refName = ref.split('/').last;
+          final target = openApiObject.components?.headers?[refName];
+          if (target == null) return false;
+          current = target;
+      }
     }
   }
 
@@ -94,7 +121,7 @@ class ResponseHeaderImporter({
       case InlinedObject<Header>():
         final header = wrapper.object;
 
-        if (header.schema == null && header.content == null) {
+        if (header.schema == null && (header.content?.isEmpty ?? true)) {
           throw ArgumentError(
             'Header ${name ?? context.path} must have either schema or content',
           );

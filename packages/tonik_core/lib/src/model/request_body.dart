@@ -140,6 +140,8 @@ final class ModelRequestContent({
 
 final class MultipartRequestContent({
   required var Model model,
+  required var Model requestModel,
+  required final Map<Property, Property> requestSources,
 
   /// Per-use multipart encoding settings keyed by the raw schema property
   /// name. Defaults are resolved from the property's model by the generator.

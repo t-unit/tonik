@@ -60,13 +60,19 @@ class const FilterApplier() {
   /// Returns a new set of filtered models.
   Set<Model> filterSchemas({
     required Set<Model> models,
+    required Set<RequestBody> requestBodies,
     required List<String> excludeSchemas,
   }) {
     if (excludeSchemas.isEmpty) {
       return models;
     }
 
+    final projections = {
+      for (final pair in multipartRequestProjectionPairs(requestBodies))
+        pair.projection,
+    };
     return models.where((model) {
+      if (projections.contains(model)) return true;
       if (model is! NamedModel) return true;
       return model.name == null || !excludeSchemas.contains(model.name);
     }).toSet();

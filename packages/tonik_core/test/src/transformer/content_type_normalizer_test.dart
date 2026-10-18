@@ -192,20 +192,23 @@ void main() {
         examples: const [],
         formEncoding: null,
       );
+      final multipartModel = ClassModel(
+        name: 'MultipartBody',
+        properties: [partProperty],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+        nameOverride: null,
+        description: null,
+        additionalPropertiesPolicy: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
       final multipartContent = MultipartRequestContent(
-        model: ClassModel(
-          name: 'MultipartBody',
-          properties: [partProperty],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
-          nameOverride: null,
-          description: null,
-          additionalPropertiesPolicy: null,
-          isNullable: false,
-          isReadOnly: false,
-          isWriteOnly: false,
-        ),
+        model: multipartModel,
+        requestModel: multipartModel,
+        requestSources: const {},
         encoding: const {'message': partEncoding},
         rawContentType: 'multipart/form-data',
         examples: const [],
@@ -1364,20 +1367,23 @@ void main() {
       });
 
       test('keeps multipart request content unchanged', () {
+        final multipartModel = ClassModel(
+          name: 'MultipartData',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        );
         final originalContent = MultipartRequestContent(
-          model: ClassModel(
-            name: 'MultipartData',
-            properties: const [],
-            context: context,
-            isDeprecated: false,
-            examples: const [],
-            nameOverride: null,
-            description: null,
-            additionalPropertiesPolicy: null,
-            isNullable: false,
-            isReadOnly: false,
-            isWriteOnly: false,
-          ),
+          model: multipartModel,
+          requestModel: multipartModel,
+          requestSources: const {},
           encoding: const {},
           rawContentType: 'multipart/form-data',
           examples: const [],
@@ -1447,6 +1453,19 @@ void main() {
           textEncoding: TextEncoding.utf8,
         );
 
+        final multipartModel = ClassModel(
+          name: 'UploadData',
+          properties: [fileProperty],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        );
         final requestBody = RequestBodyObject(
           name: 'UploadForm',
           context: context,
@@ -1454,19 +1473,9 @@ void main() {
           isRequired: true,
           content: {
             MultipartRequestContent(
-              model: ClassModel(
-                name: 'UploadData',
-                properties: [fileProperty],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-                nameOverride: null,
-                description: null,
-                additionalPropertiesPolicy: null,
-                isNullable: false,
-                isReadOnly: false,
-                isWriteOnly: false,
-              ),
+              model: multipartModel,
+              requestModel: multipartModel,
+              requestSources: const {},
               encoding: const {'file': fileEncoding},
               rawContentType: 'multipart/form-data',
               examples: const [],

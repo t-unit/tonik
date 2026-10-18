@@ -60,6 +60,7 @@ class const ConfigTransformer() {
       if (filter.excludeSchemas.isNotEmpty) {
         document.models = filterApplier.filterSchemas(
           models: document.models,
+          requestBodies: document.requestBodies,
           excludeSchemas: filter.excludeSchemas,
         );
       }
@@ -119,10 +120,18 @@ class const ConfigTransformer() {
       final applier = NameOverrideApplier();
 
       if (overrides.schemas.isNotEmpty) {
-        applier.applySchemaOverrides(document.models, overrides.schemas);
+        applier.applySchemaOverrides(
+          document.models,
+          overrides.schemas,
+          requestBodies: document.requestBodies,
+        );
       }
       if (overrides.properties.isNotEmpty) {
-        applier.applyPropertyOverrides(document.models, overrides.properties);
+        applier.applyPropertyOverrides(
+          document.models,
+          overrides.properties,
+          requestBodies: document.requestBodies,
+        );
       }
       if (overrides.enums.isNotEmpty) {
         applier.applyEnumValueOverrides(document.models, overrides.enums);

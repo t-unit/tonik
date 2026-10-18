@@ -95,6 +95,14 @@ class ResponseImporter({
               continue;
             }
 
+            if (headerImporter.isUnsupportedHeaderDefinition(entry.value)) {
+              log.warning(
+                'Response header "${entry.key}" has no usable definition. '
+                'Ignoring.',
+              );
+              continue;
+            }
+
             headers[entry.key] = headerImporter.importInlineHeader(
               wrapper: entry.value,
               context: context.push('header').push(entry.key),

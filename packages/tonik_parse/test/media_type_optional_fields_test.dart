@@ -56,6 +56,21 @@ void main() {
     expect(media.examples!.keys, ['valid']);
   });
 
+  test('empty encodings survive while malformed-only entries are omitted', () {
+    final media = MediaType.fromJson({
+      'encoding': {
+        'empty': <String, dynamic>{},
+        'invalid': {'explode': 'bad'},
+        'xml': {'contentType': 'application/xml', 'explode': 'bad'},
+      },
+    });
+
+    expect(media.encoding!.keys, ['empty', 'xml']);
+    expect(media.encoding!['empty']!.contentType, isNull);
+    expect(media.encoding!['xml']!.contentType, 'application/xml');
+    expect(media.encoding!['xml']!.explode, isNull);
+  });
+
   test('null item schemas retain complete schema handling', () {
     final document =
         Importer(contentTypes: {'application/x-ndjson': ContentType.json})

@@ -20,21 +20,19 @@ class Header({
   final Map<String, ReferenceWrapper<Example>>? examples,
 }) {
   factory fromJson(Map<String, dynamic> json) => Header(
-    description: json['description'] as String?,
-    isRequired: json['required'] as bool?,
-    isDeprecated: json['deprecated'] as bool?,
-    style: json['style'] == null
-        ? null
-        : SerializationStyle.fromJson(json['style']),
-    explode: json['explode'] as bool?,
-    schema: const SchemaConverter().fromJson(json['schema']),
-    content: (json['content'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ReferenceWrapper<MediaType>.fromJson(e)),
-    ),
+    description: json['description'] is String
+        ? json['description'] as String
+        : null,
+    isRequired: json['required'] is bool ? json['required'] as bool : null,
+    isDeprecated: json['deprecated'] is bool
+        ? json['deprecated'] as bool
+        : null,
+    style: _optionalStyle(json['style']),
+    explode: json['explode'] is bool ? json['explode'] as bool : null,
+    schema: _optionalSchema(json['schema']),
+    content: _optionalReferences<MediaType>(json['content']),
     example: json['example'],
-    examples: (json['examples'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
-    ),
+    examples: _optionalReferences<Example>(json['examples']),
   );
 
   @override
@@ -43,4 +41,43 @@ class Header({
       'isDeprecated: $isDeprecated, style: $style, explode: $explode, '
       'schema: $schema, content: $content, '
       'example: $example, examples: $examples}';
+}
+
+SerializationStyle? _optionalStyle(Object? value) {
+  if (value == null) return null;
+  try {
+    return SerializationStyle.fromJson(value);
+  } on FormatException {
+    return null;
+  }
+}
+
+Schema? _optionalSchema(Object? value) {
+  try {
+    return const SchemaConverter().fromJson(value);
+    // Optional schemas use casts and format checks during parsing.
+    // ignore: avoid_catching_errors
+  } on TypeError catch (error) {
+    if (error is MalformedReferenceError) rethrow;
+    return null;
+  } on FormatException {
+    return null;
+  }
+}
+
+Map<String, ReferenceWrapper<T>>? _optionalReferences<T>(Object? value) {
+  if (value is! Map<String, dynamic>) return null;
+  final entries = <String, ReferenceWrapper<T>>{};
+  for (final entry in value.entries) {
+    try {
+      entries[entry.key] = ReferenceWrapper<T>.fromJson(entry.value);
+      // Optional references use casts and format checks during parsing.
+      // ignore: avoid_catching_errors
+    } on TypeError catch (error) {
+      if (error is MalformedReferenceError) rethrow;
+    } on FormatException {
+      continue;
+    }
+  }
+  return entries;
 }

@@ -168,9 +168,9 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
   final occurrences =
       <({Property property, List<MultipartAccessSegment> path})>[];
   final collection = _collectMultipartProperties(
-    content.model,
+    content.requestModel,
     const [],
-    multipartModelIsNullable(content.model),
+    multipartModelIsNullable(content.requestModel),
     <Model>{},
     occurrences,
     nameManager,
@@ -186,14 +186,27 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
   final grouped =
       <
         String,
-        List<({Property property, List<MultipartAccessSegment> path})>
+        List<
+          ({
+            Property property,
+            Property source,
+            List<MultipartAccessSegment> path,
+          })
+        >
       >{};
   for (final occurrence in occurrences) {
-    if (occurrence.property.isReadOnly ||
+    final source =
+        content.requestSources[occurrence.property] ?? occurrence.property;
+    if (source.isReadOnly ||
+        _modelIsReadOnly(source.model, <Model>{}) ||
         _modelIsReadOnly(occurrence.property.model, <Model>{})) {
       continue;
     }
-    (grouped[occurrence.property.name] ??= []).add(occurrence);
+    (grouped[source.name] ??= []).add((
+      property: occurrence.property,
+      source: source,
+      path: occurrence.path,
+    ));
   }
   final unmatchedEncodingKeys = content.encoding.keys
       .where((key) => !grouped.containsKey(key))
@@ -211,7 +224,7 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
     for (final entry in grouped.entries)
       (
         normalizedName: normalizeSingle(
-          entry.value.first.property.nameOverride ?? entry.key,
+          entry.value.first.source.nameOverride ?? entry.key,
           preserveNumbers: true,
         ),
         originalValue: entry,
@@ -232,14 +245,14 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
             for (final occurrence in item.originalValue.value) occurrence.path,
           ],
           isRequired: item.originalValue.value.any(
-            (occurrence) => occurrence.property.isRequired,
+            (occurrence) => occurrence.source.isRequired,
           ),
           isNullable: item.originalValue.value.every(
             (occurrence) =>
-                occurrence.property.isNullable ||
+                occurrence.source.isNullable ||
                 multipartModelIsNullable(occurrence.property.model) ||
-                !occurrence.property.isRequired ||
-                occurrence.property.isWriteOnly ||
+                !occurrence.source.isRequired ||
+                occurrence.source.isWriteOnly ||
                 occurrence.path.any((segment) => segment.receiverNullable),
           ),
         ),

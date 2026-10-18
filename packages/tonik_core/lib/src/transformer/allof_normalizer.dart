@@ -288,6 +288,10 @@ class const AllOfNormalizer({required final bool normalizeSingleMembers}) {
               content.model = _transformModel(content.model, cache);
             case MultipartRequestContent():
               content.model = _transformModel(content.model, cache);
+              content.requestModel = _transformModel(
+                content.requestModel,
+                cache,
+              );
           }
         }
     }

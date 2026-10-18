@@ -500,13 +500,19 @@ void main() {
     expect(server.requestCount, 0);
   });
 
-  test('rejects untyped dynamic values before sending', () async {
-    final error = requireError(
-      await api.postDynamicUntyped(body: {'a': 'value'}),
+  test('sends untyped dynamic values as binary parts', () async {
+    expect(
+      await api.postDynamicUntyped(
+        body: {
+          'a': const TonikFileBytes([0, 255], fileName: 'value.bin'),
+        },
+      ),
+      isTonikSuccess,
     );
-    expect(error.type, TonikErrorType.encoding);
-    expect(error.error, isA<EncodingException>());
-    expect(server.requestCount, 0);
+    final part = MultipartWire(await server.takeRequest()).single('a');
+    expect(part.bodyBytes, [0, 255]);
+    expect(part.filename, 'value.bin');
+    expect(part.contentType, 'application/octet-stream');
   });
 
   test('rejects dynamic sources nested in allOf before sending', () async {

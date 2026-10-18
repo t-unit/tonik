@@ -246,6 +246,19 @@ void main() {
       ];
 
       for (final (contentType, expectedType) in cases) {
+        final multipartModel = ClassModel(
+          context: context,
+          properties: const [],
+          isDeprecated: false,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        );
         final operation = _operation(
           context,
           requestBody: RequestBodyObject(
@@ -256,19 +269,9 @@ void main() {
             content: {
               if (contentType == ContentType.multipart)
                 MultipartRequestContent(
-                  model: ClassModel(
-                    context: context,
-                    properties: const [],
-                    isDeprecated: false,
-                    examples: const [],
-                    name: null,
-                    nameOverride: null,
-                    description: null,
-                    additionalPropertiesPolicy: null,
-                    isNullable: false,
-                    isReadOnly: false,
-                    isWriteOnly: false,
-                  ),
+                  model: multipartModel,
+                  requestModel: multipartModel,
+                  requestSources: const {},
                   encoding: const {},
                   rawContentType: _rawContentTypes[contentType]!,
                   examples: const [],

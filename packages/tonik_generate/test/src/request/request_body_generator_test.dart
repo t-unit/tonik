@@ -224,6 +224,8 @@ void main() {
             ),
             MultipartRequestContent(
               model: model,
+              requestModel: model,
+              requestSources: const {},
               encoding: const {},
               rawContentType: 'multipart/form-data',
               examples: const [],
