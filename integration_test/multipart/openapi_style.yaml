@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: Multipart style API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /multipart/style-nested-arrays:
+    post:
+      operationId: postStyleNestedArrays
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedArrayForm'
+            encoding:
+              values:
+                style: form
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-file-values:
+    post:
+      operationId: postStyleFileValues
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, encoded]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                encoded:
+                  type: string
+                  format: byte
+            encoding:
+              file:
+                style: form
+              encoded:
+                style: form
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-typed-map-values:
+    post:
+      operationId: postStyleTypedMapValues
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [metadata, entries, timestamps, statuses]
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                entries:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                timestamps:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    format: date-time
+                statuses:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    enum: [open, closed]
+            encoding:
+              metadata:
+                style: form
+              entries:
+                style: form
+              timestamps:
+                style: form
+              statuses:
+                style: form
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-untyped-collapsed:
+    post:
+      operationId: postStyleUntypedCollapsed
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [labels]
+              properties:
+                labels:
+                  type: array
+                  items: {}
+            encoding:
+              labels:
+                explode: false
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-merged-map:
+    post:
+      operationId: postStyleMergedMap
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    metadata:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    labels:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+                - type: object
+                  properties:
+                    metadata:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    labels:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+            encoding:
+              metadata:
+                style: form
+              labels:
+                style: form
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-map-values:
+    post:
+      operationId: postStyleMapValues
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [metadata, entries, loose]
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
+                entries:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: string
+                loose: {}
+            encoding:
+              metadata:
+                style: form
+              entries:
+                style: form
+              loose:
+                allowReserved: true
+                contentType: application/json
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-collapsed-map:
+    post:
+      operationId: postStyleCollapsedMap
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [metadata]
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
+            encoding:
+              metadata:
+                explode: false
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-named-fields:
+    post:
+      operationId: postStyleNamedFields
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [labels, metadata, details, payload]
+              properties:
+                labels:
+                  type: array
+                  items:
+                    type: string
+                metadata:
+                  type: object
+                  required: [topic, note]
+                  properties:
+                    topic:
+                      type: string
+                    note:
+                      type: string
+                details:
+                  type: object
+                  required: [topic, note]
+                  properties:
+                    topic:
+                      type: string
+                    note:
+                      type: string
+                payload:
+                  type: string
+            encoding:
+              labels:
+                explode: true
+                allowReserved: true
+                contentType: application/json
+              metadata:
+                style: form
+                contentType: application/json
+              details:
+                style: deepObject
+                contentType: application/json
+              payload:
+                contentType: 'application/json, text/plain'
+      responses:
+        '204':
+          description: Accepted
+  /multipart/style-collapsed-fields:
+    post:
+      operationId: postStyleCollapsedFields
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [labels, metadata]
+              properties:
+                labels:
+                  type: array
+                  items:
+                    type: string
+                metadata:
+                  type: object
+                  required: [topic, note]
+                  properties:
+                    topic:
+                      type: string
+                    note:
+                      type: string
+            encoding:
+              labels:
+                style: form
+                explode: false
+              metadata:
+                explode: false
+      responses:
+        '204':
+          description: Accepted
+components:
+  schemas:
+    NestedArrayForm:
+      type: object
+      required: [values]
+      properties:
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer

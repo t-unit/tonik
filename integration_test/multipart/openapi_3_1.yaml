@@ -336,9 +336,8 @@ paths:
       summary: Post a complex object as a deepObject-encoded multipart part
       description: >-
         Verifies OAS 3.1 deepObject style on multipart encoding.
-        When style: deepObject is set on an object property, it is serialized
-        using bracket notation (address[city]=Berlin&address[zip]=10115) with
-        Content-Type: application/x-www-form-urlencoded.
+        Each object property is sent as a text/plain multipart part using
+        a bracketed name, such as address[city] and address[zip].
       requestBody:
         required: true
         content:
@@ -365,7 +364,8 @@ paths:
       summary: Post an object with mixed scalar types using deepObject encoding
       description: >-
         Verifies deepObject encoding handles string, integer, and boolean
-        property types correctly, including URL-encoding of special characters.
+        property types correctly, including literal multipart text for
+        special characters.
       requestBody:
         required: true
         content:

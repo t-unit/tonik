@@ -72,8 +72,7 @@ class const PartEncoding._({
        );
 
   /// When false, serialization is content-based, driven by [contentType].
-  bool get isStyleBased =>
-      style != null || explode != null || allowReserved != null;
+  bool get isStyleBased => style != null || explode != null;
 
   bool get requiresWireContentType =>
       (extractMediaType(rawContentType)?.startsWith('multipart/') ?? false) &&

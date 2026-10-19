@@ -88,6 +88,7 @@ GENERATED_DIRS=(
   read_write_only/read_write_only_api
   nullable_bodies/nullable_bodies_api
   multipart/multipart_api
+  multipart/multipart_style_api
   multipart/multipart_3_1_api
   adversarial_strings/adversarial_strings_api
   figma/figma_api
@@ -144,6 +145,7 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p read_write_only_api -s read_write_only/openapi.yaml -o read_write_only --backend $BACKEND"
   "$TONIK_BINARY -p nullable_bodies_api -s nullable_bodies/openapi.yaml -o nullable_bodies --backend $BACKEND"
   "$TONIK_BINARY --config multipart/tonik.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config multipart/tonik_style.yaml --backend $BACKEND"
   "$TONIK_BINARY --config multipart/tonik_3_1.yaml --backend $BACKEND"
   "$TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings --backend $BACKEND"
   "$TONIK_BINARY --config figma/tonik.yaml --backend $BACKEND"
@@ -154,8 +156,8 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map --backend $BACKEND"
 )
 
-if [ "${#GENERATED_DIRS[@]}" -ne 45 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 45 ]; then
-  echo "Error: integration fixture inventory must contain exactly 45 entries." >&2
+if [ "${#GENERATED_DIRS[@]}" -ne 46 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 46 ]; then
+  echo "Error: integration fixture inventory must contain exactly 46 entries." >&2
   exit 1
 fi
 
@@ -164,12 +166,12 @@ echo "Compiling Tonik..."
 dart compile exe "$REPO_ROOT/packages/tonik/bin/tonik.dart" -o "$TONIK_BINARY"
 
 cd "$INTEGRATION_TEST_DIR"
-echo "Cleaning 45 generated API packages..."
+echo "Cleaning 46 generated API packages..."
 for directory in "${GENERATED_DIRS[@]}"; do
   rm -rf "$directory"
 done
 
-echo "Generating 45 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
+echo "Generating 46 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
 run_commands "$SETUP_JOBS" "${GENERATION_COMMANDS[@]}"
 
 generated_count=0
@@ -202,7 +204,7 @@ for directory in "${TEST_DIRS[@]}"; do
 done
 PUB_GET_COMMANDS+=("cd 'test_helpers' && dart pub get")
 
-echo "Resolving dependencies for 45 generated, 41 test, and 1 helper package..."
+echo "Resolving dependencies for 46 generated, 41 test, and 1 helper package..."
 run_commands "$SETUP_JOBS" "${PUB_GET_COMMANDS[@]}"
 
 if [ "$SKIP_IMPOSTER" = false ]; then

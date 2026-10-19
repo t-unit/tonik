@@ -4,6 +4,18 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('raw deep object parts keep names and values literal', () {
+    const value = {
+      'a/b': PropertyValue.scalar('x y+z'),
+      'note': PropertyValue.scalar('one/two'),
+    };
+
+    expect(value.toRawDeepObjectParts('meta'), [
+      (name: 'meta[a/b]', value: 'x y+z'),
+      (name: 'meta[note]', value: 'one/two'),
+    ]);
+  });
+
   group('PropertyValueStyleEncoders.toUri', () {
     test('encodes scalar pairs once and keeps separators literal', () {
       const value = {

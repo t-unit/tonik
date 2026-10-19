@@ -11,6 +11,8 @@ dependencies:
     path: ../multipart_3_1_api
   multipart_api:
     path: ../multipart_api
+  multipart_style_api:
+    path: ../multipart_style_api
   path: ^1.9.1
   tonik_util: ^0.9.0
 

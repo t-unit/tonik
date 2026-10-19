@@ -215,6 +215,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  multipart_style_api:
+    dependency: "direct main"
+    description:
+      path: "../multipart_style_api"
+      relative: true
+    source: path
+    version: "1.0.0"
   node_preamble:
     dependency: transitive
     description:

@@ -117,8 +117,7 @@ void main() {
   });
 
   group('OAS 3.1 deepObject style encoding', () {
-    test('serializes required object as bracket-notation with '
-        'application/x-www-form-urlencoded content type', () async {
+    test('serializes required object as bracketed text parts', () async {
       final server = await _jsonServer();
 
       final response = await _api(server).postDeepObject(
@@ -135,6 +134,14 @@ void main() {
       ]);
       expect(wire.single('address[city]').bodyText, 'Berlin');
       expect(wire.single('address[zip]').bodyText, '10115');
+      expect(
+        wire.single('address[city]').contentType,
+        'text/plain; charset=utf-8',
+      );
+      expect(
+        wire.single('address[zip]').contentType,
+        'text/plain; charset=utf-8',
+      );
     });
 
     test(
@@ -161,7 +168,7 @@ void main() {
       },
     );
 
-    test('URL-encodes special characters in property values', () async {
+    test('sends special characters as raw text in property values', () async {
       final server = await _jsonServer();
 
       final response = await _api(server).postDeepObjectTypes(
@@ -172,7 +179,13 @@ void main() {
 
       expect(response, isTonikSuccess);
       final wire = MultipartWire(await server.takeRequest());
-      expect(wire.single('profile[name]').bodyText, 'New%20York');
+      final name = wire.single('profile[name]');
+      expect(name.bodyBytes, utf8.encode('New York'));
+      expect(name.contentType, 'text/plain; charset=utf-8');
+      expect(
+        name.header('content-disposition'),
+        contains('name="profile[name]"'),
+      );
       expect(wire.single('profile[active]').bodyText, 'false');
     });
 

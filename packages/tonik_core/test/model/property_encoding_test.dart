@@ -203,7 +203,7 @@ void main() {
         expect(encoding.isStyleBased, isTrue);
       });
 
-      test('is true when allowReserved is set', () {
+      test('does not use allowReserved as an effective style setting', () {
         const encoding = PartEncoding(
           contentType: null,
           rawContentType: null,
@@ -214,7 +214,7 @@ void main() {
           wireContentType: null,
           textEncoding: TextEncoding.utf8,
         );
-        expect(encoding.isStyleBased, isTrue);
+        expect(encoding.isStyleBased, isFalse);
       });
 
       test(

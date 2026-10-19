@@ -210,6 +210,9 @@ class RequestBodyImporter({
     final properties = _collectWritableMultipartProperties(model);
     final allProperties = _collectFormProperties(model);
     final dynamicRoot = model.resolved is core.MapModel;
+    final isFormData =
+        rawContentType.split(';').first.trim().toLowerCase() ==
+        'multipart/form-data';
     final encoding = <String, core.PartEncoding>{};
     final mediaAlternatives = <String, List<core.PartEncoding>>{};
     for (final entry
@@ -227,9 +230,10 @@ class RequestBodyImporter({
       }
       final declared = entry.value.contentType;
       final styleBased =
-          entry.value.style != null ||
-          entry.value.explode != null ||
-          entry.value.allowReserved != null;
+          isFormData &&
+          (entry.value.style != null ||
+              entry.value.explode != null ||
+              entry.value.allowReserved != null);
       final alternatives = declared == null || styleBased
           ? const <String>[]
           : _splitPartMediaTypes(declared)
@@ -242,12 +246,13 @@ class RequestBodyImporter({
               Encoding(
                 contentType: alternative,
                 headers: entry.value.headers,
-                style: entry.value.style,
-                explode: entry.value.explode,
-                allowReserved: entry.value.allowReserved,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
               entry.key,
               context,
+              styleApplicable: styleBased,
             ),
         ];
         mediaAlternatives[entry.key] = choices;
@@ -263,12 +268,14 @@ class RequestBodyImporter({
           ),
           entry.key,
           context,
+          styleApplicable: false,
         );
       } else {
         encoding[entry.key] = _importPartEncoding(
           entry.value,
           entry.key,
           context,
+          styleApplicable: styleBased,
         );
       }
     }
@@ -771,8 +778,9 @@ class RequestBodyImporter({
   core.PartEncoding _importPartEncoding(
     Encoding encoding,
     String propertyName,
-    core.Context context,
-  ) {
+    core.Context context, {
+    required bool styleApplicable,
+  }) {
     final headers = _importEncodingHeaders(encoding, propertyName, context);
     final resolvedContentType = encoding.contentType != null
         ? resolveContentType(
@@ -786,7 +794,7 @@ class RequestBodyImporter({
         encoding.style != null ||
         encoding.explode != null ||
         encoding.allowReserved != null;
-    final useStyleMode = hasExplicitStyleFields;
+    final useStyleMode = styleApplicable && hasExplicitStyleFields;
 
     final resolvedStyle = useStyleMode
         ? (_mapSerializationStyle(encoding.style) ?? core.EncodingStyle.form)
@@ -813,7 +821,7 @@ class RequestBodyImporter({
       explode: useStyleMode
           ? (encoding.explode ?? (resolvedStyle == core.EncodingStyle.form))
           : null,
-      allowReserved: useStyleMode ? (encoding.allowReserved ?? false) : null,
+      allowReserved: null,
     );
   }
 

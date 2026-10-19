@@ -676,6 +676,25 @@ class const MultipartBodyPlanner({
     if (model is MultipartChoiceModel) {
       return _choicePart(part, model);
     }
+    if (part.encoding.isStyleBased &&
+        (model is BinaryModel || model is Base64Model)) {
+      return _error(
+        'Multipart property "${part.name}" cannot encode file content '
+        'with style-based encoding.',
+      );
+    }
+    if (part.encoding.isStyleBased && model is AnyModel) {
+      return [
+        _text(
+          part,
+          refer(
+            'multipartTextValue',
+            'package:tonik_util/tonik_util.dart',
+          ).call([part.value]),
+          contentType: 'text/plain',
+        ),
+      ];
+    }
     final contentType = part.encoding.contentType;
     if (!part.encoding.isStyleBased) {
       if (contentType == ContentType.bytes &&
@@ -948,7 +967,9 @@ class const MultipartBodyPlanner({
     bool field = false,
     Expression? name,
   }) {
-    final encoding = part.encoding.textEncoding;
+    final encoding = part.encoding.isStyleBased
+        ? TextEncoding.utf8
+        : part.encoding.textEncoding;
     final plain = _dio && encoding == TextEncoding.utf8;
     return MultipartAppend(
       name: name ?? part.wireName,
@@ -962,6 +983,8 @@ class const MultipartBodyPlanner({
           : MultipartValueSource.bytes,
       contentType: omitContentType
           ? null
+          : part.encoding.isStyleBased
+          ? (_dio ? 'text/plain' : 'text/plain; charset=utf-8')
           : contentType ?? part.encoding.wireContentType ?? fallback,
       contentTypeExpression: omitContentType ? null : part.selectedContentType,
       headers: part.headers,
@@ -1046,7 +1069,7 @@ class const MultipartBodyPlanner({
         !encoding.isStyleBased &&
         encoding.contentType != null &&
         encoding.contentType != ContentType.text;
-    if (_dio && encoding.style == EncodingStyle.deepObject) {
+    if (encoding.style == EncodingStyle.deepObject) {
       return _error(
         'deepObject style is not supported for array multipart '
         'properties (property: ${part.name}).',
@@ -1057,6 +1080,12 @@ class const MultipartBodyPlanner({
       return _listItems(part, model, _part(itemPart, item));
     }
     if (item is ListModel) {
+      if (encoding.isStyleBased) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode a nested array '
+          'with style-based encoding.',
+        );
+      }
       if (contentBased && encoding.contentType == ContentType.json) {
         return _listItems(
           part,
@@ -1084,6 +1113,12 @@ class const MultipartBodyPlanner({
       );
     }
     if (item is Base64Model) {
+      if (encoding.isStyleBased) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode file content '
+          'with style-based encoding.',
+        );
+      }
       if (!encoding.isStyleBased && encoding.contentType != ContentType.bytes) {
         return _error(
           'Multipart property "${part.name}" cannot encode base64 file '
@@ -1093,6 +1128,12 @@ class const MultipartBodyPlanner({
       return _listItems(part, model, [_base64(itemPart)]);
     }
     if (item is BinaryModel) {
+      if (encoding.isStyleBased) {
+        return _error(
+          'Multipart property "${part.name}" cannot encode file content '
+          'with style-based encoding.',
+        );
+      }
       return _listItems(part, model, _file(itemPart));
     }
     if (!encoding.isStyleBased &&
@@ -1114,9 +1155,18 @@ class const MultipartBodyPlanner({
       }
       return _listItems(part, model, _part(itemPart, item));
     }
-    if (item is ClassModel ||
-        item is CompositeModel ||
-        (!_dio && (item is MapModel || item is AnyModel))) {
+    if (encoding.isStyleBased &&
+        (item is ClassModel ||
+            item is CompositeModel ||
+            item is MapModel ||
+            (item is AnyModel && (encoding.explode ?? true)))) {
+      return _listItems(part, model, _part(itemPart, item));
+    }
+    if (!encoding.isStyleBased &&
+        (item is ClassModel ||
+            item is CompositeModel ||
+            item is MapModel ||
+            item is AnyModel)) {
       if (item is MapModel) {
         return _listItems(part, model, _map(itemPart, item));
       }
@@ -1144,33 +1194,14 @@ class const MultipartBodyPlanner({
         : item is StringModel
         ? part.value
         : _mapped(part.value, itemText);
-    if (encoding.style == EncodingStyle.spaceDelimited ||
-        encoding.style == EncodingStyle.pipeDelimited) {
-      final space = encoding.style == EncodingStyle.spaceDelimited;
-      final encoded = strings
-          .property(space ? 'toSpaceDelimited' : 'toPipeDelimited')
-          .call([], {
-            'explode': literalFalse,
-            'allowEmpty': literalTrue,
-            'alreadyEncoded': literalTrue,
-            if (space) 'percentEncodeDelimiter': literalFalse,
-            if (!_dio && (encoding.allowReserved ?? false))
-              'allowReserved': literalTrue,
-          });
-      return _loop('item', encoded, [_listText(part, refer('item'))]);
-    }
-    final serialized = _dio
-        ? strings.property('uriEncode').call([], {
-            'allowEmpty': literalTrue,
-            'textEncoding': textEncodingExpression(encoding.textEncoding),
-            'alreadyEncoded': literalTrue,
-          })
-        : buildSimpleValueExpression(
-            part.value,
-            model,
-            explode: false,
-            allowEmpty: true,
-          ).unsafeRawBody;
+    final delimiter = switch (encoding.style) {
+      EncodingStyle.spaceDelimited => ' ',
+      EncodingStyle.pipeDelimited => '|',
+      _ => ',',
+    };
+    final serialized = strings.property('join').call([
+      literalString(delimiter),
+    ]);
     return [_listText(part, serialized)];
   }
 
@@ -1187,24 +1218,19 @@ class const MultipartBodyPlanner({
   MultipartAppend _listText(_Part part, Expression text) => _text(
     part,
     text,
-    field: _dio && part.encoding.isStyleBased,
-    omitContentType:
-        _dio &&
-        part.encoding.textEncoding == TextEncoding.utf8 &&
-        part.encoding.isStyleBased,
+    contentType: part.encoding.isStyleBased ? 'text/plain' : null,
   );
 
   Expression _itemText(_Part part, Model model) {
     if (model is StringModel) return part.value;
+    if (model is AnyModel) {
+      return refer(
+        'multipartTextValue',
+        'package:tonik_util/tonik_util.dart',
+      ).call([part.value]);
+    }
     if (model is EnumModel) {
-      return _dio && part.encoding.isStyleBased
-          ? part.value.property('uriEncode').call([], {
-              'allowEmpty': literalTrue,
-              'textEncoding': textEncodingExpression(
-                part.encoding.textEncoding,
-              ),
-            })
-          : _enum(part.value, model, part.encoding);
+      return _enum(part.value, model, part.encoding);
     }
     return _primitive(part.value, model, part.encoding);
   }
@@ -1215,14 +1241,20 @@ class const MultipartBodyPlanner({
     PartEncoding encoding,
   ) {
     final json = value.property('toJson').call([]);
-    if (!_dio && encoding.contentType == ContentType.json) return _json(json);
+    if (!_dio &&
+        !encoding.isStyleBased &&
+        encoding.contentType == ContentType.json) {
+      return _json(json);
+    }
     return model is EnumModel<String>
         ? json
         : json.property('toString').call([]);
   }
 
   Expression _primitive(Expression value, Model model, PartEncoding encoding) {
-    if (encoding.contentType == ContentType.json && model is PrimitiveModel) {
+    if (!encoding.isStyleBased &&
+        encoding.contentType == ContentType.json &&
+        model is PrimitiveModel) {
       final jsonValue = switch (model) {
         DateTimeModel() => value.property('toTimeZonedIso8601String').call([]),
         DateModel() => value.property('toJson').call([]),
@@ -1239,12 +1271,87 @@ class const MultipartBodyPlanner({
   }
 
   List<MultipartEmission> _map(_Part part, MapModel model) {
-    if (_dio && part.encoding.style == EncodingStyle.deepObject) {
-      return _error(
-        'deepObject style is not supported for map multipart '
-        'properties (property: ${part.name}). '
-        'Maps do not implement ParameterEncodable.toDeepObject().',
-      );
+    if (part.encoding.isStyleBased) {
+      if (part.encoding.style != EncodingStyle.form &&
+          part.encoding.style != EncodingStyle.deepObject) {
+        return _error(
+          '${part.encoding.style?.name ?? 'unknown'} style is not '
+          'supported for map multipart part ${part.name}',
+        );
+      }
+      final value = useImmutableCollections && !part.isMergedMap
+          ? part.value.property('unlock')
+          : part.value;
+      final valueModel = model.valueModel.resolved;
+      final Expression encodedValue;
+      if (valueModel is ListModel) {
+        final itemModel = valueModel.content.resolved;
+        if (!_mapStyleSupportsText(itemModel)) {
+          return _error(
+            'Multipart property "${part.name}" cannot style-encode '
+            'complex map array values.',
+          );
+        }
+        final item = refer('item');
+        final itemText = _mapStyleText(item, itemModel);
+        final rawItems = refer('value')
+            .asA(refer('Iterable', 'dart:core'))
+            .property('map')
+            .call([
+              Method(
+                (b) => b
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((p) => p..name = 'item'))
+                  ..body = item
+                      .equalTo(literalNull)
+                      .conditional(literalString(''), itemText)
+                      .code,
+              ).closure,
+            ])
+            .property('toList')
+            .call([]);
+        encodedValue = refer(
+          'PropertyValue',
+          'package:tonik_util/tonik_util.dart',
+        ).property('array').call([rawItems]);
+      } else if (_mapStyleSupportsText(valueModel)) {
+        encodedValue = refer(
+          'PropertyValue',
+          'package:tonik_util/tonik_util.dart',
+        ).property('scalar').call([_mapStyleText(refer('value'), valueModel)]);
+      } else {
+        return _error(
+          'Multipart property "${part.name}" cannot style-encode '
+          'complex map values.',
+        );
+      }
+      final entries =
+          refer(
+            'multipartMapStyleParts',
+            'package:tonik_util/tonik_util.dart',
+          ).call(
+            [value, part.wireName],
+            {
+              'explode': literalBool(part.encoding.explode ?? true),
+              'deepObject': literalBool(
+                part.encoding.style == EncodingStyle.deepObject,
+              ),
+              'encodeValue': Method(
+                (b) => b
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((p) => p..name = 'value'))
+                  ..body = encodedValue.code,
+              ).closure,
+            },
+          );
+      return _loop('entry', entries, [
+        _text(
+          part,
+          refer('entry').property('value'),
+          name: refer('entry').property('name'),
+          contentType: 'text/plain',
+        ),
+      ]);
     }
     if (!part.encoding.isStyleBased &&
         part.encoding.contentType == ContentType.form) {
@@ -1255,6 +1362,43 @@ class const MultipartBodyPlanner({
     }
     return [_text(part, _json(part.value), fallback: 'application/json')];
   }
+
+  bool _mapStyleSupportsText(Model model) => switch (model) {
+    StringModel() ||
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    EnumModel() ||
+    AnyModel() => true,
+    _ => false,
+  };
+
+  Expression _mapStyleText(Expression value, Model model) => switch (model) {
+    AnyModel() || StringModel() => refer(
+      'multipartTextValue',
+      'package:tonik_util/tonik_util.dart',
+    ).call([value]),
+    DateTimeModel() =>
+      value
+          .asA(refer('DateTime', 'dart:core'))
+          .property('toTimeZonedIso8601String')
+          .call([]),
+    EnumModel<String>() =>
+      value.asA(refer('dynamic', 'dart:core')).property('toJson').call([]),
+    EnumModel() =>
+      value
+          .asA(refer('dynamic', 'dart:core'))
+          .property('toJson')
+          .call([])
+          .property('toString')
+          .call([]),
+    _ => value.property('toString').call([]),
+  };
 
   List<MultipartEmission> _jsonPart(
     _Part part,
@@ -1285,25 +1429,20 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _object(_Part part) {
     final encoding = part.encoding;
     if (encoding.style == EncodingStyle.deepObject) {
-      final entries = part.value
-          .property('toDeepObject')
-          .call(
-            [part.wireName],
-            {
-              'explode': literalTrue,
-              'allowEmpty': literalTrue,
-              if (!_dio && (encoding.allowReserved ?? false))
-                'allowReserved': literalTrue,
-            },
-          );
+      final entries =
+          (part.isMergedObjectProperties
+                  ? part.value
+                  : part.value.property('parameterProperties').call([], {
+                      'allowEmpty': literalTrue,
+                    }))
+              .property('toRawDeepObjectParts')
+              .call([part.wireName]);
       return _loop('entry', entries, [
         _text(
           part,
           refer('entry').property('value'),
           name: refer('entry').property('name'),
-          field: _dio,
-          omitContentType: _dio,
-          contentType: 'application/x-www-form-urlencoded',
+          contentType: 'text/plain',
         ),
       ]);
     }
@@ -1336,7 +1475,6 @@ class const MultipartBodyPlanner({
             part,
             refer(variable).property('value'),
             name: refer(variable).property('name'),
-            omitContentType: _dio,
             contentType: 'text/plain',
           ),
         ]),

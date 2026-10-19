@@ -214,6 +214,21 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return [(name: paramName, value: parts.join(','))];
   }
 
+  List<ParameterEntry> toRawDeepObjectParts(String paramName) {
+    final result = <ParameterEntry>[];
+    for (final entry in entries) {
+      switch (entry.value) {
+        case ScalarPropertyValue(:final value):
+          result.add((name: '$paramName[${entry.key}]', value: value));
+        case ArrayPropertyValue():
+          throw const EncodingException(
+            'Lists are not supported in this encoding style',
+          );
+      }
+    }
+    return result;
+  }
+
   /// Joins the alternating key/value tokens with a `|`.
   ///
   /// On the wire the `|` is percent-encoded to `%7C`, identical to a `|`

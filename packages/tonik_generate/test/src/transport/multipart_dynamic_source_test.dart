@@ -713,10 +713,11 @@ Object? encode() {
     _expectMethod(content, TransportBackend.dio, r'''
 Object? encode() {
   final _$formData = FormData();
-  _$formData.fields.add(MapEntry(
+  _$formData.files.add(MapEntry(
     (r'values').replaceAll(r'\', r'\\'),
-    body.values.map((item) => item ?? '').toList().uriEncode(
-      allowEmpty: true, textEncoding: utf8, alreadyEncoded: true,
+    MultipartFile.fromString(
+      body.values.map((item) => item ?? '').toList().join(','),
+      contentType: DioMediaType.parse(r'text/plain'),
     ),
   ));
   if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {

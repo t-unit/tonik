@@ -19,7 +19,7 @@ void main() {
     expect(encoding.wireContentType, isNull);
     expect(encoding.style, EncodingStyle.deepObject);
     expect(encoding.explode, isTrue);
-    expect(encoding.allowReserved, isTrue);
+    expect(encoding.allowReserved, isNull);
   });
 
   test('explicit style suppresses media choices for every OAS version', () {
@@ -67,7 +67,7 @@ void main() {
     expect(encoding.rawContentType, isNull);
     expect(encoding.style, EncodingStyle.deepObject);
     expect(encoding.explode, isFalse);
-    expect(encoding.allowReserved, isTrue);
+    expect(encoding.allowReserved, isNull);
     expect(encoding.headers, contains('X-Trace'));
     final header = encoding.headers!['X-Trace']!;
     expect(header, isA<ResponseHeaderObject>());
@@ -79,12 +79,174 @@ void main() {
     final explodeOnly = _importEncoding(encoding: {'explode': false});
     expect(explodeOnly.style, EncodingStyle.form);
     expect(explodeOnly.explode, isFalse);
-    expect(explodeOnly.allowReserved, isFalse);
+    expect(explodeOnly.allowReserved, isNull);
 
     final reservedOnly = _importEncoding(encoding: {'allowReserved': true});
     expect(reservedOnly.style, EncodingStyle.form);
     expect(reservedOnly.explode, isTrue);
-    expect(reservedOnly.allowReserved, isTrue);
+    expect(reservedOnly.allowReserved, isNull);
+    expect(reservedOnly.isStyleBased, isTrue);
+  });
+
+  test('style fields are inapplicable outside multipart/form-data', () {
+    final api = Importer().import({
+      'openapi': '3.2.0',
+      'info': {'title': 'Multipart encoding', 'version': '1.0.0'},
+      'paths': {
+        '/upload': {
+          'post': {
+            'operationId': 'upload',
+            'requestBody': {
+              'content': {
+                'multipart/mixed': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'value': {'type': 'string'},
+                    },
+                  },
+                  'encoding': {
+                    'value': {
+                      'style': 'form',
+                      'explode': false,
+                      'allowReserved': true,
+                      'contentType': 'text/plain',
+                    },
+                  },
+                },
+              },
+            },
+            'responses': {
+              '204': {'description': 'ok'},
+            },
+          },
+        },
+      },
+    });
+
+    final content = api.operations.single.requestBody!.resolvedContent.single;
+    expect(content, isA<ModelRequestContent>());
+  });
+
+  test('configured multipart/mixed retains content encoding and siblings', () {
+    final api =
+        Importer(contentTypes: {'multipart/mixed': ContentType.multipart})
+            .import({
+              'openapi': '3.2.0',
+              'info': {'title': 'Mixed multipart', 'version': '1.0.0'},
+              'paths': {
+                '/upload': {
+                  'post': {
+                    'operationId': 'upload',
+                    'requestBody': {
+                      'content': {
+                        'multipart/mixed': {
+                          'schema': {
+                            'type': 'object',
+                            'properties': {
+                              'value': {'type': 'string'},
+                              'sibling': {'type': 'string'},
+                            },
+                          },
+                          'encoding': {
+                            'value': {
+                              'style': 'form',
+                              'explode': false,
+                              'allowReserved': true,
+                              'contentType': 'text/plain',
+                            },
+                            'sibling': {'contentType': 'application/json'},
+                          },
+                        },
+                      },
+                    },
+                    'responses': {
+                      '204': {'description': 'ok'},
+                    },
+                  },
+                },
+              },
+            });
+
+    final content =
+        api.operations.single.requestBody!.resolvedContent.single
+            as MultipartRequestContent;
+    expect((content.requestModel as ClassModel).properties, hasLength(2));
+    expect(content.encoding['value']!.contentType, ContentType.text);
+    expect(content.encoding['value']!.rawContentType, 'text/plain');
+    expect(content.encoding['value']!.style, isNull);
+    expect(content.encoding['value']!.explode, isNull);
+    expect(content.encoding['value']!.allowReserved, isNull);
+    expect(content.encoding['sibling']!.contentType, ContentType.json);
+  });
+
+  test('configured multipart custom subtype retains media choices', () {
+    final api =
+        Importer(
+          contentTypes: {'multipart/form-data-custom': ContentType.multipart},
+        ).import({
+          'openapi': '3.2.0',
+          'info': {'title': 'Custom multipart', 'version': '1.0.0'},
+          'paths': {
+            '/upload': {
+              'post': {
+                'operationId': 'upload',
+                'requestBody': {
+                  'content': {
+                    'multipart/form-data-custom': {
+                      'schema': {
+                        'type': 'object',
+                        'properties': {
+                          'value': {'type': 'string'},
+                          'sibling': {'type': 'string'},
+                        },
+                      },
+                      'encoding': {
+                        'value': {
+                          'style': 'form',
+                          'explode': false,
+                          'allowReserved': true,
+                          'contentType': 'text/plain, application/json',
+                        },
+                        'sibling': {'contentType': 'text/plain'},
+                      },
+                    },
+                  },
+                },
+                'responses': {
+                  '204': {'description': 'ok'},
+                },
+              },
+            },
+          },
+        });
+
+    final content =
+        api.operations.single.requestBody!.resolvedContent.single
+            as MultipartRequestContent;
+    final projected = content.requestModel as ClassModel;
+    expect(projected.properties, hasLength(2));
+    expect(projected.properties.first.model, isA<MultipartChoiceModel>());
+    final choices = projected.properties.first.model as MultipartChoiceModel;
+    expect(choices.choices, hasLength(2));
+    expect(choices.choices.first.contentType, ContentType.text);
+    expect(choices.choices.last.contentType, ContentType.json);
+    expect(content.encoding['value']!.style, isNull);
+    expect(content.encoding['value']!.explode, isNull);
+    expect(content.encoding['value']!.allowReserved, isNull);
+    expect(content.encoding['sibling']!.contentType, ContentType.text);
+  });
+
+  test('form-data style applies with mixed case and media parameters', () {
+    final encoding = _importEncoding(
+      mediaType: 'Multipart/Form-Data; boundary=outer',
+      encoding: {'style': 'form', 'contentType': 'application/json'},
+    );
+
+    expect(encoding.style, EncodingStyle.form);
+    expect(encoding.explode, isTrue);
+    expect(encoding.contentType, isNull);
+    expect(encoding.rawContentType, isNull);
   });
 
   test('OAS 3.1 content-only encoding preserves text charset handling', () {
@@ -413,6 +575,7 @@ MultipartRequestContent _importStyleAndChoices(String version) {
 PartEncoding _importEncoding({
   required Map<String, dynamic> encoding,
   String version = '3.1.0',
+  String mediaType = 'multipart/form-data',
   Map<String, ContentTypeMapping> contentTypes = const {},
 }) {
   final api = Importer(contentTypes: contentTypes).import({
@@ -424,7 +587,7 @@ PartEncoding _importEncoding({
           'operationId': 'upload',
           'requestBody': {
             'content': {
-              'multipart/form-data': {
+              mediaType: {
                 'schema': {
                   'type': 'object',
                   'properties': {
