@@ -3,6 +3,31 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
+  test('named part ignores Content-Type and keeps simple headers', () {
+    final encoding = _importEncoding(
+      encoding: {
+        'contentType': 'text/plain',
+        'headers': {
+          'cOnTeNt-TyPe': {
+            'required': true,
+            'schema': {'type': 'string'},
+          },
+          'X-Part-Count': {
+            'required': true,
+            'schema': {'type': 'integer'},
+          },
+        },
+      },
+    );
+
+    expect(encoding.wireContentType, 'text/plain');
+    expect(encoding.headers!.keys, ['X-Part-Count']);
+    expect(
+      (encoding.headers!['X-Part-Count']! as ResponseHeaderObject).model,
+      isA<IntegerModel>(),
+    );
+  });
+
   test('explicit multipart style takes precedence in OAS 3.0', () {
     final encoding = _importEncoding(
       version: '3.0.3',

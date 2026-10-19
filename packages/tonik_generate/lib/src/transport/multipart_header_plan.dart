@@ -63,6 +63,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
 
     for (final entry in headers.entries) {
       final rawHeaderName = entry.key;
+      if (rawHeaderName.toLowerCase() == 'content-type') continue;
       final header = entry.value.resolve(name: rawHeaderName);
       final isRequired = !isPropertyOptional && header.isRequired;
 

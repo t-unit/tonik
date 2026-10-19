@@ -753,7 +753,7 @@ void main() {
       },
     );
 
-    test('does not filter out Content-Type header', () {
+    test('omits described Content-Type and retains sibling headers', () {
       final partModel4 = _multipartContent(
         rawContentType: 'multipart/form-data',
         name: 'UploadForm',
@@ -841,11 +841,9 @@ void main() {
         package: 'api',
       );
 
-      // body + Content-Type + X-Custom (Content-Type is not filtered)
-      expect(parameters.length, 3);
+      expect(parameters.length, 2);
       final paramNames = parameters.map((p) => p.name).toList();
       expect(paramNames, contains('body'));
-      expect(paramNames, contains('fileContentType'));
       expect(paramNames, contains('fileCustom'));
     });
 

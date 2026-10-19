@@ -1662,6 +1662,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart/protocol-headers:
+    post:
+      operationId: postProtocolHeaders
+      tags: [multipart]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ByteForm'
+            encoding:
+              data:
+                contentType: application/octet-stream
+                headers:
+                  cOnTeNt-TyPe:
+                    required: true
+                    schema:
+                      type: string
+                  X-Part-Count:
+                    required: true
+                    schema:
+                      type: integer
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/anyof-model:
     post:
       operationId: postAnyOfModel

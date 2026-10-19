@@ -750,6 +750,7 @@ class RequestBodyImporter({
 
     final headers = <String, core.ResponseHeader>{};
     for (final headerEntry in encoding.headers!.entries) {
+      if (headerEntry.key.toLowerCase() == 'content-type') continue;
       if (headerEntry.value case Reference<Header>(:final ref)
           when isExternalReference(ref)) {
         log.warning(
