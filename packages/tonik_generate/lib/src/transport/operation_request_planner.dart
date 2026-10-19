@@ -20,6 +20,13 @@ class const OperationRequestPlanner({
   ) {
     final requestBody = operation.requestBody;
     final content = requestBody?.resolvedContent.toList() ?? const [];
+    final normalizations = _multipartNormalizations(content);
+    final multipartHeaders = extractOperationMultipartHeaderParamInfo(
+      operation,
+      nameManager: nameManager,
+      package: package,
+      normalizations: normalizations,
+    );
 
     return OperationRequestPlan(
       method: operation.method,
@@ -40,10 +47,11 @@ class const OperationRequestPlanner({
         for (final (:normalizedName, :parameter) in parameters.cookieParameters)
           _cookieValue(normalizedName, parameter),
       ],
+      multipartHeaderParameters: multipartHeaders,
       contentType: _contentTypeExpression(requestBody, content),
       cancellation: refer('cancellation'),
       response: _responseRequirements(operation),
-      body: planBody(operation),
+      body: _planBody(operation, content, multipartHeaders, normalizations),
     );
   }
 
@@ -128,15 +136,38 @@ class const OperationRequestPlanner({
   RequestBodyPlan planBody(Operation operation) {
     final requestBody = operation.requestBody;
     final content = requestBody?.resolvedContent.toList() ?? const [];
-    if (requestBody == null || content.isEmpty) {
-      return const AbsentBodyPlan();
-    }
-
+    final normalizations = _multipartNormalizations(content);
     final headers = extractOperationMultipartHeaderParamInfo(
       operation,
       nameManager: nameManager,
       package: package,
+      normalizations: normalizations,
     );
+    return _planBody(operation, content, headers, normalizations);
+  }
+
+  Map<MultipartRequestContent, MultipartPropertyNormalizationResult>
+  _multipartNormalizations(List<RequestContent> content) => {
+    for (final item in content)
+      if (item is MultipartRequestContent)
+        item: normalizeMultipartProperties(
+          item,
+          nameManager: nameManager,
+          package: package,
+        ),
+  };
+
+  RequestBodyPlan _planBody(
+    Operation operation,
+    List<RequestContent> content,
+    List<MultipartHeaderParamInfo> headers,
+    Map<MultipartRequestContent, MultipartPropertyNormalizationResult>
+    normalizations,
+  ) {
+    final requestBody = operation.requestBody;
+    if (requestBody == null || content.isEmpty) {
+      return const AbsentBodyPlan();
+    }
     final variants = [
       for (final item in content)
         _contentPlan(
@@ -144,6 +175,7 @@ class const OperationRequestPlanner({
           isRequired: requestBody.isRequired,
           bodyAccessor: content.length > 1 ? 'value.value' : 'body',
           headerParameters: headers,
+          normalizations: normalizations,
         ),
     ];
     if (variants.length == 1) return variants.single;
@@ -160,6 +192,8 @@ class const OperationRequestPlanner({
     required bool isRequired,
     required String bodyAccessor,
     required List<MultipartHeaderParamInfo> headerParameters,
+    required Map<MultipartRequestContent, MultipartPropertyNormalizationResult>
+    normalizations,
   }) {
     if (content is MultipartRequestContent) {
       return MultipartBodyPlanner(
@@ -172,6 +206,7 @@ class const OperationRequestPlanner({
         bodyAccessor: bodyAccessor,
         isRequired: isRequired,
         headerParameters: headerParameters,
+        normalization: normalizations[content],
       );
     }
     content as ModelRequestContent;

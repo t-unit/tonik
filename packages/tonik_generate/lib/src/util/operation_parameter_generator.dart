@@ -18,6 +18,7 @@ List<Parameter> generateParameters({
   required String package,
   bool useImmutableCollections = false,
   Map<String, OperationParameterDefault> defaultsByName = const {},
+  List<MultipartHeaderParamInfo>? multipartHeaderParameters,
 }) {
   final hasRequestBody =
       operation.requestBody?.resolvedContent.isNotEmpty ?? false;
@@ -197,6 +198,7 @@ List<Parameter> generateParameters({
       operation: operation,
       nameManager: nameManager,
       package: package,
+      multipartHeaderParameters: multipartHeaderParameters,
     );
   }
   return parameters;
@@ -207,12 +209,15 @@ void _addMultipartHeaderParameters({
   required Operation operation,
   required NameManager nameManager,
   required String package,
+  List<MultipartHeaderParamInfo>? multipartHeaderParameters,
 }) {
-  for (final info in extractOperationMultipartHeaderParamInfo(
-    operation,
-    nameManager: nameManager,
-    package: package,
-  )) {
+  for (final info
+      in multipartHeaderParameters ??
+          extractOperationMultipartHeaderParamInfo(
+            operation,
+            nameManager: nameManager,
+            package: package,
+          )) {
     final parameterType = typeReference(
       info.model,
       nameManager,

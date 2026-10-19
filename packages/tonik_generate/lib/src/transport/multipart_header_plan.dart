@@ -44,8 +44,9 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   Set<String> reservedNames = const {},
   NameManager? nameManager,
   String? package,
+  MultipartPropertyNormalizationResult? normalization,
 }) {
-  final normalization = normalizeMultipartProperties(
+  normalization ??= normalizeMultipartProperties(
     content,
     nameManager: nameManager,
     package: package,
@@ -95,6 +96,8 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
   Operation operation, {
   NameManager? nameManager,
   String? package,
+  Map<MultipartRequestContent, MultipartPropertyNormalizationResult>?
+  normalizations,
 }) {
   final hasRequestBody =
       operation.requestBody?.resolvedContent.isNotEmpty ?? false;
@@ -125,6 +128,7 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
       reservedNames: usedNames,
       nameManager: nameManager,
       package: package,
+      normalization: normalizations?[content],
     );
     result.addAll(parameters);
     usedNames.addAll(parameters.map((parameter) => parameter.name));

@@ -354,6 +354,159 @@ void main() {
       );
     });
 
+    test('shares allOf named fields with inline header parameters', () {
+      final context = Context.initial();
+      final left = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'document',
+          model: StringModel(context: context),
+        ),
+      ]).model;
+      final right = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'label',
+          model: StringModel(context: context),
+          isRequired: false,
+        ),
+      ]).model;
+      final content = MultipartRequestContent(
+        model: AllOfModel(
+          name: 'Upload',
+          models: [left, right],
+          context: context,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
+        ),
+        encoding: {
+          'document': PartEncoding(
+            contentType: null,
+            rawContentType: null,
+            headers: {
+              'X-Document-Id': ResponseHeaderObject(
+                name: 'X-Document-Id',
+                context: context,
+                description: null,
+                explode: false,
+                model: StringModel(context: context),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+          ),
+        },
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+      final operation = _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'upload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {content},
+        ),
+      );
+
+      final plan = planner.plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(plan.multipartHeaderParameters.single.name, 'documentDocumentId');
+      expect(plan.multipartHeaderParameters.single.isRequired, isTrue);
+      expect(body.runtimeEncodingError, isNull);
+      expect(body.emissions.whereType<MultipartAppend>(), hasLength(2));
+      expect(body.mergeHelpers, isEmpty);
+    });
+
+    test('shares named fields and a dynamic source for HTTP', () {
+      final context = Context.initial();
+      final property = multipartPartFixture(
+        name: 'label',
+        model: StringModel(context: context),
+      ).property;
+      final content = MultipartRequestContent(
+        model: ClassModel(
+          name: 'Upload',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [property],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: StringModel(context: context),
+            origin: AdditionalPropertiesOrigin.explicit,
+          ),
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        encoding: {
+          'label': PartEncoding(
+            contentType: null,
+            rawContentType: null,
+            headers: {
+              'X-Label-Id': ResponseHeaderObject(
+                name: 'X-Label-Id',
+                context: context,
+                description: null,
+                explode: false,
+                model: StringModel(context: context),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+          ),
+        },
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+      final operation = _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'upload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {content},
+        ),
+      );
+
+      final plan = const OperationRequestPlanner(backend: TransportBackend.http)
+          .plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(plan.multipartHeaderParameters.single.name, 'labelLabelId');
+      expect(body.runtimeEncodingError, isNull);
+      expect(body.emissions.whereType<MultipartAppend>(), hasLength(2));
+      expect(body.usesCustomParts, isTrue);
+    });
+
     test('retains response selectors and creates a variant body plan', () {
       final context = Context.initial();
       final operation = _operation(

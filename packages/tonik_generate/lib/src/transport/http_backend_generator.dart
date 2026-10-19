@@ -263,11 +263,16 @@ final class const HttpBackendGenerator({
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,
-  }) => HttpBodyGenerator(
-    nameManager: nameManager,
-    package: package,
-    useImmutableCollections: useImmutableCollections,
-  ).generateBodyMethod(operation, bodyPlan: requestPlan.body);
+  }) =>
+      HttpBodyGenerator(
+        nameManager: nameManager,
+        package: package,
+        useImmutableCollections: useImmutableCollections,
+      ).generateBodyMethod(
+        operation,
+        bodyPlan: requestPlan.body,
+        headerInfo: requestPlan.multipartHeaderParameters,
+      );
 
   @override
   Method generateOptionsMethod({

@@ -25,23 +25,25 @@ class const MultipartBodyPlanner({
     required String bodyAccessor,
     required bool isRequired,
     List<MultipartHeaderParamInfo>? headerParameters,
+    MultipartPropertyNormalizationResult? normalization,
   }) {
+    normalization ??= normalizeMultipartProperties(
+      content,
+      nameManager: nameManager,
+      package: package,
+    );
     final parameters =
         (headerParameters ??
                 extractMultipartHeaderParamInfo(
                   content,
                   nameManager: nameManager,
                   package: package,
+                  normalization: normalization,
                 ))
             .where((parameter) => identical(parameter.content, content))
             .toList();
     final emissions = <MultipartEmission>[];
     final mergeHelpers = <MultipartMergeHelper>{};
-    final normalization = normalizeMultipartProperties(
-      content,
-      nameManager: nameManager,
-      package: package,
-    );
     if (normalization.runtimeEncodingError case final runtimeEncodingError?) {
       return MultipartBodyPlan(
         value: refer(bodyAccessor),
