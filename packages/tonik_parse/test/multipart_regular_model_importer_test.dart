@@ -37,7 +37,10 @@ void main() {
       'label',
     ]);
     expect(model.properties.first.model, isA<BinaryModel>());
-    expect(content.encoding, isEmpty);
+    expect(
+      content.layout.fields.every((part) => part.declaredEncoding == null),
+      isTrue,
+    );
   });
 
   test('reuses schema models across JSON, multipart, and responses', () {
@@ -132,11 +135,39 @@ void main() {
     final plain = _multipart(api, 'plain');
     final json = _multipart(api, 'json');
     expect(plain.model, same(json.model));
-    expect(plain.encoding.keys, ['label']);
-    expect(plain.encoding['label']!.contentType, ContentType.text);
-    expect(plain.encoding['label']!.textEncoding, TextEncoding.ascii);
-    expect(json.encoding.keys, ['label']);
-    expect(json.encoding['label']!.contentType, ContentType.json);
+    expect(
+      plain.layout.fields
+          .where((part) => part.declaredEncoding != null)
+          .map((part) => part.wireName),
+      ['label'],
+    );
+    expect(
+      plain.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .declaredEncoding!
+          .contentType,
+      ContentType.text,
+    );
+    expect(
+      plain.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .declaredEncoding!
+          .textEncoding,
+      TextEncoding.ascii,
+    );
+    expect(
+      json.layout.fields
+          .where((part) => part.declaredEncoding != null)
+          .map((part) => part.wireName),
+      ['label'],
+    );
+    expect(
+      json.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .declaredEncoding!
+          .contentType,
+      ContentType.json,
+    );
   });
 
   test('reuses referenced request bodies and resolves aliases and defs', () {
@@ -197,7 +228,12 @@ void main() {
     expect(one, same(two));
     expect(one.model, isA<AliasModel>());
     expect((one.model as AliasModel).name, 'SharedAlias');
-    expect(one.encoding.keys, ['label']);
+    expect(
+      one.layout.fields
+          .where((part) => part.declaredEncoding != null)
+          .map((part) => part.wireName),
+      ['label'],
+    );
 
     final defs = _multipart(api, 'defs').model as ClassModel;
     final local = defs.properties.single.model.resolved as ClassModel;

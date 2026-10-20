@@ -2,6 +2,22 @@ import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 
+MultipartRequestContent multipartRequestContentForTest({
+  required Model model,
+  required Map<String, PartEncoding> encoding,
+  required String rawContentType,
+  required List<Example> examples,
+  required String? wireContentType,
+  required TextEncoding textEncoding,
+}) => MultipartRequestContent(
+  model: model,
+  encoding: encoding,
+  rawContentType: rawContentType,
+  examples: examples,
+  wireContentType: wireContentType,
+  textEncoding: textEncoding,
+);
+
 void main() {
   group('ContentTypeNormalizer', () {
     late ContentTypeNormalizer normalizer;
@@ -192,7 +208,7 @@ void main() {
         examples: const [],
         formEncoding: null,
       );
-      final multipartContent = MultipartRequestContent(
+      final multipartContent = multipartRequestContentForTest(
         model: ClassModel(
           name: 'MultipartBody',
           properties: [partProperty],
@@ -250,7 +266,10 @@ void main() {
         (content) => content.contentType == ContentType.multipart,
       );
       final transformedPart = (transformedMultipart as MultipartRequestContent)
-          .encoding['message']!;
+          .layout
+          .fields
+          .single
+          .declaredEncoding!;
 
       expect(
         (transformedText as ModelRequestContent).model,
@@ -1364,7 +1383,7 @@ void main() {
       });
 
       test('keeps multipart request content unchanged', () {
-        final originalContent = MultipartRequestContent(
+        final originalContent = multipartRequestContentForTest(
           model: ClassModel(
             name: 'MultipartData',
             properties: const [],
@@ -1453,7 +1472,7 @@ void main() {
           description: 'Upload with encoding',
           isRequired: true,
           content: {
-            MultipartRequestContent(
+            multipartRequestContentForTest(
               model: ClassModel(
                 name: 'UploadData',
                 properties: [fileProperty],
@@ -1507,7 +1526,10 @@ void main() {
           (content.model as ClassModel).properties.single,
           same(fileProperty),
         );
-        expect(content.encoding['file'], same(fileEncoding));
+        expect(
+          content.layout.fields.single.declaredEncoding,
+          same(fileEncoding),
+        );
       });
 
       test('preserves encoding when normalizing form request content', () {

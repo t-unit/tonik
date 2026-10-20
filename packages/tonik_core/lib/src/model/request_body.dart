@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
+part 'named_multipart_layout.dart';
+
 sealed class const RequestBody({
   required final String? name,
   required final Context context,
@@ -138,17 +140,45 @@ final class ModelRequestContent({
       'textEncoding: $textEncoding, examples: $examples)';
 }
 
-final class MultipartRequestContent({
-  required var Model model,
-
-  /// Per-use multipart encoding settings keyed by the raw schema property
-  /// name. Defaults are resolved from the property's model by the generator.
-  required final Map<String, PartEncoding> encoding,
+final class MultipartRequestContent._({
+  required var NamedMultipartLayout _layout,
   required super.rawContentType,
   required super.examples,
   required super.wireContentType,
   required super.textEncoding,
 }) extends RequestContent {
+  new({
+    required Model model,
+    required Map<String, PartEncoding> encoding,
+    required String rawContentType,
+    required List<Example> examples,
+    required String? wireContentType,
+    required TextEncoding textEncoding,
+  }) : this._(
+         layout: _resolveNamedMultipartLayout(model, encoding: encoding),
+         rawContentType: rawContentType,
+         examples: examples,
+         wireContentType: wireContentType,
+         textEncoding: textEncoding,
+       );
+
+  NamedMultipartLayout get layout => _layout;
+
+  Model get model => _layout.model;
+
+  @internal
+  void normalizeAllOf(Model Function(Model) transform) {
+    _layout = _resolveNamedMultipartLayout(
+      transform(_layout.model),
+      encoding: _layout._declaredEncodings,
+    );
+  }
+
+  @internal
+  void excludeDeprecatedProperties(Set<Property> removed) {
+    _layout = _layout._withoutProperties(removed);
+  }
+
   @override
   ContentType get contentType => ContentType.multipart;
 }

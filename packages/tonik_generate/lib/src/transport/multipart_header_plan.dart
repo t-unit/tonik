@@ -5,7 +5,6 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
-import 'package:tonik_generate/src/util/recursion_detector.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 typedef MultipartHeaderParamInfo = ({
@@ -51,13 +50,11 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
     nameManager: nameManager,
     package: package,
   );
-  if (normalization.runtimeEncodingError != null) return const [];
-
   final result = <MultipartHeaderParamInfo>[];
   final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
 
   for (final property in normalization.properties) {
-    final headers = content.encoding[property.rawName]?.headers;
+    final headers = property.part.encoding.headers;
     if (headers == null || headers.isEmpty) continue;
 
     final isPropertyOptional = !property.isRequired || property.isNullable;
@@ -138,6 +135,7 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
 }
 
 class const MultipartPropertyPlan({
+  required final NamedMultipartPart part,
   required final String rawName,
   required final String normalizedName,
   required final List<Property> properties,
@@ -169,235 +167,111 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
   NameManager? nameManager,
   String? package,
 }) {
-  final occurrences =
-      <({Property property, List<MultipartAccessSegment> path})>[];
-  final collection = _collectMultipartProperties(
-    content.model,
-    const [],
-    multipartModelIsNullable(content.model),
-    <Model>{},
-    occurrences,
-    nameManager,
-    package,
-  );
-  if (collection.error case final collectionError?) {
-    return MultipartPropertyNormalizationResult(
-      properties: const [],
-      runtimeEncodingError: collectionError,
-    );
-  }
-
-  final grouped =
-      <
-        String,
-        List<({Property property, List<MultipartAccessSegment> path})>
-      >{};
-  for (final occurrence in occurrences) {
-    if (occurrence.property.isReadOnly ||
-        _modelIsReadOnly(occurrence.property.model, <Model>{})) {
-      continue;
-    }
-    (grouped[occurrence.property.name] ??= []).add(occurrence);
-  }
-  final unmatchedEncodingKeys = content.encoding.keys
-      .where((key) => !grouped.containsKey(key))
-      .toList();
-  if (unmatchedEncodingKeys.isNotEmpty) {
-    return MultipartPropertyNormalizationResult(
-      properties: const [],
-      runtimeEncodingError:
-          'Multipart encoding references properties that are not writable or '
-          'do not exist in the body model: '
-          '${unmatchedEncodingKeys.join(', ')}.',
-    );
-  }
+  final layout = content.layout;
   final uniqueNames = ensureUniqueness([
-    for (final entry in grouped.entries)
+    for (final part in layout.fields)
       (
         normalizedName: normalizeSingle(
-          entry.value.first.property.nameOverride ?? entry.key,
+          part.sources.first.property.nameOverride ?? part.wireName,
           preserveNumbers: true,
         ),
-        originalValue: entry,
+        originalValue: part,
       ),
   ], defaultPrefix: defaultFieldPrefix);
+  final additional = layout.additionalFields;
+  MultipartDynamicSource? dynamicSource;
+  if (additional != null) {
+    final resolved = content.model.resolved;
+    final normalizedProperties = resolved is ClassModel
+        ? normalizeProperties(resolved.properties)
+        : const <({String normalizedName, Property property})>[];
+    final accessPath = resolved is ClassModel
+        ? [
+            (
+              name:
+                  (nameManager ??
+                          NameManager(
+                            generator: NameGenerator(),
+                            stableModelSorter: StableModelSorter(),
+                          ))
+                      .additionalPropertiesFieldName(normalizedProperties),
+              receiverNullable: additional.receiverNullable,
+            ),
+          ]
+        : <MultipartAccessSegment>[];
+    dynamicSource = MultipartDynamicSource(
+      accessPath: accessPath,
+      valueModel: additional.valueModel,
+      isValueNullable: additional.isValueNullable,
+      receiverNullable: additional.receiverNullable,
+      declaredWireNames: additional.declaredWireNames,
+    );
+  }
   return MultipartPropertyNormalizationResult(
-    dynamicSource: collection.dynamicSource,
+    runtimeEncodingError: layout.runtimeEncodingError,
+    dynamicSource: dynamicSource,
     properties: [
       for (final item in uniqueNames)
         MultipartPropertyPlan(
-          rawName: item.originalValue.key,
+          part: item.originalValue,
+          rawName: item.originalValue.wireName,
           normalizedName: item.normalizedName,
           properties: [
-            for (final occurrence in item.originalValue.value)
-              occurrence.property,
+            for (final source in item.originalValue.sources) source.property,
           ],
           accessPaths: [
-            for (final occurrence in item.originalValue.value) occurrence.path,
+            for (final source in item.originalValue.sources)
+              _accessPath(content.model, source, nameManager, package),
           ],
-          isRequired: item.originalValue.value.any(
-            (occurrence) => occurrence.property.isRequired,
-          ),
-          isNullable: item.originalValue.value.every(
-            (occurrence) =>
-                occurrence.property.isNullable ||
-                multipartModelIsNullable(occurrence.property.model) ||
-                !occurrence.property.isRequired ||
-                occurrence.property.isWriteOnly ||
-                occurrence.path.any((segment) => segment.receiverNullable),
-          ),
+          isRequired: item.originalValue.isRequired,
+          isNullable: item.originalValue.isNullable,
         ),
     ],
   );
 }
 
-({String? error, MultipartDynamicSource? dynamicSource})
-_collectMultipartProperties(
-  Model model,
-  List<MultipartAccessSegment> path,
-  bool receiverNullable,
-  Set<Model> active,
-  List<({Property property, List<MultipartAccessSegment> path})> result,
+List<MultipartAccessSegment> _accessPath(
+  Model root,
+  MultipartPartSource source,
   NameManager? nameManager,
   String? package,
 ) {
-  if (_modelIsReadOnly(model, <Model>{})) {
-    if (path.isEmpty) {
-      return (
-        error:
-            'Multipart body root ${model.runtimeType} at ${model.context} is '
-            'read-only and cannot be used as a request body.',
-        dynamicSource: null,
-      );
+  final path = <MultipartAccessSegment>[];
+  var current = root;
+  var receiverNullable = multipartModelIsNullable(current);
+  for (final member in source.members) {
+    final resolved = current.resolved;
+    if (resolved is! AllOfModel) {
+      throw StateError('Multipart source is not aligned with its model.');
     }
-    return (error: null, dynamicSource: null);
-  }
-  if (!active.add(model)) {
-    return (
-      error:
-          'Multipart body model contains a cycle while resolving '
-          '${model.context}.',
-      dynamicSource: null,
-    );
-  }
-  try {
-    switch (model) {
-      case AliasModel():
-        return _collectMultipartProperties(
-          model.model,
-          path,
-          receiverNullable || model.isNullable,
-          active,
-          result,
-          nameManager,
-          package,
-        );
-      case MapModel():
-        if (path.isNotEmpty) {
-          return (error: _dynamicAllOfError(model), dynamicSource: null);
-        }
-        final valueError = _dynamicValueError(model.valueModel);
-        if (valueError != null) return (error: valueError, dynamicSource: null);
-        return (
-          error: null,
-          dynamicSource: MultipartDynamicSource(
-            accessPath: path,
-            valueModel: model.valueModel,
-            isValueNullable:
-                model.isValueNullable ||
-                multipartModelIsNullable(model.valueModel),
-            receiverNullable: receiverNullable,
-            declaredWireNames: const {},
+    final namedMembers = ensureUniqueness([
+      for (final candidate in resolved.models)
+        (
+          normalizedName: normalizeSingle(
+            _multipartMemberTypeName(candidate, nameManager, package),
+            preserveNumbers: true,
           ),
-        );
-      case ClassModel():
-        final normalizedProperties = normalizeProperties(model.properties);
-        MultipartDynamicSource? dynamicSource;
-        if (model.additionalPropertiesPolicy case AllowedAdditionalProperties(
-          origin: AdditionalPropertiesOrigin.explicit,
-          :final valueModel,
-        )) {
-          if (path.isNotEmpty) {
-            return (error: _dynamicAllOfError(model), dynamicSource: null);
-          }
-          final valueError = _dynamicValueError(valueModel);
-          if (valueError != null) {
-            return (error: valueError, dynamicSource: null);
-          }
-          final fieldName =
-              (nameManager ??
-                      NameManager(
-                        generator: NameGenerator(),
-                        stableModelSorter: StableModelSorter(),
-                      ))
-                  .additionalPropertiesFieldName(normalizedProperties);
-          dynamicSource = MultipartDynamicSource(
-            accessPath: [
-              ...path,
-              (name: fieldName, receiverNullable: receiverNullable),
-            ],
-            valueModel: valueModel,
-            isValueNullable: multipartModelIsNullable(valueModel),
-            receiverNullable: receiverNullable,
-            declaredWireNames: model.properties.map((p) => p.name).toSet(),
-          );
-        }
-        for (final (:normalizedName, :property) in normalizedProperties) {
-          result.add((
-            property: property,
-            path: [
-              ...path,
-              (name: normalizedName, receiverNullable: receiverNullable),
-            ],
-          ));
-        }
-        return (error: null, dynamicSource: dynamicSource);
-      case AllOfModel():
-        final additionalPropertiesError = _additionalPropertiesError(model);
-        if (additionalPropertiesError != null) {
-          return (error: additionalPropertiesError, dynamicSource: null);
-        }
-        final namedMembers = ensureUniqueness([
-          for (final member in model.models)
-            (
-              normalizedName: normalizeSingle(
-                _multipartMemberTypeName(member, nameManager, package),
-                preserveNumbers: true,
-              ),
-              originalValue: member,
-            ),
-        ], defaultPrefix: defaultFieldPrefix);
-        for (final member in namedMembers) {
-          final memberNullable =
-              receiverNullable ||
-              multipartModelIsNullable(member.originalValue);
-          final memberResult = _collectMultipartProperties(
-            member.originalValue,
-            [
-              ...path,
-              (name: member.normalizedName, receiverNullable: receiverNullable),
-            ],
-            memberNullable,
-            active,
-            result,
-            nameManager,
-            package,
-          );
-          if (memberResult.error != null) return memberResult;
-        }
-        return (error: null, dynamicSource: null);
-      default:
-        return (
-          error:
-              'Unsupported multipart body root/member ${model.runtimeType} at '
-              '${model.context}. Multipart bodies require a class, an alias to '
-              'a supported model, or an allOf containing supported members.',
-          dynamicSource: null,
-        );
+          originalValue: candidate,
+        ),
+    ], defaultPrefix: defaultFieldPrefix);
+    final named = namedMembers[member.index];
+    if (!identical(named.originalValue, member.model)) {
+      throw StateError('Multipart source is not aligned with its model.');
     }
-  } finally {
-    active.remove(model);
+    path.add((name: named.normalizedName, receiverNullable: receiverNullable));
+    current = member.model;
+    receiverNullable =
+        receiverNullable || multipartModelIsNullable(member.model);
   }
+  final resolved = current.resolved;
+  if (resolved is! ClassModel) {
+    throw StateError('Multipart source property has no class model.');
+  }
+  final property = normalizeProperties(
+    resolved.properties,
+  ).firstWhere((candidate) => identical(candidate.property, source.property));
+  path.add((name: property.normalizedName, receiverNullable: receiverNullable));
+  return path;
 }
 
 bool multipartModelIsNullable(Model model, [Set<Model>? active]) {
@@ -411,81 +285,6 @@ bool multipartModelIsNullable(Model model, [Set<Model>? active]) {
     };
   } finally {
     visited.remove(model);
-  }
-}
-
-String? _additionalPropertiesError(AllOfModel model) {
-  if (model.additionalPropertiesPolicy case AllowedAdditionalProperties(
-    origin: AdditionalPropertiesOrigin.explicit,
-  )) {
-    return _dynamicAllOfError(model);
-  }
-  return null;
-}
-
-String _dynamicAllOfError(Model model) =>
-    'Dynamic multipart sources inside allOf are not supported '
-    '(${model.runtimeType} at ${model.context}).';
-
-bool _containsRecursiveCollection(Model model) {
-  final visited = <Model>{};
-
-  bool walk(Model current) {
-    if (!visited.add(current)) return false;
-    return switch (current) {
-      AliasModel(:final model) => walk(model),
-      MapModel(:final valueModel) => isRecursive(current) || walk(valueModel),
-      ListModel(:final content) => isRecursive(current) || walk(content),
-      _ => false,
-    };
-  }
-
-  return walk(model);
-}
-
-String? _dynamicValueError(Model model) {
-  if (_containsRecursiveCollection(model)) {
-    return 'Recursive collection types are not supported for dynamic '
-        'multipart values.';
-  }
-  var valueModel = model;
-  var resolved = model.resolved;
-  if (resolved is ListModel) {
-    valueModel = resolved.content;
-    resolved = valueModel.resolved;
-    if (resolved is ListModel) {
-      return 'Arrays of arrays are not supported for dynamic multipart values '
-          '(${model.context}).';
-    }
-  }
-  if (resolved is AnyModel) {
-    return 'Untyped dynamic multipart values are not supported '
-        '(${valueModel.context}).';
-  }
-  if (resolved is AliasModel || resolved is NeverModel) {
-    return 'Unsupported dynamic multipart value ${resolved.runtimeType} '
-        '(${valueModel.context}).';
-  }
-  return null;
-}
-
-bool _modelIsReadOnly(Model model, Set<Model> active) {
-  if (!active.add(model)) return false;
-  try {
-    return switch (model) {
-      AliasModel(:final isReadOnly, :final model) =>
-        isReadOnly || _modelIsReadOnly(model, active),
-      ClassModel(:final isReadOnly) ||
-      ListModel(:final isReadOnly) ||
-      MapModel(:final isReadOnly) ||
-      EnumModel(:final isReadOnly) ||
-      AllOfModel(:final isReadOnly) ||
-      OneOfModel(:final isReadOnly) ||
-      AnyOfModel(:final isReadOnly) => isReadOnly,
-      _ => false,
-    };
-  } finally {
-    active.remove(model);
   }
 }
 

@@ -1343,6 +1343,51 @@ Object? test() {
       expect(properties.map((property) => property.rawName), ['client']);
     });
 
+    test('uses each generated member for repeated identical allOf sources', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(context, 'tag', StringModel(context: context)),
+      ]);
+      final content = _content(_allOf(context, 'Upload', [member, member]));
+
+      final part = normalizeMultipartProperties(content).properties.single;
+
+      expect(part.accessPaths, hasLength(2));
+      expect(part.accessPaths.first.map((segment) => segment.name), [
+        'shared',
+        'tag',
+      ]);
+      expect(part.accessPaths.last.map((segment) => segment.name), [
+        'shared2',
+        'tag',
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  final _$tagMultipartValue = _mergeMultipartValues([
+    body.shared.tag,
+    body.shared2.tag,
+  ], propertyName: r'tag');
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'tag').replaceAll(r'\', r'\\'),
+      utf8.encode(_$tagMultipartValue),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('defers incompatible nested duplicate definitions to runtime', () {
       final leftMetadata = _classWithProperties(context, 'LeftMetadata', [
         _property(context, 'id', StringModel(context: context)),
@@ -1656,7 +1701,7 @@ AllOfModel _allOf(
 MultipartRequestContent _content(
   Model model, {
   Map<String, PartEncoding> encoding = const {},
-}) => MultipartRequestContent(
+}) => multipartRequestContentFixture(
   model: model,
   encoding: encoding,
   rawContentType: 'multipart/form-data',

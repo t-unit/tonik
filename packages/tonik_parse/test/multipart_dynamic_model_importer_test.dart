@@ -31,7 +31,8 @@ void main() {
     final map = content.model.resolved as MapModel;
     expect(map.valueModel.resolved, isA<StringModel>());
     expect(map.isValueNullable || map.valueModel.isEffectivelyNullable, isTrue);
-    expect(content.encoding, isEmpty);
+    expect(content.layout.fields, isEmpty);
+    expect(content.layout.additionalFields?.valueModel, same(map.valueModel));
   });
 
   test('OAS 3.1 preserves referenced nullable roots and value aliases', () {

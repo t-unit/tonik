@@ -460,7 +460,7 @@ $expectedPartCode
           textEncoding: TextEncoding.utf8,
         ),
       );
-      final content = MultipartRequestContent(
+      final content = multipartRequestContentFixture(
         model: AliasModel(
           name: 'FormAlias',
           context: testContext,

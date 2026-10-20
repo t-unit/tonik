@@ -4,6 +4,7 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generator.dart';
+import '../transport/multipart_test_support.dart';
 
 void main() {
   group('Generator request/response files', () {
@@ -33,7 +34,7 @@ void main() {
         isReadOnly: false,
         isWriteOnly: false,
       );
-      final content = MultipartRequestContent(
+      final content = multipartRequestContentFixture(
         model: model,
         encoding: const {},
         rawContentType: 'multipart/form-data',

@@ -103,12 +103,29 @@ class const ConfigTransformer() {
         }
 
         if (deprecated.properties != DeprecatedHandling.annotate) {
+          final requestBodies = <RequestBody>{
+            ...document.requestBodies,
+            for (final operation in document.operations) ?operation.requestBody,
+          };
+          final multipartContents = <MultipartRequestContent>{
+            for (final requestBody in requestBodies)
+              for (final content in requestBody.resolvedContent)
+                if (content is MultipartRequestContent) content,
+          };
           for (final model in document.models) {
             if (model case final ClassModel classModel) {
-              classModel.properties = deprecationHandler.handleProperties(
-                properties: classModel.properties,
+              final previous = classModel.properties;
+              final retained = deprecationHandler.handleProperties(
+                properties: previous,
                 mode: deprecated.properties,
               );
+              classModel.properties = retained;
+              final removed = previous.toSet()..removeAll(retained);
+              if (removed.isNotEmpty) {
+                for (final content in multipartContents) {
+                  content.excludeDeprecatedProperties(removed);
+                }
+              }
             }
           }
         }
