@@ -156,7 +156,6 @@ enum MultipartValueSource() {
   field,
   text,
   bytes,
-  path,
   file,
 }
 
@@ -177,7 +176,13 @@ final class const MultipartAppend({
   final Expression? filename,
   final String? contentType,
   final Expression? headers,
-}) extends MultipartEmission;
+}) extends MultipartEmission {
+  Expression? resolvedFilename({Expression? selectedFileName}) {
+    if (source != MultipartValueSource.file) return filename;
+    final fileName = selectedFileName ?? value.property('fileName');
+    return filename == null ? fileName : fileName.ifNullThen(filename!);
+  }
+}
 
 @immutable
 final class const MultipartBodyPlan._({

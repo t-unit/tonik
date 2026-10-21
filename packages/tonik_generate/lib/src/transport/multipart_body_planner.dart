@@ -399,53 +399,15 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _file(_Part part) {
     final contentType =
         part.encoding.wireContentType ?? 'application/octet-stream';
-    if (!_dio) {
-      return [
-        MultipartAppend(
-          name: part.wireName,
-          value: part.value,
-          source: MultipartValueSource.file,
-          filename: part.value.property('fileName').ifNullThen(part.wireName),
-          contentType: contentType,
-          headers: part.headers,
-        ),
-      ];
-    }
-    final filename = refer('fileName').ifNullThen(part.wireName);
     return [
-      MultipartCode(
-        Block.of([
-          const Code('switch ('),
-          part.value.code,
-          const Code(') { case '),
-          refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart').code,
-          const Code('(:final bytes, :final fileName):'),
-        ]),
-      ),
       MultipartAppend(
         name: part.wireName,
-        value: refer('bytes'),
-        source: MultipartValueSource.bytes,
-        filename: filename,
+        value: part.value,
+        source: MultipartValueSource.file,
+        filename: part.wireName,
         contentType: contentType,
         headers: part.headers,
       ),
-      MultipartCode(
-        Block.of([
-          const Code('case '),
-          refer('TonikFilePath', 'package:tonik_util/tonik_util.dart').code,
-          const Code('(:final path, :final fileName):'),
-        ]),
-      ),
-      MultipartAppend(
-        name: part.wireName,
-        value: refer('path'),
-        source: MultipartValueSource.path,
-        filename: filename,
-        contentType: contentType,
-        headers: part.headers,
-      ),
-      const MultipartCode(Code('}')),
     ];
   }
 

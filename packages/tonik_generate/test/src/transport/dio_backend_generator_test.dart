@@ -105,6 +105,58 @@ Object? test() {
     );
   });
 
+  test('constructs native Dio parts from file bytes and paths', () {
+    final plan = MultipartBodyPlan(
+      value: refer('body'),
+      rawContentType: 'multipart/form-data',
+      isRequired: true,
+      emissions: [
+        MultipartAppend(
+          name: specLiteralString('upload'),
+          value: refer('body').property('upload'),
+          source: MultipartValueSource.file,
+          filename: specLiteralString('upload'),
+          contentType: 'image/png',
+        ),
+      ],
+    );
+    final method = Method(
+      (builder) => builder
+        ..name = 'test'
+        ..returns = refer('Object?', 'dart:core')
+        ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+    );
+    const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  switch (body.upload) {
+    case TonikFileBytes(:final bytes, :final fileName):
+      _$formData.files.add(MapEntry(
+        (r'upload').replaceAll(r'\', r'\\'),
+        MultipartFile.fromBytes(bytes,
+          filename: (fileName ?? r'upload').replaceAll(r'\', r'\\'),
+          contentType: DioMediaType.parse(r'image/png')),
+      ));
+    case TonikFilePath(:final path, :final fileName):
+      _$formData.files.add(MapEntry(
+        (r'upload').replaceAll(r'\', r'\\'),
+        await MultipartFile.fromFile(path,
+          filename: (fileName ?? r'upload').replaceAll(r'\', r'\\'),
+          contentType: DioMediaType.parse(r'image/png')),
+      ));
+  }
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   test('emits a multipart encoding error without constructing a form', () {
     final plan = MultipartBodyPlan(
       value: refer('body'),

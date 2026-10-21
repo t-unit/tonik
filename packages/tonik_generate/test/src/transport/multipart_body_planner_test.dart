@@ -90,7 +90,7 @@ Object? test() {
 
   group('single-value parts', () {
     test(
-      'Dio retains a binary array content-type override for both sources',
+      'binary arrays keep their content-type override in a shared file part',
       () {
         final content = multipartContentFixture(context, [
           multipartPartFixture(
@@ -123,11 +123,9 @@ Object? test() {
             .plan(content, bodyAccessor: 'body', isRequired: true);
         final parts = plan.emissions.whereType<MultipartAppend>().toList();
 
-        expect(parts, hasLength(2));
-        expect(parts[0].source, MultipartValueSource.bytes);
-        expect(parts[0].contentType, 'image/png');
-        expect(parts[1].source, MultipartValueSource.path);
-        expect(parts[1].contentType, 'image/png');
+        expect(parts, hasLength(1));
+        expect(parts.single.source, MultipartValueSource.file);
+        expect(parts.single.contentType, 'image/png');
       },
     );
 

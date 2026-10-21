@@ -44,8 +44,45 @@ BuiltExpression buildMultipartBodyExpression(MultipartBodyPlan plan) =>
     );
 
 Code _append(MultipartAppend part) {
+  if (part.source == MultipartValueSource.file) {
+    return Block.of([
+      const Code('switch ('),
+      part.value.code,
+      const Code(') { case '),
+      refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart').code,
+      const Code('(:final bytes, :final fileName):'),
+      _appendNative(
+        part,
+        MultipartValueSource.bytes,
+        refer('bytes'),
+        selectedFileName: refer('fileName'),
+      ),
+      const Code('case '),
+      refer('TonikFilePath', 'package:tonik_util/tonik_util.dart').code,
+      const Code('(:final path, :final fileName):'),
+      _appendNative(
+        part,
+        MultipartValueSource.bytes,
+        refer('path'),
+        filePath: true,
+        selectedFileName: refer('fileName'),
+      ),
+      const Code('}'),
+    ]);
+  }
+  return _appendNative(part, part.source, part.value);
+}
+
+Code _appendNative(
+  MultipartAppend part,
+  MultipartValueSource source,
+  Expression value, {
+  bool filePath = false,
+  Expression? selectedFileName,
+}) {
   final arguments = <String, Expression>{
-    if (part.filename case final filename?)
+    if (part.resolvedFilename(selectedFileName: selectedFileName)
+        case final filename?)
       'filename': filename.parenthesized.property('replaceAll').call([
         specLiteralString(r'\'),
         specLiteralString(r'\\'),
@@ -58,23 +95,21 @@ Code _append(MultipartAppend part) {
     'headers': ?part.headers,
   };
   final constructor = refer('MultipartFile', 'package:dio/dio.dart');
-  final value = switch (part.source) {
-    MultipartValueSource.field => part.value,
+  final nativeValue = switch (source) {
+    MultipartValueSource.field => value,
     MultipartValueSource.text => constructor.property('fromString').call([
-      part.value,
+      value,
     ], arguments),
-    MultipartValueSource.bytes => constructor.property('fromBytes').call([
-      part.value,
-    ], arguments),
-    MultipartValueSource.path => constructor.property('fromFile').call([
-      part.value,
-    ], arguments).awaited,
+    MultipartValueSource.bytes =>
+      filePath
+          ? constructor.property('fromFile').call([value], arguments).awaited
+          : constructor.property('fromBytes').call([value], arguments),
     MultipartValueSource.file => throw StateError(
-      'Dio file paths must be planned before emission.',
+      'Dio file values must be resolved by the native adapter.',
     ),
   };
   return refer(r'_$formData')
-      .property(part.source == MultipartValueSource.field ? 'fields' : 'files')
+      .property(source == MultipartValueSource.field ? 'fields' : 'files')
       .property('add')
       .call([
         refer('MapEntry', 'dart:core').call([
@@ -82,7 +117,7 @@ Code _append(MultipartAppend part) {
             specLiteralString(r'\'),
             specLiteralString(r'\\'),
           ]),
-          value,
+          nativeValue,
         ]),
       ])
       .statement;
