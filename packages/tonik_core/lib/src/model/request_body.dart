@@ -175,8 +175,12 @@ final class MultipartRequestContent._({
   }
 
   @internal
-  void excludeDeprecatedProperties(Set<Property> removed) {
-    _layout = _layout._withoutProperties(removed);
+  void refreshLayoutAfterPropertyExclusion() {
+    _layout = _resolveNamedMultipartLayout(
+      _layout.model,
+      encoding: _layout._declaredEncodings,
+      preferredWireNames: _layout.fields.map((field) => field.wireName),
+    );
   }
 
   @override

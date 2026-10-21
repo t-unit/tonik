@@ -2565,8 +2565,7 @@ MultipartRequestContent _withEncoding(
 ) => multipartRequestContentFixture(
   model: content.model,
   encoding: {
-    for (final part in content.layout.fields)
-      part.wireName: ?part.declaredEncoding,
+    for (final part in content.layout.fields) part.wireName: part.encoding,
     ...byName,
   },
   rawContentType: content.rawContentType,

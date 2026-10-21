@@ -37,10 +37,8 @@ void main() {
       'label',
     ]);
     expect(model.properties.first.model, isA<BinaryModel>());
-    expect(
-      content.layout.fields.every((part) => part.declaredEncoding == null),
-      isTrue,
-    );
+    expect(content.layout.fields.first.encoding.contentType, ContentType.bytes);
+    expect(content.layout.fields.last.encoding.contentType, ContentType.text);
   });
 
   test('reuses schema models across JSON, multipart, and responses', () {
@@ -135,36 +133,26 @@ void main() {
     final plain = _multipart(api, 'plain');
     final json = _multipart(api, 'json');
     expect(plain.model, same(json.model));
-    expect(
-      plain.layout.fields
-          .where((part) => part.declaredEncoding != null)
-          .map((part) => part.wireName),
-      ['label'],
-    );
+    expect(plain.layout.fields.map((part) => part.wireName), ['file', 'label']);
     expect(
       plain.layout.fields
           .firstWhere((part) => part.wireName == 'label')
-          .declaredEncoding!
+          .encoding
           .contentType,
       ContentType.text,
     );
     expect(
       plain.layout.fields
           .firstWhere((part) => part.wireName == 'label')
-          .declaredEncoding!
+          .encoding
           .textEncoding,
       TextEncoding.ascii,
     );
-    expect(
-      json.layout.fields
-          .where((part) => part.declaredEncoding != null)
-          .map((part) => part.wireName),
-      ['label'],
-    );
+    expect(json.layout.fields.map((part) => part.wireName), ['file', 'label']);
     expect(
       json.layout.fields
           .firstWhere((part) => part.wireName == 'label')
-          .declaredEncoding!
+          .encoding
           .contentType,
       ContentType.json,
     );
@@ -228,12 +216,8 @@ void main() {
     expect(one, same(two));
     expect(one.model, isA<AliasModel>());
     expect((one.model as AliasModel).name, 'SharedAlias');
-    expect(
-      one.layout.fields
-          .where((part) => part.declaredEncoding != null)
-          .map((part) => part.wireName),
-      ['label'],
-    );
+    expect(one.layout.fields.map((part) => part.wireName), ['file', 'label']);
+    expect(one.layout.fields.last.encoding.contentType, ContentType.text);
 
     final defs = _multipart(api, 'defs').model as ClassModel;
     final local = defs.properties.single.model.resolved as ClassModel;

@@ -24,7 +24,6 @@ final class NamedMultipartPart({
   required final bool isRequired,
   required final bool isNullable,
   required final PartEncoding encoding,
-  required final PartEncoding? declaredEncoding,
   required final MultipartMergePolicy mergePolicy,
 });
 
@@ -42,93 +41,12 @@ final class NamedMultipartLayout._({
   required final MultipartAdditionalFields? additionalFields,
   required final String? runtimeEncodingError,
   required final Map<String, PartEncoding> _declaredEncodings,
-  required final bool _hasUnmatchedEncodingError,
-}) {
-  NamedMultipartLayout _withoutProperties(Set<Property> removed) {
-    if (removed.isEmpty) {
-      return this;
-    }
-    if (fields.isEmpty && runtimeEncodingError != null) {
-      if (!_hasUnmatchedEncodingError) return this;
-      final occurrences = <MultipartPartSource>[];
-      final collection = _collect(
-        model,
-        const [],
-        _isNullable(model),
-        <Model>{},
-        occurrences,
-      );
-      if (collection.error != null) return this;
-      final writableNames = {
-        for (final source in occurrences)
-          if (!source.property.isReadOnly &&
-              !_isReadOnly(source.property.model, <Model>{}))
-            source.property.name,
-      };
-      final unmatched = _declaredEncodings.keys.where(
-        (name) => !writableNames.contains(name),
-      );
-      return NamedMultipartLayout._(
-        model: model,
-        fields: fields,
-        additionalFields: additionalFields,
-        runtimeEncodingError: _unmatchedEncodingError(unmatched),
-        declaredEncodings: _declaredEncodings,
-        hasUnmatchedEncodingError: true,
-      );
-    }
-
-    final retained = <NamedMultipartPart>[];
-    for (final field in fields) {
-      final sources = field.sources
-          .where((source) => !removed.contains(source.property))
-          .toList();
-      if (sources.isNotEmpty) {
-        retained.add(_part(field.wireName, sources, field.declaredEncoding));
-      }
-    }
-    final unmatched = _declaredEncodings.keys.where(
-      (name) => !retained.any((field) => field.wireName == name),
-    );
-    final error = unmatched.isNotEmpty
-        ? _unmatchedEncodingError(unmatched)
-        : retained
-              .map(
-                (field) => _incompatibleDefinitionsError(
-                  field.wireName,
-                  field.sources,
-                ),
-              )
-              .whereType<String>()
-              .firstOrNull;
-    final resolved = model.resolved;
-    final additional = additionalFields;
-    final updatedAdditional = additional != null && resolved is ClassModel
-        ? MultipartAdditionalFields(
-            valueModel: additional.valueModel,
-            isValueNullable: additional.isValueNullable,
-            receiverNullable: additional.receiverNullable,
-            declaredWireNames: Set.unmodifiable(
-              resolved.properties.map((property) => property.name),
-            ),
-            encoding: additional.encoding,
-          )
-        : additional;
-
-    return NamedMultipartLayout._(
-      model: model,
-      fields: unmatched.isNotEmpty ? const [] : List.unmodifiable(retained),
-      additionalFields: unmatched.isNotEmpty ? null : updatedAdditional,
-      runtimeEncodingError: error,
-      declaredEncodings: _declaredEncodings,
-      hasUnmatchedEncodingError: unmatched.isNotEmpty,
-    );
-  }
-}
+});
 
 NamedMultipartLayout _resolveNamedMultipartLayout(
   Model model, {
   required Map<String, PartEncoding> encoding,
+  Iterable<String> preferredWireNames = const [],
 }) {
   final declaredEncodings = Map<String, PartEncoding>.unmodifiable(encoding);
   final occurrences = <MultipartPartSource>[];
@@ -146,7 +64,6 @@ NamedMultipartLayout _resolveNamedMultipartLayout(
       additionalFields: null,
       runtimeEncodingError: error,
       declaredEncodings: declaredEncodings,
-      hasUnmatchedEncodingError: false,
     );
   }
   final grouped = <String, List<MultipartPartSource>>{};
@@ -165,23 +82,28 @@ NamedMultipartLayout _resolveNamedMultipartLayout(
       additionalFields: null,
       runtimeEncodingError: _unmatchedEncodingError(unmatched),
       declaredEncodings: declaredEncodings,
-      hasUnmatchedEncodingError: true,
     );
   }
+  final previousNames = preferredWireNames.toSet();
+  final orderedNames = [
+    for (final name in preferredWireNames)
+      if (grouped.containsKey(name)) name,
+    for (final name in grouped.keys)
+      if (!previousNames.contains(name)) name,
+  ];
   String? incompatibleError;
-  for (final entry in grouped.entries) {
-    incompatibleError ??= _incompatibleDefinitionsError(entry.key, entry.value);
+  for (final name in orderedNames) {
+    incompatibleError ??= _incompatibleDefinitionsError(name, grouped[name]!);
   }
   return NamedMultipartLayout._(
     model: model,
     fields: List.unmodifiable([
-      for (final entry in grouped.entries)
-        _part(entry.key, entry.value, encoding[entry.key]),
+      for (final name in orderedNames)
+        _part(name, grouped[name]!, encoding[name]),
     ]),
     additionalFields: collection.additionalFields,
     runtimeEncodingError: incompatibleError,
     declaredEncodings: declaredEncodings,
-    hasUnmatchedEncodingError: false,
   );
 }
 
@@ -231,7 +153,6 @@ NamedMultipartPart _part(
           source.receiverNullable,
     ),
     encoding: effective,
-    declaredEncoding: declaredEncoding,
     mergePolicy: mergePolicy,
   );
 }

@@ -269,7 +269,7 @@ void main() {
           .layout
           .fields
           .single
-          .declaredEncoding!;
+          .encoding;
 
       expect(
         (transformedText as ModelRequestContent).model,
@@ -1527,8 +1527,8 @@ void main() {
           same(fileProperty),
         );
         expect(
-          content.layout.fields.single.declaredEncoding,
-          same(fileEncoding),
+          content.layout.fields.single.encoding.contentType,
+          fileEncoding.contentType,
         );
       });
 

@@ -112,6 +112,7 @@ class const ConfigTransformer() {
               for (final content in requestBody.resolvedContent)
                 if (content is MultipartRequestContent) content,
           };
+          var hasExcludedProperties = false;
           for (final model in document.models) {
             if (model case final ClassModel classModel) {
               final previous = classModel.properties;
@@ -120,12 +121,13 @@ class const ConfigTransformer() {
                 mode: deprecated.properties,
               );
               classModel.properties = retained;
-              final removed = previous.toSet()..removeAll(retained);
-              if (removed.isNotEmpty) {
-                for (final content in multipartContents) {
-                  content.excludeDeprecatedProperties(removed);
-                }
-              }
+              hasExcludedProperties =
+                  hasExcludedProperties || retained.length != previous.length;
+            }
+          }
+          if (hasExcludedProperties) {
+            for (final content in multipartContents) {
+              content.refreshLayoutAfterPropertyExclusion();
             }
           }
         }

@@ -253,7 +253,7 @@ void main() {
       expect(
         multipart.layout.fields
             .firstWhere((part) => part.wireName == entry.key)
-            .declaredEncoding!
+            .encoding
             .textEncoding,
         entry.value,
         reason: entry.key,
@@ -262,12 +262,13 @@ void main() {
     expect(
       multipart.layout.fields
           .firstWhere((part) => part.wireName == 'defaulted')
-          .declaredEncoding,
-      isNull,
+          .encoding
+          .contentType,
+      ContentType.text,
     );
     final unsupportedPart = multipart.layout.fields
         .firstWhere((part) => part.wireName == 'unsupported')
-        .declaredEncoding!;
+        .encoding;
     expect(unsupportedPart.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupportedPart.wireContentType, 'text/plain; charset=utf-8');
   });

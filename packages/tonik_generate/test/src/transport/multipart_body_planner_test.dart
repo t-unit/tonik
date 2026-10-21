@@ -1133,7 +1133,7 @@ Object? test() {
 
       final properties = normalizeMultipartProperties(_content(root))
           .properties;
-      expect(properties.map((property) => property.rawName), [
+      expect(properties.map((property) => property.part.wireName), [
         'files',
         'metadata',
       ]);
@@ -1168,9 +1168,12 @@ Object? test() {
       expect(result.runtimeEncodingError, isNull);
       expect(result.properties, isEmpty);
       expect(result.dynamicSource!.accessPath, isEmpty);
-      expect(result.dynamicSource!.valueModel, same(model.valueModel));
-      expect(result.dynamicSource!.isValueNullable, isFalse);
-      expect(result.dynamicSource!.receiverNullable, isFalse);
+      expect(
+        result.dynamicSource!.additionalFields.valueModel,
+        same(model.valueModel),
+      );
+      expect(result.dynamicSource!.additionalFields.isValueNullable, isFalse);
+      expect(result.dynamicSource!.additionalFields.receiverNullable, isFalse);
     });
 
     test('normalizes typed additional properties beside named metadata', () {
@@ -1185,12 +1188,14 @@ Object? test() {
       );
       final result = normalizeMultipartProperties(_content(model));
       expect(result.runtimeEncodingError, isNull);
-      expect(result.properties.single.rawName, 'metadata');
+      expect(result.properties.single.part.wireName, 'metadata');
       expect(
         result.dynamicSource!.accessPath.single.name,
         'additionalProperties',
       );
-      expect(result.dynamicSource!.declaredWireNames, {'metadata'});
+      expect(result.dynamicSource!.additionalFields.declaredWireNames, {
+        'metadata',
+      });
     });
 
     test('allows the implicit object additional-properties default', () {
@@ -1238,7 +1243,7 @@ Object? test() {
       final property = normalizeMultipartProperties(_content(nullableClass))
           .properties
           .single;
-      expect(property.isNullable, isTrue);
+      expect(property.part.isNullable, isTrue);
       const expected = r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
@@ -1313,8 +1318,8 @@ Object? test() {
         final property = normalizeMultipartProperties(_content(model))
             .properties
             .single;
-        expect(property.isRequired, isTrue);
-        expect(property.isNullable, isTrue);
+        expect(property.part.isRequired, isTrue);
+        expect(property.part.isNullable, isTrue);
         final code = emit(_content(model));
         expect(code, contains('if (body.secret == null)'));
         expect(code, contains('Required multipart property "secret" is null.'));
@@ -1338,7 +1343,7 @@ Object? test() {
       final properties = normalizeMultipartProperties(
         _content(_allOf(context, 'Combined', [readOnly, writable])),
       ).properties;
-      expect(properties.map((property) => property.rawName), ['client']);
+      expect(properties.map((property) => property.part.wireName), ['client']);
     });
 
     test('uses each generated member for repeated identical allOf sources', () {

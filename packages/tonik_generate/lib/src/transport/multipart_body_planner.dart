@@ -54,7 +54,8 @@ class const MultipartBodyPlanner({
       );
     }
     final dynamicSource = normalization.dynamicSource;
-    final reservedNames = dynamicSource?.declaredWireNames ?? const <String>{};
+    final reservedNames =
+        dynamicSource?.additionalFields.declaredWireNames ?? const <String>{};
     if (reservedNames.isNotEmpty) {
       emissions.add(
         MultipartCode(
@@ -84,7 +85,7 @@ class const MultipartBodyPlanner({
       final mergedLists = mergePolicy == MultipartMergePolicy.lists;
       final mergedObjectProperties =
           mergePolicy == MultipartMergePolicy.objectProperties;
-      final nullable = property.isNullable || !property.isRequired;
+      final nullable = property.part.isNullable || !property.part.isRequired;
       final Expression accessor;
       if (accesses.length == 1) {
         accessor = accesses.single;
@@ -111,18 +112,20 @@ class const MultipartBodyPlanner({
                     accesses[i],
                     nullable: _occurrenceIsNullable(
                       property.accessPaths[i],
-                      property.properties[i],
+                      property.part.sources[i].property,
                     ),
                     asProperties: mergedObjectProperties,
                   )
                 else if (useImmutableCollections &&
-                    (property.properties[i].model.resolved is ListModel ||
-                        property.properties[i].model.resolved is MapModel))
+                    (property.part.sources[i].property.model.resolved
+                            is ListModel ||
+                        property.part.sources[i].property.model.resolved
+                            is MapModel))
                   _immutableMergeValue(
                     accesses[i],
                     nullable: _occurrenceIsNullable(
                       property.accessPaths[i],
-                      property.properties[i],
+                      property.part.sources[i].property,
                     ),
                   )
                 else
@@ -130,7 +133,7 @@ class const MultipartBodyPlanner({
             ]),
           ],
           {
-            'propertyName': specLiteralString(property.rawName),
+            'propertyName': specLiteralString(property.part.wireName),
             if ((mergedObjects && !mergedObjectProperties) || mergedMaps)
               'mergeObjects': literalTrue,
           },
@@ -145,7 +148,7 @@ class const MultipartBodyPlanner({
         );
         accessor = refer(variable);
       }
-      if (property.isRequired && property.isNullable) {
+      if (property.part.isRequired && property.part.isNullable) {
         emissions.add(
           MultipartCode(
             Block.of([
@@ -153,7 +156,8 @@ class const MultipartBodyPlanner({
               accessor.code,
               const Code(' == null) { '),
               generateEncodingExceptionExpression(
-                'Required multipart property "${property.rawName}" is null.',
+                'Required multipart property '
+                '"${property.part.wireName}" is null.',
                 raw: true,
               ).code,
               const Code('; }'),
@@ -190,8 +194,8 @@ class const MultipartBodyPlanner({
             (segment) => segment.receiverNullable,
           );
       final input = (
-        name: property.rawName,
-        wireName: specLiteralString(property.rawName),
+        name: property.part.wireName,
+        wireName: specLiteralString(property.part.wireName),
         preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
         value: nullable
@@ -224,7 +228,6 @@ class const MultipartBodyPlanner({
       emissions.addAll(
         _dynamicParts(
           dynamicSource,
-          content.layout.additionalFields!.encoding,
           refer(bodyAccessor),
           checkCollisions: reservedNames.isNotEmpty,
         ),
@@ -247,7 +250,6 @@ class const MultipartBodyPlanner({
 
   List<MultipartEmission> _dynamicParts(
     MultipartDynamicSource source,
-    PartEncoding encoding,
     Expression body, {
     required bool checkCollisions,
   }) {
@@ -257,7 +259,7 @@ class const MultipartBodyPlanner({
             .assign(_access(body, source.accessPath))
             .statement,
       ),
-      if (source.receiverNullable)
+      if (source.additionalFields.receiverNullable)
         MultipartCode(
           Block.of([
             const Code(r'if (_$multipartMap == null) {'),
@@ -294,7 +296,7 @@ class const MultipartBodyPlanner({
             .assign(entry.property('value'))
             .statement,
       ),
-      if (source.isValueNullable)
+      if (source.additionalFields.isValueNullable)
         const MultipartCode(Code(r'if (_$multipartValue == null) continue;')),
     ];
     final headers = _headers(
@@ -303,13 +305,13 @@ class const MultipartBodyPlanner({
       const [],
       false,
       loopBody,
-      base64: switch (source.valueModel.resolved) {
+      base64: switch (source.additionalFields.valueModel.resolved) {
         Base64Model() => true,
         ListModel(:final content) => content.resolved is Base64Model,
         _ => false,
       },
     );
-    final valueModel = source.valueModel.resolved;
+    final valueModel = source.additionalFields.valueModel.resolved;
     final itemModel = valueModel is ListModel
         ? valueModel.content.resolved
         : valueModel;
@@ -319,7 +321,7 @@ class const MultipartBodyPlanner({
       normalizedName: r'_$dynamic',
       preserveOrder: true,
       value: value,
-      encoding: encoding,
+      encoding: source.additionalFields.encoding,
       headers: headers,
       isMergedObject: false,
       isMergedMap: false,

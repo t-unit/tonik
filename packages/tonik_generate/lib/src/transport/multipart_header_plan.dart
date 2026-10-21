@@ -57,7 +57,8 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
     final headers = property.part.encoding.headers;
     if (headers == null || headers.isEmpty) continue;
 
-    final isPropertyOptional = !property.isRequired || property.isNullable;
+    final isPropertyOptional =
+        !property.part.isRequired || property.part.isNullable;
 
     for (final entry in headers.entries) {
       final rawHeaderName = entry.key;
@@ -136,24 +137,15 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
 
 class const MultipartPropertyPlan({
   required final NamedMultipartPart part,
-  required final String rawName,
   required final String normalizedName,
-  required final List<Property> properties,
   required final List<List<MultipartAccessSegment>> accessPaths,
-  required final bool isRequired,
-  required final bool isNullable,
-}) {
-  Property get property => properties.first;
-}
+});
 
 typedef MultipartAccessSegment = ({String name, bool receiverNullable});
 
 final class const MultipartDynamicSource({
+  required final MultipartAdditionalFields additionalFields,
   required final List<MultipartAccessSegment> accessPath,
-  required final Model valueModel,
-  required final bool isValueNullable,
-  required final bool receiverNullable,
-  required final Set<String> declaredWireNames,
 });
 
 final class const MultipartPropertyNormalizationResult({
@@ -200,11 +192,8 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
           ]
         : <MultipartAccessSegment>[];
     dynamicSource = MultipartDynamicSource(
+      additionalFields: additional,
       accessPath: accessPath,
-      valueModel: additional.valueModel,
-      isValueNullable: additional.isValueNullable,
-      receiverNullable: additional.receiverNullable,
-      declaredWireNames: additional.declaredWireNames,
     );
   }
   return MultipartPropertyNormalizationResult(
@@ -214,17 +203,11 @@ MultipartPropertyNormalizationResult normalizeMultipartProperties(
       for (final item in uniqueNames)
         MultipartPropertyPlan(
           part: item.originalValue,
-          rawName: item.originalValue.wireName,
           normalizedName: item.normalizedName,
-          properties: [
-            for (final source in item.originalValue.sources) source.property,
-          ],
           accessPaths: [
             for (final source in item.originalValue.sources)
               _accessPath(content.model, source, nameManager, package),
           ],
-          isRequired: item.originalValue.isRequired,
-          isNullable: item.originalValue.isNullable,
         ),
     ],
   );

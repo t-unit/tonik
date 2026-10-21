@@ -57,7 +57,7 @@ void main() {
       body.layout.fields.last.encoding.wireContentType,
       'application/octet-stream',
     );
-    expect(body.layout.fields.first.declaredEncoding, isNull);
+    expect(body.layout.fields.first.encoding.rawContentType, 'text/plain');
   });
 
   test('allOf model replacement swaps the complete layout', () {
@@ -196,11 +196,45 @@ void main() {
     expect(part.sources.first.members.clear, throwsUnsupportedError);
 
     left.properties = const [];
-    body.excludeDeprecatedProperties({leftField});
+    body.refreshLayoutAfterPropertyExclusion();
 
     expect(body.layout.fields.single.sources, hasLength(1));
     expect(body.layout.fields.single.sources.single.property, same(rightField));
     expect(body.layout.fields.single.mergePolicy, MultipartMergePolicy.single);
+  });
+
+  test('keeps named part order when a repeated source is excluded', () {
+    final deprecatedTag = field('tag', StringModel(context: context));
+    final other = field('other', StringModel(context: context));
+    final activeTag = field('tag', StringModel(context: context));
+    final left = object('Left', [deprecatedTag, other]);
+    final right = object('Right', [activeTag]);
+    final root = AllOfModel(
+      name: 'Combined',
+      models: [left, right],
+      context: context,
+      description: null,
+      isDeprecated: false,
+      examples: const [],
+      nameOverride: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
+    );
+    final body = content(root);
+
+    expect(body.layout.fields.map((part) => part.wireName), ['tag', 'other']);
+    expect(body.layout.fields.first.sources, hasLength(2));
+
+    left.properties = [other];
+    body.refreshLayoutAfterPropertyExclusion();
+
+    expect(body.layout.fields.map((part) => part.wireName), ['tag', 'other']);
+    expect(body.layout.fields.first.sources.single.property, same(activeTag));
+    expect(body.layout.fields.first.mergePolicy, MultipartMergePolicy.single);
+    expect(body.layout.fields.last.sources.single.property, same(other));
   });
 
   test('excluding a field adds its encoding key to an existing error', () {
@@ -232,7 +266,7 @@ void main() {
     );
 
     model.properties = const [];
-    body.excludeDeprecatedProperties({tagged});
+    body.refreshLayoutAfterPropertyExclusion();
 
     expect(body.layout.fields, isEmpty);
     expect(
@@ -254,7 +288,7 @@ void main() {
     expect(body.layout.additionalFields?.declaredWireNames, {'tag'});
 
     model.properties = const [];
-    body.excludeDeprecatedProperties({tagged});
+    body.refreshLayoutAfterPropertyExclusion();
 
     expect(body.layout.fields, isEmpty);
     expect(body.layout.additionalFields?.declaredWireNames, isEmpty);
