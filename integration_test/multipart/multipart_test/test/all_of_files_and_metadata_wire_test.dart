@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:big_decimal/big_decimal.dart';
 import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -25,22 +26,29 @@ void main() {
             TonikFileBytes(second, fileName: 'second.bin'),
           ],
         ),
-        uploadMetadataBase: const UploadMetadataBase(
-          metadata: MetadataBase(id: 'upload-1', source: 'integration'),
+        uploadMetadataBase: UploadMetadataBase(
+          metadata: const MetadataBase(id: 'upload-1', source: 'integration'),
+          amounts: {'small': BigDecimal.parse('0.00000001')},
         ),
-        uploadMetadataAnnotations: const UploadMetadataAnnotations(
-          metadata: MetadataAnnotations(
+        uploadMetadataAnnotations: UploadMetadataAnnotations(
+          metadata: const MetadataAnnotations(
             annotations: MetadataAnnotationsAnnotationsModel(
               language: 'en',
               labels: ['one', 'two'],
             ),
           ),
+          amounts: {'large': BigDecimal.parse('1E+3')},
         ),
       ),
     );
 
     final wire = MultipartWire(await server.takeRequest());
-    expect(wire.parts.map((part) => part.name), ['files', 'files', 'metadata']);
+    expect(wire.parts.map((part) => part.name), [
+      'files',
+      'files',
+      'metadata',
+      'amounts',
+    ]);
     expect(wire.named('files').map((part) => part.filename), [
       'first.bin',
       'second.bin',
@@ -58,6 +66,10 @@ void main() {
         'language': 'en',
         'labels': ['one', 'two'],
       },
+    });
+    expect(jsonDecode(wire.single('amounts').bodyText), {
+      'small': '0.00000001',
+      'large': '1000',
     });
   });
 }

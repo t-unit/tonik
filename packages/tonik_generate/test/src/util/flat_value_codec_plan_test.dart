@@ -57,14 +57,13 @@ void main() {
       expect(emit((plan as FlatScalarEncodePlan).value), 'v');
     });
 
-    test('Integer, Number, Double, Boolean, Decimal, Uri, and Date encode '
+    test('Integer, Number, Double, Boolean, Uri, and Date encode '
         'via toString', () {
       final models = [
         IntegerModel(context: context),
         NumberModel(context: context),
         DoubleModel(context: context),
         BooleanModel(context: context),
-        DecimalModel(context: context),
         UriModel(context: context),
         DateModel(context: context),
       ];
@@ -77,6 +76,12 @@ void main() {
           reason: model.runtimeType.toString(),
         );
       }
+    });
+
+    test('Decimal encodes via toPlainString', () {
+      final plan = encodePlan(DecimalModel(context: context));
+
+      expect(emit((plan as FlatScalarEncodePlan).value), 'v.toPlainString()');
     });
 
     test('DateTime encodes via toTimeZonedIso8601String', () {

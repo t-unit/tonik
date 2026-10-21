@@ -185,7 +185,7 @@ void main() {
             nameManager: nameManager,
           ),
         ),
-        'price.toString()',
+        'price.toPlainString()',
       );
     });
 
@@ -211,7 +211,7 @@ void main() {
             nameManager: nameManager,
           ),
         ),
-        'discountPrice?.toString()',
+        'discountPrice?.toPlainString()',
       );
     });
 
@@ -948,7 +948,7 @@ void main() {
             nameManager: nameManager,
           ),
         ),
-        'lineItems?.map((e) => e.toString()).toList()',
+        'lineItems?.map((e) => e.toPlainString()).toList()',
       );
     });
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:big_decimal/big_decimal.dart';
 import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -214,6 +215,22 @@ void main() {
       expect(wire.single('data').bodyText, 'plain text value');
       expect(wire.single('data').contentType, startsWith('text/plain'));
       expect(wire.single('label').bodyText, 'x');
+    });
+
+    test('writes decimal parts without exponents', () async {
+      final server = await RawRequestServer.start();
+      final form = EncodingOverrideForm(
+        data: 'plain text value',
+        label: 'x',
+        amount: BigDecimal.parse('0.00000001'),
+        jsonAmount: BigDecimal.parse('1E+3'),
+      );
+
+      await _rawApi(server).postEncodingOverride(body: form);
+
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('amount').bodyText, '0.00000001');
+      expect(wire.single('jsonAmount').bodyText, '"1000"');
     });
   });
 

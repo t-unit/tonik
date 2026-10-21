@@ -1129,7 +1129,7 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-          Object? toJson() => this.bigDecimal.toString();
+          Object? toJson() => this.bigDecimal.toPlainString();
         ''';
 
       expect(

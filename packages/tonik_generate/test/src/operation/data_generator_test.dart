@@ -968,7 +968,7 @@ void main() {
       const expectedMethod = '''
         Object? _data({BigDecimal? body}) {
           if (body == null) return null;
-          return jsonEncode(body.toString());
+          return jsonEncode(body.toPlainString());
         }
       ''';
 

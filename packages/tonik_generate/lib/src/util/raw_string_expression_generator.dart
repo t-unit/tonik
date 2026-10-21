@@ -9,9 +9,9 @@ Expression buildRawStringExpression(Expression receiver, Model model) {
     DoubleModel() ||
     NumberModel() ||
     BooleanModel() ||
-    DecimalModel() ||
     UriModel() ||
     DateModel() => receiver.property('toString').call([]),
+    DecimalModel() => receiver.property('toPlainString').call([]),
     DateTimeModel() => receiver.property('toTimeZonedIso8601String').call([]),
     // String enums must precede the catch-all, which also matches them.
     EnumModel<String>() => receiver.property('toJson').call([]),

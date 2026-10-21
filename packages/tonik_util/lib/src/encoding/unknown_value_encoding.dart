@@ -18,7 +18,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
     case final Uri uri:
       return uri.toString();
     case final BigDecimal decimal:
-      return decimal.toString();
+      return decimal.toPlainString();
     // Avoid allocating when nested values are already JSON-compatible.
     case final List<Object?> list:
       List<Object?>? changed;
@@ -75,7 +75,7 @@ String encodeUnknownFlatScalar(Object value, {required String context}) =>
       final DateTime dateTime => dateTime.toTimeZonedIso8601String(),
       final Date date => date.toString(),
       final Uri uri => uri.toString(),
-      final BigDecimal decimal => decimal.toString(),
+      final BigDecimal decimal => decimal.toPlainString(),
       _ => throw EncodingException(
         'Cannot encode ${value.runtimeType} as a flat scalar value '
         'at $context',

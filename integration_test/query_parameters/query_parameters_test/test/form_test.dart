@@ -131,17 +131,17 @@ void main() {
       expect(recordedRequest.uri.query, 'date=2000-06-15');
     });
 
-    test('decimal', () async {
+    test('decimal uses plain notation', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(
-        decimal: BigDecimal.parse('1.000'),
+        decimal: BigDecimal.parse('0.00000001'),
       );
 
       expect(response, isTonikSuccess);
 
       requireSuccess(response);
       final recordedRequest = await imposterServer.takeRequest();
-      expect(recordedRequest.uri.query, 'decimal=1.000');
+      expect(recordedRequest.uri.query, 'decimal=0.00000001');
     });
   });
 

@@ -595,12 +595,18 @@ class const MultipartBodyPlanner({
 
   Expression _primitive(Expression value, Model model, PartEncoding encoding) {
     if (encoding.contentType == ContentType.json && model is PrimitiveModel) {
-      return _json(value);
+      return _json(
+        model is DecimalModel
+            ? value.property('toPlainString').call([])
+            : value,
+      );
     }
     return value
-        .property(
-          model is DateTimeModel ? 'toTimeZonedIso8601String' : 'toString',
-        )
+        .property(switch (model) {
+          DateTimeModel() => 'toTimeZonedIso8601String',
+          DecimalModel() => 'toPlainString',
+          _ => 'toString',
+        })
         .call([]);
   }
 
@@ -620,7 +626,9 @@ class const MultipartBodyPlanner({
     if (!part.isMergedMap) {
       return _jsonPart(part, model, immutable: useImmutableCollections);
     }
-    return [_text(part, _json(part.value), fallback: 'application/json')];
+    return [
+      _text(part, _json(_anyJson(part.value)), fallback: 'application/json'),
+    ];
   }
 
   List<MultipartEmission> _jsonPart(
@@ -749,7 +757,7 @@ class const MultipartBodyPlanner({
         part,
         _json(
           part.isMergedObject
-              ? part.value
+              ? _anyJson(part.value)
               : part.value.property('toJson').call([]),
         ),
         fallback: 'application/json',

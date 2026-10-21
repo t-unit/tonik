@@ -226,11 +226,10 @@ Object? test() {
       );
     });
 
-    test('converts date URI decimal and boolean scalar values once', () {
+    test('converts date URI and boolean scalar values once', () {
       for (final model in [
         DateModel(context: context),
         UriModel(context: context),
-        DecimalModel(context: context),
         BooleanModel(context: context),
       ]) {
         expectPropertyCode(model, r'''
@@ -242,6 +241,17 @@ Object? test() {
     ),
   );''');
       }
+    });
+
+    test('converts decimal scalar values to plain strings', () {
+      expectPropertyCode(DecimalModel(context: context), r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(body.value.toPlainString()),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );''');
     });
 
     test('omits read-only parts and guards optional normalized access', () {
@@ -1506,7 +1516,10 @@ Object? test() {
       expect(jsonCode, contains('body.left.metadata.toJson()'));
       expect(jsonCode, contains('body.right.metadata.toJson()'));
       expect(jsonCode, contains('mergeObjects: true'));
-      expect(jsonCode, contains(r'jsonEncode(_$metadataMultipartValue)'));
+      expect(
+        jsonCode,
+        contains(r'jsonEncode(encodeAnyToJson(_$metadataMultipartValue))'),
+      );
 
       final styleContent = _content(
         root,
@@ -1591,6 +1604,10 @@ Object? test() {
       expect(mutable, contains("propertyName: r'items'"));
       expect(mutable, contains("propertyName: r'metadata'"));
       expect(mutable, contains('mergeObjects: true'));
+      expect(
+        mutable,
+        contains(r'jsonEncode(encodeAnyToJson(_$metadataMultipartValue))'),
+      );
 
       final nonExploded = emit(
         _content(

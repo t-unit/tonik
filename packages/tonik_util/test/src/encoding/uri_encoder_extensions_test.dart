@@ -160,12 +160,12 @@ void main() {
       );
     });
 
-    test('percent-encodes plus in a positive exponent', () {
+    test('encodes a positive exponent as plain digits', () {
       final value = BigDecimal.parse('1.23E+10');
 
       expect(
         value.uriEncode(allowEmpty: true, textEncoding: utf8),
-        '1.23e%2B10',
+        '12300000000',
       );
       expect(
         value.uriEncode(
@@ -173,7 +173,15 @@ void main() {
           allowReserved: true,
           textEncoding: utf8,
         ),
-        '1.23e%2B10',
+        '12300000000',
+      );
+    });
+
+    test('encodes a small decimal without an exponent', () {
+      expect(
+        BigDecimal.parse('0.00000001')
+            .uriEncode(allowEmpty: true, textEncoding: utf8),
+        '0.00000001',
       );
     });
 
@@ -793,7 +801,7 @@ void main() {
       expect(
         BigDecimal.parse('1.23E+10')
             .uriEncode(allowEmpty: true, literal: true, textEncoding: utf8),
-        '1.23e+10',
+        '12300000000',
       );
     });
 

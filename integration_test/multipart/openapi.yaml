@@ -647,6 +647,10 @@ paths:
             encoding:
               data:
                 contentType: text/plain
+              amount:
+                contentType: text/plain
+              jsonAmount:
+                contentType: application/json
       responses:
         '200':
           description: Successful response
@@ -1306,6 +1310,12 @@ components:
         label:
           type: string
           description: Regular string field
+        amount:
+          type: string
+          format: decimal
+        jsonAmount:
+          type: string
+          format: decimal
 
     HeaderPartsForm:
       type: object
@@ -1506,6 +1516,11 @@ components:
       properties:
         metadata:
           $ref: '#/components/schemas/MetadataBase'
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: decimal
 
     UploadMetadataAnnotations:
       type: object
@@ -1514,6 +1529,11 @@ components:
       properties:
         metadata:
           $ref: '#/components/schemas/MetadataAnnotations'
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: decimal
 
     MetadataBase:
       type: object
