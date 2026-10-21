@@ -21,7 +21,11 @@ class const DioDataGenerator({
   required final String package,
   final bool useImmutableCollections = false,
 }) {
-  Method generateDataMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
+  Method generateDataMethod(
+    Operation operation, {
+    RequestBodyPlan? bodyPlan,
+    List<MultipartHeaderParamInfo>? headerInfo,
+  }) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
       return buildDataMethod(statements: [const Code('return null;')]);
@@ -29,7 +33,7 @@ class const DioDataGenerator({
 
     final content = requestBody.resolvedContent;
     final isRequired = requestBody.isRequired;
-    final headerInfo = extractOperationMultipartHeaderParamInfo(
+    headerInfo ??= extractOperationMultipartHeaderParamInfo(
       operation,
       nameManager: nameManager,
       package: package,

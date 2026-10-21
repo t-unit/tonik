@@ -68,7 +68,7 @@ Code _append(MultipartAppend part, String variable, bool custom) {
         'name': part.name,
         'bytes': bytes,
         'contentType': specLiteralString(contentType),
-        'filename': ?part.filename,
+        'filename': ?part.resolvedFilename(),
         'headers': ?part.headers,
       })
     else
@@ -83,7 +83,7 @@ Code _append(MultipartAppend part, String variable, bool custom) {
               bytes,
             ],
             {
-              if (part.filename case final filename?)
+              if (part.resolvedFilename() case final filename?)
                 'filename': filename.parenthesized.property('replaceAll').call([
                   specLiteralString(r'\'),
                   specLiteralString(r'\\'),

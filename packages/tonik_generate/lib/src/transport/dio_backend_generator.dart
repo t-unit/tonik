@@ -174,11 +174,16 @@ final class const DioBackendGenerator({
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,
-  }) => DioDataGenerator(
-    nameManager: nameManager,
-    package: package,
-    useImmutableCollections: useImmutableCollections,
-  ).generateDataMethod(operation, bodyPlan: requestPlan.body);
+  }) =>
+      DioDataGenerator(
+        nameManager: nameManager,
+        package: package,
+        useImmutableCollections: useImmutableCollections,
+      ).generateDataMethod(
+        operation,
+        bodyPlan: requestPlan.body,
+        headerInfo: requestPlan.multipartHeaderParameters,
+      );
 
   @override
   Method generateOptionsMethod({

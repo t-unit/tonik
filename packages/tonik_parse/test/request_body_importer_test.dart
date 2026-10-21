@@ -251,13 +251,24 @@ void main() {
     };
     for (final entry in expectedParts.entries) {
       expect(
-        multipart.encoding[entry.key]!.textEncoding,
+        multipart.layout.fields
+            .firstWhere((part) => part.wireName == entry.key)
+            .encoding
+            .textEncoding,
         entry.value,
         reason: entry.key,
       );
     }
-    expect(multipart.encoding['defaulted'], isNull);
-    final unsupportedPart = multipart.encoding['unsupported']!;
+    expect(
+      multipart.layout.fields
+          .firstWhere((part) => part.wireName == 'defaulted')
+          .encoding
+          .contentType,
+      ContentType.text,
+    );
+    final unsupportedPart = multipart.layout.fields
+        .firstWhere((part) => part.wireName == 'unsupported')
+        .encoding;
     expect(unsupportedPart.rawContentType, 'text/plain; charset=utf-16');
     expect(unsupportedPart.wireContentType, 'text/plain; charset=utf-8');
   });

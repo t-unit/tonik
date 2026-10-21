@@ -111,5 +111,5 @@ PartEncoding _importEncoding({
   final content =
       api.operations.single.requestBody!.resolvedContent.single
           as MultipartRequestContent;
-  return content.encoding['value']!;
+  return content.layout.fields.single.encoding;
 }

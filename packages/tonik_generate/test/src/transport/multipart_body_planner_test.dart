@@ -90,7 +90,7 @@ Object? test() {
 
   group('single-value parts', () {
     test(
-      'Dio retains a binary array content-type override for both sources',
+      'binary arrays keep their content-type override in a shared file part',
       () {
         final content = multipartContentFixture(context, [
           multipartPartFixture(
@@ -123,11 +123,9 @@ Object? test() {
             .plan(content, bodyAccessor: 'body', isRequired: true);
         final parts = plan.emissions.whereType<MultipartAppend>().toList();
 
-        expect(parts, hasLength(2));
-        expect(parts[0].source, MultipartValueSource.bytes);
-        expect(parts[0].contentType, 'image/png');
-        expect(parts[1].source, MultipartValueSource.path);
-        expect(parts[1].contentType, 'image/png');
+        expect(parts, hasLength(1));
+        expect(parts.single.source, MultipartValueSource.file);
+        expect(parts.single.contentType, 'image/png');
       },
     );
 
@@ -1135,7 +1133,7 @@ Object? test() {
 
       final properties = normalizeMultipartProperties(_content(root))
           .properties;
-      expect(properties.map((property) => property.rawName), [
+      expect(properties.map((property) => property.part.wireName), [
         'files',
         'metadata',
       ]);
@@ -1170,9 +1168,12 @@ Object? test() {
       expect(result.runtimeEncodingError, isNull);
       expect(result.properties, isEmpty);
       expect(result.dynamicSource!.accessPath, isEmpty);
-      expect(result.dynamicSource!.valueModel, same(model.valueModel));
-      expect(result.dynamicSource!.isValueNullable, isFalse);
-      expect(result.dynamicSource!.receiverNullable, isFalse);
+      expect(
+        result.dynamicSource!.additionalFields.valueModel,
+        same(model.valueModel),
+      );
+      expect(result.dynamicSource!.additionalFields.isValueNullable, isFalse);
+      expect(result.dynamicSource!.additionalFields.receiverNullable, isFalse);
     });
 
     test('normalizes typed additional properties beside named metadata', () {
@@ -1187,12 +1188,14 @@ Object? test() {
       );
       final result = normalizeMultipartProperties(_content(model));
       expect(result.runtimeEncodingError, isNull);
-      expect(result.properties.single.rawName, 'metadata');
+      expect(result.properties.single.part.wireName, 'metadata');
       expect(
         result.dynamicSource!.accessPath.single.name,
         'additionalProperties',
       );
-      expect(result.dynamicSource!.declaredWireNames, {'metadata'});
+      expect(result.dynamicSource!.additionalFields.declaredWireNames, {
+        'metadata',
+      });
     });
 
     test('allows the implicit object additional-properties default', () {
@@ -1240,7 +1243,7 @@ Object? test() {
       final property = normalizeMultipartProperties(_content(nullableClass))
           .properties
           .single;
-      expect(property.isNullable, isTrue);
+      expect(property.part.isNullable, isTrue);
       const expected = r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
@@ -1315,8 +1318,8 @@ Object? test() {
         final property = normalizeMultipartProperties(_content(model))
             .properties
             .single;
-        expect(property.isRequired, isTrue);
-        expect(property.isNullable, isTrue);
+        expect(property.part.isRequired, isTrue);
+        expect(property.part.isNullable, isTrue);
         final code = emit(_content(model));
         expect(code, contains('if (body.secret == null)'));
         expect(code, contains('Required multipart property "secret" is null.'));
@@ -1340,7 +1343,52 @@ Object? test() {
       final properties = normalizeMultipartProperties(
         _content(_allOf(context, 'Combined', [readOnly, writable])),
       ).properties;
-      expect(properties.map((property) => property.rawName), ['client']);
+      expect(properties.map((property) => property.part.wireName), ['client']);
+    });
+
+    test('uses each generated member for repeated identical allOf sources', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(context, 'tag', StringModel(context: context)),
+      ]);
+      final content = _content(_allOf(context, 'Upload', [member, member]));
+
+      final part = normalizeMultipartProperties(content).properties.single;
+
+      expect(part.accessPaths, hasLength(2));
+      expect(part.accessPaths.first.map((segment) => segment.name), [
+        'shared',
+        'tag',
+      ]);
+      expect(part.accessPaths.last.map((segment) => segment.name), [
+        'shared2',
+        'tag',
+      ]);
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  final _$tagMultipartValue = _mergeMultipartValues([
+    body.shared.tag,
+    body.shared2.tag,
+  ], propertyName: r'tag');
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'tag').replaceAll(r'\', r'\\'),
+      utf8.encode(_$tagMultipartValue),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
     });
 
     test('defers incompatible nested duplicate definitions to runtime', () {
@@ -1656,7 +1704,7 @@ AllOfModel _allOf(
 MultipartRequestContent _content(
   Model model, {
   Map<String, PartEncoding> encoding = const {},
-}) => MultipartRequestContent(
+}) => multipartRequestContentFixture(
   model: model,
   encoding: encoding,
   rawContentType: 'multipart/form-data',

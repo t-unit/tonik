@@ -287,7 +287,7 @@ class const AllOfNormalizer({required final bool normalizeSingleMembers}) {
             case ModelRequestContent():
               content.model = _transformModel(content.model, cache);
             case MultipartRequestContent():
-              content.model = _transformModel(content.model, cache);
+              content.normalizeAllOf((model) => _transformModel(model, cache));
           }
         }
     }

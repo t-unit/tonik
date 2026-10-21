@@ -37,7 +37,8 @@ void main() {
       'label',
     ]);
     expect(model.properties.first.model, isA<BinaryModel>());
-    expect(content.encoding, isEmpty);
+    expect(content.layout.fields.first.encoding.contentType, ContentType.bytes);
+    expect(content.layout.fields.last.encoding.contentType, ContentType.text);
   });
 
   test('reuses schema models across JSON, multipart, and responses', () {
@@ -132,11 +133,29 @@ void main() {
     final plain = _multipart(api, 'plain');
     final json = _multipart(api, 'json');
     expect(plain.model, same(json.model));
-    expect(plain.encoding.keys, ['label']);
-    expect(plain.encoding['label']!.contentType, ContentType.text);
-    expect(plain.encoding['label']!.textEncoding, TextEncoding.ascii);
-    expect(json.encoding.keys, ['label']);
-    expect(json.encoding['label']!.contentType, ContentType.json);
+    expect(plain.layout.fields.map((part) => part.wireName), ['file', 'label']);
+    expect(
+      plain.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .encoding
+          .contentType,
+      ContentType.text,
+    );
+    expect(
+      plain.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .encoding
+          .textEncoding,
+      TextEncoding.ascii,
+    );
+    expect(json.layout.fields.map((part) => part.wireName), ['file', 'label']);
+    expect(
+      json.layout.fields
+          .firstWhere((part) => part.wireName == 'label')
+          .encoding
+          .contentType,
+      ContentType.json,
+    );
   });
 
   test('reuses referenced request bodies and resolves aliases and defs', () {
@@ -197,7 +216,8 @@ void main() {
     expect(one, same(two));
     expect(one.model, isA<AliasModel>());
     expect((one.model as AliasModel).name, 'SharedAlias');
-    expect(one.encoding.keys, ['label']);
+    expect(one.layout.fields.map((part) => part.wireName), ['file', 'label']);
+    expect(one.layout.fields.last.encoding.contentType, ContentType.text);
 
     final defs = _multipart(api, 'defs').model as ClassModel;
     final local = defs.properties.single.model.resolved as ClassModel;

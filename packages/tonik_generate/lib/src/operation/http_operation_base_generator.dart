@@ -449,11 +449,6 @@ final class const HttpOperationBaseGenerator({final bool streaming = false})
             )
             .code,
         const Code(';'),
-        const Code('    multipartRequest.fields.addAll(const <'),
-        refer('String', 'dart:core').code,
-        const Code(', '),
-        refer('String', 'dart:core').code,
-        const Code('>{});'),
         const Code('    multipartRequest.files.addAll(data);'),
         const Code('    request = multipartRequest;'),
         const Code('  } else {'),

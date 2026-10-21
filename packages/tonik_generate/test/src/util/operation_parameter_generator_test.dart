@@ -6,6 +6,8 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 
+import '../transport/multipart_test_support.dart';
+
 void main() {
   late NameManager nameManager;
   late NameGenerator nameGenerator;
@@ -2505,7 +2507,7 @@ MultipartRequestContent _multipartContent({
   required List<MultipartPartFixture> parts,
   required Context context,
   required List<Example> examples,
-}) => MultipartRequestContent(
+}) => multipartRequestContentFixture(
   model: ClassModel(
     name: name,
     context: context,
@@ -2560,9 +2562,12 @@ final class MultipartPartFixture._({
 MultipartRequestContent _withEncoding(
   MultipartRequestContent content,
   Map<String, PartEncoding> byName,
-) => MultipartRequestContent(
+) => multipartRequestContentFixture(
   model: content.model,
-  encoding: {...content.encoding, ...byName},
+  encoding: {
+    for (final part in content.layout.fields) part.wireName: part.encoding,
+    ...byName,
+  },
   rawContentType: content.rawContentType,
   wireContentType: content.wireContentType,
   textEncoding: content.textEncoding,

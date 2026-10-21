@@ -624,7 +624,7 @@ Object? encode() {
     final second = multipartContentFixture(context, [
       multipartPartFixture(name: 'items', model: list),
     ], name: 'Second').model;
-    final content = MultipartRequestContent(
+    final content = multipartRequestContentFixture(
       model: AllOfModel(
         context: context,
         name: 'Merged',
@@ -758,9 +758,12 @@ Object? encode() {
     );
     final result = normalizeMultipartProperties(_content(root));
     expect(result.runtimeEncodingError, isNull);
-    expect(result.dynamicSource!.valueModel, same(nullableValue));
-    expect(result.dynamicSource!.isValueNullable, isTrue);
-    expect(result.dynamicSource!.receiverNullable, isTrue);
+    expect(
+      result.dynamicSource!.additionalFields.valueModel,
+      same(nullableValue),
+    );
+    expect(result.dynamicSource!.additionalFields.isValueNullable, isTrue);
+    expect(result.dynamicSource!.additionalFields.receiverNullable, isTrue);
     expect(result.dynamicSource!.accessPath, isEmpty);
   });
 
@@ -797,7 +800,7 @@ Object? encode() {
         stableModelSorter: StableModelSorter(),
       ),
     );
-    expect(result.properties.single.rawName, 'raw-name');
+    expect(result.properties.single.part.wireName, 'raw-name');
     expect(
       result.properties.single.accessPaths.single.single.name,
       'additionalProperties',
@@ -806,7 +809,10 @@ Object? encode() {
       result.dynamicSource!.accessPath.single.name,
       'additionalProperties2',
     );
-    expect(result.dynamicSource!.declaredWireNames, {'raw-name', 'read-only'});
+    expect(result.dynamicSource!.additionalFields.declaredWireNames, {
+      'raw-name',
+      'read-only',
+    });
   });
 
   test('rejects untyped map values', () {
@@ -934,7 +940,7 @@ Object? encode() {
       isReadOnly: false,
       isWriteOnly: false,
     );
-    final content = MultipartRequestContent(
+    final content = multipartRequestContentFixture(
       model: model,
       examples: const [],
       rawContentType: 'multipart/form-data',
@@ -1083,7 +1089,7 @@ Object? encode() {
     );
     final result = normalizeMultipartProperties(_content(root));
     expect(result.runtimeEncodingError, isNull);
-    expect(result.dynamicSource!.valueModel, same(node));
+    expect(result.dynamicSource!.additionalFields.valueModel, same(node));
   });
 
   test('forbidden additional properties create no dynamic source', () {
@@ -1104,7 +1110,7 @@ Object? encode() {
   });
 }
 
-MultipartRequestContent _content(Model model) => MultipartRequestContent(
+MultipartRequestContent _content(Model model) => multipartRequestContentFixture(
   model: model,
   encoding: const {},
   rawContentType: 'multipart/form-data',

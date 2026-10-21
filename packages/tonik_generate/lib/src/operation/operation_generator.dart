@@ -7,7 +7,6 @@ import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
-import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/multipart_merge_method_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_planner.dart';
@@ -206,25 +205,25 @@ class OperationGenerator({
   }) {
     final hasRequestBody =
         operation.requestBody?.resolvedContent.isNotEmpty ?? false;
-    final parameters = generateParameters(
-      operation: operation,
-      nameManager: nameManager,
-      package: package,
-      useImmutableCollections: useImmutableCollections,
-      defaultsByName: defaultsByName,
-    );
-
-    final pathArgs = <String, Expression>{};
-    final queryArgs = <String, Expression>{};
-    final headerArgs = <String, Expression>{};
-    final cookieArgs = <String, Expression>{};
     requestPlan ??= OperationRequestPlanner(
       backend: backendGenerator.backend,
       nameManager: nameManager,
       package: package,
       useImmutableCollections: useImmutableCollections,
     ).plan(operation, normalizedParams);
+    final parameters = generateParameters(
+      operation: operation,
+      nameManager: nameManager,
+      package: package,
+      useImmutableCollections: useImmutableCollections,
+      defaultsByName: defaultsByName,
+      multipartHeaderParameters: requestPlan.multipartHeaderParameters,
+    );
 
+    final pathArgs = <String, Expression>{};
+    final queryArgs = <String, Expression>{};
+    final headerArgs = <String, Expression>{};
+    final cookieArgs = <String, Expression>{};
     for (final pathParam in requestPlan.pathParameters) {
       pathArgs[pathParam.normalizedName] = pathParam.value;
     }
@@ -258,11 +257,7 @@ class OperationGenerator({
     final dataArgs = <String, Expression>{
       if (hasRequestBody) 'body': refer('body'),
       if (hasRequestBody)
-        for (final info in extractOperationMultipartHeaderParamInfo(
-          operation,
-          nameManager: nameManager,
-          package: package,
-        ))
+        for (final info in requestPlan.multipartHeaderParameters)
           info.name: refer(info.name),
     };
     final optionsArgs = <String, Expression>{

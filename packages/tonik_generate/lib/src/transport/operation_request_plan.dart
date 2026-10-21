@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 
 /// Backend-neutral generator-time meaning of one operation request.
 ///
@@ -14,6 +15,7 @@ class const OperationRequestPlan._({
   required final List<RequestValuePlan> queryParameters,
   required final List<RequestValuePlan> headers,
   required final List<RequestValuePlan> cookies,
+  required final List<MultipartHeaderParamInfo> multipartHeaderParameters,
   required final Expression? contentType,
   required final Expression cancellation,
   required final ResponseRequirements response,
@@ -30,6 +32,7 @@ class const OperationRequestPlan._({
     required Expression cancellation,
     required ResponseRequirements response,
     required RequestBodyPlan body,
+    List<MultipartHeaderParamInfo> multipartHeaderParameters = const [],
   }) : this._(
          method: method,
          uri: uri,
@@ -37,6 +40,9 @@ class const OperationRequestPlan._({
          queryParameters: List.unmodifiable(queryParameters),
          headers: List.unmodifiable(headers),
          cookies: List.unmodifiable(cookies),
+         multipartHeaderParameters: List.unmodifiable(
+           multipartHeaderParameters,
+         ),
          contentType: contentType,
          cancellation: cancellation,
          response: response,
@@ -150,7 +156,6 @@ enum MultipartValueSource() {
   field,
   text,
   bytes,
-  path,
   file,
 }
 
@@ -171,7 +176,13 @@ final class const MultipartAppend({
   final Expression? filename,
   final String? contentType,
   final Expression? headers,
-}) extends MultipartEmission;
+}) extends MultipartEmission {
+  Expression? resolvedFilename({Expression? selectedFileName}) {
+    if (source != MultipartValueSource.file) return filename;
+    final fileName = selectedFileName ?? value.property('fileName');
+    return filename == null ? fileName : fileName.ifNullThen(filename!);
+  }
+}
 
 @immutable
 final class const MultipartBodyPlan._({

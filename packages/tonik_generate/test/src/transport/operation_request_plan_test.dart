@@ -255,7 +255,7 @@ void main() {
             isRequired: true,
             content: {
               if (contentType == ContentType.multipart)
-                MultipartRequestContent(
+                multipartRequestContentFixture(
                   model: ClassModel(
                     context: context,
                     properties: const [],
@@ -319,10 +319,22 @@ void main() {
           model: BinaryModel(context: context),
           isRequired: false,
           isNullable: true,
-          encoding: const PartEncoding(
+          encoding: PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            headers: null,
+            headers: {
+              'X-Trace': ResponseHeaderObject(
+                name: 'X-Trace',
+                context: context,
+                description: null,
+                explode: false,
+                model: StringModel(context: context),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
             style: null,
             explode: null,
             allowReserved: null,
@@ -347,11 +359,239 @@ void main() {
       final body = plan.body as MultipartBodyPlan;
 
       expect(body.emissions, isEmpty);
+      expect(plan.multipartHeaderParameters, hasLength(1));
+      expect(plan.multipartHeaderParameters.single.rawHeaderName, 'X-Trace');
+      expect(plan.multipartHeaderParameters.single.name, 'itemTrace');
+      expect(plan.multipartHeaderParameters.single.isRequired, isTrue);
       expect(
         body.runtimeEncodingError,
         'Multipart property "item" has incompatible definitions '
         '(StringModel and BinaryModel).',
       );
+    });
+
+    test('plans current multipart properties after deprecated exclusion', () {
+      final context = Context.initial();
+      final legacy = multipartPartFixture(
+        name: 'legacy',
+        model: StringModel(context: context),
+      );
+      legacy.property.isDeprecated = true;
+      final active = multipartPartFixture(
+        name: 'active',
+        model: StringModel(context: context),
+      );
+      final content = multipartContentFixture(context, [legacy, active]);
+      final requestBody = RequestBodyObject(
+        name: 'upload',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {content},
+      );
+      final operation = _operation(context, requestBody: requestBody);
+      final document = ApiDocument(
+        title: 'Test',
+        version: '1',
+        summary: null,
+        description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
+        models: {content.model},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: {operation},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: {requestBody},
+      );
+      const defaults = TonikConfig.defaults;
+      final config = TonikConfig(
+        nameOverrides: defaults.nameOverrides,
+        contentTypes: defaults.contentTypes,
+        contentMediaTypes: defaults.contentMediaTypes,
+        filter: defaults.filter,
+        deprecated: const DeprecatedConfig(
+          operations: DeprecatedHandling.annotate,
+          schemas: DeprecatedHandling.annotate,
+          parameters: DeprecatedHandling.annotate,
+          properties: DeprecatedHandling.exclude,
+        ),
+        enums: defaults.enums,
+        transport: defaults.transport,
+        useImmutableCollections: defaults.useImmutableCollections,
+        workerCount: defaults.workerCount,
+      );
+
+      const ConfigTransformer().apply(document, config);
+      final plan = planner.plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(content.layout.fields.map((part) => part.wireName), ['active']);
+      expect(
+        content.layout.fields.single.sources.single.property,
+        same(active.property),
+      );
+      expect(body.runtimeEncodingError, isNull);
+      expect(body.emissions.whereType<MultipartAppend>(), hasLength(1));
+    });
+
+    test('shares allOf named fields with inline header parameters', () {
+      final context = Context.initial();
+      final left = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'document',
+          model: StringModel(context: context),
+        ),
+      ]).model;
+      final right = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'label',
+          model: StringModel(context: context),
+          isRequired: false,
+        ),
+      ]).model;
+      final content = multipartRequestContentFixture(
+        model: AllOfModel(
+          name: 'Upload',
+          models: [left, right],
+          context: context,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          defaultValue: null,
+        ),
+        encoding: {
+          'document': PartEncoding(
+            contentType: null,
+            rawContentType: null,
+            headers: {
+              'X-Document-Id': ResponseHeaderObject(
+                name: 'X-Document-Id',
+                context: context,
+                description: null,
+                explode: false,
+                model: StringModel(context: context),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+          ),
+        },
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+      final operation = _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'upload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {content},
+        ),
+      );
+
+      final plan = planner.plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(plan.multipartHeaderParameters.single.name, 'documentDocumentId');
+      expect(plan.multipartHeaderParameters.single.isRequired, isTrue);
+      expect(body.runtimeEncodingError, isNull);
+      expect(body.emissions.whereType<MultipartAppend>(), hasLength(2));
+      expect(body.mergeHelpers, isEmpty);
+    });
+
+    test('shares named fields and a dynamic source for HTTP', () {
+      final context = Context.initial();
+      final property = multipartPartFixture(
+        name: 'label',
+        model: StringModel(context: context),
+      ).property;
+      final content = multipartRequestContentFixture(
+        model: ClassModel(
+          name: 'Upload',
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          properties: [property],
+          nameOverride: null,
+          description: null,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: StringModel(context: context),
+            origin: AdditionalPropertiesOrigin.explicit,
+          ),
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        encoding: {
+          'label': PartEncoding(
+            contentType: null,
+            rawContentType: null,
+            headers: {
+              'X-Label-Id': ResponseHeaderObject(
+                name: 'X-Label-Id',
+                context: context,
+                description: null,
+                explode: false,
+                model: StringModel(context: context),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
+              ),
+            },
+            style: null,
+            explode: null,
+            allowReserved: null,
+            wireContentType: null,
+            textEncoding: TextEncoding.utf8,
+          ),
+        },
+        rawContentType: 'multipart/form-data',
+        examples: const [],
+        wireContentType: null,
+        textEncoding: TextEncoding.utf8,
+      );
+      final operation = _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'upload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {content},
+        ),
+      );
+
+      final plan = const OperationRequestPlanner(backend: TransportBackend.http)
+          .plan(operation, parameters);
+      final body = plan.body as MultipartBodyPlan;
+
+      expect(plan.multipartHeaderParameters.single.name, 'labelLabelId');
+      expect(body.runtimeEncodingError, isNull);
+      expect(body.emissions.whereType<MultipartAppend>(), hasLength(2));
+      expect(body.usesCustomParts, isTrue);
     });
 
     test('retains response selectors and creates a variant body plan', () {

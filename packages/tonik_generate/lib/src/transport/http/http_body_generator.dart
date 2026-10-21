@@ -21,7 +21,11 @@ class const HttpBodyGenerator({
   required final String package,
   final bool useImmutableCollections = false,
 }) {
-  Method generateBodyMethod(Operation operation, {RequestBodyPlan? bodyPlan}) {
+  Method generateBodyMethod(
+    Operation operation, {
+    RequestBodyPlan? bodyPlan,
+    List<MultipartHeaderParamInfo>? headerInfo,
+  }) {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
       return buildDataMethod(statements: [const Code('return null;')]);
@@ -32,11 +36,12 @@ class const HttpBodyGenerator({
     final inlineHelpers = <InlineHelper>[];
     final isRequired = requestBody.isRequired;
     final headerParameters = buildMultipartHeaderParameters(
-      extractOperationMultipartHeaderParamInfo(
-        operation,
-        nameManager: nameManager,
-        package: package,
-      ),
+      headerInfo ??
+          extractOperationMultipartHeaderParamInfo(
+            operation,
+            nameManager: nameManager,
+            package: package,
+          ),
       nameManager,
       package,
     );
