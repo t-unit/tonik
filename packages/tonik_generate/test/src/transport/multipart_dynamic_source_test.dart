@@ -434,7 +434,7 @@ Object? encode() {
   ], propertyName: r'metadata', mergeObjects: true);
   _$multipartFiles.add(MultipartFile.fromBytes(
     (r'metadata').replaceAll(r'\', r'\\'),
-    utf8.encode(jsonEncode(_$metadataMultipartValue)),
+    utf8.encode(jsonEncode(encodeAnyToJson(_$metadataMultipartValue))),
     contentType: MediaType.parse(r'application/json'),
   ));
   if (_$multipartFiles.isEmpty) {

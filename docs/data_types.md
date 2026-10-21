@@ -39,7 +39,7 @@ Since `Object?` has no static type, Tonik checks the runtime type and encodes ac
 | Value Type | JSON Body | Path/Query/Header | Form-urlencoded Body |
 |------------|-----------|-------------------|----------------------|
 | Primitives (`String`, `int`, `double`, `bool`) | ✅ | ✅ | ✅ (via `toString()`) |
-| `DateTime`, `Uri`, `BigDecimal` | ✅ | ✅ | ✅ (via `toString()`) |
+| `DateTime`, `Uri`, `BigDecimal` | ✅ | ✅ | ✅ (`BigDecimal` via `toPlainString()`) |
 | `List`, `Map` | ✅ recursive | ❌ throws | ❌ throws |
 | Generated models (`JsonEncodable` / `ParameterEncodable`) | ✅ | ✅ | ✅ |
 | `Map<String, String>` with `deepObject` style | — | ✅ | — |

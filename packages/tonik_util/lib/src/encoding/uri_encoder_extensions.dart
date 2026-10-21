@@ -195,10 +195,10 @@ extension BigDecimalUriEncoder on BigDecimal {
     bool literal = false,
   }) {
     if (literal) {
-      return toString();
+      return toPlainString();
     }
     return encodeUriValue(
-      toString(),
+      toPlainString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
       textEncoding: textEncoding,

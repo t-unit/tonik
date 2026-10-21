@@ -252,12 +252,12 @@ void main() {
       );
     });
 
-    test('percent-encodes plus in a positive exponent', () {
+    test('encodes a positive exponent as plain digits', () {
       final value = BigDecimal.parse('1.23E+10');
 
       expect(
         value.toForm('p', explode: false, allowEmpty: true, textEncoding: utf8),
-        const <ParameterEntry>[(name: 'p', value: '1.23e%2B10')],
+        const <ParameterEntry>[(name: 'p', value: '12300000000')],
       );
     });
   });

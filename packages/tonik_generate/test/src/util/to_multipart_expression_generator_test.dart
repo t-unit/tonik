@@ -943,7 +943,7 @@ $expectedPartCode
       );
     });
 
-    test('serializes DecimalModel with text/plain via toString()', () {
+    test('serializes DecimalModel with text/plain via toPlainString()', () {
       final content = multipartContentFixture(testContext, [
         multipartPartFixture(
           name: 'amount',
@@ -973,13 +973,39 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry((r'amount').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            _$formData.files.add(MapEntry((r'amount').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.amount.toPlainString(), contentType: DioMediaType.parse(r'text/plain'))));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
             return _$formData;
           }
         '''),
+        ),
+      );
+    });
+
+    test('serializes DecimalModel with application/json as a plain string', () {
+      expectPropertyCode(
+        DecimalModel(context: testContext),
+        r'''
+  _$formData.files.add(
+    MapEntry(
+      (r'value').replaceAll(r'\', r'\\'),
+      MultipartFile.fromString(
+        jsonEncode(body.value.toPlainString()),
+        contentType: DioMediaType.parse(r'application/json'),
+      ),
+    ),
+  );''',
+        encoding: const PartEncoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          style: EncodingStyle.form,
+          explode: true,
+          allowReserved: false,
+          headers: null,
+          wireContentType: null,
+          textEncoding: TextEncoding.utf8,
         ),
       );
     });

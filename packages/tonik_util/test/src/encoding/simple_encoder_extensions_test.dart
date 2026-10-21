@@ -611,7 +611,7 @@ void main() {
       final value = BigDecimal.parse('0.00000000000000000001');
       expect(
         value.toSimple(explode: false, allowEmpty: true),
-        value.toString(), // May be in scientific notation
+        '0.00000000000000000001',
       );
     });
 
@@ -625,7 +625,14 @@ void main() {
 
     test('encodes BigDecimal in scientific notation input using extension', () {
       final value = BigDecimal.parse('1.23E+10');
-      expect(value.toSimple(explode: false, allowEmpty: true), '1.23e%2B10');
+      expect(value.toSimple(explode: false, allowEmpty: true), '12300000000');
+    });
+
+    test('preserves decimal scale in plain notation', () {
+      expect(
+        BigDecimal.parse('1.0300e2').toSimple(explode: false, allowEmpty: true),
+        '103.00',
+      );
     });
 
     test('explode parameter has no effect on BigDecimal encoding', () {

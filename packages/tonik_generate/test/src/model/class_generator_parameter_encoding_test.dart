@@ -2137,7 +2137,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     this.createdAt.toTimeZonedIso8601String(),
   );
   _$result[r'birthday'] = PropertyValue.scalar(this.birthday.toString());
-  _$result[r'price'] = PropertyValue.scalar(this.price.toString());
+  _$result[r'price'] = PropertyValue.scalar(this.price.toPlainString());
   _$result[r'link'] = PropertyValue.scalar(this.link.toString());
   _$result[r'status'] = PropertyValue.scalar(this.status.toJson());
   _$result[r'level'] = PropertyValue.scalar(this.level.toJson().toString());

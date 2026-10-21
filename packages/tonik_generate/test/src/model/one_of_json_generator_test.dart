@@ -558,7 +558,7 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              NumericValueDecimal(:final value) => (value.toString(), r'decimal'),
+              NumericValueDecimal(:final value) => (value.toPlainString(), r'decimal'),
               NumericValueInteger(:final value) => (value, r'integer'),
             };
 

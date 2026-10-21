@@ -56,8 +56,8 @@ void main() {
       expectEmission(BooleanModel(context: context), 'myValue.toString()');
     });
 
-    test('DecimalModel emits myValue.toString()', () {
-      expectEmission(DecimalModel(context: context), 'myValue.toString()');
+    test('DecimalModel emits myValue.toPlainString()', () {
+      expectEmission(DecimalModel(context: context), 'myValue.toPlainString()');
     });
 
     test('UriModel emits myValue.toString()', () {

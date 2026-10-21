@@ -206,6 +206,7 @@ BuiltExpression _buildSerializationExpression(
     case DateTimeModel():
       return BuiltExpression.simple(callMethod('toTimeZonedIso8601String'));
     case DecimalModel():
+      return BuiltExpression.simple(callMethod('toPlainString'));
     case UriModel():
       return BuiltExpression.simple(callMethod('toString'));
     case BinaryModel():

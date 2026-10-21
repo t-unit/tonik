@@ -47,6 +47,14 @@ void main() {
       expect(encodeUnknownJson(BigDecimal.parse('1.50'), context: 'v'), '1.50');
     });
 
+    test('converts BigDecimal exponents to plain JSON strings', () {
+      expect(
+        encodeUnknownJson(BigDecimal.parse('0.00000001'), context: 'v'),
+        '0.00000001',
+      );
+      expect(encodeUnknownJson(BigDecimal.parse('1E+3'), context: 'v'), '1000');
+    });
+
     test('recursively encodes maps and lists', () {
       expect(
         encodeUnknownJson({
@@ -172,6 +180,14 @@ void main() {
       expect(
         encodeUnknownFlatScalar(BigDecimal.parse('1.50'), context: 'v'),
         '1.50',
+      );
+      expect(
+        encodeUnknownFlatScalar(BigDecimal.parse('0.00000001'), context: 'v'),
+        '0.00000001',
+      );
+      expect(
+        encodeUnknownFlatScalar(BigDecimal.parse('1E+3'), context: 'v'),
+        '1000',
       );
     });
 
