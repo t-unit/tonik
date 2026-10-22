@@ -9,7 +9,7 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// A class representing a date without time information.
 ///
-/// This class follows the RFC3339 date format (YYYY-MM-DD) and is immutable.
+/// This class uses YYYY-MM-DD with signed and extended years and is immutable.
 /// It provides methods for JSON serialization and simple string encoding/decoding.
 @immutable
 class Date(
@@ -33,22 +33,22 @@ class Date(
   factory fromDateTime(DateTime dateTime) =>
       Date(dateTime.year, dateTime.month, dateTime.day);
 
-  /// Parses an ISO 8601 formatted string (YYYY-MM-DD).
+  /// Parses a date string (YYYY-MM-DD, with optional sign and extended year).
   ///
   /// Throws [FormatException] if the string is not in the correct format
   /// or if any of the date components are invalid.
   factory fromString(String dateString) {
-    final parts = dateString.split('-');
-    if (parts.length != 3) {
+    final parts = RegExp(r'^([+-]?\d+)-(\+?\d+)-(\+?\d+)$').firstMatch(dateString);
+    if (parts == null) {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
 
     try {
-      final year = int.parse(parts[0]);
-      final month = int.parse(parts[1]);
-      final day = int.parse(parts[2]);
-      final date = Date(year, month, day).._validate();
-      return date;
+      return Date(
+        int.parse(parts[1]!),
+        int.parse(parts[2]!),
+        int.parse(parts[3]!),
+      );
     } on FormatException {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
@@ -169,7 +169,10 @@ class Date(
 
   @override
   String toString() {
-    return '${year.toString().padLeft(4, '0')}-'
+    final yearString = year < 0
+        ? '-${year.toString().substring(1).padLeft(4, '0')}'
+        : year.toString().padLeft(4, '0');
+    return '$yearString-'
         '${month.toString().padLeft(2, '0')}-'
         '${day.toString().padLeft(2, '0')}';
   }
@@ -181,7 +184,12 @@ class Date(
       );
     }
 
-    final daysInMonth = DateTime(year, month + 1, 0).day;
+    final daysInMonth = switch (month) {
+      2 when year % 400 == 0 || (year % 4 == 0 && year % 100 != 0) => 29,
+      2 => 28,
+      4 || 6 || 9 || 11 => 30,
+      _ => 31,
+    };
     if (day < 1 || day > daysInMonth) {
       throw FormatException(
         'Invalid day: $day. Day must be between 1 and $daysInMonth for '
