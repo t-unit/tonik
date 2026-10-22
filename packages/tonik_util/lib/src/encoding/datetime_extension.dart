@@ -15,6 +15,16 @@ extension DateTimeEncodingExtension on DateTime {
     }
 
     final year = this.year;
+    final absoluteYear = year.abs();
+    final paddedYear = absoluteYear.toString().padLeft(
+      absoluteYear > 9999 ? 6 : 4,
+      '0',
+    );
+    final formattedYear = year < 0
+        ? '-$paddedYear'
+        : year > 9999
+        ? '+$paddedYear'
+        : paddedYear;
     final month = _twoDigits(this.month);
     final day = _twoDigits(this.day);
     final hour = _twoDigits(this.hour);
@@ -40,7 +50,7 @@ extension DateTimeEncodingExtension on DateTime {
         '$offsetSign'
         '${_twoDigits(offsetHours)}:${_twoDigits(offsetMinutes)}';
 
-    return '$year-$month-${day}T$hour:$minute:$second'
+    return '$formattedYear-$month-${day}T$hour:$minute:$second'
         '$fractionalString$offsetString';
   }
 
