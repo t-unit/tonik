@@ -1,7 +1,9 @@
 import 'package:test/test.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:tonik_util/src/decoding/simple_decoder.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
+import 'package:tonik_util/src/offset_date_time.dart';
 
 void main() {
   setUpAll(tz.initializeTimeZones);
@@ -15,9 +17,64 @@ void main() {
         expect(result, utcDateTime.toIso8601String());
         expect(result, '2023-12-25T15:30:45.123Z');
       });
+
+      test('preserves Dart year formatting in UTC', () {
+        expect(
+          DateTime.utc(-5).toTimeZonedIso8601String(),
+          '-0005-01-01T00:00:00.000Z',
+        );
+        expect(
+          DateTime.utc(10000).toTimeZonedIso8601String(),
+          '+010000-01-01T00:00:00.000Z',
+        );
+      });
     });
 
     group('timezone handling', () {
+      test('pads an offset datetime year and permits decoding it again', () {
+        final dateTime = OffsetDateTime.parse('0099-01-01T12:00:00+02:00');
+
+        final encoded = dateTime.toTimeZonedIso8601String();
+
+        expect(encoded, '0099-01-01T12:00:00+02:00');
+        expect(encoded.decodeSimpleDateTime().year, 99);
+      });
+
+      test('pads a local DateTime year and permits decoding it again', () {
+        final encoded = DateTime(500, 1, 1, 12).toTimeZonedIso8601String();
+
+        expect(encoded.startsWith('0500-01-01T12:00:00'), isTrue);
+        expect(encoded.decodeSimpleDateTime().year, 500);
+      });
+
+      test('uses Dart year formatting with an offset', () {
+        final negativeYear = OffsetDateTime.from(
+          DateTime.utc(-5, 1, 1, 10),
+          offset: const Duration(hours: 2),
+        );
+        final expandedNegativeYear = OffsetDateTime.from(
+          DateTime.utc(-10000, 1, 1, 10),
+          offset: const Duration(hours: 2),
+        );
+        final expandedYear = OffsetDateTime.from(
+          DateTime.utc(10000, 1, 1, 10),
+          offset: const Duration(hours: 2),
+        );
+
+        expect(
+          negativeYear.toTimeZonedIso8601String(),
+          '-0005-01-01T12:00:00+02:00',
+        );
+        expect(
+          expandedNegativeYear.toTimeZonedIso8601String(),
+          '-010000-01-01T12:00:00+02:00',
+        );
+        expect(
+          expandedYear.toTimeZonedIso8601String(),
+          '+010000-01-01T12:00:00+02:00',
+        );
+      });
+
       test('encodes in EST (UTC-5:00)', () {
         final estLocation = tz.getLocation('America/New_York');
         final estDateTime = tz.TZDateTime(
