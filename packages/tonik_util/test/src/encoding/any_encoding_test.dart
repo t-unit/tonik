@@ -2062,6 +2062,184 @@ void main() {
   });
 
   group('encodeAnyToFormEntries', () {
+    test('exploded list repeats the declared name', () {
+      expect(
+        encodeAnyToFormEntries(
+          ['a', 'b'],
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: 'a'), (name: 'p', value: 'b')],
+      );
+    });
+
+    test('exploded integer list remains an array', () {
+      expect(
+        encodeAnyToFormEntries(
+          [1, 2],
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: '1'), (name: 'p', value: '2')],
+      );
+    });
+
+    test('exploded map uses property names', () {
+      expect(
+        encodeAnyToFormEntries(
+          {'a': 1, 'b': 2},
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'a', value: '1'), (name: 'b', value: '2')],
+      );
+    });
+
+    test('non-exploded map retains one entry', () {
+      expect(
+        encodeAnyToFormEntries(
+          {'a': 1, 'b': 2},
+          name: 'p',
+          explode: false,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: 'a,1,b,2')],
+      );
+    });
+
+    test('exploded model retains its entries', () {
+      expect(
+        encodeAnyToFormEntries(
+          const TestEncodableModel(name: 'test', value: 42),
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'name', value: 'test'), (name: 'value', value: '42')],
+      );
+    });
+
+    test('non-exploded model receives the declared name', () {
+      expect(
+        encodeAnyToFormEntries(
+          const TestEncodableModel(name: 'test', value: 42),
+          name: 'p',
+          explode: false,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: 'name,test,value,42')],
+      );
+    });
+
+    test('forwards query-component encoding to the model', () {
+      expect(
+        encodeAnyToFormEntries(
+          const QueryComponentAwareEncodable('a b'),
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          useQueryComponent: true,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: 'a+b')],
+      );
+    });
+
+    test('forwards reserved-character handling to the model', () {
+      expect(
+        encodeAnyToFormEntries(
+          const QueryComponentAwareEncodable('a/b'),
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+          textEncoding: utf8,
+        ),
+        const [(name: 'p', value: 'a/b!reserved')],
+      );
+    });
+
+    test('exploded list encodes names and values once', () {
+      expect(
+        encodeAnyToFormEntries(
+          ['a&b', 'c=d%'],
+          name: 'p/q',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        const [
+          (name: 'p%2Fq', value: 'a%26b'),
+          (name: 'p%2Fq', value: 'c%3Dd%25'),
+        ],
+      );
+    });
+
+    test('exploded map keeps keys escaped and value flags', () {
+      expect(
+        encodeAnyToFormEntries(
+          {'clé/a b': 'café/a b&c=d%'},
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
+        ),
+        const [(name: 'cl%E9%2Fa+b', value: 'caf%E9/a+b%26c%3Dd%25')],
+      );
+    });
+
+    test('exploded list retains charset and reserved-character flags', () {
+      expect(
+        encodeAnyToFormEntries(
+          ['café/a b'],
+          name: 'clé/a b',
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+          useQueryComponent: true,
+          textEncoding: latin1,
+        ),
+        const [(name: 'cl%E9%2Fa+b', value: 'caf%E9/a+b')],
+      );
+    });
+
+    test('exploded list rejects a disallowed empty element', () {
+      expect(
+        () => encodeAnyToFormEntries(
+          ['a', null],
+          name: 'p',
+          explode: true,
+          allowEmpty: false,
+          textEncoding: utf8,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('exploded map rejects an unsupported value', () {
+      expect(
+        () => encodeAnyToFormEntries(
+          {'a': Object()},
+          name: 'p',
+          explode: true,
+          allowEmpty: true,
+          textEncoding: utf8,
+        ),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
     test('escapes the declared name while retaining reserved value chars', () {
       expect(
         encodeAnyToFormEntries(

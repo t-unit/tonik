@@ -413,9 +413,57 @@ List<ParameterEntry> encodeAnyToFormEntries(
   bool useQueryComponent = false,
   bool allowReserved = false,
 }) {
-  if ((value is List && value.isEmpty) ||
-      (value is Map<String, dynamic> && value.isEmpty)) {
-    return const [];
+  if (value is ParameterEncodable) {
+    return value.toForm(
+      name,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
+      textEncoding: textEncoding,
+    );
+  }
+  if (value is List<dynamic>) {
+    final encoded = [
+      for (final item in value)
+        encodeAnyToForm(
+          item,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        ),
+    ];
+    return encoded.toForm(
+      name,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
+    );
+  }
+  if (value is Map<String, dynamic>) {
+    final encoded = {
+      for (final entry in value.entries)
+        entry.key: encodeAnyToForm(
+          entry.value,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
+          textEncoding: textEncoding,
+        ),
+    };
+    return encoded.toForm(
+      name,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+      textEncoding: textEncoding,
+    );
   }
   return [
     (
