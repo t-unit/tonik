@@ -109,18 +109,17 @@ class NameOverrideApplier() {
 
     final replacements = <(QueryParameterAlias, QueryParameterObject)>[];
     for (final param in parameters) {
-      final name = switch (param) {
-        QueryParameterAlias(:final name) => name,
-        QueryParameterObject(:final name) => name,
+      final resolved = switch (param) {
+        final QueryParameterAlias alias => alias.resolve(),
+        final QueryParameterObject object => object,
       };
-      final key = name == null ? null : '$operationId.$name';
-      final override = key == null ? null : overrides[key];
-      if (override != null) {
+      final override = overrides['$operationId.${resolved.rawName}'];
+      if (override != null && resolved.nameOverride == null) {
         switch (param) {
           case final QueryParameterObject object:
             object.nameOverride = override;
           case final QueryParameterAlias alias:
-            replacements.add((alias, alias.resolve()..nameOverride = override));
+            replacements.add((alias, resolved..nameOverride = override));
         }
       }
     }
@@ -148,18 +147,17 @@ class NameOverrideApplier() {
 
     final replacements = <(PathParameterAlias, PathParameterObject)>[];
     for (final param in parameters) {
-      final name = switch (param) {
-        PathParameterAlias(:final name) => name,
-        PathParameterObject(:final name) => name,
+      final resolved = switch (param) {
+        final PathParameterAlias alias => alias.resolve(),
+        final PathParameterObject object => object,
       };
-      final key = name == null ? null : '$operationId.$name';
-      final override = key == null ? null : overrides[key];
-      if (override != null) {
+      final override = overrides['$operationId.${resolved.rawName}'];
+      if (override != null && resolved.nameOverride == null) {
         switch (param) {
           case final PathParameterObject object:
             object.nameOverride = override;
           case final PathParameterAlias alias:
-            replacements.add((alias, alias.resolve()..nameOverride = override));
+            replacements.add((alias, resolved..nameOverride = override));
         }
       }
     }
@@ -187,23 +185,52 @@ class NameOverrideApplier() {
 
     final replacements = <(RequestHeaderAlias, RequestHeaderObject)>[];
     for (final header in headers) {
-      final name = switch (header) {
-        RequestHeaderAlias(:final name) => name,
-        RequestHeaderObject(:final name) => name,
+      final resolved = switch (header) {
+        final RequestHeaderAlias alias => alias.resolve(),
+        final RequestHeaderObject object => object,
       };
-      final key = name == null ? null : '$operationId.$name';
-      final override = key == null ? null : overrides[key];
-      if (override != null) {
+      final override = overrides['$operationId.${resolved.rawName}'];
+      if (override != null && resolved.nameOverride == null) {
         switch (header) {
           case final RequestHeaderObject object:
             object.nameOverride = override;
           case final RequestHeaderAlias alias:
-            replacements.add((alias, alias.resolve()..nameOverride = override));
+            replacements.add((alias, resolved..nameOverride = override));
         }
       }
     }
     for (final (alias, resolved) in replacements) {
       headers
+        ..remove(alias)
+        ..add(resolved);
+    }
+  }
+
+  void applyCookieParameterOverrides(
+    Set<CookieParameter> parameters,
+    String? operationId,
+    Map<String, String> overrides,
+  ) {
+    if (overrides.isEmpty || operationId == null) return;
+
+    final replacements = <(CookieParameterAlias, CookieParameterObject)>[];
+    for (final param in parameters) {
+      final resolved = switch (param) {
+        final CookieParameterAlias alias => alias.resolve(),
+        final CookieParameterObject object => object,
+      };
+      final override = overrides['$operationId.${resolved.rawName}'];
+      if (override != null && resolved.nameOverride == null) {
+        switch (param) {
+          case final CookieParameterObject object:
+            object.nameOverride = override;
+          case final CookieParameterAlias alias:
+            replacements.add((alias, resolved..nameOverride = override));
+        }
+      }
+    }
+    for (final (alias, resolved) in replacements) {
+      parameters
         ..remove(alias)
         ..add(resolved);
     }
