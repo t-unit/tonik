@@ -52,6 +52,7 @@ nameOverrides:
     "findPetsByStatus.status": filterStatus
     "findPetsByTags.tags": filterLabels
     "getPetById.petId": animalIdentifier
+    "updatePetWithForm.petId": id
     "updatePetWithForm.name": displayName
     "uploadFile.additionalMetadata": fileMetadata
     "loginUser.username": loginName

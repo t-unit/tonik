@@ -9,7 +9,7 @@ void main() {
         final ctx = Context.initial();
 
         final petIdParam = QueryParameterObject(
-          name: 'petId',
+          name: null,
           rawName: 'petId',
           description: null,
           isRequired: true,
@@ -42,6 +42,21 @@ void main() {
           nameOverride: null,
         );
 
+        final sessionParam = CookieParameterObject(
+          name: null,
+          rawName: 'session_id',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          explode: true,
+          model: StringModel(context: ctx.push('session_id')),
+          encoding: CookieParameterEncoding.form,
+          context: ctx.push('paths').push('/pet/{petId}').push('get'),
+          examples: const [],
+          defaultValue: null,
+          nameOverride: null,
+        );
+
         final tag = Tag(
           name: 'pet',
           description: 'Pet tag',
@@ -58,7 +73,7 @@ void main() {
           headers: const {},
           queryParameters: {petIdParam, limitParam},
           pathParameters: const {},
-          cookieParameters: const {},
+          cookieParameters: {sessionParam},
           responses: const {},
           securitySchemes: const {},
           nameOverride: null,
@@ -78,7 +93,7 @@ void main() {
           responses: const {},
           queryParameters: {petIdParam, limitParam},
           pathParameters: const {},
-          cookieParameters: const {},
+          cookieParameters: {sessionParam},
           requestBodies: const {},
           summary: null,
           description: null,
@@ -90,7 +105,7 @@ void main() {
 
         const config = TonikConfig(
           nameOverrides: NameOverridesConfig(
-            parameters: {'getPet.petId': 'id'},
+            parameters: {'getPet.petId': 'id', 'getPet.session_id': 'session'},
             schemas: {},
             properties: {},
             operations: {},
@@ -127,10 +142,10 @@ void main() {
 
         final opPetId = transformedOp.queryParameters
             .whereType<QueryParameterObject>()
-            .firstWhere((p) => p.name == 'petId');
+            .firstWhere((p) => p.rawName == 'petId');
         final docPetId = transformed.queryParameters
             .whereType<QueryParameterObject>()
-            .firstWhere((p) => p.name == 'petId');
+            .firstWhere((p) => p.rawName == 'petId');
 
         expect(opPetId.nameOverride, 'id');
         expect(docPetId.nameOverride, 'id');
@@ -146,6 +161,14 @@ void main() {
         expect(opLimit.nameOverride, isNull);
         expect(identical(opLimit, docLimit), isTrue);
         expect(identical(opLimit, limitParam), isTrue);
+        expect(
+          transformedOp.cookieParameters.single.resolve().nameOverride,
+          'session',
+        );
+        expect(
+          transformed.cookieParameters.single.resolve().nameOverride,
+          'session',
+        );
       },
     );
   });
