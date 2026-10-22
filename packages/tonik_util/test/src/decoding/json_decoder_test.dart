@@ -399,6 +399,15 @@ void main() {
         );
       });
 
+      test('decodes signed and extended years', () {
+        expect('300000-01-01'.decodeJsonDate(), Date(300000, 1, 1));
+        expect('-300000-01-01'.decodeJsonDate(), Date(-300000, 1, 1));
+        expect(
+          () => '300100-02-29'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('decodes nullable Date values', () {
         final date = Date(2024, 3, 15);
         expect('2024-03-15'.decodeJsonNullableDate(), date);

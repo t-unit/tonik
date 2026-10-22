@@ -19,6 +19,26 @@ void main() {
       expect(date.day, 15);
     });
 
+    test('accepts signed and extended years', () {
+      expect(Date.fromString('300000-01-01'), Date(300000, 1, 1));
+      expect(Date.fromString('-300000-01-01'), Date(-300000, 1, 1));
+      expect(Date(-1, 1, 1).toString(), '-0001-01-01');
+      expect(Date.fromString(Date(-1, 1, 1).toString()), Date(-1, 1, 1));
+    });
+
+    test('validates leap days for extended years', () {
+      expect(Date.fromString('300000-02-29'), Date(300000, 2, 29));
+      expect(Date.fromString('-300000-02-29'), Date(-300000, 2, 29));
+      expect(
+        () => Date.fromString('300100-02-29'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromString('-300100-02-29'),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('throws on invalid date string', () {
       expect(() => Date.fromString('invalid'), throwsA(isA<FormatException>()));
     });
