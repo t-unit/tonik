@@ -152,7 +152,6 @@ void main() {
     test('findPetsByStatus renamed to queryAnimalsByStatus', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
-      // Parameter name override not working - still uses petStatus
       final result = await petApi.queryAnimalsByStatus();
       expect(result, isTonikSuccess);
     });
