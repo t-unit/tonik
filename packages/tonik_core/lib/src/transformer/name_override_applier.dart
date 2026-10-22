@@ -98,8 +98,7 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.paramName".
   /// [overrides] - Map of "operationId.parameterName" to new name.
   ///
-  /// Resolves aliases into operation-local objects to keep shared targets
-  /// intact.
+  /// Copies overridden parameters to keep shared targets intact.
   void applyQueryParameterOverrides(
     Set<QueryParameter> parameters,
     String? operationId,
@@ -107,25 +106,18 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
-    final replacements = <(QueryParameterAlias, QueryParameterObject)>[];
+    final replacements = <(QueryParameter, QueryParameterObject)>[];
     for (final param in parameters) {
-      final resolved = switch (param) {
-        final QueryParameterAlias alias => alias.resolve(),
-        final QueryParameterObject object => object,
-      };
+      final resolved = param.resolve();
       final override = overrides['$operationId.${resolved.rawName}'];
       if (override != null && resolved.nameOverride == null) {
-        switch (param) {
-          case final QueryParameterObject object:
-            object.nameOverride = override;
-          case final QueryParameterAlias alias:
-            replacements.add((alias, resolved..nameOverride = override));
-        }
+        resolved.nameOverride = override;
+        replacements.add((param, resolved));
       }
     }
-    for (final (alias, resolved) in replacements) {
+    for (final (original, resolved) in replacements) {
       parameters
-        ..remove(alias)
+        ..remove(original)
         ..add(resolved);
     }
   }
@@ -136,8 +128,7 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.paramName".
   /// [overrides] - Map of "operationId.parameterName" to new name.
   ///
-  /// Resolves aliases into operation-local objects to keep shared targets
-  /// intact.
+  /// Copies overridden parameters to keep shared targets intact.
   void applyPathParameterOverrides(
     Set<PathParameter> parameters,
     String? operationId,
@@ -145,25 +136,18 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
-    final replacements = <(PathParameterAlias, PathParameterObject)>[];
+    final replacements = <(PathParameter, PathParameterObject)>[];
     for (final param in parameters) {
-      final resolved = switch (param) {
-        final PathParameterAlias alias => alias.resolve(),
-        final PathParameterObject object => object,
-      };
+      final resolved = param.resolve();
       final override = overrides['$operationId.${resolved.rawName}'];
       if (override != null && resolved.nameOverride == null) {
-        switch (param) {
-          case final PathParameterObject object:
-            object.nameOverride = override;
-          case final PathParameterAlias alias:
-            replacements.add((alias, resolved..nameOverride = override));
-        }
+        resolved.nameOverride = override;
+        replacements.add((param, resolved));
       }
     }
-    for (final (alias, resolved) in replacements) {
+    for (final (original, resolved) in replacements) {
       parameters
-        ..remove(alias)
+        ..remove(original)
         ..add(resolved);
     }
   }
@@ -174,8 +158,7 @@ class NameOverrideApplier() {
   /// [operationId] - The operation ID for matching "operationId.headerName".
   /// [overrides] - Map of "operationId.headerName" to new name.
   ///
-  /// Resolves aliases into operation-local objects to keep shared targets
-  /// intact.
+  /// Copies overridden parameters to keep shared targets intact.
   void applyHeaderOverrides(
     Set<RequestHeader> headers,
     String? operationId,
@@ -183,25 +166,18 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
-    final replacements = <(RequestHeaderAlias, RequestHeaderObject)>[];
+    final replacements = <(RequestHeader, RequestHeaderObject)>[];
     for (final header in headers) {
-      final resolved = switch (header) {
-        final RequestHeaderAlias alias => alias.resolve(),
-        final RequestHeaderObject object => object,
-      };
+      final resolved = header.resolve();
       final override = overrides['$operationId.${resolved.rawName}'];
       if (override != null && resolved.nameOverride == null) {
-        switch (header) {
-          case final RequestHeaderObject object:
-            object.nameOverride = override;
-          case final RequestHeaderAlias alias:
-            replacements.add((alias, resolved..nameOverride = override));
-        }
+        resolved.nameOverride = override;
+        replacements.add((header, resolved));
       }
     }
-    for (final (alias, resolved) in replacements) {
+    for (final (original, resolved) in replacements) {
       headers
-        ..remove(alias)
+        ..remove(original)
         ..add(resolved);
     }
   }
@@ -213,25 +189,18 @@ class NameOverrideApplier() {
   ) {
     if (overrides.isEmpty || operationId == null) return;
 
-    final replacements = <(CookieParameterAlias, CookieParameterObject)>[];
+    final replacements = <(CookieParameter, CookieParameterObject)>[];
     for (final param in parameters) {
-      final resolved = switch (param) {
-        final CookieParameterAlias alias => alias.resolve(),
-        final CookieParameterObject object => object,
-      };
+      final resolved = param.resolve();
       final override = overrides['$operationId.${resolved.rawName}'];
       if (override != null && resolved.nameOverride == null) {
-        switch (param) {
-          case final CookieParameterObject object:
-            object.nameOverride = override;
-          case final CookieParameterAlias alias:
-            replacements.add((alias, resolved..nameOverride = override));
-        }
+        resolved.nameOverride = override;
+        replacements.add((param, resolved));
       }
     }
-    for (final (alias, resolved) in replacements) {
+    for (final (original, resolved) in replacements) {
       parameters
-        ..remove(alias)
+        ..remove(original)
         ..add(resolved);
     }
   }

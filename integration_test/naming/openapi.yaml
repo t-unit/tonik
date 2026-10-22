@@ -1149,7 +1149,54 @@ paths:
         '204':
           description: OK
 
+  /parameter-overrides/{id}:
+    parameters:
+      - $ref: '#/components/parameters/SharedIdentifier'
+      - $ref: '#/components/parameters/SharedLimit'
+      - $ref: '#/components/parameters/SharedTrace'
+      - $ref: '#/components/parameters/SharedSession'
+    get:
+      operationId: firstSharedParameters
+      tags: [ParameterOverrides]
+      responses:
+        '200':
+          description: OK
+    post:
+      operationId: secondSharedParameters
+      tags: [ParameterOverrides]
+      responses:
+        '200':
+          description: OK
+    delete:
+      operationId: unchangedSharedParameters
+      tags: [ParameterOverrides]
+      responses:
+        '200':
+          description: OK
+
 components:
+  parameters:
+    SharedIdentifier:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    SharedLimit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+    SharedSession:
+      name: session_id
+      in: cookie
+      schema:
+        type: string
+    SharedTrace:
+      name: X-Trace
+      in: header
+      schema:
+        type: string
   schemas:
     MultipartNameCollisionForm:
       type: object
