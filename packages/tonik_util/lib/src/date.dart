@@ -38,7 +38,8 @@ class Date(
   /// Throws [FormatException] if the string is not in the correct format
   /// or if any of the date components are invalid.
   factory fromString(String dateString) {
-    final parts = RegExp(r'^([+-]?\d+)-(\+?\d+)-(\+?\d+)$').firstMatch(dateString);
+    final parts = RegExp(r'^([+-]?\d+)-(\+?\d+)-(\+?\d+)$')
+        .firstMatch(dateString);
     if (parts == null) {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
