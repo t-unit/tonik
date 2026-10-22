@@ -264,6 +264,121 @@ Map<String, String> _options({
       collapseWhitespace(format(expected)),
     );
   });
+
+  test('guards required nullable headers and cookies', () {
+    final nullableString = AliasModel(
+      name: null,
+      model: StringModel(context: context),
+      context: context,
+      isNullable: true,
+      examples: const [],
+      defaultValue: null,
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final accept = RequestHeaderObject(
+      name: 'Accept',
+      rawName: 'Accept',
+      description: null,
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: AnyModel(context: context),
+      encoding: HeaderParameterEncoding.simple,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      nameOverride: null,
+    );
+    final trace = RequestHeaderObject(
+      name: 'X-Trace',
+      rawName: 'X-Trace',
+      description: null,
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: nullableString,
+      encoding: HeaderParameterEncoding.simple,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      nameOverride: null,
+    );
+    final cookie = CookieParameterObject(
+      name: 'c',
+      rawName: 'c',
+      description: null,
+      isRequired: true,
+      isDeprecated: false,
+      explode: false,
+      model: nullableString,
+      encoding: CookieParameterEncoding.form,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      nameOverride: null,
+    );
+    final method = generator.generateHeadersMethod(
+      _operation(context, headers: {accept, trace}, cookies: {cookie}),
+      [
+        (normalizedName: 'accept', parameter: accept),
+        (normalizedName: 'xTrace', parameter: trace),
+      ],
+      [(normalizedName: 'c', parameter: cookie)],
+    );
+
+    const expected = r'''
+Map<String, String> _options({
+  required Object? accept,
+  required String? xTrace,
+  required String? c,
+}) {
+  final _$headers = <String, String>{};
+  if (accept != null) {
+    _$headers[r'Accept'] = encodeAnyToSimple(
+      accept,
+      explode: false,
+      allowEmpty: false,
+      literal: true,
+    );
+  } else {
+    _$headers['Accept'] = r'*/*';
+  }
+  if (xTrace != null) {
+    _$headers[r'X-Trace'] = xTrace.toSimple(
+      explode: false,
+      allowEmpty: false,
+      literal: true,
+    );
+  }
+  final _$cookieParts = <String>[];
+  if (c != null) {
+    _$cookieParts.addAll(
+      c.toForm(
+        r'c',
+        explode: false,
+        allowEmpty: true,
+        textEncoding: utf8,
+      ).map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+    );
+  }
+  if (_$cookieParts.isNotEmpty) {
+    _$headers[r'Cookie'] = _$cookieParts.join('; ');
+  }
+  return _$headers;
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
 }
 
 Operation _operation(

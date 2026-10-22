@@ -145,68 +145,80 @@ class const PathGenerator({
         continue;
       }
 
+      late final Expression encodedValue;
+      late final String emptyValue;
       switch (param.parameter.encoding) {
         case PathParameterEncoding.simple:
           final throwReason = simpleEncodingThrowReason(param.parameter.model);
           if (throwReason != null) {
-            // `throw X + literal` parses as `throw (X + literal)`; emit the
-            // throw as a standalone statement instead.
-            currentConcatParts.clear();
-            body.add(
-              generateEncodingExceptionExpression(
-                'Simple encoding does not support $throwReason '
-                'for path parameter ${param.parameter.rawName}',
-                raw: true,
-              ).statement,
+            final error = generateEncodingExceptionExpression(
+              'Simple encoding does not support $throwReason '
+              'for path parameter ${param.parameter.rawName}',
+              raw: true,
             );
-            return;
+            if (!isNullableParameterType(param.parameter.model)) {
+              // `throw X + literal` parses as `throw (X + literal)`.
+              currentConcatParts.clear();
+              body.add(error.statement);
+              return;
+            }
+            encodedValue = error;
+          } else {
+            encodedValue = buildToSimplePathParameterExpression(
+              param.normalizedName,
+              param.parameter,
+              explode: param.parameter.explode,
+              allowEmpty: param.parameter.allowEmptyValue,
+              isNullChecked: true,
+            ).expression;
           }
-
-          final valueExpression = buildToSimplePathParameterExpression(
-            param.normalizedName,
-            param.parameter,
-            explode: param.parameter.explode,
-            allowEmpty: param.parameter.allowEmptyValue,
-          );
-          currentConcatParts.add(valueExpression.expression);
+          emptyValue = '';
         case PathParameterEncoding.label:
           final valueExpression = buildToLabelPathParameterExpression(
             param.normalizedName,
             param.parameter,
+            isNullChecked: true,
           );
-          currentConcatParts.add(valueExpression.expression);
+          encodedValue = valueExpression.expression;
+          emptyValue = '.';
         case PathParameterEncoding.matrix:
           // `.resolved` is only needed for this pre-flight type test —
-          // `isEffectivelyNullable` and `buildMatrixParameterExpression`
+          // The nullability check and `buildMatrixParameterExpression`
           // handle aliases.
           final model = param.parameter.model.resolved;
           if (model is ListModel && model.content.resolved is ListModel) {
-            currentConcatParts.clear();
-            body.add(
-              generateEncodingExceptionExpression(
-                'Matrix encoding does not support arrays of objects or '
-                'nested arrays for path parameter '
-                '${param.parameter.rawName}',
-                raw: true,
-              ).statement,
+            final error = generateEncodingExceptionExpression(
+              'Matrix encoding does not support arrays of objects or '
+              'nested arrays for path parameter '
+              '${param.parameter.rawName}',
+              raw: true,
             );
-            return;
+            if (!isNullableParameterType(param.parameter.model)) {
+              currentConcatParts.clear();
+              body.add(error.statement);
+              return;
+            }
+            encodedValue = error;
+          } else {
+            encodedValue = buildMatrixParameterExpression(
+              refer(param.normalizedName),
+              param.parameter.model,
+              paramName: specLiteralString(param.parameter.rawName),
+              explode: literalBool(param.parameter.explode),
+              allowEmpty: literalBool(param.parameter.allowEmptyValue),
+            ).expression;
           }
-
-          final isModelNullable = param.parameter.model.isEffectivelyNullable;
-          // Path params are required; use ! assertion for nullable types.
-          final matrixReceiver = isModelNullable
-              ? refer(param.normalizedName).nullChecked
-              : refer(param.normalizedName);
-          final matrixExpression = buildMatrixParameterExpression(
-            matrixReceiver,
-            param.parameter.model,
-            paramName: specLiteralString(param.parameter.rawName),
-            explode: literalBool(param.parameter.explode),
-            allowEmpty: literalBool(param.parameter.allowEmptyValue),
-          );
-          currentConcatParts.add(matrixExpression.expression);
+          emptyValue = ';${param.parameter.rawName}';
       }
+
+      currentConcatParts.add(
+        isNullableParameterType(param.parameter.model)
+            ? refer(param.normalizedName)
+                  .equalTo(literalNull)
+                  .conditional(specLiteralString(emptyValue), encodedValue)
+                  .parenthesized
+            : encodedValue,
+      );
     }
 
     _flushConcatParts(currentConcatParts, pathPartExpressions);

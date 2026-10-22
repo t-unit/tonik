@@ -7,6 +7,10 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
+// AnyModel and its aliases use Object? even without a nullable schema flag.
+bool isNullableParameterType(Model model) =>
+    model.isEffectivelyNullable || model.resolved is AnyModel;
+
 TypeReference requestContentTypeReference(
   RequestContent content,
   NameManager nameManager,

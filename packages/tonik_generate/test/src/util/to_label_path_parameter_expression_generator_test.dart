@@ -30,6 +30,41 @@ void main() {
   }
 
   group('buildToLabelPathParameterExpression', () {
+    test('uses the arbitrary-value encoder for an alias to AnyModel', () {
+      final parameter = PathParameterObject(
+        name: 'label',
+        rawName: 'label',
+        description: null,
+        model: AliasModel(
+          name: 'AnyData',
+          model: AnyModel(context: context),
+          context: context,
+          isNullable: false,
+          examples: const [],
+          defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+
+      expect(
+        emit(buildToLabelPathParameterExpression('label', parameter)),
+        'encodeAnyToLabel(label, explode: false, allowEmpty: false, )',
+      );
+    });
+
     test('generates toLabel expression for primitive path parameter', () {
       final parameter = PathParameterObject(
         name: 'userId',
