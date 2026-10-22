@@ -1,0 +1,16 @@
+spec: naming/openapi.yaml
+packageName: naming_api
+outputDir: naming
+
+nameOverrides:
+  operations:
+    firstSharedParameters: renamedSharedParameters
+  parameters:
+    firstSharedParameters.id: itemId
+    firstSharedParameters.limit: maxResults
+    firstSharedParameters.X-Trace: token
+    firstSharedParameters.session_id: session
+    secondSharedParameters.id: resourceId
+    secondSharedParameters.limit: resultCount
+    secondSharedParameters.X-Trace: traceToken
+    secondSharedParameters.session_id: sessionToken
