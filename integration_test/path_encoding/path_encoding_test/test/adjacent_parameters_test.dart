@@ -57,6 +57,84 @@ void main() {
     expect(request.uri.path, '/v1/reports/sales.daily;revision=2.json/');
   });
 
+  test('null required path values retain empty style markers', () async {
+    final api = LabelApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.testNullablePathValues(
+      simple: null,
+      label: null,
+      matrix: null,
+    );
+
+    expect(response, isTonikSuccess);
+    final request = await imposterServer.takeRequest();
+    expect(request.uri.path, '/v1/nullable/.;matrix.json');
+  });
+
+  test('non-null required path values retain their styles', () async {
+    final api = LabelApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.testNullablePathValues(
+      simple: 'x',
+      label: 'y',
+      matrix: 'z',
+    );
+
+    expect(response, isTonikSuccess);
+    final request = await imposterServer.takeRequest();
+    expect(request.uri.path, '/v1/nullable/x.y;matrix=z.json');
+  });
+
+  test('null arbitrary path values retain empty style markers', () async {
+    final api = LabelApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.testNullableAnyPathValues(
+      simple: null,
+      label: null,
+      matrix: null,
+    );
+
+    expect(response, isTonikSuccess);
+    final request = await imposterServer.takeRequest();
+    expect(request.uri.path, '/v1/nullable-any/.;matrix.json');
+  });
+
+  test('referenced arbitrary label retains its style', () async {
+    final api = LabelApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.testNullableAnyPathValues(
+      simple: 'x',
+      label: 'y',
+      matrix: 'z',
+    );
+
+    expect(response, isTonikSuccess);
+    final request = await imposterServer.takeRequest();
+    expect(request.uri.path, '/v1/nullable-any/x.y;matrix=z.json');
+  });
+
+  test('non-null binary path value returns an encoding error', () async {
+    final api = SimpleApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final response = await api.testNullableBinaryPathValue(
+      value: const TonikFileBytes([1, 2, 3]),
+      suffix: 'x',
+    );
+
+    expect(response, isTonikError);
+    expect(requireError(response).type, TonikErrorType.encoding);
+  });
+
   test(
     'binary label with surrounding literals returns an encoding error',
     () async {

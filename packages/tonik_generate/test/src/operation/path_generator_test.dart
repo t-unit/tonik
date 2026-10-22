@@ -359,84 +359,81 @@ void main() {
     );
   });
 
-  test(
-    'encodes matrix path parameter with nullable model using null check',
-    () {
-      final pathParam = PathParameterObject(
-        name: 'status',
-        rawName: 'status',
-        description: 'Status filter',
-        isRequired: true,
-        isDeprecated: false,
-        allowEmptyValue: false,
-        explode: false,
-        model: AliasModel(
-          name: 'NullableStatus',
-          model: StringModel(context: context),
-          context: context,
-          isNullable: true,
-          examples: const [],
-          defaultValue: null,
-          nameOverride: null,
-          description: null,
-          isDeprecated: false,
-          isReadOnly: false,
-          isWriteOnly: false,
-        ),
-        encoding: PathParameterEncoding.matrix,
+  test('encodes null matrix path parameter as an empty value', () {
+    final pathParam = PathParameterObject(
+      name: 'status',
+      rawName: 'status',
+      description: 'Status filter',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: AliasModel(
+        name: 'NullableStatus',
+        model: StringModel(context: context),
         context: context,
+        isNullable: true,
         examples: const [],
         defaultValue: null,
         nameOverride: null,
-      );
-
-      final operation = Operation(
-        operationId: 'getByStatus',
-        context: context,
-        summary: 'Get by status',
-        description: 'Gets items by status',
-        tags: const {},
+        description: null,
         isDeprecated: false,
-        path: '/items{status}',
-        method: HttpMethod.get,
-        headers: const {},
-        queryParameters: const {},
-        pathParameters: {pathParam},
-        responses: const {},
-        securitySchemes: const {},
-        cookieParameters: const {},
-        nameOverride: null,
-        requestBody: null,
-      );
+        isReadOnly: false,
+        isWriteOnly: false,
+      ),
+      encoding: PathParameterEncoding.matrix,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      nameOverride: null,
+    );
 
-      const expectedMethod = '''
+    final operation = Operation(
+      operationId: 'getByStatus',
+      context: context,
+      summary: 'Get by status',
+      description: 'Gets items by status',
+      tags: const {},
+      isDeprecated: false,
+      path: '/items{status}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+      nameOverride: null,
+      requestBody: null,
+    );
+
+    const expectedMethod = '''
         List<String> _path({required NullableStatus status}) {
-          return [r'items' + status!.toMatrix(r'status', explode: false, allowEmpty: false, ), ];
+          return [r'items' + (status == null ? r';status' : status.toMatrix(r'status', explode: false, allowEmpty: false, )), ];
         }
       ''';
 
-      nameManager.prime(
-        models: {pathParam.model},
-        requestBodies: const [],
-        responses: const [],
-        operations: const [],
-        tags: const [],
-        servers: const [],
-      );
+    nameManager.prime(
+      models: {pathParam.model},
+      requestBodies: const [],
+      responses: const [],
+      operations: const [],
+      tags: const [],
+      servers: const [],
+    );
 
-      final pathParameters =
-          <({String normalizedName, PathParameterObject parameter})>[
-            (normalizedName: 'status', parameter: pathParam),
-          ];
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'status', parameter: pathParam),
+        ];
 
-      final method = generator.generatePathMethod(operation, pathParameters);
+    final method = generator.generatePathMethod(operation, pathParameters);
 
-      expect(
-        collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(format(expectedMethod)),
-      );
-    },
-  );
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expectedMethod)),
+    );
+  });
 
   test('encodes path parameters with explode=true', () {
     final pathParam = PathParameterObject(
@@ -2509,6 +2506,53 @@ void main() {
       );
     }
 
+    test('nullable NeverModel emits the empty path before its suffix', () {
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: NeverModel(context: context, isNullable: true),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
+      );
+
+      final method = generator.generatePathMethod(operation, [
+        (normalizedName: 'p', parameter: pathParam),
+      ]);
+
+      const expectedMethod = '''
+        List<String> _path({required Never? p}) {
+          return [r'r', (p == null ? r'' : throw EncodingException(r'Simple encoding does not support never-typed values for path parameter p')) + r'.json'];
+        }
+      ''';
+      expectMethodMatches(method, expectedMethod);
+    });
+
     test('MapModel with complex value type and literal suffix '
         'emits throw statement without concatenation', () {
       final classModel = ClassModel(
@@ -3491,6 +3535,75 @@ void main() {
 
       final method = generator.generatePathMethod(operation, pathParameters);
 
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('nullable nested matrix emits its empty marker before a suffix', () {
+      final inner = ListModel(
+        context: context,
+        content: StringModel(context: context),
+        examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final outer = ListModel(
+        context: context,
+        content: inner,
+        examples: const [],
+        name: null,
+        nameOverride: null,
+        isNullable: true,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final parameter = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: outer,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {parameter},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+        nameOverride: null,
+        requestBody: null,
+      );
+
+      final method = generator.generatePathMethod(operation, [
+        (normalizedName: 'm', parameter: parameter),
+      ]);
+
+      const expectedMethod = '''
+        List<String> _path({required List<List<String>>? m}) {
+          return [r'r', (m == null ? r';m' : throw EncodingException(r'Matrix encoding does not support arrays of objects or nested arrays for path parameter m')) + r'.json'];
+        }
+      ''';
       expectMethodMatches(method, expectedMethod);
     });
 

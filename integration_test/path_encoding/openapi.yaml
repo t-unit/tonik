@@ -20,6 +20,80 @@ tags:
     description: Operations testing simple-style path parameters (RFC 6570 Section 3.2.2)
 
 paths:
+  /nullable-any/{simple}{label}{matrix}.json:
+    get:
+      operationId: testNullableAnyPathValues
+      tags: [label]
+      parameters:
+        - name: simple
+          in: path
+          required: true
+          schema: {}
+        - name: label
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/AnyData'
+        - name: matrix
+          in: path
+          required: true
+          style: matrix
+          schema: {}
+      responses:
+        '200':
+          description: OK
+
+  /nullable-binary/{value}{suffix}.json:
+    get:
+      operationId: testNullableBinaryPathValue
+      tags: [simple]
+      parameters:
+        - name: value
+          in: path
+          required: true
+          schema:
+            type: string
+            format: binary
+            nullable: true
+        - name: suffix
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /nullable/{simple}{label}{matrix}.json:
+    get:
+      operationId: testNullablePathValues
+      tags: [label]
+      parameters:
+        - name: simple
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+        - name: label
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+            nullable: true
+        - name: matrix
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+            nullable: true
+      responses:
+        '200':
+          description: OK
+
   /reports{labels}:
     get:
       operationId: testLabelLiteralPrefix
@@ -1833,6 +1907,8 @@ paths:
 
 components:
   schemas:
+    AnyData: true
+
     StatusEnum:
       type: string
       enum:

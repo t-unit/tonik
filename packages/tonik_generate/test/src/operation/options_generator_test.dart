@@ -2187,9 +2187,11 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
+            if (data != null) {
             _$cookieParts.add(
   [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
+            }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -3701,9 +3703,11 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
+            if (data != null) {
             _$cookieParts.add(
   [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true, textEncoding: utf8,),].join(),
 );
+            }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }

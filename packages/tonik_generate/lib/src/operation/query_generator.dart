@@ -123,7 +123,8 @@ class const QueryGenerator({
     String paramName,
     QueryParameterObject resolvedParam,
   ) {
-    if (!resolvedParam.isRequired) {
+    if (!resolvedParam.isRequired ||
+        isNullableParameterType(resolvedParam.model)) {
       body.add(
         Block.of([Code('if ($paramName != null) {'), ...code, const Code('}')]),
       );

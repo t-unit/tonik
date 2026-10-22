@@ -88,18 +88,17 @@ String? _listContentThrowReason(Model content) {
   };
 }
 
-/// Path parameters are always required: if the underlying model is
-/// nullable (e.g. `typedef X = String?`), assert non-null via `!` rather
-/// than `?.`, which would produce `String?` output.
+/// Nullable values need an assertion unless the caller already guards them.
 BuiltExpression buildToSimplePathParameterExpression(
   String parameterName,
   PathParameterObject parameter, {
   bool explode = false,
   bool allowEmpty = true,
+  bool isNullChecked = false,
 }) {
   final model = parameter.model;
   final isNullable = model.isEffectivelyNullable;
-  final receiver = isNullable
+  final receiver = isNullable && !isNullChecked
       ? refer(parameterName).nullChecked
       : refer(parameterName);
   return BuiltExpression.simple(

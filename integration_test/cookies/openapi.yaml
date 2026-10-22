@@ -16,6 +16,33 @@ tags:
     description: Operations demonstrating cookie parameters
 
 paths:
+  /required-nullable-cookie:
+    get:
+      operationId: testRequiredNullableCookie
+      tags: [cookies]
+      parameters:
+        - name: c
+          in: cookie
+          required: true
+          schema:
+            type: [string, 'null']
+        - name: anyCookie
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/AnyData'
+        - name: X-Anything
+          in: header
+          required: true
+          schema: true
+        - name: Accept
+          in: header
+          required: true
+          schema: true
+      responses:
+        '204':
+          description: No content
+
   # Simple primitive cookie parameters
   /simple-string:
     get:

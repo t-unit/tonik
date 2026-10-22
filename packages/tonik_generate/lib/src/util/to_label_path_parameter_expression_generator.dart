@@ -9,28 +9,33 @@ import 'package:tonik_generate/src/util/map_property_value_expression_builder.da
 /// representation before calling `toLabel` on the resulting `List<String>`.
 BuiltExpression buildToLabelPathParameterExpression(
   String parameterName,
-  PathParameterObject parameter,
-) {
+  PathParameterObject parameter, {
+  bool isNullChecked = false,
+}) {
   return BuiltExpression.simple(
-    _buildToLabelPathParameterExpression(parameterName, parameter),
+    _buildToLabelPathParameterExpression(
+      parameterName,
+      parameter,
+      isNullChecked: isNullChecked,
+    ),
   );
 }
 
 Expression _buildToLabelPathParameterExpression(
   String parameterName,
-  PathParameterObject parameter,
-) {
+  PathParameterObject parameter, {
+  required bool isNullChecked,
+}) {
   final explode = literalBool(parameter.explode);
   final allowEmpty = literalBool(parameter.allowEmptyValue);
   final isNullable = parameter.model.isEffectivelyNullable;
-  // Path parameters are always required; use ! assertion if type is nullable.
-  final valueRef = isNullable
+  final valueRef = isNullable && !isNullChecked
       ? refer(parameterName).nullChecked
       : refer(parameterName);
 
   final model = parameter.model;
 
-  if (model is AnyModel) {
+  if (model.resolved is AnyModel) {
     return refer(
       'encodeAnyToLabel',
       'package:tonik_util/tonik_util.dart',

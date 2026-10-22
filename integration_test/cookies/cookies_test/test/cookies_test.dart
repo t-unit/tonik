@@ -406,6 +406,38 @@ void main() {
     });
   });
 
+  group('required nullable cookies', () {
+    test('null omits the cookie header', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testRequiredNullableCookie(
+        c: null,
+        anyCookie: null,
+        anything: null,
+      );
+
+      expect(response, isTonikSuccess);
+      final request = await imposterServer.takeRequest();
+      expect(request.headers['cookie'], isNull);
+      expect(request.headers['x-anything'], isNull);
+      expect(request.headers['accept'], '*/*');
+    });
+
+    test('empty string sends an empty cookie value', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testRequiredNullableCookie(
+        c: '',
+        anyCookie: 'value',
+        anything: 'header',
+      );
+
+      expect(response, isTonikSuccess);
+      final request = await imposterServer.takeRequest();
+      expect(request.headers['cookie'], 'c=; anyCookie=value');
+      expect(request.headers['x-anything'], 'header');
+      expect(request.headers['accept'], '*/*');
+    });
+  });
+
   group('referenced cookies', () {
     test(r'cookie defined via $ref', () async {
       final api = buildCookiesApi(responseStatus: '204');

@@ -194,21 +194,23 @@ class const RequestHeadersGenerator({
     );
 
     // For required Accept header, always assign using encoder
-    if (hasAcceptHeader && acceptIsRequired) {
+    if (hasAcceptHeader &&
+        acceptIsRequired &&
+        !isNullableParameterType(acceptHeader!.parameter.model)) {
       bodyStatements.add(
         refer(r'_$headers')
             .index(specLiteralString('Accept'))
             .assign(
               buildToSimpleHeaderParameterExpression(
                 acceptParamName!,
-                acceptHeader!.parameter,
+                acceptHeader.parameter,
                 explode: acceptHeader.parameter.explode,
                 allowEmpty: acceptHeader.parameter.allowEmptyValue,
               ).expression,
             )
             .statement,
       );
-    } else if (hasAcceptHeader && !acceptIsRequired) {
+    } else if (hasAcceptHeader) {
       bodyStatements
         ..add(Code('if ($acceptParamName != null) {'))
         ..add(
@@ -266,7 +268,8 @@ class const RequestHeadersGenerator({
           resolvedParam.model is ListModel &&
           (resolvedParam.model as ListModel).content.encodingShape !=
               EncodingShape.simple) {
-        if (resolvedParam.isRequired) {
+        if (resolvedParam.isRequired &&
+            !isNullableParameterType(resolvedParam.model)) {
           // Required: immediately throw at runtime
           bodyStatements.add(
             generateEncodingExceptionExpression(
@@ -295,7 +298,8 @@ class const RequestHeadersGenerator({
 
       parameters.add(_generateHeaderParameter(paramName, resolvedParam));
 
-      if (!resolvedParam.isRequired) {
+      if (!resolvedParam.isRequired ||
+          isNullableParameterType(resolvedParam.model)) {
         final headerAssignment = _generateHeaderAssignment(
           paramName,
           resolvedParam,
@@ -366,7 +370,13 @@ class const RequestHeadersGenerator({
     );
 
     for (final cookie in requiredCookies) {
+      if (isNullableParameterType(cookie.parameter.model)) {
+        bodyStatements.add(Code('if (${cookie.normalizedName} != null) {'));
+      }
       _addCookieEncodingStatement(cookie, bodyStatements);
+      if (isNullableParameterType(cookie.parameter.model)) {
+        bodyStatements.add(const Code('}'));
+      }
     }
 
     for (final cookie in optionalCookies) {
