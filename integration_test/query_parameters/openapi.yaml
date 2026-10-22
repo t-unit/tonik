@@ -35,6 +35,46 @@ paths:
         '204':
           description: OK
 
+  /required-nullable:
+    get:
+      operationId: testRequiredNullableQuery
+      tags: [query]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          allowEmptyValue: true
+          schema:
+            type: string
+            nullable: true
+        - name: qd
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            nullable: true
+            properties:
+              value:
+                type: string
+        - name: sp
+          in: query
+          required: true
+          style: spaceDelimited
+          schema:
+            type: array
+            nullable: true
+            items:
+              type: string
+        - name: anyQ
+          in: query
+          required: true
+          schema: {}
+      responses:
+        '204':
+          description: No content
+
   /form-primitive:
     get:
       operationId: testFormPrimitive

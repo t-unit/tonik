@@ -127,6 +127,86 @@ void main() {
       expect(method.optionalParameters.first.required, isFalse);
     });
 
+    test('guards a required nullable form parameter', () {
+      final queryParam = QueryParameterObject(
+        name: 'q',
+        rawName: 'q',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: true,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: false,
+        model: AliasModel(
+          name: null,
+          model: StringModel(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+      final operation = Operation(
+        operationId: 'getItem',
+        context: context,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/item',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+        nameOverride: null,
+        requestBody: null,
+      );
+
+      const expectedMethod = r'''
+String? _queryParameters({required String? q}) {
+  final _$entries = <ParameterEntry>[];
+  if (q != null) {
+    _$entries.addAll(
+      q.toForm(
+        r'q',
+        explode: false,
+        allowEmpty: true,
+        textEncoding: utf8,
+      ),
+    );
+  }
+  if (_$entries.isEmpty) {
+    return null;
+  }
+  return _$entries
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+      .join('&');
+}
+''';
+
+      final method = generator.generateQueryParametersMethod(operation, [
+        (normalizedName: 'q', parameter: queryParam),
+      ]);
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
     test('encodes query parameters with form style (default)', () {
       final queryParam = QueryParameterObject(
         name: 'filter',
@@ -2858,15 +2938,17 @@ void main() {
       const expectedMethod = r'''
         String? _queryParameters({required Object? meta}) {
           final _$entries = <ParameterEntry>[];
-          _$entries.addAll(
-            encodeAnyToFormEntries(
-              meta,
-              name: r'meta',
-              explode: false,
-              allowEmpty: false,
-              textEncoding: utf8,allowReserved: true,
-            ),
-          );
+          if (meta != null) {
+            _$entries.addAll(
+              encodeAnyToFormEntries(
+                meta,
+                name: r'meta',
+                explode: false,
+                allowEmpty: false,
+                textEncoding: utf8,allowReserved: true,
+              ),
+            );
+          }
           if (_$entries.isEmpty) {
             return null;
           }

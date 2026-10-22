@@ -149,7 +149,7 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY --config figma/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config totem/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config immutable_collections/tonik.yaml --backend $BACKEND"
-  "$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming --backend $BACKEND"
+  "$TONIK_BINARY --config naming/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config streaming_response/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map --backend $BACKEND"
 )
