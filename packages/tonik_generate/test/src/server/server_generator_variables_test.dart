@@ -750,9 +750,7 @@ void main() {
   });
 
   group('ServerGenerator templated URLs with empty url template', () {
-    test('emits empty baseUrl literal when no placeholders are present', () {
-      // An empty url combined with any variables means no placeholders match
-      // and no literal segments are appended, so the helper falls back to ''.
+    test('resolves empty URL when no placeholders are present', () {
       final servers = [
         const Server(
           url: '',
@@ -772,7 +770,10 @@ void main() {
       final serverClass = classes[1];
       final initializer = serverClass.constructors.first.initializers.first;
 
-      expect(initializer.accept(emitter).toString(), "super(baseUrl: '')");
+      expect(
+        initializer.accept(emitter).toString(),
+        "super(baseUrl: origin.resolve('').toString())",
+      );
     });
   });
 }

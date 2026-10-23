@@ -257,6 +257,9 @@ class const ServerGenerator({
     Server server,
     Reference serverConfigType,
   ) {
+    final requiresOrigin = _requiresOrigin(server);
+    final url = specLiteralString(server.url);
+
     return Class(
       (b) => b
         ..name = className
@@ -276,8 +279,19 @@ class const ServerGenerator({
                     ..toSuper = true,
                 ),
               )
+              ..optionalParameters.addAll([
+                if (requiresOrigin) _originParameter(),
+              ])
               ..initializers.add(
-                Code('super(baseUrl: ${specLiteralStringCode(server.url)})'),
+                refer('super').call([], {
+                  'baseUrl': requiresOrigin
+                      ? refer('origin')
+                            .property('resolve')
+                            .call([url])
+                            .property('toString')
+                            .call([])
+                      : url,
+                }).code,
               ),
           ),
         ),
@@ -290,7 +304,8 @@ class const ServerGenerator({
     Server server,
     Reference serverConfigType,
   ) {
-    final variableParams = <Parameter>[];
+    final requiresOrigin = _requiresOrigin(server);
+    final variableParams = <Parameter>[if (requiresOrigin) _originParameter()];
     final variableFields = <Field>[];
 
     final normalizedVariables = ensureUniqueness([
@@ -304,6 +319,7 @@ class const ServerGenerator({
             normalizedName:
                 {
                   'baseUrl',
+                  if (requiresOrigin) 'origin',
                   'serverConfig',
                   backendGenerator.clientGetterName,
                   'close',
@@ -406,11 +422,37 @@ class const ServerGenerator({
           Constructor(
             (c) => c
               ..optionalParameters.addAll(variableParams)
-              ..initializers.add(Code('super(baseUrl: $urlExpression)')),
+              ..initializers.add(
+                refer('super').call([], {
+                  'baseUrl': requiresOrigin
+                      ? refer('origin')
+                            .property('resolve')
+                            .call([CodeExpression(Code(urlExpression))])
+                            .property('toString')
+                            .call([])
+                      : CodeExpression(Code(urlExpression)),
+                }).code,
+              ),
           ),
         ),
     );
   }
+
+  bool _requiresOrigin(Server server) {
+    var url = server.url;
+    for (final variable in server.variables) {
+      url = url.replaceAll('{${variable.name}}', variable.defaultValue);
+    }
+    return !RegExp('^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(url);
+  }
+
+  Parameter _originParameter() => Parameter(
+    (p) => p
+      ..name = 'origin'
+      ..type = refer('Uri', 'dart:core')
+      ..named = true
+      ..required = true,
+  );
 
   String _buildUrlExpression(
     String urlTemplate,

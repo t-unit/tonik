@@ -62,6 +62,33 @@ servers:
           - ap-south
         description: Deployment zone
 
+  - url: /relative/api
+    description: Root-relative server
+
+  - url: ../api
+    description: Document-relative server
+
+  - url: //api.example.com/api
+    description: Network-relative server
+
+  - url: /{origin}/{version}
+    description: Relative server with variables
+    variables:
+      origin:
+        default: relative
+        enum: [relative, tenant]
+      version:
+        default: v1
+
+  - url: '{scheme}://api.example.com/{origin}'
+    description: Absolute server with a scheme variable
+    variables:
+      scheme:
+        default: https
+        enum: [https, http]
+      origin:
+        default: api
+
 tags:
   - name: health
     description: Health check operations

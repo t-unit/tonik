@@ -367,11 +367,32 @@ Tonik generates typed server classes from OpenAPI `servers` definitions, with fu
 | Feature | Status |
 |---------|--------|
 | Multiple servers | ✅ |
+| Relative server URLs | ✅ (caller-supplied origin) |
 | Server descriptions | ✅ (preserved in docs) |
 | Server variables | ✅ |
 | Variable defaults | ✅ |
 | Variable enum constraints | ✅ (generates Dart enums) |
 | Unconstrained variables | ✅ (String parameters) |
+
+### Relative Server URLs
+
+Built-in servers with relative URLs require a `Uri origin`. For a server URL
+`/api/v1`, supply the HTTP origin when constructing the server:
+
+```dart
+final server = AnonymousServer(origin: Uri.parse('https://api.example.com'));
+// server.baseUrl is https://api.example.com/api/v1
+```
+
+Tonik substitutes server variables, then resolves the URL with `Uri.resolve`.
+For document-relative URLs such as `../api`, supply the full HTTP document URL
+as `origin` to retain its directory context. Network-relative URLs such as
+`//api.example.com/api` inherit its scheme. Tonik cannot infer an HTTP origin
+from a local specification file. Absolute server URLs keep their existing
+constructors, and `CustomServer` still accepts a complete URL. Constructor
+classification uses the URL with variable defaults substituted; if overriding
+those defaults changes an absolute URL to a relative one, resolve it yourself
+and pass the complete URL to `CustomServer`.
 
 ### Server Variables
 
