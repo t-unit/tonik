@@ -190,6 +190,34 @@ void main() {
   });
 
   group('MatrixStringListEncoder', () {
+    test('omits equals for empty exploded items', () {
+      expect(
+        ['', 'x'].toMatrix('p', explode: true, allowEmpty: true),
+        ';p;p=x',
+      );
+      expect(
+        ['', 'x'].toMatrix('p', explode: true, allowEmpty: false),
+        ';p;p=x',
+      );
+    });
+
+    test('keeps pre-encoded values beside empty exploded items', () {
+      expect(
+        [
+          '',
+          'a%20b',
+        ].toMatrix('p', explode: true, allowEmpty: false, alreadyEncoded: true),
+        ';p;p=a%20b',
+      );
+    });
+
+    test('keeps empty slots in collapsed lists', () {
+      expect(
+        ['', 'x'].toMatrix('p', explode: false, allowEmpty: true),
+        ';p=,x',
+      );
+    });
+
     test('encodes list with explode=false and allowEmpty=true', () {
       final list = ['red', 'green', 'blue'];
       expect(
@@ -272,6 +300,34 @@ void main() {
   });
 
   group('MatrixStringMapEncoder', () {
+    test('omits equals for empty exploded values', () {
+      expect(
+        {'a': '', 'b': 'x'}.toMatrix('p', explode: true, allowEmpty: true),
+        ';a;b=x',
+      );
+      expect(
+        {'a': '', 'b': 'x'}.toMatrix('p', explode: true, allowEmpty: false),
+        ';a;b=x',
+      );
+    });
+
+    test('encodes keys and keeps pre-encoded values beside empty values', () {
+      expect(
+        {
+          'a b': '',
+          'c': 'x%20y',
+        }.toMatrix('p', explode: true, allowEmpty: false, alreadyEncoded: true),
+        ';a%20b;c=x%20y',
+      );
+    });
+
+    test('keeps empty slots in collapsed maps', () {
+      expect(
+        {'a': '', 'b': 'x'}.toMatrix('p', explode: false, allowEmpty: true),
+        ';p=a,,b,x',
+      );
+    });
+
     test('encodes map with explode=false and allowEmpty=true', () {
       final map = {'x': '1', 'y': '2'};
       expect(

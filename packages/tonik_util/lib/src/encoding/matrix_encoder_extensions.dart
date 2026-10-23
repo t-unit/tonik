@@ -126,9 +126,10 @@ extension MatrixStringListEncoder on List<String> {
 
     if (explode) {
       return map(
-        (item) =>
-            ';$paramName='
-            '${alreadyEncoded ? item : Uri.encodeComponent(item)}',
+        (item) => item.isEmpty
+            ? ';$paramName'
+            : ';$paramName='
+                  '${alreadyEncoded ? item : Uri.encodeComponent(item)}',
       ).join();
     } else {
       final encoded = uriEncode(
@@ -165,13 +166,13 @@ extension MatrixStringMapEncoder on Map<String, String> {
     }
 
     if (explode) {
-      return entries
-          .map(
-            (e) =>
-                ';${Uri.encodeComponent(e.key)}='
-                '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}',
-          )
-          .join();
+      return entries.map((e) {
+        final key = Uri.encodeComponent(e.key);
+        return e.value.isEmpty
+            ? ';$key'
+            : ';$key='
+                  '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}';
+      }).join();
     } else {
       final encoded = uriEncode(
         allowEmpty: allowEmpty,
