@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:test/test.dart';
 import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/decoding/decoding_exception.dart';
+import 'package:tonik_util/src/decoding/json_decoder.dart';
 
 void main() {
   group('Date', () {
@@ -24,6 +26,58 @@ void main() {
       expect(Date.fromString('-300000-01-01'), Date(-300000, 1, 1));
       expect(Date(-1, 1, 1).toString(), '-0001-01-01');
       expect(Date.fromString(Date(-1, 1, 1).toString()), Date(-1, 1, 1));
+    });
+
+    test('formats year boundaries like DateTime', () {
+      expect(Date(-10000, 1, 1).toString(), '-010000-01-01');
+      expect(Date(-9999, 1, 1).toString(), '-9999-01-01');
+      expect(Date(0, 1, 1).toString(), '0000-01-01');
+      expect(Date(9999, 1, 1).toString(), '9999-01-01');
+      expect(Date(10000, 1, 1).toString(), '+010000-01-01');
+    });
+
+    test('preserves years outside the DateTime range', () {
+      expect(Date(300000, 1, 1).toString(), '+300000-01-01');
+      expect(
+        Date(-9223372036854775808, 1, 1).toString(),
+        '-9223372036854775808-01-01',
+      );
+    });
+
+    test('round-trips an extended negative year through JSON', () {
+      final json = Date(-10000, 2, 29).toJson();
+
+      expect(json, '-010000-02-29');
+      expect(Date.fromJson(json), Date(-10000, 2, 29));
+      expect(json.decodeJsonDate(), Date(-10000, 2, 29));
+    });
+
+    test('round-trips an extended positive year through simple fields', () {
+      final simple = Date(
+        10000,
+        1,
+        1,
+      ).toSimple(explode: false, allowEmpty: false, literal: true);
+
+      expect(simple, '+010000-01-01');
+      expect(Date.fromSimple(simple), Date(10000, 1, 1));
+      expect(
+        Date(10000, 1, 1).toSimple(explode: false, allowEmpty: false),
+        '%2B010000-01-01',
+      );
+    });
+
+    test('escapes and round-trips an extended year through form encoding', () {
+      final form = Date(10000, 1, 1).toForm(
+        'date',
+        explode: false,
+        allowEmpty: false,
+        textEncoding: utf8,
+        useQueryComponent: true,
+      );
+
+      expect(form, const [(name: 'date', value: '%2B010000-01-01')]);
+      expect(Date.fromForm(form.single.value), Date(10000, 1, 1));
     });
 
     test('validates leap days for extended years', () {
@@ -109,6 +163,11 @@ void main() {
       expect(fromJson.year, date.year);
       expect(fromJson.month, date.month);
       expect(fromJson.day, date.day);
+    });
+
+    test('fromJson rejects null and non-string values with a type error', () {
+      expect(() => Date.fromJson(null), throwsA(isA<InvalidTypeException>()));
+      expect(() => Date.fromJson(123), throwsA(isA<InvalidTypeException>()));
     });
 
     test('fromJson throws on invalid format', () {
