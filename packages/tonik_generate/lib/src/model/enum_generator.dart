@@ -288,10 +288,18 @@ class const EnumGenerator({required final NameManager nameManager}) {
   ) {
     const valueParam = 'value';
     final matchVariable = T == int ? 'decoded' : valueParam;
-    final typeErrorMessage =
-        'Expected $T for $publicEnumName, got \${$valueParam.runtimeType}';
-    final valueErrorMessage =
-        'No matching $publicEnumName for value: \$$matchVariable';
+    final typeErrorMessage = CodeExpression(
+      Block.of([
+        specLiteralString('Expected $T for $publicEnumName, got ').code,
+        literalString('\${$valueParam.runtimeType}').code,
+      ]),
+    );
+    final valueErrorMessage = CodeExpression(
+      Block.of([
+        specLiteralString('No matching $publicEnumName for value: ').code,
+        literalString('\$$matchVariable').code,
+      ]),
+    );
 
     final guard = <Code>[
       // Keep integer-enum decoding consistent with plain integer fields.
@@ -310,10 +318,10 @@ class const EnumGenerator({required final NameManager nameManager}) {
         const Code('if ('),
         refer(valueParam).isNotA(refer(T.toString(), 'dart:core')).code,
         const Code(') {'),
-        generateDecodingExceptionExpression(
-          typeErrorMessage,
-          raw: true,
-        ).statement,
+        refer(
+          'JsonDecodingException',
+          'package:tonik_util/tonik_util.dart',
+        ).call([typeErrorMessage]).thrown.statement,
         const Code('}'),
       ],
     ];
@@ -328,10 +336,10 @@ class const EnumGenerator({required final NameManager nameManager}) {
           ).closure
         : Method(
             (mb) => mb
-              ..body = generateDecodingExceptionExpression(
-                valueErrorMessage,
-                raw: true,
-              ).code,
+              ..body = refer(
+                'JsonDecodingException',
+                'package:tonik_util/tonik_util.dart',
+              ).call([valueErrorMessage]).thrown.code,
           ).closure;
 
     return Constructor(
