@@ -9,7 +9,10 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// A class representing a date without time information.
 ///
-/// This class uses YYYY-MM-DD with signed and extended years and is immutable.
+/// Years 0000–9999 use the RFC 3339 date format (YYYY-MM-DD). Negative years
+/// through -9999 use a minus sign and four digits. Years outside -9999–9999
+/// use a sign and at least six digits, matching [DateTime.toIso8601String]
+/// within its supported range.
 /// It provides methods for JSON serialization and simple string encoding/decoding.
 @immutable
 class Date(
@@ -57,18 +60,20 @@ class Date(
 
   /// Decodes a date from a JSON string.
   ///
-  /// The string must be in ISO 8601 format (YYYY-MM-DD).
+  /// Accepts the date format described by [Date.fromString].
+  /// Throws [FormatException] for malformed dates and `InvalidTypeException`
+  /// for null or non-string values.
   factory fromJson(Object? json) => Date.fromString(json.decodeJsonString());
 
   /// Decodes a date from a simple string value.
   ///
-  /// The string must be in ISO 8601 format (YYYY-MM-DD).
+  /// Accepts the date format described by [Date.fromString].
   factory fromSimple(String? simple) =>
       Date.fromString(simple.decodeSimpleString());
 
   /// Decodes a date from a form-encoded string.
   ///
-  /// The string must be in ISO 8601 format (YYYY-MM-DD) and may be URL-encoded.
+  /// Accepts the date format described by [Date.fromString], URL-encoded.
   factory fromForm(String? form) => Date.fromString(form.decodeFormString());
 
   /// Converts this [Date] to a [DateTime] instance.
@@ -78,12 +83,12 @@ class Date(
 
   /// Converts this [Date] to a JSON string.
   ///
-  /// Returns the date in ISO 8601 format (YYYY-MM-DD).
+  /// Uses the year formatting described by [Date].
   String toJson() => toString();
 
   /// Converts this [Date] to a simple string format.
   ///
-  /// Returns the date in ISO 8601 format (YYYY-MM-DD).
+  /// Uses the year formatting described by [Date].
   String toSimple({
     required bool explode,
     required bool allowEmpty,
@@ -116,14 +121,14 @@ class Date(
 
   /// Converts this [Date] to a label-encoded string.
   ///
-  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with label prefix.
+  /// Uses the year formatting described by [Date] with a label prefix.
   String toLabel({required bool explode, required bool allowEmpty}) {
     return '.${uriEncode(allowEmpty: allowEmpty, textEncoding: utf8)}';
   }
 
   /// Converts this [Date] to a matrix-encoded string.
   ///
-  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with matrix prefix.
+  /// Uses the year formatting described by [Date] with a matrix prefix.
   String toMatrix(
     String paramName, {
     required bool explode,
@@ -170,9 +175,13 @@ class Date(
 
   @override
   String toString() {
+    final digits = year < 0 ? year.toString().substring(1) : year.toString();
+    final paddedYear = digits.padLeft(year < -9999 || year > 9999 ? 6 : 4, '0');
     final yearString = year < 0
-        ? '-${year.toString().substring(1).padLeft(4, '0')}'
-        : year.toString().padLeft(4, '0');
+        ? '-$paddedYear'
+        : year > 9999
+        ? '+$paddedYear'
+        : paddedYear;
     return '$yearString-'
         '${month.toString().padLeft(2, '0')}-'
         '${day.toString().padLeft(2, '0')}';

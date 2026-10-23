@@ -207,7 +207,7 @@ void main() {
     final recordedRequest = await imposterServer.takeRequest();
     expect(
       recordedRequest.uri.path,
-      '/v1/complex/id,987,score,123.45,rating,123.45,username,john_doe,is_verified,true,created_at,1970-01-01T14%3A30%3A00.000Z,birth_date,92000-01-01,balance,123.45,website,https%3A%2F%2Fexample.com,email,john.doe%40example.com,full_name,John%20Doe,age,30,status,active,priority,1',
+      '/v1/complex/id,987,score,123.45,rating,123.45,username,john_doe,is_verified,true,created_at,1970-01-01T14%3A30%3A00.000Z,birth_date,%2B092000-01-01,balance,123.45,website,https%3A%2F%2Fexample.com,email,john.doe%40example.com,full_name,John%20Doe,age,30,status,active,priority,1',
     );
   });
 
