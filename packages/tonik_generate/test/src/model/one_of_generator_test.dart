@@ -4602,6 +4602,7 @@ bool operator ==(Object other) {
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
                 textEncoding: textEncoding,
               ),
               ValueBase64(:final value) => value.toBase64String().toForm(
@@ -4711,6 +4712,7 @@ bool operator ==(Object other) {
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
                 allowReserved: allowReserved,
+                fieldEncodings: fieldEncodings,
                 textEncoding: textEncoding,
               ),
               ValueNullableData(:final value) =>

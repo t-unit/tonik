@@ -1065,6 +1065,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/ReservedBase'
 
+    OneOfArrayBodyForm:
+      oneOf:
+        - $ref: '#/components/schemas/ArrayBodyForm'
+        - type: string
+
     ArrayBodyForm:
       type: object
       required:
