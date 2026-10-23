@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
@@ -958,6 +959,40 @@ Object? test() {
   });
 
   group('repeated and style-based arrays', () {
+    test('Dio emits a runtime error for style-based nested arrays', () {
+      final content = multipartContentFixture(context, [
+        multipartPartFixture(
+          name: 'value',
+          model: _list(context, _list(context, StringModel(context: context))),
+          encoding: _encoding(style: EncodingStyle.form, explode: true),
+        ),
+      ]);
+      final plan = const MultipartBodyPlanner(backend: TransportBackend.dio)
+          .plan(content, bodyAccessor: 'body', isRequired: true);
+      final method = Method(
+        (builder) => builder
+          ..name = 'test'
+          ..returns = refer('Object?', 'dart:core')
+          ..body = Block.of(buildMultipartBodyStatements(plan).statements),
+      );
+
+      const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  throw EncodingException(r'Arrays of arrays are not supported for multipart encoding (property: value).');
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(r'Multipart request body must contain at least one part.');
+  }
+  return _$formData;
+}
+''';
+      expect(plan.runtimeEncodingError, isNull);
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('rejects a cyclic item alias', () {
       final item = AliasModel(
         name: 'CyclicItem',
