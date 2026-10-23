@@ -936,19 +936,19 @@ void main() {
           factory Color.fromJson(dynamic value) {
             if (value is! String) {
               throw JsonDecodingException(
-                r'Expected String for Color, got ${value.runtimeType}',
+                r'Expected String for Color, got ' '${value.runtimeType}',
               );
             }
             return values.firstWhere(
               (e) => e._$rawValue == value,
               orElse: () =>
-                  throw JsonDecodingException(r'No matching Color for value: $value'),
+                  throw JsonDecodingException(r'No matching Color for value: ' '$value'),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Color {$expectedFactory}')),
         );
       });
 
@@ -992,14 +992,14 @@ void main() {
             return values.firstWhere(
               (e) => e._$rawValue == decoded,
               orElse: () => throw JsonDecodingException(
-                r'No matching Status for value: $decoded',
+                r'No matching Status for value: ' '$decoded',
               ),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Status {$expectedFactory}')),
         );
       });
 
@@ -1032,19 +1032,19 @@ void main() {
           factory $2fa.fromJson(dynamic value) {
             if (value is! String) {
               throw JsonDecodingException(
-                r'Expected String for $2fa, got ${value.runtimeType}',
+                r'Expected String for $2fa, got ' '${value.runtimeType}',
               );
             }
             return values.firstWhere(
               (e) => e._$rawValue == value,
               orElse: () =>
-                  throw JsonDecodingException(r'No matching $2fa for value: $value'),
+                  throw JsonDecodingException(r'No matching $2fa for value: ' '$value'),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class \$2fa {$expectedFactory}')),
         );
       });
 
@@ -1079,13 +1079,13 @@ void main() {
             return values.firstWhere(
               (e) => e._$rawValue == decoded,
               orElse: () =>
-                  throw JsonDecodingException(r'No matching $2fa for value: $decoded'),
+                  throw JsonDecodingException(r'No matching $2fa for value: ' '$decoded'),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class \$2fa {$expectedFactory}')),
         );
       });
 
@@ -1126,19 +1126,19 @@ void main() {
           factory Status.fromJson(dynamic value) {
             if (value is! String) {
               throw JsonDecodingException(
-                r'Expected String for Status, got ${value.runtimeType}',
+                r'Expected String for Status, got ' '${value.runtimeType}',
               );
             }
             return values.firstWhere(
               (e) => e._$rawValue == value,
               orElse: () =>
-                  throw JsonDecodingException(r'No matching Status for value: $value'),
+                  throw JsonDecodingException(r'No matching Status for value: ' '$value'),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Status {$expectedFactory}')),
         );
       });
     });
@@ -2454,7 +2454,7 @@ void main() {
             factory Status.fromJson(dynamic value) {
               if (value is! String) {
                 throw JsonDecodingException(
-                  r'Expected String for Status, got ${value.runtimeType}',
+                  r'Expected String for Status, got ' '${value.runtimeType}',
                 );
               }
               return values.firstWhere(
@@ -2544,7 +2544,7 @@ void main() {
           factory Status.fromJson(dynamic value) {
             if (value is! String) {
               throw JsonDecodingException(
-                r'Expected String for Status, got ${value.runtimeType}',
+                r'Expected String for Status, got ' '${value.runtimeType}',
               );
             }
             return values.firstWhere(
@@ -2555,7 +2555,7 @@ void main() {
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Status {$expectedFactory}')),
         );
       });
 
@@ -2976,19 +2976,19 @@ void main() {
           factory Status.fromJson(dynamic value) {
             if (value is! String) {
               throw JsonDecodingException(
-                r'Expected String for Status, got ${value.runtimeType}',
+                r'Expected String for Status, got ' '${value.runtimeType}',
               );
             }
             return values.firstWhere(
               (e) => e._$rawValue == value,
               orElse: () =>
-                  throw JsonDecodingException(r'No matching Status for value: $value'),
+                  throw JsonDecodingException(r'No matching Status for value: ' '$value'),
             );
           }
         ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Status {$expectedFactory}')),
         );
       });
 
@@ -3141,7 +3141,7 @@ void main() {
             factory Status.fromJson(dynamic value) {
               if (value is! String) {
                 throw JsonDecodingException(
-                  r'Expected String for Status, got ${value.runtimeType}',
+                  r'Expected String for Status, got ' '${value.runtimeType}',
                 );
               }
               return values.firstWhere(
@@ -3152,7 +3152,7 @@ void main() {
           ''';
         expect(
           collapseWhitespace(formatted),
-          contains(collapseWhitespace(expectedFactory)),
+          collapseWhitespace(format('class Status {$expectedFactory}')),
         );
       });
 
@@ -3209,7 +3209,7 @@ void main() {
             factory Status.fromJson(dynamic value) {
               if (value is! String) {
                 throw JsonDecodingException(
-                  r'Expected String for Status, got ${value.runtimeType}',
+                  r'Expected String for Status, got ' '${value.runtimeType}',
                 );
               }
               return values.firstWhere(
@@ -3220,7 +3220,7 @@ void main() {
           ''';
           expect(
             collapseWhitespace(formatted),
-            contains(collapseWhitespace(expectedFactory)),
+            collapseWhitespace(format('class Status {$expectedFactory}')),
           );
         },
       );
