@@ -5,6 +5,28 @@ info:
 servers:
   - url: http://localhost:8080
 paths:
+  /charset-text:
+    get:
+      operationId: getCharsetText
+      tags: [streaming]
+      responses:
+        '200':
+          description: Streaming text with a declared charset
+          content:
+            application/x-ndjson; charset=utf-8:
+              itemSchema:
+                type: string
+  /charset-unsupported:
+    get:
+      operationId: getUnsupportedCharset
+      tags: [streaming]
+      responses:
+        '200':
+          description: Streaming declaration requiring an unsupported encoding
+          content:
+            application/x-ndjson; charset=latin1:
+              itemSchema:
+                type: string
   /custom-ndjson:
     get:
       operationId: getCustomNdjson

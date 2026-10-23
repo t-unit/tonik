@@ -4927,48 +4927,50 @@ String _parseResponse(Response<List<int>> response) {
         );
       });
 
-      test('ignores charset in an application/json spec key', () {
-        final operation = Operation(
-          operationId: 'paramContentTypeOp',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/param-content',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: StringModel(context: context),
-                  rawContentType: 'Application/JSON; CHARSET=UTF-8',
-                  contentType: ContentType.json,
-                  examples: const [],
-                  delivery: ResponseDelivery.complete,
-                ),
-              },
-            ),
-          },
-          securitySchemes: const {},
-          nameOverride: null,
-          requestBody: null,
-        );
-        final method = generator.generateParseResponseMethod(operation);
-        const expectedMethod = r'''
+      test(
+        'falls back to the declared charset and uses it for JSON decoding',
+        () {
+          final operation = Operation(
+            operationId: 'paramContentTypeOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/param-content',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'Application/JSON; CHARSET=UTF-8',
+                    contentType: ContentType.json,
+                    examples: const [],
+                    delivery: ResponseDelivery.complete,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+            nameOverride: null,
+            requestBody: null,
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$json = decodeResponseJson<Object?>(response.data, contentType: r'Application/JSON; CHARSET=UTF-8');
       final _$body = _$json.decodeJsonString();
       return _$body;
     default:
@@ -4979,13 +4981,15 @@ String _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
 
-        final selection = generator.generateResponseSelectionMethod(operation);
-        const expectedSelection = r'''
+          final selection = generator.generateResponseSelectionMethod(
+            operation,
+          );
+          const expectedSelection = r'''
 bool? _isStreamingResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
@@ -4999,11 +5003,12 @@ bool? _isStreamingResponse(Response<List<int>> response) {
   }
 }
 ''';
-        expect(
-          collapseWhitespace(format(selection.accept(emitter).toString())),
-          collapseWhitespace(format(expectedSelection)),
-        );
-      });
+          expect(
+            collapseWhitespace(format(selection.accept(emitter).toString())),
+            collapseWhitespace(format(expectedSelection)),
+          );
+        },
+      );
 
       test('normalizes spec key for range response status', () {
         final operation = Operation(
@@ -5269,7 +5274,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       );
 
       test(
-        'orders meaningful parameters first and dedupes JSON charset variants',
+        'orders meaningful parameters and preserves distinct charset variants',
         () {
           final previousRootLevel = Logger.root.level;
           Logger.root.level = Level.ALL;
@@ -5345,12 +5350,16 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
 AnonymousResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'version': r'2', r'charset': r'utf-8'}):
+      final _$json = decodeResponseJson<Object?>(response.data, contentType: r'application/json; version=2; charset=UTF-8');
+      final _$body = _$json.decodeJsonBool();
+      return AnonymousResponseJsonVersion2CharsetUtf8(body: _$body);
     case (200, r'application/json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'version': r'2'}):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return AnonymousResponseJsonVersion2(body: _$body);
     case (200, r'application/json'):
-      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$json = decodeResponseJson<Object?>(response.data, contentType: r'application/json; charset=utf-8');
       final _$body = _$json.decodeJsonInt();
       return AnonymousResponseJsonCharsetUtf8(body: _$body);
     default:
@@ -5371,7 +5380,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
           expect(warnings, hasLength(1));
           expect(
             warnings.single.message,
-            contains('dropped models: BooleanModel, DoubleModel'),
+            contains('dropped models: DoubleModel'),
           );
         },
       );

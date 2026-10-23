@@ -56,8 +56,30 @@ class const ParseGenerator({
         hasDefaultWithNullContentType = true;
       }
 
+      final groups = <String?, List<String?>>{};
       for (final contentType in contentTypes) {
-        final casePattern = _casePattern(status, contentType);
+        groups
+            .putIfAbsent(
+              _contentTypeKey(contentType, includeCharset: false),
+              () => [],
+            )
+            .add(contentType);
+      }
+      final alternatives = [
+        for (final group in groups.values) ...[
+          for (final contentType in group.skip(1))
+            if (_declaredCharset(contentType) != null)
+              (contentType: contentType, ignoreCharset: false),
+          (contentType: group.first, ignoreCharset: true),
+        ],
+      ];
+      for (final alternative in alternatives) {
+        final contentType = alternative.contentType;
+        final casePattern = _casePattern(
+          status,
+          contentType,
+          ignoreCharset: alternative.ignoreCharset,
+        );
         final selectedBody = response.resolved.bodies
             .where((body) => body.rawContentType == contentType)
             .firstOrNull;
@@ -169,7 +191,11 @@ class const ParseGenerator({
   Method generateResponseSelectionMethod(Operation operation) =>
       generateParseResponseMethod(operation, selectionOnly: true);
 
-  Code _casePattern(ResponseStatus status, String? contentType) {
+  Code _casePattern(
+    ResponseStatus status,
+    String? contentType, {
+    required bool ignoreCharset,
+  }) {
     // Normalize spec keys with the same helper the generated code uses at
     // runtime so case patterns match the runtime-computed `_$mediaType`.
     final normalized = tonik_util.extractMediaType(contentType);
@@ -180,7 +206,10 @@ class const ParseGenerator({
     final mediaTypeGuard = isMediaRange
         ? _mediaTypeRangeGuard(normalized)
         : null;
-    final parameters = _responseParameters(contentType);
+    final parameters = _responseParameters(
+      contentType,
+      includeCharset: !ignoreCharset,
+    );
     final parameterGuard = parameters != null && parameters.isNotEmpty
         ? refer(
             'matchesMediaTypeParameters',
@@ -308,7 +337,10 @@ class const ParseGenerator({
         responseBody,
         streaming: streaming,
       ),
-      ContentType.text => _createTextBodyDecode(streaming: streaming),
+      ContentType.text => _createTextBodyDecode(
+        responseBody,
+        streaming: streaming,
+      ),
       ContentType.bytes => _createBytesBodyDecode(streaming: streaming),
       ContentType.form => _createFormBodyDecode(
         responseBody,
@@ -369,6 +401,8 @@ class const ParseGenerator({
                 {
                   'cancellation': refer('cancellation'),
                   'response': refer('response'),
+                  if (_declaredCharset(body.rawContentType) != null)
+                    'contentType': specLiteralString(body.rawContentType),
                   'sourceErrorType': Method(
                     (b) => b
                       ..requiredParameters.add(
@@ -432,7 +466,10 @@ class const ParseGenerator({
                   streaming: streaming,
                 ),
               ],
-              {},
+              {
+                if (_declaredCharset(responseBody.rawContentType) != null)
+                  'contentType': specLiteralString(responseBody.rawContentType),
+              },
               [refer('Object?', 'dart:core')],
             ),
           )
@@ -455,7 +492,8 @@ class const ParseGenerator({
     return (statements: statements, varName: bodyVar);
   }
 
-  ({List<Code> statements, String varName}) _createTextBodyDecode({
+  ({List<Code> statements, String varName}) _createTextBodyDecode(
+    ResponseBody responseBody, {
     required bool streaming,
   }) {
     const bodyVar = r'_$body';
@@ -474,9 +512,10 @@ class const ParseGenerator({
                   ),
                 ],
                 {
-                  'contentType': backendGenerator.responseContentType(
-                    refer('response'),
-                  ),
+                  'contentType':
+                      _declaredCharset(responseBody.rawContentType) != null
+                      ? specLiteralString(responseBody.rawContentType)
+                      : backendGenerator.responseContentType(refer('response')),
                 },
               ),
             )
@@ -537,14 +576,22 @@ class const ParseGenerator({
       declareFinal(formStringVar)
           .assign(
             refer(
-              'decodeResponseText',
+              _declaredCharset(responseBody.rawContentType) == null
+                  ? 'decodeResponseText'
+                  : 'decodeResponseForm',
               'package:tonik_util/tonik_util.dart',
-            ).call([
-              backendGenerator.responseBodyBytes(
-                refer('response'),
-                streaming: streaming,
-              ),
-            ]),
+            ).call(
+              [
+                backendGenerator.responseBodyBytes(
+                  refer('response'),
+                  streaming: streaming,
+                ),
+              ],
+              {
+                if (_declaredCharset(responseBody.rawContentType) != null)
+                  'contentType': specLiteralString(responseBody.rawContentType),
+              },
+            ),
           )
           .statement,
     );
@@ -962,19 +1009,25 @@ class const ParseGenerator({
     return {...exact, ...typeRanges, ...catchAllRanges, ...catchAllPatterns};
   }
 
-  Map<String, String>? _responseParameters(String? contentType) {
+  String? _declaredCharset(String? contentType) =>
+      tonik_util.parseMediaTypeParameters(contentType)?['charset'];
+
+  Map<String, String>? _responseParameters(
+    String? contentType, {
+    bool includeCharset = false,
+  }) {
     final parameters = tonik_util.parseMediaTypeParameters(contentType);
-    // RFC 8259 defines no charset parameter for application/json.
-    if (tonik_util.extractMediaType(contentType) == 'application/json') {
-      parameters?.remove('charset');
-    }
+    if (!includeCharset) parameters?.remove('charset');
     return parameters;
   }
 
-  String? _contentTypeKey(String contentType) {
+  String? _contentTypeKey(String? contentType, {bool includeCharset = true}) {
     final normalized = tonik_util.extractMediaType(contentType);
     if (normalized == null) return null;
-    final parameters = _responseParameters(contentType);
+    final parameters = _responseParameters(
+      contentType,
+      includeCharset: includeCharset,
+    );
     if (parameters == null || parameters.isEmpty) return normalized;
     final names = parameters.keys.toList()..sort();
     final normalizedParameters = names
