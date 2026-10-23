@@ -80,7 +80,7 @@ List<ParameterEntry> _delimitedEntries(
   final flattened = map.entries
       .expand((e) => [encode(e.key), encodeProperty(e.value)])
       .join(delimiter);
-  return [(name: paramName, value: flattened)];
+  return [(name: Uri.encodeComponent(paramName), value: flattened)];
 }
 
 /// Enforces empty-value and URI-escaping rules for object-valued parameters.
@@ -262,6 +262,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
+    final encodedName = Uri.encodeComponent(paramName);
     final result = <ParameterEntry>[];
     for (final entry in entries) {
       switch (entry.value) {
@@ -271,7 +272,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           );
         case ScalarPropertyValue(:final value):
           result.add((
-            name: '$paramName[${Uri.encodeComponent(entry.key)}]',
+            name: '$encodedName[${Uri.encodeComponent(entry.key)}]',
             value: encodeUriValue(
               value,
               allowReserved: allowReserved,

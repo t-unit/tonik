@@ -57,6 +57,6 @@ extension StringMapDelimitedEncoder on Map<String, String> {
     final flattened = entries
         .expand((e) => [encode(e.key), encode(e.value)])
         .join(delimiter);
-    return [(name: paramName, value: flattened)];
+    return [(name: Uri.encodeComponent(paramName), value: flattened)];
   }
 }

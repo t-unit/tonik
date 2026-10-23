@@ -349,6 +349,9 @@ paths:
               address:
                 style: deepObject
                 explode: true
+              a&b=c+d%20:
+                style: deepObject
+                explode: true
       responses:
         '200':
           description: Successful response
@@ -675,6 +678,13 @@ components:
       properties:
         address:
           $ref: '#/components/schemas/DeepObjectAddress'
+        a&b=c+d%20:
+          type: object
+          required:
+            - k&x
+          properties:
+            k&x:
+              type: string
 
     DeepObjectAddress:
       type: object

@@ -117,6 +117,25 @@ void main() {
   });
 
   group('OAS 3.1 deepObject style encoding', () {
+    test('preserves literal parent names and encoded member keys', () async {
+      final server = await _jsonServer();
+      final body = DeepObjectForm.fromJson(const {
+        'address': {'city': 'Berlin', 'zip': '10115'},
+        'a&b=c+d%20': {'k&x': 'a/b'},
+      });
+
+      final response = await _api(server).postDeepObject(body: body);
+
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), [
+        'address[city]',
+        'address[zip]',
+        'a&b=c+d%20[k%26x]',
+      ]);
+      expect(wire.single('a&b=c+d%20[k%26x]').bodyText, 'a%2Fb');
+    });
+
     test('serializes required object as bracket-notation with '
         'application/x-www-form-urlencoded content type', () async {
       final server = await _jsonServer();

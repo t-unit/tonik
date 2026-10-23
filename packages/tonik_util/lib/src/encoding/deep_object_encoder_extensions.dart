@@ -50,6 +50,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
       return [];
     }
 
+    final encodedName = Uri.encodeComponent(paramName);
     return entries.map((e) {
       final encodedKey = Uri.encodeComponent(e.key);
       final encodedValue = alreadyEncoded
@@ -59,7 +60,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
               allowReserved: allowReserved,
               textEncoding: utf8,
             );
-      return (name: '$paramName[$encodedKey]', value: encodedValue);
+      return (name: '$encodedName[$encodedKey]', value: encodedValue);
     }).toList();
   }
 }

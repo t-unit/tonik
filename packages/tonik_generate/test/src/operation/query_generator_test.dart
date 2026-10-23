@@ -2638,7 +2638,7 @@ void main() {
             explode: false,
             allowEmpty: false,
           )) {
-            _$entries.add((name: r'$price', value: value));
+            _$entries.add((name: r'%24price', value: value));
           }
           if (_$entries.isEmpty) {
             return null;

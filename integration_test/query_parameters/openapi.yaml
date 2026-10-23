@@ -130,6 +130,71 @@ paths:
         '204':
           description: OK
 
+  /styled-special-names:
+    get:
+      operationId: testStyledSpecialNames
+      tags:
+        - query
+      parameters:
+        - name: q&a
+          in: query
+          style: deepObject
+          explode: true
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/PartialFilter'
+        - name: a=b
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: pipe&name
+          in: query
+          style: pipeDelimited
+          explode: false
+          allowReserved: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: space&name
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema: {}
+        - name: array&name
+          in: query
+          style: pipeDelimited
+          explode: false
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: composite&name
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: exploded&name
+          in: query
+          style: spaceDelimited
+          explode: true
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+      responses:
+        '204':
+          description: OK
+
   /form-complex:
     get:
       operationId: testFormComplex
