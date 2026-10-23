@@ -100,18 +100,36 @@ void main() {
       },
     );
 
-    test(
-      'getQueryAny with non-empty list serializes comma-separated',
-      () async {
-        final api = buildApi();
-        final result = await api.getQueryAny(
-          anyValue: <dynamic>['a', 'b', 'c'],
-        );
-        requireSuccess(result);
-        final recordedRequest = await imposterServer.takeRequest();
-        expect(recordedRequest.uri.query, 'anyValue=a,b,c');
-      },
-    );
+    test('getQueryAny with non-empty list repeats the parameter', () async {
+      final api = buildApi();
+      final result = await api.getQueryAny(anyValue: <dynamic>['a', 'b', 'c']);
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'anyValue=a&anyValue=b&anyValue=c');
+      expect(recordedRequest.uri.queryParametersAll, {
+        'anyValue': ['a', 'b', 'c'],
+      });
+    });
+
+    test('getQueryAny with a map uses property names', () async {
+      final api = buildApi();
+      final result = await api.getQueryAny(anyValue: {'a': '1&2', 'b': '3=4'});
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'a=1%262&b=3%3D4');
+      expect(recordedRequest.uri.queryParameters, {'a': '1&2', 'b': '3=4'});
+    });
+
+    test('getQueryAny preserves generated model entries', () async {
+      final api = buildApi();
+      final result = await api.getQueryAny(
+        anyValue: ProfileFilter.fromJson(const {'name': 'Alice & Bob'}),
+      );
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'name=Alice%20%26%20Bob');
+      expect(recordedRequest.uri.queryParameters, {'name': 'Alice & Bob'});
+    });
   });
 
   group('Query parameters - spaceDelimited style', () {

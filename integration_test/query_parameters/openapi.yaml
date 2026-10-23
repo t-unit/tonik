@@ -16,6 +16,25 @@ tags:
     description: Operations demonstrating query parameters
 
 paths:
+  /form-any:
+    get:
+      operationId: testFormAny
+      tags:
+        - query
+      parameters:
+        - name: p
+          in: query
+          style: form
+          schema: {}
+        - name: q
+          in: query
+          style: form
+          explode: false
+          schema: {}
+      responses:
+        '204':
+          description: OK
+
   /required-nullable:
     get:
       operationId: testRequiredNullableQuery
