@@ -38,14 +38,14 @@ class const ContentTypeNormalizer() {
 
     final normalizedOperations = document.operations.map((operation) {
       final normalizedRequestBody = operation.requestBody != null
-          ? requestBodyMap[operation.requestBody]
+          ? _normalizeRequestBody(operation.requestBody!, requestBodyCache)
           : null;
 
       final normalizedOperationResponses = <ResponseStatus, Response>{};
       var responsesChanged = false;
       for (final entry in operation.responses.entries) {
-        final normalized = responseMap[entry.value];
-        if (normalized != null && !identical(normalized, entry.value)) {
+        final normalized = _normalizeResponse(entry.value, responseCache);
+        if (!identical(normalized, entry.value)) {
           normalizedOperationResponses[entry.key] = normalized;
           responsesChanged = true;
         } else {
