@@ -10,6 +10,7 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/text_encoding_expression.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Resolves serialization before native multipart containers are constructed.
 class const MultipartBodyPlanner({
@@ -86,6 +87,10 @@ class const MultipartBodyPlanner({
       final mergedObjectProperties =
           mergePolicy == MultipartMergePolicy.objectProperties;
       final nullable = property.part.isNullable || !property.part.isRequired;
+      final mergedPrimitive =
+          accesses.length > 1 && property.part.model.resolved is PrimitiveModel;
+      final guardNullable =
+          nullable && !(mergedPrimitive && property.part.isRequired);
       final Expression accessor;
       if (accesses.length == 1) {
         accessor = accesses.single;
@@ -141,9 +146,25 @@ class const MultipartBodyPlanner({
         if (!nullable && (mergedObjectProperties || mergedLists)) {
           mergeExpression = mergeExpression.nullChecked;
         }
+        final model = property.part.model.resolved;
+        final mergedType = model is PrimitiveModel
+            ? typeReference(
+                model,
+                nameManager ??
+                    NameManager(
+                      generator: NameGenerator(),
+                      stableModelSorter: StableModelSorter(),
+                    ),
+                package ?? '',
+                isNullableOverride: nullable,
+              )
+            : null;
         emissions.add(
           MultipartCode(
-            declareFinal(variable).assign(mergeExpression).statement,
+            declareFinal(
+              variable,
+              type: mergedType,
+            ).assign(mergeExpression).statement,
           ),
         );
         accessor = refer(variable);
@@ -165,7 +186,7 @@ class const MultipartBodyPlanner({
           ),
         );
       }
-      if (nullable) {
+      if (guardNullable) {
         emissions.add(
           MultipartCode(
             Block.of([
@@ -198,7 +219,7 @@ class const MultipartBodyPlanner({
         wireName: specLiteralString(property.part.wireName),
         preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
-        value: nullable
+        value: nullable && !mergedPrimitive
             ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
                   .nullChecked
             : accessor,
@@ -222,7 +243,7 @@ class const MultipartBodyPlanner({
         }
         emissions.add(emission);
       }
-      if (nullable) emissions.add(const MultipartCode(Code('}')));
+      if (guardNullable) emissions.add(const MultipartCode(Code('}')));
     }
     if (dynamicSource != null) {
       emissions.addAll(
