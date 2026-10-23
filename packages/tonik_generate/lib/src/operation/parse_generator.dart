@@ -180,7 +180,7 @@ class const ParseGenerator({
     final mediaTypeGuard = isMediaRange
         ? _mediaTypeRangeGuard(normalized)
         : null;
-    final parameters = tonik_util.parseMediaTypeParameters(contentType);
+    final parameters = _responseParameters(contentType);
     final parameterGuard = parameters != null && parameters.isNotEmpty
         ? refer(
             'matchesMediaTypeParameters',
@@ -940,8 +940,8 @@ class const ParseGenerator({
 
     final byParameterCount = contentTypes.indexed.toList()
       ..sort((a, b) {
-        final aCount = tonik_util.parseMediaTypeParameters(a.$2)?.length ?? 0;
-        final bCount = tonik_util.parseMediaTypeParameters(b.$2)?.length ?? 0;
+        final aCount = _responseParameters(a.$2)?.length ?? 0;
+        final bCount = _responseParameters(b.$2)?.length ?? 0;
         final countOrder = bCount.compareTo(aCount);
         return countOrder != 0 ? countOrder : a.$1.compareTo(b.$1);
       });
@@ -962,10 +962,19 @@ class const ParseGenerator({
     return {...exact, ...typeRanges, ...catchAllRanges, ...catchAllPatterns};
   }
 
+  Map<String, String>? _responseParameters(String? contentType) {
+    final parameters = tonik_util.parseMediaTypeParameters(contentType);
+    // RFC 8259 defines no charset parameter for application/json.
+    if (tonik_util.extractMediaType(contentType) == 'application/json') {
+      parameters?.remove('charset');
+    }
+    return parameters;
+  }
+
   String? _contentTypeKey(String contentType) {
     final normalized = tonik_util.extractMediaType(contentType);
     if (normalized == null) return null;
-    final parameters = tonik_util.parseMediaTypeParameters(contentType);
+    final parameters = _responseParameters(contentType);
     if (parameters == null || parameters.isEmpty) return normalized;
     final names = parameters.keys.toList()..sort();
     final normalizedParameters = names

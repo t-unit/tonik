@@ -113,6 +113,64 @@ paths:
       responses:
         '204':
           description: Body received
+  /json/charset:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharset
+      responses:
+        '200':
+          description: JSON with a charset-qualified declaration
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+  /json/charset-profile:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharsetProfile
+      responses:
+        '200':
+          description: JSON with charset and a required profile
+          content:
+            'Application/JSON; CHARSET=UTF-8; profile="Full"':
+              schema:
+                type: string
+  /json/charset-variants:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharsetVariants
+      responses:
+        '200':
+          description: Meaningful parameters take precedence over charset
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: integer
+            application/json; version=2:
+              schema:
+                type: string
+  /text/charset:
+    get:
+      tags: [widgets]
+      operationId: getTextCharset
+      responses:
+        '200':
+          description: Text requiring its declared charset
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+  /problem/charset:
+    get:
+      tags: [widgets]
+      operationId: getProblemCharset
+      responses:
+        '200':
+          description: Structured suffix retaining its declared parameters
+          content:
+            application/problem+json; charset=utf-8:
+              schema:
+                type: string
   /document:
     get:
       tags: [widgets]

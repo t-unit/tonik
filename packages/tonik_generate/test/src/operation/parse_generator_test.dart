@@ -4927,7 +4927,7 @@ String _parseResponse(Response<List<int>> response) {
         );
       });
 
-      test('matches parameters from spec key with a guard', () {
+      test('ignores charset in an application/json spec key', () {
         final operation = Operation(
           operationId: 'paramContentTypeOp',
           context: context,
@@ -4950,7 +4950,7 @@ String _parseResponse(Response<List<int>> response) {
               bodies: {
                 ResponseBody(
                   model: StringModel(context: context),
-                  rawContentType: 'application/json; charset=utf-8',
+                  rawContentType: 'Application/JSON; CHARSET=UTF-8',
                   contentType: ContentType.json,
                   examples: const [],
                   delivery: ResponseDelivery.complete,
@@ -4967,7 +4967,7 @@ String _parseResponse(Response<List<int>> response) {
 String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
   switch ((response.statusCode, _$mediaType)) {
-    case (200, r'application/json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'charset': r'utf-8'}):
+    case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return _$body;
@@ -4982,6 +4982,26 @@ String _parseResponse(Response<List<int>> response) {
         expect(
           collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(format(expectedMethod)),
+        );
+
+        final selection = generator.generateResponseSelectionMethod(operation);
+        const expectedSelection = r'''
+bool? _isStreamingResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json'):
+      return false;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(selection.accept(emitter).toString())),
+          collapseWhitespace(format(expectedSelection)),
         );
       });
 
@@ -5249,7 +5269,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       );
 
       test(
-        'keeps distinct parameters and dedupes equivalent quoted parameters',
+        'orders meaningful parameters first and dedupes JSON charset variants',
         () {
           final previousRootLevel = Logger.root.level;
           Logger.root.level = Level.ALL;
@@ -5280,7 +5300,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                 bodies: {
                   ResponseBody(
                     model: IntegerModel(context: context),
-                    rawContentType: 'application/json',
+                    rawContentType: 'application/json; charset=utf-8',
                     contentType: ContentType.json,
                     examples: const [],
                     delivery: ResponseDelivery.complete,
@@ -5321,17 +5341,37 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
               .accept(emitter)
               .toString();
 
-          expect(generated, contains('decodeJsonInt()'));
-          expect(generated, contains('decodeJsonString()'));
-          expect(generated, contains('decodeJsonBool()'));
-          expect(generated, isNot(contains('decodeJsonDouble()')));
+          const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json') when matchesMediaTypeParameters(response.headers.value('content-type'), {r'version': r'2'}):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseJsonVersion2(body: _$body);
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonInt();
+      return AnonymousResponseJsonCharsetUtf8(body: _$body);
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(generated)),
+            collapseWhitespace(format(expectedMethod)),
+          );
           final warnings = logs.where(
             (record) => record.level == Level.WARNING,
           );
           expect(warnings, hasLength(1));
           expect(
             warnings.single.message,
-            contains('dropped models: DoubleModel'),
+            contains('dropped models: BooleanModel, DoubleModel'),
           );
         },
       );
