@@ -18,6 +18,25 @@ tags:
     description: Operations for items with collection fields
 
 paths:
+  /collection-bodies:
+    get:
+      operationId: getCollectionBodies
+      tags: [items]
+      responses:
+        '200':
+          description: Inline list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '201':
+          description: Map of lists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagGroups'
   /packed-merged:
     post:
       operationId: postPackedMerged
