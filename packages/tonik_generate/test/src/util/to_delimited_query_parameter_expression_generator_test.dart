@@ -786,7 +786,7 @@ void main() {
           'through the null guard', () {
         final parameter = createParameter(
           name: 'tags',
-          rawName: 'tags',
+          rawName: 'a&b=c+d%20\n',
           model: ListModel(
             content: StringModel(context: context),
             isContentNullable: true,
@@ -833,7 +833,7 @@ void main() {
                             allowEmpty: true,
                             alreadyEncoded: true,
                           )) {
-                    _$entries.add((name: r'tags', value: value));
+                    _$entries.add((name: r'a%26b%3Dc%2Bd%2520%0A', value: value));
                   }
                 }
               '''),
@@ -979,7 +979,7 @@ void main() {
           'when set', () {
         final parameter = createParameter(
           name: 'items',
-          rawName: 'items',
+          rawName: 'a&b=c+d',
           model: ListModel(
             content: OneOfModel(
               isDeprecated: false,
@@ -1053,7 +1053,7 @@ void main() {
                           allowEmpty: true,
                           alreadyEncoded: true,
                         )) {
-                  _$entries.add((name: r'items', value: value));
+                  _$entries.add((name: r'a%26b%3Dc%2Bd', value: value));
                 }
               }
             '''),

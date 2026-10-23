@@ -308,6 +308,7 @@ List<Code> _buildForLoop(
   bool allowReserved = false,
   Expression? mapExpression,
 }) {
+  final encodedName = Uri.encodeComponent(rawName);
   final receiver = needsMapping
       ? refer(parameterName)
             .property('map')
@@ -336,7 +337,7 @@ List<Code> _buildForLoop(
     ]),
     Code(
       r'_$entries'
-      '.add((name: ${specLiteralStringCode(rawName)}, value: value));',
+      '.add((name: ${specLiteralStringCode(encodedName)}, value: value));',
     ),
     const Code('}'),
   ];
@@ -351,6 +352,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
   String encodingName, {
   required bool allowReserved,
 }) {
+  final encodedName = Uri.encodeComponent(rawName);
   final encodedItem = refer('item').property('uriEncode').call([], {
     'allowEmpty': literalBool(allowEmpty),
     'textEncoding': refer('utf8', 'dart:convert'),
@@ -378,7 +380,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       validateItem(),
       Block.of([
         const Code(r'_$entries.add((name: '),
-        specLiteralString(rawName).code,
+        specLiteralString(encodedName).code,
         const Code(', value: '),
         encodedItem.code,
         const Code('));'),
@@ -414,7 +416,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       ]),
       Code(
         r'_$entries'
-        '.add((name: ${specLiteralStringCode(rawName)}, value: value));',
+        '.add((name: ${specLiteralStringCode(encodedName)}, value: value));',
       ),
       const Code('}'),
     ];

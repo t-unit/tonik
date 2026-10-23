@@ -495,13 +495,13 @@ Object? test() {
         _classModel(context, 'Nested'),
         r'''
   for (final entry in body.value.toDeepObject(
-    r'value',
+    '',
     explode: true,
     allowEmpty: true,
   )) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        (entry.name).replaceAll(r'\', r'\\'),
+        (r'value' + entry.name).replaceAll(r'\', r'\\'),
         utf8.encode(entry.value),
         contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
       ),

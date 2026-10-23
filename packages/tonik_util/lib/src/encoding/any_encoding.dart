@@ -591,7 +591,7 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     if (joined.isEmpty) {
       return const [];
     }
-    return [(name: paramName, value: joined.single)];
+    return [(name: Uri.encodeComponent(paramName), value: joined.single)];
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to pipeDelimited style. '
@@ -650,7 +650,7 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     if (joined.isEmpty) {
       return const [];
     }
-    return [(name: paramName, value: joined.single)];
+    return [(name: Uri.encodeComponent(paramName), value: joined.single)];
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to spaceDelimited style. '

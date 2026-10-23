@@ -2800,8 +2800,8 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .toDeepObject('', explode: true, allowEmpty: true)) {
+                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -2863,8 +2863,8 @@ $expectedPartCode
               final _$formData = FormData();
               if (body.address != null) {
                 for (final entry in body.address!
-                    .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                  _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+                    .toDeepObject('', explode: true, allowEmpty: true)) {
+                  _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
                 }
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -2924,8 +2924,8 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .toDeepObject('', explode: true, allowEmpty: true)) {
+                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -2985,8 +2985,8 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .toDeepObject('', explode: true, allowEmpty: true)) {
+                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -3046,8 +3046,8 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .toDeepObject('', explode: true, allowEmpty: true)) {
+                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');

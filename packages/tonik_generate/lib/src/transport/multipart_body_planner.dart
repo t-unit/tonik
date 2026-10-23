@@ -660,10 +660,11 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _object(_Part part) {
     final encoding = part.encoding;
     if (encoding.style == EncodingStyle.deepObject) {
+      // Multipart parent names must remain literal in Content-Disposition.
       final entries = part.value
           .property('toDeepObject')
           .call(
-            [part.wireName],
+            [literalString('')],
             {
               'explode': literalTrue,
               'allowEmpty': literalTrue,
@@ -675,7 +676,7 @@ class const MultipartBodyPlanner({
         _text(
           part,
           refer('entry').property('value'),
-          name: refer('entry').property('name'),
+          name: part.wireName.operatorAdd(refer('entry').property('name')),
           field: _dio,
           omitContentType: _dio,
           contentType: 'application/x-www-form-urlencoded',
