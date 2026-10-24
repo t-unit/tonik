@@ -244,3 +244,27 @@ components:
             - pdf
             - csv
             - json
+    TextContainer:
+      type: object
+      required: [item]
+      properties:
+        item:
+          $ref: '#/components/schemas/TextContainer/$defs/SharedItem'
+      $defs:
+        SharedItem:
+          type: string
+    CountContainer:
+      type: object
+      required: [item]
+      properties:
+        item:
+          $ref: '#/components/schemas/CountContainer/$defs/SharedItem'
+      $defs:
+        SharedItem:
+          type: integer
+    SharedItem:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string
