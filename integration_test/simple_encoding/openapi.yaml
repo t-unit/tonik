@@ -1523,6 +1523,15 @@ components:
         mapping:
           person: '#/components/schemas/HeaderPerson'
 
+    HeaderEqualsChoice:
+      oneOf:
+        - $ref: '#/components/schemas/HeaderPerson'
+        - type: string
+      discriminator:
+        propertyName: kind
+        mapping:
+          person=special: '#/components/schemas/HeaderPerson'
+
     HeaderListAlias:
       $ref: '#/components/schemas/StringList'
     HeaderListIntersection:

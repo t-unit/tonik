@@ -1,8 +1,89 @@
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/object_decoder.dart';
+import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
 
 void main() {
+  test('wraps malformed exploded object keys with decoding context', () {
+    expect(
+      () => '%=a=b'.decodeObject(
+        explode: true,
+        explodeSeparator: ',',
+        expectedKeys: {},
+        listKeys: {},
+        context: 'Example.fromSimple',
+      ),
+      throwsA(
+        isA<InvalidFormatException>()
+            .having((e) => e.value, 'value', '%')
+            .having((e) => e.format, 'format', contains('Example.fromSimple')),
+      ),
+    );
+    expect(
+      () => '%FF=a=b'.decodeObject(
+        explode: true,
+        explodeSeparator: '&',
+        expectedKeys: {},
+        listKeys: {},
+      ),
+      throwsA(isA<InvalidFormatException>()),
+    );
+  });
+
+  test('finds a header discriminator containing equals signs', () {
+    expect(
+      'kind=person=special, name=Alice'.findHeaderDiscriminator('kind', {
+        'person=special',
+      }),
+      'person=special',
+    );
+  });
+
+  test('round-trips literal simple object values containing equals', () {
+    final encoded = {
+      'data': 'YQ==',
+      'url': 'https://example.test/?a=b',
+    }.toSimple(explode: true, allowEmpty: true, literal: true);
+
+    expect(encoded, 'data=YQ==,url=https://example.test/?a=b');
+    expect(
+      encoded.decodeObject(
+        explode: true,
+        explodeSeparator: ',',
+        expectedKeys: {'data', 'url'},
+        listKeys: {},
+      ),
+      {'data': 'YQ==', 'url': 'https://example.test/?a=b'},
+    );
+  });
+
+  test('keeps quoted header list continuation before an equals value', () {
+    expect(
+      'tags=red, "a=b", data=YQ=='.decodeObject(
+        explode: true,
+        explodeSeparator: ',',
+        expectedKeys: {'tags', 'data'},
+        listKeys: {'tags'},
+        isHeader: true,
+      ),
+      {'tags': 'red,"a=b"', 'data': 'YQ=='},
+    );
+  });
+
+  test('uses the first unquoted equals after a quoted header key', () {
+    expect(
+      '"key=part"=YQ==,extra=a=b'.decodeObject(
+        explode: true,
+        explodeSeparator: ',',
+        expectedKeys: {'"key=part"'},
+        listKeys: {},
+        captureAdditionalKeys: true,
+        isHeader: true,
+      ),
+      {'"key=part"': 'YQ==', 'extra': 'a=b'},
+    );
+  });
+
   test('ignores malformed scalar pairs when looking for a header tag', () {
     expect('a=b=c'.findHeaderDiscriminator('kind', {'person'}), isNull);
     expect('hello, "world'.findHeaderDiscriminator('kind', {'person'}), isNull);
@@ -196,25 +277,26 @@ void main() {
         expect(result, {'name': 'John'});
       });
 
-      test('throws InvalidFormatException for multiple equals signs', () {
+      test('preserves equals signs after the first form separator', () {
         expect(
-          () => 'name=John=Doe'.decodeObject(
+          'name=John=Doe&data=YQ=='.decodeObject(
             explode: true,
             explodeSeparator: '&',
-            expectedKeys: {'name'},
+            expectedKeys: {'name', 'data'},
             listKeys: {},
           ),
-          throwsA(isA<InvalidFormatException>()),
+          {'name': 'John=Doe', 'data': 'YQ=='},
         );
       });
 
       test('passes context in exceptions', () {
         try {
-          'name=John=Extra'.decodeObject(
+          'name=John&missing'.decodeObject(
             explode: true,
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
+            captureAdditionalKeys: true,
             context: 'TestModel.fromForm',
           );
           fail('Should have thrown InvalidFormatException');

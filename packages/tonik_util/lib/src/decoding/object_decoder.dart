@@ -16,16 +16,17 @@ extension ObjectDecoder on String? {
     if (this == null) return null;
     try {
       for (final pair in headerValueTokens(this!)) {
-        final parts = splitHeaderValue(
+        final separator = headerValueTokens(
           pair,
           separator: '=',
           trimWhitespace: false,
-        );
-        if (parts.length != 2) continue;
+        ).first.length;
+        if (separator == pair.length) continue;
+        final rawValue = pair.substring(separator + 1);
         try {
-          if (Uri.decodeComponent(parts[0]) == key &&
-              recognizedValues.contains(parts[1])) {
-            return parts[1];
+          if (Uri.decodeComponent(pair.substring(0, separator)) == key &&
+              recognizedValues.contains(rawValue)) {
+            return rawValue;
           }
           // Uri.decodeComponent throws ArgumentError for truncated escapes.
           // ignore: avoid_catching_errors
@@ -54,6 +55,8 @@ extension ObjectDecoder on String? {
   /// separated by [explodeSeparator]:
   /// - Form style: `name=John&age=30` (separator: `&`)
   /// - Simple style: `name=John,age=30` (separator: `,`)
+  /// Only the first unquoted `=` separates a header key from its value;
+  /// other inputs use the first `=`. Later equals signs belong to the value.
   ///
   /// For list properties in exploded format:
   /// - `tags=foo,bar,baz` (comma-separated values for a single property)
@@ -184,11 +187,15 @@ extension ObjectDecoder on String? {
     var i = 0;
     while (i < pairs.length) {
       final pair = pairs[i];
-      final parts = isHeader
-          ? splitHeaderValue(pair, separator: '=', trimWhitespace: false)
-          : pair.split('=');
+      final separator = isHeader
+          ? headerValueTokens(
+              pair,
+              separator: '=',
+              trimWhitespace: false,
+            ).first.length
+          : pair.indexOf('=');
 
-      if (parts.length == 1) {
+      if (separator < 0 || separator == pair.length) {
         if (captureAdditionalKeys) {
           throw InvalidFormatException(
             value: pair,
@@ -199,14 +206,18 @@ extension ObjectDecoder on String? {
         continue;
       }
 
-      if (parts.length != 2) {
+      final rawKey = pair.substring(0, separator);
+      final String key;
+      try {
+        key = Uri.decodeComponent(rawKey);
+      } on Object {
         throw InvalidFormatException(
-          value: pair,
-          format: 'key=value pair${context != null ? ' in $context' : ''}',
+          value: rawKey,
+          format:
+              'URI-encoded object key${context != null ? ' in $context' : ''}',
         );
       }
-
-      final key = Uri.decodeComponent(parts[0]);
+      final rawValue = pair.substring(separator + 1);
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
@@ -218,13 +229,11 @@ extension ObjectDecoder on String? {
                   'key${context != null ? ' in $context' : ''}',
             );
           }
-          result[key] = parts[1];
+          result[key] = rawValue;
         }
         i++;
         continue;
       }
-
-      final rawValue = parts[1];
 
       if (listKeys.contains(key)) {
         final listParts = <String>[rawValue];
@@ -233,12 +242,12 @@ extension ObjectDecoder on String? {
         while (i < pairs.length) {
           final nextPair = pairs[i];
           final startsPair = isHeader
-              ? splitHeaderValue(
+              ? headerValueTokens(
                       nextPair,
                       separator: '=',
                       trimWhitespace: false,
-                    ).length >
-                    1
+                    ).first.length <
+                    nextPair.length
               : nextPair.contains('=');
           if (startsPair) {
             break;
