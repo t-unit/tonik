@@ -33,6 +33,71 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('resolves collection aliases for equality and encoding shape', () {
+    final list = ListModel(
+      content: StringModel(context: context),
+      context: context,
+      examples: const [],
+      name: 'Strings',
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final alias = AliasModel(
+      model: list,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      name: 'StringsAlias',
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final model = AnyOfModel(
+      isDeprecated: false,
+      name: 'CollectionChoice',
+      models: [
+        (discriminatorValue: null, model: alias),
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+      ],
+      context: context,
+      examples: const [],
+      nameOverride: null,
+      description: null,
+      discriminator: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
+    );
+
+    final klass = generator.generateClass(model);
+    final equality = klass.methods.firstWhere((m) => m.name == 'operator ==');
+    final hashCode = klass.methods.firstWhere((m) => m.name == 'hashCode');
+    final shape = klass.methods.firstWhere(
+      (m) => m.name == 'currentEncodingShape',
+    );
+
+    expect(
+      equality.accept(emitter).toString(),
+      contains('DeepCollectionEquality'),
+    );
+    expect(
+      hashCode.accept(emitter).toString(),
+      contains('DeepCollectionEquality'),
+    );
+    expect(shape.accept(emitter).toString(), contains('EncodingShape.complex'));
+    expect(
+      shape.accept(emitter).toString(),
+      isNot(contains('stringsAlias!.currentEncodingShape')),
+    );
+  });
+
   group('AnyOfGenerator basic structure', () {
     test('generates AnyOf class with nullable fields for each model', () {
       final model = AnyOfModel(
