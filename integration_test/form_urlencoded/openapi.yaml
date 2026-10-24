@@ -814,6 +814,47 @@ paths:
 
 components:
   schemas:
+    BinaryForm:
+      type: object
+      required:
+        - data
+        - files
+        - aliases
+        - variants
+      properties:
+        data:
+          type: string
+          format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        aliases:
+          type: array
+          items:
+            $ref: '#/components/schemas/BinaryFormData'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/BinaryFormValue'
+        optionalFiles:
+          type: array
+          nullable: true
+          items:
+            type: string
+            format: binary
+
+    BinaryFormData:
+      type: string
+      format: binary
+
+    BinaryFormValue:
+      oneOf:
+        - type: string
+          format: binary
+        - type: integer
+
     NullableForm:
       type: object
       nullable: true

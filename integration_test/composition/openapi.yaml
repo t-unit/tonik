@@ -1116,3 +1116,23 @@ components:
           type: object
           additionalProperties:
             type: "null"
+
+    NameMappedMetric:
+      oneOf:
+        - $ref: '#/components/schemas/Counter'
+        - $ref: '#/components/schemas/Gauge'
+      discriminator:
+        propertyName: kind
+        mapping:
+          counter: Counter
+          gauge: Gauge
+
+    NameMappedAnyMetric:
+      anyOf:
+        - $ref: '#/components/schemas/Counter'
+        - $ref: '#/components/schemas/Gauge'
+      discriminator:
+        propertyName: kind
+        mapping:
+          counter: Counter
+          gauge: Gauge

@@ -1165,6 +1165,201 @@ void main() {
       },
     );
 
+    test('binds list-of-map values only in supported matrix branches', () {
+      final integerMaps = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        context: context,
+        examples: const [],
+        name: 'IntegerMaps',
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final userMaps = ListModel(
+        content: MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [],
+            context: context,
+            examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+          ),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        context: context,
+        examples: const [],
+        name: 'UserMaps',
+        nameOverride: null,
+        isNullable: false,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'MapListChoice',
+        models: [
+          (discriminatorValue: null, model: integerMaps),
+          (discriminatorValue: null, model: userMaps),
+        ],
+        context: context,
+        examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
+      );
+
+      final baseClass = generator.generateClasses(model).first;
+      final toMatrix = baseClass.methods.firstWhere(
+        (method) => method.name == 'toMatrix',
+      );
+      final generated = format(toMatrix.accept(emitter).toString());
+
+      const expected = '''
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          return switch (this) {
+            MapListChoiceIntegerMaps(:final value) => value
+                .map<String>(
+                  (e) => e
+                      .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
+                      .toMatrix(
+                        paramName,
+                        explode: explode,
+                        allowEmpty: allowEmpty,
+                      ),
+                )
+                .toList()
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                ),
+            MapListChoiceUserMaps() => throw EncodingException(
+              'List of maps with complex value types cannot be matrix-encoded.',
+            ),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('keeps the null guard for nullable unsupported map lists', () {
+      final userMaps = ListModel(
+        content: MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [],
+            context: context,
+            examples: const [],
+            nameOverride: null,
+            description: null,
+            additionalPropertiesPolicy: null,
+            isNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+          ),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        context: context,
+        examples: const [],
+        name: 'UserMaps',
+        nameOverride: null,
+        isNullable: true,
+        isContentNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'NullableMapListChoice',
+        models: [(discriminatorValue: null, model: userMaps)],
+        context: context,
+        examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
+      );
+
+      final baseClass = generator.generateClasses(model).first;
+      final toMatrix = baseClass.methods.firstWhere(
+        (method) => method.name == 'toMatrix',
+      );
+      final generated = format(toMatrix.accept(emitter).toString());
+
+      const expected = '''
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          return switch (this) {
+            NullableMapListChoiceUserMaps(:final value) => value == null
+                ? ''
+                : throw EncodingException(
+                    'List of maps with complex value types cannot be matrix-encoded.',
+                  ),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates toMatrix for OneOf with only list variants', () {
       final listStringModel = ListModel(
         content: StringModel(context: context),

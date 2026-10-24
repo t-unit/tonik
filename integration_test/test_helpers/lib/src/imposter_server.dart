@@ -189,10 +189,15 @@ class ImposterServer({final int? sharedPort}) {
     _port = await _findAvailablePort();
     if (_stopRequested) throw Exception('Imposter startup was cancelled.');
 
+    // Full upstream YAML fixtures exceed both parsers' default size limit.
+    final yamlCodePointLimit =
+        Platform.environment['IMPOSTER_YAML_CODE_POINT_LIMIT'] ?? '16777216';
+
     _process = await Process.start(
       'java',
       [
         ...jvmArgs,
+        '-DmaxYamlCodePoints=$yamlCodePointLimit',
         '-jar',
         imposterJar,
         '--listenPort',
@@ -204,7 +209,11 @@ class ImposterServer({final int? sharedPort}) {
         '--plugin',
         'rest',
       ],
-      environment: {...Platform.environment, 'IMPOSTER_LOG_LEVEL': 'INFO'},
+      environment: {
+        ...Platform.environment,
+        'IMPOSTER_LOG_LEVEL': 'INFO',
+        'IMPOSTER_YAML_CODE_POINT_LIMIT': yamlCodePointLimit,
+      },
     );
 
     if (_stopRequested) {

@@ -131,7 +131,7 @@ void main() {
   });
 
   test(
-    'forward response header chains retain one model and canonical context',
+    'encoded forward header chains retain one model and canonical context',
     () {
       final api = Importer().import({
         'openapi': '3.1.0',
@@ -140,10 +140,11 @@ void main() {
         'components': {
           'headers': {
             'First': {
-              r'$ref': '#/components/headers/Second',
+              r'$ref': '#%2Fcomponents%2Fheaders%2FSecond',
               'description': 'Alias state.',
             },
-            'Second': {r'$ref': '#/components/headers/State'},
+            'Second': {r'$ref': '#/components/headers/%53tate'},
+            'StateAgain': {r'$ref': '#/components/headers/State'},
             'State': {
               'schema': {
                 'type': 'string',
@@ -163,8 +164,12 @@ void main() {
       final target = api.responseHeaders
           .whereType<ResponseHeaderObject>()
           .single;
+      final repeated = api.responseHeaders
+          .whereType<ResponseHeaderAlias>()
+          .singleWhere((header) => header.name == 'StateAgain');
       expect(first.header, same(second));
       expect(second.header, same(target));
+      expect(repeated.header, same(target));
       expect(first.description, 'Alias state.');
       expect(target.context.path, ['components', 'headers', 'State']);
       expect(

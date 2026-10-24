@@ -582,11 +582,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           } else {
             final _$pairs = value.split(',');
             for (final pair in _$pairs) {
-                final _$parts = pair.split('=');
-                if (_$parts.length == 2) {
-                  final _$key = Uri.decodeComponent(_$parts[0]);
+                final _$separator = pair.indexOf('=');
+                if (_$separator >= 0) {
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'entity_type') {
-                    _$discriminator = _$parts[1];
+                    _$discriminator = pair.substring(_$separator + 1);
                     break;
                   }
                 }
@@ -684,11 +684,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           } else {
             final _$pairs = value.split(',');
             for (final pair in _$pairs) {
-                final _$parts = pair.split('=');
-                if (_$parts.length == 2) {
-                  final _$key = Uri.decodeComponent(_$parts[0]);
+                final _$separator = pair.indexOf('=');
+                if (_$separator >= 0) {
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'type') {
-                    _$discriminator = _$parts[1];
+                    _$discriminator = pair.substring(_$separator + 1);
                     break;
                   }
                 }
@@ -1172,11 +1172,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           } else {
             final _$pairs = value.split(',');
             for (final pair in _$pairs) {
-                final _$parts = pair.split('=');
-                if (_$parts.length == 2) {
-                  final _$key = Uri.decodeComponent(_$parts[0]);
+                final _$separator = pair.indexOf('=');
+                if (_$separator >= 0) {
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'type') {
-                    _$discriminator = _$parts[1];
+                    _$discriminator = pair.substring(_$separator + 1);
                     break;
                   }
                 }
@@ -1267,11 +1267,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
           } else {
             final _$pairs = value.split(',');
             for (final pair in _$pairs) {
-                final _$parts = pair.split('=');
-                if (_$parts.length == 2) {
-                  final _$key = Uri.decodeComponent(_$parts[0]);
+                final _$separator = pair.indexOf('=');
+                if (_$separator >= 0) {
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r"it's-type") {
-                    _$discriminator = _$parts[1];
+                    _$discriminator = pair.substring(_$separator + 1);
                     break;
                   }
                 }
