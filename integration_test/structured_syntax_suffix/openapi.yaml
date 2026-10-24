@@ -113,6 +113,107 @@ paths:
       responses:
         '204':
           description: Body received
+  /json/charset:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharset
+      responses:
+        '200':
+          description: JSON with a charset-qualified declaration
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+  /json/charset-profile:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharsetProfile
+      responses:
+        '200':
+          description: JSON with charset and a required profile
+          content:
+            'Application/JSON; CHARSET=UTF-8; profile="Full"':
+              schema:
+                type: string
+  /json/charset-variants:
+    get:
+      tags: [widgets]
+      operationId: getJsonCharsetVariants
+      responses:
+        '200':
+          description: Meaningful parameters take precedence over charset
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: integer
+            application/json; version=2:
+              schema:
+                type: string
+  /text/charset:
+    get:
+      tags: [widgets]
+      operationId: getTextCharset
+      responses:
+        '200':
+          description: Text alternatives with distinct charsets
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+            text/plain; charset=latin1:
+              schema:
+                type: string
+  /text/charset-reversed:
+    get:
+      tags: [widgets]
+      operationId: getTextCharsetReversed
+      responses:
+        '200':
+          description: Latin-1 is the first declared text alternative
+          content:
+            text/plain; charset=latin1:
+              schema:
+                type: string
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+  /json/latin1:
+    get:
+      tags: [widgets]
+      operationId: getJsonLatin1
+      responses:
+        '200':
+          description: JSON with an explicit Latin-1 charset
+          content:
+            application/json; charset=latin1:
+              schema:
+                type: string
+  /form/charset:
+    get:
+      tags: [widgets]
+      operationId: getFormCharset
+      responses:
+        '200':
+          description: Form text with an explicit Latin-1 charset
+          content:
+            application/x-www-form-urlencoded; charset=latin1:
+              schema:
+                type: object
+                required: [name]
+                properties:
+                  name:
+                    type: string
+  /problem/charset:
+    get:
+      tags: [widgets]
+      operationId: getProblemCharset
+      responses:
+        '200':
+          description: Structured JSON suffix with a declared charset
+          content:
+            application/problem+json; charset=latin1:
+              schema:
+                type: string
   /document:
     get:
       tags: [widgets]

@@ -8,14 +8,14 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 ///
 /// Input is always `List<int>` (from ResponseType.bytes).
 /// Returns the decoded JSON (Map, List, primitive, etc.)
-T decodeResponseJson<T>(List<int>? bytes) {
+T decodeResponseJson<T>(List<int>? bytes, {String? contentType}) {
   if (bytes == null) {
     throw const ResponseDecodingException(
       'Response bytes are null, cannot decode JSON.',
     );
   }
 
-  final jsonString = utf8.decode(bytes, allowMalformed: true);
+  final jsonString = decodeResponseText(bytes, contentType: contentType);
   final decoded = jsonDecode(jsonString);
 
   if (decoded is! T) {
@@ -72,6 +72,34 @@ String decodeResponseText(List<int>? bytes, {String? contentType}) {
   }
 }
 
+String decodeResponseForm(List<int>? bytes, {String? contentType}) {
+  final charsetName = _extractCharset(contentType);
+  if (bytes == null ||
+      charsetName == null ||
+      _normalizeCharsetName(charsetName) == 'utf-8') {
+    return decodeResponseText(bytes, contentType: contentType);
+  }
+
+  // Preserve form syntax while converting complete encoded fields to UTF-8.
+  // A multibyte character can mix escaped bytes and literal ASCII trail bytes.
+  final encoded = latin1
+      .decode(bytes)
+      .replaceAllMapped(
+        RegExp(r'[\x80-\xff]'),
+        (match) => '%${match[0]!.codeUnitAt(0).toRadixString(16)}',
+      );
+  return encoded.splitMapJoin(
+    RegExp('[&=+,]'),
+    onMatch: (match) => match[0]!,
+    onNonMatch: (component) => Uri.encodeComponent(
+      decodeResponseText(
+        Uri.decodeQueryComponent(component, encoding: latin1).codeUnits,
+        contentType: contentType,
+      ),
+    ),
+  );
+}
+
 String _decodeUsingNamedCharset(
   List<int> bytes,
   String charsetName,
@@ -93,6 +121,16 @@ String _decodeUsingNamedCharset(
     return utf8.decode(bytes, allowMalformed: true);
   }
   return encoding.decode(bytes);
+}
+
+void validateResponseStreamCharset(String? contentType) {
+  final charsetName = _extractCharset(contentType);
+  if (charsetName != null && _normalizeCharsetName(charsetName) != 'utf-8') {
+    throw ResponseDecodingException(
+      'Unsupported streaming response charset: "$charsetName". '
+      'Streaming responses require UTF-8.',
+    );
+  }
 }
 
 String _normalizeCharsetName(String charsetName) {

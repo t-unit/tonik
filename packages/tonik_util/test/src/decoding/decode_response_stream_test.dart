@@ -5,6 +5,45 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('supports declared UTF-8 aliases for streamed text', () async {
+    final items = await decodeResponseStream(
+      Stream.value(utf8.encode('"café"\n')),
+      decodeNdjson,
+      (value) => value! as String,
+      cancellation: TonikCancellation(),
+      response: 'response',
+      contentType: 'application/x-ndjson; charset=unicode-1-1-utf-8',
+      sourceErrorType: (_) => TonikErrorType.network,
+    ).toList();
+
+    expect((items.single as TonikSuccess<String, String>).value, 'café');
+  });
+
+  test(
+    'reports unsupported declared stream charset as decoding failure',
+    () async {
+      final cancellation = TonikCancellation();
+      final items = await decodeResponseStream(
+        Stream.value(const [0x22, 0x63, 0x61, 0x66, 0xe9, 0x22, 0x0a]),
+        decodeNdjson,
+        (value) => value! as String,
+        cancellation: cancellation,
+        response: 'response',
+        contentType: 'application/x-ndjson; charset=latin1',
+        sourceErrorType: (_) => TonikErrorType.network,
+      ).toList();
+
+      final error = items.single as TonikError<String, String>;
+      expect(error.type, TonikErrorType.decoding);
+      expect(error.error, isA<ResponseDecodingException>());
+      expect(
+        error.error.toString(),
+        contains('Unsupported streaming response charset: "latin1"'),
+      );
+      expect(cancellation.isCancelled, isTrue);
+    },
+  );
+
   test(
     'converts items with native metadata without cancelling at EOF',
     () async {
