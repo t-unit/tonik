@@ -4338,7 +4338,9 @@ void wrap() {
   DetailedFilter? _$decodeddetailedFilter;
 
   try {
-    _$decodeddetailedFilter = DetailedFilter.fromSimple(value, explode: explode);
+    _$decodeddetailedFilter = DetailedFilter.fromSimple(
+      value, explode: explode, isHeader: isHeader,
+    );
   } on Object catch (_) {
     _$decodeddetailedFilter = null;
   }

@@ -3877,8 +3877,11 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       final generated = format(combinedClass.accept(emitter).toString());
 
       expect(
-        generated,
-        contains('NullableClass.fromSimple(value, explode: explode)'),
+        collapseWhitespace(generated),
+        contains(
+          'NullableClass.fromSimple( value, explode: explode, '
+          'isHeader: isHeader, )',
+        ),
       );
       expect(generated, isNot(contains('value!')));
     });
@@ -4941,7 +4944,11 @@ class Holder {
         );
 
         const expectedMethod = r'''
-  factory ExtendedConfig.fromSimple(String? value, {required bool explode}) {
+  factory ExtendedConfig.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
@@ -4949,6 +4956,7 @@ class Holder {
       listKeys: {},
       context: r'ExtendedConfig',
       captureAdditionalKeys: true,
+      isHeader: isHeader,
     );
     const _$knownKeys = {r'id'};
     final _$additional = <String, Object?>{};
@@ -4958,7 +4966,7 @@ class Holder {
       }
     }
     return ExtendedConfig(
-      $base: Base.fromSimple(value, explode: explode),
+      $base: Base.fromSimple(value, explode: explode, isHeader: isHeader),
       additionalProperties: _$additional,
     );
   }''';
@@ -5018,7 +5026,11 @@ class Holder {
         );
 
         const expectedMethod = r'''
-  factory TypedExtended.fromSimple(String? value, {required bool explode}) {
+  factory TypedExtended.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
@@ -5026,6 +5038,7 @@ class Holder {
       listKeys: {},
       context: r'TypedExtended',
       captureAdditionalKeys: true,
+      isHeader: isHeader,
     );
     const _$knownKeys = {r'name'};
     final _$additional = <String, String>{};
@@ -5037,7 +5050,7 @@ class Holder {
       }
     }
     return TypedExtended(
-      $base: Base.fromSimple(value, explode: explode),
+      $base: Base.fromSimple(value, explode: explode, isHeader: isHeader),
       additionalProperties: _$additional,
     );
   }''';
@@ -5110,7 +5123,11 @@ class Holder {
         );
 
         const expectedMethod = r'''
-  factory ComplexExtended.fromSimple(String? value, {required bool explode}) {
+  factory ComplexExtended.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
@@ -5118,6 +5135,7 @@ class Holder {
       listKeys: {},
       context: r'ComplexExtended',
       captureAdditionalKeys: true,
+      isHeader: isHeader,
     );
     const _$knownKeys = {r'id'};
     for (final _$entry in _$values.entries) {
@@ -5127,7 +5145,7 @@ class Holder {
         );
       }
     }
-    return ComplexExtended($base: Base.fromSimple(value, explode: explode));
+    return ComplexExtended( $base: Base.fromSimple(value, explode: explode, isHeader: isHeader), );
   }''';
 
         final combinedClass = generator.generateClass(model);
@@ -5214,7 +5232,11 @@ class Holder {
           );
 
           const expectedMethod = r'''
-  factory MultiMember.fromSimple(String? value, {required bool explode}) {
+  factory MultiMember.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
@@ -5222,6 +5244,7 @@ class Holder {
       listKeys: {},
       context: r'MultiMember',
       captureAdditionalKeys: true,
+      isHeader: isHeader,
     );
     const _$knownKeys = {r'alpha', r'beta'};
     final _$additional = <String, Object?>{};
@@ -5231,8 +5254,8 @@ class Holder {
       }
     }
     return MultiMember(
-      first: First.fromSimple(value, explode: explode),
-      second: Second.fromSimple(value, explode: explode),
+      first: First.fromSimple(value, explode: explode, isHeader: isHeader),
+      second: Second.fromSimple(value, explode: explode, isHeader: isHeader),
       additionalProperties: _$additional,
     );
   }''';

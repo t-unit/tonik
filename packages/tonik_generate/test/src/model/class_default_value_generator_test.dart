@@ -989,13 +989,18 @@ factory WithNullable.fromJson(Object? json) {
       final generated = format(result.accept(emitter).toString());
 
       const expectedFromSimple = r'''
-factory DefaultedSimple.fromSimple(String? value, {required bool explode}) {
+factory DefaultedSimple.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
   final _$values = value.decodeObject(
     explode: explode,
     explodeSeparator: ',',
     expectedKeys: {r'name'},
     listKeys: {},
     context: r'DefaultedSimple',
+            isHeader: isHeader,
   );
   return DefaultedSimple(
     name: _$values.containsKey(r'name')
@@ -1104,15 +1109,17 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
       const expectedFromSimple = r'''
 factory DefaultedSimpleRuntime.fromSimple(
-  String? value, {
-  required bool explode,
-}) {
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
   final _$values = value.decodeObject(
     explode: explode,
     explodeSeparator: ',',
     expectedKeys: {r'startsAt'},
     listKeys: {},
     context: r'DefaultedSimpleRuntime',
+            isHeader: isHeader,
   );
   return DefaultedSimpleRuntime(
     startsAt: _$values.containsKey(r'startsAt')

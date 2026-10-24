@@ -856,17 +856,22 @@ Object? toJson() {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
-factory Tags.fromSimple(String? value, {required bool explode}) {
+factory Tags.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
   final _$values = value.decodeObject(
     explode: explode,
     explodeSeparator: ',',
     expectedKeys: {r'items'},
     listKeys: {r'items'},
     context: r'Tags',
+            isHeader: isHeader,
   );
   return Tags(
     items: _$values[r'items']
-        .decodeSimpleStringList(context: r'Tags.items')
+        .decodeSimpleStringList(context: r'Tags.items', isHeader: isHeader)
         .lock,
   );
 }

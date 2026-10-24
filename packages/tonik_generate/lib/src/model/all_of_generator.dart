@@ -1042,9 +1042,10 @@ class const AllOfGenerator({
                 ..type = refer('String?', 'dart:core'),
             ),
           )
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             buildBoolParameter('explode', required: true),
-          )
+            if (!isForm) buildBoolParameter('isHeader'),
+          ])
           ..body = Code('return $className();'),
       );
     }
@@ -1076,6 +1077,7 @@ class const AllOfGenerator({
               contextClass: className,
               contextProperty: name,
               explode: refer('explode'),
+              isHeader: refer('isHeader'),
               useImmutableCollections: useImmutableCollections,
             );
 
@@ -1096,9 +1098,10 @@ class const AllOfGenerator({
                 ..type = refer('String?', 'dart:core'),
             ),
           )
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             buildBoolParameter('explode', required: true),
-          )
+            if (!isForm) buildBoolParameter('isHeader'),
+          ])
           ..body = refer(className)
               .call([], constructorArgs)
               .returned
@@ -1126,6 +1129,7 @@ class const AllOfGenerator({
               'listKeys': listKeysExpr,
               'context': specLiteralString(className),
               'captureAdditionalKeys': literalTrue,
+              if (!isForm) 'isHeader': refer('isHeader'),
             }),
           )
           .statement,
@@ -1171,7 +1175,10 @@ class const AllOfGenerator({
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(buildBoolParameter('explode', required: true))
+        ..optionalParameters.addAll([
+          buildBoolParameter('explode', required: true),
+          if (!isForm) buildBoolParameter('isHeader'),
+        ])
         ..body = Block.of(codes),
     );
   }

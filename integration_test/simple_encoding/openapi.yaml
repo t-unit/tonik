@@ -16,6 +16,66 @@ tags:
     description: Operations demonstrating simple encoding
 
 paths:
+  /headers/literal-values:
+    get:
+      operationId: testLiteralResponseHeaders
+      tags:
+        - simple-encoding
+      responses:
+        '204':
+          description: Scalar and list header values
+          headers:
+            X-Msg:
+              schema:
+                type: string
+            Last-Modified:
+              schema:
+                type: string
+            X-List:
+              schema:
+                type: array
+                items:
+                  type: string
+            X-List-Alias:
+              schema:
+                $ref: '#/components/schemas/HeaderListAlias'
+            X-List-Composition:
+              schema:
+                $ref: '#/components/schemas/HeaderListAlternatives'
+            X-Scalar-Choice:
+              schema:
+                $ref: '#/components/schemas/HeaderScalarChoice'
+            X-Nullable-List:
+              schema:
+                type: array
+                items:
+                  type: string
+                  nullable: true
+            X-Flags:
+              explode: true
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+            X-Person:
+              schema:
+                $ref: '#/components/schemas/HeaderPerson'
+            X-Exploded-Person:
+              explode: true
+              schema:
+                $ref: '#/components/schemas/HeaderPerson'
+            X-Extended-Person:
+              schema:
+                $ref: '#/components/schemas/HeaderPersonWithExtras'
+            X-Person-Composition:
+              explode: true
+              schema:
+                $ref: '#/components/schemas/HeaderPersonAlternatives'
+            X-Person-Or-String:
+              explode: true
+              schema:
+                $ref: '#/components/schemas/HeaderPersonOrString'
+
   /headers/reserved/no-content:
     parameters:
       - name: authorization
@@ -1422,6 +1482,65 @@ components:
       schema:
         type: string
   schemas:
+    HeaderPerson:
+      type: object
+      required: [name, age]
+      properties:
+        kind:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+    HeaderPersonWithExtras:
+      allOf:
+        - $ref: '#/components/schemas/HeaderPerson'
+      additionalProperties:
+        type: string
+    HeaderPersonChoice:
+      oneOf:
+        - $ref: '#/components/schemas/HeaderPerson'
+        - type: integer
+      discriminator:
+        propertyName: kind
+        mapping:
+          person: '#/components/schemas/HeaderPerson'
+    HeaderPersonAlternatives:
+      anyOf:
+        - $ref: '#/components/schemas/HeaderPersonChoice'
+        - type: boolean
+
+    HeaderPersonOrString:
+      oneOf:
+        - $ref: '#/components/schemas/HeaderPerson'
+        - type: string
+      discriminator:
+        propertyName: kind
+        mapping:
+          person: '#/components/schemas/HeaderPerson'
+
+    HeaderListAlias:
+      $ref: '#/components/schemas/StringList'
+    HeaderListIntersection:
+      allOf:
+        - $ref: '#/components/schemas/HeaderListAlias'
+    HeaderListChoice:
+      oneOf:
+        - $ref: '#/components/schemas/HeaderListIntersection'
+        - type: integer
+    HeaderListAlternatives:
+      anyOf:
+        - $ref: '#/components/schemas/HeaderListChoice'
+        - type: boolean
+    HeaderScalarChoice:
+      anyOf:
+        - type: string
+        - type: boolean
+
     HeaderCounts:
       type: object
       additionalProperties:

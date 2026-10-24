@@ -83,6 +83,7 @@ BuiltExpression buildSimpleValueExpression(
   String? contextClass,
   String? contextProperty,
   bool useImmutableCollections = false,
+  Expression? isHeader,
 }) {
   return BuiltExpression.simple(
     _buildSimpleValueExpression(
@@ -95,6 +96,7 @@ BuiltExpression buildSimpleValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       useImmutableCollections: useImmutableCollections,
+      isHeader: isHeader,
     ),
   );
 }
@@ -109,6 +111,7 @@ Expression _buildSimpleValueExpression(
   String? contextClass,
   String? contextProperty,
   bool useImmutableCollections = false,
+  Expression? isHeader,
 }) {
   final contextParam = (contextClass != null || contextProperty != null)
       ? {
@@ -184,6 +187,7 @@ Expression _buildSimpleValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      isHeader: isHeader,
     ),
     final ListModel listModel => _buildListFromSimpleExpression(
       value,
@@ -194,6 +198,7 @@ Expression _buildSimpleValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      isHeader: isHeader,
     ),
     final AliasModel aliasModel => _buildSimpleValueExpression(
       value,
@@ -205,6 +210,7 @@ Expression _buildSimpleValueExpression(
       contextProperty: contextProperty,
       useImmutableCollections: useImmutableCollections,
       explode: explode,
+      isHeader: isHeader,
     ),
     NeverModel() => _buildNeverModelExpression(value, isRequired),
     AnyModel() => value,
@@ -219,6 +225,7 @@ Expression _buildSimpleValueExpression(
       explode: explode,
       contextParam: contextParam,
       useImmutableCollections: useImmutableCollections,
+      isHeader: isHeader,
     ),
     NamedModel() ||
     CompositeModel() => generateSimpleDecodingExceptionExpression(
@@ -238,6 +245,7 @@ Expression _buildMapFromSimpleExpression(
   String? contextClass,
   String? contextProperty,
   bool useImmutableCollections = false,
+  Expression? isHeader,
 }) {
   final unsupportedReason = _getMapValueUnsupportedReason(model.valueModel);
   if (unsupportedReason != null) {
@@ -263,7 +271,10 @@ Expression _buildMapFromSimpleExpression(
   ).closure;
   final result = value
       .property(isRequired ? 'decodeSimpleMap' : 'decodeSimpleNullableMap')
-      .call([decoder], {'explode': explode, ...contextParam});
+      .call(
+        [decoder],
+        {'explode': explode, ...contextParam, 'isHeader': ?isHeader},
+      );
   if (!useImmutableCollections) return result;
 
   final immutableMap = refer(
@@ -293,9 +304,18 @@ Expression _buildFromSimpleExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  Expression? isHeader,
 }) {
   final name = nameManager.modelName(model);
-  final explodeParam = {'explode': explode};
+  final explodeParam = {
+    'explode': explode,
+    if (isHeader != null &&
+        (model is ClassModel ||
+            model is AllOfModel ||
+            model is OneOfModel ||
+            model is AnyOfModel))
+      'isHeader': isHeader,
+  };
 
   final url = package != null ? sourceFileUrl(package, 'model', name) : null;
 
@@ -317,6 +337,7 @@ Expression _buildListDecode(
   bool isRequired, {
   bool nullableElements = false,
   Map<String, Expression> contextParam = const {},
+  Expression? isHeader,
 }) {
   final decoder = switch ((isRequired, nullableElements)) {
     (true, false) => 'decodeSimpleStringList',
@@ -324,7 +345,10 @@ Expression _buildListDecode(
     (true, true) => 'decodeSimpleStringNullableList',
     (false, true) => 'decodeSimpleNullableStringNullableList',
   };
-  return value.property(decoder).call([], contextParam);
+  return value.property(decoder).call([], {
+    ...contextParam,
+    'isHeader': ?isHeader,
+  });
 }
 
 Expression _buildListFromSimpleExpression(
@@ -336,6 +360,7 @@ Expression _buildListFromSimpleExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  Expression? isHeader,
 }) {
   final content = model.content;
   final contextParam = (contextClass != null || contextProperty != null)
@@ -352,6 +377,7 @@ Expression _buildListFromSimpleExpression(
     value,
     isRequired,
     contextParam: contextParam,
+    isHeader: isHeader,
   );
 
   return switch (content) {
@@ -360,6 +386,7 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       nullableElements: model.isContentNullable,
       contextParam: contextParam,
+      isHeader: isHeader,
     ),
     IntegerModel() => _buildPrimitiveList(
       listDecode,
@@ -459,6 +486,7 @@ Expression _buildListFromSimpleExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      isHeader: isHeader,
     ),
     NeverModel() => _buildNeverList(listDecode, isRequired),
     AnyModel() => listDecode,

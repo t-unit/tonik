@@ -426,9 +426,10 @@ class const ClassGenerator({
                 ..type = refer('String?', 'dart:core'),
             ),
           )
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             buildBoolParameter('explode', required: true),
-          )
+            buildBoolParameter('isHeader'),
+          ])
           ..lambda = true
           ..body = generateSimpleDecodingExceptionExpression(
             '$className is write-only and cannot be decoded.',
@@ -472,7 +473,10 @@ class const ClassGenerator({
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(buildBoolParameter('explode', required: true))
+        ..optionalParameters.addAll([
+          buildBoolParameter('explode', required: true),
+          buildBoolParameter('isHeader'),
+        ])
         ..body = _buildFromSimpleBody(
           className,
           normalizedProperties,
@@ -541,6 +545,7 @@ class const ClassGenerator({
         contextClass: className,
         contextProperty: propertyName,
         explode: refer('explode'),
+        isHeader: refer('isHeader'),
       ).expression;
 
       if (useImmutableCollections && isCollectionModel(modelType)) {
@@ -578,6 +583,7 @@ class const ClassGenerator({
       'expectedKeys': literalSet(expectedKeys.map(specLiteralString)),
       'listKeys': literalSet(listKeys.map(specLiteralString)),
       'context': specLiteralString(className),
+      'isHeader': refer('isHeader'),
     };
     if (apPolicy != null) {
       decodeObjectArgs['captureAdditionalKeys'] = literalTrue;

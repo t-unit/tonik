@@ -56,7 +56,7 @@ abstract interface class const TransportBackendGenerator() {
 
   Expression streamSourceErrorType(Expression error, Expression cancellation);
 
-  Expression responseHeaderValues(Expression response, String name);
+  Expression responseHeaderValue(Expression response, String name);
 
   Reference get serverConfigType => TypeReference(
     (b) => b
