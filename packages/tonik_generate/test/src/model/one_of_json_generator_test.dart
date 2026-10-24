@@ -215,7 +215,9 @@ void main() {
               ResultError(:final value) => (value.toJson(), r'error'),
             };
             if (_$discriminator != null && _$json is Map<String, Object?>) {
-              _$json.putIfAbsent(r'type', () => _$discriminator);
+              final _$map = <String, Object?>{..._$json};
+              _$map.putIfAbsent(r'type', () => _$discriminator);
+              return _$map;
             }
             return _$json;
           }
@@ -370,7 +372,9 @@ void main() {
               ResultError(:final value) => (value.toJson(), r'error'),
             };
             if (_$discriminator != null && _$json is Map<String, Object?>) {
-              _$json.putIfAbsent(r'discriminator', () => _$discriminator);
+              final _$map = <String, Object?>{..._$json};
+              _$map.putIfAbsent(r'discriminator', () => _$discriminator);
+              return _$map;
             }
             return _$json;
           }
@@ -1238,7 +1242,9 @@ void main() {
             };
 
             if (_$discriminator != null && _$json is Map<String, Object?>) {
-              _$json.putIfAbsent(r'type', () => _$discriminator);
+              final _$map = <String, Object?>{..._$json};
+              _$map.putIfAbsent(r'type', () => _$discriminator);
+              return _$map;
             }
 
             return _$json;
@@ -1308,7 +1314,9 @@ void main() {
             };
 
             if (_$discriminator != null && _$json is Map<String, Object?>) {
-              _$json.putIfAbsent(r"it's-type", () => _$discriminator);
+              final _$map = <String, Object?>{..._$json};
+              _$map.putIfAbsent(r"it's-type", () => _$discriminator);
+              return _$map;
             }
 
             return _$json;
