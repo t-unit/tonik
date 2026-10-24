@@ -61,6 +61,25 @@ sealed class Model({required final Context context}) {
   };
 }
 
+EncodingShape _resolveEncodingShape(Model model, Set<Model> visiting) {
+  if (!visiting.add(model)) return EncodingShape.mixed;
+  try {
+    switch (model) {
+      case AliasModel(:final model):
+        return _resolveEncodingShape(model, visiting);
+      case CompositeModel(:final containedModels):
+        final shapes = containedModels
+            .map((member) => _resolveEncodingShape(member, visiting))
+            .toSet();
+        return shapes.length == 1 ? shapes.first : EncodingShape.mixed;
+      default:
+        return model.encodingShape;
+    }
+  } finally {
+    visiting.remove(model);
+  }
+}
+
 mixin NamedModel on Model {
   String? get name;
   String? get nameOverride;
@@ -73,14 +92,10 @@ mixin CompositeModel on Model {
   /// The enclosing schema's default; defaults on members are not inherited.
   Object? get defaultValue;
 
+  /// Cyclic composite or alias paths conservatively have mixed encoding.
   @override
-  EncodingShape get encodingShape {
-    final shapes = containedModels.map((m) => m.encodingShape).toSet();
-    if (shapes.length == 1) {
-      return shapes.first;
-    }
-    return EncodingShape.mixed;
-  }
+  EncodingShape get encodingShape =>
+      _resolveEncodingShape(this, Set<Model>.identity());
 
   /// Returns true if any contained model has simple encoding shape.
   bool get hasSimpleTypes {
@@ -209,7 +224,8 @@ class AliasModel._({
   }
 
   @override
-  EncodingShape get encodingShape => resolved.encodingShape;
+  EncodingShape get encodingShape =>
+      _resolveEncodingShape(this, Set<Model>.identity());
 
   @override
   String toString() =>
