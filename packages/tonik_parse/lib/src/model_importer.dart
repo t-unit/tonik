@@ -354,8 +354,8 @@ class ModelImporter._(
           defaultValue: schema.rawDefault,
           examples: const [],
           nameOverride: null,
-          description: null,
-          isDeprecated: false,
+          description: schema.description,
+          isDeprecated: schema.isDeprecated ?? false,
         );
         _logModelAdded(aliasModel);
         _registerModel(aliasModel, schema);
@@ -1586,8 +1586,8 @@ class ModelImporter._(
       defaultValue: schema.rawDefault,
       examples: exampleImporter.fromSchema(schema),
       nameOverride: null,
-      description: null,
-      isDeprecated: false,
+      description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
     );
     _logModelAdded(alias);
     _registerModel(alias, schema);
