@@ -1026,7 +1026,7 @@ void main() {
       );
     });
 
-    test('generates fromSimple that throws for Alias targeting list', () {
+    test('generates fromSimple for Alias targeting a scalar list', () {
       final aliasModel = AliasModel(
         name: 'StringListAlias',
         model: ListModel(
@@ -1088,17 +1088,28 @@ void main() {
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-          factory AliasHolder.fromSimple(
+      const expectedMethod = r'''
+        factory AliasHolder.fromSimple(
           String? value, {
           required bool explode,
           bool isHeader = false,
         }) {
-            throw SimpleDecodingException(
-              r'Simple encoding not supported for AliasHolder: contains complex types',
-            );
-          }
-        ''';
+          final _$values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'list'},
+            listKeys: {r'list'},
+            context: r'AliasHolder',
+            isHeader: isHeader,
+          );
+          return AliasHolder(
+            list: _$values[r'list'].decodeSimpleStringList(
+              context: r'AliasHolder.list',
+              isHeader: isHeader,
+            ),
+          );
+        }
+      ''';
 
       expect(
         collapseWhitespace(classCode),

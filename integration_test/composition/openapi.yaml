@@ -1116,3 +1116,72 @@ components:
           type: object
           additionalProperties:
             type: "null"
+
+    ParameterTags:
+      type: array
+      items:
+        type: string
+
+    ParameterTagsAlias:
+      $ref: '#/components/schemas/ParameterTags'
+
+    ParameterTagsChain:
+      $ref: '#/components/schemas/ParameterTagsAlias'
+
+    AliasListParameters:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        tags:
+          $ref: '#/components/schemas/ParameterTagsChain'
+
+    DirectListParameters:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        tags:
+          $ref: '#/components/schemas/ParameterTags'
+
+    SiblingListParameters:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        tags:
+          $ref: '#/components/schemas/ParameterTags'
+          description: Tags with a reference sibling
+
+    NestedParameterTags:
+      type: array
+      items:
+        type: array
+        items:
+          type: string
+
+    NestedParameterTagsAlias:
+      $ref: '#/components/schemas/NestedParameterTags'
+
+    NestedListParameters:
+      type: object
+      properties:
+        tags:
+          $ref: '#/components/schemas/NestedParameterTagsAlias'
+
+    NullableParameterTags:
+      $ref: '#/components/schemas/ParameterTags'
+      nullable: true
+
+    NullableParameterTagsAlias:
+      $ref: '#/components/schemas/NullableParameterTags'
+
+    NullableAliasListParameters:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          $ref: '#/components/schemas/NullableParameterTagsAlias'
