@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-/// With [allowReserved] false the result is byte-identical to
-/// [Uri.encodeQueryComponent] / [Uri.encodeComponent] — call sites rely on
-/// this. With [allowReserved] true reserved chars including `[ ]` pass through
+/// With [allowReserved] false, only RFC 3986 unreserved characters remain
+/// literal. Spaces become `%20`, or `+` under [useQueryComponent].
+/// With [allowReserved] true reserved chars including `[ ]` pass through
 /// literally; the form delimiters `& =`, along with `+`, `%`, and non-ASCII,
 /// stay encoded, and a space becomes `%20` (or `+` under [useQueryComponent]).
 ///
@@ -33,7 +33,7 @@ String encodeUriValue(
       result.write(
         useQueryComponent
             ? Uri.encodeQueryComponent(character)
-            : Uri.encodeComponent(character),
+            : encodeUriComponent(character),
       );
       continue;
     }
@@ -54,3 +54,7 @@ String encodeUriValue(
 
   return result.toString();
 }
+
+/// Encodes a UTF-8 URI component using the RFC 3986 unreserved character set.
+String encodeUriComponent(String value) =>
+    Uri.encodeQueryComponent(value).replaceAll('+', '%20');
