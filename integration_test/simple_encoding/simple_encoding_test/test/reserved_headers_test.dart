@@ -112,6 +112,27 @@ void main() {
       );
       final request = await server.takeRequest();
       expect(request.uri.path, '/headers/reserved/referenced-response');
+      expect(request.header('Accept'), 'application/json');
+    },
+  );
+
+  test(
+    'combines referenced and inline response media without duplicates',
+    () async {
+      final endpoint = await RawRequestServer.start(
+        responseStatusCode: 400,
+        responseHeaders: {'content-type': 'text/plain'},
+        responseBody: utf8.encode('invalid'),
+      );
+      final server = CustomServer(baseUrl: endpoint.baseUrl);
+      addTearDown(server.close);
+
+      final result = await SimpleEncodingApi(server).testMixedResponseAccept();
+
+      expect(requireSuccess(result).response.statusCode, 400);
+      final request = await endpoint.takeRequest();
+      expect(request.uri.path, '/headers/accept/mixed');
+      expect(request.header('Accept'), 'application/json,text/plain');
     },
   );
 }
