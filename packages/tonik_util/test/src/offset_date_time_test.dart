@@ -623,6 +623,17 @@ void main() {
     });
 
     group('local datetime parsing', () {
+      test('should not interpret the day of a date as an hour-only offset', () {
+        final result = OffsetDateTime.parse('2023-12-25');
+
+        expect(result.year, 2023);
+        expect(result.month, 12);
+        expect(result.day, 25);
+        expect(result.hour, 0);
+        expect(result.minute, 0);
+        expect(result.timeZoneOffset, DateTime(2023, 12, 25).timeZoneOffset);
+      });
+
       test('should parse local datetime without timezone', () {
         const input = '2023-12-25T15:30:45';
         final result = OffsetDateTime.parse(input);
@@ -693,6 +704,46 @@ void main() {
     });
 
     group('timezone offset parsing', () {
+      test('should preserve a positive hour-only offset', () {
+        final result = OffsetDateTime.parse('2023-01-01T10:00:00+05');
+
+        expect(result.hour, 10);
+        expect(result.timeZoneOffset, const Duration(hours: 5));
+        expect(result.toUtc(), DateTime.utc(2023, 1, 1, 5));
+        expect(result.toTimeZonedIso8601String(), '2023-01-01T10:00:00+05:00');
+      });
+
+      test('should preserve a negative hour-only offset after a space', () {
+        final result = OffsetDateTime.parse('2023-01-01T22:30:00 -05');
+
+        expect(result.day, 1);
+        expect(result.hour, 22);
+        expect(result.minute, 30);
+        expect(result.timeZoneOffset, const Duration(hours: -5));
+        expect(result.toUtc(), DateTime.utc(2023, 1, 2, 3, 30));
+        expect(result.toTimeZonedIso8601String(), '2023-01-01T22:30:00-05:00');
+      });
+
+      test(
+        'should preserve hour-only offsets with compact time and a space',
+        () {
+          final result = OffsetDateTime.parse('20230101 103000+05');
+
+          expect(result.hour, 10);
+          expect(result.minute, 30);
+          expect(result.timeZoneOffset, const Duration(hours: 5));
+          expect(result.toUtc(), DateTime.utc(2023, 1, 1, 5, 30));
+        },
+      );
+
+      test('should preserve hour-only offsets with lowercase t', () {
+        final result = OffsetDateTime.parse('2023-01-01t10+05');
+
+        expect(result.hour, 10);
+        expect(result.timeZoneOffset, const Duration(hours: 5));
+        expect(result.toUtc(), DateTime.utc(2023, 1, 1, 5));
+      });
+
       test('should parse positive timezone offset with colon', () {
         const input = '2023-12-25T15:30:45+05:30';
         final result = OffsetDateTime.parse(input);

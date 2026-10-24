@@ -89,12 +89,12 @@ class const OffsetDateTime._fromUtc(
     // DateTime.parse rejects the RFC 3339 lowercase 't' separator. Only a 't'
     // sitting between two digits is the genuine date/time separator; matching
     // bare 't' would clobber non-separator characters in malformed input.
-    final normalizedInput = input
-        .replaceFirst(' ', 'T')
-        .replaceFirst(RegExp(r'(?<=\d)t(?=\d)'), 'T');
+    final normalizedInput = input.replaceFirst(RegExp(r'(?<=\d)t(?=\d)'), 'T');
 
-    final timezoneRegex = RegExp(r'[+-]\d{2}:?\d{2}$');
-    final timezoneMatch = timezoneRegex.firstMatch(normalizedInput);
+    final timezoneRegex = RegExp(r'[+-]\d{2}(?::?\d{2})?$');
+    final timezoneMatch = normalizedInput.contains(RegExp('[T ]'))
+        ? timezoneRegex.firstMatch(normalizedInput)
+        : null;
 
     if (timezoneMatch != null) {
       return OffsetDateTime._parseWithTimezoneOffset(
@@ -120,20 +120,22 @@ class const OffsetDateTime._fromUtc(
     }
   }
 
-  /// Parses timezone offset string (±HH:MM or ±HHMM) into Duration.
+  /// Parses timezone offset string (±HH:MM, ±HHMM, or ±HH) into Duration.
   static Duration _parseTimezoneOffset(String offsetString) {
     final normalized = offsetString.replaceAll(':', '');
 
-    if (normalized.length != 5) {
+    if (normalized.length != 3 && normalized.length != 5) {
       throw InvalidFormatException(
         value: offsetString,
-        format: '±HHMM or ±HH:MM timezone offset',
+        format: '±HH, ±HHMM, or ±HH:MM timezone offset',
       );
     }
 
     final sign = normalized[0] == '+' ? 1 : -1;
     final hoursStr = normalized.substring(1, 3);
-    final minutesStr = normalized.substring(3, 5);
+    final minutesStr = normalized.length == 3
+        ? '00'
+        : normalized.substring(3, 5);
 
     final hours = int.parse(hoursStr);
     final minutes = int.parse(minutesStr);
