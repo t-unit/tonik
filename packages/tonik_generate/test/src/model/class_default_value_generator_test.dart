@@ -1001,6 +1001,7 @@ factory DefaultedSimple.fromSimple(
     listKeys: {},
     context: r'DefaultedSimple',
             isHeader: isHeader,
+            percentDecodeKeys: false,
   );
   return DefaultedSimple(
     name: _$values.containsKey(r'name')
@@ -1120,6 +1121,7 @@ factory DefaultedSimpleRuntime.fromSimple(
     listKeys: {},
     context: r'DefaultedSimpleRuntime',
             isHeader: isHeader,
+            percentDecodeKeys: false,
   );
   return DefaultedSimpleRuntime(
     startsAt: _$values.containsKey(r'startsAt')

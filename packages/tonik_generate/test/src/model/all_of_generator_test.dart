@@ -4957,6 +4957,7 @@ class Holder {
       context: r'ExtendedConfig',
       captureAdditionalKeys: true,
       isHeader: isHeader,
+      percentDecodeKeys: false,
     );
     const _$knownKeys = {r'id'};
     final _$additional = <String, Object?>{};
@@ -5039,6 +5040,7 @@ class Holder {
       context: r'TypedExtended',
       captureAdditionalKeys: true,
       isHeader: isHeader,
+      percentDecodeKeys: false,
     );
     const _$knownKeys = {r'name'};
     final _$additional = <String, String>{};
@@ -5136,6 +5138,7 @@ class Holder {
       context: r'ComplexExtended',
       captureAdditionalKeys: true,
       isHeader: isHeader,
+      percentDecodeKeys: false,
     );
     const _$knownKeys = {r'id'};
     for (final _$entry in _$values.entries) {
@@ -5245,6 +5248,7 @@ class Holder {
       context: r'MultiMember',
       captureAdditionalKeys: true,
       isHeader: isHeader,
+      percentDecodeKeys: false,
     );
     const _$knownKeys = {r'alpha', r'beta'};
     final _$additional = <String, Object?>{};

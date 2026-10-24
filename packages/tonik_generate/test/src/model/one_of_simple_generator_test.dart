@@ -584,15 +584,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             for (final pair in _$pairs) {
                 final _$separator = pair.indexOf('=');
                 if (_$separator >= 0) {
-                  final String _$key;
-                  try {
-                    _$key = Uri.decodeComponent(pair.substring(0, _$separator));
-                    // ignore: avoid_catching_errors
-                  } on ArgumentError catch (_) {
-                    continue;
-                  } on FormatException catch (_) {
-                    continue;
-                  }
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'entity_type') {
                     _$discriminator = pair.substring(_$separator + 1);
                     break;
@@ -694,15 +686,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             for (final pair in _$pairs) {
                 final _$separator = pair.indexOf('=');
                 if (_$separator >= 0) {
-                  final String _$key;
-                  try {
-                    _$key = Uri.decodeComponent(pair.substring(0, _$separator));
-                    // ignore: avoid_catching_errors
-                  } on ArgumentError catch (_) {
-                    continue;
-                  } on FormatException catch (_) {
-                    continue;
-                  }
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'type') {
                     _$discriminator = pair.substring(_$separator + 1);
                     break;
@@ -1190,15 +1174,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             for (final pair in _$pairs) {
                 final _$separator = pair.indexOf('=');
                 if (_$separator >= 0) {
-                  final String _$key;
-                  try {
-                    _$key = Uri.decodeComponent(pair.substring(0, _$separator));
-                    // ignore: avoid_catching_errors
-                  } on ArgumentError catch (_) {
-                    continue;
-                  } on FormatException catch (_) {
-                    continue;
-                  }
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r'type') {
                     _$discriminator = pair.substring(_$separator + 1);
                     break;
@@ -1293,15 +1269,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             for (final pair in _$pairs) {
                 final _$separator = pair.indexOf('=');
                 if (_$separator >= 0) {
-                  final String _$key;
-                  try {
-                    _$key = Uri.decodeComponent(pair.substring(0, _$separator));
-                    // ignore: avoid_catching_errors
-                  } on ArgumentError catch (_) {
-                    continue;
-                  } on FormatException catch (_) {
-                    continue;
-                  }
+                  final _$key = pair.substring(0, _$separator);
                   if (_$key == r"it's-type") {
                     _$discriminator = pair.substring(_$separator + 1);
                     break;

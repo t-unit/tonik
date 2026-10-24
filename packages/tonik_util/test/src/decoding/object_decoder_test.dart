@@ -4,6 +4,58 @@ import 'package:tonik_util/src/decoding/object_decoder.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
 
 void main() {
+  test('preserves literal percent keys in exploded headers', () {
+    expect(
+      '%41=encoded,A=letter,a%=raw'.decodeObject(
+        explode: true,
+        explodeSeparator: ',',
+        expectedKeys: {'%41', 'A', 'a%'},
+        listKeys: {},
+        isHeader: true,
+      ),
+      {'%41': 'encoded', 'A': 'letter', 'a%': 'raw'},
+    );
+  });
+
+  test('supports explicit literal keys without header tokenization', () {
+    expect(
+      '%41,encoded,A,letter,a%,raw'.decodeObject(
+        explode: false,
+        explodeSeparator: ',',
+        expectedKeys: {'%41', 'A', 'a%'},
+        listKeys: {},
+        percentDecodeKeys: false,
+      ),
+      {'%41': 'encoded', 'A': 'letter', 'a%': 'raw'},
+    );
+  });
+
+  test('keeps header list lookahead and additional keys literal', () {
+    expect(
+      'a%,extra,%41,other,tags,100%,%6Eame,name,Alice'.decodeObject(
+        explode: false,
+        explodeSeparator: ',',
+        expectedKeys: {'tags', 'name'},
+        listKeys: {'tags'},
+        captureAdditionalKeys: true,
+        isHeader: true,
+      ),
+      {'a%': 'extra', '%41': 'other', 'tags': '100%,%6Eame', 'name': 'Alice'},
+    );
+  });
+
+  test('matches literal percent discriminator names in headers', () {
+    expect(
+      'kind%=person'.findHeaderDiscriminator('kind%', {'person'}),
+      'person',
+    );
+    expect(
+      '%41=person,A=other'.findHeaderDiscriminator('%41', {'person'}),
+      'person',
+    );
+    expect('%41=person'.findHeaderDiscriminator('A', {'person'}), isNull);
+  });
+
   test('wraps malformed exploded object keys with decoding context', () {
     expect(
       () => '%=a=b'.decodeObject(
