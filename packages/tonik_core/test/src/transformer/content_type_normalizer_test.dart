@@ -31,6 +31,470 @@ void main() {
       context = Context.initial();
     });
 
+    group('operation normalization', () {
+      test('preserves unregistered request body when response changes', () {
+        final requestBody = RequestBodyObject(
+          name: null,
+          context: context,
+          description: 'JSON payload',
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: IntegerModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              examples: const [],
+              formEncoding: null,
+            ),
+          },
+        );
+        final response = ResponseObject(
+          name: null,
+          context: context,
+          description: 'Text response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'text/plain',
+              contentType: ContentType.text,
+              examples: const [],
+              delivery: ResponseDelivery.complete,
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: 'sendMessage',
+          context: context,
+          path: '/messages',
+          method: HttpMethod.post,
+          tags: {Tag(name: 'Messages', description: null, nameOverride: null)},
+          isDeprecated: true,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {const ExplicitResponseStatus(statusCode: 201): response},
+          securitySchemes: {},
+          nameOverride: 'send',
+          summary: 'Send a message',
+          description: 'Sends a JSON payload',
+          requestBody: requestBody,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {operation},
+          responses: {response},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+        final result = transformed.operations.single;
+        final resultResponse = result.responses.values.single as ResponseObject;
+
+        expect(result, isNot(same(operation)));
+        expect(result.requestBody, same(requestBody));
+        expect(resultResponse.bodies.single.model, isA<StringModel>());
+        expect(resultResponse, same(transformed.responses.single));
+        expect(result.responses.keys, [
+          const ExplicitResponseStatus(statusCode: 201),
+        ]);
+        expect(transformed.requestBodies, isEmpty);
+        expect(result.operationId, 'sendMessage');
+        expect(result.context, same(context));
+        expect(result.path, '/messages');
+        expect(result.method, HttpMethod.post);
+        expect(result.tags, same(operation.tags));
+        expect(result.isDeprecated, isTrue);
+        expect(result.headers, same(operation.headers));
+        expect(result.queryParameters, same(operation.queryParameters));
+        expect(result.pathParameters, same(operation.pathParameters));
+        expect(result.cookieParameters, same(operation.cookieParameters));
+        expect(result.securitySchemes, same(operation.securitySchemes));
+        expect(result.nameOverride, 'send');
+        expect(result.summary, 'Send a message');
+        expect(result.description, 'Sends a JSON payload');
+        expect(operation.requestBody, same(requestBody));
+        expect(operation.responses.values.single, same(response));
+      });
+
+      test('normalizes unregistered request body without response changes', () {
+        final requestBody = RequestBodyObject(
+          name: null,
+          context: context,
+          description: 'Text payload',
+          isRequired: true,
+          content: {
+            ModelRequestContent(
+              model: IntegerModel(context: context),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              wireContentType: 'text/plain; charset=utf-8',
+              textEncoding: TextEncoding.utf8,
+              examples: const [],
+              formEncoding: null,
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: null,
+          context: context,
+          path: '/messages',
+          method: HttpMethod.post,
+          tags: {},
+          isDeprecated: false,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {},
+          securitySchemes: {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: requestBody,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {operation},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+        final result = transformed.operations.single;
+        final body = result.requestBody! as RequestBodyObject;
+        final content = body.content.single as ModelRequestContent;
+
+        expect(result, isNot(same(operation)));
+        expect(content.model, isA<StringModel>());
+        expect(content.rawContentType, 'text/plain');
+        expect(content.wireContentType, 'text/plain; charset=utf-8');
+        expect(content.textEncoding, TextEncoding.utf8);
+        expect(body.description, 'Text payload');
+        expect(body.isRequired, isTrue);
+        expect(result.responses, isEmpty);
+        expect(transformed.requestBodies, isEmpty);
+        expect(transformed.responses, isEmpty);
+      });
+
+      test('normalizes unregistered response with absent request body', () {
+        final response = ResponseObject(
+          name: null,
+          context: context,
+          description: 'Binary response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/octet-stream',
+              contentType: ContentType.bytes,
+              examples: const [],
+              delivery: ResponseDelivery.complete,
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: null,
+          context: context,
+          path: '/download',
+          method: HttpMethod.get,
+          tags: {},
+          isDeprecated: false,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {const DefaultResponseStatus(): response},
+          securitySchemes: {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: null,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {operation},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+        final result = transformed.operations.single;
+        final body =
+            (result.responses.values.single as ResponseObject).bodies.single;
+
+        expect(result, isNot(same(operation)));
+        expect(result.requestBody, isNull);
+        expect(result.responses.keys, [const DefaultResponseStatus()]);
+        expect(body.model, isA<BinaryModel>());
+        expect(body.rawContentType, 'application/octet-stream');
+        expect(transformed.responses, isEmpty);
+        expect(transformed.requestBodies, isEmpty);
+      });
+
+      test('shares normalized alias targets with registered objects', () {
+        final requestBody = RequestBodyObject(
+          name: 'TextBody',
+          context: context,
+          description: null,
+          isRequired: false,
+          content: {
+            ModelRequestContent(
+              model: IntegerModel(context: context),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              examples: const [],
+              formEncoding: null,
+            ),
+          },
+        );
+        final requestAlias = RequestBodyAlias(
+          name: 'BodyAlias',
+          context: context,
+          description: 'Request alias',
+          requestBody: requestBody,
+        );
+        final response = ResponseObject(
+          name: 'TextResponse',
+          context: context,
+          description: 'Text response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'text/plain',
+              contentType: ContentType.text,
+              examples: const [],
+              delivery: ResponseDelivery.complete,
+            ),
+          },
+        );
+        final responseAlias = ResponseAlias(
+          name: 'ResponseAlias',
+          context: context,
+          description: 'Response alias',
+          response: response,
+        );
+        final firstOperation = Operation(
+          operationId: null,
+          context: context,
+          path: '/first',
+          method: HttpMethod.post,
+          tags: {},
+          isDeprecated: false,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): responseAlias,
+          },
+          securitySchemes: {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: requestAlias,
+        );
+        final secondOperation = Operation(
+          operationId: null,
+          context: context,
+          path: '/second',
+          method: HttpMethod.post,
+          tags: {},
+          isDeprecated: false,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): responseAlias,
+          },
+          securitySchemes: {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: requestAlias,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {firstOperation, secondOperation},
+          responses: {response},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {requestBody},
+        );
+
+        final transformed = normalizer.apply(document);
+        final first = transformed.operations.first;
+        final second = transformed.operations.last;
+        final normalizedRequest = first.requestBody! as RequestBodyAlias;
+        final normalizedResponse =
+            first.responses.values.single as ResponseAlias;
+
+        expect(second.requestBody, same(normalizedRequest));
+        expect(second.responses.values.single, same(normalizedResponse));
+        expect(
+          normalizedRequest.requestBody,
+          same(transformed.requestBodies.single),
+        );
+        expect(normalizedResponse.response, same(transformed.responses.single));
+        expect(normalizedRequest.description, 'Request alias');
+        expect(normalizedResponse.description, 'Response alias');
+        expect(
+          (normalizedRequest.resolvedContent.single as ModelRequestContent)
+              .model,
+          isA<StringModel>(),
+        );
+        expect(
+          (normalizedResponse.response as ResponseObject).bodies.single.model,
+          isA<StringModel>(),
+        );
+      });
+
+      test('preserves operation when unregistered content is unchanged', () {
+        final requestBody = RequestBodyObject(
+          name: null,
+          context: context,
+          description: null,
+          isRequired: false,
+          content: {
+            ModelRequestContent(
+              model: IntegerModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              wireContentType: null,
+              textEncoding: TextEncoding.utf8,
+              examples: const [],
+              formEncoding: null,
+            ),
+          },
+        );
+        final response = ResponseObject(
+          name: null,
+          context: context,
+          description: 'JSON response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+              delivery: ResponseDelivery.complete,
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: null,
+          context: context,
+          path: '/messages',
+          method: HttpMethod.post,
+          tags: {},
+          isDeprecated: false,
+          headers: {},
+          queryParameters: {},
+          pathParameters: {},
+          cookieParameters: {},
+          responses: {const ExplicitResponseStatus(statusCode: 200): response},
+          securitySchemes: {},
+          nameOverride: null,
+          summary: null,
+          description: null,
+          requestBody: requestBody,
+        );
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          summary: null,
+          description: null,
+          contact: null,
+          license: null,
+          termsOfService: null,
+          externalDocs: null,
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {operation},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+
+        expect(transformed.operations.single, same(operation));
+        expect(transformed.operations.single.requestBody, same(requestBody));
+        expect(
+          transformed.operations.single.responses.values.single,
+          same(response),
+        );
+        expect(transformed.requestBodies, isEmpty);
+        expect(transformed.responses, isEmpty);
+      });
+    });
+
     test('preserves document metadata without body normalization', () {
       const contact = Contact(
         name: 'API Support',
