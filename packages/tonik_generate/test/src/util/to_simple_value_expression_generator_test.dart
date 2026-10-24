@@ -110,6 +110,57 @@ void main() {
       );
     });
 
+    test('date-time array path values are encoded only once', () {
+      final parameter = PathParameterObject(
+        name: 'timestamps',
+        rawName: 'timestamps',
+        description: null,
+        model: ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+
+      final built = buildToSimplePathParameterExpression(
+        'timestamps',
+        parameter,
+      );
+
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = timestamps
+                  .map((e) => e.toSimple(explode: false, allowEmpty: true))
+                  .toList()
+                  .toSimple(
+                    explode: false,
+                    allowEmpty: true,
+                    alreadyEncoded: true,
+                  );
+            }
+          '''),
+        ),
+      );
+    });
+
     test('for integer list parameter omits literal arg', () {
       final parameter = PathParameterObject(
         name: 'ids',

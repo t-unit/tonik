@@ -563,6 +563,7 @@ class const MultipartBodyPlanner({
             model,
             explode: false,
             allowEmpty: true,
+            literal: true,
           ).unsafeRawBody;
     return [_listText(part, serialized)];
   }
@@ -590,14 +591,7 @@ class const MultipartBodyPlanner({
   Expression _itemText(_Part part, Model model) {
     if (model is StringModel) return part.value;
     if (model is EnumModel) {
-      return _dio && part.encoding.isStyleBased
-          ? part.value.property('uriEncode').call([], {
-              'allowEmpty': literalTrue,
-              'textEncoding': textEncodingExpression(
-                part.encoding.textEncoding,
-              ),
-            })
-          : _enum(part.value, model, part.encoding);
+      return _enum(part.value, model, part.encoding);
     }
     return _primitive(part.value, model, part.encoding);
   }

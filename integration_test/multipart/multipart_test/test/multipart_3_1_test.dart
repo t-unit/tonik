@@ -70,6 +70,57 @@ void main() {
       expect(parts.single.bodyText, 'a,b,c');
     });
 
+    test('preserves spaces and reserved characters in string arrays', () async {
+      final server = await _jsonServer();
+
+      final response = await _api(server).postFormNonExploded(
+        body: const FormNonExplodedForm(tags: ['a b', 'c/d,e', '100%']),
+      );
+
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('tags').bodyText, 'a b,c/d,e,100%');
+    });
+
+    test('sends formatted and enum array values literally', () async {
+      final server = await _jsonServer();
+      final body = FormNonExplodedForm.fromJson(const {
+        'timestamps': ['2024-01-02T03:04:05.000Z', null],
+        'colors': ['light blue', 'red/green'],
+        'repeatedColors': ['light blue', 'red/green'],
+        'links': ['https://example.com/a%20b?q=x/y'],
+      });
+
+      final response = await _api(server).postFormNonExploded(body: body);
+
+      expect(response, isTonikSuccess);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('timestamps').bodyText, '2024-01-02T03:04:05.000Z,');
+      expect(wire.single('colors').bodyText, 'light blue,red/green');
+      expect(wire.named('repeatedColors').map((part) => part.bodyText), [
+        'light blue',
+        'red/green',
+      ]);
+      expect(wire.single('links').bodyText, 'https://example.com/a%20b?q=x/y');
+    });
+
+    test(
+      'simple path arrays percent-encode formatted values only once',
+      () async {
+        final server = await _jsonServer();
+
+        final response = await _api(server).getTimestampArray(
+          timestamps: [DateTime.utc(2024, 1, 2, 3, 4, 5), null],
+        );
+
+        expect(response, isTonikSuccess);
+        expect(
+          (await server.takeRequest()).uri.path,
+          '/multipart31/timestamps/2024-01-02T03%3A04%3A05.000Z,',
+        );
+      },
+    );
+
     test('rejects an omitted array when no other part exists', () async {
       final server = await _jsonServer();
 

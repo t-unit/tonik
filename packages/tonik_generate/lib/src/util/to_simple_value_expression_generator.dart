@@ -319,6 +319,7 @@ Expression _handleListExpression(
         'explode': literalBool(explode),
         'allowEmpty': literalBool(allowEmpty),
         if (asLiteral) 'literal': literalBool(true),
+        if (!asLiteral) 'alreadyEncoded': literalTrue,
       });
 
   return switch (contentModel) {
