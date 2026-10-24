@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
 import 'package:tonik_generate/src/transport/multipart_body_planner.dart';
 import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
@@ -16,16 +17,20 @@ void main() {
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
 
-  String emit(MultipartRequestContent content) {
+  String emit(
+    MultipartRequestContent content, {
+    TransportBackend backend = TransportBackend.http,
+  }) {
+    final plan = MultipartBodyPlanner(backend: backend)
+        .plan(content, bodyAccessor: 'body', isRequired: true);
     final method = Method(
       (builder) => builder
         ..name = 'test'
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of(
-          buildHttpMultipartBodyStatements(
-            const MultipartBodyPlanner(backend: TransportBackend.http)
-                .plan(content, bodyAccessor: 'body', isRequired: true),
-          ),
+          backend == TransportBackend.http
+              ? buildHttpMultipartBodyStatements(plan)
+              : buildMultipartBodyStatements(plan).statements,
         ),
     );
     return format('${method.accept(emitter)}');
@@ -1376,7 +1381,7 @@ Object? test() {
       const expected = r'''
 Object? test() {
   final _$multipartFiles = <MultipartFile>[];
-  final _$tagMultipartValue = _mergeMultipartValues([
+  final String _$tagMultipartValue = _mergeMultipartValues([
     body.shared.tag,
     body.shared2.tag,
   ], propertyName: r'tag');
@@ -1384,6 +1389,120 @@ Object? test() {
     MultipartFile.fromBytes(
       (r'tag').replaceAll(r'\', r'\\'),
       utf8.encode(_$tagMultipartValue),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('HTTP keeps merged date-time values statically typed', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(context, 'when', DateTimeModel(context: context)),
+      ]);
+      final content = _content(_allOf(context, 'Upload', [member, member]));
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  final DateTime _$$whenMultipartValue = _mergeMultipartValues([
+    body.shared.$when,
+    body.shared2.$when,
+  ], propertyName: r'when');
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'when').replaceAll(r'\', r'\\'),
+      utf8.encode(_$$whenMultipartValue.toTimeZonedIso8601String()),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  if (_$multipartFiles.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+      expect(
+        collapseWhitespace(emit(content)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('Dio keeps optional merged date-time values statically typed', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'when',
+          DateTimeModel(context: context),
+          isRequired: false,
+        ),
+      ]);
+      final content = _content(_allOf(context, 'Upload', [member, member]));
+      const expected = r'''
+Object? test() {
+  final _$formData = FormData();
+  final DateTime? _$$whenMultipartValue = _mergeMultipartValues([
+    body.shared.$when,
+    body.shared2.$when,
+  ], propertyName: r'when');
+  if (_$$whenMultipartValue != null) {
+    _$formData.files.add(MapEntry(
+      (r'when').replaceAll(r'\', r'\\'),
+      MultipartFile.fromString(
+        _$$whenMultipartValue.toTimeZonedIso8601String(),
+        contentType: DioMediaType.parse(r'text/plain'),
+      ),
+    ));
+  }
+  if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
+    throw EncodingException(
+      r'Multipart request body must contain at least one part.',
+    );
+  }
+  return _$formData;
+}
+''';
+      expect(
+        collapseWhitespace(emit(content, backend: TransportBackend.dio)),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('checks a required nullable merged date-time before encoding', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'when',
+          DateTimeModel(context: context),
+          isNullable: true,
+        ),
+      ]);
+      final content = _content(_allOf(context, 'Upload', [member, member]));
+      const expected = r'''
+Object? test() {
+  final _$multipartFiles = <MultipartFile>[];
+  final DateTime? _$$whenMultipartValue = _mergeMultipartValues([
+    body.shared.$when,
+    body.shared2.$when,
+  ], propertyName: r'when');
+  if (_$$whenMultipartValue == null) {
+    throw EncodingException(r'Required multipart property "when" is null.');
+  }
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'when').replaceAll(r'\', r'\\'),
+      utf8.encode(_$$whenMultipartValue.toTimeZonedIso8601String()),
       contentType: MediaType.parse(r'text/plain'),
     ),
   );

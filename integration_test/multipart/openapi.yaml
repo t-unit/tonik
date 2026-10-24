@@ -411,6 +411,21 @@ paths:
         '204':
           description: Accepted
 
+  /multipart/merged-scalars:
+    post:
+      operationId: postMergedScalars
+      tags:
+        - multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MergedScalarsUpload'
+      responses:
+        '204':
+          description: Accepted
+
   /multipart/read-only:
     post:
       operationId: postReadOnlyFields
@@ -1569,6 +1584,41 @@ components:
         - $ref: '#/components/schemas/UploadFiles'
         - $ref: '#/components/schemas/UploadMetadataBase'
         - $ref: '#/components/schemas/UploadMetadataAnnotations'
+
+    MergedScalarsBase:
+      type: object
+      required: [when]
+      properties:
+        when:
+          type: string
+          format: date-time
+          nullable: true
+        optionalWhen:
+          type: string
+          format: date-time
+        amount:
+          type: string
+          format: decimal
+
+    MergedScalarsExtension:
+      type: object
+      required: [when]
+      properties:
+        when:
+          type: string
+          format: date-time
+          nullable: true
+        optionalWhen:
+          type: string
+          format: date-time
+        amount:
+          type: string
+          format: decimal
+
+    MergedScalarsUpload:
+      allOf:
+        - $ref: '#/components/schemas/MergedScalarsBase'
+        - $ref: '#/components/schemas/MergedScalarsExtension'
 
     GenericResponse:
       type: object
