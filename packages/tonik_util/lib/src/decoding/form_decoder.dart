@@ -210,10 +210,9 @@ extension FormDecoder on String? {
 
   /// Decodes a form-encoded string to binary data (`List<int>`).
   ///
-  /// Uses UTF-8 encoding with allowMalformed: true to handle any string input.
-  /// This provides backward compatibility and handles both text and
-  /// binary data.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// Decodes percent-encoded bytes and treats '+' as a space.
+  /// Unescaped text is encoded as UTF-8.
+  /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeFormBinary({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -225,7 +224,21 @@ extension FormDecoder on String? {
     if (this!.isEmpty) {
       return <int>[];
     }
-    return utf8.encode(this!);
+    try {
+      return Uri.decodeQueryComponent(
+        this!.replaceAllMapped(
+          RegExp(r'[^\x00-\x7F]+'),
+          (match) => Uri.encodeComponent(match[0]!),
+        ),
+        encoding: latin1,
+      ).codeUnits;
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<int>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a form-encoded string to nullable binary data.

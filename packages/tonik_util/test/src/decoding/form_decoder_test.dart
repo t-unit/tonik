@@ -4,6 +4,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
+import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
 
 void main() {
   group('FormDecoder', () {
@@ -552,6 +553,56 @@ void main() {
     });
 
     group('Binary', () {
+      test('round-trips percent-encoded binary form data', () {
+        final encoded = [72, 32, 105, 195, 169, 43, 37]
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
+            .single
+            .value;
+
+        expect(encoded, 'H%20i%C3%A9%2B%25');
+        expect(encoded.decodeFormBinary(), [72, 32, 105, 195, 169, 43, 37]);
+      });
+
+      test('round-trips binary form data with query-component encoding', () {
+        final encoded = [72, 32, 105, 43]
+            .toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+              useQueryComponent: true,
+            )
+            .single
+            .value;
+
+        expect(encoded, 'H+i%2B');
+        expect(encoded.decodeFormBinary(), [72, 32, 105, 43]);
+      });
+
+      test('preserves percent-encoded bytes that are not valid UTF-8', () {
+        expect('%00%80%FF'.decodeFormBinary(), [0, 128, 255]);
+      });
+
+      test('decodes escaped bytes alongside unescaped Unicode text', () {
+        expect('é%FF+%2B'.decodeFormBinary(), [195, 169, 255, 32, 43]);
+      });
+
+      test('wraps malformed percent escapes with context', () {
+        expect(
+          () => '%zz'.decodeFormBinary(context: 'User.thumbnail'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%zz')
+                .having((e) => e.targetType, 'targetType', List<int>)
+                .having((e) => e.context, 'context', 'User.thumbnail'),
+          ),
+        );
+        expect(
+          () => '%'.decodeFormNullableBinary(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('decodes UTF-8 string to List<int>', () {
         const textString = 'Hello World';
         final result = textString.decodeFormBinary();
@@ -570,6 +621,7 @@ void main() {
         const textString = 'Hello World';
         final result = textString.decodeFormNullableBinary();
         expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
+        expect('H+i%2B'.decodeFormNullableBinary(), [72, 32, 105, 43]);
 
         expect(null.decodeFormNullableBinary(), isNull);
         expect(''.decodeFormNullableBinary(), isNull);
