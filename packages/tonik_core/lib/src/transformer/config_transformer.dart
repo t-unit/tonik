@@ -95,6 +95,10 @@ class const ConfigTransformer() {
                 parameters: op.pathParameters,
                 mode: deprecated.parameters,
               )
+              ..cookieParameters = deprecationHandler.handleCookieParameters(
+                parameters: op.cookieParameters,
+                mode: deprecated.parameters,
+              )
               ..headers = deprecationHandler.handleRequestHeaders(
                 headers: op.headers,
                 mode: deprecated.parameters,

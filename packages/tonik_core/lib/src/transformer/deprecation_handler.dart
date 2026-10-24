@@ -76,6 +76,33 @@ class const DeprecationHandler() {
     };
   }
 
+  Set<CookieParameter> handleCookieParameters({
+    required Set<CookieParameter> parameters,
+    required DeprecatedHandling mode,
+  }) {
+    return switch (mode) {
+      DeprecatedHandling.annotate => parameters,
+      DeprecatedHandling.exclude => parameters.where((param) {
+        return switch (param) {
+          final CookieParameterObject obj => !obj.isDeprecated,
+          final CookieParameterAlias alias =>
+            !alias.parameter.resolve().isDeprecated,
+        };
+      }).toSet(),
+      DeprecatedHandling.ignore => parameters.map((param) {
+        switch (param) {
+          case final CookieParameterObject obj:
+            obj.isDeprecated = false;
+            return obj;
+          case final CookieParameterAlias alias:
+            final resolved = alias.resolve();
+            if (!resolved.isDeprecated) return alias;
+            return resolved..isDeprecated = false;
+        }
+      }).toSet(),
+    };
+  }
+
   Set<PathParameter> handlePathParameters({
     required Set<PathParameter> parameters,
     required DeprecatedHandling mode,
