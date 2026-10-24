@@ -389,10 +389,6 @@ For document-relative URLs such as `../api`, supply the full HTTP document URL
 as `origin` to retain its directory context. Network-relative URLs such as
 `//api.example.com/api` inherit its scheme. Tonik cannot infer an HTTP origin
 from a local specification file. `CustomServer` accepts a complete URL.
-Constructor classification
-uses the URL with variable defaults substituted; if overriding
-those defaults changes an absolute URL to a relative one, resolve it yourself
-and pass the complete URL to `CustomServer`.
 
 ### Server Variables
 
