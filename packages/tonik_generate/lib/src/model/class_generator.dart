@@ -448,7 +448,7 @@ class const ClassGenerator({
     ).map((p) => p.normalizedName).toList();
 
     final canBeSimplyEncoded = readProperties.every((property) {
-      final propertyModel = property.model;
+      final propertyModel = property.model.resolved;
       final shape = propertyModel.encodingShape;
 
       if (shape == .simple || shape == .mixed) {
@@ -572,7 +572,7 @@ class const ClassGenerator({
 
     final expectedKeys = properties.map((p) => p.property.name).toSet();
     final listKeys = properties
-        .where((p) => p.property.model is ListModel)
+        .where((p) => p.property.model.resolved is ListModel)
         .map((p) => p.property.name)
         .toSet();
 
@@ -1117,11 +1117,10 @@ class const ClassGenerator({
     if (hasComplexProperties) {
       final allComplexAreSimpleLists = properties
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
-          .every(
-            (p) =>
-                p.property.model is ListModel &&
-                (p.property.model as ListModel).hasSimpleContent,
-          );
+          .every((p) {
+            final resolved = p.property.model.resolved;
+            return resolved is ListModel && resolved.hasSimpleContent;
+          });
 
       if (allComplexAreSimpleLists) {
         return _buildListParameterPropertiesMethod(
@@ -1301,6 +1300,7 @@ class const ClassGenerator({
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
       final fieldModel = prop.property.model;
+      final resolvedModel = fieldModel.resolved;
       final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable =
           prop.property.isNullable || fieldModel.isEffectivelyNullable;
@@ -1330,7 +1330,7 @@ class const ClassGenerator({
             model: fieldModel,
           ),
         );
-      } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+      } else if (resolvedModel is ListModel && resolvedModel.hasSimpleContent) {
         final valueRef = (isRequired && !isNullable)
             ? (isFieldNullable
                   ? refer('this').property(name).nullChecked
@@ -1338,10 +1338,10 @@ class const ClassGenerator({
             : refer('this').property(name).nullChecked;
         final rawList = buildRawStringListExpression(
           valueRef,
-          fieldModel.content,
+          resolvedModel.content,
           isContentNullable:
-              fieldModel.isContentNullable ||
-              fieldModel.content.isEffectivelyNullable,
+              resolvedModel.isContentNullable ||
+              resolvedModel.content.isEffectivelyNullable,
           useImmutableCollections: useImmutableCollections,
         );
 
@@ -1574,7 +1574,7 @@ class const ClassGenerator({
     ).map((p) => p.normalizedName).toList();
 
     final canBeFormEncoded = readProperties.every((property) {
-      final propertyModel = property.model;
+      final propertyModel = property.model.resolved;
       final shape = propertyModel.encodingShape;
 
       if (shape == .simple || shape == .mixed) {
@@ -1689,7 +1689,7 @@ class const ClassGenerator({
 
     final expectedKeys = properties.map((p) => p.property.name).toSet();
     final listKeys = properties
-        .where((p) => p.property.model is ListModel)
+        .where((p) => p.property.model.resolved is ListModel)
         .map((p) => p.property.name)
         .toSet();
 

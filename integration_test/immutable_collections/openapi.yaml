@@ -709,3 +709,20 @@ components:
       allOf:
         - $ref: '#/components/schemas/PackedFirst'
         - $ref: '#/components/schemas/PackedSecond'
+
+    ParameterTags:
+      type: array
+      items:
+        type: string
+
+    ParameterTagsAlias:
+      $ref: '#/components/schemas/ParameterTags'
+
+    AliasListParameters:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        tags:
+          $ref: '#/components/schemas/ParameterTagsAlias'
