@@ -160,7 +160,9 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
+    if (schema.isBooleanSchema != null ||
+        _isEmptySchema(schema) ||
+        _isUnsupportedTypelessSchema(schema)) {
       final model = schema.isBooleanSchema != false
           ? AnyModel(context: context)
           : NeverModel(context: context, isNullable: false);
@@ -244,7 +246,7 @@ class ModelImporter._(
     }
 
     final hasNullType = schema.hasNullType;
-    final types = schema.nonNullTypes;
+    final types = _schemaTypes(schema);
 
     if (hasNullType && types.isEmpty) {
       final aliasModel = AliasModel(
@@ -373,6 +375,33 @@ class ModelImporter._(
     _registerModel(model, schema);
   }
 
+  List<String> _schemaTypes(Schema schema) {
+    final types = schema.nonNullTypes;
+    if (schema.type.isNotEmpty || schema.enumerated == null) return types;
+
+    final values = schema.enumerated!.nonNulls;
+    if (values.isEmpty) return types;
+    if (values.every((value) => value is String)) return const ['string'];
+    if (values.every((value) => value is int)) return const ['integer'];
+    return types;
+  }
+
+  bool _isUnsupportedTypelessSchema(Schema schema) {
+    if (schema.type.isNotEmpty ||
+        schema.ref != null ||
+        schema.allOf != null ||
+        schema.oneOf != null ||
+        schema.anyOf != null) {
+      return false;
+    }
+    // Unsupported enum shapes and items without a type must still accept
+    // scalar values. AnyModel approximates their constraints permissively.
+    if (schema.enumerated != null) return _schemaTypes(schema).isEmpty;
+    return schema.items != null &&
+        (schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties == null;
+  }
+
   /// Returns true if the type string represents a primitive type.
   bool _isPrimitiveType(String? type, Schema schema) {
     return switch (type) {
@@ -474,7 +503,9 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
+    if (schema.isBooleanSchema != null ||
+        _isEmptySchema(schema) ||
+        _isUnsupportedTypelessSchema(schema)) {
       // Already fully populated in pass 1.
       applyExamples(existingModel, examples);
       return;
@@ -499,7 +530,7 @@ class ModelImporter._(
     }
 
     final hasNullType = schema.hasNullType;
-    final types = schema.nonNullTypes;
+    final types = _schemaTypes(schema);
 
     if (hasNullType && types.isEmpty) {
       // Already fully populated in pass 1.
@@ -905,6 +936,7 @@ class ModelImporter._(
 
   // Bare objects need maps to preserve unknown members.
   bool isOpenMapSchema(Schema schema, List<String> types) {
+    if (schema.type.isEmpty && schema.enumerated != null) return false;
     if (schema.properties != null && schema.properties!.isNotEmpty) {
       return false;
     }
@@ -1427,7 +1459,9 @@ class ModelImporter._(
       return existing;
     }
 
-    if (schema.isBooleanSchema != null || _isEmptySchema(schema)) {
+    if (schema.isBooleanSchema != null ||
+        _isEmptySchema(schema) ||
+        _isUnsupportedTypelessSchema(schema)) {
       return schema.isBooleanSchema != false
           ? AnyModel(context: context)
           : NeverModel(context: context, isNullable: false);
@@ -1447,7 +1481,7 @@ class ModelImporter._(
 
     // OpenAPI 3.1 null types become Tonik nullability.
     final hasNullType = schema.hasNullType;
-    final types = schema.nonNullTypes;
+    final types = _schemaTypes(schema);
 
     if (hasNullType && types.isEmpty) {
       return NeverModel(context: context, isNullable: true);
@@ -1487,6 +1521,8 @@ class ModelImporter._(
     }
 
     var model = switch (types.firstOrNull) {
+      'string' when schema.type.isEmpty && schema.enumerated != null =>
+        _parseStringEnum(name, schema, context),
       'string' when schema.format == 'date-time' && schema.enumerated != null =>
         _parseStringEnum(name, schema, context),
       'string' when schema.format == 'date-time' => DateTimeModel(
