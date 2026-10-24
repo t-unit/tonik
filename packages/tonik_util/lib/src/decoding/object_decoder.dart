@@ -23,17 +23,9 @@ extension ObjectDecoder on String? {
         ).first.length;
         if (separator == pair.length) continue;
         final rawValue = pair.substring(separator + 1);
-        try {
-          if (Uri.decodeComponent(pair.substring(0, separator)) == key &&
-              recognizedValues.contains(rawValue)) {
-            return rawValue;
-          }
-          // Uri.decodeComponent throws ArgumentError for truncated escapes.
-          // ignore: avoid_catching_errors
-        } on ArgumentError catch (_) {
-          // An invalid key is not a matching discriminator.
-        } on FormatException catch (_) {
-          // An invalid key is not a matching discriminator.
+        if (pair.substring(0, separator) == key &&
+            recognizedValues.contains(rawValue)) {
+          return rawValue;
         }
       }
     } on SimpleDecodingException catch (_) {
@@ -84,6 +76,8 @@ extension ObjectDecoder on String? {
   ///   to help identify where decoding failed.
   /// - [isHeader]: Treat separators outside quotes as header boundaries,
   ///   removing surrounding spaces and tabs while preserving quoted text.
+  /// - [percentDecodeKeys]: Decode URI escapes in keys and list-key lookahead.
+  ///   Set to false for simple-style input. Header keys always remain literal.
   ///
   /// ## Returns
   ///
@@ -125,6 +119,7 @@ extension ObjectDecoder on String? {
     required Set<String> listKeys,
     bool captureAdditionalKeys = false,
     bool isHeader = false,
+    bool percentDecodeKeys = true,
     String? context,
   }) {
     if (this == null || this!.isEmpty) {
@@ -147,6 +142,7 @@ extension ObjectDecoder on String? {
         context,
         captureAdditionalKeys,
         isHeader,
+        percentDecodeKeys && !isHeader,
       );
     } else {
       _parseNonExploded(
@@ -157,6 +153,7 @@ extension ObjectDecoder on String? {
         context,
         captureAdditionalKeys,
         isHeader,
+        percentDecodeKeys && !isHeader,
       );
     }
 
@@ -179,6 +176,7 @@ extension ObjectDecoder on String? {
     String? context,
     bool captureAdditionalKeys,
     bool isHeader,
+    bool percentDecodeKeys,
   ) {
     final pairs = isHeader
         ? splitHeaderValue(value, separator: separator)
@@ -209,7 +207,7 @@ extension ObjectDecoder on String? {
       final rawKey = pair.substring(0, separator);
       final String key;
       try {
-        key = Uri.decodeComponent(rawKey);
+        key = percentDecodeKeys ? Uri.decodeComponent(rawKey) : rawKey;
       } on Object {
         throw InvalidFormatException(
           value: rawKey,
@@ -285,13 +283,14 @@ extension ObjectDecoder on String? {
     String? context,
     bool captureAdditionalKeys,
     bool isHeader,
+    bool percentDecodeKeys,
   ) {
     final parts = isHeader ? splitHeaderValue(value) : value.split(',');
 
     var i = 0;
     while (i < parts.length) {
       final rawKey = parts[i];
-      final key = Uri.decodeComponent(rawKey);
+      final key = percentDecodeKeys ? Uri.decodeComponent(rawKey) : rawKey;
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
@@ -325,7 +324,9 @@ extension ObjectDecoder on String? {
 
         while (i < parts.length) {
           final potentialValue = parts[i];
-          final decodedPotentialValue = Uri.decodeComponent(potentialValue);
+          final decodedPotentialValue = percentDecodeKeys
+              ? Uri.decodeComponent(potentialValue)
+              : potentialValue;
 
           if (expectedKeys.contains(decodedPotentialValue)) {
             break;

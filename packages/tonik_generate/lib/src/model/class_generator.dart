@@ -584,6 +584,7 @@ class const ClassGenerator({
       'listKeys': literalSet(listKeys.map(specLiteralString)),
       'context': specLiteralString(className),
       'isHeader': refer('isHeader'),
+      'percentDecodeKeys': literalFalse,
     };
     if (apPolicy != null) {
       decodeObjectArgs['captureAdditionalKeys'] = literalTrue;

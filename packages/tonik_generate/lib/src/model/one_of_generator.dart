@@ -664,21 +664,24 @@ class const OneOfGenerator({
           const Code(r'for (final pair in _$pairs) {'),
           const Code(r"final _$separator = pair.indexOf('=');"),
           const Code(r'if (_$separator >= 0) {'),
-          const Code('final '),
-          refer('String', 'dart:core').code,
-          const Code(r' _$key;'),
-          const Code('try {'),
-          const Code(r'_$key = '),
-          refer('Uri', 'dart:core').property('decodeComponent').call([
-            refer('pair')
-                .property('substring')
-                .call([literalNum(0), refer(r'_$separator')]),
-          ]).statement,
-          const Code('// ignore: avoid_catching_errors\n} on '),
-          refer('ArgumentError', 'dart:core').code,
-          const Code(' catch (_) { continue; } on '),
-          refer('FormatException', 'dart:core').code,
-          const Code(' catch (_) { continue; }'),
+          if (isForm) ...[
+            const Code('final '),
+            refer('String', 'dart:core').code,
+            const Code(r' _$key;'),
+            const Code('try {'),
+            const Code(r'_$key = '),
+            refer('Uri', 'dart:core').property('decodeComponent').call([
+              refer('pair')
+                  .property('substring')
+                  .call([literalNum(0), refer(r'_$separator')]),
+            ]).statement,
+            const Code('// ignore: avoid_catching_errors\n} on '),
+            refer('ArgumentError', 'dart:core').code,
+            const Code(' catch (_) { continue; } on '),
+            refer('FormatException', 'dart:core').code,
+            const Code(' catch (_) { continue; }'),
+          ] else
+            const Code(r'final _$key = pair.substring(0, _$separator);'),
           Code(
             r'if (_$key == '
             '${specLiteralStringCode(model.discriminator!)}) {',
