@@ -729,7 +729,9 @@ class ModelImporter._(
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    shell.discriminator = effectiveDiscriminator?.propertyName;
+    shell
+      ..discriminator = effectiveDiscriminator?.propertyName
+      ..discriminatorAliases = _getDiscriminatorAliases(effectiveDiscriminator);
 
     final resolvedModels = <DiscriminatedModel>[];
     for (final oneOfSchema in alternatives) {
@@ -771,7 +773,9 @@ class ModelImporter._(
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    shell.discriminator = effectiveDiscriminator?.propertyName;
+    shell
+      ..discriminator = effectiveDiscriminator?.propertyName
+      ..discriminatorAliases = _getDiscriminatorAliases(effectiveDiscriminator);
 
     final resolvedModels = <DiscriminatedModel>[];
     for (final anyOfSchema in alternatives) {
@@ -1751,6 +1755,7 @@ class ModelImporter._(
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
+      discriminatorAliases: _getDiscriminatorAliases(effectiveDiscriminator),
       description: schema.description,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
@@ -1805,6 +1810,7 @@ class ModelImporter._(
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
+      discriminatorAliases: _getDiscriminatorAliases(effectiveDiscriminator),
       description: schema.description,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
@@ -1838,6 +1844,22 @@ class ModelImporter._(
     return anyOfModel;
   }
 
+  Map<String, String> _getDiscriminatorAliases(
+    parse.Discriminator? discriminator,
+  ) {
+    final canonicalValues = <String, String>{};
+    final aliases = <String, String>{};
+    for (final entry
+        in discriminator?.mapping?.entries ?? <MapEntry<String, String>>[]) {
+      final canonical = canonicalValues.putIfAbsent(
+        entry.value,
+        () => entry.key,
+      );
+      if (entry.key != canonical) aliases[entry.key] = canonical;
+    }
+    return aliases;
+  }
+
   String? _getDiscriminatorValue({
     required parse.Discriminator? discriminator,
     required Schema innerSchema,
@@ -1846,7 +1868,13 @@ class ModelImporter._(
       final ref = innerSchema.ref!;
       final discriminatorEntry = discriminator?.mapping?.entries
           .firstWhereOrNull((entry) => entry.value == ref);
-      return discriminatorEntry?.key ?? ref.split('/').last;
+      if (discriminatorEntry != null) return discriminatorEntry.key;
+      final implicitValue = ref.split('/').last;
+      // Explicit mappings take precedence over implicit schema-name lookup.
+      if (discriminator?.mapping?.containsKey(implicitValue) ?? false) {
+        return null;
+      }
+      return implicitValue;
     }
     return null;
   }

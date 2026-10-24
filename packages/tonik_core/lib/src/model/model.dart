@@ -420,10 +420,14 @@ class OneOfModel({
   @override required var String? nameOverride,
   required var String? description,
   required var String? discriminator,
+
   required var bool isNullable,
   required var bool isReadOnly,
   required var bool isWriteOnly,
   @override required var Object? defaultValue,
+
+  /// Additional payload values mapped to each member's canonical value.
+  var Map<String, String> discriminatorAliases = const {},
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
@@ -445,10 +449,14 @@ class AnyOfModel({
   @override required var String? nameOverride,
   required var String? description,
   required var String? discriminator,
+
   required var bool isNullable,
   required var bool isReadOnly,
   required var bool isWriteOnly,
   @override required var Object? defaultValue,
+
+  /// Additional payload values mapped to each member's canonical value.
+  var Map<String, String> discriminatorAliases = const {},
 }) extends Model with NamedModel, CompositeModel {
   @override
   List<Model> get containedModels => models.map((m) => m.model).toList();
