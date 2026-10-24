@@ -3,9 +3,9 @@ import 'package:test/test.dart';
 
 void main() {
   test('same-named definitions retain their own scalar types', () {
-    final text = TextContainer.fromJson({'item': 'hello'});
-    final count = CountContainer.fromJson({'item': 42});
-    final component = SharedItem.fromJson({'label': 'component'});
+    final text = TextContainer.fromJson(const {'item': 'hello'});
+    final count = CountContainer.fromJson(const {'item': 42});
+    final component = SharedItem.fromJson(const {'label': 'component'});
 
     expect(text.item, 'hello');
     expect(count.item, 42);
