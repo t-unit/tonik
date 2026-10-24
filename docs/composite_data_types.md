@@ -137,7 +137,7 @@ final fallback = PetChoice.fromJson({'petType': 'unknown', 'name': 'X', 'meow': 
 - If the discriminator value is unknown, all variants are tried as fallback
 - Missing discriminator property will cause a `DecodingException` (since it's required)
 
-> **Note:** For `anyOf`, discriminator properties are inherited and preserved during encoding, but decoding always uses a try-all-variants strategy. This is by design — `anyOf` allows multiple variants to match simultaneously, so discriminator-based single-variant dispatch would change the semantics.
+> **Note:** For `anyOf`, decoding always uses a try-all-variants strategy, even with a discriminator. Discriminator properties declared by member models are encoded with those models, but the original discriminator value is not guaranteed to survive a JSON roundtrip.
 
 ---
 
@@ -178,6 +178,7 @@ final back2 = SearchKey.fromJson(json2);
 **Limitations:**
 - Setting multiple alternatives with incompatible representations causes ambiguous encoding
 - Overlapping object alternatives without a discriminator may fail to decode
+- Discriminator values are not guaranteed to survive `fromJson` → `toJson` roundtrips. If no member model declares the discriminator property, encoding may choose a value from the discriminator mapping that differs from the input.
 
 ---
 
