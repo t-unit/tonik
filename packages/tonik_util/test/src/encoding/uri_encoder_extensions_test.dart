@@ -36,7 +36,7 @@ void main() {
       );
       expect(
         r'special!@#$%^&*()'.uriEncode(allowEmpty: true, textEncoding: utf8),
-        'special!%40%23%24%25%5E%26*()',
+        'special%21%40%23%24%25%5E%26%2A%28%29',
       );
     });
 
@@ -369,14 +369,11 @@ void main() {
       );
     });
 
-    test('false is byte-identical to Uri.encodeComponent', () {
-      const inputs = [allReserved, 'a b', 'a+b c', 'a%b', '你好'];
-      for (final input in inputs) {
-        expect(
-          input.uriEncode(allowEmpty: true, textEncoding: utf8),
-          Uri.encodeComponent(input),
-        );
-      }
+    test('false escapes all reserved characters', () {
+      expect(
+        allReserved.uriEncode(allowEmpty: true, textEncoding: utf8),
+        '%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D',
+      );
     });
 
     test('false is byte-identical to Uri.encodeQueryComponent', () {
@@ -564,11 +561,11 @@ void main() {
       );
     });
 
-    test('list default is byte-identical to encodeComponent per item', () {
-      const items = ['a:b', 'c&d', 'e=f', 'g+h', 'i j'];
+    test('list default percent-encodes reserved characters per item', () {
+      const items = ['a:b', 'c&d', 'e=f', 'g+h', 'i j', "!'()*"];
       expect(
         items.uriEncode(allowEmpty: true, textEncoding: utf8),
-        items.map(Uri.encodeComponent).join(','),
+        'a%3Ab,c%26d,e%3Df,g%2Bh,i%20j,%21%27%28%29%2A',
       );
     });
 
@@ -603,15 +600,11 @@ void main() {
       );
     });
 
-    test('map default is byte-identical to encodeComponent per key/value', () {
-      const map = {'a&b': 'c:d', 'e=f': 'g+h'};
+    test('map default percent-encodes reserved keys and values', () {
+      const map = {'a&b': 'c:d', 'e=f': "g+h!'()*"};
       expect(
         map.uriEncode(allowEmpty: true, textEncoding: utf8),
-        map.entries
-            .expand(
-              (e) => [Uri.encodeComponent(e.key), Uri.encodeComponent(e.value)],
-            )
-            .join(','),
+        'a%26b,c%3Ad,e%3Df,g%2Bh%21%27%28%29%2A',
       );
     });
 

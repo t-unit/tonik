@@ -493,7 +493,7 @@ void main() {
                   explode: false,
                   allowEmpty: true,
                 )) {
-                  _$entries.add((name: r"filter's", value: value));
+                  _$entries.add((name: r'filter%27s', value: value));
                 }
               }
             '''),
@@ -538,7 +538,7 @@ void main() {
                   explode: true,
                   allowEmpty: true,
                 )) {
-                  _$entries.add((name: r"filter's", value: value));
+                  _$entries.add((name: r'filter%27s', value: value));
                 }
               }
             '''),
@@ -979,7 +979,7 @@ void main() {
           'when set', () {
         final parameter = createParameter(
           name: 'items',
-          rawName: 'a&b=c+d',
+          rawName: "a&b=c+d!'()*",
           model: ListModel(
             content: OneOfModel(
               isDeprecated: false,
@@ -1053,7 +1053,7 @@ void main() {
                           allowEmpty: true,
                           alreadyEncoded: true,
                         )) {
-                  _$entries.add((name: r'a%26b%3Dc%2Bd', value: value));
+                  _$entries.add((name: r'a%26b%3Dc%2Bd%21%27%28%29%2A', value: value));
                 }
               }
             '''),

@@ -32,7 +32,7 @@ String _encodeValue(PropertyValue value, {required bool literal}) =>
     };
 
 String _encodeKey(String key, {required bool literal}) =>
-    literal ? key : Uri.encodeComponent(key);
+    literal ? key : encodeUriComponent(key);
 
 String _collapsedPairs(
   Map<String, PropertyValue> map, {
@@ -80,7 +80,7 @@ List<ParameterEntry> _delimitedEntries(
   final flattened = map.entries
       .expand((e) => [encode(e.key), encodeProperty(e.value)])
       .join(delimiter);
-  return [(name: Uri.encodeComponent(paramName), value: flattened)];
+  return [(name: encodeUriComponent(paramName), value: flattened)];
 }
 
 /// Enforces empty-value and URI-escaping rules for object-valued parameters.
@@ -151,7 +151,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     }
     if (explode) {
       return entries.map((e) {
-        final key = Uri.encodeComponent(e.key);
+        final key = encodeUriComponent(e.key);
         final isValueEmpty = switch (e.value) {
           ScalarPropertyValue(:final value) => value.isEmpty,
           ArrayPropertyValue(:final values) => values.isEmpty,
@@ -180,7 +180,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       // Matrix is an RFC 6570 named operator: empty values expand to the
       // name alone, without '='.
       return entries.map((e) {
-        final key = Uri.encodeComponent(e.key);
+        final key = encodeUriComponent(e.key);
         final isValueEmpty = switch (e.value) {
           ScalarPropertyValue(:final value) => value.isEmpty,
           ArrayPropertyValue(:final values) => values.isEmpty,
@@ -262,7 +262,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final encodedName = Uri.encodeComponent(paramName);
+    final encodedName = encodeUriComponent(paramName);
     final result = <ParameterEntry>[];
     for (final entry in entries) {
       switch (entry.value) {
@@ -272,7 +272,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           );
         case ScalarPropertyValue(:final value):
           result.add((
-            name: '$encodedName[${Uri.encodeComponent(entry.key)}]',
+            name: '$encodedName[${encodeUriComponent(entry.key)}]',
             value: encodeUriValue(
               value,
               allowReserved: allowReserved,

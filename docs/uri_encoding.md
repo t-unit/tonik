@@ -8,8 +8,7 @@ tonik encodes query-parameter and form-body values, how it honors OpenAPI's `all
 and the few cases that stay percent-encoded regardless.
 
 When `allowReserved` is not set (the default), tonik percent-encodes reserved characters
-following RFC 3986. This is the standard, safe behavior and is byte-for-byte identical to
-earlier tonik releases.
+following RFC 3986, including the punctuation `!` `'` `(` `)` `*`.
 
 ## `allowReserved: true`
 
