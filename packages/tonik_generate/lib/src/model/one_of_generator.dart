@@ -372,10 +372,16 @@ class const OneOfGenerator({
         const Code(r'if (_$discriminator != null && _$json is '),
         buildMapStringObjectType().code,
         const Code(') {'),
+        const Code(r'final _$map = <'),
+        refer('String', 'dart:core').code,
+        const Code(', '),
+        refer('Object?', 'dart:core').code,
+        const Code(r'>{..._$json};'),
         Code(
-          '_\$json.putIfAbsent(${specLiteralStringCode(model.discriminator!)}'
+          '_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}'
           r', () => _$discriminator);',
         ),
+        const Code(r'return _$map;'),
         const Code('}'),
       ]);
     }

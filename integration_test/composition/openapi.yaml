@@ -795,6 +795,50 @@ components:
         - type: integer
         - type: number
 
+    Counter:
+      type: object
+      required: [count]
+      properties:
+        count:
+          type: integer
+
+    Gauge:
+      type: object
+      required: [level]
+      properties:
+        level:
+          type: integer
+
+    Flag:
+      type: object
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+
+    TaggedMetric:
+      type: object
+      required: [count, type]
+      properties:
+        count:
+          type: integer
+        type:
+          type: [string, 'null']
+
+    Metric:
+      oneOf:
+        - $ref: '#/components/schemas/Counter'
+        - $ref: '#/components/schemas/Gauge'
+        - $ref: '#/components/schemas/Flag'
+        - $ref: '#/components/schemas/TaggedMetric'
+      discriminator:
+        propertyName: type
+        mapping:
+          counter: '#/components/schemas/Counter'
+          gauge: '#/components/schemas/Gauge'
+          flag: '#/components/schemas/Flag'
+          tagged: '#/components/schemas/TaggedMetric'
+
     # =========================================================================
     # Discriminator inheritance via allOf
     # =========================================================================
