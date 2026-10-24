@@ -205,15 +205,19 @@ void main() {
       );
     });
 
-    test('literal simple explode true is not round-trippable', () {
+    test('literal simple roundtrip - explode true', () {
       final simple = allOf.toSimple(
         explode: true,
         allowEmpty: true,
         literal: true,
       );
+      expect(simple, 'count=1,id=foo%bar&baz=qux');
       expect(
-        () => AllOfPrimitive.fromSimple(simple, explode: true),
-        throwsA(isA<InvalidFormatException>()),
+        AllOfPrimitive.fromSimple(simple, explode: true),
+        const AllOfPrimitive(
+          allOfPrimitiveModel: AllOfPrimitiveModel(count: 1),
+          allOfPrimitiveModel2: AllOfPrimitiveModel2(id: 'foo%bar&baz=qux'),
+        ),
       );
     });
 
