@@ -868,6 +868,7 @@ factory Tags.fromSimple(
     listKeys: {r'items'},
     context: r'Tags',
             isHeader: isHeader,
+            percentDecodeKeys: false,
   );
   return Tags(
     items: _$values[r'items']

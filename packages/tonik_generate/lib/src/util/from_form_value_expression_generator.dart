@@ -296,10 +296,16 @@ Expression _buildListFromFormExpression(
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
+  // Other item types percent-decode through their own form decoder.
   final listDecode = value
-      .property(
-        isRequired ? 'decodeFormStringList' : 'decodeFormNullableStringList',
-      )
+      .property(switch (content) {
+        StringModel() || AnyModel() || NeverModel() =>
+          isRequired ? 'decodeFormStringList' : 'decodeFormNullableStringList',
+        _ =>
+          isRequired
+              ? 'decodeSimpleStringList'
+              : 'decodeSimpleNullableStringList',
+      })
       .call([], contextParam);
 
   var result = switch (content) {

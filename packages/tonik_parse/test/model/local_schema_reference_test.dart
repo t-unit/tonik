@@ -1439,4 +1439,98 @@ void main() {
     expect(api.models.whereType<ListModel>(), isEmpty);
     expect(api.models.whereType<MapModel>(), isEmpty);
   });
+
+  test('encoded component refs retain schema-name and canonical mappings', () {
+    final api = Importer().import({
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Dog': {
+            'type': 'object',
+            'properties': {
+              'bark': {'type': 'boolean'},
+            },
+          },
+          'Cat': {
+            'type': 'object',
+            'properties': {
+              'meow': {'type': 'string'},
+            },
+          },
+          'Choice': {
+            'oneOf': [
+              {r'$ref': '#%2Fcomponents%2Fschemas%2FDog'},
+              {r'$ref': '#/components/schemas/%43at'},
+            ],
+            'discriminator': {
+              'propertyName': 'kind',
+              'mapping': {'dog': 'Dog', 'cat': '#/components/schemas/Cat'},
+            },
+          },
+        },
+      },
+    });
+
+    final choice = api.models.whereType<OneOfModel>().single;
+    expect(choice.models.first.discriminatorValue, 'dog');
+    expect(choice.models.last.discriminatorValue, 'cat');
+  });
+
+  test('deep typeless targets retain enum values and fallback annotations', () {
+    final api = Importer().import({
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Owner': {
+            'type': 'object',
+            'properties': {
+              'color': {
+                'enum': ['red', 'green', null],
+                'format': 'uri',
+              },
+              'items': {
+                'items': {'type': 'string'},
+                'readOnly': true,
+                'default': [1, 'two'],
+              },
+              'mixed': {
+                'enum': ['red', 42],
+                'writeOnly': true,
+                'default': 42,
+              },
+            },
+          },
+          'ColorUse': {r'$ref': '#/components/schemas/Owner/properties/color'},
+          'ItemsUse': {r'$ref': '#/components/schemas/Owner/properties/items'},
+          'MixedUse': {r'$ref': '#/components/schemas/Owner/properties/mixed'},
+        },
+      },
+    });
+
+    final color =
+        api.models
+                .whereType<AliasModel>()
+                .singleWhere((model) => model.name == 'ColorUse')
+                .resolved
+            as EnumModel<String>;
+    final items = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'ItemsUse',
+    );
+    final mixed = api.models.whereType<AliasModel>().singleWhere(
+      (model) => model.name == 'MixedUse',
+    );
+    expect(color.values.map((entry) => entry.value), ['red', 'green']);
+    expect(color.isNullable, isTrue);
+    expect(items.resolved, isA<AnyModel>());
+    expect((items.model as AliasModel).isReadOnly, isTrue);
+    expect(items.defaultValue, [1, 'two']);
+    expect(mixed.resolved, isA<AnyModel>());
+    expect((mixed.model as AliasModel).isWriteOnly, isTrue);
+    expect(mixed.defaultValue, 42);
+    expect(api.models.whereType<ClassModel>(), hasLength(1));
+  });
 }

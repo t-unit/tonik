@@ -1,0 +1,3 @@
+spec: digitalocean/openapi.yaml
+packageName: digitalocean_api
+outputDir: digitalocean

@@ -455,6 +455,30 @@ void main() {
     });
 
     group('complex types', () {
+      test('percent-decodes AnyModel list items as strings', () {
+        final expression = buildFromFormValueExpression(
+          refer('value'),
+          model: ListModel(
+            content: AnyModel(context: context),
+            context: context,
+            examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+          ),
+          isRequired: false,
+          nameManager: nameManager,
+        );
+
+        expect(
+          expression.accept(DartEmitter()).toString(),
+          'value.decodeFormNullableStringList()',
+        );
+      });
+
       test('generates expression for ListModel with String content', () {
         final expression = buildFromFormValueExpression(
           refer("values['items']"),
@@ -510,7 +534,7 @@ void main() {
         expect(
           code,
           equals(
-            '''values['numbers'].decodeFormStringList(context: r'TestClass.numbers').map((e) => e.decodeFormInt(context: r'TestClass.numbers')).toList()''',
+            '''values['numbers'].decodeSimpleStringList(context: r'TestClass.numbers').map((e) => e.decodeFormInt(context: r'TestClass.numbers')).toList()''',
           ),
         );
       });
@@ -652,6 +676,43 @@ void main() {
     });
 
     group('BinaryModel', () {
+      test('splits binary alias list items without percent-decoding', () {
+        final expression = buildFromFormValueExpression(
+          refer('value'),
+          model: ListModel(
+            content: AliasModel(
+              name: 'BinaryData',
+              model: BinaryModel(context: context),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+              nameOverride: null,
+              description: null,
+              isDeprecated: false,
+              isNullable: false,
+              isReadOnly: false,
+              isWriteOnly: false,
+            ),
+            context: context,
+            examples: const [],
+            name: null,
+            nameOverride: null,
+            isNullable: false,
+            isContentNullable: false,
+            isReadOnly: false,
+            isWriteOnly: false,
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+        );
+
+        expect(
+          expression.accept(DartEmitter()).toString(),
+          'value.decodeSimpleStringList().map((e) => '
+          'TonikFileBytes(e.decodeFormBinary())).toList()',
+        );
+      });
+
       test('generates TonikFileBytes wrapping for required BinaryModel', () {
         final expression = buildFromFormValueExpression(
           refer("values['file']"),
@@ -721,7 +782,7 @@ void main() {
           final code = expression.accept(DartEmitter()).toString();
           expect(
             code,
-            "values['files'].decodeFormStringList("
+            "values['files'].decodeSimpleStringList("
             "context: r'TestClass.files').map((e) => "
             'TonikFileBytes(e.decodeFormBinary('
             "context: r'TestClass.files'))).toList()",
@@ -754,7 +815,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          "values['files'].decodeFormNullableStringList("
+          "values['files'].decodeSimpleNullableStringList("
           "context: r'TestClass.files')?.map((e) => "
           'TonikFileBytes(e.decodeFormBinary('
           "context: r'TestClass.files'))).toList()",
@@ -832,7 +893,7 @@ void main() {
           final code = expression.accept(DartEmitter()).toString();
           expect(
             code,
-            "values['files'].decodeFormStringList("
+            "values['files'].decodeSimpleStringList("
             "context: r'TestClass.files').map((e) => "
             'TonikFileBytes(e.decodeFormBase64('
             "context: r'TestClass.files'))).toList()",
@@ -865,7 +926,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          "values['files'].decodeFormNullableStringList("
+          "values['files'].decodeSimpleNullableStringList("
           "context: r'TestClass.files')?.map((e) => "
           'TonikFileBytes(e.decodeFormBase64('
           "context: r'TestClass.files'))).toList()",
