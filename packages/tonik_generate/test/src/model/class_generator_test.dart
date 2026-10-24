@@ -2374,7 +2374,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                r"_$values[r'required'].decodeFormStringList(context: "
+                r"_$values[r'required'].decodeSimpleStringList(context: "
                 "r'ListForm.required').map",
               ),
             ),
@@ -2385,7 +2385,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                r"_$values[r'optional'].decodeFormNullableStringList(context: "
+                r"_$values[r'optional']."
+                'decodeSimpleNullableStringList(context: '
                 "r'ListForm.optional')?.map",
               ),
             ),
