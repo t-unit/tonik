@@ -849,6 +849,21 @@ paths:
                     schema:
                       type: string
                     required: true
+                  X-Part-Time:
+                    schema:
+                      type: string
+                      format: date-time
+                  X-Part-Times:
+                    schema:
+                      type: array
+                      items:
+                        type: string
+                        format: date-time
+                  X-Part-Tags:
+                    schema:
+                      type: array
+                      items:
+                        type: string
               file:
                 headers:
                   X-File-Hash:

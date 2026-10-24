@@ -142,6 +142,7 @@ BuiltExpression buildSimpleValueExpression(
   required bool explode,
   required bool allowEmpty,
   bool isNullable = false,
+  bool literal = false,
 }) {
   return BuiltExpression.simple(
     _buildSimpleSerializationExpression(
@@ -150,6 +151,7 @@ BuiltExpression buildSimpleValueExpression(
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     ),
   );
 }

@@ -906,6 +906,7 @@ class const MultipartBodyPlanner({
         header.model,
         explode: header.explode,
         allowEmpty: true,
+        literal: true,
       );
       final assignment =
           base64 && entry.key.toLowerCase() == 'content-transfer-encoding'
@@ -940,6 +941,26 @@ class const MultipartBodyPlanner({
                   assignment,
                   const Code('}'),
                 ]),
+        ),
+      );
+    }
+    if (headers?.isNotEmpty ?? false) {
+      emissions.add(
+        MultipartCode(
+          Block.of([
+            Code(
+              'for (final headerValue in $variable.values'
+              '${_dio ? '.expand((values) => values)' : ''}) {',
+            ),
+            const Code(
+              r"if (headerValue.contains('\r') || headerValue.contains('\n')) {",
+            ),
+            generateEncodingExceptionExpression(
+              'Multipart header values must not contain line breaks.',
+            ).statement,
+            const Code('}'),
+            const Code('}'),
+          ]),
         ),
       );
     }

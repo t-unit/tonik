@@ -1373,7 +1373,13 @@ Future<Object?> _data({
   _$valueHeaders[r'X-Trace'] = valueTrace.toSimple(
     explode: false,
     allowEmpty: true,
+    literal: true,
   );
+  for (final headerValue in _$valueHeaders.values) {
+    if (headerValue.contains('\r') || headerValue.contains('\n')) {
+      throw EncodingException('Multipart header values must not contain line breaks.');
+    }
+  }
   _$multipartParts.add(
     TonikMultipartPart(
       name: r'value',
