@@ -1116,3 +1116,51 @@ components:
           type: object
           additionalProperties:
             type: "null"
+
+    OptionalOval:
+      type: object
+      properties:
+        radius:
+          type: number
+
+    OptionalRect:
+      type: object
+      properties:
+        width:
+          type: number
+
+    AnyOfFigure:
+      anyOf:
+        - $ref: '#/components/schemas/OptionalOval'
+        - $ref: '#/components/schemas/OptionalRect'
+      discriminator:
+        propertyName: kind
+        mapping:
+          oval: '#/components/schemas/OptionalOval'
+          rect: '#/components/schemas/OptionalRect'
+
+    DeclaredOval:
+      type: object
+      properties:
+        kind:
+          type: string
+        radius:
+          type: number
+
+    DeclaredRect:
+      type: object
+      properties:
+        kind:
+          type: string
+        width:
+          type: number
+
+    AnyOfDeclaredFigure:
+      anyOf:
+        - $ref: '#/components/schemas/DeclaredOval'
+        - $ref: '#/components/schemas/DeclaredRect'
+      discriminator:
+        propertyName: kind
+        mapping:
+          oval: '#/components/schemas/DeclaredOval'
+          rect: '#/components/schemas/DeclaredRect'

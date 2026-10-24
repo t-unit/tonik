@@ -264,6 +264,12 @@ void main() {
           for (final _$m in _$mapValues) {
             _$map.addAll(_$m);
           }
+          final _$originalDiscriminator = this._discriminator;
+          if (_$originalDiscriminator != null) {
+            for (final _$entry in _$originalDiscriminator.entries) {
+              _$map.putIfAbsent(_$entry.key, () => _$entry.value);
+            }
+          }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
             _$map.putIfAbsent(r'disc', () => _$discValue);
@@ -489,6 +495,12 @@ void main() {
           for (final _$m in _$mapValues) {
             _$map.addAll(_$m);
           }
+          final _$originalDiscriminator = this._discriminator;
+          if (_$originalDiscriminator != null) {
+            for (final _$entry in _$originalDiscriminator.entries) {
+              _$map.putIfAbsent(_$entry.key, () => _$entry.value);
+            }
+          }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
             _$map.putIfAbsent(r'type', () => _$discValue);
@@ -597,6 +609,12 @@ void main() {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
             _$map.addAll(_$m);
+          }
+          final _$originalDiscriminator = this._discriminator;
+          if (_$originalDiscriminator != null) {
+            for (final _$entry in _$originalDiscriminator.entries) {
+              _$map.putIfAbsent(_$entry.key, () => _$entry.value);
+            }
           }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {

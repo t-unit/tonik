@@ -76,7 +76,11 @@ class const AnyOfGenerator({
 
     final normalized = normalizeProperties(pseudoProperties);
 
-    final copyWithGetter = _buildCopyWith(actualClassName, normalized);
+    final copyWithGetter = _buildCopyWith(
+      actualClassName,
+      normalized,
+      model.discriminator != null,
+    );
 
     return [generateClass(model, copyWithGetter, actualClassName)];
   }
@@ -84,9 +88,14 @@ class const AnyOfGenerator({
   Method? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalized,
+    bool preserveDiscriminator,
   ) {
     return generateCopyWith(
       className: className,
+      constructorName: preserveDiscriminator ? '_' : null,
+      constructorArguments: preserveDiscriminator
+          ? [refer('this').property('_discriminator')]
+          : const [],
       properties: normalized.map((n) {
         final model = n.property.model;
         final resolvedModel = model.resolved;
@@ -152,7 +161,12 @@ class const AnyOfGenerator({
     final semanticProperties = _semanticProperties(normalized);
 
     final effectiveCopyWithGetter =
-        copyWithGetter ?? _buildCopyWith(actualClassName, normalized);
+        copyWithGetter ??
+        _buildCopyWith(
+          actualClassName,
+          normalized,
+          model.discriminator != null,
+        );
 
     final fields = normalized.map((n) {
       final ref = typeReference(
@@ -173,6 +187,9 @@ class const AnyOfGenerator({
     final defaultCtor = Constructor(
       (b) => b
         ..constant = true
+        ..initializers.addAll([
+          if (model.discriminator != null) const Code('_discriminator = null'),
+        ])
         ..optionalParameters.addAll(
           normalized.map(
             (n) => Parameter(
@@ -185,9 +202,28 @@ class const AnyOfGenerator({
         ),
     );
 
+    final discriminatorCtor = model.discriminator == null
+        ? null
+        : defaultCtor.rebuild(
+            (b) => b
+              ..name = '_'
+              ..initializers.clear()
+              ..requiredParameters.add(
+                Parameter(
+                  (p) => p
+                    ..name = '_discriminator'
+                    ..toThis = true,
+                ),
+              ),
+          );
+
     final fromJsonCtor = model.isWriteOnly
         ? buildWriteOnlyFromJsonConstructor(actualClassName)
-        : _buildFromJsonConstructor(actualClassName, semanticProperties);
+        : _buildFromJsonConstructor(
+            actualClassName,
+            semanticProperties,
+            model.discriminator,
+          );
 
     final fromSimpleCtor = model.isWriteOnly
         ? buildWriteOnlyFromSimpleConstructor(actualClassName)
@@ -244,6 +280,7 @@ class const AnyOfGenerator({
 
       b
         ..constructors.add(defaultCtor)
+        ..constructors.addAll([?discriminatorCtor])
         ..constructors.add(fromJsonCtor)
         ..constructors.add(fromSimpleCtor)
         ..constructors.add(fromFormCtor)
@@ -295,7 +332,25 @@ class const AnyOfGenerator({
           generateHashCodeMethod(properties: propsForEquality),
           ?effectiveCopyWithGetter,
         ])
-        ..fields.addAll(fields);
+        ..fields.addAll(fields)
+        ..fields.addAll([
+          if (model.discriminator != null)
+            Field(
+              (f) => f
+                ..name = '_discriminator'
+                ..modifier = FieldModifier.final$
+                ..type = TypeReference(
+                  (t) => t
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..isNullable = true
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('Object?', 'dart:core'),
+                    ]),
+                ),
+            ),
+        ]);
     });
   }
 
@@ -670,6 +725,7 @@ class const AnyOfGenerator({
   Constructor _buildFromJsonConstructor(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
+    String? discriminator,
   ) {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
@@ -765,7 +821,30 @@ class const AnyOfGenerator({
           ...spliceInlineHelpers(inlineHelpers),
           ...localDecls,
           validationCheck,
-          refer(className).call([], ctorArgs).returned.statement,
+          (discriminator == null
+                  ? refer(className).call([], ctorArgs)
+                  : refer(className).newInstanceNamed('_', [
+                      refer('json')
+                          .isA(buildMapStringObjectType())
+                          .and(
+                            refer('json')
+                                .property('containsKey')
+                                .call([specLiteralString(discriminator)]),
+                          )
+                          .conditional(
+                            literalMap(
+                              {
+                                specLiteralString(discriminator): refer('json')
+                                    .index(specLiteralString(discriminator)),
+                              },
+                              refer('String', 'dart:core'),
+                              refer('Object?', 'dart:core'),
+                            ),
+                            literalNull,
+                          ),
+                    ], ctorArgs))
+              .returned
+              .statement,
         ]),
     );
   }
@@ -894,15 +973,24 @@ class const AnyOfGenerator({
       const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
     ];
     if (hasDiscriminator) {
-      mergeBlocks.add(
-        Code(
-          r'final _$discValue = _$discriminatorValue; '
-          r'if (_$discValue != null) { '
-          r'_$map.putIfAbsent('
-          '${specLiteralStringCode(model.discriminator!)}, '
-          r'() => _$discValue); }',
-        ),
-      );
+      mergeBlocks
+        ..add(
+          const Code(
+            r'final _$originalDiscriminator = this._discriminator; '
+            r'if (_$originalDiscriminator != null) { '
+            r'for (final _$entry in _$originalDiscriminator.entries) { '
+            r'_$map.putIfAbsent(_$entry.key, () => _$entry.value); } }',
+          ),
+        )
+        ..add(
+          Code(
+            r'final _$discValue = _$discriminatorValue; '
+            r'if (_$discValue != null) { '
+            r'_$map.putIfAbsent('
+            '${specLiteralStringCode(model.discriminator!)}, '
+            r'() => _$discValue); }',
+          ),
+        );
     }
     mergeBlocks.add(const Code(r'return _$map;'));
 

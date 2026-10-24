@@ -10,6 +10,8 @@ typedef CopyWithProperty = ({
 Method? generateCopyWith({
   required String className,
   required List<CopyWithProperty> properties,
+  String? constructorName,
+  List<Expression> constructorArguments = const [],
 }) {
   if (properties.isEmpty) return null;
 
@@ -50,7 +52,15 @@ Method? generateCopyWith({
         ),
       )
       ..lambda = true
-      ..body = refer(className).call([], namedArgs).code,
+      ..body =
+          (constructorName == null
+                  ? refer(className).call(constructorArguments, namedArgs)
+                  : refer(className).newInstanceNamed(
+                      constructorName,
+                      constructorArguments,
+                      namedArgs,
+                    ))
+              .code,
   );
 
   return Method(
