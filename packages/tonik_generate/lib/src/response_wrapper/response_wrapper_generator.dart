@@ -67,9 +67,15 @@ class const ResponseWrapperGenerator({
       final subclassName = entry.value;
       final response = operation.responses[status];
       Field? bodyField;
+      var hasCollectionValue = false;
 
       if (response != null && response.bodyCount == 1 && !response.hasHeaders) {
         final body = response.resolved.bodies.first;
+        hasCollectionValue =
+            !useImmutableCollections &&
+            body.delivery == ResponseDelivery.complete &&
+            (body.model.resolved is ListModel ||
+                body.model.resolved is MapModel);
         bodyField = Field(
           (b) => b
             ..name = 'body'
@@ -101,7 +107,12 @@ class const ResponseWrapperGenerator({
 
       final properties = bodyField == null
           ? <({String normalizedName, bool hasCollectionValue})>[]
-          : [(normalizedName: bodyField.name, hasCollectionValue: false)];
+          : [
+              (
+                normalizedName: bodyField.name,
+                hasCollectionValue: hasCollectionValue,
+              ),
+            ];
 
       final equalsMethod = generateEqualsMethod(
         className: subclassName,

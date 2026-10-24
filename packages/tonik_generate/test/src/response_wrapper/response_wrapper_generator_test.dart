@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -81,6 +82,200 @@ void main() {
       expect(classes[2].fields, isEmpty);
     },
   );
+
+  group('collection body equality', () {
+    late Operation operation;
+    late ResponseBody body;
+    late DartFormatter formatter;
+
+    setUp(() {
+      body = ResponseBody(
+        model: ListModel(
+          content: StringModel(context: testContext),
+          context: testContext,
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isContentNullable: false,
+          examples: const [],
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        rawContentType: 'application/json',
+        contentType: ContentType.json,
+        examples: const [],
+        delivery: ResponseDelivery.complete,
+      );
+      operation = Operation(
+        operationId: 'listItems',
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        path: '/items',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        securitySchemes: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: 'Items',
+            description: '',
+            context: testContext,
+            headers: const {},
+            bodies: {body},
+          ),
+          const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+            name: 'Missing',
+            description: '',
+            context: testContext,
+            headers: const {},
+            bodies: const {},
+          ),
+        },
+        nameOverride: null,
+        summary: null,
+        description: null,
+        requestBody: null,
+      );
+      formatter = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      );
+    });
+
+    test('mutable lists use deep equality and hashing', () {
+      final wrapper = generator.generateClasses(operation)[1];
+      final equality = wrapper.methods.singleWhere(
+        (method) => method.name == 'operator ==',
+      );
+      final hash = wrapper.methods.singleWhere(
+        (method) => method.name == 'hashCode',
+      );
+      expect(
+        formatter.format('class Example { ${equality.accept(emitter)} }'),
+        formatter.format(r'''
+          class Example {
+            @override
+            bool operator ==(Object other) {
+              if (identical(this, other)) return true;
+              const _$deepEquals = DeepCollectionEquality();
+              return other is ListItemsResponse200 &&
+                  _$deepEquals.equals(other.body, this.body);
+            }
+          }
+        '''),
+      );
+      expect(
+        formatter.format(
+          Class(
+            (b) => b
+              ..name = 'Example'
+              ..methods.add(hash),
+          ).accept(emitter).toString(),
+        ),
+        formatter.format('''
+          class Example {
+            @override
+            int get hashCode {
+              const deepEquals = DeepCollectionEquality();
+              return deepEquals.hash(this.body);
+            }
+          }
+        '''),
+      );
+    });
+
+    test('immutable lists use their native equality and hashing', () {
+      final wrapper = ResponseWrapperGenerator(
+        nameManager: nameManager,
+        package: 'test_package',
+        useImmutableCollections: true,
+      ).generateClasses(operation)[1];
+      final equality = wrapper.methods.singleWhere(
+        (method) => method.name == 'operator ==',
+      );
+      final hash = wrapper.methods.singleWhere(
+        (method) => method.name == 'hashCode',
+      );
+      expect(
+        formatter.format('class Example { ${equality.accept(emitter)} }'),
+        formatter.format('''
+          class Example {
+            @override
+            bool operator ==(Object other) {
+              if (identical(this, other)) return true;
+              return other is ListItemsResponse200 && other.body == this.body;
+            }
+          }
+        '''),
+      );
+      expect(
+        formatter.format(
+          Class(
+            (b) => b
+              ..name = 'Example'
+              ..methods.add(hash),
+          ).accept(emitter).toString(),
+        ),
+        formatter.format('''
+          class Example {
+            @override
+            int get hashCode => this.body.hashCode;
+          }
+        '''),
+      );
+    });
+
+    test('streams of lists use stream identity equality and hashing', () {
+      final response = operation.responses.values.first.resolved;
+      response.bodies
+        ..clear()
+        ..add(
+          ResponseBody(
+            model: body.model,
+            rawContentType: 'application/x-ndjson',
+            contentType: ContentType.bytes,
+            examples: const [],
+            delivery: ResponseDelivery.ndjson,
+          ),
+        );
+      final wrapper = generator.generateClasses(operation)[1];
+      final equality = wrapper.methods.singleWhere(
+        (method) => method.name == 'operator ==',
+      );
+      final hash = wrapper.methods.singleWhere(
+        (method) => method.name == 'hashCode',
+      );
+      expect(
+        formatter.format('class Example { ${equality.accept(emitter)} }'),
+        formatter.format('''
+          class Example {
+            @override
+            bool operator ==(Object other) {
+              if (identical(this, other)) return true;
+              return other is ListItemsResponse200 && other.body == this.body;
+            }
+          }
+        '''),
+      );
+      expect(
+        formatter.format(
+          Class(
+            (b) => b
+              ..name = 'Example'
+              ..methods.add(hash),
+          ).accept(emitter).toString(),
+        ),
+        formatter.format('''
+          class Example {
+            @override
+            int get hashCode => this.body.hashCode;
+          }
+        '''),
+      );
+    });
+  });
 
   group('generate', () {
     late Operation operation;
