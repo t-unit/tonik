@@ -237,10 +237,10 @@ class const OneOfGenerator({
         useImmutableCollections: useImmutableCollections,
       );
 
-      final hasCollectionValue =
-          !useImmutableCollections &&
-          (discriminatedModel.model.resolved is ListModel ||
-              discriminatedModel.model.resolved is MapModel);
+      final hasCollectionValue = usesDeepCollectionEquality(
+        discriminatedModel.model,
+        useImmutableCollections: useImmutableCollections,
+      );
 
       classes.add(
         Class(

@@ -1116,3 +1116,35 @@ components:
           type: object
           additionalProperties:
             type: "null"
+
+    FreeformValue: {}
+
+    FreeformAlias:
+      $ref: '#/components/schemas/FreeformValue'
+
+    FreeformHolder:
+      type: object
+      properties:
+        data: {}
+        aliasedData:
+          $ref: '#/components/schemas/FreeformAlias'
+
+    OneOfFreeformValue:
+      oneOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AnyOfFreeformValue:
+      anyOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AllOfFreeformValue:
+      allOf:
+        - type: object
+          properties:
+            data: {}
+        - type: object
+          properties:
+            label:
+              type: string
