@@ -148,6 +148,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/NullableWidget'
 
+  /nullable-array-response:
+    get:
+      operationId: getNullableTags
+      tags: [type-arrays]
+      responses:
+        '200':
+          description: Tags or null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullableTags'
+  /inline-nullable-array-response:
+    get:
+      operationId: getInlineNullableTags
+      tags: [type-arrays]
+      responses:
+        '200':
+          description: Tags or null
+          content:
+            application/json:
+              schema:
+                type: [array, 'null']
+                items:
+                  type: string
+  /inline-nullable-value-response:
+    get:
+      operationId: getInlineNullableValue
+      tags: [type-arrays]
+      responses:
+        '200':
+          description: String, integer or null
+          content:
+            application/json:
+              schema:
+                type: [string, integer, 'null']
+  /nullable-value-echo:
+    post:
+      operationId: echoNullableValues
+      tags: [type-arrays]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NullableArrayValues'
+      responses:
+        '200':
+          description: Echo nullable values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullableArrayValues'
+
 components:
   schemas:
     # Simple type arrays (no null)
@@ -445,3 +498,21 @@ components:
           type: [boolean, integer]
         optionalNullableTypeArray:
           type: [string, 'null']
+
+    NullableTags:
+      type: [array, 'null']
+      items:
+        type: string
+
+    NullableArrayValues:
+      type: object
+      required: [namedTags, inlineTags, value]
+      properties:
+        namedTags:
+          $ref: '#/components/schemas/NullableTags'
+        inlineTags:
+          type: [array, 'null']
+          items:
+            type: string
+        value:
+          type: [string, integer, 'null']
