@@ -326,6 +326,8 @@ void main() {
     late ClassModel nonDeprecatedClass;
     late EnumModel<String> deprecatedEnum;
     late EnumModel<String> nonDeprecatedEnum;
+    late AliasModel deprecatedAlias;
+    late AliasModel nonDeprecatedAlias;
     late ApiDocument document;
 
     setUp(() {
@@ -389,6 +391,33 @@ void main() {
         isWriteOnly: false,
       );
 
+      deprecatedAlias = AliasModel(
+        name: 'LegacyIdentifier',
+        model: StringModel(context: ctx),
+        context: ctx,
+        description: 'Deprecated identifier',
+        isDeprecated: true,
+        examples: const [],
+        nameOverride: null,
+        defaultValue: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      nonDeprecatedAlias = AliasModel(
+        name: 'Identifier',
+        model: deprecatedAlias,
+        context: ctx,
+        description: null,
+        isDeprecated: false,
+        examples: const [],
+        nameOverride: null,
+        defaultValue: null,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+
       document = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
@@ -397,6 +426,8 @@ void main() {
           nonDeprecatedClass,
           deprecatedEnum,
           nonDeprecatedEnum,
+          deprecatedAlias,
+          nonDeprecatedAlias,
         },
         responseHeaders: const {},
         requestHeaders: const {},
@@ -420,18 +451,22 @@ void main() {
       const config = TonikConfig.defaults;
       final result = transformer.apply(document, config);
 
-      expect(result.models, hasLength(4));
+      expect(result.models, hasLength(6));
       expect(result.models.contains(deprecatedClass), isTrue);
       expect(result.models.contains(nonDeprecatedClass), isTrue);
       expect(result.models.contains(deprecatedEnum), isTrue);
+      expect(result.models.contains(deprecatedAlias), isTrue);
       expect(result.models.contains(nonDeprecatedEnum), isTrue);
+      expect(result.models.contains(nonDeprecatedAlias), isTrue);
 
       expect(identical(result.models, document.models), isTrue);
 
       expect(deprecatedClass.isDeprecated, isTrue);
       expect(deprecatedEnum.isDeprecated, isTrue);
+      expect(deprecatedAlias.isDeprecated, isTrue);
       expect(nonDeprecatedClass.isDeprecated, isFalse);
       expect(nonDeprecatedEnum.isDeprecated, isFalse);
+      expect(nonDeprecatedAlias.isDeprecated, isFalse);
     });
 
     test('exclude mode removes deprecated schemas', () {
@@ -469,11 +504,14 @@ void main() {
 
       final result = transformer.apply(document, config);
 
-      expect(result.models, hasLength(2));
+      expect(result.models, hasLength(3));
       expect(result.models.contains(nonDeprecatedClass), isTrue);
       expect(result.models.contains(nonDeprecatedEnum), isTrue);
+      expect(result.models.contains(nonDeprecatedAlias), isTrue);
       expect(result.models.contains(deprecatedClass), isFalse);
       expect(result.models.contains(deprecatedEnum), isFalse);
+      expect(result.models.contains(deprecatedAlias), isFalse);
+      expect(nonDeprecatedAlias.model, same(deprecatedAlias));
     });
 
     test('ignore mode sets isDeprecated to false for all schemas', () {
@@ -511,16 +549,20 @@ void main() {
 
       final result = transformer.apply(document, config);
 
-      expect(result.models, hasLength(4));
+      expect(result.models, hasLength(6));
       expect(result.models.contains(deprecatedClass), isTrue);
       expect(result.models.contains(nonDeprecatedClass), isTrue);
       expect(result.models.contains(deprecatedEnum), isTrue);
+      expect(result.models.contains(deprecatedAlias), isTrue);
       expect(result.models.contains(nonDeprecatedEnum), isTrue);
+      expect(result.models.contains(nonDeprecatedAlias), isTrue);
 
       expect(deprecatedClass.isDeprecated, isFalse);
       expect(deprecatedEnum.isDeprecated, isFalse);
+      expect(deprecatedAlias.isDeprecated, isFalse);
       expect(nonDeprecatedClass.isDeprecated, isFalse);
       expect(nonDeprecatedEnum.isDeprecated, isFalse);
+      expect(nonDeprecatedAlias.isDeprecated, isFalse);
     });
 
     test('default config (annotate) does not modify schemas', () {
@@ -530,8 +572,10 @@ void main() {
       expect(identical(result.models, document.models), isTrue);
       expect(deprecatedClass.isDeprecated, isTrue);
       expect(deprecatedEnum.isDeprecated, isTrue);
+      expect(deprecatedAlias.isDeprecated, isTrue);
       expect(nonDeprecatedClass.isDeprecated, isFalse);
       expect(nonDeprecatedEnum.isDeprecated, isFalse);
+      expect(nonDeprecatedAlias.isDeprecated, isFalse);
     });
 
     test('handles composite models', () {

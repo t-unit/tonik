@@ -22,6 +22,7 @@ class const DeprecationHandler() {
       DeprecatedHandling.annotate => models,
       DeprecatedHandling.exclude => models.where((model) {
         return switch (model) {
+          final AliasModel m => !m.isDeprecated,
           final ClassModel m => !m.isDeprecated,
           final EnumModel<Object?> m => !m.isDeprecated,
           final AllOfModel m => !m.isDeprecated,
@@ -33,6 +34,8 @@ class const DeprecationHandler() {
       DeprecatedHandling.ignore =>
         models..forEach((model) {
           switch (model) {
+            case final AliasModel m:
+              m.isDeprecated = false;
             case final ClassModel m:
               m.isDeprecated = false;
             case final EnumModel<Object?> m:
