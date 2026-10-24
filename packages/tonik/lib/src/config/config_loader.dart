@@ -360,8 +360,13 @@ extension ConfigLoader on CliConfig {
     }
 
     return EnumConfig(
-      generateUnknownCase: value['generateUnknownCase'] as bool? ?? false,
-      unknownCaseName: value['unknownCaseName'] as String? ?? 'unknown',
+      generateUnknownCase: _parseBool(
+        value['generateUnknownCase'],
+        'enums.generateUnknownCase',
+      ),
+      unknownCaseName:
+          _parseString(value['unknownCaseName'], 'enums.unknownCaseName') ??
+          'unknown',
     );
   }
 
