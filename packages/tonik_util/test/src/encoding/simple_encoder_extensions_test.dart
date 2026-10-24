@@ -245,7 +245,7 @@ void main() {
       group('sub-delims characters', () {
         test('encodes exclamation mark (!) properly', () {
           const value = 'Hello!';
-          expect(value.toSimple(explode: false, allowEmpty: true), 'Hello!');
+          expect(value.toSimple(explode: false, allowEmpty: true), 'Hello%21');
         });
 
         test(r'encodes dollar sign ($) properly', () {
@@ -265,7 +265,7 @@ void main() {
           const value = "It's working";
           expect(
             value.toSimple(explode: false, allowEmpty: true),
-            "It's%20working",
+            'It%27s%20working',
           );
         });
 
@@ -273,13 +273,16 @@ void main() {
           const value = '(555) 123-4567';
           expect(
             value.toSimple(explode: false, allowEmpty: true),
-            '(555)%20123-4567',
+            '%28555%29%20123-4567',
           );
         });
 
         test('encodes asterisk (*) properly', () {
           const value = 'file*.txt';
-          expect(value.toSimple(explode: false, allowEmpty: true), 'file*.txt');
+          expect(
+            value.toSimple(explode: false, allowEmpty: true),
+            'file%2A.txt',
+          );
         });
 
         test('encodes plus (+) properly', () {

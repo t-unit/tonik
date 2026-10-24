@@ -312,7 +312,7 @@ void main() {
 
     group('sub-delims characters', () {
       test('encodes exclamation mark (!) properly', () {
-        expect('Hello!'.toLabel(explode: false, allowEmpty: true), '.Hello!');
+        expect('Hello!'.toLabel(explode: false, allowEmpty: true), '.Hello%21');
       });
 
       test(r'encodes dollar sign ($) properly', () {
@@ -332,21 +332,21 @@ void main() {
       test("encodes single quote (') properly", () {
         expect(
           "It's working".toLabel(explode: false, allowEmpty: true),
-          ".It's%20working",
+          '.It%27s%20working',
         );
       });
 
       test('encodes parentheses () properly', () {
         expect(
           '(555) 123-4567'.toLabel(explode: false, allowEmpty: true),
-          '.(555)%20123-4567',
+          '.%28555%29%20123-4567',
         );
       });
 
       test('encodes asterisk (*) properly', () {
         expect(
           'file*.txt'.toLabel(explode: false, allowEmpty: true),
-          '.file*.txt',
+          '.file%2A.txt',
         );
       });
 

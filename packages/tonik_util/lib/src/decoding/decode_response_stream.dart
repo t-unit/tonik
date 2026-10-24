@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:tonik_util/src/decoding/response_decoder.dart';
 import 'package:tonik_util/src/tonik_cancellation.dart';
 import 'package:tonik_util/src/tonik_result.dart';
 
@@ -10,6 +11,7 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
   required TonikCancellation cancellation,
   required R response,
   required TonikErrorType Function(Object) sourceErrorType,
+  String? contentType,
 }) {
   late final StreamController<TonikResult<T, R>> controller;
   StreamSubscription<Object?>? subscription;
@@ -52,6 +54,7 @@ Stream<TonikResult<T, R>> decodeResponseStream<T, R extends Object>(
     onListen: () {
       final Stream<Object?> framed;
       try {
+        validateResponseStreamCharset(contentType);
         framed = frame(markedSource);
       } on Object catch (error, stack) {
         fail(error, stack, TonikErrorType.decoding);

@@ -14,6 +14,7 @@ import 'package:tonik_util/src/encoding/space_delimited_encoder_extensions.dart'
 import 'package:tonik_util/src/encoding/string_map_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/unknown_value_encoding.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Encodes any value to matrix-style. Used for AnyModel fields.
 ///
@@ -252,7 +253,7 @@ String encodeAnyToSimple(
 ///
 /// When [useQueryComponent] is true, primitives use
 /// `Uri.encodeQueryComponent` (spaces become `+`) instead of
-/// `Uri.encodeComponent` (spaces become `%20`); the same flag is threaded
+/// `encodeUriComponent` (spaces become `%20`); the same flag is threaded
 /// into recursive list/map element encoding.
 ///
 /// When [allowReserved] is true, most reserved characters in primitive
@@ -500,7 +501,7 @@ String _formEntriesToString(
 /// `Map<String, String>` values use extension methods.
 ///
 /// When [allowReserved] is true, most reserved characters in the map
-/// VALUES are kept literal (keys stay `Uri.encodeComponent`-encoded); the flag
+/// VALUES are kept literal (keys stay `encodeUriComponent`-encoded); the flag
 /// is forwarded to the [ParameterEncodable] branch so those models honor it in
 /// their own value encoding.
 ///
@@ -576,12 +577,11 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     );
   }
   if (value is List<dynamic>) {
-    final filtered = value.where((item) => item != null).toList();
-    if (filtered.isEmpty && !allowEmpty) {
+    if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = filtered
-        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: allowEmpty))
         .toList()
         .toPipeDelimited(
           explode: false,
@@ -591,7 +591,7 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     if (joined.isEmpty) {
       return const [];
     }
-    return [(name: Uri.encodeComponent(paramName), value: joined.single)];
+    return [(name: encodeUriComponent(paramName), value: joined.single)];
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to pipeDelimited style. '
@@ -635,12 +635,11 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     );
   }
   if (value is List<dynamic>) {
-    final filtered = value.where((item) => item != null).toList();
-    if (filtered.isEmpty && !allowEmpty) {
+    if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = filtered
-        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: allowEmpty))
         .toList()
         .toSpaceDelimited(
           explode: false,
@@ -650,7 +649,7 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     if (joined.isEmpty) {
       return const [];
     }
-    return [(name: Uri.encodeComponent(paramName), value: joined.single)];
+    return [(name: encodeUriComponent(paramName), value: joined.single)];
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to spaceDelimited style. '

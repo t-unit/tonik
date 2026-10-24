@@ -715,7 +715,7 @@ void main() {
       );
     });
 
-    test('FormStringEncoder default is byte-identical to encodeComponent', () {
+    test('FormStringEncoder escapes all reserved characters by default', () {
       expect(
         allReserved.toForm(
           'p',
@@ -723,7 +723,12 @@ void main() {
           allowEmpty: true,
           textEncoding: utf8,
         ),
-        <ParameterEntry>[(name: 'p', value: Uri.encodeComponent(allReserved))],
+        <ParameterEntry>[
+          (
+            name: 'p',
+            value: '%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D',
+          ),
+        ],
       );
     });
 

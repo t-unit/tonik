@@ -4,6 +4,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Extensions for encoding values using simple style parameter encoding.
 
@@ -151,13 +152,13 @@ extension SimpleStringMapEncoder on Map<String, String> {
       }
       return entries
           .map((e) {
-            final key = literal ? e.key : Uri.encodeComponent(e.key);
+            final key = literal ? e.key : encodeUriComponent(e.key);
             if (e.value.isEmpty) {
               return key;
             }
             final value = literal
                 ? e.value
-                : (alreadyEncoded ? e.value : Uri.encodeComponent(e.value));
+                : (alreadyEncoded ? e.value : encodeUriComponent(e.value));
             return '$key=$value';
           })
           .join(',');
@@ -201,6 +202,6 @@ extension SimpleBinaryEncoder on List<int> {
       return '';
     }
     final str = decodeToString();
-    return literal ? str : Uri.encodeComponent(str);
+    return literal ? str : encodeUriComponent(str);
   }
 }

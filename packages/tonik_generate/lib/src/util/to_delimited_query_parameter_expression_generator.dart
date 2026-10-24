@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 BuiltStatements buildToDelimitedQueryParameterCode(
   String parameterName,
@@ -308,7 +311,7 @@ List<Code> _buildForLoop(
   bool allowReserved = false,
   Expression? mapExpression,
 }) {
-  final encodedName = Uri.encodeComponent(rawName);
+  final encodedName = rawName.uriEncode(allowEmpty: true, textEncoding: utf8);
   final receiver = needsMapping
       ? refer(parameterName)
             .property('map')
@@ -352,7 +355,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
   String encodingName, {
   required bool allowReserved,
 }) {
-  final encodedName = Uri.encodeComponent(rawName);
+  final encodedName = rawName.uriEncode(allowEmpty: true, textEncoding: utf8);
   final encodedItem = refer('item').property('uriEncode').call([], {
     'allowEmpty': literalBool(allowEmpty),
     'textEncoding': refer('utf8', 'dart:convert'),
