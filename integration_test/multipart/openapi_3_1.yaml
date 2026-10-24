@@ -15,6 +15,22 @@ tags:
     description: OAS 3.1 multipart operations
 
 paths:
+  /multipart31/url-encoded-map:
+    post:
+      operationId: postUrlEncodedMap
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UrlEncodedMapForm'
+            encoding:
+              attrs:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '204':
+          description: Accepted
   /multipart31/named-nullable-uri-array:
     post:
       operationId: postNamedNullableUriArray
@@ -563,6 +579,13 @@ paths:
 
 components:
   schemas:
+    UrlEncodedMapForm:
+      type: object
+      required: [attrs]
+      properties:
+        attrs:
+          type: object
+          additionalProperties: true
     QuotedObjectForm:
       type: object
       required:
