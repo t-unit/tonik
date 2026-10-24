@@ -9,7 +9,10 @@ class Server({
     url: json['url'] as String,
     description: json['description'] as String?,
     variables: (json['variables'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, ServerVariable.fromJson(e as Map<String, dynamic>)),
+      (k, e) => MapEntry(
+        k,
+        ServerVariable.fromJson(e as Map<String, dynamic>, name: k),
+      ),
     ),
   );
 

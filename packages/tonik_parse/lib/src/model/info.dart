@@ -10,19 +10,27 @@ class Info({
   required final License? license,
   required final String? termsOfService,
 }) {
-  factory fromJson(Map<String, dynamic> json) => Info(
-    title: json['title'] as String,
-    version: json['version'] as String,
-    summary: json['summary'] as String?,
-    description: json['description'] as String?,
-    contact: json['contact'] == null
-        ? null
-        : Contact.fromJson(json['contact'] as Map<String, dynamic>),
-    license: json['license'] == null
-        ? null
-        : License.fromJson(json['license'] as Map<String, dynamic>),
-    termsOfService: json['termsOfService'] as String?,
-  );
+  factory fromJson(Map<String, dynamic> json) {
+    final version = json['version'];
+    if (version is! String) {
+      throw const FormatException(
+        'info.version must be a string. Quote numeric versions.',
+      );
+    }
+    return Info(
+      title: json['title'] as String,
+      version: version,
+      summary: json['summary'] as String?,
+      description: json['description'] as String?,
+      contact: json['contact'] == null
+          ? null
+          : Contact.fromJson(json['contact'] as Map<String, dynamic>),
+      license: json['license'] == null
+          ? null
+          : License.fromJson(json['license'] as Map<String, dynamic>),
+      termsOfService: json['termsOfService'] as String?,
+    );
+  }
 
   @override
   String toString() =>

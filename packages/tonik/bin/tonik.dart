@@ -157,6 +157,9 @@ Future<void> main(List<String> arguments) async {
       contentMediaTypes: mergedConfig.contentMediaTypes,
     ).import(apiSpec);
     logger.info('Successfully parsed OpenAPI document');
+  } on FormatException catch (exception) {
+    stderr.writeln('Error: ${exception.message}');
+    exit(1);
   } on Object catch (e, s) {
     logger
       ..fine('Failed to parse OpenAPI document', e, s)
