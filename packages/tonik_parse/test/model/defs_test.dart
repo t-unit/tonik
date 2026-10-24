@@ -77,6 +77,366 @@ void main() {
   });
 
   group(r'$defs reference resolution', () {
+    test('merges property siblings with the exact definition target', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Item': {
+              'type': 'object',
+              'properties': {
+                'wrong': {'type': 'boolean'},
+              },
+            },
+            'Container': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {
+                  'type': 'object',
+                  'properties': {
+                    'label': {'type': 'string'},
+                  },
+                },
+              },
+              'properties': {
+                'value': {
+                  r'$ref': r'#/components/schemas/Container/$defs/Item',
+                  'properties': {
+                    'count': {'type': 'integer'},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      final container = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'Container',
+      );
+      final merged = container.properties.single.model as AllOfModel;
+      final definition = merged.models.first as ClassModel;
+      final sibling = merged.models.last as ClassModel;
+      expect(merged.models, hasLength(2));
+      expect(definition.properties.single.name, 'label');
+      expect(definition.properties.single.model, isA<StringModel>());
+      expect(sibling.properties.single.name, 'count');
+      expect(sibling.properties.single.model, isA<IntegerModel>());
+    });
+
+    test(
+      'preserves a concrete recursive target through a definition alias',
+      () {
+        final api = Importer().import({
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Namespace': {
+                r'$defs': {
+                  'Alias': {
+                    r'$ref': r'#/components/schemas/Namespace/$defs/Node',
+                  },
+                  'Node': {
+                    'type': 'object',
+                    'properties': {
+                      'next': {
+                        r'$ref': r'#/components/schemas/Namespace/$defs/Alias',
+                      },
+                    },
+                  },
+                },
+              },
+              'Root': {r'$ref': r'#/components/schemas/Namespace/$defs/Alias'},
+            },
+          },
+        });
+
+        final root = api.models.whereType<AliasModel>().firstWhere(
+          (model) => model.name == 'Root',
+        );
+        final node = root.resolved as ClassModel;
+        expect(node.properties.single.name, 'next');
+        expect(node.properties.single.model.resolved, same(node));
+      },
+    );
+
+    test('retains an any terminal for a bare definition alias cycle', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Namespace': {
+              r'$defs': {
+                'First': {
+                  r'$ref': r'#/components/schemas/Namespace/$defs/Second',
+                },
+                'Second': {
+                  r'$ref': r'#/components/schemas/Namespace/$defs/First',
+                },
+              },
+            },
+            'Root': {r'$ref': r'#/components/schemas/Namespace/$defs/First'},
+          },
+        },
+      });
+
+      final root = api.models.whereType<AliasModel>().firstWhere(
+        (model) => model.name == 'Root',
+      );
+      expect(root.resolved, isA<AnyModel>());
+    });
+
+    test(
+      'does not mistake a same-named definition for a composite back-edge',
+      () {
+        final api = Importer().import({
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Item': {
+                'allOf': [
+                  {r'$ref': '#/components/schemas/A'},
+                ],
+              },
+              'A': {
+                'allOf': [
+                  {r'$ref': r'#/components/schemas/Container/$defs/Item'},
+                ],
+              },
+              'Container': {
+                r'$defs': {
+                  'Item': {'type': 'string'},
+                },
+              },
+            },
+          },
+        });
+
+        final a = api.models.whereType<AllOfModel>().firstWhere(
+          (model) => model.name == 'A',
+        );
+        expect(a.models, hasLength(1));
+        expect(a.models.single.resolved, isA<StringModel>());
+      },
+    );
+
+    test('keeps same-named definitions in separate schemas distinct', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {'type': 'string'},
+              },
+              'properties': {
+                'x': {r'$ref': r'#/components/schemas/A/$defs/Item'},
+                'again': {r'$ref': r'#/components/schemas/A/$defs/Item'},
+              },
+            },
+            'B': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {'type': 'integer'},
+              },
+              'properties': {
+                'y': {r'$ref': r'#/components/schemas/B/$defs/Item'},
+              },
+            },
+          },
+        },
+      });
+
+      final a = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'A',
+      );
+      final b = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'B',
+      );
+      expect(a.properties.first.model.resolved, isA<StringModel>());
+      expect(b.properties.single.model.resolved, isA<IntegerModel>());
+      expect(a.properties.last.model, same(a.properties.first.model));
+      expect(b.properties.single.model, isNot(same(a.properties.first.model)));
+    });
+
+    test('keeps definitions distinct from a same-named component', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Item': {
+              'type': 'object',
+              'properties': {
+                'label': {'type': 'string'},
+              },
+            },
+            'Container': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {'type': 'integer'},
+              },
+              'properties': {
+                'local': {
+                  r'$ref': r'#/components/schemas/Container/$defs/Item',
+                },
+                'component': {r'$ref': '#/components/schemas/Item'},
+              },
+            },
+          },
+        },
+      });
+
+      final container = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'Container',
+      );
+      final component = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'Item',
+      );
+      expect(container.properties.first.model.resolved, isA<IntegerModel>());
+      expect(container.properties.last.model, same(component));
+      expect(component.properties.single.name, 'label');
+    });
+
+    test('allows a definition alias to a same-named component', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Item': {'type': 'integer'},
+            'Container': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {r'$ref': '#/components/schemas/Item'},
+              },
+              'properties': {
+                'local': {
+                  r'$ref': r'#/components/schemas/Container/$defs/Item',
+                },
+              },
+            },
+          },
+        },
+      });
+
+      final container = api.models.whereType<ClassModel>().single;
+      final local = container.properties.single.model as AliasModel;
+      final component = api.models.whereType<AliasModel>().firstWhere(
+        (model) => model.name == 'Item' && model.context.path.length == 2,
+      );
+      expect(local, isNot(same(component)));
+      expect(local.model, same(component));
+      expect(local.resolved, isA<IntegerModel>());
+    });
+
+    test('does not let a definition shadow an unpopulated component enum', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Container': {
+              'type': 'object',
+              r'$defs': {
+                'Item': {'type': 'integer'},
+              },
+              'properties': {
+                'local': {
+                  r'$ref': r'#/components/schemas/Container/$defs/Item',
+                },
+              },
+            },
+            'Item': {
+              'type': 'string',
+              'enum': ['first', 'second'],
+            },
+            'UsesComponent': {
+              'type': 'object',
+              'properties': {
+                'value': {r'$ref': '#/components/schemas/Item'},
+              },
+            },
+          },
+        },
+      });
+
+      final component = api.models.whereType<EnumModel<String>>().single;
+      final usage = api.models.whereType<ClassModel>().firstWhere(
+        (model) => model.name == 'UsesComponent',
+      );
+      expect(component.values.map((entry) => entry.value), ['first', 'second']);
+      expect(usage.properties.single.model, same(component));
+    });
+
+    test('resolves same-named recursive definitions to their own models', () {
+      final api = Importer().import({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {
+              r'$defs': {
+                'Node': {
+                  'type': 'object',
+                  'properties': {
+                    'label': {'type': 'string'},
+                    'child': {r'$ref': r'#/components/schemas/A/$defs/Node'},
+                  },
+                },
+              },
+            },
+            'B': {
+              r'$defs': {
+                'Node': {
+                  'type': 'object',
+                  'properties': {
+                    'count': {'type': 'integer'},
+                    'child': {r'$ref': r'#/components/schemas/B/$defs/Node'},
+                  },
+                },
+              },
+            },
+            'FirstNode': {r'$ref': r'#/components/schemas/A/$defs/Node'},
+            'SecondNode': {r'$ref': r'#/components/schemas/B/$defs/Node'},
+          },
+        },
+      });
+
+      final first =
+          api.models
+                  .whereType<AliasModel>()
+                  .firstWhere((model) => model.name == 'FirstNode')
+                  .resolved
+              as ClassModel;
+      final second =
+          api.models
+                  .whereType<AliasModel>()
+                  .firstWhere((model) => model.name == 'SecondNode')
+                  .resolved
+              as ClassModel;
+      expect(first.properties.first.name, 'label');
+      expect(second.properties.first.name, 'count');
+      expect(first.properties.last.model, same(first));
+      expect(second.properties.last.model, same(second));
+      expect(second, isNot(same(first)));
+    });
+
     test(r'resolves $ref to component schema $defs', () {
       const fileContent = {
         'openapi': '3.1.0',
