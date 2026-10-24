@@ -590,6 +590,7 @@ void main() {
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
               allowReserved: allowReserved,
+              fieldEncodings: fieldEncodings,
               textEncoding: textEncoding,
             ),
           };
@@ -598,7 +599,7 @@ void main() {
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -699,6 +700,7 @@ void main() {
                       allowEmpty: allowEmpty,
                       useQueryComponent: useQueryComponent,
                       allowReserved: allowReserved,
+                      fieldEncodings: fieldEncodings,
                       textEncoding: textEncoding,
                     ),
           };
@@ -707,7 +709,7 @@ void main() {
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
+        contains(collapseWhitespace(format(expectedMethod))),
       );
     });
 
@@ -860,6 +862,7 @@ void main() {
                         allowEmpty: allowEmpty,
                         useQueryComponent: useQueryComponent,
                         allowReserved: allowReserved,
+                        fieldEncodings: fieldEncodings,
                         textEncoding: textEncoding,
                       ),
               OuterInnerB(:final value) =>
@@ -882,6 +885,7 @@ void main() {
                         allowEmpty: allowEmpty,
                         useQueryComponent: useQueryComponent,
                         allowReserved: allowReserved,
+                        fieldEncodings: fieldEncodings,
                         textEncoding: textEncoding,
                       ),
             };
@@ -890,7 +894,7 @@ void main() {
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          contains(collapseWhitespace(format(expectedMethod))),
         );
       },
     );

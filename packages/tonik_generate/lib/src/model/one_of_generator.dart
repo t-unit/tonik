@@ -1054,11 +1054,15 @@ class const OneOfGenerator({
           textEncoding: refer('textEncoding'),
         );
 
-    Map<String, Expression> memberFormArgs() => {
+    Map<String, Expression> memberFormArgs(Model member) => {
       'explode': refer('explode'),
       'allowEmpty': refer('allowEmpty'),
       'useQueryComponent': refer('useQueryComponent'),
       'allowReserved': refer('allowReserved'),
+      if (member is ClassModel ||
+          member is CompositeModel ||
+          member is EnumModel)
+        'fieldEncodings': refer('fieldEncodings'),
       'textEncoding': refer('textEncoding'),
     };
 
@@ -1136,7 +1140,7 @@ class const OneOfGenerator({
             const Code(' : '),
             refer('value')
                 .property('toForm')
-                .call([refer('paramName')], memberFormArgs())
+                .call([refer('paramName')], memberFormArgs(resolvedType))
                 .code,
           ]);
         } else {
@@ -1154,7 +1158,7 @@ class const OneOfGenerator({
               .property('toBase64String')
               .call([])
               .property('toForm')
-              .call([refer('paramName')], memberFormArgs())
+              .call([refer('paramName')], memberFormArgs(resolvedType))
               .code,
         ]);
       } else if (resolvedType is BinaryModel) {
@@ -1165,7 +1169,7 @@ class const OneOfGenerator({
         addValueArm([
           refer('value')
               .property('toForm')
-              .call([refer('paramName')], memberFormArgs())
+              .call([refer('paramName')], memberFormArgs(resolvedType))
               .code,
         ]);
       }
