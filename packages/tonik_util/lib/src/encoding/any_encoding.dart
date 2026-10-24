@@ -576,12 +576,11 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     );
   }
   if (value is List<dynamic>) {
-    final filtered = value.where((item) => item != null).toList();
-    if (filtered.isEmpty && !allowEmpty) {
+    if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = filtered
-        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: allowEmpty))
         .toList()
         .toPipeDelimited(
           explode: false,
@@ -635,12 +634,11 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     );
   }
   if (value is List<dynamic>) {
-    final filtered = value.where((item) => item != null).toList();
-    if (filtered.isEmpty && !allowEmpty) {
+    if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = filtered
-        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: allowEmpty))
         .toList()
         .toSpaceDelimited(
           explode: false,
