@@ -2728,13 +2728,13 @@ void main() {
         );
       });
 
-      test('omits a null item while keeping the rest', () {
+      test('preserves leading, middle, and trailing null slots', () {
         final result = encodeAnyToPipeDelimited(
-          [null, 'blue'],
+          [null, 'a', null, 'b', null],
           'p',
           allowEmpty: true,
         );
-        expect(result, [(name: 'p', value: 'blue')]);
+        expect(result, [(name: 'p', value: '|a||b|')]);
       });
 
       test('preserves an empty-string item', () {
@@ -2746,9 +2746,20 @@ void main() {
         expect(result, [(name: 'p', value: '|blue')]);
       });
 
-      test('omits an all-null list when allowEmpty=true', () {
+      test('preserves an all-null list when allowEmpty=true', () {
         final result = encodeAnyToPipeDelimited([null], 'p', allowEmpty: true);
-        expect(result, isEmpty);
+        expect(result, [(name: 'p', value: '')]);
+      });
+
+      test('throws for a null item among non-empty values', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            ['a', null, 'b'],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
       });
 
       test('throws for an all-null list when allowEmpty=false', () {
@@ -2973,13 +2984,13 @@ void main() {
         );
       });
 
-      test('omits a null item while keeping the rest', () {
+      test('preserves leading, middle, and trailing null slots', () {
         final result = encodeAnyToSpaceDelimited(
-          [null, 'blue'],
+          [null, 'a', null, 'b', null],
           'p',
           allowEmpty: true,
         );
-        expect(result, [(name: 'p', value: 'blue')]);
+        expect(result, [(name: 'p', value: '%20a%20%20b%20')]);
       });
 
       test('preserves an empty-string item', () {
@@ -2991,9 +3002,20 @@ void main() {
         expect(result, [(name: 'p', value: '%20blue')]);
       });
 
-      test('omits an all-null list when allowEmpty=true', () {
+      test('preserves an all-null list when allowEmpty=true', () {
         final result = encodeAnyToSpaceDelimited([null], 'p', allowEmpty: true);
-        expect(result, isEmpty);
+        expect(result, [(name: 'p', value: '')]);
+      });
+
+      test('throws for a null item among non-empty values', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            ['a', null, 'b'],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
       });
 
       test('throws for an all-null list when allowEmpty=false', () {

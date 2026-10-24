@@ -4,6 +4,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Extensions for encoding values using label style parameter encoding.
 extension LabelUriEncoder on Uri {
@@ -122,7 +123,7 @@ extension LabelStringMapEncoder on Map<String, String> {
 
     if (explode) {
       return entries.map((entry) {
-        final key = Uri.encodeComponent(entry.key);
+        final key = encodeUriComponent(entry.key);
         if (entry.value.isEmpty) {
           return '.$key';
         }
@@ -163,6 +164,6 @@ extension LabelBinaryEncoder on List<int> {
       return '.';
     }
     final str = decodeToString();
-    return '.${Uri.encodeComponent(str)}';
+    return '.${encodeUriComponent(str)}';
   }
 }

@@ -433,7 +433,7 @@ void main() {
           ),
           'p',
         ),
-        'name=50%25%20off!%20Buy%20now%20%26%20save&number=99',
+        'name=50%25%20off%21%20Buy%20now%20%26%20save&number=99',
       );
     });
 
@@ -457,7 +457,7 @@ void main() {
           ),
           'p',
         ),
-        'name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+        'name,50%25%20off%21%20Buy%20now%20%26%20save,number,99',
       );
     });
 
@@ -473,7 +473,7 @@ void main() {
     test('toSimple - explode true', () {
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'name=50%25%20off!%20Buy%20now%20%26%20save,number=99',
+        'name=50%25%20off%21%20Buy%20now%20%26%20save,number=99',
       );
     });
 
@@ -490,7 +490,7 @@ void main() {
     test('toSimple - explode false', () {
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+        'name,50%25%20off%21%20Buy%20now%20%26%20save,number,99',
       );
     });
 
@@ -507,28 +507,28 @@ void main() {
     test('toMatrix - explode false', () {
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+        ';x=name,50%25%20off%21%20Buy%20now%20%26%20save,number,99',
       );
     });
 
     test('toMatrix - explode true', () {
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';name=50%25%20off!%20Buy%20now%20%26%20save;number=99',
+        ';name=50%25%20off%21%20Buy%20now%20%26%20save;number=99',
       );
     });
 
     test('toLabel - explode true', () {
       expect(
         allOf.toLabel(explode: true, allowEmpty: true),
-        '.name=50%25%20off!%20Buy%20now%20%26%20save.number=99',
+        '.name=50%25%20off%21%20Buy%20now%20%26%20save.number=99',
       );
     });
 
     test('toLabel - explode false', () {
       expect(
         allOf.toLabel(explode: false, allowEmpty: true),
-        '.name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+        '.name,50%25%20off%21%20Buy%20now%20%26%20save,number,99',
       );
     });
 

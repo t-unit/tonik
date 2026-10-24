@@ -37,6 +37,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
+  /multipart31/nested-arrays:
+    post:
+      operationId: postNestedArrays
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NestedArrayForm'
+            encoding:
+              integers:
+                style: form
+                explode: true
+              strings:
+                style: form
+                explode: false
+              labels:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
   /multipart31/named-nullable-uri-array:
     post:
       operationId: postNamedNullableUriArray
@@ -597,6 +620,26 @@ paths:
 
 components:
   schemas:
+    NestedArrayForm:
+      type: object
+      required: [labels]
+      properties:
+        labels:
+          type: array
+          items:
+            type: string
+        integers:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+        strings:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
     QuotedObjectForm:
       type: object
       required:

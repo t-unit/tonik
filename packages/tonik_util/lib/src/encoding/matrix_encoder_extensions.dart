@@ -4,6 +4,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Extensions for encoding values using matrix style parameter encoding.
 ///
@@ -129,7 +130,7 @@ extension MatrixStringListEncoder on List<String> {
         (item) => item.isEmpty
             ? ';$paramName'
             : ';$paramName='
-                  '${alreadyEncoded ? item : Uri.encodeComponent(item)}',
+                  '${alreadyEncoded ? item : encodeUriComponent(item)}',
       ).join();
     } else {
       final encoded = uriEncode(
@@ -167,11 +168,11 @@ extension MatrixStringMapEncoder on Map<String, String> {
 
     if (explode) {
       return entries.map((e) {
-        final key = Uri.encodeComponent(e.key);
+        final key = encodeUriComponent(e.key);
         return e.value.isEmpty
             ? ';$key'
             : ';$key='
-                  '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}';
+                  '${alreadyEncoded ? e.value : encodeUriComponent(e.value)}';
       }).join();
     } else {
       final encoded = uriEncode(
@@ -206,7 +207,7 @@ extension MatrixBinaryEncoder on List<int> {
       throw const EmptyValueException();
     }
     final str = isEmpty ? '' : decodeToString();
-    final encoded = Uri.encodeComponent(str);
+    final encoded = encodeUriComponent(str);
     return ';$paramName=$encoded';
   }
 }

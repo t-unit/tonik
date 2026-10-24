@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Extensions for encoding values using deepObject style parameter encoding.
 ///
@@ -25,7 +26,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
   /// The [alreadyEncoded] parameter indicates values are already URI-encoded.
   ///
   /// When [allowReserved] is true, most reserved characters in each VALUE
-  /// are kept literal. Keys are `Uri.encodeComponent`-encoded because they
+  /// are kept literal. Keys are `encodeUriComponent`-encoded because they
   /// form part of the parameter name `name[key]`; the surrounding `[` `]` are
   /// emitted literally as name structure.
   ///
@@ -50,9 +51,9 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
       return [];
     }
 
-    final encodedName = Uri.encodeComponent(paramName);
+    final encodedName = encodeUriComponent(paramName);
     return entries.map((e) {
-      final encodedKey = Uri.encodeComponent(e.key);
+      final encodedKey = encodeUriComponent(e.key);
       final encodedValue = alreadyEncoded
           ? e.value
           : e.value.uriEncode(

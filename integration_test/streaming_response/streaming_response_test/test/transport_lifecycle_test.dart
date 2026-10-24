@@ -11,6 +11,59 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test(
+    'declared UTF-8 overrides unknown wire charset before stream EOF',
+    () async {
+      final probe = BackendProbe(
+        contentType: 'application/x-ndjson; charset=blub',
+      );
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getCharsetText()
+          .timeout(const Duration(seconds: 5));
+      final first = requireSuccess(result).value.first;
+      probe.bytes.add(utf8.encode('"café"\n'));
+
+      expect(
+        requireSuccess(await first.timeout(const Duration(seconds: 5))).value,
+        'café',
+      );
+      expect(probe.bytes.isClosed, isFalse);
+    },
+  );
+
+  test(
+    'unsupported declared stream charset produces a decoding error',
+    () async {
+      final probe = BackendProbe();
+      final server = CustomServer(
+        baseUrl: 'http://example.test',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server)
+          .getUnsupportedCharset()
+          .timeout(const Duration(seconds: 5));
+      final item = await requireSuccess(result).value.first
+          .timeout(const Duration(seconds: 5));
+
+      final error = requireError(item);
+      expect(error.type, TonikErrorType.decoding);
+      expect(error.error, isA<ResponseDecodingException>());
+      expect(
+        error.error.toString(),
+        contains('Unsupported streaming response charset'),
+      );
+      await probe.aborted.future.timeout(const Duration(seconds: 5));
+    },
+  );
+
+  test(
     'configured NDJSON selects normalized custom media before EOF',
     () async {
       final probe = BackendProbe(

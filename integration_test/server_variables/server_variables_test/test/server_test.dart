@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:server_variables_api/server_variables_api.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   group('Static server', () {
@@ -149,6 +152,86 @@ void main() {
       expect(Server6Zone.usEast.value, 'us-east');
       expect(Server6Zone.euWest.value, 'eu-west');
       expect(Server6Zone.apSouth.value, 'ap-south');
+    });
+  });
+
+  group('Relative servers', () {
+    test('root-relative server resolves against the supplied origin', () {
+      final server = Server7(
+        origin: Uri.parse('https://api.example.com/spec/openapi.yaml'),
+      );
+      expect(server.baseUrl, 'https://api.example.com/relative/api');
+    });
+
+    test('path-relative server resolves against the document location', () {
+      final server = Server8(
+        origin: Uri.parse('https://api.example.com/spec/openapi.yaml'),
+      );
+      expect(server.baseUrl, 'https://api.example.com/api');
+    });
+
+    test('network-relative server inherits the origin scheme', () {
+      final server = Server9(origin: Uri.parse('http://docs.example.com'));
+      expect(server.baseUrl, 'http://api.example.com/api');
+    });
+
+    test('relative variables are substituted before resolution', () {
+      final server = Server10(
+        origin: Uri.parse('https://api.example.com'),
+        $origin: Server10Origin.tenant,
+        version: 'v2',
+      );
+      expect(server.baseUrl, 'https://api.example.com/tenant/v2');
+      expect(server.$origin, Server10Origin.tenant);
+      expect(server.version, 'v2');
+    });
+
+    test('absolute scheme variables do not require an origin URI', () {
+      final server = Server11(scheme: Server11Scheme.http, origin: 'v2');
+      expect(server.baseUrl, 'http://api.example.com/v2');
+      expect(server.origin, 'v2');
+    });
+
+    test('root-relative server makes a successful request', () async {
+      final endpoint = await RawRequestServer.start(
+        responseStatusCode: 200,
+        responseHeaders: {'content-type': 'application/json'},
+        responseBody: utf8.encode(
+          '{"status":"healthy","timestamp":"2026-01-01T00:00:00Z"}',
+        ),
+      );
+      final server = Server7(origin: Uri.parse(endpoint.baseUrl));
+      addTearDown(server.close);
+
+      final result = await HealthApi(server).getHealth();
+
+      expect(result, isTonikSuccess);
+      final request = await endpoint.takeRequest();
+      expect(request.method, 'GET');
+      expect(request.uri.path, '/relative/api/health');
+    });
+
+    test('templated relative server makes a successful request', () async {
+      final endpoint = await RawRequestServer.start(
+        responseStatusCode: 200,
+        responseHeaders: {'content-type': 'application/json'},
+        responseBody: utf8.encode(
+          '{"status":"healthy","timestamp":"2026-01-01T00:00:00Z"}',
+        ),
+      );
+      final server = Server10(
+        origin: Uri.parse(endpoint.baseUrl),
+        $origin: Server10Origin.tenant,
+        version: 'v2',
+      );
+      addTearDown(server.close);
+
+      final result = await HealthApi(server).getHealth();
+
+      expect(result, isTonikSuccess);
+      final request = await endpoint.takeRequest();
+      expect(request.method, 'GET');
+      expect(request.uri.path, '/tenant/v2/health');
     });
   });
 

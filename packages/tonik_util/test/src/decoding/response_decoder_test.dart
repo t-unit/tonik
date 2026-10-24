@@ -30,6 +30,19 @@ void main() {
         expect(result, 'hello world');
       });
 
+      test('decodes JSON using the supplied charset', () {
+        final result = decodeResponseJson<String>(const [
+          0x22,
+          0x63,
+          0x61,
+          0x66,
+          0xe9,
+          0x22,
+        ], contentType: 'application/problem+json; charset=latin1');
+
+        expect(result, 'café');
+      });
+
       test('decodes JSON number primitive', () {
         final bytes = utf8.encode('42');
         final result = decodeResponseJson<int>(bytes);
@@ -69,6 +82,84 @@ void main() {
         expect(result['user'], isA<Map<String, Object?>>());
         expect((result['user']! as Map<String, Object?>)['name'], 'John');
         expect(result['tags'], isA<List<Object?>>());
+      });
+    });
+
+    group('form content type', () {
+      test('normalizes percent-encoded Latin-1 form values', () {
+        final result = decodeResponseForm(
+          ascii.encode('name=caf%E9'),
+          contentType: 'application/x-www-form-urlencoded; charset=latin1',
+        );
+
+        expect(result, 'name=caf%C3%A9');
+      });
+
+      test(
+        'preserves encoded syntax, list commas, duplicate keys and order',
+        () {
+          final result = decodeResponseForm(
+            ascii.encode('caf%E9=%26%3D%2B%2C+x&items=caf%E9,a%2Cb&caf%E9=fin'),
+            contentType: 'application/x-www-form-urlencoded; charset=latin1',
+          );
+
+          expect(
+            result,
+            'caf%C3%A9=%26%3D%2B%2C+x&items=caf%C3%A9,a%2Cb&caf%C3%A9=fin',
+          );
+          final listValue = result.split('&')[1].split('=')[1];
+          expect(listValue.decodeFormStringList(), ['café', 'a,b']);
+        },
+      );
+
+      test('decodes multibyte fields with escaped and literal trail bytes', () {
+        final result = decodeResponseForm(
+          ascii.encode('mark=%81K'),
+          contentType: 'application/x-www-form-urlencoded; charset=shift-jis',
+        );
+
+        expect(result, 'mark=%E3%82%9C');
+      });
+
+      test('preserves encoded spaces in form property names', () {
+        final result = decodeResponseForm(
+          ascii.encode('first%20name=caf%E9'),
+          contentType: 'application/x-www-form-urlencoded; charset=latin1',
+        );
+        final fields = result.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'first name'},
+          listKeys: {},
+        );
+
+        expect(result, 'first%20name=caf%C3%A9');
+        expect(fields['first name'].decodeFormString(), 'café');
+      });
+
+      test('normalizes UTF-16BE encoded keys and values', () {
+        final result = decodeResponseForm(
+          ascii.encode('%00n%00a%00m%00e=%00c%00a%00f%00%E9'),
+          contentType: 'application/x-www-form-urlencoded; charset=utf-16be',
+        );
+
+        expect(result, 'name=caf%C3%A9');
+      });
+
+      test('continues accepting raw Latin-1 text in form values', () {
+        final result = decodeResponseForm(const [
+          0x6e,
+          0x61,
+          0x6d,
+          0x65,
+          0x3d,
+          0x63,
+          0x61,
+          0x66,
+          0xe9,
+        ], contentType: 'application/x-www-form-urlencoded; charset=latin1');
+
+        expect(result, 'name=caf%C3%A9');
       });
     });
 

@@ -707,6 +707,10 @@ void main() {
     late PathParameterObject normalPath;
     late RequestHeaderObject deprecatedHeader;
     late RequestHeaderObject normalHeader;
+    late CookieParameterObject deprecatedCookie;
+    late CookieParameterObject normalCookie;
+    late CookieParameterAlias deprecatedCookieAlias;
+    late CookieParameterAlias normalCookieAlias;
     late Operation operation;
     late ApiDocument document;
 
@@ -826,6 +830,47 @@ void main() {
         nameOverride: null,
       );
 
+      deprecatedCookie = CookieParameterObject(
+        name: 'legacyCookie',
+        rawName: 'legacy-cookie',
+        description: 'Deprecated cookie',
+        isRequired: false,
+        isDeprecated: true,
+        explode: true,
+        model: stringModel,
+        encoding: CookieParameterEncoding.form,
+        context: ctx,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+      normalCookie = CookieParameterObject(
+        name: 'sessionCookie',
+        rawName: 'session-cookie',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        explode: true,
+        model: stringModel,
+        encoding: CookieParameterEncoding.form,
+        context: ctx,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+      );
+      deprecatedCookieAlias = CookieParameterAlias(
+        name: 'legacySession',
+        parameter: deprecatedCookie.resolve(),
+        context: ctx,
+        description: 'Alias description',
+      );
+      normalCookieAlias = CookieParameterAlias(
+        name: 'session',
+        parameter: normalCookie,
+        context: ctx,
+        description: null,
+      );
+
       operation = Operation(
         operationId: 'testOp',
         context: ctx.push('paths').push('/test').push('get'),
@@ -836,7 +881,12 @@ void main() {
         headers: {deprecatedHeader, normalHeader},
         queryParameters: {deprecatedQuery, normalQuery},
         pathParameters: {deprecatedPath, normalPath},
-        cookieParameters: const {},
+        cookieParameters: {
+          deprecatedCookie,
+          normalCookie,
+          deprecatedCookieAlias,
+          normalCookieAlias,
+        },
         responses: const {},
         securitySchemes: const {},
         nameOverride: null,
@@ -884,6 +934,17 @@ void main() {
       expect(op.headers, hasLength(2));
       expect(deprecatedHeader.isDeprecated, isTrue);
       expect(normalHeader.isDeprecated, isFalse);
+
+      expect(op.cookieParameters, {
+        deprecatedCookie,
+        normalCookie,
+        deprecatedCookieAlias,
+        normalCookieAlias,
+      });
+      expect(deprecatedCookie.isDeprecated, isTrue);
+      expect(deprecatedCookieAlias.resolve().isDeprecated, isTrue);
+      expect(normalCookie.isDeprecated, isFalse);
+      expect(normalCookieAlias.resolve().isDeprecated, isFalse);
     });
 
     test('exclude mode removes deprecated parameters', () {
@@ -934,6 +995,9 @@ void main() {
       expect(op.headers, hasLength(1));
       expect(op.headers.contains(normalHeader), isTrue);
       expect(op.headers.contains(deprecatedHeader), isFalse);
+
+      expect(op.cookieParameters, {normalCookie, normalCookieAlias});
+      expect(deprecatedCookieAlias.resolve().isDeprecated, isTrue);
     });
 
     test('ignore mode sets isDeprecated to false for all parameters', () {
@@ -984,6 +1048,18 @@ void main() {
       expect(op.headers, hasLength(2));
       expect(deprecatedHeader.isDeprecated, isFalse);
       expect(normalHeader.isDeprecated, isFalse);
+
+      expect(op.cookieParameters, hasLength(4));
+      expect(op.cookieParameters, contains(normalCookieAlias));
+      expect(deprecatedCookie.isDeprecated, isFalse);
+      expect(normalCookie.isDeprecated, isFalse);
+      final ignoredAlias = op.cookieParameters
+          .whereType<CookieParameterObject>()
+          .singleWhere((cookie) => cookie.name == 'legacySession');
+      expect(ignoredAlias.isDeprecated, isFalse);
+      expect(ignoredAlias.rawName, 'legacy-cookie');
+      expect(ignoredAlias.description, 'Alias description');
+      expect(deprecatedCookieAlias.resolve().isDeprecated, isTrue);
     });
   });
 

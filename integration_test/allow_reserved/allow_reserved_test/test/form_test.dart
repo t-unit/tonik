@@ -39,6 +39,22 @@ void main() {
       );
     });
 
+    test('escapes sub-delimiters only for the default parameter', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormAllowReserved(
+        reserved: "a!b'c(d)e*f",
+        notReserved: "a!b'c(d)e*f",
+      );
+
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(
+        recordedRequest.uri.query,
+        "reserved=a!b'c(d)e*f&notReserved=a%21b%27c%28d%29e%2Af",
+      );
+    });
+
     test('sibling default parameter is fully percent-encoded', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReserved(notReserved: value);
