@@ -11,6 +11,44 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test(
+    'borrowed client keeps its base URL during a generated request',
+    () async {
+      final client = dio.Dio(
+        dio.BaseOptions(baseUrl: 'https://application.example.com/'),
+      );
+      addTearDown(client.close);
+      final probe = BackendProbe(borrowedDio: client);
+      final server = CustomServer(
+        baseUrl: 'https://generated.example.com/v1',
+        serverConfig: probe.config(),
+      );
+      addTearDown(server.close);
+
+      final result = await StreamingApi(server).getItems();
+      final items = requireSuccess(result).value.toList();
+      probe.bytes.add(utf8.encode('{"value":7}\n'));
+      await probe.bytes.close();
+
+      expect(
+        requireSuccess((await items).single).value,
+        const ItemsGet200BodyModel(value: 7),
+      );
+      expect(
+        probe.requestedUri.toString(),
+        'https://generated.example.com/v1/items',
+      );
+      expect(client.options.baseUrl, 'https://application.example.com/');
+      if (server.serverConfig.client is dio.Dio) {
+        expect(server.serverConfig.client, same(client));
+      }
+
+      server.close();
+      expect(probe.clientClosed, isFalse);
+      expect(client.options.baseUrl, 'https://application.example.com/');
+    },
+  );
+
+  test(
     'declared UTF-8 overrides unknown wire charset before stream EOF',
     () async {
       final probe = BackendProbe(
@@ -425,6 +463,7 @@ void main() {
 }
 
 final class BackendProbe({
+  final dio.Dio? borrowedDio,
   final String contentType = 'application/x-ndjson',
   final int statusCode = 200,
   final Map<String, String> headers = const {},
@@ -434,10 +473,12 @@ final class BackendProbe({
   final aborted = Completer<void>();
   final listening = Completer<void>();
   bool clientClosed = false;
+  Uri? requestedUri;
 
   ServerConfig<Client> config<Client extends Object>() {
     if (Client == dio.Dio) {
-      final client = dio.Dio()..httpClientAdapter = ProbeDioAdapter(this);
+      final client = (borrowedDio ?? dio.Dio())
+        ..httpClientAdapter = ProbeDioAdapter(this);
       return ServerConfig.client(client) as ServerConfig<Client>;
     }
     if (Client == http.Client) {
@@ -459,6 +500,7 @@ final class ProbeDioAdapter(final BackendProbe probe)
     Stream<Uint8List>? requestStream,
     Future<void>? cancelFuture,
   ) async {
+    probe.requestedUri = options.uri;
     final token = options.cancelToken;
     if (token != null) unawaited(token.whenCancel.then((_) => probe.abort()));
     probe.bytes.onListen = probe.listening.complete;
@@ -479,6 +521,7 @@ final class ProbeDioAdapter(final BackendProbe probe)
 final class ProbeHttpClient(final BackendProbe probe) extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    probe.requestedUri = request.url;
     final abort = (request as http.Abortable).abortTrigger;
     if (abort != null) {
       unawaited(

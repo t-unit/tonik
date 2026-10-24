@@ -91,7 +91,9 @@ void main() {
 
         final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
         this._$ownsDio = client == null;
-        resolvedDio.options.baseUrl = this.baseUrl;
+        if (this._$ownsDio) {
+          resolvedDio.options.baseUrl = this.baseUrl;
+        }
         return this._$dio = resolvedDio;
       ''';
 
@@ -421,7 +423,9 @@ void main() {
             final resolvedDio =
                 client ?? clientFactory?.call() ?? _i3.Dio();
             this._$ownsDio = client == null;
-            resolvedDio.options.baseUrl = this.baseUrl;
+            if (this._$ownsDio) {
+              resolvedDio.options.baseUrl = this.baseUrl;
+            }
             return this._$dio = resolvedDio;
           }
 
