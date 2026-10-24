@@ -235,6 +235,22 @@ void main() {
     });
   });
 
+  test('escaped enum constants preserve defaults and raw values', () {
+    final server = Server12();
+
+    expect(server.mode, Server12Mode.$value);
+    expect(server.mode.value, 'value');
+    expect(server.baseUrl, 'https://value.example.com/api/v1');
+    expect(Server12Mode.$value2.value, 'VALUE');
+    expect(Server12Mode.$value3.value, '_');
+    expect(Server12Mode.$values.value, 'values');
+    expect(Server12Mode.$index.value, 'index');
+    expect(
+      Server12(mode: Server12Mode.$value3).baseUrl,
+      'https://_.example.com/api/v1',
+    );
+  });
+
   group('CustomServer', () {
     test('CustomServer can use any base URL', () {
       final server = CustomServer(baseUrl: 'https://custom.example.com/api');
