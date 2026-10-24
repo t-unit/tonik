@@ -41,13 +41,20 @@ class ModelImporter._(
   late Set<Model> models;
 
   final Map<String, Set<Model>> _modelsByName = {};
+  // The parsed schema identifies the exact reference target, even when
+  // multiple definitions or components share the same display name.
+  final Map<Model, Schema> _modelSchemas = {};
 
-  Model? _findNamedModel(String? name) {
+  Model? _findNamedModel(String? name, [Schema? schema]) {
     if (name == null) return null;
-    return _modelsByName[name]?.firstOrNull;
+    final target = schema ?? _schemas[name];
+    return _modelsByName[name]?.firstWhereOrNull(
+      (model) => identical(_modelSchemas[model], target),
+    );
   }
 
-  void _registerModel(Model model) {
+  void _registerModel(Model model, [Schema? schema]) {
+    if (schema != null) _modelSchemas[model] = schema;
     if (!models.add(model)) return;
     if (model is NamedModel) {
       final name = model.name;
@@ -59,6 +66,7 @@ class ModelImporter._(
 
   void _removeModel(Model model) {
     if (!models.remove(model)) return;
+    _modelSchemas.remove(model);
     if (model is NamedModel) {
       final name = model.name;
       if (name != null) {
@@ -89,6 +97,7 @@ class ModelImporter._(
   void import() {
     models = <Model>{};
     _modelsByName.clear();
+    _modelSchemas.clear();
     _placeholders.clear();
     _propertyModels.clear();
     _additionalProperties.clear();
@@ -117,7 +126,7 @@ class ModelImporter._(
   /// [models] so it can be found during pass 2.
   void _createShell(String name, Schema schema, Context context) {
     // Skip if already created (e.g. from a previous pass 1 iteration).
-    if (_findNamedModel(name) != null) {
+    if (_findNamedModel(name, schema) != null) {
       return;
     }
 
@@ -147,7 +156,7 @@ class ModelImporter._(
         isWriteOnly: false,
       );
       _logModelAdded(aliasModel);
-      _registerModel(aliasModel);
+      _registerModel(aliasModel, schema);
       return;
     }
 
@@ -169,7 +178,7 @@ class ModelImporter._(
         nameOverride: null,
       );
       _logModelAdded(aliasModel);
-      _registerModel(aliasModel);
+      _registerModel(aliasModel, schema);
       return;
     }
 
@@ -190,7 +199,7 @@ class ModelImporter._(
         additionalPropertiesPolicy: null,
       );
       _logModelAdded(allOfModel);
-      _registerModel(allOfModel);
+      _registerModel(allOfModel, schema);
       return;
     }
 
@@ -210,7 +219,7 @@ class ModelImporter._(
         discriminator: null,
       );
       _logModelAdded(oneOfModel);
-      _registerModel(oneOfModel);
+      _registerModel(oneOfModel, schema);
       return;
     }
 
@@ -230,7 +239,7 @@ class ModelImporter._(
         discriminator: null,
       );
       _logModelAdded(anyOfModel);
-      _registerModel(anyOfModel);
+      _registerModel(anyOfModel, schema);
       return;
     }
 
@@ -252,7 +261,7 @@ class ModelImporter._(
         isWriteOnly: false,
       );
       _logModelAdded(aliasModel);
-      _registerModel(aliasModel);
+      _registerModel(aliasModel, schema);
       return;
     }
 
@@ -273,7 +282,7 @@ class ModelImporter._(
         discriminator: null,
       );
       _logModelAdded(oneOfModel);
-      _registerModel(oneOfModel);
+      _registerModel(oneOfModel, schema);
       return;
     }
 
@@ -290,7 +299,7 @@ class ModelImporter._(
         isValueNullable: false,
       );
       _logModelAdded(model);
-      _registerModel(model);
+      _registerModel(model, schema);
       return;
     }
 
@@ -314,7 +323,7 @@ class ModelImporter._(
           isDeprecated: false,
         );
         _logModelAdded(aliasModel);
-        _registerModel(aliasModel);
+        _registerModel(aliasModel, schema);
         return;
       }
     }
@@ -342,7 +351,7 @@ class ModelImporter._(
         isContentNullable: false,
       );
       _logModelAdded(listModel);
-      _registerModel(listModel);
+      _registerModel(listModel, schema);
       return;
     }
 
@@ -361,7 +370,7 @@ class ModelImporter._(
       additionalPropertiesPolicy: null,
     );
     _logModelAdded(model);
-    _registerModel(model);
+    _registerModel(model, schema);
   }
 
   /// Returns true if the type string represents a primitive type.
@@ -413,7 +422,7 @@ class ModelImporter._(
   /// Re-reads the schema and resolves all references. The shell already
   /// exists in [models], so recursive references find it immediately.
   void _populateShell(String name, Schema schema, Context context) {
-    final existingModel = _findNamedModel(name);
+    final existingModel = _findNamedModel(name, schema);
 
     // For schemas that didn't get a shell in pass 1 (e.g. direct
     // self-references that were skipped, enums), run the full parse.
@@ -444,9 +453,9 @@ class ModelImporter._(
 
       applyExamples(model, exampleImporter.fromSchema(schema));
 
-      if (_findNamedModel(name) == null) {
+      if (_findNamedModel(name, schema) == null) {
         log.fine('Adding model $name');
-        _registerModel(model);
+        _registerModel(model, schema);
       }
       return;
     }
@@ -562,8 +571,8 @@ class ModelImporter._(
           ..isReadOnly = model.isReadOnly
           ..isWriteOnly = model.isWriteOnly;
       }
-      if (_findNamedModel(name) == null) {
-        _registerModel(shell);
+      if (_findNamedModel(name, schema) == null) {
+        _registerModel(shell, schema);
       }
       return;
     }
@@ -805,19 +814,15 @@ class ModelImporter._(
     Context context,
     Model currentShell,
   ) {
-    if (schema.ref != null) {
-      final ref = schema.ref!;
-      if (ref.startsWith('#/components/schemas/')) {
-        final refName = ref.split('/').last;
-        final refModel = _findNamedModel(refName);
-        if (refModel != null &&
-            _compositeContains(refModel, currentShell, <Model>{})) {
-          log.fine(
-            'Skipping back-edge to $refName during composite population '
-            'to prevent cycle.',
-          );
-          return null;
-        }
+    final ref = schema.ref;
+    if (ref != null) {
+      final refModel = _resolveReferenceForProperty(ref, context);
+      if (_compositeContains(refModel, currentShell, <Model>{})) {
+        log.fine(
+          'Skipping back-edge to $ref during composite population '
+          'to prevent cycle.',
+        );
+        return null;
       }
     }
 
@@ -876,8 +881,8 @@ class ModelImporter._(
 
     // Remove the duplicate created by _parseMultiType.
     _removeModel(oneOfModel);
-    if (_findNamedModel(name) == null) {
-      _registerModel(shell);
+    if (_findNamedModel(name, schema) == null) {
+      _registerModel(shell, schema);
     }
   }
 
@@ -1074,7 +1079,7 @@ class ModelImporter._(
   ) {
     final ref = schema.ref!;
 
-    final refModel = _resolveReferenceTarget(ref);
+    final refModel = _resolveReferenceForProperty(ref, context);
 
     final modelContext = context.push('allOf');
     final modelsToMerge = <Model>[refModel];
@@ -1115,13 +1120,13 @@ class ModelImporter._(
       isWriteOnly: false,
     );
 
-    _addModelToSet(allOfModel);
+    _addModelToSet(allOfModel, schema);
     return allOfModel;
   }
 
   Model _resolveReferenceForProperty(String ref, Context context) {
     if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
-      return _resolveDefsReferenceForProperty(ref, context);
+      return _resolveDefsTarget(ref);
     }
 
     return _resolveReferenceTarget(ref);
@@ -1147,77 +1152,58 @@ class ModelImporter._(
         _resolveWithCycleCheck(refName, refSchema);
   }
 
-  Model _resolveDefsReferenceForProperty(String ref, Context context) {
+  Model _resolveDefsTarget(String ref) {
     final defSchema = _defs[ref];
     if (defSchema == null) {
       throw ArgumentError('\$defs reference $ref not found');
     }
 
     final defName = ref.split('/').last;
-    final defsContext = _contextFromDefsPath(ref);
-
-    return _resolveSchemaRef(defName, defSchema, defsContext);
-  }
-
-  Model _resolveDefsReference(String? name, Schema schema, Context context) {
-    final ref = schema.ref!;
-    final defSchema = _defs[ref];
-
-    if (defSchema == null) {
-      throw ArgumentError('\$defs reference $ref not found for $name');
-    }
-
-    final defName = ref.split('/').last;
+    final existing = _findNamedModel(defName, defSchema);
+    if (existing != null) return existing;
 
     if (_resolving.contains(ref)) {
-      final existing = _findNamedModel(defName);
-      if (existing != null) {
-        return existing;
-      }
-
-      // Placeholders stay out of models so they do not shadow the real model
-      // built when resolution unwinds.
-      log.fine(
-        'Circular reference to $ref detected. '
-        'Using placeholder until resolution completes.',
+      return _placeholders.putIfAbsent(
+        ref,
+        () => AliasModel(
+          name: defName,
+          model: AnyModel(context: _contextFromDefsPath(ref)),
+          context: _contextFromDefsPath(ref),
+          defaultValue: null,
+          examples: const [],
+          nameOverride: null,
+          description: null,
+          isDeprecated: false,
+          isNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
       );
-      final placeholder = AliasModel(
-        name: defName,
-        model: AnyModel(context: _contextFromDefsPath(ref)),
-        context: _contextFromDefsPath(ref),
-        defaultValue: null,
-        examples: const [],
-        nameOverride: null,
-        description: null,
-        isDeprecated: false,
-        isNullable: false,
-        isReadOnly: false,
-        isWriteOnly: false,
-      );
-      _placeholders[ref] = placeholder;
-      return placeholder;
     }
 
     _resolving.add(ref);
-    final Model refModel;
     try {
-      final defsContext = _contextFromDefsPath(ref);
-      refModel = _resolveSchemaRef(defName, defSchema, defsContext);
-
-      // If a placeholder was created during resolution, update it to
-      // point to the real model so back-edge references resolve correctly.
-      // Skip AliasModel results to avoid infinite loops in resolved getter.
+      final refModel = _resolveSchemaRef(
+        defName,
+        defSchema,
+        _contextFromDefsPath(ref),
+      );
       final placeholder = _placeholders.remove(ref);
       if (placeholder != null) {
-        if (refModel is! AliasModel) {
+        if (!_wouldCreateAliasCycle(placeholder, refModel)) {
           placeholder.model = refModel;
         } else {
           _registerModel(placeholder);
         }
       }
+      return refModel;
     } finally {
       _resolving.remove(ref);
     }
+  }
+
+  Model _resolveDefsReference(String? name, Schema schema, Context context) {
+    final refModel = _resolveDefsTarget(schema.ref!);
 
     if (_hasStructuralSiblings(schema)) {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
@@ -1225,7 +1211,7 @@ class ModelImporter._(
 
     if (name != null || hasAnnotationSiblings(schema)) {
       if (name != null) {
-        final existing = _findNamedModel(name);
+        final existing = _findNamedModel(name, schema);
         if (existing != null) {
           return existing;
         }
@@ -1246,7 +1232,7 @@ class ModelImporter._(
       );
 
       _logModelAdded(aliasModel);
-      _registerModel(aliasModel);
+      _registerModel(aliasModel, schema);
 
       return aliasModel;
     }
@@ -1314,7 +1300,7 @@ class ModelImporter._(
         } else {
           // Bare ref cycle -- add placeholder to models as the final model.
           // AnyModel terminal is correct since there's no concrete type.
-          _registerModel(placeholder);
+          _registerModel(placeholder, refSchema);
         }
       }
 
@@ -1346,7 +1332,10 @@ class ModelImporter._(
       return _resolveDefsReference(name, schema, context);
     }
 
-    final refModel = _resolveReferenceTarget(ref, name: name);
+    final refModel = _resolveReferenceTarget(
+      ref,
+      name: identical(_schemas[name], schema) ? name : null,
+    );
 
     if (_hasStructuralSiblings(schema)) {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
@@ -1354,7 +1343,7 @@ class ModelImporter._(
 
     if (name != null || hasAnnotationSiblings(schema)) {
       if (name != null) {
-        final existing = _findNamedModel(name);
+        final existing = _findNamedModel(name, schema);
         if (existing != null) {
           return existing;
         }
@@ -1375,7 +1364,7 @@ class ModelImporter._(
       );
 
       _logModelAdded(aliasModel);
-      _registerModel(aliasModel);
+      _registerModel(aliasModel, schema);
 
       return aliasModel;
     }
@@ -1428,12 +1417,12 @@ class ModelImporter._(
       additionalPropertiesPolicy: null,
     );
 
-    _addModelToSet(allOfModel);
+    _addModelToSet(allOfModel, schema);
     return allOfModel;
   }
 
   Model _parseSchema(String? name, Schema schema, Context context) {
-    final existing = _findNamedModel(name);
+    final existing = _findNamedModel(name, schema);
     if (existing != null) {
       return existing;
     }
@@ -1492,7 +1481,7 @@ class ModelImporter._(
       );
       if (name != null) {
         _logModelAdded(model);
-        _registerModel(model);
+        _registerModel(model, schema);
       }
       return model;
     }
@@ -1553,12 +1542,13 @@ class ModelImporter._(
         isDeprecated: false,
       );
       _logModelAdded(model);
-      _registerModel(model);
+      _registerModel(model, schema);
     }
 
-    if (model is EnumModel && (name == null || _findNamedModel(name) == null)) {
+    if (model is EnumModel &&
+        (name == null || _findNamedModel(name, schema) == null)) {
       _logModelAdded(model);
-      _registerModel(model);
+      _registerModel(model, schema);
     }
 
     return model;
@@ -1641,7 +1631,7 @@ class ModelImporter._(
       isNullable: false,
     );
 
-    _addModelToSet(oneOfModel);
+    _addModelToSet(oneOfModel, schema);
     return oneOfModel;
   }
 
@@ -1666,9 +1656,9 @@ class ModelImporter._(
       isContentNullable: false,
     );
 
-    if (name != null && _findNamedModel(name) == null) {
+    if (name != null && _findNamedModel(name, schema) == null) {
       _logModelAdded(listModel);
-      _registerModel(listModel);
+      _registerModel(listModel, schema);
     }
 
     if (items == null) {
@@ -1706,9 +1696,9 @@ class ModelImporter._(
       nameOverride: null,
     );
 
-    if (name == null || _findNamedModel(name) == null) {
+    if (name == null || _findNamedModel(name, schema) == null) {
       _logModelAdded(allOfModel);
-      _registerModel(allOfModel);
+      _registerModel(allOfModel, schema);
     }
 
     final resolvedModels = schema.allOf!
@@ -1722,10 +1712,10 @@ class ModelImporter._(
     return allOfModel;
   }
 
-  void _addModelToSet(Model model) {
+  void _addModelToSet(Model model, [Schema? schema]) {
     if (model is! PrimitiveModel) {
       _logModelAdded(model);
-      _registerModel(model);
+      _registerModel(model, schema);
 
       if (model is OneOfModel) {
         for (final nestedModel in model.models) {
@@ -1759,9 +1749,9 @@ class ModelImporter._(
       nameOverride: null,
     );
 
-    if (name == null || _findNamedModel(name) == null) {
+    if (name == null || _findNamedModel(name, schema) == null) {
       _logModelAdded(oneOfModel);
-      _registerModel(oneOfModel);
+      _registerModel(oneOfModel, schema);
     }
 
     final resolvedModels = <DiscriminatedModel>[];
@@ -1813,9 +1803,9 @@ class ModelImporter._(
       nameOverride: null,
     );
 
-    if (name == null || _findNamedModel(name) == null) {
+    if (name == null || _findNamedModel(name, schema) == null) {
       _logModelAdded(anyOfModel);
-      _registerModel(anyOfModel);
+      _registerModel(anyOfModel, schema);
     }
 
     final resolvedModels = <DiscriminatedModel>[];
@@ -2028,11 +2018,11 @@ class ModelImporter._(
       );
     }
 
-    if (name == null || _findNamedModel(name) == null) {
+    if (name == null || _findNamedModel(name, schema) == null) {
       // Recursive properties need the model registered before property
       // parsing.
       _logModelAdded(model);
-      _registerModel(model);
+      _registerModel(model, schema);
     }
 
     for (final MapEntry(key: propertyName, value: propertySchema)
