@@ -109,7 +109,9 @@ bool matrixParameterExpressionUsesValue(Model model) {
   return switch (model) {
     BinaryModel() => false,
     MapModel() => _mapMatrixUsesValue(model),
-    ListModel(:final content) => _listMatrixContentUsesValue(content),
+    ListModel(:final content) =>
+      (model.isEffectivelyNullable && content.resolved is MapModel) ||
+          _listMatrixContentUsesValue(content),
     _ => true,
   };
 }
@@ -127,6 +129,7 @@ bool _mapMatrixUsesValue(MapModel model) {
 bool _listMatrixContentUsesValue(Model content) {
   return switch (content) {
     ClassModel() || ListModel() => false,
+    MapModel() => _mapMatrixUsesValue(content),
     AliasModel(:final model) => _listMatrixContentUsesValue(model),
     _ => true,
   };

@@ -52,6 +52,12 @@
 /integration_test/streaming_response/streaming_response_api
 /integration_test/recursive_map/recursive_map_api
 
+/integration_test/datadog/datadog_api
+/integration_test/elasticsearch/elasticsearch_api
+/integration_test/digitalocean/digitalocean_api
+/integration_test/box/box_api
+/integration_test/adyen/adyen_api
+
 # Coverage
 coverage/
 

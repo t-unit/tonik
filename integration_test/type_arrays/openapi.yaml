@@ -516,3 +516,39 @@ components:
             type: string
         value:
           type: [string, integer, 'null']
+
+    TypelessColor:
+      enum: [red, green, null]
+
+    TypelessPriority:
+      enum: [1, 2, null]
+      x-dart-enum: [low, high]
+
+    TypelessDate:
+      enum: ['2024-01-01', null]
+      format: date
+
+    TypelessValues:
+      type: object
+      required: [color, inlineColor, priority, inlinePriority, itemsOnly, mixed, date, encoded]
+      properties:
+        color:
+          $ref: '#/components/schemas/TypelessColor'
+        inlineColor:
+          enum: [red, green, null]
+        priority:
+          $ref: '#/components/schemas/TypelessPriority'
+        inlinePriority:
+          enum: [1, 2, null]
+          x-dart-enum: [low, high]
+        itemsOnly:
+          items:
+            type: integer
+        mixed:
+          enum: [red, 1, true, null]
+        date:
+          $ref: '#/components/schemas/TypelessDate'
+        encoded:
+          enum: [cmVk, null]
+          format: byte
+          contentEncoding: base64

@@ -16,23 +16,16 @@ extension ObjectDecoder on String? {
     if (this == null) return null;
     try {
       for (final pair in headerValueTokens(this!)) {
-        final parts = splitHeaderValue(
+        final separator = headerValueTokens(
           pair,
           separator: '=',
           trimWhitespace: false,
-        );
-        if (parts.length != 2) continue;
-        try {
-          if (Uri.decodeComponent(parts[0]) == key &&
-              recognizedValues.contains(parts[1])) {
-            return parts[1];
-          }
-          // Uri.decodeComponent throws ArgumentError for truncated escapes.
-          // ignore: avoid_catching_errors
-        } on ArgumentError catch (_) {
-          // An invalid key is not a matching discriminator.
-        } on FormatException catch (_) {
-          // An invalid key is not a matching discriminator.
+        ).first.length;
+        if (separator == pair.length) continue;
+        final rawValue = pair.substring(separator + 1);
+        if (pair.substring(0, separator) == key &&
+            recognizedValues.contains(rawValue)) {
+          return rawValue;
         }
       }
     } on SimpleDecodingException catch (_) {
@@ -54,6 +47,8 @@ extension ObjectDecoder on String? {
   /// separated by [explodeSeparator]:
   /// - Form style: `name=John&age=30` (separator: `&`)
   /// - Simple style: `name=John,age=30` (separator: `,`)
+  /// Only the first unquoted `=` separates a header key from its value;
+  /// other inputs use the first `=`. Later equals signs belong to the value.
   ///
   /// For list properties in exploded format:
   /// - `tags=foo,bar,baz` (comma-separated values for a single property)
@@ -81,6 +76,8 @@ extension ObjectDecoder on String? {
   ///   to help identify where decoding failed.
   /// - [isHeader]: Treat separators outside quotes as header boundaries,
   ///   removing surrounding spaces and tabs while preserving quoted text.
+  /// - [percentDecodeKeys]: Decode URI escapes in keys and list-key lookahead.
+  ///   Set to false for simple-style input. Header keys always remain literal.
   ///
   /// ## Returns
   ///
@@ -122,6 +119,7 @@ extension ObjectDecoder on String? {
     required Set<String> listKeys,
     bool captureAdditionalKeys = false,
     bool isHeader = false,
+    bool percentDecodeKeys = true,
     String? context,
   }) {
     if (this == null || this!.isEmpty) {
@@ -144,6 +142,7 @@ extension ObjectDecoder on String? {
         context,
         captureAdditionalKeys,
         isHeader,
+        percentDecodeKeys && !isHeader,
       );
     } else {
       _parseNonExploded(
@@ -154,6 +153,7 @@ extension ObjectDecoder on String? {
         context,
         captureAdditionalKeys,
         isHeader,
+        percentDecodeKeys && !isHeader,
       );
     }
 
@@ -176,6 +176,7 @@ extension ObjectDecoder on String? {
     String? context,
     bool captureAdditionalKeys,
     bool isHeader,
+    bool percentDecodeKeys,
   ) {
     final pairs = isHeader
         ? splitHeaderValue(value, separator: separator)
@@ -184,11 +185,15 @@ extension ObjectDecoder on String? {
     var i = 0;
     while (i < pairs.length) {
       final pair = pairs[i];
-      final parts = isHeader
-          ? splitHeaderValue(pair, separator: '=', trimWhitespace: false)
-          : pair.split('=');
+      final separator = isHeader
+          ? headerValueTokens(
+              pair,
+              separator: '=',
+              trimWhitespace: false,
+            ).first.length
+          : pair.indexOf('=');
 
-      if (parts.length == 1) {
+      if (separator < 0 || separator == pair.length) {
         if (captureAdditionalKeys) {
           throw InvalidFormatException(
             value: pair,
@@ -199,14 +204,18 @@ extension ObjectDecoder on String? {
         continue;
       }
 
-      if (parts.length != 2) {
+      final rawKey = pair.substring(0, separator);
+      final String key;
+      try {
+        key = percentDecodeKeys ? Uri.decodeComponent(rawKey) : rawKey;
+      } on Object {
         throw InvalidFormatException(
-          value: pair,
-          format: 'key=value pair${context != null ? ' in $context' : ''}',
+          value: rawKey,
+          format:
+              'URI-encoded object key${context != null ? ' in $context' : ''}',
         );
       }
-
-      final key = Uri.decodeComponent(parts[0]);
+      final rawValue = pair.substring(separator + 1);
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
@@ -218,13 +227,11 @@ extension ObjectDecoder on String? {
                   'key${context != null ? ' in $context' : ''}',
             );
           }
-          result[key] = parts[1];
+          result[key] = rawValue;
         }
         i++;
         continue;
       }
-
-      final rawValue = parts[1];
 
       if (listKeys.contains(key)) {
         final listParts = <String>[rawValue];
@@ -233,12 +240,12 @@ extension ObjectDecoder on String? {
         while (i < pairs.length) {
           final nextPair = pairs[i];
           final startsPair = isHeader
-              ? splitHeaderValue(
+              ? headerValueTokens(
                       nextPair,
                       separator: '=',
                       trimWhitespace: false,
-                    ).length >
-                    1
+                    ).first.length <
+                    nextPair.length
               : nextPair.contains('=');
           if (startsPair) {
             break;
@@ -276,13 +283,14 @@ extension ObjectDecoder on String? {
     String? context,
     bool captureAdditionalKeys,
     bool isHeader,
+    bool percentDecodeKeys,
   ) {
     final parts = isHeader ? splitHeaderValue(value) : value.split(',');
 
     var i = 0;
     while (i < parts.length) {
       final rawKey = parts[i];
-      final key = Uri.decodeComponent(rawKey);
+      final key = percentDecodeKeys ? Uri.decodeComponent(rawKey) : rawKey;
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
@@ -316,7 +324,9 @@ extension ObjectDecoder on String? {
 
         while (i < parts.length) {
           final potentialValue = parts[i];
-          final decodedPotentialValue = Uri.decodeComponent(potentialValue);
+          final decodedPotentialValue = percentDecodeKeys
+              ? Uri.decodeComponent(potentialValue)
+              : potentialValue;
 
           if (expectedKeys.contains(decodedPotentialValue)) {
             break;

@@ -1777,6 +1777,7 @@ void main() {
       listKeys: {},
       context: r'Config',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'name'};
@@ -1945,6 +1946,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       listKeys: {},
       context: r'Labels',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
@@ -2112,6 +2114,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       listKeys: {},
       context: r'WidgetMap',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'version'};
@@ -2532,6 +2535,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       listKeys: {},
       context: r'IntTyped',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'name'};
@@ -2665,6 +2669,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       listKeys: {},
       context: r'BoolTyped',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'label'};
