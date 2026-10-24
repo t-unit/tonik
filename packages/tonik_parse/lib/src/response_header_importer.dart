@@ -27,13 +27,26 @@ class ResponseHeaderImporter({
       final name = entry.key;
       final header = entry.value;
 
-      final imported = _importHeader(
-        name: name,
-        wrapper: header,
-        context: rootContext.push(name),
-      );
-      headers.add(imported);
+      _importComponent(name, header);
     }
+  }
+
+  core.ResponseHeader _importComponent(
+    String name,
+    ReferenceWrapper<Header> wrapper, {
+    Set<String>? visitedRefs,
+  }) {
+    for (final header in headers) {
+      if (header.name == name) return header;
+    }
+    final imported = _importHeader(
+      name: name,
+      wrapper: wrapper,
+      context: rootContext.push(name),
+      visitedRefs: visitedRefs,
+    );
+    headers.add(imported);
+    return imported;
   }
 
   core.ResponseHeader importInlineHeader({
@@ -57,6 +70,7 @@ class ResponseHeaderImporter({
     required String? name,
     required ReferenceWrapper<Header> wrapper,
     required core.Context context,
+    Set<String>? visitedRefs,
   }) {
     switch (wrapper) {
       case Reference<Header>():
@@ -66,6 +80,11 @@ class ResponseHeaderImporter({
           );
         }
 
+        final seen = visitedRefs ?? <String>{};
+        if (!seen.add(wrapper.ref)) {
+          throw ArgumentError('Cyclic header reference: ${wrapper.ref}');
+        }
+
         final refName = wrapper.ref.split('/').last;
         final refHeader = openApiObject.components?.headers?[refName];
 
@@ -73,13 +92,10 @@ class ResponseHeaderImporter({
           throw ArgumentError('Header $refName not found');
         }
 
-        final existing = headers.firstWhere(
-          (h) => h.name == refName,
-          orElse: () => _importHeader(
-            name: refName,
-            wrapper: refHeader,
-            context: context,
-          ),
+        final existing = _importComponent(
+          refName,
+          refHeader,
+          visitedRefs: seen,
         );
 
         return core.ResponseHeaderAlias(
