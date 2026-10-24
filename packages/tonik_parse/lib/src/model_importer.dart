@@ -1845,7 +1845,12 @@ class ModelImporter._(
     if (innerSchema.ref != null && discriminator?.propertyName != null) {
       final ref = innerSchema.ref!;
       final discriminatorEntry = discriminator?.mapping?.entries
-          .firstWhereOrNull((entry) => entry.value == ref);
+          .firstWhereOrNull(
+            (entry) =>
+                entry.value == ref ||
+                (_schemas.containsKey(entry.value) &&
+                    '#/components/schemas/${entry.value}' == ref),
+          );
       return discriminatorEntry?.key ?? ref.split('/').last;
     }
     return null;
