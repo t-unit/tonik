@@ -219,7 +219,7 @@ class const MultipartBodyPlanner({
         wireName: specLiteralString(property.part.wireName),
         preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
-        value: nullable && !mergedPrimitive
+        value: nullable && accesses.length == 1
             ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
                   .nullChecked
             : accessor,
