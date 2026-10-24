@@ -33,6 +33,34 @@ void main() {
     expect(request.uri.path, '/items/;x=1');
   });
 
+  test('empty exploded map values omit equals', () async {
+    final server = await RawRequestServer.start();
+    final api = MatrixApi(CustomServer(baseUrl: server.baseUrl));
+
+    final result = await api.testMatrixExplodedCoordinates(
+      coordinates: const {'a': '', 'b': 'x'},
+    );
+
+    expect(result, isTonikSuccess);
+    final request = await server.takeRequest();
+    expect(request.uri.path, '/items/;a;b=x');
+  });
+
+  test('empty exploded list items omit equals', () async {
+    final server = await RawRequestServer.start(
+      responseStatusCode: 200,
+      responseHeaders: {'content-type': 'application/json'},
+      responseBody: utf8.encode('{}'),
+    );
+    final api = MatrixApi(CustomServer(baseUrl: server.baseUrl));
+
+    final result = await api.testMatrixArrayStringExplode(values: ['', 'x']);
+
+    expect(result, isTonikSuccess);
+    final request = await server.takeRequest();
+    expect(request.uri.path, '/matrix/array/string/explode/;values;values=x');
+  });
+
   test('empty collapsed map sends the request with a trailing slash', () async {
     final server = await RawRequestServer.start(
       responseStatusCode: 200,
