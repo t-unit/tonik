@@ -95,7 +95,24 @@ paths:
         - simple-encoding
       responses:
         '200':
-          $ref: '#/components/responses/ReservedHeaderResponse'
+          $ref: '#/components/responses/ReservedHeaderResponseAlias'
+
+  /headers/accept/mixed:
+    get:
+      operationId: testMixedResponseAccept
+      tags:
+        - simple-encoding
+      responses:
+        '200':
+          $ref: '#/components/responses/ReservedHeaderResponseAlias'
+        '400':
+          description: Error in plain text
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          $ref: '#/components/responses/ReservedHeaderResponseAlias'
 
   /response-header-maps:
     get:
@@ -1379,6 +1396,8 @@ components:
       schema:
         type: string
   responses:
+    ReservedHeaderResponseAlias:
+      $ref: '#/components/responses/ReservedHeaderResponse'
     ReservedHeaderResponse:
       description: Response with reserved and ordinary headers
       headers:

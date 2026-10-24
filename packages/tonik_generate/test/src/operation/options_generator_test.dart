@@ -1071,7 +1071,39 @@ void main() {
       },
     );
 
-    test('adds Accept header with all response content types', () {
+    test('collects distinct media from chained and inline responses', () {
+      final referencedResponse = ResponseAlias(
+        name: 'ResponseAlias',
+        context: context,
+        description: null,
+        response: ResponseAlias(
+          name: 'ResponseAliasTarget',
+          context: context,
+          description: null,
+          response: ResponseObject(
+            name: 'ReferencedResponse',
+            context: context,
+            headers: const {},
+            description: 'Referenced JSON response',
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/problem+json',
+                contentType: ContentType.json,
+                examples: const [],
+                delivery: ResponseDelivery.complete,
+              ),
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+                examples: const [],
+                delivery: ResponseDelivery.complete,
+              ),
+            },
+          ),
+        ),
+      );
       final operation = Operation(
         operationId: 'getWithAccept',
         context: context,
@@ -1086,7 +1118,8 @@ void main() {
         pathParameters: const {},
         cookieParameters: const {},
         responses: {
-          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+          const ExplicitResponseStatus(statusCode: 200): referencedResponse,
+          const ExplicitResponseStatus(statusCode: 400): ResponseObject(
             name: null,
             context: context,
             headers: const {},
@@ -1117,7 +1150,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = r'application/json,application/xml';
+          _$headers['Accept'] = r'application/problem+json,application/json,application/xml';
           return Options(
             method: 'GET',
             headers: _$headers,
