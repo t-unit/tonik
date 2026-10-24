@@ -5229,7 +5229,7 @@ $expectedPartCode
                 _$formData.fields.add(
                   MapEntry(
                     (r'statuses').replaceAll(r'\', r'\\'),
-                    item.uriEncode(allowEmpty: true, textEncoding: utf8),
+                    item.toJson(),
                   ),
                 );
               }
@@ -5305,7 +5305,7 @@ $expectedPartCode
                 MapEntry(
                   (r'codes').replaceAll(r'\', r'\\'),
                   body.codes
-                      .map((item) => item.uriEncode(allowEmpty: true, textEncoding: utf8))
+                      .map((item) => item.toJson().toString())
                       .toList()
                       .uriEncode(
                         allowEmpty: true,

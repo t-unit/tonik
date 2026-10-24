@@ -1034,7 +1034,7 @@ Object? test() {
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(body.value.toSimple(explode: false, allowEmpty: true)),
+      utf8.encode(body.value.toSimple(explode: false, allowEmpty: true, literal: true)),
       contentType: MediaType.parse(r'text/plain'),
     ),
   );''',
