@@ -189,6 +189,7 @@ void main() {
                 listKeys: {r'corner'},
                 context: r'Shape',
             isHeader: isHeader,
+            percentDecodeKeys: false,
               );
               return Shape(
                 corner: _$values[r'corner']
@@ -3826,6 +3827,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       listKeys: {},
       context: r'Labels',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
@@ -3909,6 +3911,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       listKeys: {},
       context: r'WidgetMap',
             isHeader: isHeader,
+            percentDecodeKeys: false,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'version'};

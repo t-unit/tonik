@@ -1482,6 +1482,32 @@ components:
       schema:
         type: string
   schemas:
+    PercentKeyObject:
+      type: object
+      required: ['a%', '%41', 'A']
+      properties:
+        'a%':
+          type: string
+        '%41':
+          type: string
+        A:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+      additionalProperties:
+        type: string
+
+    PercentKeyChoice:
+      oneOf:
+        - $ref: '#/components/schemas/PercentKeyObject'
+        - type: string
+      discriminator:
+        propertyName: '%41'
+        mapping:
+          person: '#/components/schemas/PercentKeyObject'
+
     HeaderPerson:
       type: object
       required: [name, age]
