@@ -584,6 +584,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/merged-arrays:
+    post:
+      operationId: postMergedArrays
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MergedArrays'
+            encoding:
+              tags:
+                style: form
+                explode: true
+              attributes:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
 components:
   schemas:
     NestedArrayForm:
@@ -946,3 +967,48 @@ components:
           items:
             type: [string, 'null']
             format: uri
+
+    MergedArrayAttributes:
+      type: object
+      required: [labels]
+      properties:
+        labels:
+          type: array
+          items:
+            type: string
+    MergedArraysBase:
+      type: object
+      properties:
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/MergedArrayAttributes'
+        rawValue:
+          $ref: '#/components/schemas/AnyValue'
+        metadata:
+          type: object
+          additionalProperties: true
+    MergedArraysExtension:
+      type: object
+      properties:
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/MergedArrayAttributes'
+        rawValue:
+          $ref: '#/components/schemas/AnyValue'
+        metadata:
+          type: object
+          additionalProperties: true
+    MergedArrays:
+      allOf:
+        - $ref: '#/components/schemas/MergedArraysBase'
+        - $ref: '#/components/schemas/MergedArraysExtension'

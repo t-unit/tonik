@@ -1559,6 +1559,37 @@ Object? test() {
       );
     });
 
+    test('uses the promoted optional merged list inside its guard', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'tags',
+          _list(context, StringModel(context: context)),
+          isRequired: false,
+        ),
+      ]);
+      final code = emit(_content(_allOf(context, 'Upload', [member, member])));
+
+      expect(code, contains(r'if (_$tagsMultipartValue != null)'));
+      expect(code, contains(r'for (final item in _$tagsMultipartValue)'));
+    });
+
+    test('checks a required nullable merged list before iterating', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'tags',
+          _list(context, StringModel(context: context)),
+          isNullable: true,
+        ),
+      ]);
+      final code = emit(_content(_allOf(context, 'Upload', [member, member])));
+
+      expect(code, contains(r'if (_$tagsMultipartValue == null)'));
+      expect(code, contains('Required multipart property "tags" is null.'));
+      expect(code, contains(r'for (final item in _$tagsMultipartValue)'));
+    });
+
     test('defers incompatible nested duplicate definitions to runtime', () {
       final leftMetadata = _classWithProperties(context, 'LeftMetadata', [
         _property(context, 'id', StringModel(context: context)),
