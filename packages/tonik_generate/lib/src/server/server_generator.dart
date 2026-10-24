@@ -85,7 +85,10 @@ class const ServerGenerator({
 
   Enum _generateVariableEnum(String serverName, ServerVariable variable) {
     final enumName = nameManager.serverVariableEnumName(serverName, variable);
-    final normalizedValues = normalizeEnumValues(variable.enumValues!);
+    final normalizedValues = normalizeEnumValues(
+      variable.enumValues!,
+      additionalReservedNames: {'value'},
+    );
 
     return Enum(
       (b) => b
@@ -130,7 +133,10 @@ class const ServerGenerator({
   /// when the value is not among the enum values.
   @visibleForTesting
   String? getNormalizedEnumValueName(ServerVariable variable, String value) {
-    final normalizedValues = normalizeEnumValues(variable.enumValues!);
+    final normalizedValues = normalizeEnumValues(
+      variable.enumValues!,
+      additionalReservedNames: {'value'},
+    );
     return normalizedValues
         .firstWhereOrNull((n) => n.originalValue == value)
         ?.normalizedName;
