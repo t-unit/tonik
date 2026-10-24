@@ -3690,8 +3690,13 @@ $expectedPartCode
                 final _$formData = FormData();
                 final _$addressHeaders = <String, List<String>>{};
                 _$addressHeaders[r'X-Custom-Header'] = [
-                  addressCustomHeader.toSimple(explode: false, allowEmpty: true),
+                  addressCustomHeader.toSimple(explode: false, allowEmpty: true, literal: true),
                 ];
+                for (final headerValue in _$addressHeaders.values.expand((values) => values)) {
+                  if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                    throw EncodingException('Multipart header values must not contain line breaks.');
+                  }
+                }
                 final addressRawParts = body.address
                     .parameterProperties(allowEmpty: true)
                     .toRawStyleParts(r'address', explode: true);
@@ -3895,8 +3900,13 @@ $expectedPartCode
                 final _$formData = FormData();
                 final _$addressHeaders = <String, List<String>>{};
                 _$addressHeaders[r'X-Custom-Header'] = [
-                  addressCustomHeader.toSimple(explode: false, allowEmpty: true),
+                  addressCustomHeader.toSimple(explode: false, allowEmpty: true, literal: true),
                 ];
+                for (final headerValue in _$addressHeaders.values.expand((values) => values)) {
+                  if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                    throw EncodingException('Multipart header values must not contain line breaks.');
+                  }
+                }
                 final addressEntries = body.address.toForm(
                   r'address',
                   explode: true,
@@ -3966,8 +3976,8 @@ $expectedPartCode
           collapseWhitespace(code),
           contains(
             collapseWhitespace(
-              'fileTraceIdPartHeader.toSimple('
-              'explode: false, allowEmpty: true)',
+              'fileTraceIdPartHeader.toSimple( '
+              'explode: false, allowEmpty: true, literal: true, )',
             ),
           ),
         );
@@ -7045,7 +7055,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
-            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$fileHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
@@ -7112,7 +7127,12 @@ $expectedPartCode
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
             if (fileTag != null) {
-              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true, literal: true)];
+            }
+            for (final headerValue in _$fileHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
@@ -7193,7 +7213,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$addressHeaders = <String, List<String>>{};
-            _$addressHeaders[r'X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
+            _$addressHeaders[r'X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$addressHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'address').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(
@@ -7255,7 +7280,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$descriptionHeaders = <String, List<String>>{};
-            _$descriptionHeaders[r'X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
+            _$descriptionHeaders[r'X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$descriptionHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'description').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
@@ -7315,7 +7345,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$countHeaders = <String, List<String>>{};
-            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$countHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
@@ -7392,7 +7427,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$statusHeaders = <String, List<String>>{};
-            _$statusHeaders[r'X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
+            _$statusHeaders[r'X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$statusHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'status').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
@@ -7526,9 +7566,14 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
-            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true, literal: true)];
             if (fileTag != null) {
-              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true, literal: true)];
+            }
+            for (final headerValue in _$fileHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
@@ -7658,7 +7703,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$tagsHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             for (final item in body.tags) {
               _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
@@ -7727,8 +7777,13 @@ $expectedPartCode
               final _$formData = FormData();
               final _$tagsHeaders = <String, List<String>>{};
               _$tagsHeaders[r'X-Custom'] = [
-                tagsCustom.toSimple(explode: false, allowEmpty: true),
+                tagsCustom.toSimple(explode: false, allowEmpty: true, literal: true),
               ];
+              for (final headerValue in _$tagsHeaders.values.expand((values) => values)) {
+                if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                  throw EncodingException('Multipart header values must not contain line breaks.');
+                }
+              }
               _$formData.files.add(
                 MapEntry(
                   (r'tags').replaceAll(r'\', r'\\'),
@@ -7806,7 +7861,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$tagsHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
               _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
@@ -7876,7 +7936,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$datesHeaders = <String, List<String>>{};
-            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
+            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$datesHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
@@ -7945,7 +8010,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$filesHeaders = <String, List<String>>{};
-            _$filesHeaders[r'X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
+            _$filesHeaders[r'X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$filesHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
@@ -8032,7 +8102,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$addressesHeaders = <String, List<String>>{};
-            _$addressesHeaders[r'X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
+            _$addressesHeaders[r'X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$addressesHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry((r'addresses').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
@@ -8093,7 +8168,12 @@ $expectedPartCode
             final _$formData = FormData();
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
-              _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true, literal: true)];
+              for (final headerValue in _$fileHeaders.values.expand((values) => values)) {
+                if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                  throw EncodingException('Multipart header values must not contain line breaks.');
+                }
+              }
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
@@ -8167,7 +8247,12 @@ $expectedPartCode
             }
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
-              _$fileHeaders[r'X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true, literal: true)];
+              for (final headerValue in _$fileHeaders.values.expand((values) => values)) {
+                if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                  throw EncodingException('Multipart header values must not contain line breaks.');
+                }
+              }
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
@@ -8237,7 +8322,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$dataHeaders = <String, List<String>>{};
-            _$dataHeaders[r'X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
+            _$dataHeaders[r'X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$dataHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'data').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
@@ -8297,7 +8387,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$countHeaders = <String, List<String>>{};
-            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$countHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'count').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
@@ -8358,7 +8453,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$createdAtHeaders = <String, List<String>>{};
-            _$createdAtHeaders[r'X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
+            _$createdAtHeaders[r'X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$createdAtHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             _$formData.files.add(MapEntry(
               (r'createdAt').replaceAll(r'\', r'\\'),
               MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
@@ -8430,8 +8530,13 @@ $expectedPartCode
                 final _$formData = FormData();
                 final _$datesHeaders = <String, List<String>>{};
                 _$datesHeaders[r'X-Custom'] = [
-                  datesCustom.toSimple(explode: false, allowEmpty: true),
+                  datesCustom.toSimple(explode: false, allowEmpty: true, literal: true),
                 ];
+                for (final headerValue in _$datesHeaders.values.expand((values) => values)) {
+                  if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                    throw EncodingException('Multipart header values must not contain line breaks.');
+                  }
+                }
                 _$formData.files.add(
                   MapEntry(
                     (r'dates').replaceAll(r'\', r'\\'),
@@ -8511,7 +8616,12 @@ $expectedPartCode
           void test() {
             final _$formData = FormData();
             final _$documentHeaders = <String, List<String>>{};
-            _$documentHeaders[r'X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
+            _$documentHeaders[r'X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true, literal: true)];
+            for (final headerValue in _$documentHeaders.values.expand((values) => values)) {
+              if (headerValue.contains('\r') || headerValue.contains('\n')) {
+                throw EncodingException('Multipart header values must not contain line breaks.');
+              }
+            }
             switch (body.document) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(

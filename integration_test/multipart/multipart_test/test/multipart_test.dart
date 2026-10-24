@@ -288,17 +288,32 @@ void main() {
             description: 'test desc',
             file: TonikFileBytes(fileBytes),
           ),
-          descriptionPartMeta: 'meta-value',
+          descriptionPartMeta: 'a b / 100%',
+          descriptionPartTime: DateTime.utc(2024, 1, 2, 3, 4, 5),
+          descriptionPartTimes: [
+            DateTime.utc(2024, 1, 2, 3, 4, 5),
+            DateTime.utc(2024, 1, 3, 4, 5, 6),
+          ],
+          descriptionPartTags: ['a b', '100%'],
           fileFileHash: 'abc123',
-          fileFileTag: 'tag-value',
+          fileFileTag: 'tag value',
         );
 
         final wire = MultipartWire(await server.takeRequest());
         expect(wire.single('description').bodyText, 'test desc');
-        expect(wire.single('description').header('x-part-meta'), 'meta-value');
+        expect(wire.single('description').header('x-part-meta'), 'a b / 100%');
+        expect(
+          wire.single('description').header('x-part-time'),
+          '2024-01-02T03:04:05.000Z',
+        );
+        expect(
+          wire.single('description').header('x-part-times'),
+          '2024-01-02T03:04:05.000Z,2024-01-03T04:05:06.000Z',
+        );
         expect(wire.single('file').bodyBytes, fileBytes);
+        expect(wire.single('description').header('x-part-tags'), 'a b,100%');
         expect(wire.single('file').header('x-file-hash'), 'abc123');
-        expect(wire.single('file').header('x-file-tag'), 'tag-value');
+        expect(wire.single('file').header('x-file-tag'), 'tag value');
       },
     );
 
@@ -318,6 +333,46 @@ void main() {
       expect(wire.single('description').header('x-part-meta'), 'meta-value');
       expect(wire.single('file').header('x-file-hash'), 'abc123');
       expect(wire.single('file').header('x-file-tag'), isNull);
+      expect(wire.single('description').header('x-part-time'), isNull);
+      expect(wire.single('description').header('x-part-times'), isNull);
+      expect(wire.single('description').header('x-part-tags'), isNull);
+    });
+
+    test('rejects carriage returns in a part header before sending', () async {
+      final server = await RawRequestServer.start();
+
+      final response = await _rawApi(server).postWithHeaders(
+        body: HeaderPartsForm(
+          description: 'test desc',
+          file: TonikFileBytes(Uint8List.fromList([10, 20, 30])),
+        ),
+        descriptionPartMeta: 'safe\rX-Injected: yes',
+        fileFileHash: 'abc123',
+      );
+
+      final error = requireError(response);
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(server.requestCount, 0);
+    });
+
+    test('rejects line feeds in an array part header before sending', () async {
+      final server = await RawRequestServer.start();
+
+      final response = await _rawApi(server).postWithHeaders(
+        body: HeaderPartsForm(
+          description: 'test desc',
+          file: TonikFileBytes(Uint8List.fromList([10, 20, 30])),
+        ),
+        descriptionPartMeta: 'safe',
+        descriptionPartTags: ['first', 'safe\nX-Injected: yes'],
+        fileFileHash: 'abc123',
+      );
+
+      final error = requireError(response);
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(server.requestCount, 0);
     });
   });
 

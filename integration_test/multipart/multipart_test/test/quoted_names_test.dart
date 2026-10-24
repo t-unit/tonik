@@ -137,7 +137,7 @@ void main() {
           .parameters['name'],
       r'profile\name',
     );
-    expect(profile.header('x-part-meta'), 'keep%5Cvalue');
+    expect(profile.header('x-part-meta'), r'keep\value');
     final alias = wire.parts.singleWhere((part) => part.bodyText == 'Grace');
     expect(
       HeaderValue.parse(alias.header('content-disposition')!)

@@ -331,7 +331,12 @@ Object? test() {
   final _$multipartParts = <TonikMultipartPart>[];
   final _$valueHeaders = <String, String>{};
   if (valueLabel != null) {
-    _$valueHeaders[r'X-Label'] = valueLabel.toSimple(explode: false, allowEmpty: true);
+    _$valueHeaders[r'X-Label'] = valueLabel.toSimple(explode: false, allowEmpty: true, literal: true);
+  }
+  for (final headerValue in _$valueHeaders.values) {
+    if (headerValue.contains('\r') || headerValue.contains('\n')) {
+      throw EncodingException('Multipart header values must not contain line breaks.');
+    }
   }
   _$multipartParts.add(
     TonikMultipartPart(
