@@ -210,9 +210,27 @@ void main() {
     });
 
     group('decodeFormBool', () {
+      test('wraps malformed form encoding with boolean context', () {
+        expect(
+          () => '%zz'.decodeFormBool(context: 'Settings.enabled'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%zz')
+                .having((e) => e.targetType, 'targetType', bool)
+                .having((e) => e.context, 'context', 'Settings.enabled'),
+          ),
+        );
+        expect(
+          () => '%FF'.decodeFormBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('decodes boolean strings', () {
         expect('true'.decodeFormBool(), isTrue);
         expect('false'.decodeFormBool(), isFalse);
+        expect('%74rue'.decodeFormBool(), isTrue);
+        expect('%66alse'.decodeFormBool(), isFalse);
       });
 
       test('throws InvalidTypeException for invalid booleans', () {
@@ -240,6 +258,17 @@ void main() {
     });
 
     group('decodeFormNullableBool', () {
+      test('wraps truncated escapes without changing nullable behavior', () {
+        expect(
+          () => '%'.decodeFormNullableBool(context: 'Settings.enabled'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%')
+                .having((e) => e.context, 'context', 'Settings.enabled'),
+          ),
+        );
+      });
+
       test('decodes boolean strings', () {
         expect('true'.decodeFormNullableBool(), isTrue);
         expect('false'.decodeFormNullableBool(), isFalse);
@@ -452,6 +481,26 @@ void main() {
     });
 
     group('decodeFormStringList', () {
+      test('wraps malformed list elements with the original wire value', () {
+        expect(
+          () => 'ok,%zz'.decodeFormStringList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,%zz')
+                .having((e) => e.targetType, 'targetType', List<String>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
+      test('preserves encoded percent and plus semantics', () {
+        expect('100%25,%2B,hello+world'.decodeFormStringList(), [
+          '100%',
+          '+',
+          'hello world',
+        ]);
+      });
+
       test('decodes comma-separated string lists', () {
         expect('red,green,blue'.decodeFormStringList(), [
           'red',
@@ -485,6 +534,18 @@ void main() {
     });
 
     group('decodeFormNullableStringList', () {
+      test('wraps truncated list escapes through the nullable adapter', () {
+        expect(
+          () => 'ok,%'.decodeFormNullableStringList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,%')
+                .having((e) => e.targetType, 'targetType', List<String>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
       test('decodes string lists', () {
         expect('red,green,blue'.decodeFormNullableStringList(), [
           'red',
@@ -504,6 +565,27 @@ void main() {
     });
 
     group('decodeFormStringNullableList', () {
+      test('wraps invalid UTF-8 in lists with nullable elements', () {
+        expect(
+          () => 'ok,,%FF'.decodeFormStringNullableList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,,%FF')
+                .having((e) => e.targetType, 'targetType', List<String?>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
+      test('preserves percent and plus decoding around null elements', () {
+        expect('100%25,,%2B,hello+world'.decodeFormStringNullableList(), [
+          '100%',
+          null,
+          '+',
+          'hello world',
+        ]);
+      });
+
       test('decodes string lists with nullable elements', () {
         expect('red,green,blue'.decodeFormStringNullableList(), [
           'red',
@@ -529,6 +611,20 @@ void main() {
     });
 
     group('decodeFormNullableStringNullableList', () {
+      test('wraps malformed escapes through the nullable list adapter', () {
+        expect(
+          () => 'ok,,%zz'.decodeFormNullableStringNullableList(
+            context: 'Search.tags',
+          ),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,,%zz')
+                .having((e) => e.targetType, 'targetType', List<String?>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
       test('decodes nullable string lists with nullable elements', () {
         expect('red,green,blue'.decodeFormNullableStringNullableList(), [
           'red',
