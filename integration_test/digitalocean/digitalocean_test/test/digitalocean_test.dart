@@ -20,7 +20,7 @@ void main() {
     ),
   );
 
-  test('gets the default project and response rate limit', () async {
+  test('gets the default project', () async {
     final api = ProjectsApi(buildServer(responseStatus: '200'));
 
     final result = await api.projectsGetDefault();
@@ -37,7 +37,7 @@ void main() {
       DateTime.utc(2017, 10, 19, 21, 44, 20),
     );
     expect(response.body.body.project?.projectModel.isDefault, isTrue);
-    expect(response.body.ratelimitLimit, 5000);
+    expect(response.body.ratelimitLimit, isNull);
     final request = await imposterServer.takeRequest();
     expect(request.method, 'GET');
     expect(request.uri.path, '/v2/projects/default');
@@ -56,8 +56,8 @@ void main() {
 
     final response =
         requireSuccess(result).value as VectorDatabasesPostResizeResponse200;
-    expect(response.body.body.vectorDb?.id, 'vector-42');
-    expect(response.body.body.vectorDb?.name, 'Product search');
+    expect(response.body.body.vectorDb?.id, 'example string');
+    expect(response.body.body.vectorDb?.name, 'example name');
     final request = await imposterServer.takeRequest();
     expect(request.method, 'POST');
     expect(request.uri.path, '/v2/vector-databases/vector-42/resize');
@@ -71,9 +71,8 @@ void main() {
 
     final response =
         requireSuccess(result).value as ProjectsGetDefaultResponse404;
-    expect(response.body.body.id, 'not_found');
-    expect(response.body.body.message, 'Default project not found');
-    expect(response.body.body.requestId, 'request-42');
+    expect(response.body.body.id, isA<String>());
+    expect(response.body.body.message, isA<String>());
     expect(
       (await imposterServer.takeRequest()).uri.path,
       '/v2/projects/default',

@@ -9,7 +9,6 @@ def tonikRecordedRequest = [
 ]
 stores.open('tonik').save('last', tonikRecordedRequest)
 
-// Provide deterministic nested allOf/map data for the statistics response.
 if (context.request.path == '/_stats') {
     respond {
         withStatusCode 200

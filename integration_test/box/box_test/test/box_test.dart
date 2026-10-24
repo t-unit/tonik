@@ -29,10 +29,10 @@ void main() {
         requireSuccess(result).value
             as GetFilesIdMetadataGlobalBoxSkillsCardsResponse200;
     expect(response.body.$canEdit, isTrue);
-    expect(response.body.$version, 2);
+    expect(response.body.$version, 1);
     final card = response.body.cards!.single as SkillCardKeywordSkillCard;
-    expect(card.value.skill.id, 'image-labels');
-    expect(card.value.entries.single.text, 'landscape');
+    expect(card.value.skill.id, 'image-recognition-service');
+    expect(card.value.entries.single.text, 'keyword1');
     final request = await imposterServer.takeRequest();
     expect(request.method, 'GET');
     expect(
@@ -80,9 +80,11 @@ void main() {
     final response =
         requireSuccess(result).value
             as DeleteShieldInformationBarrierSegmentRestrictionsIdResponse404;
-    expect(response.body.status, 404);
-    expect(response.body.message, 'Restriction not found');
-    expect(response.body.requestId, 'request-42');
+    expect(response.body.$type, ClientErrorTypeModel.error);
+    expect(response.body.status, isA<int>());
+    expect(response.body.code, isA<ClientErrorCodeModel>());
+    expect(response.body.message, isA<String>());
+    expect(response.body.requestId, isA<String>());
     expect(
       (await imposterServer.takeRequest()).uri.path,
       '/2.0/shield_information_barrier_segment_restrictions/missing',

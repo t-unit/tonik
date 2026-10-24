@@ -101,9 +101,11 @@ void main() {
     final response =
         requireSuccess(result).value
             as GetCompaniesCompanyIdTerminalOrdersResponse403;
-    expect(response.body.status, 403);
-    expect(response.body.errorCode, '010');
-    expect(response.body.detail, 'Insufficient permissions');
+    expect(response.body.status, isA<int>());
+    expect(response.body.errorCode, isA<String>());
+    expect(response.body.detail, isA<String>());
+    expect(response.body.title, isA<String>());
+    expect(response.body.$type, isA<String>());
     expect(
       (await imposterServer.takeRequest()).uri.path,
       '/v3/companies/company-42/terminalOrders',

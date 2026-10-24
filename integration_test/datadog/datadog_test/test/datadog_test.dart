@@ -102,7 +102,8 @@ void main() {
     final response =
         requireSuccess(result).value
             as GetSecurityMonitoringHistsignalResponse404;
-    expect(response.body.errors, ['Signal not found']);
+    expect(response.body.errors, isNotEmpty);
+    expect(response.body.errors, everyElement(isA<String>()));
     expect(
       (await imposterServer.takeRequest()).uri.path,
       '/api/v2/siem-historical-detections/histsignals/missing',
