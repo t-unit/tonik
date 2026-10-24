@@ -98,6 +98,83 @@ void main() {
     );
   });
 
+  test(
+    'unsupported-only collection aliases throw from parameter factories',
+    () {
+      final map = MapModel(
+        name: 'Tags',
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+        nameOverride: null,
+        isNullable: false,
+        isValueNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final alias = AliasModel(
+        name: 'TagsAlias',
+        model: map,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+        nameOverride: null,
+        description: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+      );
+      final model = AnyOfModel(
+        name: 'Unsupported',
+        models: [(discriminatorValue: null, model: alias)],
+        context: context,
+        examples: const [],
+        nameOverride: null,
+        description: null,
+        discriminator: null,
+        isDeprecated: false,
+        isNullable: false,
+        isReadOnly: false,
+        isWriteOnly: false,
+        defaultValue: null,
+      );
+      final klass = generator.generateClass(model);
+      final simple = klass.constructors.singleWhere(
+        (c) => c.name == 'fromSimple',
+      );
+      final form = klass.constructors.singleWhere((c) => c.name == 'fromForm');
+
+      final constructors = Class(
+        (b) => b
+          ..name = 'Unsupported'
+          ..constructors.addAll([simple, form]),
+      );
+      const expected = '''
+        class Unsupported {
+          factory Unsupported.fromSimple(
+            String? value, {
+            required bool explode,
+            bool isHeader = false,
+          }) {
+            throw SimpleDecodingException(
+              r'Invalid simple value for Unsupported: all variants failed to decode',
+            );
+          }
+          factory Unsupported.fromForm(String? value, {required bool explode}) {
+            throw FormDecodingException(
+              r'Invalid form value for Unsupported: all variants failed to decode',
+            );
+          }
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(constructors.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    },
+  );
+
   group('AnyOfGenerator basic structure', () {
     test('generates AnyOf class with nullable fields for each model', () {
       final model = AnyOfModel(

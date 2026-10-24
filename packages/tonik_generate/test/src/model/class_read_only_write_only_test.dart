@@ -298,6 +298,7 @@ void main() {
             listKeys: {},
             context: r'User',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return User(
             id: _$values[r'id'].decodeSimpleInt(context: r'User.id'),

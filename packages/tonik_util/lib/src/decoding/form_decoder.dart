@@ -113,7 +113,7 @@ extension FormDecoder on String? {
   ///
   /// Only accepts 'true' or 'false' (case-sensitive).
   /// Throws [InvalidTypeException] if the string is not a valid boolean
-  /// or if the value is null.
+  /// after form decoding, has invalid form encoding, or is null.
   bool decodeFormBool({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -122,14 +122,15 @@ extension FormDecoder on String? {
         context: context,
       );
     }
-    final decoded = Uri.decodeQueryComponent(this!);
-    if (decoded == 'true') return true;
-    if (decoded == 'false') return false;
-    throw InvalidTypeException(
-      value: this!,
-      targetType: bool,
-      context: context,
-    );
+    try {
+      return bool.parse(Uri.decodeQueryComponent(this!));
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: bool,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a form-encoded string to a nullable boolean.
@@ -210,10 +211,9 @@ extension FormDecoder on String? {
 
   /// Decodes a form-encoded string to binary data (`List<int>`).
   ///
-  /// Uses UTF-8 encoding with allowMalformed: true to handle any string input.
-  /// This provides backward compatibility and handles both text and
-  /// binary data.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// Decodes percent-encoded bytes and treats '+' as a space.
+  /// Unescaped text is encoded as UTF-8.
+  /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeFormBinary({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -225,7 +225,21 @@ extension FormDecoder on String? {
     if (this!.isEmpty) {
       return <int>[];
     }
-    return utf8.encode(this!);
+    try {
+      return Uri.decodeQueryComponent(
+        this!.replaceAllMapped(
+          RegExp(r'[^\x00-\x7F]+'),
+          (match) => Uri.encodeComponent(match[0]!),
+        ),
+        encoding: latin1,
+      ).codeUnits;
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<int>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a form-encoded string to nullable binary data.
@@ -343,7 +357,8 @@ extension FormDecoder on String? {
   ///
   /// Splits the string by commas and decodes each element.
   /// Empty string returns an empty list.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// Throws [InvalidTypeException] if the value is null or has invalid form
+  /// encoding.
   List<String> decodeFormStringList({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -353,12 +368,21 @@ extension FormDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',').map(Uri.decodeQueryComponent).toList();
+    try {
+      return this!.split(',').map(Uri.decodeQueryComponent).toList();
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<String>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a form-encoded string to a nullable list of strings.
   ///
   /// Returns null if the string is empty or null.
+  /// Throws [InvalidTypeException] for invalid form encoding.
   List<String>? decodeFormNullableStringList({String? context}) {
     if (this?.isEmpty ?? true) return null;
     return decodeFormStringList(context: context);
@@ -369,7 +393,8 @@ extension FormDecoder on String? {
   /// Splits the string by commas and decodes each element.
   /// Empty elements in the list are converted to null.
   /// Empty string returns an empty list.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// Throws [InvalidTypeException] if the value is null or has invalid form
+  /// encoding.
   List<String?> decodeFormStringNullableList({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -379,15 +404,24 @@ extension FormDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!
-        .split(',')
-        .map((s) => s.isEmpty ? null : Uri.decodeQueryComponent(s))
-        .toList();
+    try {
+      return this!
+          .split(',')
+          .map((s) => s.isEmpty ? null : Uri.decodeQueryComponent(s))
+          .toList();
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<String?>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a form-encoded string to a nullable list of nullable strings.
   ///
   /// Returns null if the string is empty or null.
+  /// Throws [InvalidTypeException] for invalid form encoding.
   List<String?>? decodeFormNullableStringNullableList({String? context}) {
     if (this?.isEmpty ?? true) return null;
     return decodeFormStringNullableList(context: context);

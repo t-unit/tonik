@@ -1130,6 +1130,7 @@ class const AllOfGenerator({
               'context': specLiteralString(className),
               'captureAdditionalKeys': literalTrue,
               if (!isForm) 'isHeader': refer('isHeader'),
+              if (!isForm) 'percentDecodeKeys': literalFalse,
             }),
           )
           .statement,

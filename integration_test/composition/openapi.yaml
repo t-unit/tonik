@@ -839,9 +839,9 @@ components:
           flag: '#/components/schemas/Flag'
           tagged: '#/components/schemas/TaggedMetric'
 
-    # =========================================================================
+    # ==================================================================
     # Discriminator inheritance via allOf
-    # =========================================================================
+    # ==================================================================
     # These schemas test the pattern where a parent object has a discriminator,
     # child schemas inherit from the parent via allOf, and a oneOf/anyOf
     # references the children. The oneOf/anyOf should inherit the discriminator.
@@ -989,9 +989,9 @@ components:
             bField:
               type: integer
 
-    # =========================================================================
+    # ==================================================================
     # Boolean schema (true) in oneOf — OpenAPI 3.1 / JSON Schema 2020-12
-    # =========================================================================
+    # ==================================================================
     # The boolean `true` schema means "accept any value". The parser converts
     # it to an AnyModel. This exercises the generator's handling of AnyModel
     # as a oneOf variant.
@@ -1000,9 +1000,9 @@ components:
         - true
         - $ref: '#/components/schemas/Class1'
 
-    # =========================================================================
+    # ==================================================================
     # Base64 (format: byte) variant in oneOf and anyOf
-    # =========================================================================
+    # ==================================================================
     # `type: string, format: byte` is parsed as Base64Model and represented as
     # TonikFile at the API surface. Encoding to simple/form/label parameter
     # styles must convert the file via toBase64String() before delegating to
@@ -1166,3 +1166,28 @@ components:
       anyOf:
         - $ref: '#/components/schemas/NestedStringValuesAlias'
         - type: integer
+
+    NameMappedMetric:
+      oneOf:
+        - $ref: '#/components/schemas/Counter'
+        - $ref: '#/components/schemas/Gauge'
+      discriminator:
+        propertyName: kind
+        mapping:
+          counter: Counter
+          gauge: Gauge
+
+    NameMappedAnyMetric:
+      anyOf:
+        - $ref: '#/components/schemas/Counter'
+        - $ref: '#/components/schemas/Gauge'
+      discriminator:
+        propertyName: kind
+        mapping:
+          counter: Counter
+          gauge: Gauge
+
+    AnyOfUnsupportedAliases:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+        - $ref: '#/components/schemas/NestedStringValuesAlias'

@@ -129,4 +129,18 @@ void main() {
       throwsA(isA<FormDecodingException>()),
     );
   });
+
+  test('unsupported-only aliases fail simple and form decoding', () {
+    expect(
+      () => AnyOfUnsupportedAliases.fromSimple('key,value', explode: false),
+      throwsA(isA<SimpleDecodingException>()),
+    );
+    expect(
+      () => AnyOfUnsupportedAliases.fromForm('key=value', explode: true),
+      throwsA(isA<FormDecodingException>()),
+    );
+    expect(AnyOfUnsupportedAliases.fromJson(const {'key': 'value'}).toJson(), {
+      'key': 'value',
+    });
+  });
 }

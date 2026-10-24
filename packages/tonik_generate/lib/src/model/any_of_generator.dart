@@ -1582,15 +1582,20 @@ class const AnyOfGenerator({
             : refer('_\$decoded${n.normalizedName}'),
     };
 
-    final validationCheck = _buildAllNullValidation(
-      decodableProperties,
-      'Invalid $encodingStyleName value for $className: '
-      'all variants failed to decode',
-      isForm
-          ? generateFormDecodingExceptionExpression
-          : generateSimpleDecodingExceptionExpression,
-      raw: true,
-    );
+    final errorMessage =
+        'Invalid $encodingStyleName value for $className: '
+        'all variants failed to decode';
+    final exceptionGenerator = isForm
+        ? generateFormDecodingExceptionExpression
+        : generateSimpleDecodingExceptionExpression;
+    final validationCheck = decodableProperties.isEmpty
+        ? exceptionGenerator(errorMessage, raw: true).statement
+        : _buildAllNullValidation(
+            decodableProperties,
+            errorMessage,
+            exceptionGenerator,
+            raw: true,
+          );
 
     return Constructor(
       (b) => b
@@ -1610,7 +1615,8 @@ class const AnyOfGenerator({
         ..body = Block.of([
           ...localDecls,
           validationCheck,
-          refer(className).call([], ctorArgs).returned.statement,
+          if (decodableProperties.isNotEmpty)
+            refer(className).call([], ctorArgs).returned.statement,
         ]),
     );
   }

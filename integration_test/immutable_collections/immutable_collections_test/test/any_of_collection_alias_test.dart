@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test('immutable list aliases retain JSON and value equality', () {
@@ -35,5 +36,19 @@ void main() {
     expect(value.toJson(), {'key': 'value'});
     expect(value, equalValue);
     expect(value.hashCode, equalValue.hashCode);
+  });
+
+  test('immutable unsupported-only aliases fail parameter decoding', () {
+    expect(
+      () => AnyOfUnsupportedAliases.fromSimple('key,value', explode: false),
+      throwsA(isA<SimpleDecodingException>()),
+    );
+    expect(
+      () => AnyOfUnsupportedAliases.fromForm('key=value', explode: true),
+      throwsA(isA<FormDecodingException>()),
+    );
+    expect(AnyOfUnsupportedAliases.fromJson(const {'key': 'value'}).toJson(), {
+      'key': 'value',
+    });
   });
 }

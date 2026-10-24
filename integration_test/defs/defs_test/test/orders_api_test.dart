@@ -2,6 +2,19 @@ import 'package:defs_api/defs_api.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('same-named definitions retain their own scalar types', () {
+    final text = TextContainer.fromJson(const {'item': 'hello'});
+    final count = CountContainer.fromJson(const {'item': 42});
+    final component = SharedItem.fromJson(const {'label': 'component'});
+
+    expect(text.item, 'hello');
+    expect(count.item, 42);
+    expect(component.label, 'component');
+    expect(text.toJson(), {'item': 'hello'});
+    expect(count.toJson(), {'item': 42});
+    expect(component.toJson(), {'label': 'component'});
+  });
+
   group(r'Order model (with $defs)', () {
     test('serializes to JSON', () {
       const order = Order(
