@@ -374,13 +374,17 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
       const expectedMethod = '''
-        factory Entity.fromSimple(String? value, {required bool explode}) {
+        factory Entity.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           try {
-            return EntityCompany(Company.fromSimple(value, explode: explode));
+            return EntityCompany( Company.fromSimple(value, explode: explode, isHeader: isHeader), );
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           try {
-            return EntityPerson(Person.fromSimple(value, explode: explode));
+            return EntityPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
           } on DecodingException catch (_) {
           } on FormatException catch (_) {}
           throw SimpleDecodingException(r'Invalid simple value for Entity');
@@ -416,7 +420,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
-        factory Result.fromSimple(String? value, {required bool explode}) {
+        factory Result.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           try {
             return ResultError(value.decodeSimpleInt(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
@@ -458,7 +466,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-          factory Value.fromSimple(String? value, {required bool explode}) {
+          factory Value.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             try {
               return ValueDateTime(value.decodeSimpleDateTime(context: r'Value'));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
@@ -556,11 +568,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = r'''
-          factory Entity.fromSimple(String? value, {required bool explode}) {
+          factory Entity.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             if (explode && value != null && value.isNotEmpty) {
-              final _$pairs = value.split(',');
               String? _$discriminator;
-              for (final pair in _$pairs) {
+          if (isHeader) {
+            _$discriminator = value.findHeaderDiscriminator(r'entity_type', {
+              r'person', r'company',
+            });
+          } else {
+            final _$pairs = value.split(',');
+            for (final pair in _$pairs) {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
@@ -570,19 +591,21 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
+          }
+
               if (_$discriminator == r'person') {
-                return EntityPerson(Person.fromSimple(value, explode: explode));
+                return EntityPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
               }
               if (_$discriminator == r'company') {
-                return EntityCompany(Company.fromSimple(value, explode: explode));
+                return EntityCompany( Company.fromSimple(value, explode: explode, isHeader: isHeader), );
               }
             }
             try {
-              return EntityCompany(Company.fromSimple(value, explode: explode));
+              return EntityCompany( Company.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return EntityPerson(Person.fromSimple(value, explode: explode));
+              return EntityPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Entity');
@@ -649,11 +672,18 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = r'''
-          factory MixedEntity.fromSimple(String? value, {required bool explode}) {
+          factory MixedEntity.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             if (explode && value != null && value.isNotEmpty) {
-              final _$pairs = value.split(',');
               String? _$discriminator;
-              for (final pair in _$pairs) {
+          if (isHeader) {
+            _$discriminator = value.findHeaderDiscriminator(r'type', {r'person'});
+          } else {
+            final _$pairs = value.split(',');
+            for (final pair in _$pairs) {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
@@ -663,8 +693,10 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
+          }
+
               if (_$discriminator == r'person') {
-                return MixedEntityPerson(Person.fromSimple(value, explode: explode));
+                return MixedEntityPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
               }
             }
             try {
@@ -672,7 +704,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return MixedEntityPerson(Person.fromSimple(value, explode: explode));
+              return MixedEntityPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
@@ -765,13 +797,17 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
 
       const expectedMethod = '''
-          factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
+          factory EntityNoDisc.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             try {
-              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
+              return EntityNoDiscCompany( Company.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             try {
-              return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
+              return EntityNoDiscPerson( Person.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) {
             } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');
@@ -1021,10 +1057,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       );
     });
 
-    test('fromSimple throws for simple-content ListModel variant '
-        'that is not decodable', () {
-      // A ListModel with simple content that is NOT a list of primitives
-      // (e.g. list of enums) — the hasSimpleContent branch
+    test('fromSimple passes header context to a simple list variant', () {
       final listVariant = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -1059,13 +1092,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final baseClass = classes.firstWhere((c) => c.name == 'Payload');
       final generated = format(baseClass.accept(emitter).toString());
 
-      // Simple-content list should be decodable via try/catch path
       expect(
         collapseWhitespace(generated),
         contains(
-          collapseWhitespace(
-            'return PayloadTags(value.decodeSimpleStringList(',
-          ),
+          collapseWhitespace('''
+            return PayloadTags(
+              value.decodeSimpleStringList(context: r'Payload', isHeader: isHeader),
+            );
+            '''),
         ),
       );
     });
@@ -1124,11 +1158,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-          factory Result.fromSimple(String? value, {required bool explode}) {
+          factory Result.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             if (explode && value != null && value.isNotEmpty) {
-              final _$pairs = value.split(',');
               String? _$discriminator;
-              for (final pair in _$pairs) {
+          if (isHeader) {
+            _$discriminator = value.findHeaderDiscriminator(r'type', {
+              r"it's-success",
+            });
+          } else {
+            final _$pairs = value.split(',');
+            for (final pair in _$pairs) {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
@@ -1138,12 +1181,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
+          }
+
               if (_$discriminator == r"it's-success") {
-                return ResultSuccess(Success.fromSimple(value, explode: explode));
+                return ResultSuccess( Success.fromSimple(value, explode: explode, isHeader: isHeader), );
               }
             }
             try {
-              return ResultSuccess(Success.fromSimple(value, explode: explode));
+              return ResultSuccess( Success.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) { } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Result');
           }''';
@@ -1208,11 +1253,20 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         final generated = format(baseClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-          factory Result.fromSimple(String? value, {required bool explode}) {
+          factory Result.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             if (explode && value != null && value.isNotEmpty) {
-              final _$pairs = value.split(',');
               String? _$discriminator;
-              for (final pair in _$pairs) {
+          if (isHeader) {
+            _$discriminator = value.findHeaderDiscriminator(r"it's-type", {
+              r'success',
+            });
+          } else {
+            final _$pairs = value.split(',');
+            for (final pair in _$pairs) {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
@@ -1222,12 +1276,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
                   }
                 }
               }
+          }
+
               if (_$discriminator == r'success') {
-                return ResultSuccess(Success.fromSimple(value, explode: explode));
+                return ResultSuccess( Success.fromSimple(value, explode: explode, isHeader: isHeader), );
               }
             }
             try {
-              return ResultSuccess(Success.fromSimple(value, explode: explode));
+              return ResultSuccess( Success.fromSimple(value, explode: explode, isHeader: isHeader), );
             } on DecodingException catch (_) { } on FormatException catch (_) {}
             throw SimpleDecodingException(r'Invalid simple value for Result');
           }''';
@@ -1279,7 +1335,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final generatedCode = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        factory Result.fromSimple(String? value, {required bool explode}) {
+        factory Result.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           try {
             return ResultErrorCode(value.decodeSimpleString(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}

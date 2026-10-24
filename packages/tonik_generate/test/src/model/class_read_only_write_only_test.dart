@@ -286,13 +286,18 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        factory User.fromSimple(String? value, {required bool explode}) {
+        factory User.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'id', r'name', r'createdAt'},
             listKeys: {},
             context: r'User',
+            isHeader: isHeader,
           );
           return User(
             id: _$values[r'id'].decodeSimpleInt(context: r'User.id'),
@@ -346,7 +351,11 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-        factory WriteOnlyModel.fromSimple(String? value, {required bool explode}) {
+        factory WriteOnlyModel.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return WriteOnlyModel(password: null);
         }
       ''';

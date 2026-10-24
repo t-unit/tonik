@@ -1506,7 +1506,18 @@ class const AnyOfGenerator({
                   ),
                 )
                 .property(constructorName)
-                .call([refer('value')], {'explode': refer('explode')}),
+                .call(
+                  [refer('value')],
+                  {
+                    'explode': refer('explode'),
+                    if (!isForm &&
+                        (modelType.resolved is ClassModel ||
+                            modelType.resolved is AllOfModel ||
+                            modelType.resolved is OneOfModel ||
+                            modelType.resolved is AnyOfModel))
+                      'isHeader': refer('isHeader'),
+                  },
+                ),
           _ =>
             (isForm
                     ? buildFromFormValueExpression(
@@ -1526,6 +1537,7 @@ class const AnyOfGenerator({
                         package: package,
                         contextClass: className,
                         explode: refer('explode'),
+                        isHeader: refer('isHeader'),
                         useImmutableCollections: useImmutableCollections,
                       ))
                 .expression,
@@ -1569,7 +1581,10 @@ class const AnyOfGenerator({
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(buildBoolParameter('explode', required: true))
+        ..optionalParameters.addAll([
+          buildBoolParameter('explode', required: true),
+          if (!isForm) buildBoolParameter('isHeader'),
+        ])
         ..body = Block.of([
           ...localDecls,
           validationCheck,

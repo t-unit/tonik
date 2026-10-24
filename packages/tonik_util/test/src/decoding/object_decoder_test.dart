@@ -3,6 +3,98 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/object_decoder.dart';
 
 void main() {
+  test('ignores malformed scalar pairs when looking for a header tag', () {
+    expect('a=b=c'.findHeaderDiscriminator('kind', {'person'}), isNull);
+    expect('hello, "world'.findHeaderDiscriminator('kind', {'person'}), isNull);
+  });
+
+  test('finds a recognized header tag after unrelated malformed pairs', () {
+    expect(
+      'a=b=c, %=bad, kind=unknown, kind=person'.findHeaderDiscriminator(
+        'kind',
+        {'person'},
+      ),
+      'person',
+    );
+  });
+
+  test('does not mistake a quoted header value for a discriminator', () {
+    expect(
+      'name="Alice, kind=person", kind=person'.findHeaderDiscriminator('kind', {
+        'person',
+      }),
+      'person',
+    );
+    expect(
+      'name="Alice, kind=person"'.findHeaderDiscriminator('kind', {'person'}),
+      isNull,
+    );
+  });
+
+  test('retains a recognized header tag before a malformed quoted tail', () {
+    expect(
+      'kind=person, name="Alice'.findHeaderDiscriminator('kind', {'person'}),
+      'person',
+    );
+  });
+
+  test('decodes header object pairs with optional whitespace', () {
+    final result = 'name,Alice, age,30'.decodeObject(
+      explode: false,
+      explodeSeparator: ',',
+      expectedKeys: {'name', 'age'},
+      listKeys: {},
+      isHeader: true,
+    );
+
+    expect(result, {'name': 'Alice', 'age': '30'});
+  });
+
+  test('keeps quoted equals and commas inside exploded header list values', () {
+    final result = 'name="Alice=Bob, Jr.", tags=red, "blue=green,yellow"'
+        .decodeObject(
+          explode: true,
+          explodeSeparator: ',',
+          expectedKeys: {'name', 'tags'},
+          listKeys: {'tags'},
+          isHeader: true,
+        );
+
+    expect(result, {
+      'name': '"Alice=Bob, Jr."',
+      'tags': 'red,"blue=green,yellow"',
+    });
+  });
+
+  test('captures additional header keys before a list property', () {
+    final result = 'note,"a=b,c", name,Alice, tags,red, "blue,green"'
+        .decodeObject(
+          explode: false,
+          explodeSeparator: ',',
+          expectedKeys: {'name', 'tags'},
+          listKeys: {'tags'},
+          captureAdditionalKeys: true,
+          isHeader: true,
+        );
+
+    expect(result, {
+      'note': '"a=b,c"',
+      'name': 'Alice',
+      'tags': 'red,"blue,green"',
+    });
+  });
+
+  test('keeps ordinary simple object whitespace behavior unchanged', () {
+    final result = 'name,Alice, age,30'.decodeObject(
+      explode: false,
+      explodeSeparator: ',',
+      expectedKeys: {'name', 'age'},
+      listKeys: {},
+    );
+
+    expect(result, {'name': 'Alice'});
+  });
+
   group('ObjectDecoder', () {
     group('decodeObject with explode=true and ampersand separator', () {
       test('decodes simple key-value pairs', () {

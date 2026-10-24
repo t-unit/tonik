@@ -106,10 +106,14 @@ void main() {
       );
 
       const expectedMethod = r'''
-          factory Flexible.fromSimple(String? value, {required bool explode}) {
+          factory Flexible.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             User? _$decodeduser;
             try {
-              _$decodeduser = User.fromSimple(value, explode: explode);
+              _$decodeduser = User.fromSimple( value, explode: explode, isHeader: isHeader, );
             } on Object catch (_) {
               _$decodeduser = null;
             }
@@ -253,7 +257,11 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-      factory MixedAnyOf.fromSimple(String? value, {required bool explode}) {
+      factory MixedAnyOf.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
         String? _$decodedstring;
         try {
           _$decodedstring = value.decodeSimpleString(context: r'MixedAnyOf');

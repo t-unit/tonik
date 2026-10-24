@@ -605,9 +605,10 @@ class const OneOfGenerator({
                 ..type = refer('String?', 'dart:core'),
             ),
           )
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             buildBoolParameter('explode', required: true),
-          )
+            if (!isForm) buildBoolParameter('isHeader'),
+          ])
           ..lambda = true
           ..body =
               (isForm
@@ -621,7 +622,7 @@ class const OneOfGenerator({
     }
 
     if (model.discriminator != null) {
-      final hasDiscriminatedComplexTypes = model.models.any(
+      final discriminatedComplexTypes = model.models.where(
         (m) =>
             m.discriminatorValue != null &&
             m.model.resolved is! PrimitiveModel &&
@@ -631,12 +632,29 @@ class const OneOfGenerator({
             m.model.resolved is! NeverModel,
       );
 
-      if (hasDiscriminatedComplexTypes) {
+      if (discriminatedComplexTypes.isNotEmpty) {
         bodyBlocks.addAll([
           const Code('if (explode && value != null && value.isNotEmpty) {'),
-          const Code(r"final _$pairs = value.split(',');"),
+          if (isForm) const Code(r"final _$pairs = value.split(',');"),
           refer('String?', 'dart:core').code,
           const Code(r' _$discriminator;'),
+          if (!isForm) ...[
+            const Code('if (isHeader) {'),
+            refer(r'_$discriminator')
+                .assign(
+                  refer('value').property('findHeaderDiscriminator').call([
+                    specLiteralString(model.discriminator!),
+                    literalSet(
+                      discriminatedComplexTypes.map(
+                        (m) => specLiteralString(m.discriminatorValue!),
+                      ),
+                    ),
+                  ]),
+                )
+                .statement,
+            const Code('} else {'),
+          ],
+          if (!isForm) const Code(r"final _$pairs = value.split(',');"),
           const Code(r'for (final pair in _$pairs) {'),
           const Code(r"final _$parts = pair.split('=');"),
           const Code(r'if (_$parts.length == 2) {'),
@@ -653,17 +671,10 @@ class const OneOfGenerator({
           const Code('}'),
           const Code('}'),
           const Code('}'),
+          if (!isForm) const Code('}'),
         ]);
 
-        for (final m in model.models.where(
-          (m) =>
-              m.discriminatorValue != null &&
-              m.model.resolved is! PrimitiveModel &&
-              m.model.resolved is! ListModel &&
-              m.model.resolved is! MapModel &&
-              m.model.resolved is! AnyModel &&
-              m.model.resolved is! NeverModel,
-        )) {
+        for (final m in discriminatedComplexTypes) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
 
@@ -683,7 +694,18 @@ class const OneOfGenerator({
                     ),
                   )
                   .property(constructorName)
-                  .call([refer('value')], {'explode': refer('explode')}),
+                  .call(
+                    [refer('value')],
+                    {
+                      'explode': refer('explode'),
+                      if (!isForm &&
+                          (modelType.resolved is ClassModel ||
+                              modelType.resolved is AllOfModel ||
+                              modelType.resolved is OneOfModel ||
+                              modelType.resolved is AnyOfModel))
+                        'isHeader': refer('isHeader'),
+                    },
+                  ),
             ]).statement,
             const Code('}'),
           ]);
@@ -725,6 +747,7 @@ class const OneOfGenerator({
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                isHeader: refer('isHeader'),
               );
         tryBody.add(
           refer(variantName).call([decodeExpr.expression]).returned.statement,
@@ -749,6 +772,7 @@ class const OneOfGenerator({
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                isHeader: refer('isHeader'),
               );
         tryBody.add(
           refer(variantName).call([decodeExpr.expression]).returned.statement,
@@ -788,7 +812,18 @@ class const OneOfGenerator({
                   ),
                 )
                 .property(constructorName)
-                .call([refer('value')], {'explode': refer('explode')});
+                .call(
+                  [refer('value')],
+                  {
+                    'explode': refer('explode'),
+                    if (!isForm &&
+                        (modelType.resolved is ClassModel ||
+                            modelType.resolved is AllOfModel ||
+                            modelType.resolved is OneOfModel ||
+                            modelType.resolved is AnyOfModel))
+                      'isHeader': refer('isHeader'),
+                  },
+                );
         tryBody.add(refer(variantName).call([innerDecode]).returned.statement);
       }
 
@@ -821,7 +856,10 @@ class const OneOfGenerator({
               ..type = refer('String?', 'dart:core'),
           ),
         )
-        ..optionalParameters.add(buildBoolParameter('explode', required: true))
+        ..optionalParameters.addAll([
+          buildBoolParameter('explode', required: true),
+          if (!isForm) buildBoolParameter('isHeader'),
+        ])
         ..body = Block.of(bodyBlocks),
     );
   }

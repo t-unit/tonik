@@ -114,9 +114,8 @@ final class const HttpBackendGenerator({
       );
 
   @override
-  Expression responseHeaderValues(Expression response, String name) => response
-      .property('headersSplitValues')
-      .index(specLiteralString(name.toLowerCase()));
+  Expression responseHeaderValue(Expression response, String name) =>
+      response.property('headers').index(specLiteralString(name.toLowerCase()));
 
   @override
   Reference get serverConfigType => TypeReference(

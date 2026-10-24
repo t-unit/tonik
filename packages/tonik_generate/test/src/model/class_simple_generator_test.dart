@@ -135,7 +135,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -147,7 +147,11 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory Sample.fromSimple(String? value, {required bool explode}) {
+        factory Sample.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
@@ -161,6 +165,7 @@ void main() {
             },
             listKeys: {},
             context: r'Sample',
+            isHeader: isHeader,
           );
           return Sample(
             flag: _$values[r'flag'].decodeSimpleBool(context: r'Sample.flag'),
@@ -243,7 +248,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -255,13 +260,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory Order.fromSimple(String? value, {required bool explode}) {
+        factory Order.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'status'},
             listKeys: {},
             context: r'Order',
+            isHeader: isHeader,
           );
           return Order(
             status: Status.fromSimple(_$values[r'status'], explode: explode),
@@ -368,7 +378,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -380,13 +390,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory NullableSample.fromSimple(String? value, {required bool explode}) {
+        factory NullableSample.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'flag', r'count', r'label', r'created', r'amount'},
             listKeys: {},
             context: r'NullableSample',
+            isHeader: isHeader,
           );
           return NullableSample(
             flag: _$values[r'flag'].decodeSimpleNullableBool(
@@ -476,7 +491,7 @@ void main() {
               .toString(),
           'String?',
         );
-        expect(fromSimpleConstructor.optionalParameters.length, 1);
+        expect(fromSimpleConstructor.optionalParameters.length, 2);
         expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
         expect(
           fromSimpleConstructor.optionalParameters[0].type
@@ -488,16 +503,21 @@ void main() {
 
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = r'''
-          factory Container.fromSimple(String? value, {required bool explode}) {
+          factory Container.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             final _$values = value.decodeObject(
               explode: explode,
               explodeSeparator: ',',
               expectedKeys: {r'value'},
               listKeys: {},
               context: r'Container',
+            isHeader: isHeader,
             );
             return Container(
-              value: PrimitiveOneOf.fromSimple(_$values[r'value'], explode: explode),
+              value: PrimitiveOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
             );
           }
         ''';
@@ -577,21 +597,26 @@ void main() {
 
         expect(fromSimpleConstructor.factory, isTrue);
         expect(fromSimpleConstructor.requiredParameters.length, 1);
-        expect(fromSimpleConstructor.optionalParameters.length, 1);
+        expect(fromSimpleConstructor.optionalParameters.length, 2);
         expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = r'''
-          factory Container.fromSimple(String? value, {required bool explode}) {
+          factory Container.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             final _$values = value.decodeObject(
               explode: explode,
               explodeSeparator: ',',
               expectedKeys: {r'value'},
               listKeys: {},
               context: r'Container',
+            isHeader: isHeader,
             );
             return Container(
-              value: MixedOneOf.fromSimple(_$values[r'value'], explode: explode),
+              value: MixedOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
             );
           }
         ''';
@@ -681,16 +706,21 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedFromSimpleMethod = r'''
-          factory Wrapper.fromSimple(String? value, {required bool explode}) {
+          factory Wrapper.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             final _$values = value.decodeObject(
               explode: explode,
               explodeSeparator: ',',
               expectedKeys: {r'data'},
               listKeys: {},
               context: r'Wrapper',
+            isHeader: isHeader,
             );
             return Wrapper(
-              data: DynamicValue.fromSimple(_$values[r'data'], explode: explode),
+              data: DynamicValue.fromSimple( _$values[r'data'], explode: explode, isHeader: isHeader, ),
             );
           }
         ''';
@@ -756,7 +786,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -768,13 +798,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory UserIdHolder.fromSimple(String? value, {required bool explode}) {
+        factory UserIdHolder.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'id'},
             listKeys: {},
             context: r'UserIdHolder',
+            isHeader: isHeader,
           );
           return UserIdHolder(
             id: _$values[r'id'].decodeSimpleInt(context: r'UserIdHolder.id'),
@@ -859,7 +894,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -871,16 +906,21 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory AliasHolder.fromSimple(String? value, {required bool explode}) {
+        factory AliasHolder.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'value'},
             listKeys: {},
             context: r'AliasHolder',
+            isHeader: isHeader,
           );
           return AliasHolder(
-            value: PrimitiveOneOf.fromSimple(_$values[r'value'], explode: explode),
+            value: PrimitiveOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
           );
         }
       ''';
@@ -964,12 +1004,16 @@ void main() {
 
       expect(fromSimpleConstructor.factory, isTrue);
       expect(fromSimpleConstructor.requiredParameters.length, 1);
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-          factory AliasHolder.fromSimple(String? value, {required bool explode}) {
+          factory AliasHolder.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             throw SimpleDecodingException(
               r'Simple encoding not supported for AliasHolder: contains complex types',
             );
@@ -1040,12 +1084,16 @@ void main() {
 
       expect(fromSimpleConstructor.factory, isTrue);
       expect(fromSimpleConstructor.requiredParameters.length, 1);
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-          factory AliasHolder.fromSimple(String? value, {required bool explode}) {
+          factory AliasHolder.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             throw SimpleDecodingException(
               r'Simple encoding not supported for AliasHolder: contains complex types',
             );
@@ -1121,11 +1169,15 @@ void main() {
       );
       expect(fromSimpleConstructor.factory, isTrue);
       expect(fromSimpleConstructor.requiredParameters.length, 1);
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
 
       const expectedMethod = '''
-        factory User.fromSimple(String? value, {required bool explode}) {
+        factory User.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           throw SimpleDecodingException(
             r'Simple encoding not supported for User: contains complex types',
           );
@@ -1181,7 +1233,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -1193,13 +1245,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory Resource.fromSimple(String? value, {required bool explode}) {
+        factory Resource.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'endpoint'},
             listKeys: {},
             context: r'Resource',
+            isHeader: isHeader,
           );
           return Resource(
             endpoint: _$values[r'endpoint'].decodeSimpleUri(
@@ -1258,7 +1315,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -1270,13 +1327,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory Resource.fromSimple(String? value, {required bool explode}) {
+        factory Resource.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'callback'},
             listKeys: {},
             context: r'Resource',
+            isHeader: isHeader,
           );
           return Resource(
             callback: _$values[r'callback'].decodeSimpleNullableUri(
@@ -1374,7 +1436,7 @@ void main() {
             .toString(),
         'String?',
       );
-      expect(fromSimpleConstructor.optionalParameters.length, 1);
+      expect(fromSimpleConstructor.optionalParameters.length, 2);
       expect(fromSimpleConstructor.optionalParameters[0].name, 'explode');
       expect(
         fromSimpleConstructor.optionalParameters[0].type
@@ -1386,13 +1448,18 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
-        factory Resource.fromSimple(String? value, {required bool explode}) {
+        factory Resource.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'name', r'endpoint', r'port', r'callback'},
             listKeys: {},
             context: r'Resource',
+            isHeader: isHeader,
           );
           return Resource(
             name: _$values[r'name'].decodeSimpleString(context: r'Resource.name'),

@@ -2004,9 +2004,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         collapseWhitespace(generated),
         contains(
           collapseWhitespace('''
-            factory Value.fromSimple(String? value, {required bool explode}) {
+            factory Value.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
               try {
-                return ValueList(value.decodeSimpleStringList(context: r'Value'));
+                return ValueList( value.decodeSimpleStringList(context: r'Value', isHeader: isHeader), );
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
               try {
@@ -2295,9 +2299,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         collapseWhitespace(generated),
         contains(
           collapseWhitespace('''
-              factory Value.fromSimple(String? value, {required bool explode}) {
+              factory Value.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) {
                 try {
-                  return ValueList(value.decodeSimpleStringList(context: r'Value'));
+                  return ValueList( value.decodeSimpleStringList(context: r'Value', isHeader: isHeader), );
                 } on DecodingException catch (_) {
                 } on FormatException catch (_) {}
                 try {

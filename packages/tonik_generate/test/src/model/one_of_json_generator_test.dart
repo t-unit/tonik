@@ -1690,7 +1690,11 @@ void main() {
           );
       ''';
       const expectedFromSimple = '''
-        factory Empty.fromSimple(String? value, {required bool explode}) =>
+        factory Empty.fromSimple(
+    String? value, {
+    required bool explode,
+    bool isHeader = false,
+  }) =>
           throw SimpleDecodingException(
             r'Empty is write-only and cannot be decoded.',
           );

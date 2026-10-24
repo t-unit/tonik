@@ -1590,7 +1590,11 @@ void main() {
       );
 
       const expectedMethod = '''
-  factory EmptyClass.fromSimple(String? value, {required bool explode}) {
+  factory EmptyClass.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     return EmptyClass();
   }''';
 
@@ -1761,13 +1765,18 @@ void main() {
 
       test('generates fromSimple with AP capture', () {
         const expectedMethod = r'''
-  factory Config.fromSimple(String? value, {required bool explode}) {
+  factory Config.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'name'},
       listKeys: {},
       context: r'Config',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'name'};
@@ -1924,13 +1933,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
       test('generates fromSimple decoding string AP values', () {
         const expectedMethod = r'''
-  factory Labels.fromSimple(String? value, {required bool explode}) {
+  factory Labels.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'id'},
       listKeys: {},
       context: r'Labels',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
@@ -2086,13 +2100,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
       test('generates fromSimple rejecting unknown keys', () {
         const expectedMethod = r'''
-  factory WidgetMap.fromSimple(String? value, {required bool explode}) {
+  factory WidgetMap.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'version'},
       listKeys: {},
       context: r'WidgetMap',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'version'};
@@ -2501,13 +2520,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
 
         const expectedMethod = r'''
-  factory IntTyped.fromSimple(String? value, {required bool explode}) {
+  factory IntTyped.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'name'},
       listKeys: {},
       context: r'IntTyped',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'name'};
@@ -2629,13 +2653,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
 
         const expectedMethod = r'''
-  factory BoolTyped.fromSimple(String? value, {required bool explode}) {
+  factory BoolTyped.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'label'},
       listKeys: {},
       context: r'BoolTyped',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'label'};

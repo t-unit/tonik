@@ -353,7 +353,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        factory PasswordReset.fromSimple(String? value, {required bool explode}) =>
+        factory PasswordReset.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) =>
           throw SimpleDecodingException(
             r'PasswordReset is write-only and cannot be decoded.',
           );

@@ -134,8 +134,11 @@ final class const DioBackendGenerator({
       );
 
   @override
-  Expression responseHeaderValues(Expression response, String name) =>
-      response.property('headers').index(specLiteralString(name));
+  Expression responseHeaderValue(Expression response, String name) => response
+      .property('headers')
+      .index(specLiteralString(name))
+      .nullSafeProperty('join')
+      .call([literalString(',')]);
 
   @override
   Reference get serverConfigType => TypeReference(

@@ -329,7 +329,11 @@ void main() {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        factory UserCommand.fromSimple(String? value, {required bool explode}) =>
+        factory UserCommand.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) =>
           throw SimpleDecodingException(
             r'UserCommand is write-only and cannot be decoded.',
           );
