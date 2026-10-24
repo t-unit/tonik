@@ -9,6 +9,39 @@ void main() {
   ).format;
   final emitter = DartEmitter(useNullSafetySyntax: true);
 
+  test('copyWith preserves private positional constructor state', () {
+    final copyWith = generateCopyWith(
+      className: 'Payload',
+      constructorName: '_',
+      constructorArguments: [refer('this').property('_discriminator')],
+      properties: [
+        (
+          normalizedName: 'count',
+          typeRef: TypeReference(
+            (b) => b
+              ..symbol = 'int'
+              ..url = 'dart:core',
+          ),
+          isNullable: false,
+          skipCast: false,
+        ),
+      ],
+    )!;
+
+    const expected = '''
+      Payload Function({int? count}) get copyWith {
+        return ({int? count}) => Payload._(
+          this._discriminator,
+          count: count ?? this.count,
+        );
+      }
+    ''';
+    expect(
+      collapseWhitespace(format(copyWith.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('generateCopyWith', () {
     test('returns null when properties are empty', () {
       final result = generateCopyWith(
