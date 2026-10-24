@@ -4,6 +4,22 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('exploded header maps preserve quoted keys and value equals', () async {
+    final server = await RawRequestServer.start(
+      responseHeaders: {'X-Meta': '"a=b"=value=more, c=other'},
+    );
+    final api = SimpleEncodingApi(
+      CustomServer(baseUrl: server.baseUrl, serverConfig: testServerConfig()),
+    );
+
+    final result = await api.testResponseHeaderMaps();
+
+    expect(requireSuccess(result).value.xMeta, {
+      '"a=b"': 'value=more',
+      'c': 'other',
+    });
+  });
+
   test('204 exploded object response header decodes successfully', () async {
     final server = await RawRequestServer.start(
       responseHeaders: {'X-Meta': 'role=admin,firstName=Alex'},

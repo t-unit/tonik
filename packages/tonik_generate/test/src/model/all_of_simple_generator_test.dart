@@ -74,13 +74,18 @@ void main() {
       collapseWhitespace(generated),
       contains(
         collapseWhitespace('''
-          factory MapComponent.fromSimple(String? value, {required bool explode}) {
+          factory MapComponent.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
             return MapComponent(
               metadata: IMap(
                 value.decodeSimpleMap(
                   (v) => v.decodeSimpleString(context: r'MapComponent.metadata'),
                   explode: explode,
                   context: r'MapComponent.metadata',
+                  isHeader: isHeader,
                 ),
               ),
             );
@@ -676,9 +681,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedFromSimpleMethod = '''
-        factory Combined.fromSimple(String? value, {required bool explode}) {
+        factory Combined.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return Combined(
-            flexibleValue: FlexibleValue.fromSimple(value, explode: explode),
+            flexibleValue: FlexibleValue.fromSimple( value, explode: explode, isHeader: isHeader, ),
             int: value.decodeSimpleInt(context: r'Combined.int'),
           );
         }
@@ -722,10 +731,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedFromSimple = '''
-        factory AllOfIntList.fromSimple(String? value, {required bool explode}) {
+        factory AllOfIntList.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return AllOfIntList(
             list: value
-              .decodeSimpleStringList(context: r'AllOfIntList.list')
+              .decodeSimpleStringList( context: r'AllOfIntList.list', isHeader: isHeader, )
               .map((e) => e.decodeSimpleInt(context: r'AllOfIntList.list'))
               .toList(),
           );
@@ -770,10 +783,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedFromSimple = '''
-        factory AllOfDateTimeList.fromSimple(String? value, {required bool explode}) {
+        factory AllOfDateTimeList.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return AllOfDateTimeList(
             list: value
-              .decodeSimpleStringList(context: r'AllOfDateTimeList.list')
+              .decodeSimpleStringList( context: r'AllOfDateTimeList.list', isHeader: isHeader, )
               .map(
                 (e) => e.decodeSimpleDateTime(context: r'AllOfDateTimeList.list'),
               )
@@ -820,10 +837,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedFromSimple = '''
-        factory AllOfDateList.fromSimple(String? value, {required bool explode}) {
+        factory AllOfDateList.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return AllOfDateList(
             list: value
-              .decodeSimpleStringList(context: r'AllOfDateList.list')
+              .decodeSimpleStringList( context: r'AllOfDateList.list', isHeader: isHeader, )
               .map((e) => e.decodeSimpleDate(context: r'AllOfDateList.list'))
               .toList(),
           );
@@ -897,14 +918,18 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedFromSimple = '''
-        factory AllOfDoubleList.fromSimple(String? value, {required bool explode}) {
+        factory AllOfDoubleList.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return AllOfDoubleList(
             list: value
-              .decodeSimpleStringList(context: r'AllOfDoubleList.list')
+              .decodeSimpleStringList( context: r'AllOfDoubleList.list', isHeader: isHeader, )
               .map((e) => e.decodeSimpleDateTime(context: r'AllOfDoubleList.list'))
               .toList(),
             list2: value
-              .decodeSimpleStringList(context: r'AllOfDoubleList.list2')
+              .decodeSimpleStringList( context: r'AllOfDoubleList.list2', isHeader: isHeader, )
               .map((e) => ArrayOneOfModel.fromSimple(e, explode: explode))
               .toList(),
           );
@@ -991,10 +1016,14 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final combinedClass = generator.generateClass(model);
 
     const expectedFromSimpleMethod = r'''
-        factory CombinedModel.fromSimple(String? value, {required bool explode}) {
+        factory CombinedModel.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return CombinedModel(
-            $base: Base.fromSimple(value, explode: explode),
-            $mixin: Mixin.fromSimple(value, explode: explode),
+            $base: Base.fromSimple(value, explode: explode, isHeader: isHeader),
+            $mixin: Mixin.fromSimple(value, explode: explode, isHeader: isHeader),
           );
         }
       ''';
@@ -1031,6 +1060,7 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
         factory StringDecimalModel.fromSimple(
           String? value, {
           required bool explode,
+          bool isHeader = false,
         }) {
           return StringDecimalModel(
             bigDecimal: value.decodeSimpleBigDecimal(
@@ -1087,7 +1117,11 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
       final combinedClass = generator.generateClass(model);
 
       const expectedFromSimpleMethod = '''
-        factory EnumStringModel.fromSimple(String? value, {required bool explode}) {
+        factory EnumStringModel.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return EnumStringModel(
             status: Status.fromSimple(value, explode: explode),
             string: value.decodeSimpleString(context: r'EnumStringModel.string'),
@@ -1167,9 +1201,13 @@ String toSimple({ required bool explode, required bool allowEmpty, bool literal 
     final combinedClass = generator.generateClass(model);
 
     const expectedFromSimpleMethod = '''
-        factory MixedModel.fromSimple(String? value, {required bool explode}) {
+        factory MixedModel.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
           return MixedModel(
-            userData: UserData.fromSimple(value, explode: explode),
+            userData: UserData.fromSimple( value, explode: explode, isHeader: isHeader, ),
             status: Status.fromSimple(value, explode: explode),
             string: value.decodeSimpleString(context: r'MixedModel.string'),
           );

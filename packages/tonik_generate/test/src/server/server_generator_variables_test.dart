@@ -53,6 +53,52 @@ void main() {
     expect(() => generator.generate(servers), returnsNormally);
   });
 
+  test('escapes enum constants that normalize to the value field', () {
+    const variable = ServerVariable(
+      name: 'mode',
+      defaultValue: 'value',
+      enumValues: ['value', 'VALUE', '_', 'values', 'index'],
+      description: null,
+    );
+    const servers = [
+      Server(
+        url: 'https://mode.example.com/{mode}',
+        description: 'Mode server',
+        variables: [variable],
+      ),
+    ];
+
+    final generatedEnum = generator.generateEnums(servers).single;
+    const expectedEnum = r'''
+      /// Allowed values for the mode variable.
+      enum ModeServerMode {
+        $value(r'value'),
+        $value2(r'VALUE'),
+        $value3(r'_'),
+        $values(r'values'),
+        $index(r'index');
+
+        const ModeServerMode(this.value);
+        final String value;
+      }
+    ''';
+    expect(
+      collapseWhitespace(format(generatedEnum.accept(emitter).toString())),
+      collapseWhitespace(format(expectedEnum)),
+    );
+    expect(generator.getNormalizedEnumValueName(variable, 'value'), r'$value');
+    expect(generator.getNormalizedEnumValueName(variable, 'VALUE'), r'$value2');
+    expect(generator.getNormalizedEnumValueName(variable, '_'), r'$value3');
+
+    final serverClass = generator.generateClasses(servers)[1];
+    final modeParameter = serverClass.constructors.single.optionalParameters
+        .firstWhere((parameter) => parameter.name == 'mode');
+    expect(
+      modeParameter.defaultTo?.accept(emitter).toString(),
+      r'ModeServerMode.$value',
+    );
+  });
+
   group('ServerGenerator templated URLs with enum variables', () {
     late List<Server> servers;
     late List<Class> classes;

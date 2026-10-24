@@ -147,6 +147,7 @@ void main() {
                 (v) => v.decodeSimpleString(context: r'X-Meta'),
                 explode: true,
                 context: r'X-Meta',
+                isHeader: true,
               ),
             ),
           '''),
@@ -164,6 +165,7 @@ void main() {
                       (v) => v.decodeSimpleString(context: r'X-Optional'),
                       explode: false,
                       context: r'X-Optional',
+                      isHeader: true,
                     ),
                 ),
           '''),
@@ -3431,7 +3433,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers[r'X-Never-Header'] != null) {
+              if (response.headers[r'X-Never-Header']?.join(',') != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -3563,7 +3565,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers[r'X-Never-Header'] != null) {
+              if (response.headers[r'X-Never-Header']?.join(',') != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -3690,7 +3692,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers[r'X-Never-Header'] != null) {
+              if (response.headers[r'X-Never-Header']?.join(',') != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -4206,7 +4208,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      if (response.headers[r'X-Never-Header'] != null) {
+      if (response.headers[r'X-Never-Header']?.join(',') != null) {
         throw SimpleDecodingException(
           r'NeverModel does not permit any value at X-Never-Header',
         );
@@ -4300,7 +4302,7 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      if (response.headers[r'X-Never-Header'] != null) {
+      if (response.headers[r'X-Never-Header']?.join(',') != null) {
         throw SimpleDecodingException(
           r'NeverModel does not permit any value at X-Never-Header',
         );
@@ -5972,7 +5974,7 @@ AnonymousResponse _parseResponse(Response response) {
     case (204, _):
       return AnonymousResponse(
         xRateLimit:
-            (response.headersSplitValues[r'x-rate-limit']?.join(','))
+            (response.headers[r'x-rate-limit'])
                 .decodeSimpleInt(context: r'X-Rate-Limit'),
       );
     default:

@@ -247,6 +247,110 @@ void main() {
       });
     });
 
+    group('Header lists', () {
+      test('uses the first unquoted equals sign in exploded header maps', () {
+        expect(
+          '"a=b"=value=more, c=other'.decodeSimpleMap(
+            (value) => value,
+            explode: true,
+            isHeader: true,
+          ),
+          {'"a=b"': 'value=more', 'c': 'other'},
+        );
+        expect(
+          '"a=b"=value=more, c=other'.decodeSimpleMap(
+            (value) => value,
+            explode: true,
+          ),
+          {'"a': 'b"=value=more', ' c': 'other'},
+        );
+      });
+
+      test('trims header map separators without changing scalar values', () {
+        expect(
+          'enabled=true, archived=false'.decodeSimpleMap(
+            (value) => value.decodeSimpleBool(),
+            explode: true,
+            isHeader: true,
+          ),
+          {'enabled': true, 'archived': false},
+        );
+        expect(
+          'name,"Alice=Bob, Jr.", age,30'.decodeSimpleNullableMap(
+            (value) => value,
+            explode: false,
+            isHeader: true,
+          ),
+          {'name': '"Alice=Bob, Jr."', 'age': '30'},
+        );
+        expect(
+          'enabled=true, archived=false'.decodeSimpleMap(
+            (value) => value.decodeSimpleBool(),
+            explode: true,
+          ),
+          {'enabled': true, ' archived': false},
+        );
+      });
+
+      test('removes only optional whitespace around elements', () {
+        expect(
+          ' a,\tb \t, c d,\u00a0e\u00a0'.decodeSimpleStringList(isHeader: true),
+          ['a', 'b', 'c d', '\u00a0e\u00a0'],
+        );
+      });
+
+      test('preserves quoted commas, spaces and escaped quotes verbatim', () {
+        expect(
+          r' a, " b, c ", "d\",e", "f\\", g'.decodeSimpleStringList(
+            isHeader: true,
+          ),
+          ['a', '" b, c "', r'"d\",e"', r'"f\\"', 'g'],
+        );
+      });
+
+      test('preserves empty and absent nullable list behavior', () {
+        expect(null.decodeSimpleNullableStringList(isHeader: true), isNull);
+        expect(''.decodeSimpleNullableStringList(isHeader: true), isNull);
+        expect(''.decodeSimpleStringList(isHeader: true), isEmpty);
+        expect(
+          () => null.decodeSimpleStringList(isHeader: true),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect('a, \t, ""'.decodeSimpleStringNullableList(isHeader: true), [
+          'a',
+          null,
+          '""',
+        ]);
+        expect(
+          'a, \t,b'.decodeSimpleNullableStringNullableList(isHeader: true),
+          ['a', null, 'b'],
+        );
+        expect(
+          null.decodeSimpleNullableStringNullableList(isHeader: true),
+          isNull,
+        );
+      });
+
+      test('rejects an unterminated quoted item', () {
+        expect(
+          () => 'a, "b,c'.decodeSimpleStringList(isHeader: true),
+          throwsA(isA<SimpleDecodingException>()),
+        );
+      });
+
+      test('rejects a dangling escape inside a quoted item', () {
+        expect(
+          () => r'a, "b\'.decodeSimpleStringList(isHeader: true),
+          throwsA(isA<SimpleDecodingException>()),
+        );
+      });
+
+      test('keeps ordinary simple lists and scalar strings unchanged', () {
+        expect(' a, "b,c"'.decodeSimpleStringList(), [' a', ' "b', 'c"']);
+        expect('hello, world'.decodeSimpleString(), 'hello, world');
+      });
+    });
+
     group('Collections', () {
       test('decodes string lists', () {
         // List<String>

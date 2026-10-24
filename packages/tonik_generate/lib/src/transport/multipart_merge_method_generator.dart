@@ -57,7 +57,19 @@ Method _mergeListsMethod() {
             )
             .statement,
         const Code('if (present.isEmpty) return null;'),
-        const Code('return [for (final value in present) ...value];'),
+        const Code('final first = present.first;'),
+        const Code('for (final value in present.skip(1)) {'),
+        const Code('  if (!'),
+        _iterablesEqual(refer('first'), refer('value')).code,
+        const Code(') {'),
+        _encodingError(
+          const Code(
+            r''' 'Conflicting values for multipart property "$propertyName".' ''',
+          ),
+        ),
+        const Code('  }'),
+        const Code('}'),
+        const Code('return first.toList();'),
       ]),
   );
 }
@@ -145,19 +157,13 @@ Method _mergePropertyValueMethod() {
           refer('current').isA(array).code,
           const Code(' && '),
           refer('incoming').isA(array).code,
+          const Code(' && '),
+          _iterablesEqual(
+            refer('current').property('values'),
+            refer('incoming').property('values'),
+          ).code,
           const Code(') {'),
-          const Code('  return '),
-          _propertyValue.property('array').call([
-            CodeExpression(
-              Block.of([
-                const Code('['),
-                const Code('...current.values, '),
-                const Code('...incoming.values,'),
-                const Code(']'),
-              ]),
-            ),
-          ]).code,
-          const Code(';'),
+          const Code('  return current;'),
           const Code('}'),
         ]),
         _encodingError(
@@ -228,11 +234,21 @@ Method _mergeValuesMethod() {
               .code,
           const Code(') {'),
         ]),
-        Block.of([
-          const Code('  return [for (final value in present) ...('),
-          refer('value').asA(iterableType).code,
-          const Code(')];'),
-        ]),
+        declareFinal('first')
+            .assign(refer('present').property('first').asA(iterableType))
+            .statement,
+        const Code('  for (final value in present.skip(1)) {'),
+        const Code('    if (!'),
+        _iterablesEqual(refer('first'), refer('value').asA(iterableType)).code,
+        const Code(') {'),
+        _encodingError(
+          const Code(
+            r''' 'Conflicting values for multipart property "$propertyName".' ''',
+          ),
+        ),
+        const Code('    }'),
+        const Code('  }'),
+        const Code('  return first.toList();'),
         const Code('}'),
         const Code('final first = present.first;'),
         const Code('for (final value in present.skip(1)) {'),
@@ -309,13 +325,20 @@ Method _mergeMapMethod() {
           const Code(' && '),
           refer('entry').property('value').isA(iterableType).code,
           const Code(') {'),
+          const Code('    if (!'),
+          _iterablesEqual(
+            refer('current'),
+            refer('entry').property('value').asA(iterableType),
+          ).code,
+          const Code(') {'),
         ]),
-        Block.of([
-          const Code('    target[key] = ['),
-          const Code('...current, ...('),
-          refer('entry').property('value').asA(iterableType).code,
-          const Code(')];'),
-        ]),
+        _encodingError(
+          const Code(
+            r''' 'Conflicting values for multipart property "$propertyName" at "$key".' ''',
+          ),
+        ),
+        const Code('    }'),
+        const Code('    target[key] = current.toList();'),
         const Code('    continue;'),
         const Code('  }'),
         const Code('  if (current != entry.value) {'),
@@ -329,6 +352,17 @@ Method _mergeMapMethod() {
       ]),
   );
 }
+
+Expression _iterablesEqual(Expression left, Expression right) =>
+    refer('IterableEquality', 'package:collection/collection.dart')
+        .constInstance([
+          refer(
+            'DeepCollectionEquality',
+            'package:collection/collection.dart',
+          ).newInstance([]),
+        ])
+        .property('equals')
+        .call([left, right]);
 
 Parameter _parameter(String name, Reference type) => Parameter(
   (parameter) => parameter

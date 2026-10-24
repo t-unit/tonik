@@ -1064,7 +1064,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> colors}) {
-          return [r'data', colors.map((e) => e.toSimple(explode: true, allowEmpty: false, )).toList().toSimple(explode: true, allowEmpty: false, ), ];
+          return [r'data', colors.map((e) => e.toSimple(explode: true, allowEmpty: false, )).toList().toSimple(explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
         }
       ''';
 

@@ -97,7 +97,13 @@ void _mergeMultipartMap(
       continue;
     }
     if (current is Iterable && entry.value is Iterable) {
-      target[key] = [...current, ...((entry.value as Iterable))];
+      if (!const IterableEquality(DeepCollectionEquality())
+          .equals(current, (entry.value as Iterable))) {
+        throw EncodingException(
+          'Conflicting values for multipart property "$propertyName" at "$key".',
+        );
+      }
+      target[key] = current.toList();
       continue;
     }
     if (current != entry.value) {
@@ -111,6 +117,42 @@ void _mergeMultipartMap(
 
     expect(
       collapseWhitespace(formatter.format('${method.accept(DartEmitter())}')),
+      collapseWhitespace(formatter.format(expected)),
+    );
+  });
+
+  test('reconciles repeated lists and rejects conflicting values', () {
+    final method = generateMultipartMergeMethods(
+      _multipartPlan({MultipartMergeHelper.lists}),
+    ).single;
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
+    const expected = r'''
+List<T>? _mergeMultipartLists<T>(
+  List<Iterable<T>?> values, {
+  required String propertyName,
+}) {
+  final present = values.whereType<Iterable<T>>().toList();
+  if (present.isEmpty) return null;
+  final first = present.first;
+  for (final value in present.skip(1)) {
+    if (!const IterableEquality(DeepCollectionEquality()).equals(first, value)) {
+      throw EncodingException(
+        'Conflicting values for multipart property "$propertyName".',
+      );
+    }
+  }
+  return first.toList();
+}
+''';
+
+    expect(
+      collapseWhitespace(
+        formatter.format(
+          '${method.accept(DartEmitter(useNullSafetySyntax: true))}',
+        ),
+      ),
       collapseWhitespace(formatter.format(expected)),
     );
   });

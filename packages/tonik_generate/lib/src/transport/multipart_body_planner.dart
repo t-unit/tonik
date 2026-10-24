@@ -219,7 +219,7 @@ class const MultipartBodyPlanner({
         wireName: specLiteralString(property.part.wireName),
         preserveOrder: dynamicSource != null,
         normalizedName: property.normalizedName,
-        value: nullable && !mergedPrimitive
+        value: nullable && accesses.length == 1
             ? (hasNullAwareAccess ? accessor.parenthesized : accessor)
                   .nullChecked
             : accessor,
@@ -563,6 +563,7 @@ class const MultipartBodyPlanner({
             model,
             explode: false,
             allowEmpty: true,
+            literal: true,
           ).unsafeRawBody;
     return [_listText(part, serialized)];
   }
@@ -590,14 +591,7 @@ class const MultipartBodyPlanner({
   Expression _itemText(_Part part, Model model) {
     if (model is StringModel) return part.value;
     if (model is EnumModel) {
-      return _dio && part.encoding.isStyleBased
-          ? part.value.property('uriEncode').call([], {
-              'allowEmpty': literalTrue,
-              'textEncoding': textEncodingExpression(
-                part.encoding.textEncoding,
-              ),
-            })
-          : _enum(part.value, model, part.encoding);
+      return _enum(part.value, model, part.encoding);
     }
     return _primitive(part.value, model, part.encoding);
   }
@@ -908,6 +902,7 @@ class const MultipartBodyPlanner({
         header.model,
         explode: header.explode,
         allowEmpty: true,
+        literal: true,
       );
       final assignment =
           base64 && entry.key.toLowerCase() == 'content-transfer-encoding'
@@ -942,6 +937,26 @@ class const MultipartBodyPlanner({
                   assignment,
                   const Code('}'),
                 ]),
+        ),
+      );
+    }
+    if (headers?.isNotEmpty ?? false) {
+      emissions.add(
+        MultipartCode(
+          Block.of([
+            Code(
+              'for (final headerValue in $variable.values'
+              '${_dio ? '.expand((values) => values)' : ''}) {',
+            ),
+            const Code(
+              r"if (headerValue.contains('\r') || headerValue.contains('\n')) {",
+            ),
+            generateEncodingExceptionExpression(
+              'Multipart header values must not contain line breaks.',
+            ).statement,
+            const Code('}'),
+            const Code('}'),
+          ]),
         ),
       );
     }

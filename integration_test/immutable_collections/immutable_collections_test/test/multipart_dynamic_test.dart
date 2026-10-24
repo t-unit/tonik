@@ -4,10 +4,11 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test(
-    'packs merged immutable URI lists with nulls through the JSON codec',
+    'packs equal immutable URI lists once with nulls through the JSON codec',
     () async {
       final server = await RawRequestServer.start();
       final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
@@ -18,7 +19,7 @@ void main() {
               values: IList([null, Uri.parse('https://first.test/')]),
             ),
             packedSecond: PackedSecond(
-              values: IList([Uri.parse('https://second.test/'), null]),
+              values: IList([null, Uri.parse('https://first.test/')]),
             ),
           ),
         ),
@@ -27,12 +28,31 @@ void main() {
       final wire = MultipartWire(await server.takeRequest());
       expect(wire.parts.single.name, 'values');
       expect(wire.parts.single.contentType, startsWith('application/json'));
-      expect(
-        wire.parts.single.bodyText,
-        '[null,"https://first.test/","https://second.test/",null]',
-      );
+      expect(wire.parts.single.bodyText, '[null,"https://first.test/"]');
     },
   );
+
+  test('rejects conflicting immutable URI lists before sending', () async {
+    final server = await RawRequestServer.start();
+    final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
+
+    final error = requireError(
+      await api.postPackedMerged(
+        body: PackedMerged(
+          packedFirst: PackedFirst(
+            values: IList([null, Uri.parse('https://first.test/')]),
+          ),
+          packedSecond: PackedSecond(
+            values: IList([null, Uri.parse('https://second.test/')]),
+          ),
+        ),
+      ),
+    );
+
+    expect(error.type, TonikErrorType.encoding);
+    expect(error.error, isA<EncodingException>());
+    expect(server.requestCount, 0);
+  });
 
   test('sends an inline immutable map through the public API', () async {
     final server = await RawRequestServer.start();

@@ -1,4 +1,5 @@
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
+import 'package:tonik_util/src/decoding/header_value.dart';
 
 /// Extensions for decoding URI-encoded objects from strings.
 ///
@@ -6,6 +7,40 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 /// URI-encoded strings according to RFC 6570 URI Template specification.
 /// Supports both form and simple encoding styles with explode variations.
 extension ObjectDecoder on String? {
+  /// Finds a recognized discriminator without validating unrelated header data.
+  ///
+  /// Stops at a recognized tag so the selected model validates the whole value.
+  /// Malformed pairs and an unterminated quoted tail do not prevent scalar
+  /// variants from decoding a value without a recognized tag.
+  String? findHeaderDiscriminator(String key, Set<String> recognizedValues) {
+    if (this == null) return null;
+    try {
+      for (final pair in headerValueTokens(this!)) {
+        final parts = splitHeaderValue(
+          pair,
+          separator: '=',
+          trimWhitespace: false,
+        );
+        if (parts.length != 2) continue;
+        try {
+          if (Uri.decodeComponent(parts[0]) == key &&
+              recognizedValues.contains(parts[1])) {
+            return parts[1];
+          }
+          // Uri.decodeComponent throws ArgumentError for truncated escapes.
+          // ignore: avoid_catching_errors
+        } on ArgumentError catch (_) {
+          // An invalid key is not a matching discriminator.
+        } on FormatException catch (_) {
+          // An invalid key is not a matching discriminator.
+        }
+      }
+    } on SimpleDecodingException catch (_) {
+      // A malformed quoted tail contains no complete discriminator pair.
+    }
+    return null;
+  }
+
   /// Decodes a URI-encoded object string into a map of key-value pairs.
   ///
   /// Parses a URI-encoded string containing object properties and returns
@@ -44,6 +79,8 @@ extension ObjectDecoder on String? {
   ///   These properties will consume comma-separated values.
   /// - [context]: Optional context string included in error messages
   ///   to help identify where decoding failed.
+  /// - [isHeader]: Treat separators outside quotes as header boundaries,
+  ///   removing surrounding spaces and tabs while preserving quoted text.
   ///
   /// ## Returns
   ///
@@ -84,6 +121,7 @@ extension ObjectDecoder on String? {
     required Set<String> expectedKeys,
     required Set<String> listKeys,
     bool captureAdditionalKeys = false,
+    bool isHeader = false,
     String? context,
   }) {
     if (this == null || this!.isEmpty) {
@@ -105,6 +143,7 @@ extension ObjectDecoder on String? {
         values,
         context,
         captureAdditionalKeys,
+        isHeader,
       );
     } else {
       _parseNonExploded(
@@ -114,6 +153,7 @@ extension ObjectDecoder on String? {
         values,
         context,
         captureAdditionalKeys,
+        isHeader,
       );
     }
 
@@ -135,13 +175,18 @@ extension ObjectDecoder on String? {
     Map<String, String> result,
     String? context,
     bool captureAdditionalKeys,
+    bool isHeader,
   ) {
-    final pairs = value.split(separator);
+    final pairs = isHeader
+        ? splitHeaderValue(value, separator: separator)
+        : value.split(separator);
 
     var i = 0;
     while (i < pairs.length) {
       final pair = pairs[i];
-      final parts = pair.split('=');
+      final parts = isHeader
+          ? splitHeaderValue(pair, separator: '=', trimWhitespace: false)
+          : pair.split('=');
 
       if (parts.length == 1) {
         if (captureAdditionalKeys) {
@@ -187,7 +232,15 @@ extension ObjectDecoder on String? {
         i++;
         while (i < pairs.length) {
           final nextPair = pairs[i];
-          if (nextPair.contains('=')) {
+          final startsPair = isHeader
+              ? splitHeaderValue(
+                      nextPair,
+                      separator: '=',
+                      trimWhitespace: false,
+                    ).length >
+                    1
+              : nextPair.contains('=');
+          if (startsPair) {
             break;
           }
 
@@ -222,8 +275,9 @@ extension ObjectDecoder on String? {
     Map<String, String> result,
     String? context,
     bool captureAdditionalKeys,
+    bool isHeader,
   ) {
-    final parts = value.split(',');
+    final parts = isHeader ? splitHeaderValue(value) : value.split(',');
 
     var i = 0;
     while (i < parts.length) {

@@ -177,17 +177,22 @@ void main() {
               );
             }
 
-            factory Shape.fromSimple(String? value, {required bool explode}) {
+            factory Shape.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
               final _$values = value.decodeObject(
                 explode: explode,
                 explodeSeparator: ',',
                 expectedKeys: {r'corner'},
                 listKeys: {r'corner'},
                 context: r'Shape',
+            isHeader: isHeader,
               );
               return Shape(
                 corner: _$values[r'corner']
-                    .decodeSimpleStringList(context: r'Shape.corner')
+                    .decodeSimpleStringList(context: r'Shape.corner', isHeader: isHeader)
                     .map(
                       (e) => throw SimpleDecodingException(
                         'Cannot decode List<NeverModel> - this type does not permit any value.',
@@ -3808,13 +3813,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
 
           const expectedMethod = r'''
-  factory Labels.fromSimple(String? value, {required bool explode}) {
+  factory Labels.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'id'},
       listKeys: {},
       context: r'Labels',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
@@ -3886,13 +3896,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
 
           const expectedMethod = r'''
-  factory WidgetMap.fromSimple(String? value, {required bool explode}) {
+  factory WidgetMap.fromSimple(
+          String? value, {
+          required bool explode,
+          bool isHeader = false,
+        }) {
     final _$values = value.decodeObject(
       explode: explode,
       explodeSeparator: ',',
       expectedKeys: {r'version'},
       listKeys: {},
       context: r'WidgetMap',
+            isHeader: isHeader,
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'version'};

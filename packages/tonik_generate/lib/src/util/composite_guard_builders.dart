@@ -251,7 +251,10 @@ Constructor buildWriteOnlyFromSimpleConstructor(String className) {
             ..type = refer('String?', 'dart:core'),
         ),
       )
-      ..optionalParameters.add(buildBoolParameter('explode', required: true))
+      ..optionalParameters.addAll([
+        buildBoolParameter('explode', required: true),
+        buildBoolParameter('isHeader'),
+      ])
       ..lambda = true
       ..body = generateSimpleDecodingExceptionExpression(
         '$className is write-only and cannot be decoded.',

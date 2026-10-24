@@ -31,6 +31,28 @@ paths:
       responses:
         '204':
           description: Accepted
+  /multipart31/timestamps/{timestamps}:
+    get:
+      operationId: getTimestampArray
+      tags: [multipart31]
+      parameters:
+        - name: timestamps
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: array
+            items:
+              type: [string, 'null']
+              format: date-time
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
   /multipart31/nested-arrays:
     post:
       operationId: postNestedArrays
@@ -312,6 +334,18 @@ paths:
               $ref: '#/components/schemas/FormNonExplodedForm'
             encoding:
               tags:
+                style: form
+                explode: false
+              timestamps:
+                style: form
+                explode: false
+              colors:
+                style: form
+                explode: false
+              repeatedColors:
+                style: form
+                explode: true
+              links:
                 style: form
                 explode: false
       responses:
@@ -600,6 +634,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/merged-arrays:
+    post:
+      operationId: postMergedArrays
+      tags: [multipart31]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MergedArrays'
+            encoding:
+              tags:
+                style: form
+                explode: true
+              attributes:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Accepted
+
 components:
   schemas:
     UrlEncodedMapForm:
@@ -677,6 +732,29 @@ components:
           items:
             type: string
           description: Optional array serialized as one comma-joined field
+
+        timestamps:
+          type: array
+          items:
+            type: [string, 'null']
+            format: date-time
+        colors:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultipartColor'
+        repeatedColors:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultipartColor'
+        links:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    MultipartColor:
+      type: string
+      enum: ['light blue', 'red/green']
 
     DefaultExplodeForm:
       type: object
@@ -969,3 +1047,48 @@ components:
           items:
             type: [string, 'null']
             format: uri
+
+    MergedArrayAttributes:
+      type: object
+      required: [labels]
+      properties:
+        labels:
+          type: array
+          items:
+            type: string
+    MergedArraysBase:
+      type: object
+      properties:
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/MergedArrayAttributes'
+        rawValue:
+          $ref: '#/components/schemas/AnyValue'
+        metadata:
+          type: object
+          additionalProperties: true
+    MergedArraysExtension:
+      type: object
+      properties:
+        label:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/MergedArrayAttributes'
+        rawValue:
+          $ref: '#/components/schemas/AnyValue'
+        metadata:
+          type: object
+          additionalProperties: true
+    MergedArrays:
+      allOf:
+        - $ref: '#/components/schemas/MergedArraysBase'
+        - $ref: '#/components/schemas/MergedArraysExtension'

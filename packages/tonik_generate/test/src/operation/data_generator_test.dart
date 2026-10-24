@@ -3616,8 +3616,8 @@ Future<Object?> _data({required Upload body}) async {
           collapseWhitespace(methodString),
           contains(
             collapseWhitespace(
-              'fileCustomPartHeader.toSimple('
-              'explode: false, allowEmpty: true)',
+              'fileCustomPartHeader.toSimple( '
+              'explode: false, allowEmpty: true, literal: true, )',
             ),
           ),
         );

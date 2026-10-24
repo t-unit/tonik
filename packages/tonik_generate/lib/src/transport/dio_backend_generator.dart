@@ -134,8 +134,11 @@ final class const DioBackendGenerator({
       );
 
   @override
-  Expression responseHeaderValues(Expression response, String name) =>
-      response.property('headers').index(specLiteralString(name));
+  Expression responseHeaderValue(Expression response, String name) => response
+      .property('headers')
+      .index(specLiteralString(name))
+      .nullSafeProperty('join')
+      .call([literalString(',')]);
 
   @override
   Reference get serverConfigType => TypeReference(
@@ -299,7 +302,9 @@ final class const DioBackendGenerator({
                 dioType.newInstance([]).code,
                 const Code(';'),
                 const Code(r'this._$ownsDio = client == null;'),
+                const Code(r'if (this._$ownsDio) {'),
                 const Code('resolvedDio.options.baseUrl = this.baseUrl;'),
+                const Code('}'),
                 const Code(r'return this._$dio = resolvedDio;'),
               ]),
           ),

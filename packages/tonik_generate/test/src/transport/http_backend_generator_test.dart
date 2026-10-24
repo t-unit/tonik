@@ -150,7 +150,7 @@ void main() {
             const Code(','),
             generator.responseBodyBytes(response).code,
             const Code(','),
-            generator.responseHeaderValues(response, 'X-Rate-Limit').code,
+            generator.responseHeaderValue(response, 'X-Rate-Limit').code,
             const Code(',];'),
           ]),
       );
@@ -161,7 +161,7 @@ List<Object?> responseInputs(Response response) {
     response.statusCode,
     response.headers['content-type'],
     response.bodyBytes,
-    response.headersSplitValues[r'x-rate-limit'],
+    response.headers[r'x-rate-limit'],
   ];
 }
 ''';
@@ -172,7 +172,7 @@ List<Object?> responseInputs(Response response) {
       );
     });
 
-    test('uses the package http split-header fidelity boundary', () {
+    test('retains raw values for schema-specific response header decoding', () {
       final response = http.Response.bytes(
         const [],
         200,
@@ -182,14 +182,14 @@ List<Object?> responseInputs(Response response) {
         },
       );
 
-      expect(response.headersSplitValues['x-values'], ['first', 'second']);
-      expect(response.headersSplitValues['set-cookie'], [
-        'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
-        'session=two; Path=/',
-      ]);
+      expect(response.headers['x-values'], 'first, second');
+      expect(
+        response.headers['set-cookie'],
+        'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT,session=two; Path=/',
+      );
     });
 
-    test('documents ambiguous comma-containing single header values', () {
+    test('preserves comma spacing in scalar header values', () {
       final response = http.Response.bytes(
         const [],
         200,
@@ -197,7 +197,6 @@ List<Object?> responseInputs(Response response) {
       );
 
       expect(response.headers['x-display-name'], 'last, first');
-      expect(response.headersSplitValues['x-display-name'], ['last', 'first']);
     });
   });
 

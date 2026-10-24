@@ -89,6 +89,13 @@ servers:
       origin:
         default: api
 
+  - url: https://{mode}.example.com/api/v1
+    description: Server with enum member name collisions
+    variables:
+      mode:
+        default: value
+        enum: [value, VALUE, _, values, index]
+
 tags:
   - name: health
     description: Health check operations

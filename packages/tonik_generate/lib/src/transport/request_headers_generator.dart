@@ -176,10 +176,8 @@ class const RequestHeadersGenerator({
     final contentTypes = <String>{};
 
     for (final response in operation.responses.values) {
-      if (response is ResponseObject) {
-        for (final body in response.bodies) {
-          contentTypes.add(body.rawContentType);
-        }
+      for (final body in response.resolved.bodies) {
+        contentTypes.add(body.rawContentType);
       }
     }
 

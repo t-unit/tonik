@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
+import 'package:tonik_util/src/decoding/header_value.dart';
 import 'package:tonik_util/src/offset_date_time.dart';
 
 /// Extensions for decoding simple form values from strings.
@@ -257,9 +258,15 @@ extension SimpleDecoder on String? {
   /// Decodes a string to a list of strings.
   ///
   /// Splits the string by commas.
+  /// With [isHeader], ignores commas inside quotes and removes surrounding
+  /// spaces and tabs from each element, retaining the quoted text verbatim.
+  /// Throws [SimpleDecodingException] for an unterminated quoted header item.
   /// Empty string returns an empty list.
   /// Throws [InvalidTypeException] if the value is null.
-  List<String> decodeSimpleStringList({String? context}) {
+  List<String> decodeSimpleStringList({
+    String? context,
+    bool isHeader = false,
+  }) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
@@ -268,6 +275,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
+    if (isHeader) return splitHeaderValue(this!);
     return this!
         .split(',')
         .map((s) => s.decodeSimpleString(context: context))
@@ -278,9 +286,12 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Otherwise splits the string by commas.
-  List<String>? decodeSimpleNullableStringList({String? context}) {
+  List<String>? decodeSimpleNullableStringList({
+    String? context,
+    bool isHeader = false,
+  }) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleStringList(context: context);
+    return decodeSimpleStringList(context: context, isHeader: isHeader);
   }
 
   /// Decodes a string to a list of nullable strings.
@@ -289,7 +300,10 @@ extension SimpleDecoder on String? {
   /// Empty elements in the list are converted to null.
   /// Empty string returns an empty list.
   /// Throws [InvalidTypeException] if the value is null.
-  List<String?> decodeSimpleStringNullableList({String? context}) {
+  List<String?> decodeSimpleStringNullableList({
+    String? context,
+    bool isHeader = false,
+  }) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
@@ -298,16 +312,20 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',').map((s) => s.isEmpty ? null : s).toList();
+    final values = isHeader ? splitHeaderValue(this!) : this!.split(',');
+    return values.map((s) => s.isEmpty ? null : s).toList();
   }
 
   /// Decodes a string to a nullable list of nullable strings.
   ///
   /// Returns null if the string is empty or null.
   /// Otherwise splits the string by commas and converts empty elements to null.
-  List<String?>? decodeSimpleNullableStringNullableList({String? context}) {
+  List<String?>? decodeSimpleNullableStringNullableList({
+    String? context,
+    bool isHeader = false,
+  }) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleStringNullableList(context: context);
+    return decodeSimpleStringNullableList(context: context, isHeader: isHeader);
   }
 
   /// Decodes a flat simple-style object, converting values with [decodeValue].
@@ -315,12 +333,15 @@ extension SimpleDecoder on String? {
   /// Exploded objects use `key=value,key=value`; non-exploded objects use
   /// `key,value,key,value`. A bare exploded key has an empty value.
   /// Keys and values retain literal percent sequences.
+  /// With [isHeader], comma boundaries respect quotes and surrounding HTTP
+  /// whitespace is removed from each token.
   /// An empty string represents an empty map. Throws [InvalidTypeException]
   /// for null and [InvalidFormatException] for malformed or duplicate pairs.
   Map<String, T> decodeSimpleMap<T>(
     T Function(String) decodeValue, {
     required bool explode,
     String? context,
+    bool isHeader = false,
   }) {
     final value = this;
     if (value == null) {
@@ -332,7 +353,7 @@ extension SimpleDecoder on String? {
     }
     if (value.isEmpty) return {};
 
-    final parts = value.split(',');
+    final parts = isHeader ? splitHeaderValue(value) : value.split(',');
     final result = <String, T>{};
     final location = context == null ? '' : ' in $context';
     if (!explode && parts.length.isOdd) {
@@ -345,9 +366,16 @@ extension SimpleDecoder on String? {
       final String key;
       final String rawValue;
       if (explode) {
-        final separator = parts[i].indexOf('=');
-        key = separator == -1 ? parts[i] : parts[i].substring(0, separator);
-        rawValue = separator == -1 ? '' : parts[i].substring(separator + 1);
+        final separator = isHeader
+            ? headerValueTokens(
+                parts[i],
+                separator: '=',
+                trimWhitespace: false,
+              ).first.length
+            : parts[i].indexOf('=');
+        final hasSeparator = separator >= 0 && separator < parts[i].length;
+        key = hasSeparator ? parts[i].substring(0, separator) : parts[i];
+        rawValue = hasSeparator ? parts[i].substring(separator + 1) : '';
       } else {
         key = parts[i];
         rawValue = parts[i + 1];
@@ -371,9 +399,15 @@ extension SimpleDecoder on String? {
     T Function(String) decodeValue, {
     required bool explode,
     String? context,
+    bool isHeader = false,
   }) {
     if (this == null) return null;
-    return decodeSimpleMap(decodeValue, explode: explode, context: context);
+    return decodeSimpleMap(
+      decodeValue,
+      explode: explode,
+      context: context,
+      isHeader: isHeader,
+    );
   }
 
   /// Decodes a string to a Date.

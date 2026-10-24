@@ -331,7 +331,12 @@ Object? test() {
   final _$multipartParts = <TonikMultipartPart>[];
   final _$valueHeaders = <String, String>{};
   if (valueLabel != null) {
-    _$valueHeaders[r'X-Label'] = valueLabel.toSimple(explode: false, allowEmpty: true);
+    _$valueHeaders[r'X-Label'] = valueLabel.toSimple(explode: false, allowEmpty: true, literal: true);
+  }
+  for (final headerValue in _$valueHeaders.values) {
+    if (headerValue.contains('\r') || headerValue.contains('\n')) {
+      throw EncodingException('Multipart header values must not contain line breaks.');
+    }
   }
   _$multipartParts.add(
     TonikMultipartPart(
@@ -1122,7 +1127,7 @@ Object? test() {
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(body.value.toSimple(explode: false, allowEmpty: true)),
+      utf8.encode(body.value.toSimple(explode: false, allowEmpty: true, literal: true)),
       contentType: MediaType.parse(r'text/plain'),
     ),
   );''',
@@ -1606,6 +1611,37 @@ Object? test() {
         collapseWhitespace(emit(content)),
         collapseWhitespace(format(expected)),
       );
+    });
+
+    test('uses the promoted optional merged list inside its guard', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'tags',
+          _list(context, StringModel(context: context)),
+          isRequired: false,
+        ),
+      ]);
+      final code = emit(_content(_allOf(context, 'Upload', [member, member])));
+
+      expect(code, contains(r'if (_$tagsMultipartValue != null)'));
+      expect(code, contains(r'for (final item in _$tagsMultipartValue)'));
+    });
+
+    test('checks a required nullable merged list before iterating', () {
+      final member = _classWithProperties(context, 'Shared', [
+        _property(
+          context,
+          'tags',
+          _list(context, StringModel(context: context)),
+          isNullable: true,
+        ),
+      ]);
+      final code = emit(_content(_allOf(context, 'Upload', [member, member])));
+
+      expect(code, contains(r'if (_$tagsMultipartValue == null)'));
+      expect(code, contains('Required multipart property "tags" is null.'));
+      expect(code, contains(r'for (final item in _$tagsMultipartValue)'));
     });
 
     test('defers incompatible nested duplicate definitions to runtime', () {

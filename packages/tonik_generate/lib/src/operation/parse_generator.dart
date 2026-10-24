@@ -832,7 +832,7 @@ class const ParseGenerator({
 
   List<Code> _generateNeverHeaderChecks(List<String> neverHeaders) {
     return neverHeaders.map((headerName) {
-      final headerValue = backendGenerator.responseHeaderValues(
+      final headerValue = backendGenerator.responseHeaderValue(
         refer('response'),
         headerName,
       );
@@ -902,9 +902,7 @@ class const ParseGenerator({
       // RFC 9110 combined field value: a header repeated across field
       // lines is equivalent to the comma-joined single-line form.
       final headerValue = backendGenerator
-          .responseHeaderValues(refer('response'), rawHeaderName)
-          .nullSafeProperty('join')
-          .call([literalString(',')])
+          .responseHeaderValue(refer('response'), rawHeaderName)
           .parenthesized;
       final resolvedHeader = norm.header!.resolve();
       final decode = buildSimpleValueExpression(
@@ -915,6 +913,7 @@ class const ParseGenerator({
         package: package,
         contextProperty: rawHeaderName,
         explode: literalBool(resolvedHeader.explode),
+        isHeader: literalTrue,
         useImmutableCollections: useImmutableCollections,
       );
       supported[normalizedName] = decode.expression;
