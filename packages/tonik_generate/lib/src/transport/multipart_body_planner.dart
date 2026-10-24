@@ -461,7 +461,7 @@ class const MultipartBodyPlanner({
         'properties (property: ${part.name}).',
       );
     }
-    if (item is ListModel && (!_dio || contentBased)) {
+    if (item is ListModel) {
       return _error(
         'Arrays of arrays are not supported for multipart encoding '
         '(property: ${part.name}).',
