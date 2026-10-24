@@ -633,8 +633,7 @@ class const MultipartBodyPlanner({
         'Maps do not implement ParameterEncodable.toDeepObject().',
       );
     }
-    if (_dio &&
-        !part.encoding.isStyleBased &&
+    if (!part.encoding.isStyleBased &&
         part.encoding.contentType == ContentType.form) {
       return _urlEncodedMap(part);
     }
@@ -784,6 +783,9 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _urlEncodedMap(_Part part) {
     final encoding = textEncodingExpression(part.encoding.textEncoding);
     final variable = '${part.normalizedName}Parts';
+    final mapValue = useImmutableCollections && !part.isMergedMap
+        ? part.value.property('unlock')
+        : part.value;
     return [
       MultipartCode(
         declareFinal(variable)
@@ -793,7 +795,7 @@ class const MultipartBodyPlanner({
       MultipartCode(
         Block.of([
           const Code('for (final entry in ('),
-          part.value.asA(refer('Map', 'dart:core')).code,
+          mapValue.asA(refer('Map', 'dart:core')).code,
           const Code(').entries) {'),
           declareFinal('value')
               .assign(refer('entry').property('value'))

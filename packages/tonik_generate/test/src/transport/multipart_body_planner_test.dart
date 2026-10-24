@@ -424,6 +424,60 @@ Object? test() {
       );
     });
 
+    test('form-encodes a map in content-based mode on HTTP', () {
+      expectPropertyCode(
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+          name: null,
+          nameOverride: null,
+          isNullable: false,
+          isValueNullable: false,
+          isReadOnly: false,
+          isWriteOnly: false,
+        ),
+        r'''
+  final valueParts = <String>[];
+  for (final entry in ((body.value as Map)).entries) {
+    final value = entry.value;
+    if (value == null) continue;
+    if (value is Map || value is List) {
+      throw EncodingException(
+        'Standard URL encoding does not support nested values (property: '
+        r'value'
+        ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+      );
+    }
+    valueParts.add([
+      entry.key.toString().uriEncode(
+        allowEmpty: true,
+        useQueryComponent: true,
+        textEncoding: utf8,
+      ),
+      encodeAnyToForm(
+        value,
+        explode: true,
+        allowEmpty: true,
+        useQueryComponent: true,
+        textEncoding: utf8,
+      ),
+    ].join('='));
+  }
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(valueParts.join('&')),
+      contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
+    ),
+  );''',
+        encoding: _encoding(
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+    });
+
     for (final entry in <({String name, Model model})>[
       (name: 'class', model: _classModel(context, 'Nested')),
       (

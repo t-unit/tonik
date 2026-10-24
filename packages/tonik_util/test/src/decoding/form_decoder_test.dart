@@ -4,6 +4,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
+import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
 
 void main() {
   group('FormDecoder', () {
@@ -210,9 +211,27 @@ void main() {
     });
 
     group('decodeFormBool', () {
+      test('wraps malformed form encoding with boolean context', () {
+        expect(
+          () => '%zz'.decodeFormBool(context: 'Settings.enabled'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%zz')
+                .having((e) => e.targetType, 'targetType', bool)
+                .having((e) => e.context, 'context', 'Settings.enabled'),
+          ),
+        );
+        expect(
+          () => '%FF'.decodeFormBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('decodes boolean strings', () {
         expect('true'.decodeFormBool(), isTrue);
         expect('false'.decodeFormBool(), isFalse);
+        expect('%74rue'.decodeFormBool(), isTrue);
+        expect('%66alse'.decodeFormBool(), isFalse);
       });
 
       test('throws InvalidTypeException for invalid booleans', () {
@@ -240,6 +259,17 @@ void main() {
     });
 
     group('decodeFormNullableBool', () {
+      test('wraps truncated escapes without changing nullable behavior', () {
+        expect(
+          () => '%'.decodeFormNullableBool(context: 'Settings.enabled'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%')
+                .having((e) => e.context, 'context', 'Settings.enabled'),
+          ),
+        );
+      });
+
       test('decodes boolean strings', () {
         expect('true'.decodeFormNullableBool(), isTrue);
         expect('false'.decodeFormNullableBool(), isFalse);
@@ -452,6 +482,26 @@ void main() {
     });
 
     group('decodeFormStringList', () {
+      test('wraps malformed list elements with the original wire value', () {
+        expect(
+          () => 'ok,%zz'.decodeFormStringList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,%zz')
+                .having((e) => e.targetType, 'targetType', List<String>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
+      test('preserves encoded percent and plus semantics', () {
+        expect('100%25,%2B,hello+world'.decodeFormStringList(), [
+          '100%',
+          '+',
+          'hello world',
+        ]);
+      });
+
       test('decodes comma-separated string lists', () {
         expect('red,green,blue'.decodeFormStringList(), [
           'red',
@@ -485,6 +535,18 @@ void main() {
     });
 
     group('decodeFormNullableStringList', () {
+      test('wraps truncated list escapes through the nullable adapter', () {
+        expect(
+          () => 'ok,%'.decodeFormNullableStringList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,%')
+                .having((e) => e.targetType, 'targetType', List<String>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
       test('decodes string lists', () {
         expect('red,green,blue'.decodeFormNullableStringList(), [
           'red',
@@ -504,6 +566,27 @@ void main() {
     });
 
     group('decodeFormStringNullableList', () {
+      test('wraps invalid UTF-8 in lists with nullable elements', () {
+        expect(
+          () => 'ok,,%FF'.decodeFormStringNullableList(context: 'Search.tags'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,,%FF')
+                .having((e) => e.targetType, 'targetType', List<String?>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
+      test('preserves percent and plus decoding around null elements', () {
+        expect('100%25,,%2B,hello+world'.decodeFormStringNullableList(), [
+          '100%',
+          null,
+          '+',
+          'hello world',
+        ]);
+      });
+
       test('decodes string lists with nullable elements', () {
         expect('red,green,blue'.decodeFormStringNullableList(), [
           'red',
@@ -529,6 +612,20 @@ void main() {
     });
 
     group('decodeFormNullableStringNullableList', () {
+      test('wraps malformed escapes through the nullable list adapter', () {
+        expect(
+          () => 'ok,,%zz'.decodeFormNullableStringNullableList(
+            context: 'Search.tags',
+          ),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', 'ok,,%zz')
+                .having((e) => e.targetType, 'targetType', List<String?>)
+                .having((e) => e.context, 'context', 'Search.tags'),
+          ),
+        );
+      });
+
       test('decodes nullable string lists with nullable elements', () {
         expect('red,green,blue'.decodeFormNullableStringNullableList(), [
           'red',
@@ -552,6 +649,56 @@ void main() {
     });
 
     group('Binary', () {
+      test('round-trips percent-encoded binary form data', () {
+        final encoded = [72, 32, 105, 195, 169, 43, 37]
+            .toForm('p', explode: false, allowEmpty: true, textEncoding: utf8)
+            .single
+            .value;
+
+        expect(encoded, 'H%20i%C3%A9%2B%25');
+        expect(encoded.decodeFormBinary(), [72, 32, 105, 195, 169, 43, 37]);
+      });
+
+      test('round-trips binary form data with query-component encoding', () {
+        final encoded = [72, 32, 105, 43]
+            .toForm(
+              'p',
+              explode: false,
+              allowEmpty: true,
+              textEncoding: utf8,
+              useQueryComponent: true,
+            )
+            .single
+            .value;
+
+        expect(encoded, 'H+i%2B');
+        expect(encoded.decodeFormBinary(), [72, 32, 105, 43]);
+      });
+
+      test('preserves percent-encoded bytes that are not valid UTF-8', () {
+        expect('%00%80%FF'.decodeFormBinary(), [0, 128, 255]);
+      });
+
+      test('decodes escaped bytes alongside unescaped Unicode text', () {
+        expect('é%FF+%2B'.decodeFormBinary(), [195, 169, 255, 32, 43]);
+      });
+
+      test('wraps malformed percent escapes with context', () {
+        expect(
+          () => '%zz'.decodeFormBinary(context: 'User.thumbnail'),
+          throwsA(
+            isA<InvalidTypeException>()
+                .having((e) => e.value, 'value', '%zz')
+                .having((e) => e.targetType, 'targetType', List<int>)
+                .having((e) => e.context, 'context', 'User.thumbnail'),
+          ),
+        );
+        expect(
+          () => '%'.decodeFormNullableBinary(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('decodes UTF-8 string to List<int>', () {
         const textString = 'Hello World';
         final result = textString.decodeFormBinary();
@@ -570,6 +717,7 @@ void main() {
         const textString = 'Hello World';
         final result = textString.decodeFormNullableBinary();
         expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
+        expect('H+i%2B'.decodeFormNullableBinary(), [72, 32, 105, 43]);
 
         expect(null.decodeFormNullableBinary(), isNull);
         expect(''.decodeFormNullableBinary(), isNull);

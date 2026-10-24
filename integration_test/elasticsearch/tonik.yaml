@@ -1,0 +1,3 @@
+spec: elasticsearch/openapi.json
+packageName: elasticsearch_api
+outputDir: elasticsearch

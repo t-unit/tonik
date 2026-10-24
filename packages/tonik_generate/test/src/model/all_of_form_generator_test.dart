@@ -1566,7 +1566,7 @@ void main() {
         factory AllOfDoubleList.fromForm(String? value, {required bool explode}) {
           return AllOfDoubleList(
             list: value
-              .decodeFormStringList(context: r'AllOfDoubleList.list')
+              .decodeSimpleStringList(context: r'AllOfDoubleList.list')
               .map((e) => e.decodeFormDouble(context: r'AllOfDoubleList.list'))
               .toList(),
           );
@@ -1614,7 +1614,7 @@ void main() {
         factory AllOfDateTimeList.fromForm(String? value, {required bool explode}) {
           return AllOfDateTimeList(
             list: value
-              .decodeFormStringList(context: r'AllOfDateTimeList.list')
+              .decodeSimpleStringList(context: r'AllOfDateTimeList.list')
               .map((e) => e.decodeFormDateTime(context: r'AllOfDateTimeList.list'))
               .toList(),
           );

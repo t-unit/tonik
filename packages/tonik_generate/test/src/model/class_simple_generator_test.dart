@@ -166,6 +166,7 @@ void main() {
             listKeys: {},
             context: r'Sample',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return Sample(
             flag: _$values[r'flag'].decodeSimpleBool(context: r'Sample.flag'),
@@ -272,6 +273,7 @@ void main() {
             listKeys: {},
             context: r'Order',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return Order(
             status: Status.fromSimple(_$values[r'status'], explode: explode),
@@ -402,6 +404,7 @@ void main() {
             listKeys: {},
             context: r'NullableSample',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return NullableSample(
             flag: _$values[r'flag'].decodeSimpleNullableBool(
@@ -515,6 +518,7 @@ void main() {
               listKeys: {},
               context: r'Container',
             isHeader: isHeader,
+            percentDecodeKeys: false,
             );
             return Container(
               value: PrimitiveOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
@@ -614,6 +618,7 @@ void main() {
               listKeys: {},
               context: r'Container',
             isHeader: isHeader,
+            percentDecodeKeys: false,
             );
             return Container(
               value: MixedOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
@@ -718,6 +723,7 @@ void main() {
               listKeys: {},
               context: r'Wrapper',
             isHeader: isHeader,
+            percentDecodeKeys: false,
             );
             return Wrapper(
               data: DynamicValue.fromSimple( _$values[r'data'], explode: explode, isHeader: isHeader, ),
@@ -810,6 +816,7 @@ void main() {
             listKeys: {},
             context: r'UserIdHolder',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return UserIdHolder(
             id: _$values[r'id'].decodeSimpleInt(context: r'UserIdHolder.id'),
@@ -918,6 +925,7 @@ void main() {
             listKeys: {},
             context: r'AliasHolder',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return AliasHolder(
             value: PrimitiveOneOf.fromSimple( _$values[r'value'], explode: explode, isHeader: isHeader, ),
@@ -1101,6 +1109,7 @@ void main() {
             listKeys: {r'list'},
             context: r'AliasHolder',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return AliasHolder(
             list: _$values[r'list'].decodeSimpleStringList(
@@ -1268,6 +1277,7 @@ void main() {
             listKeys: {},
             context: r'Resource',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return Resource(
             endpoint: _$values[r'endpoint'].decodeSimpleUri(
@@ -1350,6 +1360,7 @@ void main() {
             listKeys: {},
             context: r'Resource',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return Resource(
             callback: _$values[r'callback'].decodeSimpleNullableUri(
@@ -1471,6 +1482,7 @@ void main() {
             listKeys: {},
             context: r'Resource',
             isHeader: isHeader,
+            percentDecodeKeys: false,
           );
           return Resource(
             name: _$values[r'name'].decodeSimpleString(context: r'Resource.name'),

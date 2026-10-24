@@ -1,0 +1,18 @@
+{
+  "plugin": "rest",
+  "resources": [
+    {
+      "path": "/_stats",
+      "response": {
+        "scriptFile": "response.groovy"
+      }
+    },
+    {
+      "path": "/_security/api_key/_bulk_update",
+      "method": "POST",
+      "response": {
+        "scriptFile": "response.groovy"
+      }
+    }
+  ]
+}

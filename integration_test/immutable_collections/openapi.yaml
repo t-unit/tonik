@@ -18,6 +18,22 @@ tags:
     description: Operations for items with collection fields
 
 paths:
+  /url-encoded-map:
+    post:
+      operationId: postUrlEncodedMap
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UrlEncodedMapForm'
+            encoding:
+              attrs:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '204':
+          description: Accepted
   /collection-bodies:
     get:
       operationId: getCollectionBodies
@@ -432,6 +448,13 @@ paths:
 
 components:
   schemas:
+    UrlEncodedMapForm:
+      type: object
+      required: [attrs]
+      properties:
+        attrs:
+          type: object
+          additionalProperties: true
     # Simple list property + map property + list of objects
     Item:
       type: object
