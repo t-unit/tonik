@@ -142,8 +142,13 @@ precedence over `*/*`. For example, if a response declares both
 response uses the exact JSON variant, while `application/problem+json` can
 match the `application/*` variant.
 
-For responses classified as text, Tonik also honors the runtime `charset`
-parameter. UTF-8 remains the default when the parameter is absent. Supported
+Across media types, response matching prefers an exact declared `charset`.
+If the wire charset is missing or unmatched, the first declared alternative
+is used. The selected declaration controls decoding; other media-type parameters
+remain required. Streaming supports UTF-8 only.
+
+Without a declared charset, text responses honor the runtime `charset`
+parameter, defaulting to UTF-8 when absent. Supported
 encodings include ASCII, ISO-8859-1 through ISO-8859-11 and ISO-8859-13 through
 ISO-8859-16, Windows-874 and Windows-1250 through Windows-1258, Shift_JIS,
 EUC-JP, GBK, and UTF-16/UTF-32. Charset names and aliases are resolved
@@ -151,8 +156,8 @@ by [`package:charset`](https://pub.dev/packages/charset). Unknown charsets fail
 with a `ResponseDecodingException` instead of silently falling back to UTF-8.
 GB18030 is not accepted because the dependency only provides a GBK codec for
 that label. EUC-KR is also rejected because the dependency's decoder produces
-incorrect Unicode. JSON responses remain UTF-8, as required by the JSON
-specification.
+incorrect Unicode. JSON and form responses default to UTF-8 when no charset
+is declared.
 
 Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `other`.
 
@@ -333,7 +338,7 @@ Each operation generates a sealed response class. Every status code and content 
 | Distinct type per status code | ✅ |
 | Distinct type per content type | ✅ |
 | Response media-type ranges | ✅ (`type/*`, `*/*`) |
-| Text response charsets | ✅ (from runtime `Content-Type`) |
+| Response charsets | ✅ (declared charset, or runtime `Content-Type` for text) |
 | Exhaustive pattern matching | ✅ |
 | Range codes (`2XX`, `4XX`) | ✅ |
 | `default` response | ✅ |
