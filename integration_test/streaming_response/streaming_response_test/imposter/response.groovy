@@ -14,6 +14,30 @@ def count = '1'
 def body
 
 switch (context.request.path) {
+    case '/status-precedence':
+        switch (responseCase) {
+            case 'explicit-media-mismatch':
+                body = '1\n'
+                break
+            case 'range-media-mismatch':
+                statusCode = 201
+                contentType = 'application/json'
+                body = '9'
+                break
+            case 'range':
+                statusCode = 201
+                body = '2\n'
+                break
+            case 'default':
+                statusCode = 500
+                contentType = 'application/json'
+                body = '3'
+                break
+            default:
+                contentType = 'application/json'
+                body = '1'
+        }
+        break
     case '/items':
         if (responseCase == 'malformed') {
             body = 'invalid\n{"value":2}\n'

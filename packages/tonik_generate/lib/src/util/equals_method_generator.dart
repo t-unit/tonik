@@ -1,4 +1,16 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:tonik_core/tonik_core.dart';
+
+/// Free-form values can contain mutable collections in either collection mode.
+bool usesDeepCollectionEquality(
+  Model model, {
+  required bool useImmutableCollections,
+}) {
+  final resolved = model.resolved;
+  return resolved is AnyModel ||
+      (!useImmutableCollections &&
+          (resolved is ListModel || resolved is MapModel));
+}
 
 /// Generates an equals method for a class with the given properties.
 ///

@@ -5,6 +5,29 @@ info:
 servers:
   - url: http://localhost:8080
 paths:
+  /status-precedence:
+    get:
+      operationId: getStatusPrecedence
+      tags: [streaming]
+      responses:
+        '200':
+          description: Explicit complete result
+          content:
+            application/json:
+              schema:
+                type: integer
+        '2XX':
+          description: Other success stream
+          content:
+            application/x-ndjson:
+              itemSchema:
+                type: integer
+        default:
+          description: Default complete result
+          content:
+            application/json:
+              schema:
+                type: integer
   /charset-text:
     get:
       operationId: getCharsetText

@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
@@ -115,26 +116,27 @@ class ExampleImporter({required final OpenApiObject openApiObject}) {
     switch (wrapper) {
       case Reference<Example>():
         if (isExternalReference(wrapper.ref)) return null;
-        if (!wrapper.ref.startsWith('#/components/examples/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('examples');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local example references are supported, '
             'found ${wrapper.ref}',
           );
         }
 
-        if (chain.contains(wrapper.ref)) {
-          final cycleChain = [...chain, wrapper.ref];
+        if (chain.contains(pointer.reference)) {
+          final cycleChain = [...chain, pointer.reference];
           throw ArgumentError(
             'Cyclic example reference: ${cycleChain.join(" -> ")}',
           );
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refExample = openApiObject.components?.examples?[refName];
         if (refExample == null) {
           throw ArgumentError('Example $refName not found');
         }
-        return _resolveExample(refExample, [...chain, wrapper.ref]);
+        return _resolveExample(refExample, [...chain, pointer.reference]);
 
       case InlinedObject<Example>():
         return wrapper.object;

@@ -90,6 +90,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserTypes/$defs/UserResponse'
+  /pointer-source:
+    get:
+      tags: [Orders]
+      responses:
+        '200':
+          description: Pointer payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeepUse'
+  /pointer-alias:
+    $ref: '#/paths/~1pointer-source'
 components:
   schemas:
     Order:
@@ -268,3 +280,140 @@ components:
       properties:
         label:
           type: string
+    id:
+      type: string
+    DeepSource:
+      type: object
+      properties:
+        id:
+          type: integer
+        a/b:
+          type: string
+        child:
+          type: object
+          properties:
+            next:
+              $ref: '#/components/schemas/DeepSource/properties/child'
+    DeepUse:
+      type: object
+      required: [id, slash]
+      properties:
+        id:
+          $ref: '#/components/schemas/DeepSource/properties/id'
+        slash:
+          $ref: '#%2Fcomponents%2Fschemas%2FDeepSource%2Fproperties%2Fa~1b'
+        child:
+          $ref: '#/components/schemas/DeepSource/properties/child'
+    NullablePointerSource:
+      type: object
+      properties:
+        id:
+          type: [string, 'null']
+    NullablePointerUse:
+      type: object
+      required: [value]
+      properties:
+        value:
+          $ref: '#/components/schemas/NullablePointerSource/properties/id'
+    RecursiveListSource:
+      type: object
+      required: [nodes]
+      properties:
+        nodes:
+          type: array
+          items:
+            type: object
+            properties:
+              next:
+                $ref: '#/components/schemas/RecursiveListSource/properties/nodes'
+    RecursiveListUse:
+      type: object
+      required: [nodes]
+      properties:
+        nodes:
+          $ref: '#/components/schemas/RecursiveListSource/properties/nodes'
+    MergedPointerUse:
+      $ref: '#/components/schemas/MergedPointerOwner/properties/child'
+    MergedPointerOwner:
+      type: object
+      required: [child]
+      properties:
+        child:
+          $ref: '#/components/schemas/MergedPointerBase'
+          required: [extra]
+          properties:
+            extra:
+              type: integer
+            next:
+              $ref: '#/components/schemas/MergedPointerOwner/properties/child'
+    MergedPointerBase:
+      type: object
+      required: [base]
+      properties:
+        base:
+          type: string
+    RecursiveUnionOwner:
+      type: object
+      required: [child]
+      properties:
+        child:
+          type: [string, array]
+          items:
+            $ref: '#/components/schemas/RecursiveUnionOwner/properties/child'
+    RecursiveAllOfOwner:
+      type: object
+      required: [child]
+      properties:
+        child:
+          allOf:
+            - type: object
+              properties:
+                name:
+                  type: string
+          additionalProperties:
+            $ref: '#/components/schemas/RecursiveAllOfOwner/properties/child'
+    RecursiveAdditionalOwner:
+      type: object
+      required: [child]
+      properties:
+        child:
+          type: object
+          properties:
+            name:
+              type: string
+          additionalProperties:
+            $ref: '#/components/schemas/RecursiveAdditionalOwner/properties/child'
+    RawOneChoice:
+      $ref: '#/x-schemas/oneChoice'
+    RawAnyChoice:
+      $ref: '#/x-schemas/anyChoice'
+    RawAllChoice:
+      $ref: '#/x-schemas/allChoice'
+    SelfCollectionOwner:
+      type: object
+      required: [list, map]
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelfCollectionOwner/properties/list'
+        map:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/SelfCollectionOwner/properties/map'
+x-schemas:
+  oneChoice:
+    oneOf:
+      - $ref: '#/x-schemas/oneChoice'
+      - type: string
+  anyChoice:
+    anyOf:
+      - $ref: '#/x-schemas/anyChoice'
+      - type: string
+  allChoice:
+    allOf:
+      - $ref: '#/x-schemas/allChoice'
+      - type: object
+        properties:
+          label:
+            type: string

@@ -2,7 +2,9 @@ import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/media_type_resolver.dart';
+import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -57,14 +59,15 @@ class ResponseImporter({
     core.Response response;
     switch (wrapper) {
       case Reference<Response>():
-        if (!wrapper.ref.startsWith('#/components/responses/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('responses');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local response references are supported, '
             'found ${wrapper.ref}',
           );
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refResponse = openApiObject.components?.responses?[refName];
 
         if (refResponse == null) {
@@ -109,6 +112,9 @@ class ResponseImporter({
           for (final entry in mediaTypes.entries) {
             final rawContentType = entry.key;
             final mediaType = mediaTypeResolver.resolve(entry.value);
+            if (entry.value is Reference<MediaType>) {
+              modelImporter.registerReferencedMediaType(mediaType);
+            }
             final mapping = resolveContentTypeMapping(
               rawContentType,
               contentTypes: contentTypes,
