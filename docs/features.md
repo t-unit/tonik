@@ -224,8 +224,6 @@ Tonik does not validate whether an implemented feature is allowed by the declare
 - Reusable Media Type Objects referenced within `#/components/mediaTypes`. External targets and other same-document media targets are unsupported.
 - Inline Example Object `dataValue` rendered in generated documentation.
 
-XML encoding/decoding, external references, and `prefixEncoding` / `itemEncoding` on both Media Type and Encoding Objects are unsupported. Security support generates documentation; authentication remains configured on the HTTP client. Reusable `components.pathItems` and schema `$ref` siblings are supported features introduced before 3.2.
-
 ---
 
 ## Schema Types
