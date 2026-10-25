@@ -94,6 +94,7 @@ GENERATED_DIRS=(
   nullable_bodies/nullable_bodies_api
   multipart/multipart_api
   multipart/multipart_3_1_api
+  multipart/multipart_3_2_api
   adversarial_strings/adversarial_strings_api
   figma/figma_api
   stripe/stripe_api
@@ -155,6 +156,7 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p nullable_bodies_api -s nullable_bodies/openapi.yaml -o nullable_bodies --backend $BACKEND"
   "$TONIK_BINARY --config multipart/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config multipart/tonik_3_1.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config multipart/tonik_3_2.yaml --backend $BACKEND"
   "$TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings --backend $BACKEND"
   "$TONIK_BINARY --config figma/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config totem/tonik.yaml --backend $BACKEND"
@@ -164,8 +166,8 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map --backend $BACKEND"
 )
 
-if [ "${#GENERATED_DIRS[@]}" -ne 50 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 50 ]; then
-  echo "Error: integration fixture inventory must contain exactly 50 entries." >&2
+if [ "${#GENERATED_DIRS[@]}" -ne 51 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 51 ]; then
+  echo "Error: integration fixture inventory must contain exactly 51 entries." >&2
   exit 1
 fi
 
@@ -174,12 +176,12 @@ echo "Compiling Tonik..."
 dart compile exe "$REPO_ROOT/packages/tonik/bin/tonik.dart" -o "$TONIK_BINARY"
 
 cd "$INTEGRATION_TEST_DIR"
-echo "Cleaning 50 generated API packages..."
+echo "Cleaning 51 generated API packages..."
 for directory in "${GENERATED_DIRS[@]}"; do
   rm -rf "$directory"
 done
 
-echo "Generating 50 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
+echo "Generating 51 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
 run_commands "$SETUP_JOBS" "${GENERATION_COMMANDS[@]}"
 
 generated_count=0
@@ -212,7 +214,7 @@ for directory in "${TEST_DIRS[@]}"; do
 done
 PUB_GET_COMMANDS+=("cd 'test_helpers' && dart pub get")
 
-echo "Resolving dependencies for 50 generated, 46 test, and 1 helper package..."
+echo "Resolving dependencies for 51 generated, 46 test, and 1 helper package..."
 run_commands "$SETUP_JOBS" "${PUB_GET_COMMANDS[@]}"
 
 if [ "$SKIP_IMPOSTER" = false ]; then

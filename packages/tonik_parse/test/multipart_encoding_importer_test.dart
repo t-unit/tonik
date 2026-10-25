@@ -63,6 +63,37 @@ void main() {
     expect(reservedOnly.allowReserved, isTrue);
   });
 
+  test('OAS 3.2 uses the same explicit style mode as OAS 3.1', () {
+    final encoding = _importEncoding(
+      version: '3.2.0',
+      encoding: {
+        'contentType': 'application/json',
+        'style': 'pipeDelimited',
+        'explode': false,
+      },
+    );
+    expect(encoding.contentType, isNull);
+    expect(encoding.style, EncodingStyle.pipeDelimited);
+    expect(encoding.explode, isFalse);
+    expect(encoding.allowReserved, isFalse);
+  });
+
+  test('explicit allowReserved false still selects style mode', () {
+    final encoding = _importEncoding(
+      encoding: {'allowReserved': false, 'contentType': 'application/json'},
+    );
+    expect(encoding.contentType, isNull);
+    expect(encoding.style, EncodingStyle.form);
+    expect(encoding.explode, isTrue);
+    expect(encoding.allowReserved, isFalse);
+  });
+
+  test('an empty encoding object keeps content mode', () {
+    final encoding = _importEncoding(encoding: {});
+    expect(encoding.contentType, ContentType.text);
+    expect(encoding.isStyleBased, isFalse);
+  });
+
   test('OAS 3.1 content-only encoding preserves text charset handling', () {
     final encoding = _importEncoding(
       encoding: {'contentType': 'text/plain; charset=us-ascii'},

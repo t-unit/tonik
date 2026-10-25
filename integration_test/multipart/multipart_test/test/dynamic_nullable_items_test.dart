@@ -156,28 +156,21 @@ void main() {
     },
   );
 
-  test(
-    'packed JSON arrays retain nulls around transformed date aliases',
-    () async {
-      expect(
-        await api.postNamedNullableJsonArray(
-          body: NamedNullableJsonArray(
-            dates: [null, DateTime.utc(2026, 9, 14, 1, 2, 3), null],
-          ),
+  test('JSON array parts omit nulls around transformed date aliases', () async {
+    expect(
+      await api.postNamedNullableJsonArray(
+        body: NamedNullableJsonArray(
+          dates: [null, DateTime.utc(2026, 9, 14, 1, 2, 3), null],
         ),
-        isTonikSuccess,
-      );
-      final wire = MultipartWire(await server.takeRequest());
-      expect(wire.parts.single.name, 'dates');
-      expect(wire.parts.single.contentType, startsWith('application/json'));
-      expect(jsonDecode(wire.parts.single.bodyText), [
-        null,
-        '2026-09-14T01:02:03.000Z',
-        null,
-      ]);
-    },
-  );
-  test('packed JSON arrays use the shared nullable URI codec', () async {
+      ),
+      isTonikSuccess,
+    );
+    final wire = MultipartWire(await server.takeRequest());
+    expect(wire.parts.single.name, 'dates');
+    expect(wire.parts.single.contentType, startsWith('application/json'));
+    expect(wire.parts.single.bodyText, '"2026-09-14T01:02:03.000Z"');
+  });
+  test('JSON array parts use the shared nullable URI codec', () async {
     expect(
       await api.postNamedNullableUriArray(
         body: NamedNullableUriArray(
@@ -189,10 +182,7 @@ void main() {
     final wire = MultipartWire(await server.takeRequest());
     expect(wire.parts.single.name, 'uris');
     expect(wire.parts.single.contentType, startsWith('application/json'));
-    expect(
-      wire.parts.single.bodyText,
-      '[null,"https://example.test/a?b=c",null]',
-    );
+    expect(wire.parts.single.bodyText, '"https://example.test/a?b=c"');
   });
 
   test(

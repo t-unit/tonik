@@ -508,6 +508,23 @@ void main() {
   });
 
   group('PropertyValueStyleEncoders.toRawStyleParts', () {
+    test('deepObject preserves literal names and values', () {
+      const value = {'k&x': PropertyValue.scalar('Grüße a/b%20')};
+      expect(value.toRawStyleParts('a&b', explode: true, deepObject: true), [
+        (name: 'a&b[k&x]', value: 'Grüße a/b%20'),
+      ]);
+    });
+
+    test('deepObject rejects array members', () {
+      const value = {
+        'tags': PropertyValue.array(['a', 'b']),
+      };
+      expect(
+        () => value.toRawStyleParts('obj', explode: true, deepObject: true),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
     test('exploded object emits one raw part per key', () {
       const value = {
         'note': PropertyValue.scalar('a b'),

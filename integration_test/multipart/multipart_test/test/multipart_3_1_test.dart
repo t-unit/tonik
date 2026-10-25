@@ -168,7 +168,7 @@ void main() {
   });
 
   group('OAS 3.1 deepObject style encoding', () {
-    test('preserves literal parent names and encoded member keys', () async {
+    test('preserves literal parent names and literal member keys', () async {
       final server = await _jsonServer();
       final body = DeepObjectForm.fromJson(const {
         'address': {'city': 'Berlin', 'zip': '10115'},
@@ -182,13 +182,13 @@ void main() {
       expect(wire.parts.map((part) => part.name), [
         'address[city]',
         'address[zip]',
-        'a&b=c+d%20[k%26x]',
+        'a&b=c+d%20[k&x]',
       ]);
-      expect(wire.single('a&b=c+d%20[k%26x]').bodyText, 'a%2Fb');
+      expect(wire.single('a&b=c+d%20[k&x]').bodyText, 'a/b');
     });
 
     test('serializes required object as bracket-notation with '
-        'application/x-www-form-urlencoded content type', () async {
+        'text/plain content type', () async {
       final server = await _jsonServer();
 
       final response = await _api(server).postDeepObject(
@@ -231,7 +231,7 @@ void main() {
       },
     );
 
-    test('URL-encodes special characters in property values', () async {
+    test('preserves special characters in property values', () async {
       final server = await _jsonServer();
 
       final response = await _api(server).postDeepObjectTypes(
@@ -242,7 +242,7 @@ void main() {
 
       expect(response, isTonikSuccess);
       final wire = MultipartWire(await server.takeRequest());
-      expect(wire.single('profile[name]').bodyText, 'New%20York');
+      expect(wire.single('profile[name]').bodyText, 'New York');
       expect(wire.single('profile[active]').bodyText, 'false');
     });
 

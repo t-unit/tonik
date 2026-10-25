@@ -8,7 +8,7 @@ import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test(
-    'packs equal immutable URI lists once with nulls through the JSON codec',
+    'encodes equal immutable URI lists as JSON parts and omits null items',
     () async {
       final server = await RawRequestServer.start();
       final api = ItemsApi(CustomServer(baseUrl: server.baseUrl));
@@ -28,7 +28,7 @@ void main() {
       final wire = MultipartWire(await server.takeRequest());
       expect(wire.parts.single.name, 'values');
       expect(wire.parts.single.contentType, startsWith('application/json'));
-      expect(wire.parts.single.bodyText, '[null,"https://first.test/"]');
+      expect(wire.parts.single.bodyText, '"https://first.test/"');
     },
   );
 

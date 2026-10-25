@@ -2800,8 +2800,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject('', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .parameterProperties(allowEmpty: true)
+                  .toRawStyleParts(r'address', explode: true, deepObject: true)) {
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -2863,8 +2864,9 @@ $expectedPartCode
               final _$formData = FormData();
               if (body.address != null) {
                 for (final entry in body.address!
-                    .toDeepObject('', explode: true, allowEmpty: true)) {
-                  _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
+                    .parameterProperties(allowEmpty: true)
+                  .toRawStyleParts(r'address', explode: true, deepObject: true)) {
+                  _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
                 }
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -2924,8 +2926,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject('', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .parameterProperties(allowEmpty: true)
+                  .toRawStyleParts(r'address', explode: true, deepObject: true)) {
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -2985,8 +2988,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject('', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .parameterProperties(allowEmpty: true)
+                  .toRawStyleParts(r'address', explode: true, deepObject: true)) {
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -3046,8 +3050,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               for (final entry in body.address
-                  .toDeepObject('', explode: true, allowEmpty: true)) {
-                _$formData.fields.add(MapEntry((r'address' + entry.name).replaceAll(r'\', r'\\'), entry.value));
+                  .parameterProperties(allowEmpty: true)
+                  .toRawStyleParts(r'address', explode: true, deepObject: true)) {
+                _$formData.fields.add(MapEntry((entry.name).replaceAll(r'\', r'\\'), entry.value));
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -4944,11 +4949,7 @@ $expectedPartCode
               _$formData.fields.add(
                 MapEntry(
                   (r'tags').replaceAll(r'\', r'\\'),
-                  body.tags.uriEncode(
-                    allowEmpty: true,
-                    textEncoding: utf8,
-                    alreadyEncoded: true,
-                  ),
+                  body.tags.join(','),
                 ),
               );
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -5001,9 +5002,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
-            }
+                          _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), body.tags.join(' ')));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -5054,9 +5053,7 @@ $expectedPartCode
           format(r'''
           void test() {
             final _$formData = FormData();
-            for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), item));
-            }
+                          _$formData.fields.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), body.tags.join('|')));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -5317,11 +5314,7 @@ $expectedPartCode
                   body.codes
                       .map((item) => item.toJson().toString())
                       .toList()
-                      .uriEncode(
-                        allowEmpty: true,
-                        textEncoding: utf8,
-                        alreadyEncoded: true,
-                      ),
+                      .join(','),
                 ),
               );
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -5488,11 +5481,7 @@ $expectedPartCode
                   body.scores
                       .map((item) => jsonEncode(item))
                       .toList()
-                      .uriEncode(
-                        allowEmpty: true,
-                        textEncoding: utf8,
-                        alreadyEncoded: true,
-                      ),
+                      .join(','),
                 ),
               );
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
@@ -6023,7 +6012,9 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.tags) {
+                _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item), contentType: DioMediaType.parse(r'application/json'))));
+              }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
               }
@@ -6074,7 +6065,9 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.scores) {
+                _$formData.files.add(MapEntry((r'scores').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item), contentType: DioMediaType.parse(r'application/json'))));
+              }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
               }
@@ -6238,7 +6231,9 @@ $expectedPartCode
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.dates) {
+                _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toTimeZonedIso8601String()), contentType: DioMediaType.parse(r'application/json'))));
+              }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
               }
@@ -6291,7 +6286,9 @@ $expectedPartCode
             void test() {
               final _$formData = FormData();
               if (body.tags != null) {
-                _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
+                for (final item in body.tags!) {
+                  _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item), contentType: DioMediaType.parse(r'application/json'))));
+                }
               }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
@@ -6595,74 +6592,79 @@ $expectedPartCode
         );
       });
 
-      test('list of string enums, content-based mode → JSON-encoded array', () {
-        final enumModel = EnumModel<String>(
-          name: 'Priority',
-          isNullable: false,
-          isDeprecated: false,
-          values: {
-            const EnumEntry(value: 'high', nameOverride: null),
-            const EnumEntry(value: 'low', nameOverride: null),
-          },
-          context: testContext,
-          examples: const [],
-          nameOverride: null,
-          description: null,
-          defaultValue: null,
-          fallbackValue: null,
-          isReadOnly: false,
-          isWriteOnly: false,
-        );
+      test(
+        'list of string enums, content-based mode → repeated JSON parts',
+        () {
+          final enumModel = EnumModel<String>(
+            name: 'Priority',
+            isNullable: false,
+            isDeprecated: false,
+            values: {
+              const EnumEntry(value: 'high', nameOverride: null),
+              const EnumEntry(value: 'low', nameOverride: null),
+            },
+            context: testContext,
+            examples: const [],
+            nameOverride: null,
+            description: null,
+            defaultValue: null,
+            fallbackValue: null,
+            isReadOnly: false,
+            isWriteOnly: false,
+          );
 
-        final content = multipartContentFixture(testContext, [
-          multipartPartFixture(
-            name: 'priorities',
-            model: ListModel(
-              content: enumModel,
-              context: testContext,
-              examples: const [],
-              name: null,
-              nameOverride: null,
-              isNullable: false,
-              isContentNullable: false,
-              isReadOnly: false,
-              isWriteOnly: false,
+          final content = multipartContentFixture(testContext, [
+            multipartPartFixture(
+              name: 'priorities',
+              model: ListModel(
+                content: enumModel,
+                context: testContext,
+                examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
+              ),
+              encoding: const PartEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+                wireContentType: null,
+                textEncoding: TextEncoding.utf8,
+              ),
             ),
-            encoding: const PartEncoding(
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-              headers: null,
-              style: null,
-              explode: null,
-              allowReserved: null,
-              wireContentType: null,
-              textEncoding: TextEncoding.utf8,
-            ),
-          ),
-        ]);
+          ]);
 
-        final result = buildMultipartBodyStatements(
-          const MultipartBodyPlanner(backend: TransportBackend.dio)
-              .plan(content, bodyAccessor: 'body', isRequired: true),
-        );
+          final result = buildMultipartBodyStatements(
+            const MultipartBodyPlanner(backend: TransportBackend.dio)
+                .plan(content, bodyAccessor: 'body', isRequired: true),
+          );
 
-        final code = emitStatements(result);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry((r'priorities').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              for (final item in body.priorities) {
+                _$formData.files.add(MapEntry((r'priorities').replaceAll(r'\', r'\\'), MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
+              }
               if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
                 throw EncodingException(r'Multipart request body must contain at least one part.');
               }
               return _$formData;
             }
           '''),
-          ),
-        );
-      });
+            ),
+          );
+        },
+      );
 
       test('list of BinaryModel, content-based mode (no style) → '
           'binary for-loop per item', () {
@@ -7788,11 +7790,7 @@ $expectedPartCode
                 MapEntry(
                   (r'tags').replaceAll(r'\', r'\\'),
                   MultipartFile.fromString(
-                    body.tags.uriEncode(
-                      allowEmpty: true,
-                      textEncoding: utf8,
-                      alreadyEncoded: true,
-                    ),
+                    body.tags.join(','),
                     headers: _$tagsHeaders,
                   ),
                 ),
@@ -7867,9 +7865,7 @@ $expectedPartCode
                 throw EncodingException('Multipart header values must not contain line breaks.');
               }
             }
-            for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$tagsHeaders)));
-            }
+                          _$formData.files.add(MapEntry((r'tags').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.tags.join(' '), headers: _$tagsHeaders)));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -7942,9 +7938,7 @@ $expectedPartCode
                 throw EncodingException('Multipart header values must not contain line breaks.');
               }
             }
-            for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(item, headers: _$datesHeaders)));
-            }
+                          _$formData.files.add(MapEntry((r'dates').replaceAll(r'\', r'\\'), MultipartFile.fromString(body.dates.map((item) => item.toTimeZonedIso8601String()).toList().join('|'), headers: _$datesHeaders)));
             if (_$formData.fields.isEmpty && _$formData.files.isEmpty) {
               throw EncodingException(r'Multipart request body must contain at least one part.');
             }
@@ -8544,11 +8538,7 @@ $expectedPartCode
                       body.dates
                           .map((item) => item.toTimeZonedIso8601String())
                           .toList()
-                          .uriEncode(
-                            allowEmpty: true,
-                            textEncoding: utf8,
-                            alreadyEncoded: true,
-                          ),
+                          .join(','),
                       headers: _$datesHeaders,
                     ),
                   ),

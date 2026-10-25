@@ -324,7 +324,7 @@ class RequestBodyImporter({
         encoding.style != null ||
         encoding.explode != null ||
         encoding.allowReserved != null;
-    // OAS 3.0: always content-based; OAS 3.1: style-based only if explicit
+    // OAS 3.0: always content-based; OAS 3.1+: style-based only if explicit
     final useStyleMode = !isOas30 && hasExplicitStyleFields;
 
     final resolvedStyle = useStyleMode

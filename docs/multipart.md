@@ -1,6 +1,6 @@
 # Multipart Form Data
 
-Tonik supports `multipart/form-data` request bodies for file uploads and mixed-field forms. The request body schema must be an object — each property maps to one part of the multipart request.
+Tonik supports `multipart/form-data` request bodies for file uploads and mixed-field forms. The request body schema must describe an object whose properties supply named multipart parts.
 
 ---
 
@@ -107,9 +107,15 @@ await api.post(body: Form(tags: ['dart', 'flutter', 'openapi']));
 
 Arrays of binary files work the same way — each `TonikFile` becomes its own part.
 
+Content-based encoding applies to each array item individually, including when
+`encoding.{field}.contentType` is `application/json`. For example, an array of
+`[1, 2]` produces two JSON parts with bodies `1` and `2`. String items in JSON
+parts include quotes. Content-based arrays omit null items.
+
 ### Delimited Arrays
 
-In documents whose version does not start with `3.0`, you can use explicit style fields in `encoding` to send an array as a single delimited value:
+Outside OAS 3.0 documents, you can use explicit style fields in `encoding` to
+send an array as a single delimited value. OAS 3.1 and 3.2 use the same rules:
 
 ```yaml
 encoding:
@@ -125,7 +131,21 @@ await api.post(body: Form(tags: ['dart', 'flutter']));
 
 Supported styles: `form` (comma-separated), `spaceDelimited`, `pipeDelimited`.
 
-> The current implementation ignores style fields in `encoding` for documents whose version starts with `3.0`; arrays use separate parts.
+An explicit `style`, `explode`, or `allowReserved` selects style-based encoding
+and overrides `contentType`. An explicit `false` also selects style-based
+encoding; an empty encoding object uses content-based encoding. If `style` is
+omitted in style mode, it defaults to `form`. The default `explode` is `true`
+for `form` and `false` for the other styles.
+
+Style-based multipart names and values are sent literally, without URI
+percent-encoding. Spaces, reserved characters, and existing percent sequences
+are preserved. The `allowReserved` value has no effect on multipart escaping.
+A content-based part with `contentType: application/x-www-form-urlencoded`
+uses that media type's escaping rules.
+
+> In OAS 3.0 documents, `style`, `explode`, and `allowReserved` in multipart
+> encoding objects are ignored. Arrays use content-based encoding with separate
+> parts for their items.
 
 ---
 
@@ -179,4 +199,4 @@ contentTypes:
 | Dynamic sources inside `allOf` | Not supported |
 | Unmatched or non-writable encoding keys | Encoding error |
 | `deepObject` style on arrays | Not supported |
-| `style` / `explode` in OAS 3.0 | Ignored — arrays always use separate parts |
+| `style` / `explode` / `allowReserved` in OAS 3.0 | Ignored — arrays use content-based encoding with separate parts |

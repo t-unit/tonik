@@ -208,6 +208,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  multipart_3_2_api:
+    dependency: "direct main"
+    description:
+      path: "../multipart_3_2_api"
+      relative: true
+    source: path
+    version: "1.0.0"
   multipart_api:
     dependency: "direct main"
     description:
