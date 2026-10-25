@@ -18,6 +18,88 @@ tags:
     description: Operations with custom content type
 
 paths:
+  /form/unknown-union-array:
+    post:
+      operationId: postUnknownUnionArrayForm
+      tags: [form]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnknownUnionArrayForm'
+      responses:
+        '204':
+          description: Form accepted
+
+  /form/mixed-item-union-array:
+    post:
+      operationId: postMixedItemUnionArrayForm
+      tags: [form]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MixedItemUnionArrayForm'
+            encoding:
+              tags:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Form accepted
+
+  /form/complex-union-array:
+    post:
+      operationId: postComplexUnionArrayForm
+      tags: [form]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplexUnionArrayForm'
+      responses:
+        '204':
+          description: Form accepted
+
+  /form/joined-union-array:
+    post:
+      operationId: postJoinedUnionArrayForm
+      tags: [form]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnionArrayForm'
+            encoding:
+              tags:
+                style: form
+                explode: false
+      responses:
+        '204':
+          description: Form accepted
+
+  /form/union-array:
+    post:
+      operationId: postUnionArrayForm
+      tags: [form]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnionArrayForm'
+            encoding:
+              tags:
+                style: form
+                explode: true
+      responses:
+        '204':
+          description: Form accepted
+
   /form/nullable:
     post:
       operationId: postNullableForm
@@ -814,6 +896,78 @@ paths:
 
 components:
   schemas:
+    UnknownUnionArrayForm:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          anyOf:
+            - type: string
+            - {}
+    MixedItemUnionArrayForm:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                oneOf:
+                  - type: string
+                  - type: object
+                    required: [name]
+                    properties:
+                      name:
+                        type: string
+    UnionArrayForm:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+    UnionArrayAndListForm:
+      type: object
+      required: [tags, names]
+      properties:
+        tags:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        names:
+          type: array
+          items:
+            type: string
+    ComplexUnionArrayForm:
+      type: object
+      required: [tags, label]
+      properties:
+        label: {}
+        tags:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+    OptionalUnionArrayForm:
+      type: object
+      properties:
+        tags:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
     BinaryForm:
       type: object
       required:
