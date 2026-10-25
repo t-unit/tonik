@@ -26,6 +26,7 @@ void main() {
               'propertyName': 'petType',
               'mapping': {
                 'cat': '#/components/schemas/Cat',
+                'kitten': '#/components/schemas/Cat',
                 'dog': '#/components/schemas/Dog',
               },
             },
@@ -84,23 +85,22 @@ void main() {
       expect((petResponse as OneOfModel).discriminator, 'petType');
     });
 
-    test(
-      'oneOf alternatives have discriminator values from parent mapping',
-      () {
-        final api = Importer().import(fileContent);
+    test('oneOf alternatives preserve inherited discriminator mappings', () {
+      final api = Importer().import(fileContent);
+      const AllOfNormalizer(normalizeSingleMembers: true).apply(api);
 
-        final petResponse = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'PetResponse',
-        ) as OneOfModel;
+      final petResponse = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'PetResponse',
+      ) as OneOfModel;
 
-        expect(petResponse.models, hasLength(2));
-        final discriminatorValues = petResponse.models
-            .map((m) => m.discriminatorValue)
-            .toSet();
+      expect(petResponse.models, hasLength(2));
+      expect(petResponse.discriminatorAliases, {'kitten': 'cat'});
+      final discriminatorValues = petResponse.models
+          .map((m) => m.discriminatorValue)
+          .toSet();
 
-        expect(discriminatorValues, containsAll(['cat', 'dog']));
-      },
-    );
+      expect(discriminatorValues, containsAll(['cat', 'dog']));
+    });
 
     test('anyOf inherits discriminator propertyName from parent schema', () {
       final api = Importer().import(fileContent);
@@ -113,23 +113,22 @@ void main() {
       expect((petRequest as AnyOfModel).discriminator, 'petType');
     });
 
-    test(
-      'anyOf alternatives have discriminator values from parent mapping',
-      () {
-        final api = Importer().import(fileContent);
+    test('anyOf alternatives preserve inherited discriminator mappings', () {
+      final api = Importer().import(fileContent);
+      const AllOfNormalizer(normalizeSingleMembers: true).apply(api);
 
-        final petRequest = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'PetRequest',
-        ) as AnyOfModel;
+      final petRequest = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'PetRequest',
+      ) as AnyOfModel;
 
-        expect(petRequest.models, hasLength(2));
-        final discriminatorValues = petRequest.models
-            .map((m) => m.discriminatorValue)
-            .toSet();
+      expect(petRequest.models, hasLength(2));
+      expect(petRequest.discriminatorAliases, {'kitten': 'cat'});
+      final discriminatorValues = petRequest.models
+          .map((m) => m.discriminatorValue)
+          .toSet();
 
-        expect(discriminatorValues, containsAll(['cat', 'dog']));
-      },
-    );
+      expect(discriminatorValues, containsAll(['cat', 'dog']));
+    });
   });
 
   group('Inherited discriminator without explicit mapping', () {

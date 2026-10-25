@@ -10,6 +10,57 @@ void main() {
     sorter = StableModelSorter();
   });
 
+  test('oneOf stable key includes all aliases in a deterministic order', () {
+    final model = OneOfModel(
+      name: 'Shape',
+      models: [
+        (discriminatorValue: 'square', model: IntegerModel(context: context)),
+      ],
+      discriminator: 'kind',
+      discriminatorAliases: {'crate': 'square', 'box': 'square'},
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
+    );
+
+    expect(
+      sorter.stableKeyOf(model),
+      'OneOfModel{kind,square:IntegerModel,'
+      'aliases:{"box":"square","crate":"square"}}',
+    );
+  });
+
+  test('anyOf stable key includes aliases', () {
+    final model = AnyOfModel(
+      name: 'Shape',
+      models: [
+        (discriminatorValue: 'square', model: IntegerModel(context: context)),
+      ],
+      discriminator: 'kind',
+      discriminatorAliases: {'box': 'square'},
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      nameOverride: null,
+      description: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+      defaultValue: null,
+    );
+
+    expect(
+      sorter.stableKeyOf(model),
+      'AnyOfModel{kind,square:IntegerModel,aliases:{"box":"square"}}',
+    );
+  });
+
   group('stableKeyOf cycle detection', () {
     test(
       'does not stack overflow for direct circular ClassModel reference',

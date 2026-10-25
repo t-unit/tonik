@@ -471,7 +471,7 @@ void main() {
         const expectedMethod = r'''
           factory Choice.fromForm(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
-              final _$pairs = value.split(',');
+              final _$pairs = value.split('&');
               String? _$discriminator;
               for (final pair in _$pairs) {
                 final _$separator = pair.indexOf('=');

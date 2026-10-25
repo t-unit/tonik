@@ -391,6 +391,18 @@ class const OneOfGenerator({
     return Block.of([...spliceInlineHelpers(inlineHelpers), ...blocks]);
   }
 
+  Iterable<String> _discriminatorValues(
+    OneOfModel model,
+    DiscriminatedModel member,
+  ) sync* {
+    final canonical = member.discriminatorValue;
+    if (canonical == null) return;
+    yield canonical;
+    yield* model.discriminatorAliases.entries
+        .where((entry) => entry.value == canonical)
+        .map((entry) => entry.key);
+  }
+
   Code _generateFromJsonBody(
     String className,
     OneOfModel model,
@@ -429,8 +441,12 @@ class const OneOfGenerator({
       )) {
         final variantName = variantNames[m]!;
 
+        final pattern = _discriminatorValues(
+          model,
+          m,
+        ).map(specLiteralStringCode).join(' || ');
         resultCases.addAll([
-          Code('${specLiteralStringCode(m.discriminatorValue!)} => '),
+          Code('$pattern => '),
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
@@ -641,7 +657,7 @@ class const OneOfGenerator({
       if (discriminatedComplexTypes.isNotEmpty) {
         bodyBlocks.addAll([
           const Code('if (explode && value != null && value.isNotEmpty) {'),
-          if (isForm) const Code(r"final _$pairs = value.split(',');"),
+          if (isForm) const Code(r"final _$pairs = value.split('&');"),
           refer('String?', 'dart:core').code,
           const Code(r' _$discriminator;'),
           if (!isForm) ...[
@@ -651,8 +667,11 @@ class const OneOfGenerator({
                   refer('value').property('findHeaderDiscriminator').call([
                     specLiteralString(model.discriminator!),
                     literalSet(
-                      discriminatedComplexTypes.map(
-                        (m) => specLiteralString(m.discriminatorValue!),
+                      discriminatedComplexTypes.expand(
+                        (m) => _discriminatorValues(
+                          model,
+                          m,
+                        ).map(specLiteralString),
                       ),
                     ),
                   ]),
@@ -698,11 +717,14 @@ class const OneOfGenerator({
           final variantName = variantNames[m]!;
           final modelType = m.model;
 
+          final discriminatorCondition = _discriminatorValues(model, m)
+              .map(
+                (value) =>
+                    r'_$discriminator == ' + specLiteralStringCode(value),
+              )
+              .join(' || ');
           bodyBlocks.addAll([
-            Code(
-              r'if (_$discriminator == '
-              '${specLiteralStringCode(m.discriminatorValue!)}) {',
-            ),
+            Code('if ($discriminatorCondition) {'),
             const Code('return '),
             refer(variantName).call([
               refer(

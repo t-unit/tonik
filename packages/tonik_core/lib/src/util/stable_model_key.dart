@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tonik_core/src/model/additional_properties_policy.dart';
 import 'package:tonik_core/src/model/model.dart';
 
@@ -164,22 +166,34 @@ class StableModelSorter() {
         depth,
         preserveCompoundOrder: preserveCompoundOrder,
       ),
-      OneOfModel(:final models, :final discriminator) => _discriminatedKey(
-        'OneOfModel',
-        discriminator,
-        models,
-        visited,
-        depth,
-        preserveCompoundOrder: preserveCompoundOrder,
-      ),
-      AnyOfModel(:final models, :final discriminator) => _discriminatedKey(
-        'AnyOfModel',
-        discriminator,
-        models,
-        visited,
-        depth,
-        preserveCompoundOrder: preserveCompoundOrder,
-      ),
+      OneOfModel(
+        :final models,
+        :final discriminator,
+        :final discriminatorAliases,
+      ) =>
+        _discriminatedKey(
+          'OneOfModel',
+          discriminator,
+          discriminatorAliases,
+          models,
+          visited,
+          depth,
+          preserveCompoundOrder: preserveCompoundOrder,
+        ),
+      AnyOfModel(
+        :final models,
+        :final discriminator,
+        :final discriminatorAliases,
+      ) =>
+        _discriminatedKey(
+          'AnyOfModel',
+          discriminator,
+          discriminatorAliases,
+          models,
+          visited,
+          depth,
+          preserveCompoundOrder: preserveCompoundOrder,
+        ),
       ListModel(:final content, :final name) => _nestedModelKey(
         'ListModel',
         name,
@@ -279,6 +293,7 @@ class StableModelSorter() {
   String _discriminatedKey(
     String type,
     String? discriminator,
+    Map<String, String> discriminatorAliases,
     List<DiscriminatedModel> models,
     Set<Model> visited,
     int depth, {
@@ -287,7 +302,12 @@ class StableModelSorter() {
     final modelsKey = preserveCompoundOrder
         ? _orderedDiscriminatedModels(models, visited, depth)
         : _stableSortedDiscriminatedModels(models, visited, depth);
-    return '$type{$discriminator,$modelsKey}';
+    final aliases = discriminatorAliases.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    final aliasesKey = aliases.isEmpty
+        ? ''
+        : ',aliases:${jsonEncode(Map.fromEntries(aliases))}';
+    return '$type{$discriminator,$modelsKey$aliasesKey}';
   }
 
   String _policyKey(

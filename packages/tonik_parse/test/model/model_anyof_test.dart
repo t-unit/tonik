@@ -42,6 +42,7 @@ void main() {
             'propertyName': 'disc',
             'mapping': {
               'ref': '#/components/schemas/Reference',
+              'referenceAlias': '#/components/schemas/Reference',
               'inline': '#/components/schemas/InlineAnyOf',
             },
           },
@@ -110,6 +111,14 @@ void main() {
                   {r'$ref': '#/components/schemas/Alpha'},
                   {r'$ref': '#/components/schemas/Zebra'},
                 ],
+                'discriminator': {
+                  'propertyName': 'kind',
+                  'mapping': {
+                    'z': '#/components/schemas/Zebra',
+                    'zebraAlias': '#/components/schemas/Zebra',
+                    'a': '#/components/schemas/Alpha',
+                  },
+                },
               },
             },
           },
@@ -134,11 +143,12 @@ void main() {
       (model: alpha, discriminatorValue: 'a'),
       (model: zebra, discriminatorValue: 'z'),
     ]);
-    expect(nested.discriminator, isNull);
+    expect(nested.discriminator, 'kind');
+    expect(nested.discriminatorAliases, {'zebraAlias': 'z'});
     expect(nested.models, [
-      (model: zebra, discriminatorValue: null),
-      (model: alpha, discriminatorValue: null),
-      (model: zebra, discriminatorValue: null),
+      (model: zebra, discriminatorValue: 'z'),
+      (model: alpha, discriminatorValue: 'a'),
+      (model: zebra, discriminatorValue: 'z'),
     ]);
   });
 
@@ -194,6 +204,7 @@ void main() {
     expect(discriminator, isA<AnyOfModel>());
     expect((discriminator as AnyOfModel).models, hasLength(2));
     expect(discriminator.discriminator, 'disc');
+    expect(discriminator.discriminatorAliases, {'referenceAlias': 'ref'});
 
     final refModel = discriminator.models.first;
     expect(refModel.model, isA<ClassModel>());

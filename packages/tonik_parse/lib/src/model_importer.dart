@@ -781,7 +781,9 @@ class ModelImporter._(
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    shell.discriminator = effectiveDiscriminator?.propertyName;
+    shell
+      ..discriminator = effectiveDiscriminator?.propertyName
+      ..discriminatorAliases = _getDiscriminatorAliases(effectiveDiscriminator);
 
     final resolvedModels = <DiscriminatedModel>[];
     for (final oneOfSchema in alternatives) {
@@ -823,7 +825,9 @@ class ModelImporter._(
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    shell.discriminator = effectiveDiscriminator?.propertyName;
+    shell
+      ..discriminator = effectiveDiscriminator?.propertyName
+      ..discriminatorAliases = _getDiscriminatorAliases(effectiveDiscriminator);
 
     final resolvedModels = <DiscriminatedModel>[];
     for (final anyOfSchema in alternatives) {
@@ -1759,6 +1763,7 @@ class ModelImporter._(
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
+      discriminatorAliases: _getDiscriminatorAliases(effectiveDiscriminator),
       description: schema.description,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
@@ -1825,6 +1830,7 @@ class ModelImporter._(
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
+      discriminatorAliases: _getDiscriminatorAliases(effectiveDiscriminator),
       description: schema.description,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
@@ -1865,6 +1871,34 @@ class ModelImporter._(
     return anyOfModel;
   }
 
+  String _discriminatorTarget(String value) {
+    if (_schemas.containsKey(value)) {
+      return LocalJsonPointer.fromTokens(['components', 'schemas', value])
+          .reference;
+    }
+    if (value.startsWith('#') &&
+        Uri.decodeComponent(value.substring(1)).startsWith('/')) {
+      return LocalJsonPointer.parse(value).reference;
+    }
+    return value;
+  }
+
+  Map<String, String> _getDiscriminatorAliases(
+    parse.Discriminator? discriminator,
+  ) {
+    final canonicalValues = <String, String>{};
+    final aliases = <String, String>{};
+    for (final entry
+        in discriminator?.mapping?.entries ?? <MapEntry<String, String>>[]) {
+      final canonical = canonicalValues.putIfAbsent(
+        _discriminatorTarget(entry.value),
+        () => entry.key,
+      );
+      if (entry.key != canonical) aliases[entry.key] = canonical;
+    }
+    return aliases;
+  }
+
   String? _getDiscriminatorValue({
     required parse.Discriminator? discriminator,
     required Schema innerSchema,
@@ -1873,21 +1907,16 @@ class ModelImporter._(
       final ref = innerSchema.ref!;
       final pointer = LocalJsonPointer.parse(ref);
       final discriminatorEntry = discriminator?.mapping?.entries
-          .firstWhereOrNull((entry) {
-            if (entry.value == ref) return true;
-            if (_schemas.containsKey(entry.value) &&
-                pointer.componentName('schemas') == entry.value) {
-              return true;
-            }
-            if (!entry.value.startsWith('#') ||
-                !Uri.decodeComponent(entry.value.substring(1))
-                    .startsWith('/')) {
-              return false;
-            }
-            return LocalJsonPointer.parse(entry.value).reference ==
-                pointer.reference;
-          });
-      return discriminatorEntry?.key ?? pointer.tokens.lastOrNull;
+          .firstWhereOrNull(
+            (entry) => _discriminatorTarget(entry.value) == pointer.reference,
+          );
+      if (discriminatorEntry != null) return discriminatorEntry.key;
+      final implicitValue = pointer.tokens.lastOrNull;
+      // Explicit mappings take precedence over implicit schema-name lookup.
+      if (discriminator?.mapping?.containsKey(implicitValue) ?? false) {
+        return null;
+      }
+      return implicitValue;
     }
     return null;
   }

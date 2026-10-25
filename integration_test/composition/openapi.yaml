@@ -1125,6 +1125,94 @@ components:
           additionalProperties:
             type: "null"
 
+    AliasedSquare:
+      type: object
+      required: [shapeType, side]
+      properties:
+        shapeType:
+          type: string
+          enum: [square, box, AliasedCircle]
+        side:
+          type: number
+
+    AliasedCircle:
+      type: object
+      required: [shapeType, radius]
+      properties:
+        shapeType:
+          type: string
+          enum: [circle]
+        radius:
+          type: number
+
+    AliasedShape:
+      oneOf:
+        - $ref: '#/components/schemas/AliasedCircle'
+        - $ref: '#/components/schemas/AliasedSquare'
+      discriminator:
+        propertyName: shapeType
+        mapping:
+          circle: '#/components/schemas/AliasedCircle'
+          square: '#/components/schemas/AliasedSquare'
+          box: '#/components/schemas/AliasedSquare'
+
+    AliasedShapeAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/AliasedCircle'
+        - $ref: '#/components/schemas/AliasedSquare'
+      discriminator:
+        propertyName: shapeType
+        mapping:
+          circle: '#/components/schemas/AliasedCircle'
+          square: '#/components/schemas/AliasedSquare'
+          box: '#/components/schemas/AliasedSquare'
+
+    CollidingShape:
+      oneOf:
+        - $ref: '#/components/schemas/AliasedCircle'
+        - $ref: '#/components/schemas/AliasedSquare'
+      discriminator:
+        propertyName: shapeType
+        mapping:
+          square: '#/components/schemas/AliasedSquare'
+          AliasedCircle: '#/components/schemas/AliasedSquare'
+
+    ReversedCollidingShape:
+      oneOf:
+        - $ref: '#/components/schemas/AliasedSquare'
+        - $ref: '#/components/schemas/AliasedCircle'
+      discriminator:
+        propertyName: shapeType
+        mapping:
+          square: '#/components/schemas/AliasedSquare'
+          AliasedCircle: '#/components/schemas/AliasedSquare'
+
+    MixedTargetCircle:
+      type: object
+      required: [shapeType]
+      properties:
+        shapeType:
+          type: string
+
+    MixedTargetSquare:
+      type: object
+      required: [shapeType]
+      properties:
+        shapeType:
+          type: string
+
+    MixedTargetShape:
+      oneOf:
+        - $ref: '#/components/schemas/MixedTargetCircle'
+        - $ref: '#/components/schemas/MixedTargetSquare'
+      discriminator:
+        propertyName: shapeType
+        mapping:
+          circle: '#/components/schemas/MixedTargetCircle'
+          square: '#%2Fcomponents%2Fschemas%2FMixedTargetSquare'
+          box: '#/components/schemas/MixedTargetSquare'
+          crate: MixedTargetSquare
+
     ParameterTags:
       type: array
       items:
