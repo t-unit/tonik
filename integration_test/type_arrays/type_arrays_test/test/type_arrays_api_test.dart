@@ -377,10 +377,10 @@ void main() {
         nullableNumber: 3.14,
         nullableBoolean: true,
         nullableStringOrNumber:
-            NullableTypeArraysNullableStringOrNumberOneOfModelString(
+            $RawNullableTypeArraysNullableStringOrNumberOneOfModelString(
               'mixed-string',
             ),
-        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
+        nullableMultiType: $RawNullableTypeArraysNullableMultiTypeOneOfModelInt(
           777,
         ),
         unquotedNullable: 'unquoted-value',
@@ -409,21 +409,21 @@ void main() {
       expect(output.nullableBoolean, true);
       expect(
         output.nullableStringOrNumber,
-        isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>(),
+        isA<$RawNullableTypeArraysNullableStringOrNumberOneOfModelString>(),
       );
       expect(
         (output.nullableStringOrNumber!
-                as NullableTypeArraysNullableStringOrNumberOneOfModelString)
+                as $RawNullableTypeArraysNullableStringOrNumberOneOfModelString)
             .value,
         'mixed-string',
       );
       expect(
         output.nullableMultiType,
-        isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>(),
+        isA<$RawNullableTypeArraysNullableMultiTypeOneOfModelInt>(),
       );
       expect(
         (output.nullableMultiType!
-                as NullableTypeArraysNullableMultiTypeOneOfModelInt)
+                as $RawNullableTypeArraysNullableMultiTypeOneOfModelInt)
             .value,
         777,
       );
@@ -467,7 +467,7 @@ void main() {
       const input = NullableTypeArrays(
         requiredNullable: null,
         nullableStringOrNumber:
-            NullableTypeArraysNullableStringOrNumberOneOfModelString(
+            $RawNullableTypeArraysNullableStringOrNumberOneOfModelString(
               'test-string',
             ),
       );
@@ -485,11 +485,11 @@ void main() {
       final output = success.value;
       expect(
         output.nullableStringOrNumber,
-        isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>(),
+        isA<$RawNullableTypeArraysNullableStringOrNumberOneOfModelString>(),
       );
       expect(
         (output.nullableStringOrNumber!
-                as NullableTypeArraysNullableStringOrNumberOneOfModelString)
+                as $RawNullableTypeArraysNullableStringOrNumberOneOfModelString)
             .value,
         'test-string',
       );
@@ -501,7 +501,7 @@ void main() {
       const input = NullableTypeArrays(
         requiredNullable: null,
         nullableStringOrNumber:
-            NullableTypeArraysNullableStringOrNumberOneOfModelNumber(42.5),
+            $RawNullableTypeArraysNullableStringOrNumberOneOfModelNumber(42.5),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -517,11 +517,11 @@ void main() {
       final output = success.value;
       expect(
         output.nullableStringOrNumber,
-        isA<NullableTypeArraysNullableStringOrNumberOneOfModelNumber>(),
+        isA<$RawNullableTypeArraysNullableStringOrNumberOneOfModelNumber>(),
       );
       expect(
         (output.nullableStringOrNumber!
-                as NullableTypeArraysNullableStringOrNumberOneOfModelNumber)
+                as $RawNullableTypeArraysNullableStringOrNumberOneOfModelNumber)
             .value,
         42.5,
       );
@@ -532,9 +532,10 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelString(
-          'multi-string',
-        ),
+        nullableMultiType:
+            $RawNullableTypeArraysNullableMultiTypeOneOfModelString(
+              'multi-string',
+            ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -550,11 +551,11 @@ void main() {
       final output = success.value;
       expect(
         output.nullableMultiType,
-        isA<NullableTypeArraysNullableMultiTypeOneOfModelString>(),
+        isA<$RawNullableTypeArraysNullableMultiTypeOneOfModelString>(),
       );
       expect(
         (output.nullableMultiType!
-                as NullableTypeArraysNullableMultiTypeOneOfModelString)
+                as $RawNullableTypeArraysNullableMultiTypeOneOfModelString)
             .value,
         'multi-string',
       );
@@ -565,7 +566,7 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
+        nullableMultiType: $RawNullableTypeArraysNullableMultiTypeOneOfModelInt(
           999,
         ),
       );
@@ -583,11 +584,11 @@ void main() {
       final output = success.value;
       expect(
         output.nullableMultiType,
-        isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>(),
+        isA<$RawNullableTypeArraysNullableMultiTypeOneOfModelInt>(),
       );
       expect(
         (output.nullableMultiType!
-                as NullableTypeArraysNullableMultiTypeOneOfModelInt)
+                as $RawNullableTypeArraysNullableMultiTypeOneOfModelInt)
             .value,
         999,
       );
@@ -598,9 +599,8 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelBool(
-          false,
-        ),
+        nullableMultiType:
+            $RawNullableTypeArraysNullableMultiTypeOneOfModelBool(false),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -616,11 +616,11 @@ void main() {
       final output = success.value;
       expect(
         output.nullableMultiType,
-        isA<NullableTypeArraysNullableMultiTypeOneOfModelBool>(),
+        isA<$RawNullableTypeArraysNullableMultiTypeOneOfModelBool>(),
       );
       expect(
         (output.nullableMultiType!
-                as NullableTypeArraysNullableMultiTypeOneOfModelBool)
+                as $RawNullableTypeArraysNullableMultiTypeOneOfModelBool)
             .value,
         false,
       );
@@ -655,7 +655,7 @@ void main() {
               'simple-string',
             ),
         nullableTypeArray:
-            CompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
+            $RawCompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
       );
 
       final result = await api.testComposition(body: input);
@@ -683,11 +683,11 @@ void main() {
       );
       expect(
         output.nullableTypeArray,
-        isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelInt>(),
+        isA<$RawCompositionWithTypeArraysNullableTypeArrayOneOfModelInt>(),
       );
       expect(
         (output.nullableTypeArray!
-                as CompositionWithTypeArraysNullableTypeArrayOneOfModelInt)
+                as $RawCompositionWithTypeArraysNullableTypeArrayOneOfModelInt)
             .value,
         123,
       );
@@ -700,7 +700,7 @@ void main() {
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelNumber(99.99),
         nullableTypeArray:
-            CompositionWithTypeArraysNullableTypeArrayOneOfModelBool(true),
+            $RawCompositionWithTypeArraysNullableTypeArrayOneOfModelBool(true),
       );
 
       final result = await api.testComposition(body: input);
@@ -727,11 +727,11 @@ void main() {
       );
       expect(
         output.nullableTypeArray,
-        isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelBool>(),
+        isA<$RawCompositionWithTypeArraysNullableTypeArrayOneOfModelBool>(),
       );
       expect(
         (output.nullableTypeArray!
-                as CompositionWithTypeArraysNullableTypeArrayOneOfModelBool)
+                as $RawCompositionWithTypeArraysNullableTypeArrayOneOfModelBool)
             .value,
         true,
       );
@@ -877,9 +877,10 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelString(
-          'nullable-string',
-        ),
+        allPrimitivesNullable:
+            $RawEdgeCasesAllPrimitivesNullableOneOfModelString(
+              'nullable-string',
+            ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -896,11 +897,11 @@ void main() {
       final output = success.value;
       expect(
         output.allPrimitivesNullable,
-        isA<EdgeCasesAllPrimitivesNullableOneOfModelString>(),
+        isA<$RawEdgeCasesAllPrimitivesNullableOneOfModelString>(),
       );
       expect(
         (output.allPrimitivesNullable!
-                as EdgeCasesAllPrimitivesNullableOneOfModelString)
+                as $RawEdgeCasesAllPrimitivesNullableOneOfModelString)
             .value,
         'nullable-string',
       );
@@ -911,7 +912,9 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelInt(123),
+        allPrimitivesNullable: $RawEdgeCasesAllPrimitivesNullableOneOfModelInt(
+          123,
+        ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -928,11 +931,11 @@ void main() {
       final output = success.value;
       expect(
         output.allPrimitivesNullable,
-        isA<EdgeCasesAllPrimitivesNullableOneOfModelInt>(),
+        isA<$RawEdgeCasesAllPrimitivesNullableOneOfModelInt>(),
       );
       expect(
         (output.allPrimitivesNullable!
-                as EdgeCasesAllPrimitivesNullableOneOfModelInt)
+                as $RawEdgeCasesAllPrimitivesNullableOneOfModelInt)
             .value,
         123,
       );
@@ -943,9 +946,8 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelNumber(
-          99.99,
-        ),
+        allPrimitivesNullable:
+            $RawEdgeCasesAllPrimitivesNullableOneOfModelNumber(99.99),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -962,11 +964,11 @@ void main() {
       final output = success.value;
       expect(
         output.allPrimitivesNullable,
-        isA<EdgeCasesAllPrimitivesNullableOneOfModelNumber>(),
+        isA<$RawEdgeCasesAllPrimitivesNullableOneOfModelNumber>(),
       );
       expect(
         (output.allPrimitivesNullable!
-                as EdgeCasesAllPrimitivesNullableOneOfModelNumber)
+                as $RawEdgeCasesAllPrimitivesNullableOneOfModelNumber)
             .value,
         99.99,
       );
@@ -977,7 +979,7 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelBool(
+        allPrimitivesNullable: $RawEdgeCasesAllPrimitivesNullableOneOfModelBool(
           false,
         ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
@@ -996,11 +998,11 @@ void main() {
       final output = success.value;
       expect(
         output.allPrimitivesNullable,
-        isA<EdgeCasesAllPrimitivesNullableOneOfModelBool>(),
+        isA<$RawEdgeCasesAllPrimitivesNullableOneOfModelBool>(),
       );
       expect(
         (output.allPrimitivesNullable!
-                as EdgeCasesAllPrimitivesNullableOneOfModelBool)
+                as $RawEdgeCasesAllPrimitivesNullableOneOfModelBool)
             .value,
         false,
       );

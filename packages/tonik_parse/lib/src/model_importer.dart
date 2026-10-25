@@ -345,7 +345,7 @@ class ModelImporter._(
         content: AnyModel(context: context.push('array')),
         context: context,
         name: name,
-        isNullable: schema.isNullable ?? false,
+        isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
@@ -1664,7 +1664,7 @@ class ModelImporter._(
       examples: exampleImporter.fromSchema(schema),
       nameOverride: null,
       discriminator: null,
-      isNullable: false,
+      isNullable: schema.isNullable ?? hasNullType,
     );
 
     _addModelToSet(oneOfModel, schema);
@@ -1684,7 +1684,7 @@ class ModelImporter._(
       content: AnyModel(context: modelContext),
       context: context,
       name: name,
-      isNullable: schema.isNullable ?? false,
+      isNullable: schema.isNullable ?? schema.hasNullType,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
