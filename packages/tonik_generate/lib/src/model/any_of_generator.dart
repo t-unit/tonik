@@ -209,9 +209,10 @@ class const AnyOfGenerator({
         .map(
           (n) => (
             normalizedName: n.normalizedName,
-            hasCollectionValue:
-                !useImmutableCollections &&
-                (n.property.model is ListModel || n.property.model is MapModel),
+            hasCollectionValue: usesDeepCollectionEquality(
+              n.property.model,
+              useImmutableCollections: useImmutableCollections,
+            ),
           ),
         )
         .toList();
