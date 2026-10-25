@@ -902,7 +902,12 @@ class const AnyOfGenerator({
         refer('String', 'dart:core'),
         refer('Object?', 'dart:core'),
       ).statement,
-      const Code(r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }'),
+      const Code(r'for (final _$m in _$mapValues) {'),
+      refer(
+        'mergeJsonObject',
+        'package:tonik_util/tonik_util.dart',
+      ).call([refer(r'_$map'), refer(r'_$m')]).statement,
+      const Code('}'),
     ];
     if (hasDiscriminator) {
       mergeBlocks.add(
