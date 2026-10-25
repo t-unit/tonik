@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -60,13 +61,14 @@ class ResponseHeaderImporter({
   }) {
     switch (wrapper) {
       case Reference<Header>():
-        if (!wrapper.ref.startsWith('#/components/headers/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('headers');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local header references are supported, found ${wrapper.ref}',
           );
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refHeader = openApiObject.components?.headers?[refName];
 
         if (refHeader == null) {

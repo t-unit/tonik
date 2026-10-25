@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -35,8 +36,10 @@ class RequestParameterImporter({
 
       // Resolve chained aliases when used so unused cycles stay inert.
       if (parameter is Reference<Parameter> &&
-          parameter.ref.startsWith('#/components/parameters/') &&
-          parameterMap[parameter.ref.split('/').last] is Reference<Parameter>) {
+          !isExternalReference(parameter.ref) &&
+          parameterMap[LocalJsonPointer.parse(parameter.ref)
+                  .componentName('parameters')]
+              is Reference<Parameter>) {
         continue;
       }
 
@@ -127,7 +130,9 @@ class RequestParameterImporter({
   }) {
     switch (wrapper) {
       case Reference<Parameter>():
-        if (!wrapper.ref.startsWith('#/components/parameters/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('parameters');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local parameter references are supported, '
             'found ${wrapper.ref}',
@@ -135,11 +140,10 @@ class RequestParameterImporter({
         }
 
         final seen = visitedRefs ?? <String>{};
-        if (!seen.add(wrapper.ref)) {
+        if (!seen.add(pointer.reference)) {
           throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refParameter = openApiObject.components?.parameters?[refName];
 
         if (refParameter == null) {

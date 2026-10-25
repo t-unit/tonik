@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/operation.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
@@ -7,6 +8,7 @@ import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/tag.dart';
+import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/src/request_parameter_importer.dart';
 import 'package:tonik_parse/src/response_importer.dart';
@@ -14,6 +16,7 @@ import 'package:tonik_parse/src/security_scheme_importer.dart';
 
 class OperationImporter({
   required final OpenApiObject openApiObject,
+  required final ModelImporter modelImporter,
   required final RequestParameterImporter parameterImporter,
   required final ResponseImporter responseImporter,
   required final RequestBodyImporter requestBodyImporter,
@@ -26,8 +29,10 @@ class OperationImporter({
 
   late Set<core.Operation> operations;
   late Map<String, core.Tag> _tagsByName;
+  final _pathItemReferences = <String, ReferenceWrapper<PathItem>>{};
 
   void import() {
+    _pathItemReferences.clear();
     _tagsByName = {
       for (final tag in openApiObject.tags ?? <Tag>[])
         tag.name: core.Tag(
@@ -260,16 +265,16 @@ class OperationImporter({
       case InlinedObject<Parameter>():
         return wrapper.object;
       case Reference<Parameter>():
-        if (!wrapper.ref.startsWith('#/components/parameters/')) {
-          return null;
-        }
+        if (isExternalReference(wrapper.ref)) return null;
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('parameters');
+        if (refName == null) return null;
 
         final seen = visitedRefs ?? <String>{};
-        if (!seen.add(wrapper.ref)) {
+        if (!seen.add(pointer.reference)) {
           throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refParameter = openApiObject.components?.parameters?[refName];
         if (refParameter == null) return null;
 
@@ -277,26 +282,40 @@ class OperationImporter({
     }
   }
 
-  PathItem _resolvePathItem(ReferenceWrapper<PathItem> wrapper) {
+  PathItem _resolvePathItem(
+    ReferenceWrapper<PathItem> wrapper, [
+    Set<String>? visitedRefs,
+  ]) {
     switch (wrapper) {
       case Reference<PathItem>():
-        if (!wrapper.ref.startsWith('#/components/pathItems/')) {
-          throw UnimplementedError(
-            'Only local pathItem references are supported, '
-            'found ${wrapper.ref}',
-          );
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final seen = visitedRefs ?? <String>{};
+        if (!seen.add(pointer.reference)) {
+          throw ArgumentError('Cyclic path item reference: ${wrapper.ref}');
         }
 
-        final refName = wrapper.ref.split('/').last;
-        final refPathItem = openApiObject.components?.pathItems?[refName];
-
-        if (refPathItem == null) {
-          throw ArgumentError(
-            'PathItem $refName not found in components/pathItems',
-          );
+        final component = pointer.componentName('pathItems');
+        final ReferenceWrapper<PathItem>? target;
+        if (component != null) {
+          target = openApiObject.components?.pathItems?[component];
+        } else if (pointer.tokens.length == 2 &&
+            pointer.tokens.first == 'paths') {
+          target = openApiObject.paths[pointer.tokens.last];
+        } else if (openApiObject.source != null) {
+          target = _pathItemReferences.putIfAbsent(pointer.reference, () {
+            final parsed = ReferenceWrapper<PathItem>.fromJson(
+              pointer.resolve(openApiObject.source),
+            );
+            return parsed;
+          });
+        } else {
+          target = null;
         }
-
-        return _resolvePathItem(refPathItem);
+        if (target == null) {
+          throw ArgumentError('PathItem ${wrapper.ref} not found');
+        }
+        modelImporter.registerLocalPathItem(target, pointer);
+        return _resolvePathItem(target, seen);
 
       case InlinedObject<PathItem>():
         return wrapper.object;
