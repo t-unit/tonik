@@ -18,7 +18,6 @@
   - Tag enhancements (`summary`, `parent`, `kind` for hierarchies)
   - Server Object `name` metadata
   - Inline Example Object `serializedValue` rendering alongside existing `value` and `dataValue` support
-  - Recognize `3.2.*` in version reporting and update support documentation; feature handling remains independent of the declared version
 - Advanced OpenAPI 3.1 features (core 3.1 support is shipped — see [Features](features.md#supported-oas-31-features)):
   - Support for `if/then/else` schemas (via custom encoding/decoding checks)
   - Support for `const` schemas

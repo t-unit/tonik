@@ -20,9 +20,9 @@
 
 # Tonik
 
-A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
+A Dart code generator for OpenAPI 3.0 and 3.1 specifications, with partial OpenAPI 3.2 support.
 
-Generate type-safe API client packages for Dart and Flutter. Tonik produces idiomatic code with sealed classes for `oneOf`, exhaustive pattern matching for responses, and full OpenAPI encoding support.
+Generate type-safe API client packages for Dart and Flutter. Tonik produces idiomatic code with sealed classes for `oneOf`, exhaustive pattern matching for responses, and support for common OpenAPI parameter and body encodings. See the [support matrix](https://github.com/t-unit/tonik/blob/main/docs/features.md#openapi-version-support) for current capabilities and limitations.
 
 ## Key Features
 
@@ -161,12 +161,14 @@ for Dart clients using FastAPI, NestJS, Fastify, Spring Boot, and Rails APIs.
 | **Streaming Responses** | Typed NDJSON, JSONL, JSON-seq, and SSE response streams with explicit `itemSchema` |
 | **Composition** | `oneOf` (sealed classes), `anyOf`, `allOf`, discriminators, nested composition |
 | **Types** | Integer/string enums, `date`, `date-time` with timezone, `decimal`/`BigDecimal`, `uri`, `binary` |
-| **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |
+| **Parameters** | Path, query, header, cookie; supported encoding styles include `form`, `simple`, `label`, `matrix`, and `deepObject` |
 | **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
 | **Multipart** | `multipart/form-data` with primitive, file, JSON, and array parts; per-part `encoding` and content types |
 | **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas, `additionalProperties` |
 | **Configuration** | HTTP backend selection, name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping, parallel generation tuning |
 | **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays, `contentEncoding`/`contentMediaType` |
+
+OpenAPI 3.2 support includes typed `itemSchema` response streams, local reusable Media Type Objects under `components.mediaTypes`, and inline `dataValue` examples. See [Features](https://github.com/t-unit/tonik/blob/main/docs/features.md#supported-oas-32-features) for details.
 
 ## Acknowledgments
 
