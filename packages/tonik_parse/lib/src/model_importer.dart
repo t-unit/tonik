@@ -1198,7 +1198,9 @@ class ModelImporter._(
       return _placeholders.putIfAbsent(
         ref,
         () => AliasModel(
-          name: defName,
+          // Resolution placeholders must delegate to the registered target,
+          // rather than introduce a separate generated type.
+          name: null,
           model: AnyModel(context: _contextFromDefsPath(ref)),
           context: _contextFromDefsPath(ref),
           defaultValue: null,
@@ -1221,12 +1223,9 @@ class ModelImporter._(
         _contextFromDefsPath(ref),
       );
       final placeholder = _placeholders.remove(ref);
-      if (placeholder != null) {
-        if (!_wouldCreateAliasCycle(placeholder, refModel)) {
-          placeholder.model = refModel;
-        } else {
-          _registerModel(placeholder);
-        }
+      if (placeholder != null &&
+          !_wouldCreateAliasCycle(placeholder, refModel)) {
+        placeholder.model = refModel;
       }
       return refModel;
     } finally {
