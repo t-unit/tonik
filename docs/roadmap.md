@@ -28,6 +28,8 @@
 - Supporting the `not` keyword
 - `server` overrides in operations and paths
 
+- Support for comma-separated media type alternatives in multipart `encoding.contentType`, selecting a supported media type for each part
+
 ## Non-goals
 
 **Validation**:
