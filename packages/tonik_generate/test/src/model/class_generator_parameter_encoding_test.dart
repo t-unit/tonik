@@ -28,6 +28,77 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('aliased list properties retain array parameter values', () {
+    final list = ListModel(
+      content: StringModel(context: context),
+      context: context,
+      examples: const [],
+      name: 'Tags',
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final alias = AliasModel(
+      model: list,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      name: 'TagsAlias',
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+    final model = ClassModel(
+      name: 'Filter',
+      isDeprecated: false,
+      context: context,
+      examples: const [],
+      properties: [
+        Property(
+          name: 'tags',
+          model: alias,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
+        ),
+      ],
+      nameOverride: null,
+      description: null,
+      additionalPropertiesPolicy: null,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+
+    final method = generator
+        .generateClass(model)
+        .methods
+        .singleWhere((method) => method.name == 'parameterProperties');
+    const expected = r'''
+      @override
+      Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+        final _$result = <String, PropertyValue>{};
+        _$result[r'tags'] = PropertyValue.array(this.tags);
+        return _$result;
+      }
+    ''';
+    expect(
+      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('parameterProperties method', () {
     test('generates parameterProperties method signature', () {
       final model = ClassModel(
