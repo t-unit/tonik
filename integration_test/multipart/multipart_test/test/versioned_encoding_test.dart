@@ -6,7 +6,7 @@ import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   test('OAS 3.0 multipart encoding has the expected wire values', () async {
-    final server = await RawRequestServer.start(responseStatusCode: 204);
+    final server = await RawRequestServer.start();
     final api = v30.VersionedApi(
       v30.CustomServer(
         baseUrl: server.baseUrl,
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('OAS 3.1 multipart encoding has the expected wire values', () async {
-    final server = await RawRequestServer.start(responseStatusCode: 204);
+    final server = await RawRequestServer.start();
     final api = v31.VersionedApi(
       v31.CustomServer(
         baseUrl: server.baseUrl,
@@ -85,7 +85,7 @@ void main() {
   });
 
   test('OAS 3.2 multipart encoding has the expected wire values', () async {
-    final server = await RawRequestServer.start(responseStatusCode: 204);
+    final server = await RawRequestServer.start();
     final api = v32.VersionedApi(
       v32.CustomServer(
         baseUrl: server.baseUrl,
