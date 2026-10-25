@@ -16,6 +16,13 @@ tags:
     description: Operations demonstrating composition of models
 
 paths:
+  x-generated-by: fixture
+  /no-declared-responses:
+    post:
+      operationId: noDeclaredResponses
+      tags:
+        - composition
+
   /health:
     get:
       operationId: health
@@ -24,6 +31,7 @@ paths:
       summary: Health check
       description: Health check endpoint
       responses:
+        x-note: Health response metadata
         '2XX':
           description: Successful response
 
@@ -1167,6 +1175,43 @@ components:
         - $ref: '#/components/schemas/NestedStringValuesAlias'
         - type: integer
 
+    AnyOfUnsupportedAliases:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+        - $ref: '#/components/schemas/NestedStringValuesAlias'
+
+    FreeformValue: {}
+
+    FreeformAlias:
+      $ref: '#/components/schemas/FreeformValue'
+
+    FreeformHolder:
+      type: object
+      properties:
+        data: {}
+        aliasedData:
+          $ref: '#/components/schemas/FreeformAlias'
+
+    OneOfFreeformValue:
+      oneOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AnyOfFreeformValue:
+      anyOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AllOfFreeformValue:
+      allOf:
+        - type: object
+          properties:
+            data: {}
+        - type: object
+          properties:
+            label:
+              type: string
+
     NameMappedMetric:
       oneOf:
         - $ref: '#/components/schemas/Counter'
@@ -1186,8 +1231,3 @@ components:
         mapping:
           counter: Counter
           gauge: Gauge
-
-    AnyOfUnsupportedAliases:
-      anyOf:
-        - $ref: '#/components/schemas/StringDictionaryAlias'
-        - $ref: '#/components/schemas/NestedStringValuesAlias'

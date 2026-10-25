@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fastify_type_provider_zod_api/fastify_type_provider_zod_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -43,22 +45,26 @@ void main() {
     expect(data.deletedAt.dateTime, isA<DateTime>());
   });
 
-  test('exampleExamplePost exampleDtoInputDeletedAtAnyOfModel', () async {
+  test('sends a scalar through the typeless fallback variant', () async {
     final api = buildExampleApi(responseStatus: '200');
     final response = await api.exampleExamplePost(
       body: const ExampleDtoInput(
         email: 'john.doe@example.com',
         password: 'password',
-        deletedAt: ExampleDtoInputDeletedAtAnyOfModel(
-          exampleDtoInputDeletedAtAnyOfModel2:
-              ExampleDtoInputDeletedAtAnyOfModel2(),
-        ),
+        deletedAt: ExampleDtoInputDeletedAtAnyOfModel(object2: 42),
       ),
     );
 
     expect(response, isTonikSuccess);
     final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+
+    final request = await imposterServer.takeRequest();
+    expect(jsonDecode(request.body!), {
+      'email': 'john.doe@example.com',
+      'password': 'password',
+      'deletedAt': 42,
+    });
 
     final data = success.value;
     expect(data.email, isA<String>());

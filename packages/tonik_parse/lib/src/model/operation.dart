@@ -28,9 +28,15 @@ class Operation({
     requestBody: json['requestBody'] == null
         ? null
         : ReferenceWrapper<RequestBody>.fromJson(json['requestBody']),
-    responses: (json['responses'] as Map<String, dynamic>).map(
-      (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),
-    ),
+    responses: {
+      for (final entry
+          in (json.containsKey('responses')
+                  ? json['responses'] as Map<String, dynamic>
+                  : const <String, dynamic>{})
+              .entries)
+        if (!entry.key.startsWith('x-'))
+          entry.key: ReferenceWrapper<Response>.fromJson(entry.value),
+    },
     isDeprecated: json['deprecated'] as bool?,
     servers: (json['servers'] as List<dynamic>?)
         ?.map((e) => Server.fromJson(e as Map<String, dynamic>))

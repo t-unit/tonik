@@ -95,7 +95,7 @@ void main() {
     );
   });
 
-  test('unsupported local schema targets are not external references', () {
+  test('missing local schema targets are not external references', () {
     expect(
       () => Importer().import({
         'openapi': '3.1.0',
@@ -107,7 +107,7 @@ void main() {
           },
         },
       }),
-      throwsA(isA<UnimplementedError>()),
+      throwsArgumentError,
     );
   });
 

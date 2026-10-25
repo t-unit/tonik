@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
-import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/composite_library_builder.dart';
@@ -210,8 +209,10 @@ class const AnyOfGenerator({
         .map(
           (n) => (
             normalizedName: n.normalizedName,
-            hasCollectionValue:
-                !useImmutableCollections && isCollectionModel(n.property.model),
+            hasCollectionValue: usesDeepCollectionEquality(
+              n.property.model,
+              useImmutableCollections: useImmutableCollections,
+            ),
           ),
         )
         .toList();

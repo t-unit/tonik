@@ -69,6 +69,7 @@ class Importer({
     );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,
+      modelImporter: modelImporter,
       parameterImporter: parameterImporter,
       responseImporter: responseImporter,
       requestBodyImporter: requestBodyImporter,
