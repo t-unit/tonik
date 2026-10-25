@@ -1022,8 +1022,7 @@ class ModelImporter._(
       final isNullable =
           propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
-      final isReadOnly = propertySchema.isReadOnly ?? false;
-      final isWriteOnly = propertySchema.isWriteOnly ?? false;
+      final (:isReadOnly, :isWriteOnly) = _propertyAccessFlags(propertySchema);
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
@@ -1092,6 +1091,25 @@ class ModelImporter._(
     }
 
     return model;
+  }
+
+  ({bool isReadOnly, bool isWriteOnly}) _propertyAccessFlags(Schema schema) {
+    var current = schema;
+    var isReadOnly = false;
+    var isWriteOnly = false;
+    final visited = <String>{};
+
+    while (true) {
+      isReadOnly = isReadOnly || (current.isReadOnly ?? false);
+      isWriteOnly = isWriteOnly || (current.isWriteOnly ?? false);
+      final ref = current.ref;
+      if (ref == null || !visited.add(ref)) break;
+      final resolved = resolveSchemaReference(current);
+      if (resolved == null) break;
+      current = resolved;
+    }
+
+    return (isReadOnly: isReadOnly, isWriteOnly: isWriteOnly);
   }
 
   Model importPropertySchema(Schema schema, Context context) {
@@ -2124,8 +2142,7 @@ class ModelImporter._(
       final isNullable =
           propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
-      final isReadOnly = propertySchema.isReadOnly ?? false;
-      final isWriteOnly = propertySchema.isWriteOnly ?? false;
+      final (:isReadOnly, :isWriteOnly) = _propertyAccessFlags(propertySchema);
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
