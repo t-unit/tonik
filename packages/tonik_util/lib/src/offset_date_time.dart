@@ -48,7 +48,35 @@ class const OffsetDateTime._fromUtc(
     final offset = _parseTimezoneOffset(offsetString);
 
     try {
-      final utcDateTime = DateTime.parse(input).toUtc();
+      final localInput = input.substring(0, timezoneMatch.start);
+      DateTime parseWithOffset(Duration parseOffset) {
+        final suffix = parseOffset == Duration.zero
+            ? 'Z'
+            : _generateTimeZoneName(parseOffset).substring(3);
+        return DateTime.parse('$localInput$suffix');
+      }
+
+      var parseOffset = Duration(minutes: offset.inMinutes);
+      DateTime parsed;
+      try {
+        parsed = parseWithOffset(parseOffset);
+      } on FormatException {
+        if (offset == parseOffset) rethrow;
+        // The intermediate instant can exceed DateTime's range even when
+        // applying the offset seconds produces a representable instant.
+        parseOffset += Duration(minutes: offset.isNegative ? -1 : 1);
+        parsed = parseWithOffset(parseOffset);
+      }
+      final utcMicroseconds =
+          parsed.microsecondsSinceEpoch - (offset - parseOffset).inMicroseconds;
+      // DateTime supports 100,000,000 days on either side of the Unix epoch.
+      if (utcMicroseconds.abs() > 8640000000000000000) {
+        throw const FormatException('Datetime offset is out of range');
+      }
+      final utcDateTime = DateTime.fromMicrosecondsSinceEpoch(
+        utcMicroseconds,
+        isUtc: true,
+      );
       return OffsetDateTime._fromUtc(
         utcDateTime,
         offset: offset,
@@ -91,7 +119,9 @@ class const OffsetDateTime._fromUtc(
     // bare 't' would clobber non-separator characters in malformed input.
     final normalizedInput = input.replaceFirst(RegExp(r'(?<=\d)t(?=\d)'), 'T');
 
-    final timezoneRegex = RegExp(r'[+-]\d{2}(?::?\d{2})?$');
+    final timezoneRegex = RegExp(
+      r'[+-]\d{2}(?::\d{2}(?::\d{2}(?:[.,]\d+)?)?|\d{2}(?:\d{2}(?:[.,]\d+)?)?)?$',
+    );
     final timezoneMatch = normalizedInput.contains(RegExp('[T ]'))
         ? timezoneRegex.firstMatch(normalizedInput)
         : null;
@@ -120,14 +150,18 @@ class const OffsetDateTime._fromUtc(
     }
   }
 
-  /// Parses timezone offset string (±HH:MM, ±HHMM, or ±HH) into Duration.
   static Duration _parseTimezoneOffset(String offsetString) {
-    final normalized = offsetString.replaceAll(':', '');
+    final normalized = offsetString
+        .split(RegExp('[.,]'))
+        .first
+        .replaceAll(':', '');
 
-    if (normalized.length != 3 && normalized.length != 5) {
+    if (normalized.length != 3 &&
+        normalized.length != 5 &&
+        normalized.length != 7) {
       throw InvalidFormatException(
         value: offsetString,
-        format: '±HH, ±HHMM, or ±HH:MM timezone offset',
+        format: '±HH, ±HHMM, ±HH:MM, ±HHMMSS, or ±HH:MM:SS timezone offset',
       );
     }
 
@@ -139,6 +173,9 @@ class const OffsetDateTime._fromUtc(
 
     final hours = int.parse(hoursStr);
     final minutes = int.parse(minutesStr);
+    final seconds = normalized.length == 7
+        ? int.parse(normalized.substring(5, 7))
+        : 0;
 
     if (hours < 0 || hours > 23) {
       throw InvalidFormatException(
@@ -154,7 +191,18 @@ class const OffsetDateTime._fromUtc(
       );
     }
 
-    return Duration(hours: sign * hours, minutes: sign * minutes);
+    if (seconds > 59) {
+      throw InvalidFormatException(
+        value: offsetString,
+        format: 'timezone offset seconds must be between 00 and 59',
+      );
+    }
+
+    return Duration(
+      hours: sign * hours,
+      minutes: sign * minutes,
+      seconds: sign * seconds,
+    );
   }
 
   /// Converts a local DateTime with an offset to UTC DateTime.
@@ -188,7 +236,9 @@ class const OffsetDateTime._fromUtc(
 
     final hourPart = absHours.toString().padLeft(2, '0');
     final minutePart = minutes.toString().padLeft(2, '0');
-    return 'UTC$sign$hourPart:$minutePart';
+    final seconds = offset.inSeconds.abs() % 60;
+    final secondsSuffix = seconds == 0 ? '' : ':${_twoDigits(seconds)}';
+    return 'UTC$sign$hourPart:$minutePart$secondsSuffix';
   }
 
   @override
@@ -322,8 +372,13 @@ class const OffsetDateTime._fromUtc(
       final offsetMinutes = offsetAbs.inMinutes % 60;
       final offH = _twoDigits(offsetHours);
       final offM = _twoDigits(offsetMinutes);
+      final offsetSeconds = offsetAbs.inSeconds % 60;
+      final secondsSuffix = offsetSeconds == 0
+          ? ''
+          : ':${_twoDigits(offsetSeconds)}';
 
-      return '$y-$m-$d$sep$h:$min:$sec.$ms$us$offsetSign$offH:$offM';
+      return '$y-$m-$d$sep$h:$min:$sec.$ms$us$offsetSign$offH:$offM'
+          '$secondsSuffix';
     }
   }
 

@@ -1,11 +1,11 @@
 /// Extension on DateTime to provide timezone-aware encoding.
 ///
-/// This extension ensures that DateTime objects are encoded with their full
-/// timezone information, unlike [DateTime.toIso8601String()] which only
+/// This extension ensures that DateTime objects are encoded with a timezone
+/// offset, unlike [DateTime.toIso8601String()] which only
 /// works correctly for UTC dates.
 extension DateTimeEncodingExtension on DateTime {
-  /// Encodes this DateTime to a string representation that preserves
-  /// timezone information.
+  /// Offset seconds are included when nonzero; fractional offset seconds
+  /// are discarded.
   ///
   /// For UTC dates, this returns the same as [DateTime.toIso8601String()].
   /// For local dates, this ensures the timezone offset is properly included.
@@ -44,11 +44,15 @@ extension DateTimeEncodingExtension on DateTime {
     final offset = timeZoneOffset;
     final offsetHours = offset.inHours.abs();
     final offsetMinutes = offset.inMinutes.abs() % 60;
+    final offsetSeconds = offset.inSeconds.abs() % 60;
+    final secondsSuffix = offsetSeconds == 0
+        ? ''
+        : ':${_twoDigits(offsetSeconds)}';
 
     final offsetSign = offset.isNegative ? '-' : '+';
     final offsetString =
         '$offsetSign'
-        '${_twoDigits(offsetHours)}:${_twoDigits(offsetMinutes)}';
+        '${_twoDigits(offsetHours)}:${_twoDigits(offsetMinutes)}$secondsSuffix';
 
     return '$formattedYear-$month-${day}T$hour:$minute:$second'
         '$fractionalString$offsetString';

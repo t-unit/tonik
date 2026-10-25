@@ -435,6 +435,42 @@ void main() {
   });
 
   group('string representation', () {
+    test(
+      'should include positive offset seconds in strings and timezone name',
+      () {
+        final dateTime = OffsetDateTime.from(
+          DateTime.utc(1900, 1, 1, 11, 50, 39),
+          offset: const Duration(minutes: 9, seconds: 21),
+        );
+
+        expect(dateTime.toIso8601String(), '1900-01-01T12:00:00.000+00:09:21');
+        expect(dateTime.toString(), '1900-01-01 12:00:00.000+00:09:21');
+        expect(dateTime.timeZoneName, 'UTC+00:09:21');
+      },
+    );
+
+    test('should include negative sub-minute offset seconds', () {
+      final dateTime = OffsetDateTime.from(
+        DateTime.utc(2024, 1, 1, 0, 0, 0, 123, 456),
+        offset: const Duration(seconds: -21),
+      );
+
+      expect(dateTime.toIso8601String(), '2023-12-31T23:59:39.123456-00:00:21');
+      expect(dateTime.toString(), '2023-12-31 23:59:39.123456-00:00:21');
+      expect(dateTime.timeZoneName, 'UTC-00:00:21');
+    });
+
+    test('should omit fractional offset seconds without rounding', () {
+      final dateTime = OffsetDateTime.from(
+        DateTime.utc(2024),
+        offset: const Duration(seconds: -21, milliseconds: -500),
+      );
+
+      expect(dateTime.toIso8601String(), '2023-12-31T23:59:38.500-00:00:21');
+      expect(dateTime.toString(), '2023-12-31 23:59:38.500-00:00:21');
+      expect(dateTime.timeZoneName, 'UTC-00:00:21');
+    });
+
     test('should format UTC time with Z suffix', () {
       final offsetDateTime = OffsetDateTime.from(
         DateTime.utc(2023, 1, 15, 12, 30, 45, 123),
@@ -704,6 +740,72 @@ void main() {
     });
 
     group('timezone offset parsing', () {
+      test('should preserve whole-minute parsing at the maximum instant', () {
+        final result = OffsetDateTime.parse('+275760-09-13T00:01:00+00:01');
+
+        expect(result.millisecondsSinceEpoch, 8640000000000000);
+        expect(result.timeZoneOffset, const Duration(minutes: 1));
+      });
+
+      test('should parse offset seconds at the maximum instant', () {
+        final result = OffsetDateTime.parse('+275760-09-13T00:00:21+00:00:21');
+
+        expect(result.millisecondsSinceEpoch, 8640000000000000);
+        expect(result.timeZoneOffset, const Duration(seconds: 21));
+      });
+
+      test('should parse negative offset seconds at the minimum instant', () {
+        final result = OffsetDateTime.parse('-271821-04-19T23:59:39-00:00:21');
+
+        expect(result.millisecondsSinceEpoch, -8640000000000000);
+        expect(result.timeZoneOffset, const Duration(seconds: -21));
+      });
+
+      test('should preserve offset seconds and fractional clock seconds', () {
+        final result = OffsetDateTime.parse(
+          '1900-01-01T12:00:00.123456+00:09:21',
+        );
+
+        expect(result.timeZoneOffset, const Duration(minutes: 9, seconds: 21));
+        expect(result.timeZoneName, 'UTC+00:09:21');
+        expect(result.toUtc(), DateTime.utc(1900, 1, 1, 11, 50, 39, 123, 456));
+        expect(result.toIso8601String(), '1900-01-01T12:00:00.123456+00:09:21');
+      });
+
+      test('should parse compact negative offset seconds with lowercase t', () {
+        final result = OffsetDateTime.parse('20231231t235939-000021');
+
+        expect(result.timeZoneOffset, const Duration(seconds: -21));
+        expect(result.toUtc(), DateTime.utc(2024));
+        expect(result.toIso8601String(), '2023-12-31T23:59:39.000-00:00:21');
+      });
+
+      test('should discard positive fractional offset seconds', () {
+        final result = OffsetDateTime.parse(
+          '2024-01-01T12:00:00.123456+00:09:21.999',
+        );
+
+        expect(result.timeZoneOffset, const Duration(minutes: 9, seconds: 21));
+        expect(result.toUtc(), DateTime.utc(2024, 1, 1, 11, 50, 39, 123, 456));
+        expect(result.toIso8601String(), '2024-01-01T12:00:00.123456+00:09:21');
+      });
+
+      test('should discard negative fractional offset seconds', () {
+        final result = OffsetDateTime.parse('2024-01-01T12:00:00-000021,999');
+
+        expect(result.timeZoneOffset, const Duration(seconds: -21));
+        expect(result.toUtc(), DateTime.utc(2024, 1, 1, 12, 0, 21));
+        expect(result.toIso8601String(), '2024-01-01T12:00:00.000-00:00:21');
+      });
+
+      test('should emit minute precision when offset seconds are zero', () {
+        final result = OffsetDateTime.parse('2024-01-01T12:00:00+05:30:00');
+
+        expect(result.timeZoneOffset, const Duration(hours: 5, minutes: 30));
+        expect(result.toIso8601String(), '2024-01-01T12:00:00.000+05:30');
+        expect(result.toTimeZonedIso8601String(), '2024-01-01T12:00:00+05:30');
+      });
+
       test('should preserve a positive hour-only offset', () {
         final result = OffsetDateTime.parse('2023-01-01T10:00:00+05');
 
@@ -839,6 +941,68 @@ void main() {
     });
 
     group('error handling', () {
+      test(
+        'should reject minute offsets producing an instant below the range',
+        () {
+          expect(
+            () => OffsetDateTime.parse('-271821-04-20T00:00:00+00:01'),
+            throwsA(isA<InvalidFormatException>()),
+          );
+        },
+      );
+
+      test(
+        'should reject offset seconds producing an instant above the range',
+        () {
+          expect(
+            () => OffsetDateTime.parse('+275760-09-13T00:00:00-00:00:01'),
+            throwsA(isA<InvalidFormatException>()),
+          );
+        },
+      );
+
+      test('should reject trailing content after offset seconds', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00+00:09:21\n'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should reject offset seconds outside their range', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00+00:09:60'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should reject a fractional offset with no fraction digits', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00+00:09:21.'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should reject mixed colon and compact offset seconds', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00+00:0921'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should reject a UTC marker followed by an offset', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00Z+00:09:21'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should reject duplicate timezone offsets', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-01T12:00:00+01:00+00:09:21'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
       test('should throw InvalidFormatException for empty string', () {
         expect(
           () => OffsetDateTime.parse(''),
