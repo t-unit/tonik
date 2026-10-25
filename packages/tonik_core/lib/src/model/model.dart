@@ -155,7 +155,7 @@ class AliasModel._({
   required super.context,
   required var List<Example> examples,
   required final Object? _localDefault,
-  @override required final String? name,
+  @override required var String? name,
   @override required var String? nameOverride,
   required var String? description,
   required var bool isDeprecated,
