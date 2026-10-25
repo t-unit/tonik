@@ -207,7 +207,7 @@ by the generated server.
 | OpenAPI 3.2.x | Partially supported | Streaming responses, reusable media types, and inline `dataValue` examples; see below |
 | OpenAPI 2.0 (Swagger) | ❌ Not Supported | Use a converter like swagger2openapi |
 
-Tonik does not validate whether an implemented feature is allowed by the declared OpenAPI version. For example, typed `itemSchema` response streams also work in 3.0 and 3.1 documents. Version reporting recognizes 3.0, 3.1, and 3.2; unknown versions log a warning and parsing continues permissively. Encoding and reference-override behavior can still vary by version.
+Tonik does not validate whether an implemented feature is allowed by the declared OpenAPI version. For example, typed `itemSchema` response streams also work in 3.0 and 3.1 documents. Version reporting recognizes 3.0, 3.1, and 3.2; unknown versions log a warning and parsing continues permissively. Version switches select between conflicting OAS serialization rules, such as multipart style handling in 3.0 versus 3.1 and 3.2.
 
 ### Supported OAS 3.1 Features
 
@@ -216,7 +216,7 @@ Tonik does not validate whether an implemented feature is allowed by the declare
 - Boolean schemas — `schema: true` → `Object?`, `schema: false` → `Never`. See [Data Types](data_types.md#boolean-schemas-oas-31).
 - Nullable type arrays — `type: [string, "null"]` as the 3.1 replacement for `nullable: true`.
 - `contentEncoding` / `contentMediaType` — content-encoded strings with configurable media type mapping.
-- Multipart encoding — named `multipart/form-data` request parts. Explicit style fields are currently honored outside 3.0 documents; 3.0 uses content-based encoding. See [Multipart](multipart.md#delimited-arrays).
+- Multipart encoding — named `multipart/form-data` request parts. OAS 3.0 ignores multipart style fields and uses content-based encoding. Outside 3.0 documents, explicit `style`, `explode`, or `allowReserved` selects style-based encoding; absent style fields select content-based encoding. OAS 3.1 and 3.2 share this behavior. Content-based arrays produce one part per item; multipart styles send literal names and values without URI percent-encoding. See [Multipart](multipart.md).
 
 ### Supported OAS 3.2 Features
 

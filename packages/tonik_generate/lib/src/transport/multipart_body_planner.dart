@@ -489,22 +489,10 @@ class const MultipartBodyPlanner({
           'is supported for content-based array serialization.',
         );
       }
-      if (item is ClassModel ||
-          item is MapModel ||
-          (item is CompositeModel &&
-              (item.hasComplexTypes || item.hasMixedTypes))) {
-        if (item is MapModel) {
-          return _listItems(part, model, _map(itemPart, item));
-        }
-        final json = itemPart.value.property('toJson').call([]);
-        return _listItems(part, model, [
-          _text(itemPart, _json(json), fallback: 'application/json'),
-        ]);
-      }
-      return _jsonPart(
+      return _listItems(
         part,
         model,
-        immutable: useImmutableCollections && !part.isMergedList,
+        _jsonPart(itemPart, item, immutable: useImmutableCollections),
       );
     }
     if (item is ClassModel ||
@@ -537,34 +525,14 @@ class const MultipartBodyPlanner({
         : item is StringModel
         ? part.value
         : _mapped(part.value, itemText);
-    if (encoding.style == EncodingStyle.spaceDelimited ||
-        encoding.style == EncodingStyle.pipeDelimited) {
-      final space = encoding.style == EncodingStyle.spaceDelimited;
-      final encoded = strings
-          .property(space ? 'toSpaceDelimited' : 'toPipeDelimited')
-          .call([], {
-            'explode': literalFalse,
-            'allowEmpty': literalTrue,
-            'alreadyEncoded': literalTrue,
-            if (space) 'percentEncodeDelimiter': literalFalse,
-            if (!_dio && (encoding.allowReserved ?? false))
-              'allowReserved': literalTrue,
-          });
-      return _loop('item', encoded, [_listText(part, refer('item'))]);
-    }
-    final serialized = _dio
-        ? strings.property('uriEncode').call([], {
-            'allowEmpty': literalTrue,
-            'textEncoding': textEncodingExpression(encoding.textEncoding),
-            'alreadyEncoded': literalTrue,
-          })
-        : buildSimpleValueExpression(
-            part.value,
-            model,
-            explode: false,
-            allowEmpty: true,
-            literal: true,
-          ).unsafeRawBody;
+    final delimiter = switch (encoding.style) {
+      EncodingStyle.spaceDelimited => ' ',
+      EncodingStyle.pipeDelimited => '|',
+      _ => ',',
+    };
+    final serialized = strings.property('join').call([
+      literalString(delimiter),
+    ]);
     return [_listText(part, serialized)];
   }
 
@@ -674,26 +642,25 @@ class const MultipartBodyPlanner({
   List<MultipartEmission> _object(_Part part) {
     final encoding = part.encoding;
     if (encoding.style == EncodingStyle.deepObject) {
-      // Multipart parent names must remain literal in Content-Disposition.
-      final entries = part.value
-          .property('toDeepObject')
-          .call(
-            [literalString('')],
-            {
-              'explode': literalTrue,
-              'allowEmpty': literalTrue,
-              if (!_dio && (encoding.allowReserved ?? false))
-                'allowReserved': literalTrue,
-            },
-          );
+      final entries =
+          (part.isMergedObjectProperties
+                  ? part.value
+                  : part.value.property('parameterProperties').call([], {
+                      'allowEmpty': literalTrue,
+                    }))
+              .property('toRawStyleParts')
+              .call(
+                [part.wireName],
+                {'explode': literalTrue, 'deepObject': literalTrue},
+              );
       return _loop('entry', entries, [
         _text(
           part,
           refer('entry').property('value'),
-          name: part.wireName.operatorAdd(refer('entry').property('name')),
+          name: refer('entry').property('name'),
           field: _dio,
           omitContentType: _dio,
-          contentType: 'application/x-www-form-urlencoded',
+          contentType: 'text/plain',
         ),
       ]);
     }

@@ -558,16 +558,16 @@ Object? test() {
       expectPropertyCode(
         _classModel(context, 'Nested'),
         r'''
-  for (final entry in body.value.toDeepObject(
-    '',
+  for (final entry in body.value.parameterProperties(allowEmpty: true).toRawStyleParts(
+    r'value',
     explode: true,
-    allowEmpty: true,
+    deepObject: true,
   )) {
     _$multipartFiles.add(
       MultipartFile.fromBytes(
-        (r'value' + entry.name).replaceAll(r'\', r'\\'),
+        (entry.name).replaceAll(r'\', r'\\'),
         utf8.encode(entry.value),
-        contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
+        contentType: MediaType.parse(r'text/plain'),
       ),
     );
   }''',
@@ -963,13 +963,15 @@ Object? test() {
       expectPropertyCode(
         _list(context, IntegerModel(context: context)),
         r'''
-  _$multipartFiles.add(
-    MultipartFile.fromBytes(
-      (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(jsonEncode(body.value)),
-      contentType: MediaType.parse(r'application/octet-stream'),
-    ),
-  );''',
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/octet-stream'),
+      ),
+    );
+  }''',
         encoding: _encoding(
           contentType: ContentType.bytes,
           rawContentType: 'application/octet-stream',
@@ -977,48 +979,85 @@ Object? test() {
       );
     });
 
-    for (final entry in <({String name, Model model, String encodedValue})>[
-      (
-        name: 'enums',
-        model: _stringEnum(context),
-        encodedValue: 'body.value.map((e) => e.toJson()).toList()',
+    test('JSON encodes each item of enums separately', () {
+      expectPropertyCode(
+        _list(context, _stringEnum(context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toJson())),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'dates',
-        model: DateTimeModel(context: context),
-        encodedValue:
-            'body.value.map((e) => '
-            'e.toTimeZonedIso8601String()).toList()',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each item of dates separately', () {
+      expectPropertyCode(
+        _list(context, DateTimeModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item.toTimeZonedIso8601String())),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'unconstrained values',
-        model: AnyModel(context: context),
-        encodedValue: 'body.value.map((e) => encodeAnyToJson(e)).toList()',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each item of unconstrained values separately', () {
+      expectPropertyCode(
+        _list(context, AnyModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(encodeAnyToJson(item))),
+        contentType: MediaType.parse(r'application/json'),
       ),
-      (
-        name: 'integers',
-        model: IntegerModel(context: context),
-        encodedValue: 'body.value',
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
+
+    test('JSON encodes each item of integers separately', () {
+      expectPropertyCode(
+        _list(context, IntegerModel(context: context)),
+        r'''
+  for (final item in body.value) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        (r'value').replaceAll(r'\', r'\\'),
+        utf8.encode(jsonEncode(item)),
+        contentType: MediaType.parse(r'application/json'),
       ),
-    ]) {
-      test('JSON encodes ${entry.name}', () {
-        expectPropertyCode(
-          _list(context, entry.model),
-          '''
-  _\$multipartFiles.add(
-    MultipartFile.fromBytes(
-      (r'value').replaceAll(r'\\', r'\\\\'),
-      utf8.encode(jsonEncode(${entry.encodedValue})),
-      contentType: MediaType.parse(r'application/json'),
-    ),
-  );''',
-          encoding: _encoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-          ),
-        );
-      });
-    }
+    );
+  }''',
+        encoding: _encoding(
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+        ),
+      );
+    });
   });
 
   group('repeated and style-based arrays', () {
@@ -1127,7 +1166,7 @@ Object? test() {
   _$multipartFiles.add(
     MultipartFile.fromBytes(
       (r'value').replaceAll(r'\', r'\\'),
-      utf8.encode(body.value.toSimple(explode: false, allowEmpty: true, literal: true)),
+      utf8.encode(body.value.join(',')),
       contentType: MediaType.parse(r'text/plain'),
     ),
   );''',
@@ -1139,38 +1178,43 @@ Object? test() {
       );
     });
 
-    for (final entry in <({EncodingStyle style, String method})>[
-      (style: EncodingStyle.pipeDelimited, method: 'toPipeDelimited'),
-      (style: EncodingStyle.spaceDelimited, method: 'toSpaceDelimited'),
-    ]) {
-      test('honors ${entry.style.name} for a non-exploded string array', () {
-        final delimiterArgument = entry.style == EncodingStyle.spaceDelimited
-            ? '\n    percentEncodeDelimiter: false,'
-            : '';
-        expectPropertyCode(
-          _list(context, StringModel(context: context)),
-          '''
-  for (final item in body.value.${entry.method}(
-    explode: false,
-    allowEmpty: true,
-    alreadyEncoded: true,$delimiterArgument
-  )) {
-    _\$multipartFiles.add(
-      MultipartFile.fromBytes(
-        (r'value').replaceAll(r'\\', r'\\\\'),
-        utf8.encode(item),
-        contentType: MediaType.parse(r'text/plain'),
-      ),
-    );
-  }''',
-          encoding: _encoding(
-            style: entry.style,
-            explode: false,
-            allowReserved: false,
-          ),
-        );
-      });
-    }
+    test('joins a pipe-delimited string array without escaping', () {
+      expectPropertyCode(
+        _list(context, StringModel(context: context)),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(body.value.join('|')),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );''',
+        encoding: _encoding(
+          style: EncodingStyle.pipeDelimited,
+          explode: false,
+          allowReserved: false,
+        ),
+      );
+    });
+
+    test('joins a space-delimited string array without escaping', () {
+      expectPropertyCode(
+        _list(context, StringModel(context: context)),
+        r'''
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      (r'value').replaceAll(r'\', r'\\'),
+      utf8.encode(body.value.join(' ')),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );''',
+        encoding: _encoding(
+          style: EncodingStyle.spaceDelimited,
+          explode: false,
+          allowReserved: false,
+        ),
+      );
+    });
 
     for (final entry in <({String name, Model model, String encodedItem})>[
       (
@@ -1793,7 +1837,7 @@ Object? test() {
         ),
       );
       expect(deepObjectCode, contains('mergeMultipartPropertyValues'));
-      expect(deepObjectCode, contains('toDeepObject'));
+      expect(deepObjectCode, contains('deepObject: true'));
 
       final formCode = emit(
         _content(
@@ -1862,7 +1906,7 @@ Object? test() {
       );
       expect(nonExploded, contains('mergeMultipartLists'));
       expect(nonExploded, contains("propertyName: r'items')!"));
-      expect(nonExploded, contains(r'_$itemsMultipartValue.toSimple'));
+      expect(nonExploded, contains(r"_$itemsMultipartValue.join(',')"));
 
       const immutablePlanner = MultipartBodyPlanner(
         backend: TransportBackend.http,

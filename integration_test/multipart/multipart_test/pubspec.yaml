@@ -10,6 +10,8 @@ dependencies:
   big_decimal: ^0.7.0
   multipart_3_1_api:
     path: ../multipart_3_1_api
+  multipart_3_2_api:
+    path: ../multipart_3_2_api
   multipart_api:
     path: ../multipart_api
   path: ^1.9.1

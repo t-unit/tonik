@@ -197,7 +197,22 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   List<ParameterEntry> toRawStyleParts(
     String paramName, {
     required bool explode,
+    bool deepObject = false,
   }) {
+    if (deepObject) {
+      return [
+        for (final entry in entries)
+          switch (entry.value) {
+            ScalarPropertyValue(:final value) => (
+              name: '$paramName[${entry.key}]',
+              value: value,
+            ),
+            ArrayPropertyValue() => throw const EncodingException(
+              'Lists are not supported in this encoding style',
+            ),
+          },
+      ];
+    }
     String raw(PropertyValue value) => switch (value) {
       ScalarPropertyValue(:final value) => value,
       ArrayPropertyValue(:final values) => values.join(','),

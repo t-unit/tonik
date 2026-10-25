@@ -18,6 +18,33 @@ tags:
     description: Operations with custom content type mapped to multipart
 
 paths:
+  /versioned-multipart:
+    post:
+      operationId: postVersionedMultipart
+      tags: [versioned]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VersionedForm'
+            encoding:
+              tags:
+                style: pipeDelimited
+                explode: false
+              spaces:
+                style: spaceDelimited
+                explode: false
+              numbers:
+                contentType: application/json
+              texts:
+                contentType: application/json
+              profile:
+                style: deepObject
+                allowReserved: false
+      responses:
+        '204':
+          description: Accepted
   /multipart/dynamic-primitive-unions:
     post:
       operationId: postDynamicPrimitiveUnions
@@ -1096,6 +1123,35 @@ paths:
 
 components:
   schemas:
+    VersionedForm:
+      type: object
+      required: [tags, spaces, numbers, texts, profile]
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        spaces:
+          type: array
+          items:
+            type: string
+        numbers:
+          type: array
+          items:
+            type: integer
+        texts:
+          type: array
+          items:
+            type: string
+        profile:
+          $ref: '#/components/schemas/VersionedProfile'
+    VersionedProfile:
+      type: object
+      additionalProperties: false
+      required: [note]
+      properties:
+        note:
+          type: string
     ReadOnlyFields:
       type: object
       required:

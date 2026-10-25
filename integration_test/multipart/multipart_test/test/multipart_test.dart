@@ -147,12 +147,16 @@ void main() {
           ),
         );
 
-        final part = MultipartWire(await server.takeRequest())
-            .single('categories');
-        expect(part.contentType, startsWith('application/json'));
-        expect(jsonDecode(part.bodyText), ['science & tech', 'arts & crafts']);
-        expect(part.bodyText, isNot(contains('%26')));
-        expect(part.bodyText, isNot(contains('%20')));
+        final parts = MultipartWire(await server.takeRequest())
+            .named('categories');
+        expect(parts.map((part) => part.bodyText), [
+          '"science & tech"',
+          '"arts & crafts"',
+        ]);
+        expect(
+          parts.map((part) => part.contentType),
+          everyElement(startsWith('application/json')),
+        );
       },
     );
   });
