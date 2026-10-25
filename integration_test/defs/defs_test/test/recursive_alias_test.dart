@@ -9,7 +9,7 @@ void main() {
       'next': {'next': <String, Object?>{}},
     });
 
-    final decoded = RecursiveRoot.fromJson({
+    final decoded = RecursiveRoot.fromJson(const {
       'next': {'next': <String, Object?>{}},
     });
 
@@ -19,12 +19,18 @@ void main() {
   });
 
   test('keeps named aliases for bare definition cycles usable', () {
-    const First first = 'value';
-    const Second second = 42;
+    First first = 'value';
+    Second second = 42;
     const CycleRoot root = null;
 
     expect(first, 'value');
     expect(second, 42);
     expect(root, isNull);
+
+    first = null;
+    second = null;
+
+    expect(first, isNull);
+    expect(second, isNull);
   });
 }
