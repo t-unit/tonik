@@ -13,7 +13,8 @@ def path = context.request.path
 if (path == '/simple-types' || 
     path == '/nullable-types' || 
     path == '/composition' || 
-    path == '/edge-cases') {
+    path == '/edge-cases' ||
+    path == '/nullable-value-echo') {
     respond()
         .withStatusCode(200)
         .withHeader('Content-Type', 'application/json')
@@ -30,7 +31,10 @@ if (path == '/simple-types' ||
         .withStatusCode(200)
         .withHeader('Content-Type', 'application/json')
         .withContent('"test-value"')
-} else if (path == '/nullable-object-response') {
+} else if (path == '/nullable-object-response' ||
+    path == '/nullable-array-response' ||
+    path == '/inline-nullable-array-response' ||
+    path == '/inline-nullable-value-response') {
     respond()
         .withStatusCode(200)
         .withHeader('Content-Type', 'application/json')

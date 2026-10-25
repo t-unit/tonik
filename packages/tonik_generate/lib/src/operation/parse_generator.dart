@@ -47,7 +47,7 @@ class const ParseGenerator({
     final entries = responses.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 
-    for (final entry in entries) {
+    for (final (index, entry) in entries.indexed) {
       final status = entry.key;
       final response = entry.value;
       final contentTypes = _getContentTypes(response);
@@ -100,6 +100,14 @@ class const ParseGenerator({
           ..add(casePattern)
           ..add(caseBody);
       }
+
+      // Once a status matches, a media mismatch must not fall through to a
+      // broader status definition. No-body responses already match all media.
+      if (index < entries.length - 1 && !contentTypes.contains(null)) {
+        cases
+          ..add(_casePattern(status, null, ignoreCharset: true))
+          ..add(_unexpectedContentType());
+      }
     }
 
     final responseExpression = refer('response');
@@ -129,30 +137,9 @@ class const ParseGenerator({
     // so emitting a synthetic `default:` arm would shadow it and produce dead
     // code.
     if (!hasDefaultWithNullContentType) {
-      switchCases.add(
-        Block.of([
-          const Code('default:'),
-          Block.of([
-            const Code(r'final _$content = '),
-            contentTypeExpression.code,
-            const Code(" ?? 'not specified';"),
-          ]),
-          const Code(r"final _$matched = _$mediaType ?? 'none';"),
-          Block.of([
-            const Code(r'final _$status = '),
-            statusCodeExpression.code,
-            const Code(';'),
-          ]),
-          generateResponseDecodingExceptionExpression(
-            'Unexpected content type: '
-            r'${_$content}'
-            ' (matched as: '
-            r'${_$matched}'
-            ') for status code: '
-            r'${_$status}',
-          ).statement,
-        ]),
-      );
+      switchCases
+        ..add(const Code('default:'))
+        ..add(_unexpectedContentType());
     }
 
     switchCases.add(const Code('}'));
@@ -190,6 +177,28 @@ class const ParseGenerator({
 
   Method generateResponseSelectionMethod(Operation operation) =>
       generateParseResponseMethod(operation, selectionOnly: true);
+
+  Code _unexpectedContentType() => Block.of([
+    Block.of([
+      const Code(r'final _$content = '),
+      backendGenerator.responseContentType(refer('response')).code,
+      const Code(" ?? 'not specified';"),
+    ]),
+    const Code(r"final _$matched = _$mediaType ?? 'none';"),
+    Block.of([
+      const Code(r'final _$status = '),
+      backendGenerator.responseStatusCode(refer('response')).code,
+      const Code(';'),
+    ]),
+    generateResponseDecodingExceptionExpression(
+      'Unexpected content type: '
+      r'${_$content}'
+      ' (matched as: '
+      r'${_$matched}'
+      ') for status code: '
+      r'${_$status}',
+    ).statement,
+  ]);
 
   Code _casePattern(
     ResponseStatus status,

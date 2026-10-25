@@ -130,7 +130,7 @@ class MapModel({
   required var Model valueModel,
   required super.context,
   required var List<Example> examples,
-  @override required final String? name,
+  @override required var String? name,
   @override required var String? nameOverride,
   required var bool isNullable,
 
@@ -155,7 +155,7 @@ class AliasModel._({
   required super.context,
   required var List<Example> examples,
   required final Object? _localDefault,
-  @override required final String? name,
+  @override required var String? name,
   @override required var String? nameOverride,
   required var String? description,
   required var bool isDeprecated,
@@ -239,7 +239,7 @@ class ListModel({
   required var Model content,
   required super.context,
   required var List<Example> examples,
-  @override required final String? name,
+  @override required var String? name,
   @override required var String? nameOverride,
   required var bool isNullable,
 

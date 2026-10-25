@@ -59,6 +59,11 @@ add_tonik_util_override() {
 }
 
 GENERATED_DIRS=(
+  datadog/datadog_api
+  elasticsearch/elasticsearch_api
+  digitalocean/digitalocean_api
+  box/box_api
+  adyen/adyen_api
   additional_properties/additional_properties_api
   defaulted/defaulted_api
   petstore/petstore_api
@@ -107,6 +112,11 @@ GENERATED_DIRS=(
 )
 
 GENERATION_COMMANDS=(
+  "$TONIK_BINARY --config datadog/tonik.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config elasticsearch/tonik.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config digitalocean/tonik.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config box/tonik.yaml --backend $BACKEND"
+  "$TONIK_BINARY --config adyen/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config cloudflare/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config github/tonik.yaml --backend $BACKEND"
   "$TONIK_BINARY --config stripe/tonik.yaml --backend $BACKEND"
@@ -154,8 +164,8 @@ GENERATION_COMMANDS=(
   "$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map --backend $BACKEND"
 )
 
-if [ "${#GENERATED_DIRS[@]}" -ne 45 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 45 ]; then
-  echo "Error: integration fixture inventory must contain exactly 45 entries." >&2
+if [ "${#GENERATED_DIRS[@]}" -ne 50 ] || [ "${#GENERATION_COMMANDS[@]}" -ne 50 ]; then
+  echo "Error: integration fixture inventory must contain exactly 50 entries." >&2
   exit 1
 fi
 
@@ -164,12 +174,12 @@ echo "Compiling Tonik..."
 dart compile exe "$REPO_ROOT/packages/tonik/bin/tonik.dart" -o "$TONIK_BINARY"
 
 cd "$INTEGRATION_TEST_DIR"
-echo "Cleaning 45 generated API packages..."
+echo "Cleaning 50 generated API packages..."
 for directory in "${GENERATED_DIRS[@]}"; do
   rm -rf "$directory"
 done
 
-echo "Generating 45 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
+echo "Generating 50 API packages for $BACKEND (max $SETUP_JOBS jobs, TONIK_WORKERS=$TONIK_WORKERS)..."
 run_commands "$SETUP_JOBS" "${GENERATION_COMMANDS[@]}"
 
 generated_count=0
@@ -186,8 +196,8 @@ while IFS= read -r directory; do
   TEST_DIRS+=("$directory")
 done < <(find . -mindepth 2 -maxdepth 2 -type d -name '*_test' -print | sort)
 
-if [ "${#TEST_DIRS[@]}" -ne 41 ]; then
-  echo "Error: expected 41 checked-in test packages, found ${#TEST_DIRS[@]}." >&2
+if [ "${#TEST_DIRS[@]}" -ne 46 ]; then
+  echo "Error: expected 46 checked-in test packages, found ${#TEST_DIRS[@]}." >&2
   exit 1
 fi
 
@@ -202,7 +212,7 @@ for directory in "${TEST_DIRS[@]}"; do
 done
 PUB_GET_COMMANDS+=("cd 'test_helpers' && dart pub get")
 
-echo "Resolving dependencies for 45 generated, 41 test, and 1 helper package..."
+echo "Resolving dependencies for 50 generated, 46 test, and 1 helper package..."
 run_commands "$SETUP_JOBS" "${PUB_GET_COMMANDS[@]}"
 
 if [ "$SKIP_IMPOSTER" = false ]; then

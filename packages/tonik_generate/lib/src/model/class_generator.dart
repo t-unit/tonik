@@ -162,15 +162,16 @@ class const ClassGenerator({
             normalizedProperties.indexOf(b);
       });
 
-    // IList/IMap support native deep equality, so immutable collections do
-    // not need DeepCollectionEquality.
+    // Typed immutable collections provide value equality; free-form values
+    // can still contain mutable collections in either collection mode.
     final equalityProps = normalizedProperties
         .map(
           (prop) => (
             normalizedName: prop.normalizedName,
-            hasCollectionValue:
-                !useImmutableCollections &&
-                isCollectionModel(prop.property.model),
+            hasCollectionValue: usesDeepCollectionEquality(
+              prop.property.model,
+              useImmutableCollections: useImmutableCollections,
+            ),
           ),
         )
         .toList();
@@ -584,6 +585,7 @@ class const ClassGenerator({
       'listKeys': literalSet(listKeys.map(specLiteralString)),
       'context': specLiteralString(className),
       'isHeader': refer('isHeader'),
+      'percentDecodeKeys': literalFalse,
     };
     if (apPolicy != null) {
       decodeObjectArgs['captureAdditionalKeys'] = literalTrue;

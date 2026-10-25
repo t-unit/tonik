@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -35,27 +36,40 @@ class RequestParameterImporter({
 
       // Resolve chained aliases when used so unused cycles stay inert.
       if (parameter is Reference<Parameter> &&
-          parameter.ref.startsWith('#/components/parameters/') &&
-          parameterMap[parameter.ref.split('/').last] is Reference<Parameter>) {
+          !isExternalReference(parameter.ref) &&
+          parameterMap[LocalJsonPointer.parse(parameter.ref)
+                  .componentName('parameters')]
+              is Reference<Parameter>) {
         continue;
       }
 
-      final imported = _importParameter(
-        name: name,
-        wrapper: parameter,
-        context: rootContext.push(name),
-      );
-
-      if (imported case final core.RequestHeader header) {
-        headers.add(header);
-      } else if (imported case final core.QueryParameter query) {
-        queryParameters.add(query);
-      } else if (imported case final core.PathParameter path) {
-        pathParameters.add(path);
-      } else if (imported case final core.CookieParameter cookie) {
-        cookieParameters.add(cookie);
-      }
+      _importComponent(name, parameter);
     }
+  }
+
+  Object? _importComponent(
+    String name,
+    ReferenceWrapper<Parameter> wrapper, {
+    Set<String>? visitedRefs,
+  }) {
+    final existing = _importedComponent(name);
+    if (existing != null) return existing;
+    final imported = _importParameter(
+      name: name,
+      wrapper: wrapper,
+      context: rootContext.push(name),
+      visitedRefs: visitedRefs,
+    );
+    if (imported case final core.RequestHeader header) {
+      headers.add(header);
+    } else if (imported case final core.QueryParameter query) {
+      queryParameters.add(query);
+    } else if (imported case final core.PathParameter path) {
+      pathParameters.add(path);
+    } else if (imported case final core.CookieParameter cookie) {
+      cookieParameters.add(cookie);
+    }
+    return imported;
   }
 
   (
@@ -127,7 +141,9 @@ class RequestParameterImporter({
   }) {
     switch (wrapper) {
       case Reference<Parameter>():
-        if (!wrapper.ref.startsWith('#/components/parameters/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('parameters');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local parameter references are supported, '
             'found ${wrapper.ref}',
@@ -135,25 +151,21 @@ class RequestParameterImporter({
         }
 
         final seen = visitedRefs ?? <String>{};
-        if (!seen.add(wrapper.ref)) {
+        if (!seen.add(pointer.reference)) {
           throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refParameter = openApiObject.components?.parameters?[refName];
 
         if (refParameter == null) {
           throw ArgumentError('Parameter $refName not found');
         }
 
-        final existing =
-            _importedComponent(refName) ??
-            _importParameter(
-              name: refName,
-              wrapper: refParameter,
-              context: rootContext.push(refName),
-              visitedRefs: seen,
-            );
+        final existing = _importComponent(
+          refName,
+          refParameter,
+          visitedRefs: seen,
+        );
         return switch (existing) {
           final core.RequestHeader header => core.RequestHeaderAlias(
             name: name ?? refName,

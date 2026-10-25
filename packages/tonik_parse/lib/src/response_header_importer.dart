@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -27,13 +28,26 @@ class ResponseHeaderImporter({
       final name = entry.key;
       final header = entry.value;
 
-      final imported = _importHeader(
-        name: name,
-        wrapper: header,
-        context: rootContext.push(name),
-      );
-      headers.add(imported);
+      _importComponent(name, header);
     }
+  }
+
+  core.ResponseHeader _importComponent(
+    String name,
+    ReferenceWrapper<Header> wrapper, {
+    Set<String>? visitedRefs,
+  }) {
+    for (final header in headers) {
+      if (header.name == name) return header;
+    }
+    final imported = _importHeader(
+      name: name,
+      wrapper: wrapper,
+      context: rootContext.push(name),
+      visitedRefs: visitedRefs,
+    );
+    headers.add(imported);
+    return imported;
   }
 
   core.ResponseHeader importInlineHeader({
@@ -57,29 +71,33 @@ class ResponseHeaderImporter({
     required String? name,
     required ReferenceWrapper<Header> wrapper,
     required core.Context context,
+    Set<String>? visitedRefs,
   }) {
     switch (wrapper) {
       case Reference<Header>():
-        if (!wrapper.ref.startsWith('#/components/headers/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('headers');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local header references are supported, found ${wrapper.ref}',
           );
         }
 
-        final refName = wrapper.ref.split('/').last;
+        final seen = visitedRefs ?? <String>{};
+        if (!seen.add(pointer.reference)) {
+          throw ArgumentError('Cyclic header reference: ${wrapper.ref}');
+        }
+
         final refHeader = openApiObject.components?.headers?[refName];
 
         if (refHeader == null) {
           throw ArgumentError('Header $refName not found');
         }
 
-        final existing = headers.firstWhere(
-          (h) => h.name == refName,
-          orElse: () => _importHeader(
-            name: refName,
-            wrapper: refHeader,
-            context: context,
-          ),
+        final existing = _importComponent(
+          refName,
+          refHeader,
+          visitedRefs: seen,
         );
 
         return core.ResponseHeaderAlias(

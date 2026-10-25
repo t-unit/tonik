@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
+import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 
 void main() {
@@ -23,6 +24,82 @@ void main() {
     final code = library.accept(emitter).toString();
     return format(code);
   }
+
+  test('free-form values use deep equality in both collection modes', () {
+    final model = AnyModel(context: Context.initial());
+
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: false),
+      isTrue,
+    );
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: true),
+      isTrue,
+    );
+  });
+
+  test('free-form aliases use deep equality with immutable collections', () {
+    final context = Context.initial();
+    final model = AliasModel(
+      model: AnyModel(context: context),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+      name: 'FreeformAlias',
+      nameOverride: null,
+      description: null,
+      isDeprecated: false,
+      isNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: false),
+      isTrue,
+    );
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: true),
+      isTrue,
+    );
+  });
+
+  test('typed lists retain their existing collection-mode equality policy', () {
+    final context = Context.initial();
+    final model = ListModel(
+      content: StringModel(context: context),
+      context: context,
+      examples: const [],
+      name: null,
+      nameOverride: null,
+      isNullable: false,
+      isContentNullable: false,
+      isReadOnly: false,
+      isWriteOnly: false,
+    );
+
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: false),
+      isTrue,
+    );
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: true),
+      isFalse,
+    );
+  });
+
+  test('scalar models retain direct equality in both collection modes', () {
+    final model = IntegerModel(context: Context.initial());
+
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: false),
+      isFalse,
+    );
+    expect(
+      usesDeepCollectionEquality(model, useImmutableCollections: true),
+      isFalse,
+    );
+  });
 
   group('EqualsMethodGenerator', () {
     test('generates equals method for class without properties', () {

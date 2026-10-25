@@ -118,4 +118,18 @@ void main() {
     expect(shape, isA<CollidingShapeAliasedCircle>());
     expect(shape.toJson(), {'shapeType': 'circle', 'radius': 3});
   });
+
+  test('equivalent pointer mapping aliases select the overlapping member', () {
+    final shape = MixedTargetShape.fromJson(const {'shapeType': 'box'});
+
+    expect(shape, isA<MixedTargetShapeMixedTargetSquare>());
+    expect(shape.toJson(), {'shapeType': 'box'});
+  });
+
+  test('bare component mapping aliases select the overlapping member', () {
+    final shape = MixedTargetShape.fromJson(const {'shapeType': 'crate'});
+
+    expect(shape, isA<MixedTargetShapeMixedTargetSquare>());
+    expect(shape.toJson(), {'shapeType': 'crate'});
+  });
 }

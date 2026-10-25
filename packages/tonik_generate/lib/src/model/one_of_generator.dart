@@ -237,10 +237,10 @@ class const OneOfGenerator({
         useImmutableCollections: useImmutableCollections,
       );
 
-      final hasCollectionValue =
-          !useImmutableCollections &&
-          (discriminatedModel.model.resolved is ListModel ||
-              discriminatedModel.model.resolved is MapModel);
+      final hasCollectionValue = usesDeepCollectionEquality(
+        discriminatedModel.model,
+        useImmutableCollections: useImmutableCollections,
+      );
 
       classes.add(
         Class(
@@ -681,17 +681,31 @@ class const OneOfGenerator({
           ],
           if (!isForm) const Code(r"final _$pairs = value.split(',');"),
           const Code(r'for (final pair in _$pairs) {'),
-          const Code(r"final _$parts = pair.split('=');"),
-          const Code(r'if (_$parts.length == 2) {'),
-          const Code(r'final _$key = '),
-          refer('Uri', 'dart:core').property('decodeComponent').call([
-            refer(r'_$parts').index(literalNum(0)),
-          ]).statement,
+          const Code(r"final _$separator = pair.indexOf('=');"),
+          const Code(r'if (_$separator >= 0) {'),
+          if (isForm) ...[
+            const Code('final '),
+            refer('String', 'dart:core').code,
+            const Code(r' _$key;'),
+            const Code('try {'),
+            const Code(r'_$key = '),
+            refer('Uri', 'dart:core').property('decodeComponent').call([
+              refer('pair')
+                  .property('substring')
+                  .call([literalNum(0), refer(r'_$separator')]),
+            ]).statement,
+            const Code('// ignore: avoid_catching_errors\n} on '),
+            refer('ArgumentError', 'dart:core').code,
+            const Code(' catch (_) { continue; } on '),
+            refer('FormatException', 'dart:core').code,
+            const Code(' catch (_) { continue; }'),
+          ] else
+            const Code(r'final _$key = pair.substring(0, _$separator);'),
           Code(
             r'if (_$key == '
             '${specLiteralStringCode(model.discriminator!)}) {',
           ),
-          const Code(r'_$discriminator = _$parts[1];'),
+          const Code(r'_$discriminator = pair.substring(_$separator + 1);'),
           const Code('break;'),
           const Code('}'),
           const Code('}'),

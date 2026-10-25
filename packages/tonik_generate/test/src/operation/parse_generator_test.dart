@@ -858,6 +858,13 @@ String _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return MultiStatusOpResponse200(body: _$body);
+            case (200, _):
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+              );
             case (400, _):
               return MultiStatusOpResponse400();
             default:
@@ -1120,10 +1127,24 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
+            case (200, _):
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+              );
             case (var status, r'application/json') when status != null && status >= 400 && status <= 499:
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = AnonymousModel.fromJson(_$json);
               return CombinedOpResponse4XX(body: _$body);
+            case (var status, _) when status != null && status >= 400 && status <= 499:
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+              );
             case (_, _):
               return CombinedOpResponseDefault();
           }
@@ -1250,6 +1271,13 @@ String _parseResponse(Response<List<int>> response) {
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Ok.fromJson(_$json);
                 return GetThingResponse200(body: _$body);
+              case (200, _):
+                final _$content = response.headers.value('content-type') ?? 'not specified';
+                final _$matched = _$mediaType ?? 'none';
+                final _$status = response.statusCode;
+                throw ResponseDecodingException(
+                  'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+                );
               case (var status, r'application/json') when status != null && status >= 200 && status <= 299:
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Generic.fromJson(_$json);
@@ -1394,10 +1422,24 @@ String _parseResponse(Response<List<int>> response) {
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Ok.fromJson(_$json);
                 return GetThingResponse200(body: _$body);
+              case (200, _):
+                final _$content = response.headers.value('content-type') ?? 'not specified';
+                final _$matched = _$mediaType ?? 'none';
+                final _$status = response.statusCode;
+                throw ResponseDecodingException(
+                  'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+                );
               case (var status, r'application/json') when status != null && status >= 200 && status <= 299:
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Generic.fromJson(_$json);
                 return GetThingResponse2XX(body: _$body);
+              case (var status, _) when status != null && status >= 200 && status <= 299:
+                final _$content = response.headers.value('content-type') ?? 'not specified';
+                final _$matched = _$mediaType ?? 'none';
+                final _$status = response.statusCode;
+                throw ResponseDecodingException(
+                  'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+                );
               case (_, _):
                 return GetThingResponseDefault();
             }
@@ -1526,6 +1568,13 @@ String _parseResponse(Response<List<int>> response) {
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Ok.fromJson(_$json);
                 return GetThingResponse200(body: _$body);
+              case (200, _):
+                final _$content = response.headers.value('content-type') ?? 'not specified';
+                final _$matched = _$mediaType ?? 'none';
+                final _$status = response.statusCode;
+                throw ResponseDecodingException(
+                  'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+                );
               case (201, r'application/json'):
                 final _$json = decodeResponseJson<Object?>(response.data);
                 final _$body = Created.fromJson(_$json);
@@ -2174,6 +2223,13 @@ String _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return GetUserResponse200(body: _$body);
+            case (200, _):
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+              );
             case (400, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonInt();
@@ -3700,6 +3756,13 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return MultiNeverOpResponse200(body: AnonymousResponse(body: _$body));
+            case (200, _):
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+              );
             case (404, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
@@ -4133,6 +4196,13 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
       throw JsonDecodingException(
         'Cannot decode NeverModel - this type does not permit any value.',
       );
+    case (200, _):
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+      );
     case (404, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
@@ -4309,6 +4379,13 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
       }
       throw JsonDecodingException(
         'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    case (200, _):
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
     case (404, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
