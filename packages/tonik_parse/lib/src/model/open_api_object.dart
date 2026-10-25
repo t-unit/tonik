@@ -24,9 +24,15 @@ class OpenApiObject({
     servers: (json['servers'] as List<dynamic>?)
         ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
         .toList(),
-    paths: (json['paths'] as Map<String, dynamic>).map(
-      (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
-    ),
+    paths: {
+      for (final entry
+          in (json.containsKey('paths')
+                  ? json['paths'] as Map<String, dynamic>
+                  : const <String, dynamic>{})
+              .entries)
+        if (!entry.key.startsWith('x-'))
+          entry.key: ReferenceWrapper<PathItem>.fromJson(entry.value),
+    },
     components: json['components'] == null
         ? null
         : Components.fromJson(json['components'] as Map<String, dynamic>),

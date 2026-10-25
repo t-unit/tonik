@@ -43,22 +43,33 @@ class RequestParameterImporter({
         continue;
       }
 
-      final imported = _importParameter(
-        name: name,
-        wrapper: parameter,
-        context: rootContext.push(name),
-      );
-
-      if (imported case final core.RequestHeader header) {
-        headers.add(header);
-      } else if (imported case final core.QueryParameter query) {
-        queryParameters.add(query);
-      } else if (imported case final core.PathParameter path) {
-        pathParameters.add(path);
-      } else if (imported case final core.CookieParameter cookie) {
-        cookieParameters.add(cookie);
-      }
+      _importComponent(name, parameter);
     }
+  }
+
+  Object? _importComponent(
+    String name,
+    ReferenceWrapper<Parameter> wrapper, {
+    Set<String>? visitedRefs,
+  }) {
+    final existing = _importedComponent(name);
+    if (existing != null) return existing;
+    final imported = _importParameter(
+      name: name,
+      wrapper: wrapper,
+      context: rootContext.push(name),
+      visitedRefs: visitedRefs,
+    );
+    if (imported case final core.RequestHeader header) {
+      headers.add(header);
+    } else if (imported case final core.QueryParameter query) {
+      queryParameters.add(query);
+    } else if (imported case final core.PathParameter path) {
+      pathParameters.add(path);
+    } else if (imported case final core.CookieParameter cookie) {
+      cookieParameters.add(cookie);
+    }
+    return imported;
   }
 
   (
@@ -150,14 +161,11 @@ class RequestParameterImporter({
           throw ArgumentError('Parameter $refName not found');
         }
 
-        final existing =
-            _importedComponent(refName) ??
-            _importParameter(
-              name: refName,
-              wrapper: refParameter,
-              context: rootContext.push(refName),
-              visitedRefs: seen,
-            );
+        final existing = _importComponent(
+          refName,
+          refParameter,
+          visitedRefs: seen,
+        );
         return switch (existing) {
           final core.RequestHeader header => core.RequestHeaderAlias(
             name: name ?? refName,

@@ -2,6 +2,13 @@
   "plugin": "rest",
   "resources": [
     {
+      "path": "/status-precedence",
+      "response": {
+        "scriptFile": "response.groovy"
+      },
+      "method": "GET"
+    },
+    {
       "path": "/items",
       "response": {
         "scriptFile": "response.groovy"
