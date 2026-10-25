@@ -746,6 +746,10 @@ class const AllOfGenerator({
         const Code('}'),
         const Code(r'final _$map = '),
         buildEmptyMapStringObject().statement,
+        declareFinal(r'_$values')
+            .assign(literalList([], refer('Object?', 'dart:core')))
+            .statement,
+        const Code(r'var _$hasMap = false;'),
       ];
 
       final mapType = buildMapStringObjectType();
@@ -780,6 +784,7 @@ class const AllOfGenerator({
             Code('final $fieldNameJson = '),
             toJsonBuilt.unsafeRawBody.code,
             const Code(';'),
+            const Code(r'_$hasMap = true;'),
             const Code(r'_$map.addAll('),
             refer(fieldNameJson).code,
             const Code(');'),
@@ -791,17 +796,19 @@ class const AllOfGenerator({
             const Code(';'),
             const Code('if ('),
             refer(fieldNameJson).code,
-            const Code(' is! '),
+            const Code(' is '),
             mapType.code,
             const Code(') {'),
-            generateEncodingExceptionExpression(
-              'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
-              'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
-            ).statement,
-            const Code('}'),
+            const Code(r'_$hasMap = true;'),
             const Code(r'_$map.addAll('),
             refer(fieldNameJson).code,
             const Code(');'),
+            const Code('} else {'),
+            refer(r'_$values')
+                .property('add')
+                .call([refer(fieldNameJson)])
+                .statement,
+            const Code('}'),
           ]);
         }
         if (isNullable) {
@@ -810,6 +817,41 @@ class const AllOfGenerator({
       }
 
       final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+      bodyCode.addAll([
+        const Code(r'if (_$values.isNotEmpty) {'),
+        const Code(r'if (_$hasMap'),
+        if (apPolicy != null)
+          Code(
+            ' || this.'
+            '${nameManager.additionalPropertiesFieldName(normalizedProperties)}'
+            '.isNotEmpty',
+          ),
+        const Code(') {'),
+        generateEncodingExceptionExpression(
+          'Cannot encode $className: mixing JSON objects with other values '
+          'is not supported',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        const Code('const deepEquals = '),
+        refer(
+          'DeepCollectionEquality',
+          'package:collection/collection.dart',
+        ).newInstance([]).code,
+        const Code(';'),
+        const Code(r'for (var i = 1; i < _$values.length; i++) {'),
+        const Code(r'if (!deepEquals.equals(_$values.first, _$values[i])) {'),
+        generateEncodingExceptionExpression(
+          'Inconsistent allOf JSON encoding: all values must encode to '
+          'the same result',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        const Code('}'),
+        const Code(r'return _$values.first;'),
+        const Code('}'),
+      ]);
+
       if (apPolicy != null) {
         final apFieldName = nameManager.additionalPropertiesFieldName(
           normalizedProperties,
