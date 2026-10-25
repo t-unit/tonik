@@ -727,6 +727,36 @@ components:
         tags:
           $ref: '#/components/schemas/ParameterTagsAlias'
 
+    StringValues:
+      type: array
+      items:
+        type: string
+
+    StringValuesAlias:
+      $ref: '#/components/schemas/StringValues'
+
+    AnyOfListAlias:
+      anyOf:
+        - $ref: '#/components/schemas/StringValuesAlias'
+        - type: integer
+
+    StringDictionary:
+      type: object
+      additionalProperties:
+        type: string
+
+    StringDictionaryAlias:
+      $ref: '#/components/schemas/StringDictionary'
+
+    AnyOfMapAlias:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+        - type: integer
+
+    AnyOfUnsupportedAliases:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+
     FreeformValue: {}
 
     FreeformAlias:

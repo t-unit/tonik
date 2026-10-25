@@ -332,6 +332,11 @@ class const AnyOfGenerator({
     required String className,
     String? discriminatorValue,
   }) {
+    final resolvedModel = fieldModel.resolved;
+    final value = refer('this').property(fieldName).nullChecked;
+    final listValue = useImmutableCollections
+        ? value.property('unlock')
+        : value;
     const toMethodName = 'toSimple';
     final codes = <Code>[];
 
@@ -373,12 +378,12 @@ class const AnyOfGenerator({
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+      if (resolvedModel is ListModel && resolvedModel.hasSimpleContent) {
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
             buildSimpleParameterExpression(
-              refer('this').property(fieldName).nullChecked,
+              listValue,
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
@@ -389,7 +394,7 @@ class const AnyOfGenerator({
         if (needsValues) {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
-      } else if (fieldModel is ListModel) {
+      } else if (resolvedModel is ListModel) {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -400,7 +405,7 @@ class const AnyOfGenerator({
               .thrown
               .statement,
         );
-      } else if (fieldModel is MapModel) {
+      } else if (resolvedModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be simple-encoded',
@@ -494,6 +499,11 @@ class const AnyOfGenerator({
     required String className,
     String? discriminatorValue,
   }) {
+    final resolvedModel = fieldModel.resolved;
+    final value = refer('this').property(fieldName).nullChecked;
+    final listValue = useImmutableCollections
+        ? value.property('unlock')
+        : value;
     final codes = <Code>[];
 
     if (fieldModel.resolved is AnyModel) {
@@ -533,12 +543,12 @@ class const AnyOfGenerator({
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+      if (resolvedModel is ListModel && resolvedModel.hasSimpleContent) {
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
             buildLabelParameterExpression(
-              refer('this').property(fieldName).nullChecked,
+              listValue,
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
@@ -548,7 +558,7 @@ class const AnyOfGenerator({
         if (needsValues) {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
-      } else if (fieldModel is ListModel) {
+      } else if (resolvedModel is ListModel) {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -559,7 +569,7 @@ class const AnyOfGenerator({
               .thrown
               .statement,
         );
-      } else if (fieldModel is MapModel) {
+      } else if (resolvedModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be label-encoded',
@@ -937,7 +947,7 @@ class const AnyOfGenerator({
     final needsValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -946,7 +956,7 @@ class const AnyOfGenerator({
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -977,7 +987,7 @@ class const AnyOfGenerator({
     final hasComplexFields =
         hasDiscriminator &&
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           return model.encodingShape != EncodingShape.simple;
         });
 
@@ -1096,7 +1106,7 @@ class const AnyOfGenerator({
     final needsValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -1105,7 +1115,7 @@ class const AnyOfGenerator({
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -1275,6 +1285,11 @@ class const AnyOfGenerator({
     required String className,
     String? discriminatorValue,
   }) {
+    final resolvedModel = fieldModel.resolved;
+    final value = refer('this').property(fieldName).nullChecked;
+    final listValue = useImmutableCollections
+        ? value.property('unlock')
+        : value;
     final codes = <Code>[];
 
     if (fieldModel.resolved is AnyModel) {
@@ -1350,9 +1365,10 @@ class const AnyOfGenerator({
             ),
       );
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      final listEntries = fieldModel is ListModel && fieldModel.hasSimpleContent
+      final listEntries =
+          resolvedModel is ListModel && resolvedModel.hasSimpleContent
           ? buildFormEntriesValueExpression(
-              refer('this').property(fieldName).nullChecked,
+              listValue,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
@@ -1363,7 +1379,7 @@ class const AnyOfGenerator({
           : null;
       if (listEntries != null) {
         addSimpleEntries(listEntries);
-      } else if (fieldModel is ListModel) {
+      } else if (resolvedModel is ListModel) {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -1374,7 +1390,7 @@ class const AnyOfGenerator({
               .thrown
               .statement,
         );
-      } else if (fieldModel is MapModel) {
+      } else if (resolvedModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be form-encoded',
@@ -1481,18 +1497,20 @@ class const AnyOfGenerator({
 
     for (final n in normalizedProperties) {
       final modelType = n.property.model;
+      final resolvedModel = modelType.resolved;
       final varName = '_\$decoded${n.normalizedName}';
 
-      if (modelType.resolved is AnyModel) {
+      if (resolvedModel is AnyModel) {
         // AnyModel has no parameter-string decoding; the field stays null.
         nonDecodableProperties.add(n);
-      } else if ((modelType is ListModel && !modelType.hasSimpleContent) ||
-          modelType is MapModel) {
+      } else if ((resolvedModel is ListModel &&
+              !resolvedModel.hasSimpleContent) ||
+          resolvedModel is MapModel) {
         nonDecodableProperties.add(n);
       } else {
         decodableProperties.add(n);
 
-        final decodeExpr = switch (modelType) {
+        var decodeExpr = switch (modelType) {
           EnumModel() ||
           ClassModel() ||
           AllOfModel() ||
@@ -1544,6 +1562,10 @@ class const AnyOfGenerator({
                 .expression,
         };
 
+        if (!isForm && useImmutableCollections && resolvedModel is ListModel) {
+          decodeExpr = decodeExpr.property('lock');
+        }
+
         localDecls.add(
           _tryAssignLocal(
             variableName: varName,
@@ -1561,15 +1583,20 @@ class const AnyOfGenerator({
             : refer('_\$decoded${n.normalizedName}'),
     };
 
-    final validationCheck = _buildAllNullValidation(
-      decodableProperties,
-      'Invalid $encodingStyleName value for $className: '
-      'all variants failed to decode',
-      isForm
-          ? generateFormDecodingExceptionExpression
-          : generateSimpleDecodingExceptionExpression,
-      raw: true,
-    );
+    final errorMessage =
+        'Invalid $encodingStyleName value for $className: '
+        'all variants failed to decode';
+    final exceptionGenerator = isForm
+        ? generateFormDecodingExceptionExpression
+        : generateSimpleDecodingExceptionExpression;
+    final validationCheck = decodableProperties.isEmpty
+        ? exceptionGenerator(errorMessage, raw: true).statement
+        : _buildAllNullValidation(
+            decodableProperties,
+            errorMessage,
+            exceptionGenerator,
+            raw: true,
+          );
 
     return Constructor(
       (b) => b
@@ -1589,7 +1616,8 @@ class const AnyOfGenerator({
         ..body = Block.of([
           ...localDecls,
           validationCheck,
-          refer(className).call([], ctorArgs).returned.statement,
+          if (decodableProperties.isNotEmpty)
+            refer(className).call([], ctorArgs).returned.statement,
         ]),
     );
   }
@@ -1611,7 +1639,7 @@ class const AnyOfGenerator({
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
-      final fieldModel = n.property.model;
+      final fieldModel = n.property.model.resolved;
       final isAnyModel = fieldModel.resolved is AnyModel;
       final isSimple = fieldModel.encodingShape == EncodingShape.simple;
       final isList = fieldModel is ListModel;
@@ -1731,7 +1759,7 @@ class const AnyOfGenerator({
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final discValue = discMap[n.property.model];
-      final fieldModel = n.property.model;
+      final fieldModel = n.property.model.resolved;
       final isAnyModel = fieldModel.resolved is AnyModel;
 
       if (isAnyModel) {
@@ -1779,7 +1807,7 @@ class const AnyOfGenerator({
     if (hasSimpleTypes) {
       for (final n in normalizedProperties) {
         final name = n.normalizedName;
-        final fieldModel = n.property.model;
+        final fieldModel = n.property.model.resolved;
         // AnyModel handled above; skip to avoid duplicate throws.
         if (fieldModel.resolved is AnyModel) continue;
 
@@ -1845,10 +1873,11 @@ class const AnyOfGenerator({
     required bool hasDiscriminator,
     String? discriminatorValue,
   }) {
+    final resolvedModel = fieldModel.resolved;
     final codes = <Code>[];
 
     if (fieldModel.encodingShape == EncodingShape.complex) {
-      if (fieldModel is ListModel) {
+      if (resolvedModel is ListModel) {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -1857,7 +1886,7 @@ class const AnyOfGenerator({
               .thrown
               .statement,
         );
-      } else if (fieldModel is MapModel) {
+      } else if (resolvedModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be parameter encoded',
@@ -1942,7 +1971,7 @@ class const AnyOfGenerator({
     final needsValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -1951,7 +1980,7 @@ class const AnyOfGenerator({
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -2093,7 +2122,7 @@ class const AnyOfGenerator({
     final needsValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -2102,7 +2131,7 @@ class const AnyOfGenerator({
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
-          final model = prop.property.model;
+          final model = prop.property.model.resolved;
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -2313,6 +2342,11 @@ class const AnyOfGenerator({
     required String className,
     String? discriminatorValue,
   }) {
+    final resolvedModel = fieldModel.resolved;
+    final value = refer('this').property(fieldName).nullChecked;
+    final listValue = useImmutableCollections
+        ? value.property('unlock')
+        : value;
     final codes = <Code>[];
 
     if (fieldModel.resolved is AnyModel) {
@@ -2342,12 +2376,12 @@ class const AnyOfGenerator({
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+      if (resolvedModel is ListModel && resolvedModel.hasSimpleContent) {
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
             buildMatrixParameterExpression(
-              refer('this').property(fieldName).nullChecked,
+              listValue,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
@@ -2358,7 +2392,7 @@ class const AnyOfGenerator({
         if (needsValues) {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
-      } else if (fieldModel is ListModel) {
+      } else if (resolvedModel is ListModel) {
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -2369,7 +2403,7 @@ class const AnyOfGenerator({
               .thrown
               .statement,
         );
-      } else if (fieldModel is MapModel) {
+      } else if (resolvedModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be matrix-encoded',
@@ -2401,13 +2435,13 @@ class const AnyOfGenerator({
         'package:tonik_util/tonik_util.dart',
       );
 
-      if (fieldModel is ListModel) {
+      if (resolvedModel is ListModel) {
         // Lists keep their matrix helper despite reporting complex shape.
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
             buildMatrixParameterExpression(
-              refer('this').property(fieldName).nullChecked,
+              listValue,
               fieldModel,
               paramName: refer('paramName'),
               explode: refer('explode'),
