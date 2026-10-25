@@ -401,6 +401,25 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/SelfCollectionOwner/properties/map'
+    RecursiveTypes:
+      $defs:
+        NodeAlias:
+          $ref: '#/components/schemas/RecursiveTypes/$defs/Node'
+        Node:
+          type: object
+          properties:
+            next:
+              $ref: '#/components/schemas/RecursiveTypes/$defs/NodeAlias'
+    RecursiveRoot:
+      $ref: '#/components/schemas/RecursiveTypes/$defs/NodeAlias'
+    CycleTypes:
+      $defs:
+        First:
+          $ref: '#/components/schemas/CycleTypes/$defs/Second'
+        Second:
+          $ref: '#/components/schemas/CycleTypes/$defs/First'
+    CycleRoot:
+      $ref: '#/components/schemas/CycleTypes/$defs/First'
 x-schemas:
   oneChoice:
     oneOf:

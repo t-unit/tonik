@@ -1218,7 +1218,9 @@ class ModelImporter._(
       return _placeholders.putIfAbsent(
         ref,
         () => AliasModel(
-          name: modelName,
+          // Resolution placeholders must delegate to the registered target,
+          // rather than introduce a separate generated type.
+          name: null,
           model: AnyModel(context: context),
           context: context,
           defaultValue: null,
@@ -1238,12 +1240,8 @@ class ModelImporter._(
       final model = _resolveSchemaRef(modelName, schema, context);
       _nestedReferenceModels[schema] = model;
       final placeholder = _placeholders.remove(ref);
-      if (placeholder != null) {
-        if (!_wouldCreateAliasCycle(placeholder, model)) {
-          placeholder.model = model;
-        } else {
-          _registerModel(placeholder);
-        }
+      if (placeholder != null && !_wouldCreateAliasCycle(placeholder, model)) {
+        placeholder.model = model;
       }
       return model;
     } finally {

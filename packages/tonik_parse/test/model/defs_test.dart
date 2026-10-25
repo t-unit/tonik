@@ -160,7 +160,18 @@ void main() {
         );
         final node = root.resolved as ClassModel;
         expect(node.properties.single.name, 'next');
-        expect(node.properties.single.model.resolved, same(node));
+        final backEdge = node.properties.single.model as AliasModel;
+        expect(backEdge.name, isNull);
+        expect(api.models, isNot(contains(backEdge)));
+        expect(backEdge.resolved, same(node));
+        expect(
+          root.model,
+          same(
+            api.models.whereType<AliasModel>().firstWhere(
+              (model) => model.name == 'Alias',
+            ),
+          ),
+        );
       },
     );
 
