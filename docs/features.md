@@ -11,7 +11,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | **Type composition** | `oneOf` → sealed class (switch on variants), `anyOf` → nullable fields, `allOf` → fields per member |
 | **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
 | **Integer enums** | Full support, with optional unknown-value handling |
-| **All encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
+| **Parameter encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
 | **Text response charsets** | Decodes legacy response encodings declared by `Content-Type`, including ISO-8859, Windows code pages, and common East Asian encodings |
 | **readOnly / writeOnly** | Properties excluded from the correct serialization direction automatically |
 | **Server variables** | URL templating with enum constraints and runtime substitution |
@@ -203,9 +203,11 @@ by the generated server.
 | Version | Status | Notes |
 |---------|--------|-------|
 | OpenAPI 3.0.x | ✅ Fully Supported | |
-| OpenAPI 3.1.x | ✅ Supported | Advanced JSON Schema keywords on [Roadmap](roadmap.md) |
-| OpenAPI 3.2.x | Planned | See [Roadmap](roadmap.md) |
+| OpenAPI 3.1.x | ✅ Supported | Supports the features listed below; not all JSON Schema keywords are implemented |
+| OpenAPI 3.2.x | Partially supported | Streaming responses, reusable media types, and inline `dataValue` examples; see below |
 | OpenAPI 2.0 (Swagger) | ❌ Not Supported | Use a converter like swagger2openapi |
+
+Tonik does not validate whether an implemented feature is allowed by the declared OpenAPI version. For example, typed `itemSchema` response streams also work in 3.0 and 3.1 documents. Version reporting recognizes 3.0, 3.1, and 3.2; unknown versions log a warning and parsing continues permissively. Encoding and reference-override behavior can still vary by version.
 
 ### Supported OAS 3.1 Features
 
@@ -214,7 +216,15 @@ by the generated server.
 - Boolean schemas — `schema: true` → `Object?`, `schema: false` → `Never`. See [Data Types](data_types.md#boolean-schemas-oas-31).
 - Nullable type arrays — `type: [string, "null"]` as the 3.1 replacement for `nullable: true`.
 - `contentEncoding` / `contentMediaType` — content-encoded strings with configurable media type mapping.
-- Version-aware multipart encoding — style-based encoding for 3.1, content-based for 3.0.
+- Multipart encoding — named `multipart/form-data` request parts. Explicit style fields are currently honored outside 3.0 documents; 3.0 uses content-based encoding. See [Multipart](multipart.md#delimited-arrays).
+
+### Supported OAS 3.2 Features
+
+- Typed NDJSON, JSONL, JSON-seq, and SSE response streams with an explicit, usable `itemSchema`; see [Streaming Responses](streaming_responses.md) for framing and backend limitations.
+- Reusable Media Type Objects referenced within `#/components/mediaTypes`. External targets and other same-document media targets are unsupported.
+- Inline Example Object `dataValue` rendered in generated documentation.
+
+XML encoding/decoding, external references, and `prefixEncoding` / `itemEncoding` on both Media Type and Encoding Objects are unsupported. Security support generates documentation; authentication remains configured on the HTTP client. Reusable `components.pathItems` and schema `$ref` siblings are supported features introduced before 3.2.
 
 ---
 
@@ -268,13 +278,13 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 
 ### Not Supported
 
-Validation constraints (`minimum`, `maximum`, `pattern`, `minLength`, etc.) are parsed but not enforced at runtime. See [Roadmap](roadmap.md) for planned features.
+Validation constraints such as `minimum`, `maximum`, `pattern`, and `minLength` are not enforced at runtime.
 
 ### Examples
 
 Tonik renders OpenAPI examples into dartdoc so they surface in the IDE and in `dart doc` output. Coverage: schema-level `example` (3.0) and `examples` (3.1 array), the named `examples` map at MediaType / Parameter / Header level, `$ref` into `components.examples` with OAS 3.1+ Reference-sibling overrides, and OAS 3.2's `dataValue`.
 
-Examples render on every class, enum, typedef, composite, and property, and on api_client method docs as `Parameter examples`, `Request body`, and `Response NNN` sections. `externalValue` URL fetching is not supported (see [Roadmap](roadmap.md) Non-goals).
+Examples render on every class, enum, typedef, composite, and property, and on api_client method docs as `Parameter examples`, `Request body`, and `Response NNN` sections. `serializedValue` is parsed but is not rendered; examples containing only `serializedValue` are omitted. `externalValue` URLs are not fetched.
 
 ---
 
@@ -287,7 +297,7 @@ Examples render on every class, enum, typedef, composite, and property, and on a
 | `in: path` | ✅ |
 | `in: query` | ✅ |
 | `in: header` | ✅ |
-| `in: cookie` | ✅ |
+| `in: cookie` | ✅ (`form` style only) |
 
 ### Encoding Styles
 
@@ -308,7 +318,7 @@ Examples render on every class, enum, typedef, composite, and property, and on a
 | `pipeDelimited` | `?color=blue%7Cblack` |
 | `deepObject` | `?filter%5Bcolor%5D=red` |
 
-**Note:** By default reserved characters are percent-encoded. Set `allowReserved: true` on a parameter to send them literally. See [URI Encoding](uri_encoding.md).
+**Note:** `allowReserved: true` is supported for query parameters and form-body properties, subject to delimiter escaping. Parameter and header serialization via `content` and the `querystring` parameter location are unsupported. See [URI Encoding](uri_encoding.md).
 
 ---
 
@@ -353,7 +363,7 @@ See [Streaming Responses](streaming_responses.md) for usage and limitations.
 
 | Feature | Status |
 |---------|--------|
-| All HTTP methods | ✅ (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, TRACE) |
+| HTTP methods | GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, TRACE |
 | `operationId` | ✅ (used for method naming) |
 | `tags` | ✅ (used for API class grouping) |
 | `deprecated` | ✅ |

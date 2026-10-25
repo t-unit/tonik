@@ -112,6 +112,8 @@ class Importer({
       _log.info('Parsing OpenAPI 3.0.x specification (version: $version)');
     } else if (version.startsWith('3.1')) {
       _log.info('Parsing OpenAPI 3.1.x specification (version: $version)');
+    } else if (version.startsWith('3.2.')) {
+      _log.info('Parsing OpenAPI 3.2.x specification (version: $version)');
     } else {
       _log.warning(
         'Unknown or unsupported OpenAPI version: $version - '

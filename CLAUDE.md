@@ -1,5 +1,7 @@
 # Project Instructions
 
+For OpenAPI work, use the [feature guide](docs/features.md#openapi-version-support) and [roadmap](docs/roadmap.md) for current support, planned work, and explicit non-goals. Tonik does not validate whether an implemented feature is allowed by the declared OpenAPI version. For example, `itemSchema` response streams also work in older OAS documents. Follow the detailed feature-support and generation-error policies in the local `AGENTS.md` when present.
+
 ## TDD Checkpoint Rule
 
 **CRITICAL: When following a TDD workflow (as defined in plans), you MUST stop and wait for explicit user confirmation after writing tests and before writing any implementation code.** Do NOT proceed to implementation automatically. The workflow is:

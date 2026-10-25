@@ -107,9 +107,9 @@ await api.post(body: Form(tags: ['dart', 'flutter', 'openapi']));
 
 Arrays of binary files work the same way — each `TonikFile` becomes its own part.
 
-### Delimited Arrays (OAS 3.1)
+### Delimited Arrays
 
-In OAS 3.1 specs, you can use `encoding` to send an array as a single delimited value:
+In documents whose version does not start with `3.0`, you can use explicit style fields in `encoding` to send an array as a single delimited value:
 
 ```yaml
 encoding:
@@ -125,7 +125,7 @@ await api.post(body: Form(tags: ['dart', 'flutter']));
 
 Supported styles: `form` (comma-separated), `spaceDelimited`, `pipeDelimited`.
 
-> In OAS 3.0, `style` and `explode` in `encoding` objects are ignored — arrays always use separate parts.
+> The current implementation ignores style fields in `encoding` for documents whose version starts with `3.0`; arrays use separate parts.
 
 ---
 
