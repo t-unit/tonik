@@ -42,7 +42,7 @@ void main() {
     expect(data.email, isA<String>());
     expect(data.password, isA<String>());
     expect(data.deletedAt, isA<ExampleDtoDeletedAtAnyOfModel>());
-    expect(data.deletedAt.dateTime, isA<DateTime>());
+    expect(data.deletedAt?.dateTime, isA<DateTime>());
   });
 
   test('sends a scalar through the typeless fallback variant', () async {
@@ -70,6 +70,6 @@ void main() {
     expect(data.email, isA<String>());
     expect(data.password, isA<String>());
     expect(data.deletedAt, isA<ExampleDtoDeletedAtAnyOfModel>());
-    expect(data.deletedAt.dateTime, isA<DateTime>());
+    expect(data.deletedAt?.dateTime, isA<DateTime>());
   });
 }
